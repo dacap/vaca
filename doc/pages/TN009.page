@@ -1,0 +1,22 @@
+// -*- C++ -*-
+
+/*!
+
+@page TN009 TN009 - Technical Note 009: Reflection
+
+Vaca supports reflection of @c WM_COMMAND, @c WM_NOTIFY and @c WM_DRAWITEM
+using the @ref Vaca::Widget methods:
+
+@li @ref Vaca::Widget::onCommand
+@li @ref Vaca::Widget::onNotify
+@li @ref Vaca::Widget::onDrawItem
+
+When a widget (for example, a Vaca::Button) sends a notification (for
+example, @c BN_CLICKED) to its parent widget (for example, Vaca::Frame), the
+Frame processes the @c WM_COMMAND and extracts the handle of the button
+from the @c lParam (a @c HWND). Then uses the Vaca::Widget::fromHwnd()
+to get the @c "Button *" pointer, and finally calls Vaca::Button::onCommand(...).
+
+@see Vaca::Widget::wndProc
+
+*/

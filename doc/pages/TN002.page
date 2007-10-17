@@ -1,0 +1,91 @@
+// -*- C++ -*-
+
+/*!
+
+@page TN002 TN002 - Technical Note 002: CreateWindow and DestroyWindow
+
+@image html CreationProcess.png
+
+The dispose() method exists because, generally, you should create
+instances of widgets using normal instantiation:
+
+@code
+  {
+    MyDialog dlg;
+    ...
+  }
+@endcode
+
+If you want to destroy the window, you can't call the destructor,
+because it's called automatically by the code that generates the
+compiler. So if you want to destroy @c dlg (its HWND) before C++
+life-time ends, you must use dispose().
+
+@code
+{
+  MyDialog dlg;
+  ...
+  dlg.dispose();
+  ...here I can't use the dlg anymore...
+}
+@endcode
+
+Anyway, generally is not necessary to use dispose(), and you can use
+@c delete directly. Here is another valid example:
+
+@code
+{
+  MyDialog *dlg = new MyDialog();
+  ...
+  delete dlg;
+  ...here I can't use the dlg anymore...
+}
+@endcode
+
+<h2>General rules</h2>
+
+As general rule, if you override @ref Vaca::Widget::createHwnd "createHwnd"
+or @ref Vaca::Widget::defWndProc "defWndProc" you must to use the Widget
+constructor with a NULL class name, and then call
+@ref Vaca::Widget::create create() in your own constructor. Example:
+
+@code
+class MyWidget : public Widget
+{
+public:
+  MyWidget(Widget *parent) 
+    : Widget(NULL, NULL, NoStyle)
+  {
+    create(_T("MyWidget"), parent, ChildStyle);
+  }
+protected:
+  virtual HWND createHwnd(LPCTSTR className,
+                          Widget *parent,
+                          Style style) {
+    return ...;
+  }
+};
+@endcode
+
+Also, if you override the @ref Vaca::Widget::onDestroy "onDestroy"
+event or @ref Vaca::Widget::destroyHwnd "destroyHwnd" method, you @b MUST to call
+dispose in your destructor:
+
+@code
+class MyDialog : public Dialog
+{
+protected:
+  virtual void onDestroy() {
+     ...
+     Widget::onDestroy();
+  }
+public:
+  virtual ~MyDialog() {
+    dispose();
+  }
+};
+@endcode
+
+@see Vaca::Widget::Widget, Vaca::Widget::dispose, Vaca::Widget::~Widget().
+
+*/

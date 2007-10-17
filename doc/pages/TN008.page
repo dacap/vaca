@@ -1,0 +1,16 @@
+// -*- C++ -*-
+
+/*!
+
+@page TN008 TN008 - Technical Note 008: Unicode support
+
+Vaca can be compiled with Unicode support without problems for
+W2K/WinXP. If you want to add Unicode support for Win95/98/Me, you
+will need the Microsoft Layer for Unicode (MSLU).
+
+<A href="http://www.microsoft.com/msdownload/platformsdk/sdkupdate/psdkredist.htm">http://www.microsoft.com/msdownload/platformsdk/sdkupdate/psdkredist.htm</A>
+
+To avoid the MSLU, don't compile Vaca with Unicode support when you
+want to use your application on Win95/98/Me.
+
+*/

@@ -1,0 +1,129 @@
+// -*- C++ -*-
+
+/*!
+
+@page index
+
+@image html Vaca.gif
+
+@b Consideration: This is an important note, I speak Spanish, I don't
+speak English and I don't known how to write in this language. So this
+documentation is only a draft that will never be official. Why I don't
+write it in Spanish? Because more people want English documentation
+than Spanish one. Also this is not a literary novel, this is
+just a document to known what does the library, I try to use the more
+simple language constructions here (also you'll find a borring
+lecture). If you found a mistake, please,
+<a href="http://www.davidcapello.com.ar/">report it to me</a>.
+
+@b Warning: This library is under development, there aren't a stable
+release. The API is mutating in this development stage. Please, if you
+want to use this library for real work be careful, or wait the first
+stable release (from there we'll maintain backward compability).
+
+This library is licensed under the terms of the @ref license "BSD license".
+
+<h2>Introduction</h2>
+
+A library to wrap the Win32 API with C++ classes. Also, it's has some
+extra functionalities like dockable tool bars and layout
+managers. This library uses templates (but not generic programming),
+and Boost (the Boost.Signals library is just perfect).
+
+<h2>Objetives</h2>
+
+@li Fit design to make programming more easy.
+@li Constructors must construct, if I do @c "new MyWindow()", then my
+    window must be created (see @ref TN001).
+@li Documentation for every tricky situation, its solution, and
+    examples.
+@li Technical Notes about how more common (or uncommon) problems were solved.
+
+<h2>Message &mdash; Event &mdash; Signal (MES)</h2>
+
+A @em message is received from Windows OS with a @c WM_ constant value.
+A global @ref Vaca::Widget::globalWndProc "WndProc" extracts the @c GWL_USERDATA
+from the @c HWND that received the message.  In the @c GWL_USERDATA is located
+an instance of the @ref Vaca::Widget "Widget" class. This instance is used to
+call the @ref Vaca::Widget::wndProc "Widget::wndProc" method to process
+the message. Depending the message it calls other method (an @em event) that
+can be override (like @ref Vaca::Widget::onPaint "onPaint",
+@ref Vaca::Widget::onResize "onResize", etc.). Some default
+implementations of the events fire a @em signal related to the event.
+The signal can be intercepted by anyone (like a C# delegate). Signals
+are the only variable members of classes that can be public, and its
+name must begin with a capital letter (like
+@ref Vaca::Button::Action "Action").
+
+@li A @em message is message received from Windows (a @c WM_... constant).
+@li An @em event is a virtual method (a @c on... method).
+@li A @em signal is @c boost::signal<> (a public member variable that start with capital letter).
+
+Vaca uses virtual methods to handle events, and signals for events
+that should be intercepted by the parent window. Maybe in the future,
+signals will exist for every event (like events and delegates in .NET
+framework).
+
+<h2>Alternatives</h2>
+
+<h3>MFC</h3>
+
+MFC needs message maps. They are ugly, they are evil, I just don't
+like it. You can't modify message maps in run-time. It's too hard to
+program with message maps when you don't have the Visual C++ editor.
+Do you try to remember all that macros? Impossible.
+
+<h3>wxWidgets</h3>
+
+Same as MFC, but it's free. Also, they don't like C++ templates.
+Anyway this could be a good alternative for really-big projects.
+
+<h3>GTK</h3>
+
+It doesn't support the native look and feel of Windows.
+
+<h3>Qt</h3>
+
+License problem for the Windows version. Also it needs a
+preprecompiler making of C++ a new language: C+++
+
+<h3>SmartWin++</h3>
+
+Generic programming is good, I really don't known how much good them
+can be for GUI programming. Keep tracking this library, could be better
+what we think.
+
+<h3>Add here your favorite one...</h3>
+
+Sure that I forget a lot of libraries (like Fox, fltk, VCF, and other
+super underground libraries like Windows++), but each one has
+something that I don't like it.
+
+Generally, one thing that I don't like of some libraries is the fact
+that they have a (poor) visual editor that ("generally") is developed
+using other library (or other language like C#).
+
+<h2>Why other library?</h2>
+
+I want to make information systems using C++ on Windows plataforms
+without having license problems. There are situations where you must
+develop a relatively easy system but you can't because:
+
+(a) The user has Windows. \n
+(b) You don't have the money to buy products like the Microsoft Visual Studio .NET. \n
+(c) You don't have enough time to program with all the difficulties of wxWidgets or GTK.
+
+So what we can do? A new library.
+
+<h2>Unicode support</h2>
+
+See @ref TN008.
+
+<h2>Platforms</h2>
+
+@li Win95 and WinNT4 are not supported (at least, I'm not thinking to
+    add support for them).
+@li Tested on Win98, Win2K, and WinXP.
+@li Compiled with Mingw (GCC 3.4.2) and VC 7.1.
+
+*/

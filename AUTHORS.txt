@@ -1,0 +1,17 @@
+David A. Capello <dacap@users.sourceforge.net>
+
+----------------------------------------------------------------------
+Thanks to
+
+  James Brown <james@catch22.net>
+  His site http://www.catch22.net has some good Windows tricks.
+
+  Developers of:
+    Boost        http://www.boost.org/
+    Scintilla    http://www.scintilla.org/
+    Doxygen      http://www.doxygen.org/
+    Wine         http://www.winehq.com/
+    MinGW        http://www.mingw.org/
+    GCC          http://gcc.gnu.org/
+
+  The Wine project is an excelent place to learn about the WinAPI.

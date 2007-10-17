@@ -1,0 +1,5 @@
+#include "resource.h"
+#include "windows.h"
+
+IDI_VACA	ICON	"../Vaca.ico"
+IDC_EYEDROPPER	CURSOR	"EyeDropper.cur"

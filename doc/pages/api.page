@@ -1,0 +1,24 @@
+// -*- C++ -*-
+
+/*!
+
+@page api API
+
+In this page I'll give some kind of explanation about the names of
+methods and classes:
+
+- <b>@c Rect or @c Rectangle?</b> Rect is shorter. Also, we can use
+  @c drawRect and @c fillRect instead of drawRectangle. It's commondly
+  used in the Win32 API (as @c RECT) and in the MFC like @c CRect.
+
+- <b>Why not @c getClientRect or @c getRect?</b> @c getClientBounds
+  and @c getBounds are the Java convention, they are better because
+  indicates what return (the @em bounds of the widget), not the type
+  of return (a @em Rect).
+
+- <b>Why @c getR, @c getG, and @c getB in @c Color class?</b> Because
+  they are shorter than @c getRed, @c getGreen, and @c getBlue. Also,
+  a method @c Color::green() is not good because they don't give us
+  a verb (like @a get or @a set).
+
+*/

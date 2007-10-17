@@ -1,0 +1,3 @@
+- EditableListBox has an irreproducible bug (??? I think it hasn't bugs).
+- Sudoku can be enter in a infinite loop in its level generator
+  (mainly the swapCellToFixDigitCollision method).

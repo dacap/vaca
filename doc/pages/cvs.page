@@ -1,0 +1,14 @@
+// -*- C++ -*-
+
+/*!
+
+@page cvs CVS Access
+
+You can access to the latest source code in development using CVS:
+
+@code
+cvs -d :pserver:anonymous@cvs.sourceforge.net:/cvsroot/vaca login
+cvs -z3 -d :pserver:anonymous@cvs.sourceforge.net:/cvsroot/vaca co vaca
+@endcode
+
+*/

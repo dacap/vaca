@@ -1,0 +1,72 @@
+Vaca 0.0.3
+- added VacaDoc.
+- new Scribble example.
+- new EyeDropper example.
+- added Cursor class.
+- new DragListBox.
+- reflection of onVScroll and onHScroll events.
+- new SpinButton and Spinner widgets (with examples).
+- new Slider widget.
+- new CancellableEvent and CloseEvent.
+- new ProgressBar widget (with example).
+- DockBar fully supports the Control key and the Esc key.
+- split DockArea in: abstract class DockArea and BasicDockArea.
+- fixed Graphics::measureString, default fitInWidth can't be INT_MAX,
+  must be less or equal than 32767 on Win98.
+- renamed the CustomButton::vs* methods to CustomButton::has*VisualAspect.
+- added Icon class, and Frame::setIcon().
+- added the Style class (to handle "style" and "style_ex" in one variable).
+- outsideWidget isn't used in destruction.
+- added BandedDockArea.
+- ToolBar and ToolSet work.
+- finished DockArea, DockBar and DockFrame: the whole thing is working.
+- added DockInfo and DefaultDockInfo.
+- added ToolBars example.
+- added Frame::onResizing and DockBar::onResizingFrame.
+
+Vaca 0.0.2
+- added thread support (Thread/MessengerThread/Mutex/ScopedLock).
+- renamed Widget::getWidgetPtr to Widget::getHwnd.
+- added Edit::preferredSize(fitIn).
+- tested on Win98, Win2K and WinXP: everything works!!!
+- big change: now all is processed in WM_COMMAND and not in
+  WM_MENUCOMMAND (WM_MENUCOMMAND has problems in Win98).
+  Added onIdAction.
+- added Widget::isEnabled and Widget::setEnabled.
+- added Widget::preferredSize(fitIn) and Label::preferredSize(fitIn).
+- finally Dialog keyboard works! I spend five hours to known that
+  Panel must have the WS_EX_CONTROLPARENT style.
+- fixed big bugs with creation process for Dialog, MdiChild and MdiFrame.
+- added Widget::defWndProc.
+- added Widget::onSetCursor.
+- added VBoxLayout, HBoxLayout.
+- added MdiFrame::onMoreWindows().
+- The TextEditor finally can Find/Replace text.
+- added GotFocus and LostFocus (for WM_SETFOCUS and WM_KILLFOCUS).
+- Widget, MenuItem, and Graphics are noncopyable.
+- renamed BasicWidget to Panel.
+- added FindTextDialog.
+- added ColorDialog.
+- more Binds.
+- added Edit::onChange
+- added Menu::onUpdate
+- fixed memory management of Widgets and Menus.
+- added MdiListMenu.
+- added FileDialog, OpenFileDialog, SaveFileDialog.
+- added ReBar.
+- renamed ToolBarFrame to DockFrame.
+- renamed ToolBar to DockBar, created a new ToolBar and ToolBarWidget.
+- added KeyEvent and Keys.
+- added CustomLabel and LinkLabel.
+- View class temporally deprecated.
+
+Vaca 0.0.1
+- Anchor, AnchorLayout, Application, BasicWidget, Bind, BoxLayout,
+  Button, ButtonBase, CheckBox, ClientLayout, Clipboard, Color,
+  Constraint, CustomColor, CustomLabel, Dialog, DockArea, Edit, Event,
+  Exception, Font, Frame, Graphics, GroupBox, Image, Item, Label,
+  Layout, ListBox, MdiClient, MdiChild, MdiFrame, MenuItem, Menu,
+  MenuSeparator, MenuBar, MouseEvent, Point, RadioButton, Rect,
+  Register, String, System, Thread, ToggleButton, ToolBar, TreeNode,
+  TreeView, TreeViewEvent, View, Widget, WidgetClass, WidgetEvent.
+- CVS import.

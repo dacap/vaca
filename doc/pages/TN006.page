@@ -1,0 +1,19 @@
+// -*- C++ -*-
+
+/*!
+
+@page TN006 TN006 - Technical Note 006: Deleting a Widget inside its event
+
+There are a big problem with signals: <b>YOU CAN'T DELETE A WIDGET
+INSIDE AN EVENT WHICH THE WIDGET BY SELF GENERATED</b>. The solution
+is quite simple: Use the @ref Vaca::Widget::deleteAfterEvent "Widget::deleteAfterEvent"
+method.
+
+@image html DeleteInEvent.png
+
+See the TextEditor example, it uses the @c deleteAfterEvent to
+delete an MdiChild when its close button is pushed by the user.
+
+@see Vaca::Frame::onClose
+
+*/

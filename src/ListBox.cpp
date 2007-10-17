@@ -1,0 +1,221 @@
+// Vaca - Visual Application Components Abstraction
+// Copyright (c) 2005, 2006, David A. Capello
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+//
+// * Redistributions of source code must retain the above copyright
+//   notice, this list of conditions and the following disclaimer.
+// * Redistributions in binary form must reproduce the above copyright
+//   notice, this list of conditions and the following disclaimer in
+//   the documentation and/or other materials provided with the
+//   distribution.
+// * Neither the name of the Vaca nor the names of its contributors
+//   may be used to endorse or promote products derived from this
+//   software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+// FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+// COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+// INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+// (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+// SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+// OF THE POSSIBILITY OF SUCH DAMAGE.
+
+#include "stdvaca.h"
+#include "Vaca/ListBox.h"
+#include "Vaca/WidgetEvent.h"
+#include "Vaca/Debug.h"
+#include "Vaca/System.h"
+
+using namespace Vaca;
+
+//////////////////////////////////////////////////////////////////////
+// ListBox
+
+/**
+ * 
+ * @param style Add the LBS_MULTIPLESEL if you want a multiselection ListBox.
+ */
+ListBox::ListBox(Widget *parent, Style style)
+  : Widget(_T("LISTBOX"), parent, style)
+{
+  setBgColor(System::getColor(COLOR_WINDOW));
+}
+
+/**
+ * (LB_ADDSTRING)
+ */
+int ListBox::addItem(const String &text)
+{
+  int index = sendMessage(LB_ADDSTRING, 0, reinterpret_cast<LPARAM>(text.c_str()));
+  if (index == LB_ERR)
+    return -1;
+  else
+    return index;
+}
+
+/**
+ * (LB_INSERTSTRING)
+ * 
+ */
+void ListBox::insertItem(int itemIndex, const String &text)
+{
+  sendMessage(LB_INSERTSTRING, itemIndex, reinterpret_cast<LPARAM>(text.c_str()));
+}
+
+void ListBox::removeItem(int itemIndex)
+{
+  sendMessage(LB_DELETESTRING, itemIndex, 0);
+}
+
+/**
+ * (LB_GETCOUNT)
+ */
+int ListBox::getItemCount()
+{
+  return sendMessage(LB_GETCOUNT, 0, 0);
+}
+
+/**
+ * Returns the rectangle that the item @a itemIndex uses (LB_GETITEMRECT).
+ *
+ * @a itemIndex is zero-based.
+ */
+Rect ListBox::getItemRect(int itemIndex)
+{
+  RECT rc;
+  sendMessage(LB_GETITEMRECT, itemIndex, reinterpret_cast<LPARAM>(&rc));
+  return Rect(&rc);
+}
+
+/**
+ * (LB_GETTEXT and LB_GETTEXTLEN)
+ */
+String ListBox::getItemText(int itemIndex)
+{
+  int len = sendMessage(LB_GETTEXTLEN, itemIndex, 0);
+  if (!len)
+    return String("");
+  else {
+    LPTSTR buf = (LPTSTR)new _TCHAR[len+1];
+    sendMessage(LB_GETTEXT, itemIndex, reinterpret_cast<LPARAM>(buf));
+    String str = String(buf);
+    delete buf;
+    return str;
+  }
+}
+
+void ListBox::setItemText(int itemIndex, const String &text)
+{
+  bool reselect = getCurrentItem() == itemIndex;
+
+  removeItem(itemIndex);
+  insertItem(itemIndex, text);
+
+  if (reselect)
+    setCurrentItem(itemIndex);
+}
+
+/**
+ * Returns the current selected item index (LB_GETCURSEL). Returns -1
+ * if there aren't selection at all.
+ */
+int ListBox::getCurrentItem()
+{
+  int index = sendMessage(LB_GETCURSEL, 0, 0);
+  if (index != LB_ERR && index >= 0)
+    return index;
+  else
+    return index;
+}
+
+/**
+ * Changes the current selected item to the @a itemIndex only (LB_SETCURSEL).
+ */
+void ListBox::setCurrentItem(int itemIndex)
+{
+  sendMessage(LB_SETCURSEL, itemIndex, 0);
+}
+
+/**
+ * Returns the set of selected items (it's useful for ListBoxes with
+ * the LBS_MULTIPLESEL style).
+ */
+std::vector<int> ListBox::getSelectedItems()
+{
+  std::vector<int> items;
+  int count = sendMessage(LB_GETSELITEMS, 0, 0);
+  return items;
+}
+
+Size ListBox::preferredSize()
+{
+  Size sz(4, 4);		// TODO HTHEME stuff
+  int i, n = getItemCount();
+  Rect rc;
+
+  for (i=0; i<n; ++i) {
+    rc = getItemRect(i);
+    sz = Size(VACA_MAX(sz.w, rc.w), sz.h+rc.h);
+  }
+
+  return sz;
+}
+
+/**
+ * When the user press double-click in some item (LBN_DBLCLK).
+ */
+void ListBox::onAction(WidgetEvent &ev)
+{
+  Action(ev);
+}
+
+/**
+ * When the user changes the current selected item (LBN_SELCHANGE).
+ */
+void ListBox::onSelChange(WidgetEvent &ev)
+{
+  SelChange(ev);
+}
+
+bool ListBox::onCommand(int commandCode, LRESULT &lResult)
+{
+  switch (commandCode) {
+
+    case LBN_DBLCLK: {
+      WidgetEvent ev(this);
+      onAction(ev);
+      return true;
+    }
+
+    case LBN_SELCHANGE: {
+      WidgetEvent ev(this);
+      onSelChange(ev);
+      return true;
+    }
+
+  }
+
+  return false;
+}
+
+//////////////////////////////////////////////////////////////////////
+// DragListBox
+
+DragListBox::DragListBox(Widget *parent, Style style)
+  : ListBox(parent, style)
+{
+  BOOL res;
+
+  res = MakeDragList(getHwnd());
+  
+  VACA_ASSERT(res != FALSE);	// TODO throw exception
+}

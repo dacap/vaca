@@ -1,0 +1,42 @@
+- DL_BEGINDRAG, DL_CANCELDRAG, DL_DRAGGING, DL_DROPPED
+
+- document why getOrientation() and setOrientation() don't exist for
+  Spinner (is because the UDS_HORZ style can't be changed after up-down
+  control is created).
+
+- complete:
+      onBeforePosChange();
+      onAfterPosChange();
+      onVScroll();
+      onHScroll();
+
+- check the WM_WINDOWPOSCHANGING message, it's the key.
+
+- methods to use: EnableScrollBar
+
+- all HTHEME stuff (add "Theme" class).
+  + IsAppThemed
+
+- write more about the "Alternatives" in the index page.
+
+- setVisible for a Widget (not only for a Frame)
+
+- Add support for FlashWindowEx.
+
+- See what to do with the Command class.
+
+- remember the WM_MENUSELECT message for status-bars.
+
+- add support for DrawFrameControl, DrawState, DrawEdge
+  as
+    Graphics::drawControl
+    Graphics::drawState
+    Graphics::drawEdge
+
+- mouseHover should be? (there is already some code)
+
+- "Application::instance" or "Application::getInstance"?
+
+- a "MVC: Model View Controller" pattern (also known as Observer pattern).
+
+- look for 'TODO'

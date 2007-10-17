@@ -1,0 +1,1134 @@
+<?xml version="1.0"?>
+<doc lang="es"
+     name="Vaca"
+     title="Biblioteca de clases de Vaca"
+     feedbackAddress="davidcapello@gmail.com"
+     copyright="© 2005-2006, David A. Capello. Todos los derechos reservados."
+     copyrightAddress="http://vaca.sourceforge.net/index.php?section=license">
+
+  <content>
+    Bienvenido a Vaca, una biblioteca para desarrollar aplicaciones
+    bajo Windows, utilizando el lenguage de programación C++ junto
+    con las bibliotecas STL y Boost.
+  </content>
+
+  <!-- Vaca Library -->
+
+  <chapter name="Vaca" title="Biblioteca Vaca">
+
+    <section name="Introduction" title="Introducción">
+    </section>
+
+    <section name="License" title="Licencia">
+    </section>
+
+  </chapter>
+
+  <!-- Examples -->
+
+  <chapter name="Examples" title="Ejemplos">
+
+    <content>
+      <para>
+	Antes de comenzar a ver cualquier ejemplo, le recomiendo leer
+	esta pequeña introducción general que se aplica a todos los
+	ejemplos.
+      </para>
+      <para>
+	Toda aplicación de Windows, debe contener un <c>WinMain</c>,
+	este será el cuerpo WinMain que utilizaremos en la mayoría de
+	los ejemplos:
+      </para>
+      <code>int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
+		   LPSTR lpCmdLine, int nCmdShow)
+{
+  Example *app(new Example);
+  app->run();
+  delete app;
+  return 0;
+}</code>
+      <para>
+	Donde <b>Example</b> es una clase derivada de <see cref="Application"/>:
+      </para>
+      <code>class Example : public Application
+{
+  MainFrame mMainWnd;
+public:
+  virtual void main(std::vector&lt;String&gt; args) {
+    mMainWnd.setVisible(true);
+  }
+};</code>
+      <para>En la cabecera de todo ejemplo encontrará estas dos líneas:</para>
+<code>#include "Vaca/Vaca.h"
+
+using namespace Vaca;</code>
+    </content>
+
+    <section name="Anchors" title="Anchors"></section>
+    <section name="Buttons" title="Buttons"></section>
+    <section name="Calendar" title="Calendar"></section>
+    <section name="ColoredButton" title="ColoredButton"></section>
+    <section name="EditableListBox" title="EditableListBox"></section>
+    <section name="Edits" title="Edits"></section>
+    <section name="HelloWorld" title="HelloWorld"></section>
+    <section name="Labels" title="Labels"></section>
+    <section name="NumberCruncher" title="NumberCruncher"></section>
+    <section name="Primitives" title="Primitives"></section>
+
+    <section name="SimpleWorld" title="SimpleWorld">
+      <summary>
+	El ejemplo más simple de Vaca, hecho sólo para propósitos de
+	publicidad :)
+      </summary>
+      <content>
+	<code>class MainFrame : public Frame
+{
+  Label mLabel;
+public:
+  MainFrame() : Frame("SimpleWorld")
+	      , mLabel("Hello World!", this) {
+    setLayout(new ClientLayout);
+    setSize(preferredSize());
+  }
+};
+</code>
+      </content>
+    </section>
+
+    <section name="Sudoku" title="Sudoku"></section>
+    <section name="Tabs" title="Tabs"></section>
+
+    <section name="TextEditor" title="TextEditor (tutoría)">
+      <summary>
+	Un editor de texto que utiliza MDI (Interfaz de Documentos
+	Múltiples, <em>Multiple Document Interface</em>). Aquí puede
+	encontrar una tutoría que le explica los diferentes aspectos
+	de uno de los ejemplos más complicados que tiene Vaca.
+      </summary>
+      <section name="TextEditorPart1" title="Lo básico"></section>
+      <section name="TextEditorPart2" title="Menús"></section>
+      <section name="TextEditorPart1" title="MDI"></section>
+      <section name="TextEditorPart3" title="Foco de entrada"></section>
+      <section name="TextEditorPart3" title="Lideando con Scintilla"></section>
+      <section name="TextEditorPart2" title="Documentos y vistas"></section>
+      <section name="TextEditorPart2" title="Manejando archivos"></section>
+      <section name="TextEditorPart2" title="Detalles"></section>
+    </section>
+
+    <section name="Threads" title="Threads"></section>
+    <section name="TimerThread" title="TimerThread"></section>
+    <section name="ToolBars" title="ToolBars"></section>
+    <section name="Trees" title="Trees">
+      <summary>
+      </summary>
+    </section>
+
+  </chapter>
+
+  <!-- Vaca namespace -->
+
+  <namespace name="Vaca" title="Referencia de clases">
+
+    <section name="CoreClasses" title="Base">
+      
+      <summary>
+	Clases y tipos de datos de propósitos generales. Manejo de
+	excepciones y cadenas de caracteres son algunos ejemplos.
+      </summary>
+
+      <class name="Exception" syntax="class Exception : public std::exception">
+      </class>
+
+      <class name="Point" syntax="class Point">
+	<field name="x" syntax="public int x;"></field>
+	<field name="y" syntax="public int y;"></field>
+      </class>
+
+      <class name="Rect" syntax="class Rect">
+	<field name="x" syntax="public int x;"></field>
+	<field name="y" syntax="public int y;"></field>
+	<field name="w" syntax="public int w;"></field>
+	<field name="h" syntax="public int h;"></field>
+      </class>
+
+      <class name="Size" syntax="class Size">
+	<field name="w" syntax="public int w;">
+	  <summary>
+	    Anchor
+	  </summary>
+	</field>
+	<field name="h" syntax="public int h;">
+	  <summary>
+	    Alto
+	  </summary>
+	</field>
+      </class>
+
+      <class name="String" syntax="class String : public std::basic_string&lt;Char&gt;">
+      </class>
+
+      <class name="Style" syntax="class Style">
+	<summary>
+	  Especifica los estilos de un <see cref="Widget"/>. Es un
+	  contenedor para los estilos regulares y extendidos de los
+	  <see cref="HWND"/> de Windows (<c>WS_*</c>
+	  y <c>WS_EX_*</c> respectivamente).
+	</summary>
+	<field name="regular" syntax="public int regular;">
+	  <summary>
+	    Estilos regulares, un conjunto de valores <c>WS_*</c> del API de <see cref="Win32"/>.
+	  </summary>
+	</field>
+	<field name="extended" syntax="public int extended;">
+	  <summary>
+	    Estilos extendidos, un conjunto de valores <c>WS_EX_*</c> del API de <see cref="Win32"/>.
+	  </summary>
+	</field>
+	<ctor syntax="public Style(int regular, int extended);"></ctor>
+	<operator name="operator+" syntax="public Style operator+(const Style &amp;style) const;"></operator>
+	<operator name="operator-" syntax="public Style operator-(const Style &amp;style) const;"></operator>
+	<operator name="operator&" syntax="public Style operator&(const Style &style) const;"></operator>
+	<operator name="operator==" syntax="public bool operator==(const Style &amp;style) const;"></operator>
+      </class>
+
+      <enum name="TextAlign" syntax="enum TextAlign {
+  LeftAlign,
+  CenterAlign,
+  RightAlign
+};"></enum>
+
+      <enum name="VerticalAlign" syntax="enum VerticalAlign {
+  TopAlign,
+  MiddleAlign,
+  BottomAlign
+};"></enum>
+
+      <enum name="Orientation" syntax="enum Orientation { Horizontal, Vertical };">
+	<summary>
+	  Establece una orientación para un objeto, la cual puede
+	  ser <c>Horizontal</c> o <c>Vertical</c>.
+	</summary>
+	<remarks>
+	  En algunas situaciones deberá establecer una orientación
+	  horizontal o vertical a un objeto o función. La orientación
+	  debe ser alguno de sus dos posibles
+	  valores: <c>Horizontal</c> o <c>Vertical</c>.
+	</remarks>
+	<example>
+	  Los <see cref="BoxLayout"/>s y los <see cref="Slider"/>s
+	  necesitan una orientación. También
+	  <see cref="Graphics::fillGradientRect"/> utiliza una
+	  orientación para saber si la gradiente debe ir de izquierda
+	  a derecha (Horizontal), o de arriba hacia abajo (Vertical).
+	</example>
+      </enum>
+
+      <enum name="Side" syntax="enum Side {
+  LeftSide,
+  TopSide,
+  RightSide,
+  BottomSide
+};"></enum>
+
+      <typedef name="Borders" syntax="typedef int Borders;"></typedef>
+
+    </section>
+
+    <section name="Widgets" title="Widgets">
+
+      <summary>
+	Clases para manejar widgets (ventanas, controles).
+      </summary>
+
+      <content>
+	<para>
+	  <em>¿Qué es un widget?</em> Un <b>Widget</b> es lo que se
+	  conoce en Windows como un control o ventana. No se trata sólo
+	  de las ventanas en sí (que usted puede minimizar y maximizar),
+	  si no que engloba a todos los controles: ya sean ventanas
+	  (<see cref="Frame"/>), botones (<see cref="Button"/>), cuadros
+	  de texto (<see cref="Edit"/>), listas
+	  ((<see cref="ListBox"/>)), etc.
+	</para>
+	<para>
+	  
+	</para>
+      </content>
+
+      <class name="Widget" syntax="class Widget : private boost::noncopyable">
+	<summary>
+	  Descripción breve de Widget.
+	</summary>
+	<ctor syntax="public Widget(LPCTSTR className, Widget *parent, Style style = NoStyle);">
+          <summary>
+	  </summary>
+	  <param name="className">Nombre de la clase</param>
+	  <param name="parent">Widget padre (puede ser NULL)</param>
+	  <param name="style">Estilo</param>
+	</ctor>
+	<dtor syntax="public virtual ~Widget();">
+          <summary>
+	  </summary>
+	</dtor>
+	<method name="acquireCapture" syntax="public void acquireCapture();">
+	  <summary>
+	    Peticiona al sistema la captura del mouse, para que el
+	    widget adquiera un control completo del mouse.
+	  </summary>
+	  <remarks>
+	    Cuando un widget tiene la captura, se le notificarán de
+	    todos los movimientos o eventos que genere el mouse, sin
+	    importar si el mismo está o no dentro del área cliente del
+	    widget en cuestión.
+	  </remarks>
+	</method>
+	<method name="addStyle" syntax="public void addStyle(Style style);">
+	  <summary>
+	    Agrega uno o varios estilos al widget.
+	  </summary>
+	  <param name="style">
+	    Indica la colección de nuevos estilos que se deben agregar
+	    al widget.
+	  </param>
+	</method>
+	<method name="bringToTop" syntax="public void bringToTop();">
+	  <summary>
+	    Envía este widget al frente de todos los demás. Útil al
+	    utilizar un Frame que se desea mostrar por encima de todos
+	    en un momento determinado.
+	  </summary>
+	</method>
+	<method name="center" syntax="public void center();">
+	  <summary>
+	    Centra la posición del widget con respecto a su padre (o la
+	    pantalla en el caso de que no tenga padre).
+	  </summary>
+	  <remarks>
+	    Para utilizar esta función, el widget debe tener un tamaño
+	    ya especificado.
+	  </remarks>
+	</method>
+	<method name="deleteAfterEvent" syntax="public void deleteAfterEvent();">
+	</method>
+	<method name="dispose" syntax="public void dispose();"></method>
+	<method name="focus" syntax="public void focus();"></method>
+	<method name="fromHwnd" syntax="public static Widget *fromHwnd(HWND hwnd);">
+	  <summary>
+	    Devuelve un puntero al widget que está relacionado con el
+	    <see cref="HWND"/> especificado.
+	  </summary>
+	</method>
+	<method name="getAbsoluteBounds" syntax="public Rect getAbsoluteBounds();"></method>
+	<method name="getAbsoluteClientBounds" syntax="public Rect getAbsoluteClientBounds();"></method>
+	<method name="getAbsoluteCursorPos" syntax="public Point getAbsoluteCursorPos();"></method>
+	<method name="getBgColor" syntax="public Color getBgColor();"></method>
+	<method name="getBounds" syntax="public Rect getBounds();"></method>
+	<method name="getChildren" syntax="public Container getChildren();"></method>
+	<method name="getClientBounds" syntax="public virtual Rect getClientBounds();"></method>
+	<method name="getConstraint" syntax="public Constraint *getConstraint();"></method>
+	<method name="getCursor" syntax="public Cursor::Type getCursor();"></method>
+	<method name="getFont" syntax="public virtual Font &amp;getFont();"></method>
+	<method name="getGlobalWndProc" syntax="public static WNDPROC getGlobalWndProc();"></method>
+	<method name="getHwnd" syntax="public HWND getHwnd();"></method>
+	<method name="getLayout" syntax="public Layout *getLayout();"></method>
+	<method name="getLayoutBounds" syntax="public virtual Rect getLayoutBounds();"></method>
+	<method name="getOpacity" syntax="public int getOpacity();"></method>
+	<method name="getParent" syntax="public Widget *getParent();">
+	  <summary>
+	    Obtiene el padre asociado a este widget. 
+	  </summary>
+	  <remarks>
+	    Bajo Windows, cada <see cref="HWND"/> tiene un padre y un
+	    propietario asociado.  TODO
+	  </remarks>
+	</method>
+	<method name="getParentHwnd" syntax="public HWND getParentHwnd();"></method>
+	<method name="getStyle" syntax="public Style getStyle();"></method>
+	<method name="getText" syntax="public virtual String getText();">
+	  <summary>
+	    Retorna el texto del widget. Equivalente a utilizar las
+	    funciones <see cref="GetWindowTextLength"/> y
+	    <see cref="GetWindowText"/> de Win32.
+	  </summary>
+	</method>
+	<method name="getThreadOwnerId" syntax="public int getThreadOwnerId();"></method>
+	<method name="hasCapture" syntax="public bool hasCapture();"></method>
+	<method name="hasMouse" syntax="public bool hasMouse();"></method>
+	<method name="invalidate" syntax="public void invalidate(bool eraseBg);"></method>
+	<method name="invalidate" syntax="public void invalidate(const Rect &amp;rc, bool eraseBg);"></method>
+	<method name="isEnabled" syntax="public bool isEnabled();">
+	  <summary>
+	    Determina si el widget está habilitado o deshabilitado. Un
+	    widget deshabilitado no recibe la entrada del mouse ni del
+	    teclado.
+	  </summary>
+	  <returns>
+	    Verdadero si el widget está habilitado, o falso en caso
+	    contrario.
+	  </returns>
+	</method>
+	<method name="isLayoutFree" syntax="public virtual bool isLayoutFree();">
+	  <summary>
+	    Indica si el widget está libre del <em>layout manager</em>. Esto
+	    significa, que la posición del widget no es modificada por
+	    el <em>layout manager</em> activo.
+	  </summary>
+	  <remarks>
+	    El layout manager activo está especificado por <c>getLayout</c>.
+	  </remarks>
+	</method>
+	<method name="isVisible" syntax="public bool isVisible();"></method>
+	<method name="keepEnabledSynchronised" syntax="public virtual bool keepEnabledSynchronised();"></method>
+	<method name="layout" syntax="public virtual void layout();"></method>
+	<method name="msgBox" syntax="public int msgBox(String text, String title, int flags);"></method>
+	<method name="preTranslateMessage" syntax="public virtual bool preTranslateMessage(MSG &amp;msg);"></method>
+	<method name="preferredSize" syntax="public virtual Size preferredSize();"></method>
+	<method name="preferredSize" syntax="public virtual Size preferredSize(const Size &amp;fitIn);"></method>
+	<method name="releaseCapture" syntax="public void releaseCapture();"></method>
+	<method name="removeStyle" syntax="public void removeStyle(Style style);"></method>
+	<method name="sendMessage" syntax="public LRESULT sendMessage(UINT message, WPARAM wParam, LPARAM lParam);"></method>
+	<method name="setBgColor" syntax="public virtual void setBgColor(Color color);"></method>
+	<method name="setBounds" syntax="public void setBounds(const Rect &amp;rc);"></method>
+	<method name="setConstraint" syntax="public Constraint *setConstraint(Constraint *constraint);"></method>
+	<method name="setCursor" syntax="public void setCursor(Cursor::Type cursor);"></method>
+	<method name="setEnabled" syntax="public void setEnabled(bool state);"></method>
+	<method name="setFont" syntax="public virtual void setFont(Font &amp;font);"></method>
+	<method name="setLayout" syntax="public Layout *setLayout(Layout *layout);"></method>
+	<method name="setOpacity" syntax="public void setOpacity(int opacity);"></method>
+	<method name="setOrigin" syntax="public void setOrigin(const Point &amp;pt);"></method>
+	<method name="setOrigin" syntax="public void setOrigin(int x, int y);"></method>
+	<method name="setSize" syntax="public void setSize(const Size &amp;sz);"></method>
+	<method name="setSize" syntax="public void setSize(int w, int h);"></method>
+	<method name="setStyle" syntax="public void setStyle(Style style);"></method>
+	<method name="setText" syntax="public virtual void setText(const String &amp;str);"></method>
+	<method name="setVisible" syntax="public virtual void setVisible(bool visible);"></method>
+	<method name="update" syntax="public void update();"></method>
+	<method name="validate" syntax="public void validate();"></method>
+	<method name="validate" syntax="public void validate(const Rect &amp;rc);"></method>
+	<method name="wantArrowCursor" syntax="public virtual bool wantArrowCursor();"></method>
+	<event name="onAfterPosChange" syntax="protected virtual void onAfterPosChange();"></event>
+	<event name="onBeforePosChange" syntax="protected virtual void onBeforePosChange();"></event>
+	<event name="onCommand" syntax="protected virtual bool onCommand(int commandCode, LRESULT &amp;lResult);"></event>
+	<event name="onDestroy" syntax="protected virtual void onDestroy();"></event>
+	<event name="onDoubleClick" syntax="protected virtual void onDoubleClick(MouseEvent &amp;ev);"></event>
+	<event name="onDrawItem" syntax="protected virtual bool onDrawItem(Graphics &amp;g, LPDRAWITEMSTRUCT lpDrawItem);"></event>
+	<event name="onGotFocus" syntax="protected virtual void onGotFocus(WidgetEvent &amp;ev);"></event>
+	<event name="onHScroll" syntax="protected virtual void onHScroll(int code, int pos/*, ScrollBar *scrollbar*/);"></event>
+	<event name="onIdAction" syntax="protected virtual bool onIdAction(int id);"></event>
+	<event name="onKeyDown" syntax="protected virtual void onKeyDown(KeyEvent &amp;ev);"></event>
+	<event name="onKeyUp" syntax="protected virtual void onKeyUp(KeyEvent &amp;ev);"></event>
+	<event name="onLostFocus" syntax="protected virtual void onLostFocus(WidgetEvent &amp;ev);"></event>
+	<event name="onMouseDown" syntax="protected virtual void onMouseDown(MouseEvent &amp;ev);"></event>
+	<event name="onMouseEnter" syntax="protected virtual void onMouseEnter(MouseEvent &amp;ev);"></event>
+	<event name="onMouseLeave" syntax="protected virtual void onMouseLeave();"></event>
+	<event name="onMouseMove" syntax="protected virtual void onMouseMove(MouseEvent &amp;ev);"></event>
+	<event name="onMouseUp" syntax="protected virtual void onMouseUp(MouseEvent &amp;ev);"></event>
+	<event name="onMouseWheel" syntax="protected virtual void onMouseWheel(MouseEvent &amp;ev);"></event>
+	<event name="onNotify" syntax="protected virtual bool onNotify(LPNMHDR lpnmhdr, LRESULT &amp;lResult);"></event>
+	<event name="onPaint" syntax="protected virtual void onPaint(Graphics &amp;g);"></event>
+	<event name="onPowerQuerySuspend" syntax="protected virtual bool onPowerQuerySuspend(bool interactive);"></event>
+	<event name="onPowerQuerySuspendFailed" syntax="protected virtual void onPowerQuerySuspendFailed();"></event>
+	<event name="onPowerResumeSuspend" syntax="protected virtual void onPowerResumeSuspend();"></event>
+	<event name="onPowerSuspend" syntax="protected virtual void onPowerSuspend();"></event>
+	<event name="onResize" syntax="protected virtual void onResize(const Size &amp;sz);"></event>
+	<event name="onSetCursor" syntax="protected virtual void onSetCursor(int hitTest);"></event>
+	<event name="onVScroll" syntax="protected virtual void onVScroll(int code, int pos/*, ScrollBar *scrollbar*/);"></event>
+	<signal name="GotFocus" syntax="public boost::signal&lt;void (WidgetEvent &amp;ev)&gt; GotFocus;"></signal>
+	<signal name="KeyDown" syntax="public boost::signal&lt;void (KeyEvent &amp;)&gt; KeyDown;"></signal>
+	<signal name="KeyUp" syntax="public boost::signal&lt;void (KeyEvent &amp;)&gt; KeyUp;"></signal>
+	<signal name="LostFocus" syntax="public boost::signal&lt;void (WidgetEvent &amp;ev)&gt; LostFocus;"></signal>
+      </class>
+
+      <section name="FrameWidgets" title="Ventanas">
+
+      <class name="Dialog" syntax="class Dialog : public Register&lt;DialogClass&gt;, public Frame"></class>
+
+      <class name="Frame" syntax="class Frame : public Register&lt;FrameClass&gt;, public Widget">
+	<ctor syntax="Frame(const String &amp;title, Widget *parent = NULL, Style style = FrameStyle);"></ctor>
+	<ctor syntax="Frame(LPCTSTR className, const String &amp;title, Widget *parent = NULL, Style style = FrameStyle);"></ctor>
+	<dtor syntax="virtual ~Frame();"></dtor>
+	<field name="mMenuBar" syntax="private MenuBar *mMenuBar;"></field>
+	<field name="mDockAreas" syntax="private std::vector&lt;DockArea *&gt; mDockAreas;"></field>
+	<field name="mCounted" syntax="private bool mCounted;"></field>
+	<method name="addDockArea" syntax="public void addDockArea(DockArea *dockArea);"></method>
+	<method name="clearDockAreas" syntax="public void clearDockAreas();"></method>
+	<method name="defaultDockAreas" syntax="public void defaultDockAreas();"></method>
+	<method name="getDefaultDockArea" syntax="public virtual DockArea *getDefaultDockArea();"></method>
+	<method name="getDockArea" syntax="public DockArea *getDockArea(Side::Type side);"></method>
+	<method name="getDockAreas" syntax="public std::vector&lt;DockArea *&gt; getDockAreas();"></method>
+	<method name="getLayoutBounds" syntax="public virtual Rect getLayoutBounds();"></method>
+	<method name="getMenuBar" syntax="public MenuBar *getMenuBar();"></method>
+	<method name="getNonClientSize" syntax="public Size getNonClientSize();"></method>
+	<method name="getVisibleFramesByThread" syntax="public static int getVisibleFramesByThread(int threadId);"></method>
+	<method name="isLayoutFree" syntax="public virtual bool isLayoutFree();"></method>
+	<method name="layout" syntax="public virtual void layout();"></method>
+	<method name="preTranslateMessage" syntax="public virtual bool preTranslateMessage(MSG &amp;msg);"></method>
+	<method name="preferredSize" syntax="public virtual Size preferredSize();">
+	  <summary>
+	    Pregunta por el tamaño preferido del widget. Esto es, el
+	    tamaño mínimo con el cual el widget puede ser visualizado
+	    sin perder información visual.
+	  </summary>
+	</method>
+	<method name="removeDockArea" syntax="public void removeDockArea(DockArea *dockArea);">
+	</method>
+	<method name="setIcon" syntax="public void setIcon(Icon *icon, bool bigIcon);"></method>
+	<method name="setIcon" syntax="public void setIcon(int iconId);"></method>
+	<method name="setMenuBar" syntax="public virtual void setMenuBar(MenuBar *menuBar);"></method>
+	<method name="setVisible" syntax="public virtual void setVisible(bool visible);"></method>
+	<method name="wantArrowCursor" syntax="public virtual bool wantArrowCursor();"></method>
+	<method name="wndProc" syntax="protected virtual bool wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &amp;lResult);"></method>
+	<method name="defWndProc" syntax="protected virtual LRESULT defWndProc(UINT message, WPARAM wParam, LPARAM lParam);"></method>
+	<event name="onDestroy" syntax="protected virtual void onDestroy();"></event>
+	<event name="onResize" syntax="protected virtual void onResize(const Size &amp;sz);"></event>
+	<event name="onIdAction" syntax="protected virtual bool onIdAction(int id);"></event>
+	<event name="onActivate" syntax="protected virtual void onActivate(WidgetEvent &amp;ev);"></event>
+	<event name="onDeactivate" syntax="protected virtual void onDeactivate(WidgetEvent &amp;ev);"></event>
+	<event name="onClose" syntax="protected virtual void onClose(WidgetEvent &amp;ev);"></event>
+	<event name="onResizing" syntax="protected virtual void onResizing(int edge, Rect &amp;rc);"></event>
+	<signal name="Activate" syntax="boost::signal&lt;void (WidgetEvent &amp;)&gt; Activate;"></signal>
+	<signal name="Deactivate" syntax="boost::signal&lt;void (WidgetEvent &amp;)&gt; Deactivate;"></signal>
+	<signal name="Close" syntax="boost::signal&lt;void (WidgetEvent &amp;)&gt; Close;"></signal>
+      </class>
+
+      </section>
+
+      <section name="StaticWidgets" title="Etiquetas y widgets estáticos">
+
+	<class name="CustomLabel" syntax="class CustomLabel : public Label"></class>
+
+	<class name="GroupBox" syntax="class GroupBox : public Widget"></class>
+
+	<class name="Label" syntax="class Label : public Widget"></class>
+
+	<class name="LinkLabel" syntax="class LinkLabel : public CustomLabel"></class>
+
+	<class name="Panel" syntax="class Panel : public Register&lt;PanelClass&gt;, public Widget"></class>
+	
+      </section>
+
+      <section name="ButtonWidgets" title="Botones">
+
+	<class name="Button" syntax="class Button : public ButtonBase">
+	  <summary>
+	    Descripción breve de Button.
+	  </summary>
+	  <ctor syntax="public Button(const String &amp;text, Widget *parent, Style style = ButtonStyle);">
+	  </ctor>
+	  <method name="setDefault" syntax="public void setDefault(bool state);">
+            <summary>
+	    </summary>
+	    <param name="state"></param>
+	  </method>
+	</class>
+	
+	<class name="ButtonBase" syntax="class ButtonBase : public Widget"></class>
+
+	<class name="CheckBox" syntax="class CheckBox : public ButtonBase"></class>
+
+	<class name="CustomButton" syntax="class CustomButton : public Button"></class>
+
+	<class name="RadioButton" syntax="class RadioButton : public ButtonBase"></class>
+
+	<class name="ToggleButton" syntax="class ToggleButton : public ButtonBase"></class>
+
+      </section>
+
+      <section name="TextEditionWidgets" title="Edición de texto">
+
+	<class name="Edit" syntax="class Edit : public Widget"></class>
+
+	<class name="MultilineEdit" syntax="class MultilineEdit : public Edit"></class>
+
+	<class name="PasswordEdit" syntax="class PasswordEdit : public Edit"></class>
+
+	<class name="SciEditor" syntax="class SciEditor : public SciRegister, public Widget"></class>
+
+      </section>
+
+      <section name="ViewWidgets" title="Listas y árboles">
+
+	<class name="DragListBox" syntax="class DragListBox : public ListBox"></class>
+
+	<class name="ListBox" syntax="class ListBox : public Widget"></class>
+
+	<class name="TreeView" syntax="class TreeView : public Widget "></class>
+
+	<class name="View" syntax="class View"></class>
+
+      </section>
+
+      <section name="ToolBarWidgets" title="Barras de herramientas">
+
+	<class name="BandedDockArea" syntax="class BandedDockArea : public DockArea">
+	  <summary>
+	  </summary>
+	</class>
+	
+	<class name="BasicDockArea" syntax="class BasicDockArea : public DockArea">
+	  <summary>
+	  </summary>
+	</class>
+
+	<class name="DockArea" syntax="class DockArea : public Register&lt;DockAreaClass&gt;, public Widget"></class>
+
+	<class name="DockBar" syntax="class DockBar : public Register&lt;DockBarClass&gt;, public Widget"></class>
+
+	<class name="DockFrame" syntax="class DockFrame : public Register&lt;DockFrameClass&gt;, public Frame"></class>
+
+	<class name="ReBar" syntax="class ReBar : public Widget"></class>
+
+	<class name="ToolBar" syntax="class ToolBar : public DockBar"></class>
+
+	<class name="ToolSet" syntax="class ToolSet : public Widget"></class>
+
+      </section>
+
+      <section name="MdiWidgets" title="Interfaz de Documentos Múltiples (MDI)">
+
+	<class name="MdiChild" syntax="class MdiChild : public Register&lt;MdiChildClass&gt;, public Frame">
+	  <ctor syntax="public MdiChild(const String &title, MdiClient *parent, Style style = MdiChildStyle);"></ctor>
+	  <ctor syntax="public MdiChild(const String &title, MdiFrame *parent, Style style = MdiChildStyle);"></ctor>
+	  <dtor syntax="public virtual ~MdiChild();"></dtor>
+	  <method name="wndProc" syntax="protected virtual bool wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &amp;lResult);"></method>
+	  <method name="defWndProc" syntax="protected virtual LRESULT defWndProc(UINT message, WPARAM wParam, LPARAM lParam);"></method>
+	  <event name="onCommand" syntax="protected virtual bool onCommand(int commandCode, LRESULT &amp;lResult);"></event>
+	</class>
+
+	<class name="MdiClient" syntax="class MdiClient : public Widget"></class>
+
+	<class name="MdiFrame" syntax="class MdiFrame : public Frame"></class>
+
+      </section>
+
+      <section name="TabWidgets" title="Solapas (Tabs)">
+
+	<class name="Tab" syntax="class Tab : public TabBase"></class>
+
+	<class name="TabBase" syntax="class TabBase : public Widget"></class>
+
+	<class name="TabPage" syntax="class TabPage : public Register&lt;TabPageClass&gt;, public Panel"></class>
+
+      </section>
+
+    </section>
+
+    <section name="LayoutManagers" title="Layout Managers">
+
+      <summary>
+	Clases relacionadas a los <em>layout managers</em>.
+      </summary>
+
+      <content>
+	<para>
+	  Un <em>layout manager</em> se encarga de gestionar la
+	  disposición de los widgets que tiene a su cargo. Estos suelen
+	  ser todos los hijos del <see cref="Widget"/> poseedor
+	  del <em>layout manager</em>.
+	</para>
+	<para>
+	  Un <see cref="Widget"/> tiene un <em>layout manager</em>
+	  asociado. especificado mediante
+	  <see cref="Widget::setLayout"/>, el cual es utilizado para
+	  acomodar los widgets hijos. Cada hijo a su vez, puede tener
+	  una condición (<em>constraint</em>) asociada, especificada
+	  por medio de <see cref="Widget::setConstraint"/>, la cual
+	  establece algunas características a tener en cuenta por
+	  el <em>layout manager</em> al momento de acomodar dicho
+	  widget hijo.
+	</para>
+      </content>
+
+      <seealso cref="Widget"/>
+      <seealso cref="Widget::setLayout"/>
+
+      <class name="Anchor" syntax="class Anchor : public Constraint">
+	<summary>
+	  Una condición (<em>constraint</em>) que utiliza el
+	  <see cref="AnchorLayout"/> para cada <see cref="Widget"/>
+	  que controla. Principalmente establece qué lados del widget
+	  deben anclarse a los bordes.
+	</summary>
+	<remarks>
+	  <para>
+	    Un <see cref="Widget"/> que tiene anclado uno de sus
+	    lados, intenta quedarse a la misma distancia del borde de
+	    su padre.
+	  </para>
+	  <para>
+	    Un <see cref="Anchor"/> intenta dejar constante la
+	    distancia entre el borde anclado del rectángulo de
+	    referencia (indicado al crear el <see cref="Anchor"/>,
+	    <see cref="mRefRect"/>) y el borde del tamaño establecido
+	    al crear el <see cref="AnchorLayout"/>
+	    (<see cref="AnchorLayout::mRefSize"/>).
+	  </para>
+	</remarks>
+	<field name="mRefRect" syntax="private Rect mRefRect;">
+	  <summary>
+	  </summary>
+	</field>
+	<field name="mSides" syntax="private int mSides;">
+	  <summary>
+	    Indica cuales son los lados del <see cref="Widget"/> que
+	    están anclados.
+	  </summary>
+	</field>
+	<field name="None" syntax="public static const int None = 0;">
+	  <summary>
+	    Sin anclaje.
+	  </summary>
+	</field>
+	<field name="Left" syntax="public static const int Left = 1;">
+	  <summary>
+	    Anclar el lado izquierdo.
+	  </summary>
+	</field>
+	<field name="Top" syntax="public static const int Top = 2;">
+	  <summary>
+	    Anclar el borde superior.
+	  </summary>
+	</field>
+	<field name="Right" syntax="public static const int Right = 4;">
+	  <summary>
+	    Anclar el lado derecho.
+	  </summary>
+	</field>
+	<field name="Bottom" syntax="public static const int Bottom = 8;">
+	  <summary>
+	    Anclar el borde inferior.
+	  </summary>
+	</field>
+	<field name="All" syntax="public static const int All = 15;">
+	  <summary>
+	    Anclar todos los bordes.
+	  </summary>
+	</field>
+	<ctor syntax="public Anchor(const Rect &refRect, int sides);">
+	  <param name="refRect">
+	    El rectángulo de referencia que utilizará el
+	    <see cref="AnchorLayout"/>. Este rectángulo está en
+	    relación directa con el tamaño especificado en el
+	    constructor del <see cref="AnchorLayout"/>.
+	  </param>
+	  <param name="sides">
+	    <para>
+	      Indica los lados que se deben anclar. Es una combinación
+	      de los siguientes valores:
+	    </para>
+	    <list type="bullet">
+	      <item>
+		<term><see cref="Anchor::None"/></term>
+		<description>
+		  No anclar nigún borde. No debería especificar otro
+		  valor junto con este.
+		</description>
+	      </item>
+	      <item>
+		<term><see cref="Anchor::Left"/></term>
+		<description>
+		  Anclar el borde izquierdo.
+		</description>
+	      </item>
+	      <item>
+		<term><see cref="Anchor::Top"/></term>
+		<description>
+		  Anclar el borde superior.
+		</description>
+	      </item>
+	      <item>
+		<term><see cref="Anchor::Right"/></term>
+		<description>
+		  Anclar el borde derecho.
+		</description>
+	      </item>
+	      <item>
+		<term><see cref="Anchor::Bottom"/></term>
+		<description>
+		  Anclar el borde inferior.
+		</description>
+	      </item>
+	      <item>
+		<term><see cref="Anchor::All"/></term>
+		<description>
+		  Anclar todos los bordes. No debería especificar otro
+		  valor junto con este.
+		</description>
+	      </item>
+	    </list>
+	  </param>
+	  <example>
+	    <code>{
+  Button boton(...);
+  boton.setConstraint(new Anchor(Rect(5, 5, 60, 25),
+                                 Anchor::Left | Anchor::Right));
+  ...
+}</code>
+	  </example>
+	</ctor>
+	<method name="getRefRect" syntax="public Rect getRefRect() const;">
+	  <seealso cref="setRefRect"/>
+	</method>
+	<method name="setRefRect" syntax="public void setRefRect(const Rect &refRect);">
+	  <summary>
+	    Establece un nuevo rectángulo de referencia.
+	  </summary>
+	  <param name="refRect">El nuevo rectángulo a utilizar.</param>
+	  <seealso cref="getRefRect"/>
+	</method>
+	<method name="getSides" syntax="public int getSides() const;">
+	  <seealso cref="setSides"/>
+	  <seealso cref="mSides"/>
+	</method>
+	<method name="setSides" syntax="public void setSides(int sides);">
+	  <param name="sides"></param>
+	  <seealso cref="getSides"/>
+	  <seealso cref="mSides"/>
+	</method>
+      </class>
+
+      <class name="AnchorLayout" syntax="class AnchorLayout : public Layout">
+	<summary>
+	  <em>Layout manager</em> que intenta mantener el mismo
+	  aspecto de los widgets a través de unos rectángulos de
+	  referencia y condiciones de anclaje (<see cref="Anchor"/>).
+	</summary>
+	<remarks>
+	  Cada widget que es controlada por un <see cref="AnchorLayout"/>, debe tener
+	  una condición (constraint) <see cref="Anchor"/>.
+	</remarks>
+      </class>
+
+      <class name="BoxConstraint" syntax="class BoxConstraint : public Constraint">
+	<summary>
+	</summary>
+      </class>
+
+      <class name="BoxLayout" syntax="class BoxLayout : public Layout">
+	<summary>
+	  Layout manager que distribuye los widgets horizontal o
+	  verticalmente, y de manera uniforme (todos del mismo tamaño) o
+	  no (cada widget con su tamaño preferido).
+	</summary>
+      </class>
+
+      <class name="ClientLayout" syntax="class ClientLayout : public Layout">
+      </class>
+
+      <class name="Constraint" syntax="class Constraint">
+	<summary>
+	  Una condición (<em>constraint</em>) que puede utilizar un
+	  <see cref="Widget"/> para modificar el comportamiento
+	  del <em>layout manager</em> que lo controla.
+	</summary>
+      </class>
+
+      <class name="Layout" syntax="class Layout">
+      </class>
+
+    </section>
+    
+    <section name="SystemClasses" title="Sistema">
+
+      <summary>
+	Clases principales del sistema, para manejar la aplicación,
+	hilos de ejecución, el portapapeles, etc.
+      </summary>
+
+      <class name="Application" syntax="class Application : public MessengerThread"></class>
+      <class name="Clipboard" syntax="class Clipboard"></class>
+      <class name="MessengerThread" syntax="class MessengerThread : public Thread"></class>
+      <class name="Mutex" syntax="class Mutex : private boost::noncopyable"></class>
+      <class name="ScopedLock" syntax="class ScopedLock : private boost::noncopyable"></class>
+      <class name="System" syntax="class System"></class>
+      <class name="Thread" syntax="class Thread : private boost::noncopyable"></class>
+    </section>
+
+    <section name="GraphicsClasses" title="Gráficos">
+
+      <summary>
+	Clases para dibujar y controlar todo lo que tenga que ver con
+	la parte gráfica de una aplicación.
+      </summary>
+
+      <class name="Color" syntax="class Color">
+	<ctor name="Color" syntax="public Color();"></ctor>
+	<ctor name="Color" syntax="public Color(int r, int g, int b);"></ctor>
+	<ctor name="Color" syntax="public explicit Color(COLORREF rgb);"></ctor>
+	<dtor name="Color" syntax="public virtual ~Color();"></dtor>
+	<field name="White" syntax="public static const Color White;"></field>
+	<field name="LightGray" syntax="public static const Color LightGray;"></field>
+	<field name="Gray" syntax="public static const Color Gray;"></field>
+	<field name="DarkGray" syntax="public static const Color DarkGray;"></field>
+	<field name="Black" syntax="public static const Color Black;"></field>
+	<field name="Red" syntax="public static const Color Red;"></field>
+	<field name="Pink" syntax="public static const Color Pink;"></field>
+	<field name="Orange" syntax="public static const Color Orange;"></field>
+	<field name="Yellow" syntax="public static const Color Yellow;"></field>
+	<field name="Green" syntax="public static const Color Green;"></field>
+	<field name="Magenta" syntax="public static const Color Magenta;"></field>
+	<field name="Cyan" syntax="public static const Color Cyan;"></field>
+	<field name="Blue" syntax="public static const Color Blue;"></field>
+	<field name="mColorRef" syntax="private COLORREF mColorRef;"></field>
+	<method name="getR" syntax="public int getR() const;"></method>
+	<method name="getG" syntax="public int getG() const;"></method>
+	<method name="getB" syntax="public int getB() const;"></method>
+	<operator name="operator+" syntax="public Color operator+(const Color &amp;color) const;"></operator>
+	<operator name="operator-" syntax="public Color operator-(const Color &amp;color) const;"></operator>
+	<operator name="operator*" syntax="public Color operator*(int value) const;"></operator>
+	<operator name="operator/" syntax="public Color operator/(int value) const;"></operator>
+	<operator name="operator*" syntax="public Color operator*(double value) const;"></operator>
+	<operator name="operator/" syntax="public Color operator/(double value) const;"></operator>
+	<method name="getColorRef" syntax="public COLORREF getColorRef() const;"></method>
+      </class>
+
+      <class name="Font" syntax="class Font"></class>
+      <class name="Graphics" syntax="class Graphics : private boost::noncopyable"></class>
+      <class name="Icon" syntax="class Icon : private boost::noncopyable"></class>
+      <class name="Image" syntax="class Image"></class>
+      <class name="ImageList" syntax="class ImageList : private boost::noncopyable"></class>
+      <class name="SharedIcon" syntax="class SharedIcon : public Icon"></class>
+
+    </section>
+
+    <section name="CommonDialogs" title="Diálogos comunes">
+
+      <summary>
+	Cuadros de diálogos comunes, como para seleccionar colores,
+	archivos, fuentes de texto, etc.
+      </summary>
+
+      <class name="ColorDialog" syntax="class ColorDialog : public CommonDialog"></class>
+      <class name="CommonDialog" syntax="class CommonDialog : private boost::noncopyable"></class>
+      <class name="FileDialog" syntax="class FileDialog : public CommonDialog"></class>
+      <class name="FindTextDialog" syntax="class FindTextDialog : public Dialog"></class>
+      <class name="FontDialog" syntax="class FontDialog : public CommonDialog"></class>
+      <class name="OpenFileDialog" syntax="class OpenFileDialog : public FileDialog"></class>
+      <class name="SaveFileDialog" syntax="class SaveFileDialog : public FileDialog"></class>
+    </section>
+
+    <section name="EventClasses" title="Eventos">
+
+      <summary>
+	Clases de eventos.
+      </summary>
+
+      <class name="Event" syntax="class Event"></class>
+      <class name="CancellableEvent" syntax="class Event"></class>
+      <class name="CloseEvent" syntax="class CloseEvent : public CancellableEvent"></class>
+      <class name="KeyEvent" syntax="class KeyEvent : public WidgetEvent"></class>
+      <class name="MenuItemEvent" syntax="class MenuItemEvent : public Event"></class>
+      <class name="MouseEvent" syntax="class MouseEvent : public WidgetEvent"></class>
+      <class name="TreeViewEvent" syntax="class TreeViewEvent : public CancellableEvent"></class>
+      <class name="WidgetEvent" syntax="class WidgetEvent : public Event"></class>
+
+    </section>
+
+    <section name="RegisterClasses" title="Registración de clases Win32">
+
+      <summary>
+	Clases C++ internas para manejar las clases del API de <see cref="Win32"/>.
+      </summary>
+
+      <class name="DialogClass" syntax="class DialogClass : public WidgetClass"></class>
+      <class name="DockAreaClass" syntax="class DockAreaClass : public WidgetClass"></class>
+      <class name="DockBarClass" syntax="class DockBarClass : public WidgetClass"></class>
+      <class name="DockFrameClass" syntax="class DockFrameClass : public WidgetClass"></class>
+      <class name="FrameClass" syntax="class FrameClass : public WidgetClass"></class>
+      <class name="MdiChildClass" syntax="class MdiChildClass : public WidgetClass"></class>
+      <class name="PanelClass" syntax="class PanelClass : public WidgetClass"></class>
+      <class name="Register" syntax="class Register"></class>
+      <class name="RegisterFailedException" syntax="class RegisterFailedException : public Exception"></class>
+      <class name="SciRegister" syntax="class SciRegister"></class>
+      <class name="TabPageClass" syntax="class TabPageClass : public WidgetClass"></class>
+      <class name="WidgetClass" syntax="class WidgetClass"></class>
+    </section>
+
+    <section name="MenuClasses" title="Menúes">
+
+      <summary>
+	Clases para controlar los menúes.
+      </summary>
+
+      <class name="MdiListMenu" syntax="class MdiListMenu : public Menu"></class>
+      <class name="Menu" syntax="class Menu : public MenuItem"></class>
+      <class name="MenuBar" syntax="class MenuBar : public Menu"></class>
+      <class name="MenuItem" syntax="class MenuItem : private boost::noncopyable"></class>
+      <class name="MenuSeparator" syntax="class MenuSeparator : public MenuItem"></class>
+      <class name="PopupMenu" syntax="class PopupMenu"></class>
+    </section>
+
+    <section name="AuxiliaryClasses" title="Auxiliares">
+
+      <summary>
+	Clases auxiliares o sin clasificar.
+      </summary>
+
+      <class name="Command" syntax="class Command"></class>
+      <class name="CommandState" syntax="class CommandState"></class>
+      <class name="CreateHwndException" syntax="class CreateHwndException : public Exception"></class>
+      <class name="DockInfo" syntax="class DockInfo"></class>
+      <class name="Item" syntax="class Item"></class>
+      <class name="RadioGroup" syntax="class RadioGroup"></class>
+      <class name="TreeNode" syntax="class TreeNode"></class>
+    </section>
+
+  </namespace>
+  
+  <!-- Techinal Notes -->
+  
+  <chapter name="TN" title="Notas Técnicas">
+    
+    <section name="TN001" title="001. Proceso de registración de clases (RegisterClass)">
+    </section>
+    
+    <section name="TN002" title="002. Utilización de CreateWindow y DestroyWindow">
+    </section>
+    
+    <section name="TN003" title="003. Usando dynamic_cast">
+    </section>
+
+    <section name="TN004" title="004. Señales (signals) públicas">
+    </section>
+
+    <section name="TN005" title="005. Limitaciones de MdiChild">
+      <summary>
+	Crear un MdiChild puede traerle complicaciones, principalmente
+	con los estilos.
+      </summary>
+      <content>
+	<para>
+	  Win32 hace visibles todos los widgets de tipo <see cref="MdiChild"/>
+	  al momento de ser creados. No se pueden crear
+	  <see cref="MdiChild"/>s que no sean visibles, es decir, que no tenga el
+	  estilo <see cref="WS_VISIBLE"/>.  Internamente, al llamar
+	  <see cref="CreateWindowEx"/> con el estilo
+	  <see cref="WS_EX_MDICHILD"/> y especificando un
+	  <see cref="MdiClient"/> como padre, Win32 crea la nueva
+	  ventana MDI hija pero ignorando algunos estilos
+	  espeficidos. Como por ejemplo <see cref="WS_VISIBLE"/> y
+	  <see cref="WS_MAXIMIZEBOX"/>.
+	</para>
+	<para>
+	  Esto le puede traer algunos problemas directos a usted, como
+	  al querer crear un <see cref="MdiChild"/> quitando algunos
+	  estilos como <see cref="MaximizableFrameStyle"/> o
+	  <see cref="MinimizableFrameStyle"/>. La solución es
+	  simplemente evitar pasarle estilos al constructor, e
+	  intentar agregarlos o quitarlos con las correspondientes
+	  funciones (<see cref="Widget::addStyle"/> y
+	  <see cref="Widget::removeStyle"/>).  El ejemplo
+	  <see cref="Anchors"/> utiliza esta técnica.
+	</para>
+	<para>
+	  Por otro lado, el problema más grande que le trae a Vaca
+	  esta limitación, es la pérdida de algunos mensajes muy
+	  importantes. Debido a que el <see cref="MdiChild"/> es
+	  visible al ser creado, <see cref="MdiChild::wndProc"/>
+	  pierde algunos mensajes como <see cref="WM_SETFOCUS"/> y
+	  <see cref="WM_MDIACTIVATE"/>. Estos mensajes son pasados
+	  directamente a <see cref="MdiChild::defWndProc"/> &mdash;que
+	  equivale a <see cref="DefMDIChildProc"/>&mdash;, sin ser
+	  interceptados antes por <see cref="MdiChild::wndProc"/>, por
+	  lo que algunos eventos no se generan (como
+	  <see cref="MdiChild::onGotFocus"/> y
+	  <see cref="MdiChild::onActivate"/>).
+	</para>
+	<para>
+	  La solución al problema de los eventos perdidos es bastante
+	  sencilla: Se colocan nuevamente los mensajes en la cola de
+	  mensajes del hilo de ejecución activo. Utilizando
+	  <see cref="PostMessage"/>, se envía:
+	  <list type="bullet">
+	    <item><term>WM_SETFOCUS</term><description>Para generar <see cref="Widget::onGotFocus"/>.</description></item>
+	    <item><term>WM_MDIACTIVATE</term><description>Para generar <see cref="Frame::onActivate"/>.</description></item>
+	    <item><term>WM_SIZE</term><description>Para generar <see cref="Frame::onResize"/> (y finalmente una llamada a <see cref="Frame::layout"/>).</description></item>
+	  </list>
+	</para>
+	<para>
+	  Como comentario extra, cabe destacar que estuve probando
+	  enviar un mensaje <see cref="WM_MDICREATE"/> al
+	  <see cref="MdiClient"/>, pero esto tampoco solucionó el
+	  problema. Inclusive, esta opción nos quita la posibilidad de
+	  especificar los estilos extendidos (como
+	  <see cref="ClientEdgeStyle"/>). Por lo tanto, usar
+	  <see cref="CreateWindowEx"/> y resignarse a sufrir las
+	  limitaciones de Win32, es lo mejor que podemos hacer.
+	</para>
+      </content>
+    </section>
+    
+    <section name="TN006" title="006. Eliminando un Widget dentro de su evento">
+    </section>
+    
+    <section name="TN007" title="007. Llamando CreateWindowEx sin texto">
+    </section>
+    
+    <section name="TN008" title="008. Soporte para Unicode">
+    </section>
+    
+    <section name="TN009" title="009. Reflexión de mensajes">
+    </section>
+    
+    <section name="TN010" title="010. Objetos eliminados automáticamente">
+    </section>
+    
+  </chapter>
+
+  <!-- Extra -->
+
+  <chapter name="Appendix" title="Apéndice">
+
+    <section name="MDI" title="Interfaz de Documentos Múltiples (MDI)">
+      <content>
+	MDI (Interfaz de Documentos Múltiples, <em>Multiple Document Interface</em>)
+      </content>
+    </section>
+
+    <section name="Win32" title="Win32">
+
+      <typedef name="HWND">
+	<summary>
+	  Un puntero (<em>handler</em>) a una estructura interna que
+	  utiliza Windows para manejar las ventanas y controles que se
+	  despliegan por la pantalla.
+	</summary>
+	<remarks>
+	  <para>
+	    Windows da la posibilidad de que cada <see cref="HWND"/>
+	    que crea una aplicación, guarde un puntero a una
+	    estructura interna que sólo conoce la aplicación. Dicho
+	    puntero se puede obtener mediante la función
+	    <see cref="GetWindowLongPtr"/> con el parámetro <see cref="GWL_USERDATA"/>.
+	  </para>
+	  <para>
+	    Vaca utiliza <see cref="SetWindowLongPtr"/> para cambiar
+	    el campo <see cref="GWL_USERDATA"/> a la dirección de
+	    memoria del <see cref="Widget"/> con el cual se relaciona
+	    el <see cref="HWND"/>.
+	  </para>
+	</remarks>
+      </typedef>
+
+      <function name="GetWindowLongPtr">
+      </function>
+
+      <function name="SetWindowLongPtr">
+      </function>
+
+    </section>
+
+    <namespace name="boost" title="Boost">
+
+      <class name="noncopyable">
+	<summary>
+	  Una clase derivada de noncopyable no puede ser copiada por
+	  ningún medio: ni utilizando el constructor copia, ni el operator==.
+	</summary>
+      </class>
+
+    </namespace>
+
+  </chapter>
+  
+</doc>

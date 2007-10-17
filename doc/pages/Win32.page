@@ -1,0 +1,28 @@
+// -*- C++ -*-
+
+/*!
+
+@page Win32 Win32's API
+
+Links to MSDN (http://msdn.microsoft.com/):
+
+Registration, creation and destruction:
+@li <a href="http://msdn.microsoft.com/library/en-us/winui/winui/windowsuserinterface/windowing/windowclasses/windowclassreference/windowclassfunctions/registerclassex.asp">RegisterClassEx</a> (@ref Vaca::Register::Register())
+@li <a href="http://msdn.microsoft.com/library/en-us/winui/winui/windowsuserinterface/windowing/windows/windowreference/windowfunctions/createwindowex.asp">CreateWindowEx</a> (@ref Vaca::Widget::createHwnd())
+@li <a href="http://msdn.microsoft.com/library/en-us/winui/winui/windowsuserinterface/windowing/windows/windowreference/windowfunctions/destroywindow.asp">DestroyWindow</a> (@ref Vaca::Widget::destroyHwnd())
+
+Default Procedures (@ref Vaca::Widget::defWndProc()):
+@li <a href="http://msdn.microsoft.com/library/en-us/winui/winui/windowsuserinterface/windowing/dialogboxes/dialogboxreference/dialogboxfunctions/defdlgproc.asp">DefDlgProc</a>
+@li <a href="http://msdn.microsoft.com/library/en-us/winui/winui/windowsuserinterface/windowing/multipledocumentinterface/multipledocumentinterfacereference/multipledocumentinterfacefunctions/defframeproc.asp">DefFrameProc</a>
+@li <a href="http://msdn.microsoft.com/library/en-us/winui/winui/windowsuserinterface/windowing/multipledocumentinterface/multipledocumentinterfacereference/multipledocumentinterfacefunctions/defmdichildproc.asp">DefMDIChildProc</a>
+@li <a href="http://msdn.microsoft.com/library/en-us/winui/winui/windowsuserinterface/windowing/windowprocedures/windowprocedurereference/windowprocedurefunctions/defwindowproc.asp">DefWindowProc</a>
+
+Others:
+@li <a href="http://msdn.microsoft.com/library/en-us/winui/winui/windowsuserinterface/windowing/windows/windowreference/windowfunctions/deferwindowpos.asp">DeferWindowPos</a>
+@li <a href="http://msdn.microsoft.com/library/en-us/gdi/fontext_15kk.asp">GetTextExtentExPoint</a>
+@li <a href="http://msdn.microsoft.com/library/en-us/winui/winui/windowsuserinterface/windowing/windows/windowreference/windowfunctions/setwindowtext.asp">SetWindowText</a>
+@li <a href="http://msdn.microsoft.com/library/en-us/winui/winui/windowsuserinterface/windowing/windows/windowreference/windowfunctions/showwindow.asp">ShowWindow</a>
+@li <a href="http://msdn.microsoft.com/library/en-us/gdi/pantdraw_4zef.asp">UpdateWindow</a>
+@li <a href="http://msdn.microsoft.com/library/en-us/sysinfo/base/getsyscolor.asp">GetSysColor</a>
+
+*/

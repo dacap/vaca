@@ -1,0 +1,39 @@
+Visual C++ 7.1
+----------------------------------------------------------------------
+
+If you have boost 1.33.1 installed in c:/boost_1_33_1, you don't need
+to modify anything. If not, you need to modify the paths (for the
+includes and the libs). Also, don't try to compile the shared version,
+it'll fail. You should be able to compile the static version only.
+
+
+MinGW
+----------------------------------------------------------------------
+
+To compile Vaca you need Boost library, please, modify the Makefile to
+your requirements:
+
+  BOOSTDIR = c:/boost_1_33_1
+  BOOSTLIBS = ...
+
+In the future will be a better solution (maybe a Jamfile)
+
+
+Scintilla
+----------------------------------------------------------------------
+
+If you are compiling the source code, remember to put the SciLexer.dll
+in the bin directory.
+
+You will need to decompress the Scintilla zip (scintilla167.zip) in
+the vaca root directory. You should have a directory structure like:
+
+   Vaca/
+     bin/
+     scintilla/
+       bin/
+       include/
+       ...
+
+Compile Scintilla and move the libraries (SciLexer.dll)
+from "Vaca/scintilla/bin" to "Vaca/bin".

@@ -1,0 +1,13 @@
+// -*- C++ -*-
+
+/*! @namespace Vaca
+
+@page exampleCalendar Example - Calendar
+
+This example shown you how to:
+
+@li Override layout() to set the position of children (this avoid the Layout manager).
+@li Override onPaint() of a Dialog to customize the client area painting process.
+@li Use of Font and FontDialog.
+
+*/

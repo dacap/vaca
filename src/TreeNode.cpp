@@ -32,87 +32,178 @@
 #include "stdvaca.h"
 #include "Vaca/TreeNode.h"
 #include "Vaca/TreeView.h"
+#include "Vaca/TreeViewEvent.h"
 #include "Vaca/Debug.h"
 
 using namespace Vaca;
 
-TreeNode::TreeNode()
+TreeNode::TreeNode(const String &text, int imageIndex, int selectedImageIndex)
+  : mText(text)
+  , mImage(imageIndex)
+  , mSelectedImage(selectedImageIndex)
 {
-  mText = "";
   mParent = NULL;
-  mHtreeitem = NULL;
-  mTreeView = NULL;
-}
-
-TreeNode::TreeNode(const String &text)
-{
-  mText = text;
-  mParent = NULL;
-  mHtreeitem = NULL;
-  mTreeView = NULL;
+  mHTREEITEM = NULL;
+  mOwner = NULL;
 }
 
 TreeNode::~TreeNode()
 {
-  if (mTreeView)
-    TreeView_DeleteItem(mTreeView->getHwnd(), mHtreeitem);
+  if (mOwner)
+    TreeView_DeleteItem(mOwner->getHWND(), mHTREEITEM);
 
   for (Container::iterator it=mChildren.begin();
        it!=mChildren.end(); ++it)
     delete *it;
 }
 
+/**
+ * Adds a new sub-node (child) to this one. After calling this method
+ * @a node'll have this node as parent.
+ */
 void TreeNode::addNode(TreeNode *node)
 {
-  VACA_ASSERT(node->mHtreeitem == NULL && node->mParent == NULL);
+  assert(node->mHTREEITEM == NULL && node->mParent == NULL);
 
   this->mChildren.push_back(node);
 
   node->mParent = this;
-  node->addToTreeView(this->mTreeView);
+  node->addToTreeView(this->mOwner);
 }
 
 TreeNode *TreeNode::getParent()
 {
-  return mParent;
+  if (mOwner != NULL &&
+      &mOwner->mRoot == mParent)
+    return NULL;
+  else
+    return mParent;
 }
 
 TreeView *TreeNode::getTreeView()
 {
-  return mTreeView;
+  return mOwner;
 }
 
+/**
+ * Returns the collection of children.
+ * 
+ */
 TreeNode::Container TreeNode::getChildren()
 {
   return mChildren;
 }
 
+/**
+ * Returns true if this node should have the plus sign to be
+ * expanded. The default implementation returns true if the mChildren
+ * member has elements. If you override this method isn't necessary to
+ * call the base implementation.
+ * 
+ * @code
+ * class MyTreeNode : public TreeNode
+ * {
+ * protected:
+ *   bool hasChildren() {
+ *     return ...;
+ *   }
+ * };
+ * @endcode
+ */
 bool TreeNode::hasChildren()
 {
   return !mChildren.empty();
 }
 
+/**
+ * Returns the label's text for the node. If you override this method
+ * isn't necessary to call the base implementation.
+ * 
+ * @code
+ * class MyTreeNode : public TreeNode
+ * {
+ * protected:
+ *   String getText() {
+ *     return "...";
+ *   }
+ * };
+ * @endcode
+ */
 String TreeNode::getText()
 {
   return mText;
 }
 
+/**
+ * Returns the index of the image that uses this node from the
+ * ImageList. If you override this method isn't necessary to call the
+ * base implementation.
+ * 
+ * @code
+ * class MyTreeNode : public TreeNode
+ * {
+ * protected:
+ *   int getImage() {
+ *     int imageIndex = -1;
+ *     // ... do some work here
+ *     return imageIndex;
+ *   }
+ * };
+ * @endcode
+ */
 int TreeNode::getImage()
 {
-  return -1;
+  return mImage;
 }
 
+/**
+ * Returns the index of the image in selected-state that uses this
+ * node from the ImageList. If you override this method isn't
+ * necessary to call the base implementation.
+ * 
+ * @seealso getImage()
+ */
 int TreeNode::getSelectedImage()
 {
-  return -1;
+  return mSelectedImage;
 }
 
-HTREEITEM TreeNode::getHtreeitem()
+/**
+ * Sets the node's text. It's useful only if you are using the default
+ * implementation of getText().
+ * 
+ */
+void TreeNode::setText(const String &text)
 {
-  return mHtreeitem;
+  mText = text;
 }
 
-TreeNode *TreeNode::fromHtreeitem(HWND hwnd, HTREEITEM htreeitem)
+/**
+ * Sets the node's image. It's useful only if you are using the
+ * default implementation of getImage().
+ * 
+ */
+void TreeNode::setImage(int imageIndex)
+{
+  mImage = imageIndex;
+}
+
+/**
+ * Sets the node's image in selected-state. It's useful only if you
+ * are using the default implementation of getSelectedImage().
+ * 
+ */
+void TreeNode::setSelectedImage(int selectedImageIndex)
+{
+  mSelectedImage = selectedImageIndex;
+}
+
+HTREEITEM TreeNode::getHTREEITEM()
+{
+  return mHTREEITEM;
+}
+
+TreeNode *TreeNode::fromHTREEITEM(HWND hwnd, HTREEITEM htreeitem)
 {
   TVITEMEX tvie;
 
@@ -128,37 +219,60 @@ TreeNode *TreeNode::fromHtreeitem(HWND hwnd, HTREEITEM htreeitem)
 
 void TreeNode::onBeforeExpand(TreeViewEvent &ev)
 {
+  // do nothing
 }
 
 void TreeNode::onBeforeCollapse(TreeViewEvent &ev)
 {
+  // do nothing
 }
 
 void TreeNode::onBeforeSelect(TreeViewEvent &ev)
 {
+  // do nothing
+}
+
+void TreeNode::onBeforeLabelEdit(TreeViewEvent &ev)
+{
+  // do nothing
 }
 
 void TreeNode::onAfterExpand(TreeViewEvent &ev)
 {
+  // do nothing
 }
 
 void TreeNode::onAfterCollapse(TreeViewEvent &ev)
 {
+  // do nothing
 }
 
 void TreeNode::onAfterSelect(TreeViewEvent &ev)
 {
+  // do nothing
 }
 
-void TreeNode::addToTreeView(TreeView *treeview)
+/**
+ * The default implementation changes the mText field to be returned
+ * in getText() only if @a ev wasn't canceled.
+ * 
+ */
+void TreeNode::onAfterLabelEdit(TreeViewEvent &ev)
 {
-  VACA_ASSERT(mTreeView == NULL);
+  // if the event isn't cancelled, change the label
+  if (!ev.isCanceled())
+    mText = ev.getLabel();
+}
 
-  mTreeView = treeview;
-  if (treeview) {
+void TreeNode::addToTreeView(TreeView *treeView)
+{
+  assert(mOwner == NULL);
+
+  mOwner = treeView;
+  if (treeView) {
     TVINSERTSTRUCT is;
 
-    is.hParent = mParent->mHtreeitem;
+    is.hParent = mParent->mHTREEITEM;
     is.hInsertAfter = TVI_LAST;
     is.item.mask = TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_CHILDREN | TVIF_PARAM;
     is.item.pszText = LPSTR_TEXTCALLBACK;
@@ -167,12 +281,12 @@ void TreeNode::addToTreeView(TreeView *treeview)
     is.item.cChildren = I_CHILDRENCALLBACK;
     is.item.lParam = reinterpret_cast<LPARAM>(this);
 
-    mHtreeitem = TreeView_InsertItem(treeview->getHwnd(), &is);
+    mHTREEITEM = TreeView_InsertItem(treeView->getHWND(), &is);
   }
 
   for (Container::iterator it=mChildren.begin();
        it!=mChildren.end(); ++it) {
-    if ((*it)->mTreeView == NULL)
-      (*it)->addToTreeView(treeview);
+    if ((*it)->mOwner == NULL)
+      (*it)->addToTreeView(treeView);
   }
 }

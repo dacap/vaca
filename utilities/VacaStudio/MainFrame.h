@@ -33,8 +33,9 @@
 #define VACASTUDIO_MAINFRAME_H
 
 #include "Vaca/Frame.h"
+// #include "Vaca/Mdi.h"
 #include "Vaca/Menu.h"
-#include "VsMdi.h"
+#include "OutputBar.h"
 
 using namespace Vaca;
 
@@ -43,14 +44,15 @@ class MainFrame : public Frame
   MenuBar mMenuBar;
   Menu mFileMenu;
   Menu mToolsMenu;
-  VsMdi mMdi;
-  
+  OutputBar mOutputBar;
+
 public:
 
   MainFrame();
 
 protected:
 
+  void onNewFile();
   void onExit();
   void onFindReplaceInFiles();
   

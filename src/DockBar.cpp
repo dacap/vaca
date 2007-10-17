@@ -244,9 +244,17 @@ bool DockBar::isFloating()
   return mDockFrame != NULL;
 }
 
-void DockBar::dockIn(DockArea &dockArea)
+void DockBar::dockIn(DockArea *dockArea)
 {
-  makeDock(&dockArea, mDockInfo);
+  assert(dockArea != NULL);
+  
+  // does it have DockInfo?
+  if (mDockInfo == NULL) {
+    // create the default one
+    mDockInfo = dockArea->createDefaultDockInfo(this);
+  }
+
+  makeDock(dockArea, mDockInfo);
 }
 
 void DockBar::floatOut()
@@ -254,20 +262,19 @@ void DockBar::floatOut()
   makeFloat(NULL);
 }
 
-DockArea &DockBar::getDockArea()
+Frame *DockBar::getOwnerFrame()
 {
-  if (mDockArea == NULL)
-    throw Exception("You can't use getDockArea() when isDocked() is false");
-  else
-    return *mDockArea;
+  return mOwner;
 }
 
-DockFrame &DockBar::getDockFrame()
+DockArea *DockBar::getDockArea()
 {
-  if (mDockFrame == NULL)
-    throw Exception("You can't use getDockFrame() when isFloating() is false");
-  else
-    return *mDockFrame;
+  return mDockArea;
+}
+
+DockFrame *DockBar::getDockFrame()
+{
+  return mDockFrame;
 }
 
 DockInfo *DockBar::getDockInfo()
@@ -358,7 +365,7 @@ void DockBar::makeFloat(const Rect *rect)
 
 void DockBar::onDestroy()
 {
-  VACA_ASSERT(mDrag == NULL);
+  assert(mDrag == NULL);
 
   // undock, and delete DockFrame or DockFrameGarbage
   cleanUp();
@@ -394,7 +401,7 @@ void DockBar::onDockFrameClose(CloseEvent &ev)
  */
 void DockBar::onDockFrameDestroy()
 {
-  VACA_ASSERT(mDockFrame != NULL);
+  assert(mDockFrame != NULL);
 
   if (getParent() == mDockFrame) {
     mDockFrame->removeChild(this, false);
@@ -462,7 +469,7 @@ void DockBar::onMouseDown(MouseEvent &ev)
 void DockBar::onMouseMove(MouseEvent &ev)
 {
   if (hasCapture()) {
-    VACA_ASSERT(mDrag != NULL);
+    assert(mDrag != NULL);
 
     //////////////////////////////////////////////////////////////////////
     // does the mouse or the control key change?
@@ -497,7 +504,7 @@ void DockBar::onMouseMove(MouseEvent &ev)
 void DockBar::onMouseUp(MouseEvent &ev)
 {
   if (hasCapture()) {
-    VACA_ASSERT(mDrag != NULL);
+    assert(mDrag != NULL);
 
     if (!mFullDrag) {
       ScreenGraphics g;
@@ -512,7 +519,7 @@ void DockBar::onMouseUp(MouseEvent &ev)
 
 void DockBar::onDoubleClick(MouseEvent &ev)
 {
-  VACA_ASSERT(mOwner != NULL);
+  assert(mOwner != NULL);
 
   // is floating? dock it in the last dock position remembered
   if (isFloating()) {
@@ -520,15 +527,16 @@ void DockBar::onDoubleClick(MouseEvent &ev)
 
     // the DockBar has DockInfo, so use it
     if (mDockInfo != NULL)
-      dockArea = &mOwner->getDockArea(mDockInfo->getSide());
+      dockArea = mOwner->getDockArea(mDockInfo->getSide());
     // create a default DockInfo
     else {
-      dockArea = &mOwner->getDefaultDockArea();
-      mDockInfo = dockArea->createDefaultDockInfo(this);
+      dockArea = mOwner->getDefaultDockArea();
+      if (dockArea != NULL)
+	mDockInfo = dockArea->createDefaultDockInfo(this);
     }
 
     if (dockArea != NULL && mDockInfo != NULL)
-      dockIn(*dockArea);
+      dockIn(dockArea);
     // else { do nothing, we can't dock the tool-bar, so it should
     // continue floating }
   }
@@ -555,6 +563,7 @@ void DockBar::onCancelMode()
  */
 void DockBar::onDocking()
 {
+  assert(getDockArea() != NULL);
 }
 
 /**
@@ -652,12 +661,12 @@ bool DockBar::isGripperVisible(bool docked, Side dockSide)
 
 void DockBar::beginDrag()
 {
-  VACA_ASSERT(mDrag == NULL);
+  assert(mDrag == NULL);
   
   // install the keyboard hook (to hook the CONTROL key changes, and
   // the ESC key)
-  VACA_ASSERT(hwndDockWnd == NULL && dragHook == NULL);
-  hwndDockWnd = getHwnd();
+  assert(hwndDockWnd == NULL && dragHook == NULL);
+  hwndDockWnd = getHWND();
   dragHook = SetWindowsHookEx(WH_KEYBOARD, dragHookProc, NULL, Thread::getCurrentId()); 
 
 //   if (mDockArea != NULL)
@@ -700,11 +709,11 @@ void DockBar::dragBar()
 {
   // inside a dock bar
   if (mDrag->dockIn != NULL) {
-    makeDock(&mOwner->getDockArea(mDrag->dockIn->getSide()),
+    makeDock(mOwner->getDockArea(mDrag->dockIn->getSide()),
 	     mDrag->dockIn);
 
     // now "mDockInfo" is "mDrag->dockIn", so avoid to delete it in endDrag()
-    VACA_ASSERT(mDockInfo == mDrag->dockIn);
+    assert(mDockInfo == mDrag->dockIn);
     mDrag->dockIn = NULL;
   }
   // floating
@@ -716,7 +725,7 @@ void DockBar::dragBar()
 // destroys the DragInfo (mDrag)
 void DockBar::endDrag()
 {
-  VACA_ASSERT(mDrag != NULL);
+  assert(mDrag != NULL);
   
   // destroy the DragInfo...
   if (mDrag->dockIn != NULL)
@@ -730,7 +739,7 @@ void DockBar::endDrag()
     dragHook = NULL;
   }
 
-  VACA_ASSERT(hwndDockWnd == getHwnd());
+  assert(hwndDockWnd == getHWND());
   hwndDockWnd = NULL;
 
       // end dragging
@@ -744,7 +753,7 @@ void DockBar::cleanUp()
 {
   // undock (dispose the DockArea)
   if (mDockArea != NULL) {
-    if (mDockArea->getHwnd() != NULL) {
+    if (mDockArea->getHWND() != NULL) {
       mDockArea->removeDockBar(this);
       mDockArea->getParent()->layout();
     }
@@ -757,7 +766,7 @@ void DockBar::cleanUp()
     mDockFrame->Close.disconnect_all_slots();
     mDockFrame->Destroy.disconnect_all_slots();
 
-    if (mDockFrame->getHwnd() != NULL)
+    if (mDockFrame->getHWND() != NULL)
       mDockFrame->removeChild(this, true);
 
     delete mDockFrame;
@@ -818,34 +827,34 @@ DockInfo *DockBar::calcDestination(Rect &rc)
 
 void DockBar::drawFeedbackShape(Graphics &g)
 {
-  VACA_ASSERT(mDrag != NULL);
-
-  // draw docked shape
-  if (mDrag->dockIn != NULL) {
-    DockArea &dockArea = mOwner->getDockArea(mDrag->dockIn->getSide());
-    
-    dockArea.drawXorDockInfoShape(g, mDrag->dockIn);
-    
-    mDrag->inArea = &dockArea;
-  }
-  // draw floating rectangle
-  else {
-    g.drawXorFrame(mDrag->currentRect);
-  }
+  if (mDrag->dockIn != NULL)
+    mDrag->inArea = xorFeedbackShape(g);
+  else
+    xorFeedbackShape(g);
 }
 
 void DockBar::cleanFeedbackShape(Graphics &g)
 {
-  VACA_ASSERT(mDrag != NULL);
+  xorFeedbackShape(g);
+}
+
+DockArea *DockBar::xorFeedbackShape(Graphics &g)
+{
+  assert(mDrag != NULL);
 
   // clean docked shape
   if (mDrag->dockIn != NULL) {
-    DockArea &dockArea = mOwner->getDockArea(mDrag->dockIn->getSide());
+    DockArea *dockArea = mOwner->getDockArea(mDrag->dockIn->getSide());
+
+    assert(dockArea != NULL);
     
-    dockArea.drawXorDockInfoShape(g, mDrag->dockIn);
+    dockArea->drawXorDockInfoShape(g, mDrag->dockIn);
+
+    return dockArea;
   }
   // clean floating rectangle
   else {
     g.drawXorFrame(mDrag->currentRect);
+    return NULL;
   }
 }

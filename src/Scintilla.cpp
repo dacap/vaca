@@ -68,6 +68,10 @@ SciEditor::SciEditor(Widget *parent, Style style)
   setEolMode(SC_EOL_CRLF);
 }
 
+SciEditor::~SciEditor()
+{
+}
+
 /**
  * Sets the font used to paint text inside the editor. WARNING: this
  * sets the default style of the Scintilla editor (see for

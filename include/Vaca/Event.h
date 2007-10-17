@@ -32,41 +32,22 @@
 #ifndef VACA_EVENT_H
 #define VACA_EVENT_H
 
+#include "Vaca/base.h"
+
 namespace Vaca {
 
-/**
- * Base class for event information. Each event has a "consumed"
- * state, if the event is consumed means that it was processed.
- */
-class Event
+class Component;
+
+class VACA_DLL Event
 {
-//   bool mConsumed : 1;		///< The event was consumed.
-//   bool mCanceled : 1;		///< The event was canceled.
+  Component *mSource;
 
 public:
-  Event()//  : mConsumed(false), mCanceled(false) 
-  { }
-  virtual ~Event() { }
 
-  /**
-   * Consumes the event.
-   */
-//   void consume() { mConsumed = true; }
+  Event(Component *source);
+  virtual ~Event();
 
-  /**
-   * Cancels the event.
-   */
-//   void cancel() { mCanceled = true; }
-
-  /**
-   * The event was consumed.
-   */
-//   bool isConsumed() const { return mConsumed; }
-
-  /**
-   * The event was canceled.
-   */
-//   bool isCanceled() const { return mCanceled; }
+  Component *getSource();
 
 };
 

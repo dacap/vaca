@@ -41,6 +41,10 @@ public:
     : CustomButton(text, parent)
   {
     setBgColor(color);
+ 
+    // use double-buffering technique for this Widget when onPaint()
+    // event is received
+    setDoubleBuffering(true);
   }
 
   // paint event

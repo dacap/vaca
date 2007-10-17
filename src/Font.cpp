@@ -42,9 +42,9 @@ Font *Font::defaultFont;
  * Constructs an invalid font.
  */
 Font::Font()
-  : mHfont(NULL)
+  : mHFONT(NULL)
 {
-  mDeletePtr = false;
+  mAutoDelete = false;
 }
 
 Font::Font(const Font &font)
@@ -66,12 +66,12 @@ Font::Font(const Font &font, Font::Style::Type style)
 }
 
 Font::Font(String familyName, int size, Font::Style::Type style)
-  : mHfont(NULL)
+  : mHFONT(NULL)
 {
   ScreenGraphics g;
   LOGFONT lf;
 
-  lf.lfHeight = -MulDiv(size, GetDeviceCaps(g.getHdc(), LOGPIXELSY), 72);
+  lf.lfHeight = -MulDiv(size, GetDeviceCaps(g.getHDC(), LOGPIXELSY), 72);
   lf.lfWidth = 0;
   lf.lfEscapement = 0;
   lf.lfOrientation = 0;
@@ -94,21 +94,21 @@ Font::Font(String familyName, int size, Font::Style::Type style)
  * Wrapper constructor for HFONT.
  */
 Font::Font(HFONT hfont)
-  : mHfont(NULL)
+  : mHFONT(NULL)
 {
   assign(hfont);
 }
 
 Font::Font(LPLOGFONT lplf)
-  : mHfont(NULL)
+  : mHFONT(NULL)
 {
   assign(lplf);
 }
 
 Font::~Font()
 {
-  if (mHfont != NULL && mDeletePtr)
-    DeleteObject(mHfont);
+  if (mHFONT != NULL && mAutoDelete)
+    DeleteObject(mHFONT);
 
   if (this == Font::defaultFont)
     Font::defaultFont = NULL;
@@ -116,7 +116,7 @@ Font::~Font()
 
 bool Font::isValid()
 {
-  return mHfont != NULL;
+  return mHFONT != NULL;
 }
 
 /**
@@ -126,7 +126,7 @@ int Font::getSize()
 {
   LOGFONT lf;
   if (getLogFont(&lf))
-    return -lf.lfHeight * 72 / GetDeviceCaps(ScreenGraphics().getHdc(), LOGPIXELSY);
+    return -lf.lfHeight * 72 / GetDeviceCaps(ScreenGraphics().getHDC(), LOGPIXELSY);
   else
     return -1;			// TODO error, document it
 }
@@ -145,7 +145,7 @@ Font::Style::Type Font::getStyle()
   else
     return 0;			// TODO error, document it
 
-//   lf.lfHeight = -MulDiv(size, GetDeviceCaps(g.getHdc(), LOGPIXELSY), 72);
+//   lf.lfHeight = -MulDiv(size, GetDeviceCaps(g.getHDC(), LOGPIXELSY), 72);
 //   lf.lfWidth = 0;
 //   lf.lfEscapement = 0;
 //   lf.lfOrientation = 0;
@@ -180,24 +180,24 @@ void Font::assign(const Font &font)
 
 void Font::assign(HFONT hfont)
 {
-  if (mHfont != NULL && mDeletePtr) {
-    DeleteObject(mHfont);
-    mHfont = NULL;
+  if (mHFONT != NULL && mAutoDelete) {
+    DeleteObject(mHFONT);
+    mHFONT = NULL;
   }
 
-  mHfont = hfont;
-  mDeletePtr = false;
+  mHFONT = hfont;
+  mAutoDelete = false;
 }
 
 void Font::assign(LPLOGFONT lplf)
 {
-  if (mHfont != NULL && mDeletePtr) {
-    DeleteObject(mHfont);
-    mHfont = NULL;
+  if (mHFONT != NULL && mAutoDelete) {
+    DeleteObject(mHFONT);
+    mHFONT = NULL;
   }
 
-  mHfont = CreateFontIndirect(lplf);
-  mDeletePtr = true;
+  mHFONT = CreateFontIndirect(lplf);
+  mAutoDelete = true;
 }
 
 // FontMetrics Font::getMetrics()
@@ -210,21 +210,21 @@ Font &Font::getDefault()
   if (!Font::defaultFont)
     Font::defaultFont = new Font(reinterpret_cast<HFONT>(GetStockObject(DEFAULT_GUI_FONT)));
 
-  VACA_ASSERT(Font::defaultFont != NULL);
+  assert(Font::defaultFont != NULL);
 
   return *Font::defaultFont;
 }
 
-HFONT Font::getHfont()
+HFONT Font::getHFONT()
 {
-  return mHfont;
+  return mHFONT;
 }
 
 bool Font::getLogFont(LPLOGFONT lplf) const
 {
-  VACA_ASSERT(mHfont != NULL);
+  assert(mHFONT != NULL);
 
-  return GetObject(mHfont,
+  return GetObject(mHFONT,
 		   sizeof(LOGFONT),
 		   reinterpret_cast<LPVOID>(lplf)) != 0;
 }

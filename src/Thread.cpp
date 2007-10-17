@@ -55,19 +55,21 @@ static DWORD WINAPI ThreadProxy(LPVOID thread)
  */
 Thread::Thread(bool useCurrent)
 {
+  mFrameCount = 0;
+
   if (useCurrent) {
     mJoinable = false;
-    mHthread = GetCurrentThread();
+    mHANDLE = GetCurrentThread();
     mId = GetCurrentThreadId();
   }
   else {
     mJoinable = true;
-    mHthread = CreateThread(NULL, 0,
+    mHANDLE = CreateThread(NULL, 0,
 			    ThreadProxy,
 			    reinterpret_cast<void *>(this),
 			    CREATE_SUSPENDED, &mId);
 
-    VACA_TRACE("new Thread (%p, %d) {\n", mHthread, mId);
+    VACA_TRACE("new Thread (%p, %d) {\n", mHANDLE, mId);
   }
 
   activeThreadsMutex.lock();
@@ -77,9 +79,9 @@ Thread::Thread(bool useCurrent)
 
 Thread::~Thread()
 {
-  if (mJoinable && mHthread != NULL) {
-    CloseHandle(reinterpret_cast<HANDLE>(mHthread));
-    mHthread = NULL;
+  if (mJoinable && mHANDLE != NULL) {
+    CloseHandle(reinterpret_cast<HANDLE>(mHANDLE));
+    mHANDLE = NULL;
 
     VACA_TRACE("} delete Thread (%p, %d)\n", this, mId);
   }
@@ -104,7 +106,7 @@ int Thread::getId()
  */
 void Thread::execute()
 {
-  VACA_ASSERT(mJoinable != false);
+  assert(mJoinable != false);
 
   resume();
 }
@@ -114,9 +116,9 @@ void Thread::execute()
  */
 void Thread::suspend()
 {
-  VACA_ASSERT(mHthread != NULL);
+  assert(mHANDLE != NULL);
 
-  SuspendThread(mHthread);
+  SuspendThread(mHANDLE);
 }
 
 /**
@@ -124,9 +126,9 @@ void Thread::suspend()
  */
 void Thread::resume()
 {
-  VACA_ASSERT(mHthread != NULL);
+  assert(mHANDLE != NULL);
 
-  ResumeThread(mHthread);
+  ResumeThread(mHANDLE);
 }
 
 /**
@@ -135,12 +137,12 @@ void Thread::resume()
  */
 void Thread::join()
 {
-  VACA_ASSERT(mHthread != NULL);
-  VACA_ASSERT(mJoinable != false);
+  assert(mHANDLE != NULL);
+  assert(mJoinable != false);
 
-  WaitForSingleObject(reinterpret_cast<HANDLE>(mHthread), INFINITE);
-  CloseHandle(reinterpret_cast<HANDLE>(mHthread));
-  mHthread = NULL;
+  WaitForSingleObject(reinterpret_cast<HANDLE>(mHANDLE), INFINITE);
+  CloseHandle(reinterpret_cast<HANDLE>(mHANDLE));
+  mHANDLE = NULL;
 
   VACA_TRACE("} join Thread (%p, %d)\n", this, mId);
 }
@@ -157,9 +159,9 @@ void Thread::join()
  */
 void Thread::setPriority(int priority)
 {
-  VACA_ASSERT(mHthread != NULL);
+  assert(mHANDLE != NULL);
 
-  SetThreadPriority(mHthread, priority);
+  SetThreadPriority(mHANDLE, priority);
 }
 
 /**
@@ -178,7 +180,7 @@ Thread *Thread::getCurrent()
       return *it;
 
   // impossible!!!
-  VACA_ASSERT(false);
+  assert(false);
   return NULL;
 }
 
@@ -208,10 +210,11 @@ void Thread::postQuitMessage()
  */
 void Thread::doMessageLoop()
 {
-  VACA_ASSERT(getId() == Thread::getCurrentId());
+  assert(getId() == Thread::getCurrentId());
 
   // there are Frames in this thread?
-  if (Frame::getVisibleFramesByThread(getId()) == 0)
+//   if (Frame::getVisibleFramesByThread(getId()) == 0)
+  if (!hasFrames())
     return;
 
   // message loop
@@ -225,14 +228,14 @@ void Thread::doMessageLoop()
  */
 void Thread::doMessageLoopFor(Widget *widget)
 {
-  VACA_ASSERT(getId() == Thread::getCurrentId());
+  assert(getId() == Thread::getCurrentId());
 
   // get widget HWND
-  HWND hwnd = widget->getHwnd();
-  VACA_ASSERT(hwnd != NULL);
+  HWND hwnd = widget->getHWND();
+  assert(hwnd != NULL);
 
   // get parent HWND
-  HWND hparent = widget->getParentHwnd();
+  HWND hparent = widget->getParentHWND();
 
   // disable the parent HWND
   if (hparent != NULL)
@@ -287,7 +290,7 @@ void Thread::processMessage(MSG &msg)
     // because it returns windows from other applications
     HWND hactive = GetActiveWindow();
     if (hactive != NULL && hactive != msg.hwnd) {
-      Widget *activeWidget = Widget::fromHwnd(hactive);
+      Widget *activeWidget = Widget::fromHWND(hactive);
       if (activeWidget->preTranslateMessage(msg))
 	return;
     }
@@ -302,13 +305,13 @@ void Thread::processMessage(MSG &msg)
 
 /**
  * Pretranslates the message. The main function is to retrieve the
- * Widget pointer (using Widget::fromHwnd()) and then (if it isn't
+ * Widget pointer (using Widget::fromHWND()) and then (if it isn't
  * NULL), call its Widget::preTranslateMessage().
  */
 bool Thread::preTranslateMessage(MSG &msg)
 {
   if (msg.hwnd != NULL) {
-    Widget *widget = Widget::fromHwnd(msg.hwnd);
+    Widget *widget = Widget::fromHWND(msg.hwnd);
 
     // with WinXP there is a "CicMarshalWndClass" that sends messages
     // to the application, I really don't why, and what is that window,
@@ -326,3 +329,19 @@ bool Thread::preTranslateMessage(MSG &msg)
 
   return false;
 }
+
+bool Thread::hasFrames()
+{
+  return mFrameCount > 0;
+}
+
+void Thread::addFrame()
+{
+  ++mFrameCount;
+}
+
+void Thread::removeFrame()
+{
+  --mFrameCount;
+}
+

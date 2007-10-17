@@ -46,7 +46,7 @@ namespace Vaca {
  */
 class VACA_DLL Layout
 {
-  HDWP mHdwp;
+  HDWP mHDWP;
   Widget::Container mRelayoutWidgets;
 
 public:

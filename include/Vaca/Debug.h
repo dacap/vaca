@@ -34,13 +34,18 @@
 
 #include "Vaca/base.h"
 
+#include <assert.h>
+
 namespace Vaca {
 
 #ifdef NDEBUG
-#  define VACA_ASSERT(expr)    ((void)0)
-#  define VACA_TRACE(msg)      1 ? (void)0 : __vaca_trace
+// #  define VACA_TRACE(msg...)   1 ? (void)0 : __vaca_trace
+#  ifdef __GNUC__
+#    define VACA_TRACE(msg...)   
+#  else
+#    define VACA_TRACE(...)
+#  endif
 #else
-#  define VACA_ASSERT(expr)    ((expr) ? (void)0: Vaca::__vaca_assert(__FILE__, __LINE__, #expr))
 #  ifdef __GNUC__
 #    define VACA_TRACE(msg...) Vaca::__vaca_trace(__FILE__, __LINE__, msg)
 #  else
@@ -48,7 +53,6 @@ namespace Vaca {
 #  endif
 #endif
 
-void VACA_DLL __vaca_assert(LPCSTR filename, UINT line, LPCSTR expr);
 void VACA_DLL __vaca_trace(LPCSTR filename, UINT line, LPCSTR msg, ...);
 
 // dirty trick for others compilers that doesn't support macros with ellipsis (...)

@@ -84,6 +84,11 @@ public:
    */
   static LPCTSTR getClassName() { return _T("Vaca.Widget"); }
 
+  /**
+   * All Widgets by default received double-clicks, so it returns
+   * CS_DBLCLKS.
+   * 
+   */
   static int getStyle() { return CS_DBLCLKS; }
 
   static int getColor() { return COLOR_3DFACE; }

@@ -97,6 +97,7 @@ class VACA_DLL Label : public Widget
 public:
 
   Label(const String &text, Widget *parent, Style style = LabelStyle);
+  virtual ~Label();
 
   virtual TextAlign getTextAlign();
   virtual void setTextAlign(TextAlign align);
@@ -105,6 +106,9 @@ public:
   virtual Size preferredSize(const Size &fitIn);
 
 protected:
+  
+  bool useWordWrap();
+  int getFlagsForDrawString();
 
   virtual void onResize(const Size &sz);
 

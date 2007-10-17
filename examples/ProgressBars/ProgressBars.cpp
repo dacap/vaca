@@ -33,15 +33,25 @@
 
 using namespace Vaca;
 
+// To control a progress bar that can be paused, it's a little tricky:
+// We need a state-machine and to use a custom loop (see "The Loop"
+// below) to pump the message queue while we do the "real work"
 class MainFrame : public Dialog
 {
-  ProgressBar mProgressBar1;
-  ProgressBar mProgressBar2;
+  // possible states
+  enum State {
+    WaitingToWork,
+    Working,
+    Paused,
+    WorkDone,
+    Aborting
+  };
+
+  ProgressBar mProgressBar1;	// normal progress bar
+  ProgressBar mProgressBar2;	// smooth progress bar
   Button mStart;
   Button mClose;
-  bool mWorking;
-  bool mBreak;
-  bool mClosing;
+  State mState;			// current state
 
 public:
 
@@ -69,8 +79,9 @@ public:
     // message that is converted to the "onClose" event
     mClose.Action.connect(Bind(&MainFrame::defaultCancelAction, this));
 
-    // the application is not working now
-    mWorking = false;
+    // the application is waiting to work (the user should press the
+    // "Start" button)
+    mState = WaitingToWork;
 
     // set the size of the Frame
     setSize(Size(256, preferredSize().h));
@@ -79,96 +90,101 @@ public:
 
 protected:
 
-  // when the "Start" button is pressed...
+  // when the "Start/Pause/Continue/Restart" button is pressed...
   void onStart()
   {
-    // the work is done? the user press the "Restart" button
-    if (mProgressBar1.getPosition() == mProgressBar1.getMaximum()) {
-      mProgressBar1.setPosition(mProgressBar1.getMinimum());
-      mProgressBar2.setPosition(mProgressBar2.getMinimum());
-      mStart.setText("Start");
-      mWorking = false;
-      return;
-    }
+    switch (mState) {
 
-    // we are working...
-    if (mWorking) {
-      // the user press "Pause"?
-      if (mBreak == false) {
-	mBreak = true;
-	return;
-      }
-      // the user press "Continue"...
-      else {
-	// do nothing
-      }
-    }
-    else {
-      // ...the user really press "Start" button
-      mWorking = true;
-    }
+      case WaitingToWork:
+      case Paused:
+	mState = Working;
+	mStart.setText("Pause"); // convert the button to "Pause"...
 
-    mBreak = false;
-    mClosing = false;
+	// this is "The Loop", where the real work is done
+	do {
+	  // when we pump the message queue, we can get events like onClose()
+	  Thread::getCurrent()->pumpMessageQueue();
 
-    // convert the button to "Pause"...
-    mStart.setText("Pause");
+	  // work done
+	  if (mProgressBar1.getValue() == mProgressBar1.getMaximum()) {
+	    mState = WorkDone;
+	    mStart.setText("Restart"); // convert the button to "Restart"
+	  }
+	  else {
+	    mProgressBar1.addValue(1);
+	    mProgressBar2.addValue(1);
 
-    do {
-      Thread::getCurrent()->pumpMessageQueue();
+	    // in our case, the "real work" is sleep :) ...but for
+	    // your application this could be "loading a file"...
+	    Sleep(10);
+	  }
 
-      if (mClosing) {
-	dispose();
-	return;
-      }
-      
-      if (mBreak)
+	  // still working?
+	} while (mState == Working);
+	// aborting work? dispose the frame...
+	if (mState == Aborting)
+	  dispose();
 	break;
 
-      mProgressBar1.advancePosition(1);
-      mProgressBar2.advancePosition(1);
-      Sleep(10);
+      case Working:
+	mState = Paused;
+	mStart.setText("Continue"); // convert the button to "Continue"
+	break;
 
-      // we don't finish?
-    } while (mProgressBar1.getPosition() < mProgressBar1.getMaximum());
+      // the work is done? the user press the "Restart" button
+      case WorkDone:
+	// restart progress bars
+	mProgressBar1.setValue(mProgressBar1.getMinimum());
+	mProgressBar2.setValue(mProgressBar2.getMinimum());
+	mStart.setText("Start"); // convert the button to "Start"
+	mState = WaitingToWork;
+	break;
 
-    if (mBreak) {
-      // convert the button to "Continue"
-      mStart.setText("Continue");
+      case Aborting:
+	assert(false);		// impossible
+	break;
     }
-    else {
-      // convert the button to "Restart"
-      mStart.setText("Restart");
-      mWorking = false;
-    }
-  }
-
-  void onCancel()
-  {
-    mBreak = true;
   }
 
   virtual void onClose(CloseEvent &ev)
   {
-    if (mWorking) {
+    // work in progress? (we are in "The Loop")
+    if (mState == Working) {
+      // display a warning message
       if (msgBox("The application is working.\r\n"
-		 "Do you really want to stop it?",
+		 "Do you really want to close it?",
 		 "Warning",
 		 MB_YESNO | MB_ICONWARNING | MB_DEFBUTTON2) == IDYES) {
-	// the user really want to close the window
-	mClosing = true;
+	// the user really want to close the window, abort the work
+	mState = Aborting;
       }
-      else {
-	// cancel the close event, don't dispose the Frame
-	ev.cancel();
-      }
+
+      // cancel the close event, don't hide the Dialog
+      ev.cancel();
     }
-    // close the Dialog...
+    // need more time?
+    else if (mState == Paused) {
+      // display a warning message
+      if (msgBox("The application is paused, but doesn't finish its work.\r\n"
+		 "Do you really want to close it?",
+		 "Warning",
+		 MB_YESNO | MB_ICONWARNING | MB_DEFBUTTON2) == IDYES) {
+	// the dialog implementation just hide the window
+	Dialog::onClose(ev);
+
+	// so we should dispose the Frame
+	dispose();
+      }
+      else
+	// cancel the close event, don't hide the Dialog
+	ev.cancel();
+    }
+    // the work is done (or never start), close the Dialog...
     else {
       // the dialog implementation just hide the window
       Dialog::onClose(ev);
 
-      // now we can dispose the Frame
+      // so we should dispose the Frame
       dispose();
     }
   }

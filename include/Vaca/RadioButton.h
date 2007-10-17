@@ -70,12 +70,13 @@ public:
 	      const RadioGroup &group,
 	      Widget *parent,
 	      Style style = RadioButtonStyle);
+  virtual ~RadioButton();
 
   const RadioGroup &getRadioGroup() const;
 
 protected:
   // reflection
-  virtual bool onCommand(int commandCode, LRESULT &lResult);
+  virtual bool onCommand(int id, int code, LRESULT &lResult);
 };
 
 } // namespace Vaca

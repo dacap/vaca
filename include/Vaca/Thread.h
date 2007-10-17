@@ -77,13 +77,14 @@ class Widget;
 class VACA_DLL Thread : private boost::noncopyable
 {
   bool mJoinable;
-  HANDLE mHthread;
+  HANDLE mHANDLE;
   DWORD mId;
+  int mFrameCount;
 
 public:
 
   Thread(bool useCurrent = false);
-  ~Thread();
+  virtual ~Thread();
 
   int getId();
 
@@ -112,6 +113,10 @@ public:
   virtual void doMessageLoopFor(Widget *widget);
 
   virtual void pumpMessageQueue();
+
+  bool hasFrames();
+  void addFrame();
+  void removeFrame();
 
 protected:
 

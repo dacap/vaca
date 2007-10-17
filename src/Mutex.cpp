@@ -47,7 +47,7 @@ Mutex::Mutex(bool multiProcess, LPCTSTR mutexName)
   
   if (mCriticalSection) {
     // critical sections can't have a name
-    VACA_ASSERT(mutexName == NULL);
+    assert(mutexName == NULL);
 
     mData = new CRITICAL_SECTION;
     InitializeCriticalSection(reinterpret_cast<LPCRITICAL_SECTION>(mData));

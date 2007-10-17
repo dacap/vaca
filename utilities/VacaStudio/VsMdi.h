@@ -39,6 +39,9 @@ using namespace Vaca;
 // "Vs" = "Vaca Studio"
 class VsMdi : public Panel
 {
+  std::vector<String> mTabText;
+  int mSelectedTab;
+
 public:
 
   VsMdi(Widget *parent);

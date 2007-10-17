@@ -33,7 +33,7 @@
 #include "XmlException.h"
 #include "XmlStream.h"
 
-// XmlRawParser::XmlRawParser(const Vaca::String &fileName)
+// XmlRawParser::XmlRawParser(const String &fileName)
 //   : mFileName(fileName)
 XmlRawParser::XmlRawParser(XmlStream *stream)
   : mStream(stream)
@@ -58,7 +58,7 @@ XmlRawParser::~XmlRawParser()
 }
 
 // return the text inside the next tag (the text inside the <...>)
-Vaca::String XmlRawParser::nextTag()
+String XmlRawParser::nextTag()
 {
   for (; currentChar() != 0; // end of buffer
        forwardChar(1, false)) { // advance one character in buffer
@@ -77,7 +77,7 @@ Vaca::String XmlRawParser::nextTag()
 	forwardChar(3, true); // done, we finish to jump the comment
       }
       else {
-	Vaca::String tag;
+	String tag;
 
 	while (currentChar() != '>') { // until the end of tag
 	  tag.push_back(currentChar()); // add this character
@@ -90,14 +90,36 @@ Vaca::String XmlRawParser::nextTag()
       }
     }
     else {
-      // generate event
+      // entity?
+      if (currentChar() == '&') {
+	String entity;
+	int line = mCurrentLine;
+	
+	for (;;) {
+	  entity.push_back(currentChar());
+	  forwardChar(1, true);
+
+	  if (currentChar() != ';')
+	    break;
+
+	  if (line != mCurrentLine || !isEntityChar(currentChar())) {
+	    mCurrentLine = line;
+	    throw XmlException("Invalid entity \""+entity+"\"");
+	  }
+	}
+
+	for (String::iterator
+	       it = entity.begin(); it != entity.end(); ++it)
+	  onTextOutside(*it);
+      }
+
       onTextOutside(currentChar());
     }
   }
-  return Vaca::String("");
+  return String("");
 }
 
-Vaca::String XmlRawParser::getFileName()
+String XmlRawParser::getFileName()
 {
 //   return mFileName;
   return mStream->getName();
@@ -170,7 +192,15 @@ bool XmlRawParser::readLine(int offset)
   return res;
 }
 
-void XmlRawParser::onTextOutside(int character)
+bool XmlRawParser::isEntityChar(int ch)
+{
+  return ((ch == '#') ||
+	  (ch >= 'a' && ch <= 'z') ||
+	  (ch >= 'A' && ch <= 'Z') ||
+	  (ch >= '0' && ch <= '9'));
+}
+
+void XmlRawParser::onTextOutside(int ch)
 {
   // do nothing
 }

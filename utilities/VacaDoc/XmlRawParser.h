@@ -32,10 +32,12 @@
 #ifndef VACA_XMLRAWPARSER_H
 #define VACA_XMLRAWPARSER_H
 
-class XmlStream;
-
-// #include <stdio.h>
 #include "Vaca/String.h"
+
+using namespace std;
+using namespace Vaca;
+
+class XmlStream;
 
 // Basic XML parser, it doesn't know XmlNode class, it just reports the
 // text inside tags, and text outside tags
@@ -43,19 +45,19 @@ class XmlRawParser
 {
   XmlStream *mStream;
 //   FILE *mFile;
-//   Vaca::String mFileName;
+//   String mFileName;
   char mBuf[256];
   int mPos;
   int mCurrentLine;
   
 public:
 
-//   XmlRawParser(const Vaca::String &fileName);
+//   XmlRawParser(const String &fileName);
   XmlRawParser(XmlStream *stream);
   virtual ~XmlRawParser();
 
-  Vaca::String nextTag();
-  Vaca::String getFileName();
+  String nextTag();
+  String getFileName();
   int getCurrentLine();
 
 private:
@@ -64,11 +66,12 @@ private:
   void forwardChar(int howMany, bool needed);
   bool areNextBytes(const char *string);
   bool readLine(int offset = 0);
+  bool isEntityChar(int ch);
 
 protected:
   
   // events
-  virtual void onTextOutside(int character);
+  virtual void onTextOutside(int ch);
   
 };
 

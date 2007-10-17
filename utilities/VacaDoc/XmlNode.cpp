@@ -29,13 +29,14 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
+#include <algorithm>
 #include <ctype.h>
 #include "XmlNode.h"
 #include "XmlAttribute.h"
 #include "XmlException.h"
 #include "XmlString.h"
 
-XmlNode::XmlNode(const Vaca::String &name)
+XmlNode::XmlNode(const String &name)
   : mName(name)
   , mParent(NULL)
 {
@@ -43,25 +44,25 @@ XmlNode::XmlNode(const Vaca::String &name)
 
 XmlNode::~XmlNode()
 {
-  for (std::list<XmlType *>::iterator it=mTypeString.begin();
+  for (list<XmlType *>::iterator it=mTypeString.begin();
        it!=mTypeString.end(); ++it)
     if ((*it)->isString())
       delete *it;
   
-  for (std::list<XmlNode *>::iterator it=mChildren.begin();
+  for (list<XmlNode *>::iterator it=mChildren.begin();
        it!=mChildren.end(); ++it)
     delete *it;
 
-  for (std::list<XmlAttribute *>::iterator it=mAttributes.begin();
+  for (list<XmlAttribute *>::iterator it=mAttributes.begin();
        it!=mAttributes.end(); ++it)
     delete *it;
 }
 
-Vaca::String XmlNode::getText()
+String XmlNode::getText()
 {
-  Vaca::String res;
+  String res;
 
-  for (std::list<XmlType *>::iterator it=mTypeString.begin();
+  for (list<XmlType *>::iterator it=mTypeString.begin();
        it!=mTypeString.end(); ++it) {
     // XmlString
     if ((*it)->isString()) {
@@ -70,9 +71,9 @@ Vaca::String XmlNode::getText()
 //     // XmlNode
 //     else if ((*it)->isNode()) {
 //       XmlNode *node = (*it)->getNode();
-//       std::list<XmlAttribute *> attributes = node->getAttributes();
+//       list<XmlAttribute *> attributes = node->getAttributes();
 //       res += "<" + node->getName();
-//       for (std::list<XmlAttribute *>::iterator it=attributes.begin();
+//       for (list<XmlAttribute *>::iterator it=attributes.begin();
 // 	   it!=attributes.end(); ++it) {
 // 	res += " " + (*it)->getName() + "=\"" + (*it)->getValue() + "\"";
 //       }
@@ -85,7 +86,7 @@ Vaca::String XmlNode::getText()
   return res;
 }
 
-Vaca::String XmlNode::getName()
+String XmlNode::getName()
 {
   return mName;
 }
@@ -98,9 +99,9 @@ XmlNode *XmlNode::getParent()
 void XmlNode::addChar(int character)
 {
   if (!mTypeString.empty()) {
-    XmlType *back = mTypeString.back();
-    if (back->isString()) {
-      (static_cast<XmlString *>(back))->addChar(character);
+    XmlString *back = dynamic_cast<XmlString *>(mTypeString.back());
+    if (back != NULL) {
+      back->addChar(character);
       return;
     }
   }
@@ -123,24 +124,24 @@ void XmlNode::addAttribute(XmlAttribute *attribute)
   mAttributes.push_back(attribute);
 }
 
-std::list<XmlNode *> XmlNode::getChildren()
+list<XmlNode *> XmlNode::getChildren()
 {
   return mChildren;
 }
 
-std::list<XmlAttribute *> XmlNode::getAttributes()
+list<XmlAttribute *> XmlNode::getAttributes()
 {
   return mAttributes;
 }
 
-std::list<XmlType *> XmlNode::getTypeString()
+list<XmlType *> XmlNode::getTypeString()
 {
   return mTypeString;
 }
   
-XmlNode *XmlNode::getChild(const Vaca::String &name)
+XmlNode *XmlNode::getChild(const String &name)
 {
-  std::list<XmlNode *>::iterator it;
+  list<XmlNode *>::iterator it;
   for (it = mChildren.begin(); it != mChildren.end(); ++it) {
     if ((*it)->getName() == name)
       return *it;
@@ -148,9 +149,9 @@ XmlNode *XmlNode::getChild(const Vaca::String &name)
   return NULL;
 }
 
-XmlAttribute *XmlNode::getAttribute(const Vaca::String &name)
+XmlAttribute *XmlNode::getAttribute(const String &name)
 {
-  std::list<XmlAttribute *>::iterator it;
+  list<XmlAttribute *>::iterator it;
   for (it = mAttributes.begin(); it != mAttributes.end(); ++it) {
     if ((*it)->getName() == name)
       return *it;
@@ -158,7 +159,7 @@ XmlAttribute *XmlNode::getAttribute(const Vaca::String &name)
   return NULL;
 }
 
-Vaca::String XmlNode::getAttributeValue(const Vaca::String &name)
+String XmlNode::getAttributeValue(const String &name)
 {
   XmlAttribute *attrib = getAttribute(name);
   if (attrib != NULL)
@@ -167,7 +168,7 @@ Vaca::String XmlNode::getAttributeValue(const Vaca::String &name)
     return "";
 }
 
-void XmlNode::setAttributeValue(const Vaca::String &name, const Vaca::String &value)
+void XmlNode::setAttributeValue(const String &name, const String &value)
 {
   XmlAttribute *attrib = getAttribute(name);
   if (attrib != NULL)

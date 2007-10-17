@@ -34,6 +34,31 @@
 
 using namespace Vaca;
 
+//////////////////////////////////////////////////////////////////////
+
+class Console : public MultilineEdit
+{
+  Font mFont;
+  
+public:
+
+  Console(Widget *parent)
+    : MultilineEdit("", parent, MultilineEditStyle + ScrollStyle)
+    , mFont("Verdana", 10)
+  {
+    setFont(mFont);
+  }
+
+  void println(const String &str)
+  {
+    setText(getText() + str + "\r\n");
+    scrollLines(getLineCount());
+  }
+  
+};
+
+//////////////////////////////////////////////////////////////////////
+
 class MainFrame : public Frame
 {
   ToolBar mToolBar1;
@@ -44,7 +69,7 @@ class MainFrame : public Frame
   Button mButton2;
   Button mButton3;
   ImageList mImageList;
-  MultilineEdit mEdit;
+  Console mConsole;
   Panel mBottomPanel;
   Button mButton4;
   ToggleButton mButton5;
@@ -62,17 +87,17 @@ public:
     , mButton2("Setup basic dock areas (BasicDockArea)", &mDockBar)
     , mButton3("Clear all dock areas", &mDockBar)
     , mImageList(IDB_TOOLBAR, 16, Color(192, 192, 192))
-    , mEdit("", this, MultilineEditStyle + ScrollStyle)
+    , mConsole(this)
     , mBottomPanel(this)
     , mButton4("Show all dock bars", &mBottomPanel)
     , mButton5("Full Drag mode", &mBottomPanel)
     , mButton6("Floating Gripper mode", &mBottomPanel)
   {
     setLayout(new BoxLayout(Vertical, false));
-    mEdit.setConstraint(new BoxConstraint(true));
+    mConsole.setConstraint(new BoxConstraint(true));
     mBottomPanel.setLayout(new BoxLayout(Horizontal, true, 0));
 
-    mToolBar1.getSet().setImageList(&mImageList);
+    mToolBar1.getSet().setImageList(mImageList);
     mToolBar1.getSet().addButton(0, 1000, TBSTATE_ENABLED);
     mToolBar1.getSet().addButton(1, 1001, TBSTATE_ENABLED);
     mToolBar1.getSet().addButton(2, 1002, TBSTATE_ENABLED);
@@ -81,7 +106,7 @@ public:
     mToolBar1.getSet().addButton(4, 1004, TBSTATE_ENABLED);
     mToolBar1.getSet().addButton(5, 1005, TBSTATE_ENABLED);
 
-    mToolBar2.getSet().setImageList(&mImageList);
+    mToolBar2.getSet().setImageList(mImageList);
     mToolBar2.getSet().addButton(2, 1002, TBSTATE_ENABLED);
     mToolBar2.getSet().addToggleButton(2, 1002, TBSTATE_ENABLED);
     mToolBar2.getSet().addToggleButton(2, 1002, 0);
@@ -90,7 +115,7 @@ public:
     mToolBar2.getSet().addToggleButton(2, 1002, TBSTATE_ENABLED | TBSTATE_INDETERMINATE);
     mToolBar2.getSet().addToggleButton(2, 1002, TBSTATE_ENABLED | TBSTATE_MARKED);
 
-    mToolBar3.getSet().setImageList(&mImageList);
+    mToolBar3.getSet().setImageList(mImageList);
     mToolBar3.getSet().addButton(2, 1002, TBSTATE_ENABLED);
     mToolBar3.getSet().addDropDownButton(2, 1002, TBSTATE_ENABLED);
     mToolBar3.getSet().addWholeDropDownButton(2, 1002, TBSTATE_ENABLED);
@@ -109,29 +134,29 @@ public:
     Point origin = getAbsoluteClientBounds().getOrigin();
     Size size = getAbsoluteClientBounds().getSize();
 
-    Size size1 = mToolBar1.getDockFrame().preferredSize();
-    mToolBar1.getDockFrame().setBounds(Rect(origin.x+size.w-size1.w,
-					    origin.y,
-					    size1.w,
-					    size1.h));
+    Size size1 = mToolBar1.getDockFrame()->preferredSize();
+    mToolBar1.getDockFrame()->setBounds(Rect(origin.x+size.w-size1.w,
+					     origin.y,
+					     size1.w,
+					     size1.h));
 
-    Size size2 = mToolBar2.getDockFrame().preferredSize();
-    mToolBar2.getDockFrame().setBounds(Rect(origin.x+size.w-size2.w,
-					    origin.y+size1.h,
-					    size2.w,
-					    size2.h));
+    Size size2 = mToolBar2.getDockFrame()->preferredSize();
+    mToolBar2.getDockFrame()->setBounds(Rect(origin.x+size.w-size2.w,
+					     origin.y+size1.h,
+					     size2.w,
+					     size2.h));
 
-    Size size3 = mToolBar3.getDockFrame().preferredSize();
-    mToolBar3.getDockFrame().setBounds(Rect(origin.x+size.w-size3.w,
-					    origin.y+size1.h+size2.h,
-					    size3.w,
-					    size3.h));
+    Size size3 = mToolBar3.getDockFrame()->preferredSize();
+    mToolBar3.getDockFrame()->setBounds(Rect(origin.x+size.w-size3.w,
+					     origin.y+size1.h+size2.h,
+					     size3.w,
+					     size3.h));
 
-    Size size4 = mDockBar.getDockFrame().preferredSize();
-    mDockBar.getDockFrame().setBounds(Rect(origin.x+size.w-size4.w,
-					   origin.y+size1.h+size2.h+size3.h,
-					   size4.w,
-					   size4.h));
+    Size size4 = mDockBar.getDockFrame()->preferredSize();
+    mDockBar.getDockFrame()->setBounds(Rect(origin.x+size.w-size4.w,
+					    origin.y+size1.h+size2.h+size3.h,
+					    size4.w,
+					    size4.h));
 
     // actions
     mButton1.Action.connect(Bind(&MainFrame::onDefaultDockAreas, this));
@@ -144,15 +169,15 @@ public:
     // TODO when floating-gripper works, we can comment this line
     mButton6.setEnabled(false);
 
-    println("You must to setup dock areas to dock the tool bars");
+    mConsole.println("You must to setup dock areas to dock the tool bars");
   }
 
 protected:
 
-  virtual void onGotFocus(WidgetEvent &ev)
+  virtual void onGotFocus(Event &ev)
   {
     Frame::onGotFocus(ev);
-    mEdit.focus();
+    mConsole.focus();
   }
 
 private:
@@ -162,7 +187,7 @@ private:
     defaultDockAreas();
     layout();
 
-    println("Try to dock the tool bars in the new default (banded) dock areas");
+    mConsole.println("Try to dock the tool bars in the new default (banded) dock areas");
   }
 
   void onBasicDockAreas()
@@ -174,7 +199,7 @@ private:
     addDockArea(new BasicDockArea(RightSide,  this));
     layout();
 
-    println("Try to dock the tool bars in the new basic dock areas");
+    mConsole.println("Try to dock the tool bars in the new basic dock areas");
   }
 
   void onClearDockAreas()
@@ -182,7 +207,7 @@ private:
     clearDockAreas();
     layout();
 
-    println("All dock bars were cleared, right now you can't dock the bars");
+    mConsole.println("All dock bars were cleared, right now you can't dock the bars");
   }
 
   void onShowAll()
@@ -192,7 +217,7 @@ private:
     mToolBar3.setVisible(true);
     mDockBar.setVisible(true);
 
-    println("Show all dock bars");
+    mConsole.println("Show all dock bars");
   }
 
   void onToggleFullDrag()
@@ -204,7 +229,7 @@ private:
     mToolBar3.setFullDrag(state);
     mDockBar.setFullDrag(state);
 
-    println(String("Full Drag mode ") + (state ? "enabled": "disabled"));
+    mConsole.println(String("Full Drag mode ") + (state ? "enabled": "disabled"));
   }
 
   void onToggleFloatingGripper()
@@ -216,12 +241,7 @@ private:
     mToolBar3.setFloatingGripper(state);
     mDockBar.setFloatingGripper(state);
 
-    println(String("Floating Gripper mode ") + (state ? "enabled": "disabled"));
-  }
-
-  void println(const String &text)
-  {
-    mEdit.setText(mEdit.getText()+text+"\r\n");
+    mConsole.println(String("Floating Gripper mode ") + (state ? "enabled": "disabled"));
   }
 
 };

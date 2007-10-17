@@ -46,7 +46,10 @@ namespace Vaca {
 				       TVS_HASLINES | TVS_SHOWSELALWAYS | \
 				       TVS_EDITLABELS, 0))
 
+#define EditLabelTreeViewStyle	(Style(TVS_EDITLABELS, 0))
+
 class TreeViewEvent;
+class ImageList;
 
 /**
  * Handles a TreeView control.  A TreeView (internally) has a root
@@ -54,11 +57,20 @@ class TreeViewEvent;
  */
 class VACA_DLL TreeView : public Widget 
 {
+  friend class TreeNode;
+  
   TreeNode mRoot;
+  String mTmpBuffer; // to use LPSTR_TEXTCALLBACK we need some space
+		     // to allocate text temporally
 
 public:
 
   TreeView(Widget *parent, Style style = TreeViewStyle);
+  virtual ~TreeView();
+
+  void setImageList(ImageList &imageList, int type);
+  void setNormalImageList(ImageList &imageList);
+  void setStateImageList(ImageList &imageList);
 
   void addNode(TreeNode *node);
 //   void insertNode(TreeNode *node);
@@ -77,11 +89,11 @@ public:
   boost::signal<void (TreeViewEvent &)> BeforeExpand;
   boost::signal<void (TreeViewEvent &)> BeforeCollapse;
   boost::signal<void (TreeViewEvent &)> BeforeSelect;
+  boost::signal<void (TreeViewEvent &)> BeforeLabelEdit;
   boost::signal<void (TreeViewEvent &)> AfterExpand;
   boost::signal<void (TreeViewEvent &)> AfterCollapse;
   boost::signal<void (TreeViewEvent &)> AfterSelect;
-//   boost::signal<void (TreeViewEvent &)> BeforeLabelEdit;
-//   boost::signal<void (TreeViewEvent &)> AfterLabelEdit;
+  boost::signal<void (TreeViewEvent &)> AfterLabelEdit;
 //   boost::signal<void (TreeViewEvent &)> BeginDrag;
 //   boost::signal<void (TreeViewEvent &)> EndDrag;
 
@@ -90,11 +102,11 @@ protected:
   virtual void onBeforeExpand(TreeViewEvent &ev);
   virtual void onBeforeCollapse(TreeViewEvent &ev);
   virtual void onBeforeSelect(TreeViewEvent &ev);
+  virtual void onBeforeLabelEdit(TreeViewEvent &ev);
   virtual void onAfterExpand(TreeViewEvent &ev);
   virtual void onAfterCollapse(TreeViewEvent &ev);
   virtual void onAfterSelect(TreeViewEvent &ev);
-//   virtual void onBeforeLabelEdit(TreeViewEvent &ev);
-//   virtual void onAfterLabelEdit(TreeViewEvent &ev);
+  virtual void onAfterLabelEdit(TreeViewEvent &ev);
 //   virtual void onBeginDrag(TreeViewEvent &ev);
 //   virtual void onEndDrag(TreeViewEvent &ev);
 

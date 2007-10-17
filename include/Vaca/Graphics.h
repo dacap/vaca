@@ -37,12 +37,16 @@
 #include "Vaca/Color.h"
 #include "Vaca/String.h"
 
+#include <list>
 #include <boost/noncopyable.hpp>
 
 namespace Vaca {
 
+class Application;
 class Font;
 class Image;
+class ImageList;
+class Region;
 class Widget;
 
 /**
@@ -50,9 +54,37 @@ class Widget;
  */
 class VACA_DLL Graphics : private boost::noncopyable
 {
-  HDC mHdc;
-  bool mRelease : 1;
-  bool mDelete : 1;
+
+  friend class Application;
+
+  struct Pen
+  {
+    HPEN handle;
+    int style;
+    int width;
+    COLORREF color;
+
+    Pen(int style, int width, COLORREF color);
+    ~Pen();
+  };
+
+  struct Brush
+  {
+    HBRUSH handle;
+    int style;
+    int hatch;
+    COLORREF color;
+
+    Brush(int style, int hatch, COLORREF color);
+    ~Brush();
+  };
+
+  static std::list<Pen *> mPens;
+  static std::list<Brush *> mBrushes;
+
+  HDC mHDC;
+  bool mAutoRelease : 1;
+  bool mAutoDelete : 1;
   bool mNoPaint : 1;
   Color mColor;
   Font *mFont;
@@ -60,7 +92,7 @@ class VACA_DLL Graphics : private boost::noncopyable
 
 protected:
   
-  Graphics();
+  Graphics();			// accessible through ScreenGraphics
 
 public:
 
@@ -103,15 +135,17 @@ public:
   void lineTo(int x, int y);
 
   void beginPath();
-  void closePath();
-  void stroke();
-  void fill();
-  // void strokeAndFill();
+  void endPath();
+  void strokePath();
+  void fillPath();
+  // void strokeAndFillPath();
   // void quadTo(int x1, int y1, int x2, int y2);
   // void curveTo(int x1, int y1, int x2, int y2, int x3, int y3);
 
   void drawString(const String &str, const Point &pt);
   void drawString(const String &str, int x, int y);
+  void drawString(const String &str, const Rect &rc, int flags = DT_WORDBREAK);
+  void drawDisabledString(const String &str, const Rect &rc, int flags = DT_WORDBREAK);
 
   void drawImage(Image &image, int x, int y);
   void drawImage(Image &image, int dstX, int dstY, int srcX, int srcY, int width, int height);
@@ -121,6 +155,9 @@ public:
   void drawImage(Image &image, const Point &pt, const Rect &rc);
   void drawImage(Image &image, const Point &pt, Color bgColor);
   void drawImage(Image &image, const Point &pt, const Rect &rc, Color bgColor);
+
+  void drawImageList(ImageList &imageList, int imageIndex, int x, int y, int style);
+  void drawImageList(ImageList &imageList, int imageIndex, const Point &pt, int style);
 
   void drawLine(const Point &pt1, const Point &pt2);
   void drawLine(int x1, int y1, int x2, int y2);
@@ -145,6 +182,7 @@ public:
   void fillPie(int x, int y, int w, int h, double startAngle, double sweepAngle);
   void fillChord(const Rect &rc, double startAngle, double sweepAngle);
   void fillChord(int x, int y, int w, int h, double startAngle, double sweepAngle);
+  void fillRegion(const Region &rgn);
 
   void fillGradientRect(const Rect &rc, Color startColor, Color endColor, Orientation orientation);
   void fillGradientRect(int x, int y, int w, int h, Color startColor, Color endColor, Orientation orientation);
@@ -160,14 +198,22 @@ public:
   // SetROP2 wrapper
   void setRop2(int drawMode);
 
-  HDC getHdc();
+  HDC getHDC();
 
+  static HPEN findHPEN(int style, int width, COLORREF color);
+  static HBRUSH findHBRUSH(int style, int hatch, COLORREF color);
+
+private:
+  
+  static void deleteHandles();
+  
 };
 
 class VACA_DLL ScreenGraphics : public Graphics
 {
 public:
   ScreenGraphics();
+  virtual ~ScreenGraphics();
 };
 
 } // namespace Vaca

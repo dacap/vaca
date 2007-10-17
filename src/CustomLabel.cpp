@@ -41,6 +41,10 @@ CustomLabel::CustomLabel(const String &text, Widget *parent, Style style)
   mTextAlign = LeftAlign;
 }
 
+CustomLabel::~CustomLabel()
+{
+}
+
 TextAlign CustomLabel::getTextAlign()
 {
   return mTextAlign;
@@ -54,9 +58,7 @@ void CustomLabel::setTextAlign(TextAlign align)
 
 bool CustomLabel::onDrawItem(Graphics &g, LPDRAWITEMSTRUCT lpDrawItem)
 {
-  VACA_ASSERT(lpDrawItem->CtlType == ODT_STATIC);
+  assert(lpDrawItem->CtlType == ODT_STATIC);
 
-  onPaint(g);
-
-  return g.wasPainted();
+  return doPaint(g);
 }

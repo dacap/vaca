@@ -70,7 +70,7 @@ protected:
   
   void onSpinButtonChange(SpinButtonEvent &ev, Spinner *spinner)
   {
-    spinner->setPosition(spinner->getPosition() + ev.getDelta());
+    spinner->setValue(spinner->getValue() + ev.getDelta());
   }
 
 };

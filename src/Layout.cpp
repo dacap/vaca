@@ -37,25 +37,25 @@ using namespace Vaca;
 
 Layout::Layout()
 {
-  mHdwp = NULL;
+  mHDWP = NULL;
 }
 
 Layout::~Layout()
 {
-  VACA_ASSERT(mHdwp == NULL);
+  assert(mHDWP == NULL);
 }
 
 void Layout::beginMovement(const Widget::Container &widgets)
 {
-  mHdwp = BeginDeferWindowPos(widgets.size());
+  mHDWP = BeginDeferWindowPos(widgets.size());
 
   mRelayoutWidgets.clear();
 }
 
 void Layout::moveWidget(Widget *widget, const Rect &rc)
 {
-  if (mHdwp != NULL) {
-    mHdwp = DeferWindowPos(mHdwp, widget->getHwnd(), NULL,
+  if (mHDWP != NULL) {
+    mHDWP = DeferWindowPos(mHDWP, widget->getHWND(), NULL,
 			   rc.x, rc.y, rc.w, rc.h, 
 			   SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOACTIVATE);
   }
@@ -66,9 +66,9 @@ void Layout::moveWidget(Widget *widget, const Rect &rc)
 
 void Layout::endMovement()
 {
-  if (mHdwp != NULL) {
-    EndDeferWindowPos(mHdwp);
-    mHdwp = NULL;
+  if (mHDWP != NULL) {
+    EndDeferWindowPos(mHDWP);
+    mHDWP = NULL;
   }
 
   for (Widget::Container::iterator it=mRelayoutWidgets.begin();

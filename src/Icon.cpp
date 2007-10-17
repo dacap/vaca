@@ -33,6 +33,7 @@
 #include "Vaca/Icon.h"
 #include "Vaca/Application.h"
 #include "Vaca/Debug.h"
+#include "Vaca/ResourceException.h"
 
 using namespace Vaca;
 
@@ -42,7 +43,7 @@ using namespace Vaca;
 
 Icon::Icon()
 {
-  mHicon = NULL;
+  mHICON = NULL;
 }
 
 /**
@@ -50,14 +51,13 @@ Icon::Icon()
  */
 Icon::Icon(int iconId, const Size &sz)
 {
-  mHicon = reinterpret_cast<HICON>(LoadImage(Application::getHinstance(),
+  mHICON = reinterpret_cast<HICON>(LoadImage(Application::getHINSTANCE(),
 					     MAKEINTRESOURCE(iconId),
 					     IMAGE_ICON,
 					     sz.w, sz.h, 0));
 
-  // TODO throw an exception
-  if (mHicon == NULL)
-    Beep(400, 100);
+  if (mHICON == NULL)
+    throw ResourceException();
 }
 
 /**
@@ -65,30 +65,29 @@ Icon::Icon(int iconId, const Size &sz)
  */
 Icon::Icon(const String &fileName, const Size &sz)
 {
-  mHicon = reinterpret_cast<HICON>(LoadImage(Application::getHinstance(),
+  mHICON = reinterpret_cast<HICON>(LoadImage(Application::getHINSTANCE(),
 					     fileName.c_str(),
 					     IMAGE_ICON,
 					     sz.w, sz.h, LR_LOADFROMFILE));
 
-  // TODO throw an exception
-  if (mHicon == NULL)
-    Beep(400, 100);
+  if (mHICON == NULL)
+    throw ResourceException();
 }
 
 Icon::~Icon()
 {
-  if (mHicon != NULL)
-    DestroyIcon(mHicon);
+  if (mHICON != NULL)
+    DestroyIcon(mHICON);
 }
 
-HICON Icon::getHicon()
+HICON Icon::getHICON()
 {
-  return mHicon;
+  return mHICON;
 }
 
-void Icon::setHicon(HICON hicon)
+void Icon::setHICON(HICON hicon)
 {
-  mHicon = hicon;
+  mHICON = hicon;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -97,35 +96,33 @@ void Icon::setHicon(HICON hicon)
 
 SharedIcon::SharedIcon(int iconId, const Size &sz)
 {
-  HICON hicon = reinterpret_cast<HICON>(LoadImage(Application::getHinstance(),
+  HICON hicon = reinterpret_cast<HICON>(LoadImage(Application::getHINSTANCE(),
 						  MAKEINTRESOURCE(iconId),
 						  IMAGE_ICON,
 						  sz.w, sz.h, LR_SHARED));
 
-  // TODO hicon == NULL throw
   if (hicon == NULL)
-    Beep(400, 100);
+    throw ResourceException();
 
-  setHicon(hicon);
+  setHICON(hicon);
 }
 
 SharedIcon::SharedIcon(const String &fileName, const Size &sz)
 {
-  HICON hicon = reinterpret_cast<HICON>(LoadImage(Application::getHinstance(),
+  HICON hicon = reinterpret_cast<HICON>(LoadImage(Application::getHINSTANCE(),
 						  fileName.c_str(),
 						  IMAGE_ICON,
 						  sz.w, sz.h,
 						  LR_LOADFROMFILE | LR_SHARED));
 
-  // TODO hicon == NULL throw
   if (hicon == NULL)
-    Beep(400, 100);
+    throw ResourceException();
 
-  setHicon(hicon);
+  setHICON(hicon);
 }
 
 SharedIcon::~SharedIcon()
 {
-  // don't call DestroyIcon
-  setHicon(NULL);
+  // avoid to call DestroyIcon, this icon is shared
+  setHICON(NULL);
 }

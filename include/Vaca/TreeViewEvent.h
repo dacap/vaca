@@ -33,27 +33,31 @@
 #define VACA_TREEVIEWEVENT_H
 
 #include "Vaca/base.h"
-#include "Vaca/CancellableEvent.h"
+#include "Vaca/CancelableEvent.h"
+#include "Vaca/String.h"
 
 namespace Vaca {
 
+class TreeView;
+class TreeNode;
+
 /**
- * Event where interact a TreeNode.
+ * Event where interact a TreeView and TreeNode.
  */
-class TreeViewEvent : public CancellableEvent
+class VACA_DLL TreeViewEvent : public CancelableEvent
 {
   TreeNode *mTreeNode;
+  String mLabel;
 
 public:
 
-  TreeViewEvent(TreeView *treeView, TreeNode *treeNode)
-    : CancellableEvent(treeView)
-    , mTreeNode(treeNode)
-  {
-  }
+  TreeViewEvent(TreeView *treeView, TreeNode *treeNode, String label = "");
+  virtual ~TreeViewEvent();
 
-  TreeView *getTreeView() { return static_cast<TreeView *>(getWidget()); }
-  TreeNode *getTreeNode() { return mTreeNode; }
+  TreeView *getTreeView();
+  TreeNode *getTreeNode();
+
+  String getLabel();
 
 };
 

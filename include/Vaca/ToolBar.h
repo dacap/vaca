@@ -61,10 +61,12 @@ class ImageList;
 class VACA_DLL ToolSet : public Widget
 {
   std::vector<Size> mPreferredSizes;
+  HIMAGELIST mLoadedImageList;
 
 public:
 
   ToolSet(Widget *parent, Style style = ToolSetStyle);
+  virtual ~ToolSet();
 
   virtual Size preferredSize();
 //   virtual Size preferredSize(const Size &fitIn);
@@ -73,7 +75,8 @@ public:
   int getRows();
   Rect setRows(int rows, bool expand);
 
-  void setImageList(ImageList *imageList);
+  void setImageList(ImageList &imageList);
+  void loadStandardImageList(int imageListId = IDB_STD_SMALL_COLOR);
 
   void addButton(int imageIndex, int commandId, int buttonState);
   void addToggleButton(int imageIndex, int commandId, int buttonState);
@@ -86,13 +89,12 @@ public:
 
   int hitTest(const Point &pt);
 
-//   WidgetSignal Ldown;
-
   std::vector<Size> getPreferredSizes();
   void updatePreferredSizes();
 
 protected:
-//   virtual bool onCommand(int commandCode, LRESULT &lResult);
+  // reflection
+  virtual bool onCommand(int id, int code, LRESULT &lResult);
 //   virtual void onMouseDown(MouseEvent &ev);
   virtual bool wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult);
 
@@ -112,6 +114,7 @@ public:
   ToolBar(const String &title, Frame *parent,
 	  Style toolSetStyle = ToolSetStyle,
 	  Style style = ToolBarStyle);
+  virtual ~ToolBar();
 
   ToolSet &getSet();
 
@@ -120,6 +123,7 @@ public:
 
 protected:
   // events
+  virtual bool onIdAction(int id);
   virtual void onDocking();
   virtual void onFloating();
   virtual void onResizingFrame(DockFrame *frame, int edge, Rect &rc);

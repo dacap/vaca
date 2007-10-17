@@ -32,13 +32,13 @@
 #include "stdvaca.h"
 #include "Vaca/ButtonBase.h"
 #include "Vaca/Debug.h"
-#include "Vaca/WidgetEvent.h"
+#include "Vaca/Event.h"
 #include "Vaca/System.h"
 
 using namespace Vaca;
 
-ButtonBase::ButtonBase(LPCTSTR className, Widget *parent, Style style)
-  : Widget(className, parent, style)
+ButtonBase::ButtonBase(Widget *parent, Style style)
+  : Widget(WC_BUTTON, parent, style)
 {
 }
 
@@ -63,15 +63,11 @@ void ButtonBase::setSelected(bool state)
 #endif
 
 /**
- * Returns the preferred size for the button. It uses
- * Button_GetIdealSize on WinXP and only if the button is
- * BS_PUSHBUTTON, BS_DEFPUSHBUTTON or BS_PUSHLIKE. In other case, it
- * calculates the size obtaining more information from the system
- * (text, border, and check-box or radio-box size).
+ * Returns the preferred size for the button.
  */
 Size ButtonBase::preferredSize()
 {
-  VACA_ASSERT(getHwnd() != NULL);
+  assert(getHWND() != NULL);
 
   int style = getStyle().regular;
 
@@ -84,6 +80,7 @@ Size ButtonBase::preferredSize()
 
   SIZE size;
 
+#if 0				// TODO
   // Button_GetIdealSize only in WinXP
   if (pushLike &&
       (System::isWinXP()) &&
@@ -92,6 +89,7 @@ Size ButtonBase::preferredSize()
     return Size(&size);
   // ...well, we must to do this by hand...
   else {
+#endif
     // first of all, obtain the text's size
     Size textSize;
     {
@@ -127,7 +125,9 @@ Size ButtonBase::preferredSize()
     // maybe a BS_GROUPBOX...
     // just returns the size of the text
     return textSize;
+#if 0
   }
+#endif
 }
 
 /**
@@ -136,7 +136,7 @@ Size ButtonBase::preferredSize()
  * ToggleButton when the button-state is changed, and for RadioButton
  * when one option is selected.
  */
-void ButtonBase::onAction(WidgetEvent &ev)
+void ButtonBase::onAction(Event &ev)
 {
   Action(ev);
 }
@@ -144,20 +144,19 @@ void ButtonBase::onAction(WidgetEvent &ev)
 /**
  * Catchs BN_CLICKED to fire onAction event.
  */
-bool ButtonBase::onCommand(int commandCode, LRESULT &lResult)
+bool ButtonBase::onCommand(int id, int code, LRESULT &lResult)
 {
-  if (Widget::onCommand(commandCode, lResult))
+  if (Widget::onCommand(id, code, lResult))
     return true;
-  else {
-    switch (commandCode) {
 
-      case BN_CLICKED: {
-	WidgetEvent ev(this);
-	onAction(ev);
-	break;
-      }
+  switch (code) {
 
+    case BN_CLICKED: {
+      Event ev(this);
+      onAction(ev);
+      break;
     }
+
   }
   return false;
 }

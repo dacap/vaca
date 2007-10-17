@@ -59,8 +59,8 @@ private:
 
   static Font *defaultFont;
 
-  HFONT mHfont;
-  bool mDeletePtr;
+  HFONT mHFONT;
+  bool mAutoDelete;
 
 public:
 
@@ -86,7 +86,7 @@ public:
 
 //   FontMetrics getMetrics();
 
-  HFONT getHfont();
+  HFONT getHFONT();
   bool getLogFont(LPLOGFONT lplf) const;
 
 };

@@ -34,6 +34,10 @@
 
 using namespace Vaca;
 
+ClientLayout::ClientLayout()
+{
+}
+
 // Size ClientLayout::minimumSize(Widget *parent, Widget::Container &widgets)
 // {
 //   Size sz(0, 0);

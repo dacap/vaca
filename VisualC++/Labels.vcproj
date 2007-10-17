@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="Labels"
-	ProjectGUID="{D8A18BA7-0A1E-4F9F-94F3-C4120E1D264A}"
+	ProjectGUID="{FA25780B-3EC9-4E38-BA3C-10A215801F3A}"
 	RootNamespace="Labels"
 	Keyword="Win32Proj">
 	<Platforms>
@@ -36,7 +36,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(OutDir)/Labels.exe"
+				OutputFile="$(OutDir)/Example.Labels.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;C:\boost_1_33_1\bin\boost\libs\signals\build\libboost_signals.lib\vc-7_1\debug\runtime-link-static\threading-multi&quot;;&quot;C:\boost_1_33_1\bin\boost\libs\signals\build\libboost_signals.lib\vc-7_1\debug\runtime-link-static&quot;"
 				IgnoreDefaultLibraryNames="LIBCMTD.lib;LIBCD.lib"
@@ -76,6 +76,8 @@
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;SECURITY_WIN32;WINVER=0x0500;_WIN32_IE=0x0500;_WIN32_WINNT=0x0500"
 				RuntimeLibrary="4"
 				UsePrecompiledHeader="0"
+				PrecompiledHeaderThrough="stdvaca.h"
+				PrecompiledHeaderFile="$(IntDir)/vaca.pch"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
 				DebugInformationFormat="3"/>
@@ -83,7 +85,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(OutDir)/Labels.exe"
+				OutputFile="$(OutDir)/Example.Labels.exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="TRUE"
 				SubSystem="2"
@@ -136,8 +138,8 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ComCtl32.Lib Secur32.Lib MSImg32.Lib"
-				OutputFile="$(OutDir)/Labels.exe"
+				AdditionalDependencies="ComCtl32.Lib Secur32.Lib MSImg32.Lib ShLwApi.Lib"
+				OutputFile="$(OutDir)/Example.Labels.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;C:\boost_1_33_1\bin\boost\libs\signals\build\libboost_signals.lib\vc-7_1\debug\runtime-link-static\threading-multi&quot;;&quot;C:\boost_1_33_1\bin\boost\libs\signals\build\libboost_signals.lib\vc-7_1\debug\runtime-link-static&quot;"
 				IgnoreDefaultLibraryNames="LIBCD.lib"
@@ -188,8 +190,8 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ComCtl32.Lib Secur32.Lib MSImg32.Lib"
-				OutputFile="$(OutDir)/Labels.exe"
+				AdditionalDependencies="ComCtl32.Lib Secur32.Lib MSImg32.Lib ShLwApi.Lib"
+				OutputFile="$(OutDir)/Example.Labels.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;C:\boost_1_33_1\bin\boost\libs\signals\build\libboost_signals.lib\vc-7_1\debug\runtime-link-static\threading-multi&quot;;&quot;C:\boost_1_33_1\bin\boost\libs\signals\build\libboost_signals.lib\vc-7_1\debug\runtime-link-static&quot;"
 				IgnoreDefaultLibraryNames="LIBCD.lib"
@@ -226,9 +228,7 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
-			<File
-				RelativePath="..\examples\Labels\Labels.cpp">
-			</File>
+			<File RelativePath="..\examples\Labels\Labels.cpp"></File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -239,6 +239,8 @@
 			Name="Resource Files"
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}">
+			<File RelativePath="..\examples\Example.rc"></File>
+			<File RelativePath="..\examples\Vaca.ico"></File>
 		</Filter>
 	</Files>
 	<Globals>

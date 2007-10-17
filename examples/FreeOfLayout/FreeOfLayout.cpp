@@ -33,54 +33,64 @@
 
 using namespace Vaca;
 
-class MainFrame : public Frame
+class MainFrame : public Dialog
 {
-  Edit mEdit1;
-  Edit mEdit2;
-  Edit mEdit3;
-  MultilineEdit mEdit4;
-  Label mLabel1;
-  PasswordEdit mPassword;
+  Label mUsernameLabel;
+  Edit mUsernameEdit;
+  Label mPasswordLabel;
+  PasswordEdit mPasswordEdit;
+  CheckBox mAdministrator;
+  Button mLoginButton;
+  Button mCancelButton;
 
 public:
 
   MainFrame()
-    : Frame("Edits")
-    , mEdit1("Default Edit widget with some text that you can edit.", this)
-    , mEdit2("An Edit widget without client-edge and right-aligned.",
-	     this, EditStyle - ClientEdgeStyle + RightAlignedEditStyle)
-    , mEdit3("A read-only Edit widget without client-edge and with modified bgColor",
-	     this, EditStyle - ClientEdgeStyle)
-    , mEdit4("A MultilineEdit widget\r\nwith multiple lines\r\nof text...", this,
-	     MultilineEditStyle + ScrollStyle)
-    , mLabel1("Password:", this)
-    , mPassword("", this)
+    : Dialog("FreeOfLayout")
+    , mUsernameLabel("&Username:", this)
+    , mUsernameEdit("", this)
+    , mPasswordLabel("&Password:", this)
+    , mPasswordEdit("", this)
+    , mAdministrator("&Administrador account", this)
+    , mLoginButton("&Login", this)
+    , mCancelButton("&Cancel", this)
   {
-    setLayout(new BoxLayout(Vertical, false));
-    mEdit4.setConstraint(new BoxConstraint(true));
+    // if we don't setup a layout manager through this->setLayout(),
+    // we are free of layout manager...
 
-    mEdit3.setReadOnly(true);
-    mEdit3.setBgColor(System::getColor(COLOR_3DFACE));
+    mUsernameLabel.setBounds(2,                   2,          70,  23);
+    mUsernameEdit .setBounds(2+70+2,              2,          130, 23);
+    mPasswordLabel.setBounds(2,                   2+(23+2)*1, 70,  23);
+    mPasswordEdit .setBounds(2+70+2,              2+(23+2)*1, 130, 23);
+    mAdministrator.setBounds(2+70+2,              2+(23+2)*2, 130, 23);
+    mLoginButton  .setBounds(2+70+2+130-(66+2)*2, 2+(23+2)*3, 66,  23);
+    mCancelButton .setBounds(2+70+2+130-(66+2)*1, 2+(23+2)*3, 66,  23);
 
-    setSize(preferredSize());
+    mLoginButton.setDefault(true);
+
+    mLoginButton.Action.connect(Bind(&MainFrame::defaultOkAction, this));
+    mCancelButton.Action.connect(Bind(&MainFrame::defaultCancelAction, this));
+    mAdministrator.Action.connect(Bind(&MainFrame::onAdministrator, this));
+
+    setSize(getNonClientSize() +
+	    Size(2+70+2+130+2, 2+(23+2)*4));
+    center();
   }
 
+  String getUserName()
+  {
+    return mUsernameEdit.getText();
+  }
+  
 protected:
 
-  virtual void onClose(CloseEvent &ev)
+  void onAdministrator()
   {
-    Frame::onClose(ev);
-
-    String password = mPassword.getText();
-    if (!password.empty())
-      msgBox("Your password is:\r\n\""+password+"\"\r\n"+
-	     "Keep it safe, don't show it to anyone!\r\n"+
-	     "Maybe you forgot it, so I'll show your password\r\n"+
-	     "one more time so nobody can see it:\r\n\""+
-	     password+"\"\r\n"+"Remember it: \""+password+
-	     "\", don't forget it...\r\n\r\n..."+password,
-	     "Anti-Security Message",
-	     MB_OK | MB_ICONINFORMATION);
+    bool enabled = !mAdministrator.isSelected();
+    mUsernameLabel.setEnabled(enabled);
+    mUsernameEdit.setEnabled(enabled);
+    if (!enabled)
+      mUsernameEdit.setText("root");
   }
 
 };
@@ -89,10 +99,18 @@ protected:
 
 class Example : public Application
 {
-  MainFrame mMainWnd;
 public:
   virtual void main(std::vector<String> args) {
-    mMainWnd.setVisible(true);
+    MainFrame dlg;
+
+    if (dlg.doModal())
+      dlg.msgBox("Welcome '"+dlg.getUserName()+"'",
+		 "Information",
+		 MB_OK | MB_ICONINFORMATION);
+    else
+      dlg.msgBox("You canceled the operation",
+		 "Information",
+		 MB_OK | MB_ICONINFORMATION);
   }
 };
 

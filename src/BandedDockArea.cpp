@@ -60,6 +60,10 @@ BandedDockArea::BandedDockArea(Side side, Widget *parent, Style style)
 {
 }
 
+BandedDockArea::~BandedDockArea()
+{
+}
+
 bool BandedDockArea::hitTest(DockBar *bar, const Point &cursor, const Point &anchor, bool fromInside)
 {
   Rect bounds = getAbsoluteClientBounds();
@@ -73,7 +77,7 @@ bool BandedDockArea::hitTest(DockBar *bar, const Point &cursor, const Point &anc
     if (bar->isFloating() ||
 	// or is docked in other DockArea that isn't this BandeDockArea
 	(bar->isDocked() &&
-	 (&bar->getDockArea() != this)))
+	 (bar->getDockArea() != this)))
       sz += bar->getDockedSize(getSide());
   }
   else
@@ -218,7 +222,7 @@ void BandedDockArea::layout()
       BandedDockInfo *dockInfo =
 	static_cast<BandedDockInfo *>(mBandInfo[bandIndex].bars[barIndex]->getDockInfo());
 
-      VACA_ASSERT(dockInfo != NULL);
+      assert(dockInfo != NULL);
 
       // bounds specified by the dockInfo of this DockBar
       Rect bounds;
@@ -248,7 +252,7 @@ void BandedDockArea::layout()
       if (dockInfo->lastMovedInBand) {
 	// we can have just one DockBar with the "lastMovedInBand"
 	// flag per band
-	VACA_ASSERT(lastMovedBarIndex < 0);
+	assert(lastMovedBarIndex < 0);
 	
 	lastMovedBarIndex = barIndex;
       }
@@ -303,13 +307,15 @@ void BandedDockArea::onPaint(Graphics &g)
 void BandedDockArea::onAddDockBar(DockBar *dockBar)
 {
   BandedDockInfo *dockInfo = static_cast<BandedDockInfo *>(dockBar->getDockInfo());
-  VACA_ASSERT(dockInfo != NULL);
+  assert(dockInfo != NULL);
+
+  int bandCount = mBandInfo.size();
 
   // in which band we must to dock this dockBar?
-  dockInfo->band = VACA_MID(0, dockInfo->band, mBandInfo.size());
+  dockInfo->band = VACA_MID(0, dockInfo->band, bandCount);
 
   // add a new band?
-  if (dockInfo->band == mBandInfo.size())
+  if (dockInfo->band == bandCount)
     mBandInfo.push_back(BandInfo());
 
   // add the dock bar to the band
@@ -334,10 +340,11 @@ void BandedDockArea::onAddDockBar(DockBar *dockBar)
 void BandedDockArea::onRemoveDockBar(DockBar *dockBar)
 {
   BandedDockInfo *dockInfo = static_cast<BandedDockInfo *>(dockBar->getDockInfo());
-  VACA_ASSERT(dockInfo != NULL);
+  assert(dockInfo != NULL);
 
   int bandIndex = dockInfo->band;
-  VACA_ASSERT(bandIndex >= 0 && bandIndex < mBandInfo.size());
+  int bandCount = mBandInfo.size();
+  assert(bandIndex >= 0 && bandIndex < bandCount);
 
   // remove the dockBar from the band
   remove_element_from_container(mBandInfo[bandIndex].bars, dockBar);
@@ -361,7 +368,7 @@ void BandedDockArea::onRemoveDockBar(DockBar *dockBar)
 	DockBar *dockBar2 = *it2;
 	BandedDockInfo *dockInfo2 = static_cast<BandedDockInfo *>(dockBar2->getDockInfo());
 
-	VACA_ASSERT(dockInfo2 != NULL);
+	assert(dockInfo2 != NULL);
 
 	dockInfo2->band--;
       }
@@ -377,8 +384,8 @@ void BandedDockArea::onRedock(DockBar *dockBar, DockInfo *_newDockInfo)
   BandedDockInfo *oldDockInfo = static_cast<BandedDockInfo *>(dockBar->getDockInfo());
   BandedDockInfo *newDockInfo = static_cast<BandedDockInfo *>(_newDockInfo);
 
-  VACA_ASSERT(oldDockInfo != NULL);
-  VACA_ASSERT(newDockInfo != NULL);
+  assert(oldDockInfo != NULL);
+  assert(newDockInfo != NULL);
   
   if (mBandInfo[oldDockInfo->band].bars.size() == 1) {
     if (newDockInfo->band > oldDockInfo->band) {
@@ -394,7 +401,7 @@ void BandedDockArea::onRedock(DockBar *dockBar, DockInfo *_newDockInfo)
 
 void BandedDockArea::updateBandSize(int bandIndex)
 {
-  VACA_ASSERT(bandIndex >= 0 && bandIndex < mBandInfo.size());
+  assert(bandIndex >= 0 && bandIndex < static_cast<int>(mBandInfo.size()));
 
   std::vector<DockBar *>::iterator it = mBandInfo[bandIndex].bars.begin();
   std::vector<DockBar *>::iterator end = mBandInfo[bandIndex].bars.end();
@@ -404,7 +411,7 @@ void BandedDockArea::updateBandSize(int bandIndex)
     DockBar *dockBar = *it;
     BandedDockInfo *dockInfo = static_cast<BandedDockInfo *>(dockBar->getDockInfo());
 
-    VACA_ASSERT(dockInfo != NULL);
+    assert(dockInfo != NULL);
 
     if (isHorizontal())
       size = VACA_MAX(size, dockInfo->size.h);
@@ -430,6 +437,9 @@ Rect BandedDockArea::getBandBounds(int bandIndex)
   switch (getSide()) {
     case BottomSide: bounds.y += bounds.h; break;
     case RightSide:  bounds.x += bounds.w; break;
+    default:
+      // do nothing
+      break;
   }
   for (int c=0; c<bandIndex; ++c) {
     switch (getSide()) {
@@ -443,6 +453,9 @@ Rect BandedDockArea::getBandBounds(int bandIndex)
     switch (getSide()) {
       case BottomSide: bounds.y -= mBandInfo[bandIndex].size; break;
       case RightSide:  bounds.x -= mBandInfo[bandIndex].size; break;
+      default:
+	// do nothing
+	break;
     }
 
   // reduce the height (or width) to the size of the band on bandIndex

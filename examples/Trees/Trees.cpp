@@ -33,6 +33,7 @@
 
 using namespace Vaca;
 
+// this is a customized TreeNode
 class InfiniteTreeNode : public TreeNode
 {
 public:
@@ -44,16 +45,27 @@ public:
 
   virtual bool hasChildren()
   {
+    // an infinite node always as children
     return true;
   }
 
+  // before expand an we infinite tree node, we should add some children
   virtual void onBeforeExpand(TreeViewEvent &ev)
   {
+    // did we add the children already? if not...
     if (getChildren().empty()) {
+      // add ten sub-infinite nodes as children
       for (int c=0; c<10; c++)
 	addNode(new InfiniteTreeNode(getText() + " " +
 				     String::fromInt(c)));
     }
+  }
+
+  // how we can avoid to edit one node label?
+  virtual void onBeforeLabelEdit(TreeViewEvent &ev)
+  {
+    // ...cancelling the BeforeLabelEdit event
+    ev.cancel();
   }
 
 };
@@ -70,24 +82,30 @@ public:
     , mTreeView(this)
     , mLabel("", this)
   {
+    // layout
     setLayout(new BoxLayout(Vertical, false));
     mTreeView.setConstraint(new BoxConstraint(true));
 
+    // add the first node (the most simple node without children)
     mTreeView.addNode(new TreeNode("Leaf node"));
 
+    // creates a node with three sub-nodes
     TreeNode *node = new TreeNode("Node with children");
     node->addNode(new TreeNode("Leaf A"));
     node->addNode(new TreeNode("Leaf B"));
     node->addNode(new TreeNode("Leaf C"));
+
+    // add the second node (a node that has children)
     mTreeView.addNode(node);
 
+    // add the third node (a custom node, the infinite node that we defined)
     mTreeView.addNode(new InfiniteTreeNode("Infinite Node"));
 
+    // bind some events
     mTreeView.AfterExpand.connect(Bind(&MainFrame::onAfter, this, boost::arg<1>(), "expanded"));
     mTreeView.AfterCollapse.connect(Bind(&MainFrame::onAfter, this, boost::arg<1>(), "collapsed"));
     mTreeView.AfterSelect.connect(Bind(&MainFrame::onAfter, this, boost::arg<1>(), "selected"));
-
-    setSize(getNonClientSize()+Size(256, 512));
+    mTreeView.AfterLabelEdit.connect(Bind(&MainFrame::onAfter, this, boost::arg<1>(), "edited"));
   }
 
 protected:

@@ -60,6 +60,7 @@ public:
 
   Panel(Widget *parent, Style style = PanelStyle);
   Panel(LPCTSTR className, Widget *parent, Style style = PanelStyle);
+  virtual ~Panel();
 
 };
 

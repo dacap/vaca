@@ -146,8 +146,8 @@ bool FileDialog::doModal()
 #else
   ofn.lStructSize = sizeof(OPENFILENAME);
 #endif
-  ofn.hwndOwner = getParentHwnd();
-  ofn.hInstance = Application::getHinstance();
+  ofn.hwndOwner = getParentHWND();
+  ofn.hInstance = Application::getHINSTANCE();
   ofn.lpstrFilter = mFiltersString.c_str();
   ofn.lpstrCustomFilter = NULL;
   ofn.nMaxCustFilter = 0;
@@ -211,6 +211,10 @@ OpenFileDialog::OpenFileDialog(const String &title, Widget *parent)
 {
 }
 
+OpenFileDialog::~OpenFileDialog()
+{
+}
+
 /**
  * By default it's false.
  */
@@ -264,6 +268,10 @@ bool OpenFileDialog::showDialog(LPOPENFILENAME lpofn)
 
 SaveFileDialog::SaveFileDialog(const String &title, Widget *parent)
   : FileDialog(title, parent)
+{
+}
+
+SaveFileDialog::~SaveFileDialog()
 {
 }
 

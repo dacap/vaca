@@ -31,17 +31,14 @@
 
 #include "stdvaca.h"
 #include "Vaca/Menu.h"
+#include "Vaca/MenuItemEvent.h"
 #include "Vaca/Debug.h"
 #include "Vaca/System.h"
 #include "Vaca/Mdi.h"
 #include "Vaca/Mutex.h"
+#include "Vaca/ResourceException.h"
 
 using namespace Vaca;
-
-#ifndef NDEBUG
-static Mutex instanceCounterMutex; // used to access instanceCounter
-static int instanceCounter = 0;
-#endif
 
 static int mIdCounter = VACA_FIRST_AUTOID;
 
@@ -53,12 +50,6 @@ MenuItem::MenuItem()
   mAutoDelete = false;
   mParent = NULL;
   mId = 0;
-
-#ifndef NDEBUG
-  instanceCounterMutex.lock();
-    VACA_TRACE("new MenuItem (%p, %d) {\n", this, ++instanceCounter);
-  instanceCounterMutex.unlock();
-#endif
 }
 
 /**
@@ -81,11 +72,11 @@ MenuItem::MenuItem(const String &text, Keys::Type defaultShortcut, int id)
   else {
     // you can't use automatic and manual IDs mixed, use one option or
     // other, but don't use both in the same application
-    VACA_ASSERT(mIdCounter == VACA_FIRST_AUTOID);
+    assert(mIdCounter == VACA_FIRST_AUTOID);
   }
 
   // check overflow
-  VACA_ASSERT(mIdCounter < VACA_FIRST_MDICHILD);
+  assert(mIdCounter < VACA_FIRST_MDICHILD);
 
   mAutoDelete = false;
   mParent = NULL;
@@ -94,21 +85,10 @@ MenuItem::MenuItem(const String &text, Keys::Type defaultShortcut, int id)
 
   if (defaultShortcut != Keys::None)
     addShortcut(defaultShortcut);
-
-#ifndef NDEBUG
-  instanceCounterMutex.lock();
-    VACA_TRACE("new MenuItem (%p, %d) {\n", this, ++instanceCounter);
-  instanceCounterMutex.unlock();
-#endif
 }
 
 MenuItem::~MenuItem()
 {
-#ifndef NDEBUG
-  instanceCounterMutex.lock();
-    VACA_TRACE("} delete MenuItem (%p, %d)\n", this, --instanceCounter);
-  instanceCounterMutex.unlock();
-#endif
 }
 
 bool MenuItem::isAutoDelete()
@@ -134,16 +114,28 @@ const String &MenuItem::getText()
 void MenuItem::setText(const String &text)
 {
   mText = text;
+
+  if (mParent != NULL) {
+    MENUITEMINFO mii;
+
+    mii.cbSize = sizeof(MENUITEMINFO);
+    mii.fMask = MIIM_STRING;
+    mii.dwTypeData = const_cast<LPTSTR>(text.c_str());
+
+    SetMenuItemInfo(mParent->getHMENU(),
+		    mParent->getMenuItemIndex(this),
+		    TRUE, &mii);
+  }
 }
 
 bool MenuItem::isEnabled()
 {
-  VACA_ASSERT(mParent != NULL);
+  assert(mParent != NULL);
 
   MENUITEMINFO mii;
   mii.cbSize = sizeof(MENUITEMINFO);
   mii.fMask = MIIM_STATE;
-  if (GetMenuItemInfo(mParent->getHmenu(),
+  if (GetMenuItemInfo(mParent->getHMENU(),
 		      mParent->getMenuItemIndex(this),
 		      TRUE, &mii)) {
     return (mii.fState & (MFS_DISABLED | MFS_GRAYED)) == 0;
@@ -154,21 +146,21 @@ bool MenuItem::isEnabled()
 
 void MenuItem::setEnabled(bool state)
 {
-  VACA_ASSERT(mParent != NULL);
+  assert(mParent != NULL);
 
-  ::EnableMenuItem(mParent->getHmenu(),
+  ::EnableMenuItem(mParent->getHMENU(),
 		   mParent->getMenuItemIndex(this),
 		   MF_BYPOSITION | (state ? MF_ENABLED: MF_GRAYED));
 }
 
 bool MenuItem::isChecked()
 {
-  VACA_ASSERT(mParent != NULL);
+  assert(mParent != NULL);
 
   MENUITEMINFO mii;
   mii.cbSize = sizeof(MENUITEMINFO);
   mii.fMask = MIIM_STATE;
-  if (GetMenuItemInfo(mParent->getHmenu(),
+  if (GetMenuItemInfo(mParent->getHMENU(),
 		      mParent->getMenuItemIndex(this),
 		      TRUE, &mii)) {
     return (mii.fState & MFS_CHECKED) != 0;
@@ -179,9 +171,9 @@ bool MenuItem::isChecked()
 
 void MenuItem::setChecked(bool state)
 {
-  VACA_ASSERT(mParent != NULL);
+  assert(mParent != NULL);
 
-  ::CheckMenuItem(mParent->getHmenu(),
+  ::CheckMenuItem(mParent->getHMENU(),
 		  mParent->getMenuItemIndex(this),
 		  MF_BYPOSITION |
 		  (state ? MF_CHECKED: MF_UNCHECKED));
@@ -194,7 +186,7 @@ void MenuItem::setChecked(bool state)
 void MenuItem::setRadio(bool state)
 {
   if (state) {
-    VACA_ASSERT(mParent != NULL);
+    assert(mParent != NULL);
 
     int index = mParent->getMenuItemIndex(this);
     int count = mParent->getItemCount();
@@ -211,7 +203,7 @@ void MenuItem::setRadio(bool state)
     } while (last < count && !mParent->getMenuItemByIndex(last)->isSeparator());
     last--;
 
-    ::CheckMenuRadioItem(mParent->getHmenu(), first, last, index, MF_BYPOSITION);
+    ::CheckMenuRadioItem(mParent->getHMENU(), first, last, index, MF_BYPOSITION);
   }
   else {
     setChecked(false);
@@ -220,7 +212,7 @@ void MenuItem::setRadio(bool state)
 
 void MenuItem::addShortcut(Keys::Type shortcut)
 {
-  VACA_ASSERT(shortcut != Keys::None);
+  assert(shortcut != Keys::None);
 
   mShortcuts.push_back(shortcut);
 }
@@ -233,6 +225,10 @@ MenuItem *MenuItem::checkShortcuts(Keys::Type pressedKey)
 
   return NULL;
 }
+
+bool MenuItem::isMenu() const { return false; }
+bool MenuItem::isSeparator() const { return false; }
+bool MenuItem::isMdiList() const { return false; }
 
 /**
  * It's called when the menu item is selected. Also it's called when
@@ -272,40 +268,53 @@ MenuSeparator::~MenuSeparator()
 {
 }
 
+bool MenuSeparator::isSeparator() const
+{
+  return true;
+}
+
 //////////////////////////////////////////////////////////////////////
 // Menu
 
 Menu::Menu()
 {
-  mHmenu = ::CreateMenu();
-  VACA_TRACE("%p = CreateMenu()\n", mHmenu);
+  mHMENU = ::CreateMenu();
+  VACA_TRACE("%p = CreateMenu()\n", mHMENU);
 
-  MENUINFO mi;
-  mi.cbSize = sizeof(MENUINFO);
-  mi.fMask = MIM_STYLE | MIM_MENUDATA;
-  // don't use MNS_NOTIFYBYPOS
-  mi.dwStyle = 0;
-  mi.dwMenuData = reinterpret_cast<ULONG_PTR>(this);
-  SetMenuInfo(mHmenu, &mi);
+  subClass();
 }
 
 Menu::Menu(const String &text)
   : MenuItem(text)
 {
-  mHmenu = ::CreatePopupMenu();
-  VACA_TRACE("%p = CreatePopupMenu()\n", mHmenu);
+  mHMENU = ::CreatePopupMenu();
+  VACA_TRACE("%p = CreatePopupMenu()\n", mHMENU);
 
-  MENUINFO mi;
-  mi.cbSize = sizeof(MENUINFO);
-  mi.fMask = MIM_STYLE | MIM_MENUDATA;
-  mi.dwStyle = 0;
-  mi.dwMenuData = reinterpret_cast<ULONG_PTR>(this);
-  SetMenuInfo(mHmenu, &mi);
+  subClass();
+}
+
+Menu::Menu(int menuId)
+{
+  mHMENU = ::LoadMenu(Application::getHINSTANCE(),
+		      MAKEINTRESOURCE(menuId));
+
+  if (mHMENU == NULL)
+    throw ResourceException();
+
+  subClass();
+}
+
+Menu::Menu(HMENU hmenu)
+{
+  assert(hmenu != NULL);
+  
+  mHMENU = hmenu;
+  subClass();
 }
 
 Menu::~Menu()
 {
-  VACA_ASSERT(mHmenu != NULL);
+  assert(mHMENU != NULL);
 
   for (Container::iterator it=mContainer.begin(); it!=mContainer.end(); ++it) {
     MenuItem *menuItem = *it;
@@ -313,7 +322,70 @@ Menu::~Menu()
       delete menuItem;
   }
 
-  DestroyMenu(mHmenu);
+  DestroyMenu(mHMENU);
+}
+
+void Menu::subClass()
+{
+  assert(mHMENU != NULL);
+
+  MENUINFO mi;
+  mi.cbSize = sizeof(MENUINFO);
+  mi.fMask = MIM_MENUDATA | MIM_STYLE;
+  GetMenuInfo(mHMENU, &mi);
+
+  // Vaca doesn't use MNS_NOTIFYBYPOS
+  assert((mi.dwStyle & MNS_NOTIFYBYPOS) == 0);
+
+  // the menu can't have data
+  assert(mi.dwMenuData == 0);
+
+  // set the associated data with this Menu
+  mi.fMask = MIM_MENUDATA;
+  mi.dwMenuData = reinterpret_cast<ULONG_PTR>(this);
+  SetMenuInfo(mHMENU, &mi);
+
+  // now we must sub-class all existent menu items
+  int menuItemCount = GetMenuItemCount(mHMENU);
+  for (int itemIndex=0; itemIndex<menuItemCount; ++itemIndex) {
+    TCHAR buf[4096];		// TODO buffer overflow
+    MENUITEMINFO mii;
+
+    mii.cbSize = sizeof(MENUITEMINFO);
+    mii.fMask = MIIM_FTYPE | MIIM_DATA | MIIM_ID | MIIM_STRING | MIIM_SUBMENU;
+    mii.dwTypeData = buf;
+    mii.cch = sizeof(buf) / sizeof(TCHAR);
+
+    BOOL res = GetMenuItemInfo(mHMENU, itemIndex, TRUE, &mii);
+    assert(res == TRUE);
+
+    // the item can't have data
+    assert(mii.dwItemData == 0);
+
+    MenuItem *menuItem = NULL;
+
+    switch (mii.fType) {
+      case MFT_STRING:
+	if (mii.hSubMenu != NULL) {
+	  menuItem = new Menu(mii.hSubMenu);
+	  menuItem->mText = buf;
+	}
+	else {
+	  menuItem = new MenuItem(buf, Keys::None, mii.wID);
+	}
+	break;
+      case MFT_SEPARATOR:
+	menuItem = new MenuSeparator();
+	break;
+      // TODO MdiListMenu
+      default:
+	assert(false);		// TODO unsupported MENUITEM type
+	break;
+    }
+
+    menuItem->mParent = this;
+    mContainer.push_back(menuItem);
+  }
 }
 
 /**
@@ -367,7 +439,7 @@ void Menu::addSeparator()
  */
 MenuItem *Menu::insert(int index, MenuItem *menuItem)
 {
-  VACA_ASSERT(index >= 0 && index <= static_cast<int>(mContainer.size()));
+  assert(index >= 0 && index <= static_cast<int>(mContainer.size()));
 
   Container::iterator it;
   int c = 0;
@@ -399,7 +471,7 @@ MenuItem *Menu::insert(int index, MenuItem *menuItem)
     mii.fMask |= MIIM_STRING | MIIM_SUBMENU;
     mii.fType = MFT_STRING;
     Menu *menu = static_cast<Menu *>(menuItem);
-    mii.hSubMenu = menu->getHmenu();
+    mii.hSubMenu = menu->getHMENU();
     mii.dwTypeData = buf;
     mii.cch = len;
   }
@@ -413,7 +485,7 @@ MenuItem *Menu::insert(int index, MenuItem *menuItem)
     // HBITMAP hbmpItem;
   }
 
-  InsertMenuItem(mHmenu, index, TRUE, &mii);
+  InsertMenuItem(mHMENU, index, TRUE, &mii);
 
   if (buf != NULL)
     delete buf;
@@ -452,13 +524,18 @@ void Menu::insertSeparator(int index)
 
 void Menu::remove(MenuItem *menuItem)
 {
-  // TODO
+  assert(mHMENU != NULL);
+
+  // TODO check if this works
+  RemoveMenu(mHMENU, getMenuItemIndex(menuItem), MF_BYPOSITION);
+
+  menuItem->mParent = NULL;
   menuItem->mAutoDelete = false;
 }
 
 void Menu::remove(int index)
 {
-  // TODO
+  remove(getMenuItemByIndex(index));
 }
 
 MenuItem *Menu::getMenuItemByIndex(int index)
@@ -535,7 +612,12 @@ MenuItem *Menu::checkShortcuts(Keys::Type pressedKey)
 //   return NULL;
 // }
 
-Menu *Menu::getMenuByHmenu(HMENU hmenu)
+bool Menu::isMenu() const
+{
+  return true;
+}
+
+Menu *Menu::getMenuByHMENU(HMENU hmenu)
 {
   Menu *lastMenu = NULL;
 
@@ -544,7 +626,7 @@ Menu *Menu::getMenuByHmenu(HMENU hmenu)
 
   while (!stack.empty()) {
     lastMenu = stack.top();
-    if (lastMenu->getHmenu() == hmenu)
+    if (lastMenu->getHMENU() == hmenu)
       return lastMenu;
 
     stack.pop();
@@ -560,9 +642,9 @@ Menu *Menu::getMenuByHmenu(HMENU hmenu)
   return NULL;
 }
 
-HMENU Menu::getHmenu()
+HMENU Menu::getHMENU()
 {
-  return mHmenu;
+  return mHMENU;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -571,6 +653,15 @@ HMENU Menu::getHmenu()
 
 MenuBar::MenuBar()
  : Menu()
+{
+}
+
+MenuBar::MenuBar(int menuId)
+  : Menu(menuId)
+{
+}
+
+MenuBar::~MenuBar()
 {
 }
 
@@ -592,6 +683,8 @@ MdiListMenu *MenuBar::getMdiListMenu()
 	stack.push(*it);
     }
   }
+
+  return NULL;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -601,4 +694,13 @@ MdiListMenu *MenuBar::getMdiListMenu()
 MdiListMenu::MdiListMenu(const String &text)
  : Menu(text)
 {
+}
+
+MdiListMenu::~MdiListMenu()
+{
+}
+
+bool MdiListMenu::isMdiList() const
+{
+  return true;
 }

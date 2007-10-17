@@ -1,0 +1,17 @@
+#include "resource.h"
+#include "windows.h"
+
+IDI_VACA	ICON	"../Vaca.ico"
+
+IDM_MENUBAR MENU
+{
+  MENUITEM "&Item1",		IDM_ITEM1
+  POPUP "&Popup1" {
+    MENUITEM "&Item2",		IDM_ITEM2
+    POPUP "&Popup2" {
+      MENUITEM "&Item3",	IDM_ITEM3
+      MENUITEM SEPARATOR
+      MENUITEM "&Item4",	IDM_ITEM4
+    }
+  }
+}

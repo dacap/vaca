@@ -31,14 +31,12 @@
 
 #include "Vaca/Vaca.h"
 
-#include <math.h>
-
 using namespace Vaca;
 
 class Scribble : public Panel
 {
   Image mImage;
-  Point mOldPoint;
+  Point mPoint[3];
   bool mErasing;
 
 public:
@@ -46,6 +44,7 @@ public:
   Scribble(Widget *parent)
     : Panel(parent)
   {
+    setBgColor(Color::White);
   }
 
 protected:
@@ -87,7 +86,9 @@ protected:
   {
     if (!hasCapture()) {
       acquireCapture();
-      mOldPoint = ev.getPoint();
+
+      for (int c=0; c<3; ++c)
+	mPoint[c] = ev.getPoint();
 
       // with right mouse button we erase 
       mErasing = ev.getButton() == MouseButtons::Right;
@@ -97,7 +98,9 @@ protected:
   virtual void onMouseMove(MouseEvent &ev)
   {
     if (hasCapture()) {
+      // get the graphics from the to draw into the image
       Graphics &g(mImage.getGraphics());
+
       // we must to use "System::getCursorPos()" (absolute cursor
       // position), because "ev.getPoint()" is useful only inside the
       // client-bounds, but we adquire the mouse capture, so we need
@@ -106,37 +109,45 @@ protected:
 	System::getCursorPos()
 	- getAbsoluteClientBounds().getOrigin();
 
-      // pen size
-      int penSize = 0;
+      // rotate points
+      mPoint[0] = mPoint[1];
+      mPoint[1] = mPoint[2];
+      mPoint[2] = newPoint;
 
-      // erase the line
+      // pen size
+      int penSize;
+
+      // erase
       if (mErasing) {
 	g.setColor(Color::White);
-	// the eraser has a constant pen size
-	penSize = 128;
+	g.setPenSize(penSize = 64);
+	g.drawLine(mPoint[1], mPoint[2]);
       }
-      // draw the line
+      // draw
       else {
 	g.setColor(Color::Black);
-	// the pen size is directly proportional to the length of the
-	// drawn line
-	penSize = (int)sqrt(pow(newPoint.x-mOldPoint.x, 2) +
-			    pow(newPoint.y-mOldPoint.y, 2));
+	g.setPenSize(penSize = 1);
+	g.drawLine(mPoint[1], mPoint[2]);
+
+	// this add an extra style to the trace (more realistic)
+	g.beginPath();
+	g.moveTo(mPoint[0]);
+	g.lineTo(mPoint[1]);
+	g.lineTo(mPoint[2]);
+	g.endPath();
+	g.fillPath();
       }
-      
-      g.setPenSize(penSize);
-      g.drawLine(mOldPoint, newPoint);
 
-      // invalidate the drawn region
-      Point origin = Point(VACA_MIN(mOldPoint.x, newPoint.x),
-			   VACA_MIN(mOldPoint.y, newPoint.y));
-      Size size = Size(VACA_MAX(mOldPoint.x, newPoint.x) - origin.x + 1,
-		       VACA_MAX(mOldPoint.y, newPoint.y) - origin.y + 1);
-      invalidate(Rect(origin - penSize/2,
-		      size + penSize), false);
-
-      // the old point is now the new point
-      mOldPoint = newPoint;
+      // invalidate the drawn area
+      Point minPoint = mPoint[0];
+      Point maxPoint = mPoint[0];
+      for (int c = 1; c < 3; ++c) {
+	if (minPoint.x > mPoint[c].x) minPoint.x = mPoint[c].x;
+	if (minPoint.y > mPoint[c].y) minPoint.y = mPoint[c].y;
+	if (maxPoint.x < mPoint[c].x) maxPoint.x = mPoint[c].x;
+	if (maxPoint.y < mPoint[c].y) maxPoint.y = mPoint[c].y;
+      }
+      invalidate(Rect(minPoint-penSize, maxPoint+penSize), false);
     }
   }
 

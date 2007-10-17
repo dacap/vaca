@@ -32,18 +32,18 @@
 #ifndef VACA_CLOSEEVENT_H
 #define VACA_CLOSEEVENT_H
 
-#include "Vaca/CancellableEvent.h"
+#include "Vaca/CancelableEvent.h"
 
 namespace Vaca {
 
-class CloseEvent : public CancellableEvent
+class Frame;
+
+class VACA_DLL CloseEvent : public CancelableEvent
 {
 public:
 
-  CloseEvent(Widget *widget)
-    : CancellableEvent(widget)
-  {
-  }
+  CloseEvent(Frame *source);
+  virtual ~CloseEvent();
 
 };
 

@@ -32,10 +32,13 @@
 #ifndef VACA_MOUSEEVENT_H
 #define VACA_MOUSEEVENT_H
 
+#include "Vaca/base.h"
+#include "Vaca/Event.h"
 #include "Vaca/Point.h"
-#include "Vaca/WidgetEvent.h"
 
 namespace Vaca {
+
+class Widget;
 
 struct MouseButtons {
   /**
@@ -57,64 +60,34 @@ struct MouseButtons {
  * getButton returns MouseButton::None if the event is about mouse
  * movement (no button was pressed to trigger the event).
  */
-class MouseEvent : public WidgetEvent
+class VACA_DLL MouseEvent : public Event
 {
   Point mPoint;
-  int mClickCount;
-  MouseButtons::Type mTrigger;
+  int mClicks;
   int mFlags;
+  MouseButtons::Type mTrigger;
   int mDelta;
 
 public:
 
-  MouseEvent(Widget *widget, Point point, int clickCount, MouseButtons::Type trigger, int flags, int delta = 0)
-    : WidgetEvent(widget)
-    , mPoint(point)
-    , mClickCount(clickCount)
-    , mTrigger(trigger)
-    , mFlags(flags)
-    , mDelta(delta)
-  {
-  }
+  MouseEvent(Widget *source, Point point, int clicks, int flags, MouseButtons::Type trigger, int delta = 0);
+  virtual ~MouseEvent();
 
-  /**
-   * Returns the X component of the mouse position (getPoint).
-   */
-  int getX() { return mPoint.x; }
+  int getX() const;
+  int getY() const;
+  Point getPoint() const;
 
-  /**
-   * Returns the Y component of the mouse position (getPoint).
-   */
-  int getY() { return mPoint.y; }
+  int getClicks() const;
+  MouseButtons::Type getButton() const;
 
-  /**
-   * Returns the mouse position relative to the control that received
-   * the event.
-   */
-  Point getPoint() { return mPoint; }
+  bool isLeftButtonPressed() const;
+  bool isRightButtonPressed() const;
+  bool isMiddleButtonPressed() const;
+  bool isShiftKeyPressed() const;
+  bool isControlKeyPressed() const;
+  bool isAltKeyPressed() const;
 
-  /**
-   * Returns how many clicks the user did:
-   * @li 0 = just mouse movement;
-   * @li 1 = single click;
-   * @li 2 = double click.
-   */
-  int getClickCount() { return mClickCount; }
-
-  /**
-   * Returns the button that trigger the event (if the event is
-   * Widget::mouseUp or Widget::mouseDown).
-   */
-  MouseButtons::Type getButton() { return mTrigger; }
-
-  bool isLeftButtonPressed()   { return (mFlags & MK_LBUTTON) != 0; }
-  bool isRightButtonPressed()  { return (mFlags & MK_RBUTTON) != 0; }
-  bool isMiddleButtonPressed() { return (mFlags & MK_MBUTTON) != 0; }
-  bool isShiftKeyPressed()     { return (mFlags & MK_SHIFT  ) != 0; }
-  bool isControlKeyPressed()   { return (mFlags & MK_CONTROL) != 0; }
-  bool isAltKeyPressed()       { return (mFlags & MK_ALT    ) != 0; }
-
-  int getDelta() { return mDelta; }
+  int getDelta() const;
 
 };
 

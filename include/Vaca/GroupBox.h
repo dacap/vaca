@@ -47,6 +47,7 @@ class VACA_DLL GroupBox : public Widget
 public:
 
   GroupBox(const String &text, Widget *parent, Style style = GroupBoxStyle);
+  virtual ~GroupBox();
 
 };
 

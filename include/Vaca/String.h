@@ -50,8 +50,8 @@ namespace Vaca {
 
 /**
  * A character string used in Vaca namespace. It's like a
- * std::basic_string<Char> with some extra functionalities. This class
- * doesn't have extra data members.
+ * std::basic_string<Character> with some extra functionalities. This
+ * class doesn't have extra data members.
  */
 class VACA_DLL String : public VACA_STRING_BASE
 {
@@ -63,23 +63,19 @@ public:
   String(const VACA_STRING_BASE &str);
   String(const char *str);
   String(const char *str, int length);
-#ifdef UNICODE
-  String(const Char *str);
-#endif
+  String(const wchar_t *str);
   virtual ~String();
 
-  String &format(LPCTSTR fmt, ...);
+//   String &format(LPCTSTR fmt, ...);
 
   void copyTo(LPTSTR dest, int size) const;
-
-//   String &operator+(int value);
-//   String &operator<<(int value);
 
   // String <-> int
   static String fromInt(int value, int base = 10, int precision = 0);
   int parseInt(int base = 10);
 
   // String <-> double
+  static String fromDouble(double value);
   double parseDouble();
 
   //////////////////////////////////////////////////////////////////////
@@ -96,6 +92,34 @@ public:
 //   String replaceExtension(const String &newExtension) const;
 
 };
+
+inline String operator+(const String &_s1, const char *_s2)
+{
+  String _res(_s1);
+  _res.append(String(_s2));
+  return _res;
+}
+
+inline String operator+(const String &_s1, const wchar_t *_s2)
+{
+  String _res(_s1);
+  _res.append(String(_s2));
+  return _res;
+}
+
+inline String operator+(const char *_s1, const String &_s2)
+{
+  String _res(_s1);
+  _res.append(_s2);
+  return _res;
+}
+
+inline String operator+(const wchar_t *_s1, const String &_s2)
+{
+  String _res(_s1);
+  _res.append(_s2);
+  return _res;
+}
 
 } // namespace Vaca
 

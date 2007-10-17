@@ -32,38 +32,37 @@
 #ifndef VACA_KEYEVENT_H
 #define VACA_KEYEVENT_H
 
-#include "Vaca/WidgetEvent.h"
+#include "Vaca/base.h"
+#include "Vaca/Event.h"
 #include "Vaca/Keys.h"
 
 namespace Vaca {
 
+class Widget;
+
 /**
  * Data for an event that comes from the keyboard.
  */
-class KeyEvent : public WidgetEvent
+class VACA_DLL KeyEvent : public Event
 {
   bool mConsumed;		// the event was consumed?
   int mKeys;
 
 public:
 
-  KeyEvent(Widget *widget, Keys::Type keys)
-    : WidgetEvent(widget)
-    , mConsumed(false)
-    , mKeys(keys)
-  {
-  }
+  KeyEvent(Widget *source, Keys::Type keys);
+  virtual ~KeyEvent();
 
-  void consume() { mConsumed = true; }
-  bool isConsumed() const { return mConsumed; }
+  void consume();
+  bool isConsumed() const;
 
   // Keys::Type getKeys() { return mKeys; }
-  Keys::Type getKeyCode() { return mKeys & Keys::KeyCode; }
-  Keys::Type getModifiers() { return mKeys & Keys::Modifiers; }
+  Keys::Type getKeyCode() const;
+  Keys::Type getModifiers() const;
 
-  bool isShift()   { return (mKeys & Keys::Shift  ) != 0; }
-  bool isControl() { return (mKeys & Keys::Control) != 0; }
-  bool isAlt()     { return (mKeys & Keys::Alt    ) != 0; }
+  bool isShift() const;
+  bool isControl() const;
+  bool isAlt() const;
 
 };
 

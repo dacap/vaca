@@ -33,30 +33,60 @@
 #include "Vaca/Image.h"
 #include "Vaca/Debug.h"
 #include "Vaca/Graphics.h"
+#include "Vaca/Application.h"
+#include "Vaca/ResourceException.h"
 
 using namespace Vaca;
 
 Image::Image()
 {
-  mFromHdc = NULL;
+  mFromHDC = NULL;
   mSize = Size(0, 0);
-  mHbitmap = NULL;
+  mHBITMAP = NULL;
+  mGraphics = NULL;
+}
+
+/**
+ * Loads an image from the resource specified by @a imageId. This
+ * constructor uses Win32 LoadBitmap.
+ * 
+ */
+Image::Image(int imageId)
+{
+  mFromHDC = GetDC(GetDesktopWindow());
+
+  // HBITMAP
+  mHBITMAP = LoadBitmap(Application::getHINSTANCE(),
+			MAKEINTRESOURCE(imageId));
+
+  if (mHBITMAP == NULL)
+    throw ResourceException();
+
+  // get the size from the mHBITMAP
+  BITMAPCOREHEADER bc;
+  ZeroMemory(&bc, sizeof(bc));
+  bc.bcSize = sizeof(bc);
+  GetDIBits(mFromHDC, mHBITMAP, 0, 0, NULL,
+	    reinterpret_cast<BITMAPINFO *>(&bc), 0);
+  mSize = Size(bc.bcWidth, bc.bcHeight);
+
+  // graphics
   mGraphics = NULL;
 }
 
 Image::Image(const Size &sz)
 {
-  VACA_ASSERT(sz.w > 0 && sz.h > 0);
+  assert(sz.w > 0 && sz.h > 0);
 
-  mFromHdc = GetDC(GetDesktopWindow());
+  mFromHDC = GetDC(GetDesktopWindow());
   mSize = sz;
-  mHbitmap = CreateCompatibleBitmap(mFromHdc, sz.w, sz.h);
+  mHBITMAP = CreateCompatibleBitmap(mFromHDC, sz.w, sz.h);
   mGraphics = NULL;
 }
 
 Image::Image(const Size &sz, int bpp)
 {
-  VACA_ASSERT(sz.w > 0 && sz.h > 0);
+  assert(sz.w > 0 && sz.h > 0);
 
   BITMAPINFOHEADER bhdr;
   bhdr.biSize = sizeof(BITMAPINFOHEADER);
@@ -76,12 +106,10 @@ Image::Image(const Size &sz, int bpp)
   binf.bmiColors[0] = dummy;
   binf.bmiHeader = bhdr;
 
-  // TODO use getDesktopGraphics
   char *bits = NULL;
-
-  mFromHdc = GetDC(GetDesktopWindow());
+  mFromHDC = GetDC(GetDesktopWindow());
   mSize = sz;
-  mHbitmap = CreateDIBSection(mFromHdc, &binf, DIB_RGB_COLORS,
+  mHBITMAP = CreateDIBSection(mFromHDC, &binf, DIB_RGB_COLORS,
 			      reinterpret_cast<void**>(&bits),
 			      NULL, 0);
   mGraphics = NULL;
@@ -89,20 +117,20 @@ Image::Image(const Size &sz, int bpp)
 
 Image::Image(Graphics &g, const Size &sz)
 {
-  VACA_ASSERT(g.getHdc() != NULL);
-  VACA_ASSERT(sz.w > 0 && sz.h > 0);
+  assert(g.getHDC() != NULL);
+  assert(sz.w > 0 && sz.h > 0);
 
-  mFromHdc = g.getHdc();
+  mFromHDC = g.getHDC();
   mSize = sz;
-  mHbitmap = CreateCompatibleBitmap(mFromHdc, mSize.w, mSize.h);
+  mHBITMAP = CreateCompatibleBitmap(mFromHDC, mSize.w, mSize.h);
   mGraphics = NULL;
 }
 
 Image::Image(const Image &image)
 {
-  mFromHdc = image.mFromHdc;
+  mFromHDC = image.mFromHDC;
   mSize = image.getSize();
-  mHbitmap = CreateCompatibleBitmap(mFromHdc, mSize.w, mSize.h);
+  mHBITMAP = CreateCompatibleBitmap(mFromHDC, mSize.w, mSize.h);
   mGraphics = NULL;
 
   image.copyTo(*this);
@@ -115,7 +143,7 @@ Image::~Image()
 
 bool Image::isValid()
 {
-  return mHbitmap != NULL;
+  return mHBITMAP != NULL;
 }
 
 int Image::getWidth() const
@@ -136,26 +164,26 @@ Size Image::getSize() const
 Graphics &Image::getGraphics()
 {
   if (mGraphics == NULL) {
-    VACA_ASSERT(mFromHdc != NULL);
+    assert(mFromHDC != NULL);
 
-    mGraphics = new Graphics(mFromHdc, *this);
+    mGraphics = new Graphics(mFromHDC, *this);
   }
 
   return *mGraphics;
 }
 
-HBITMAP Image::getHbitmap()
+HBITMAP Image::getHBITMAP()
 {
-  return mHbitmap;
+  return mHBITMAP;
 }
 
 Image &Image::operator=(const Image &image)
 {
   destroy();
 
-  mFromHdc = image.mFromHdc;
+  mFromHDC = image.mFromHDC;
   mSize = image.getSize();
-  mHbitmap = CreateCompatibleBitmap(mFromHdc, mSize.w, mSize.h);
+  mHBITMAP = CreateCompatibleBitmap(mFromHDC, mSize.w, mSize.h);
   mGraphics = NULL;
 
   image.copyTo(*this);
@@ -164,9 +192,9 @@ Image &Image::operator=(const Image &image)
 
 void Image::destroy()
 {
-  if (mHbitmap != NULL) {
-    DeleteObject(mHbitmap);
-    mHbitmap = NULL;
+  if (mHBITMAP != NULL) {
+    DeleteObject(mHBITMAP);
+    mHBITMAP = NULL;
   }
 
   if (mGraphics != NULL) {

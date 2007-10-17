@@ -77,7 +77,7 @@ protected:
 
   virtual bool wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult);
 private:
-  virtual HWND createHwnd(LPCTSTR className, Widget *parent, Style style);
+  virtual HWND createHWND(LPCTSTR className, Widget *parent, Style style);
   static UINT_PTR CALLBACK hookProc(HWND hdlg, UINT uiMsg, WPARAM wParam, LPARAM lParam);
 
 };

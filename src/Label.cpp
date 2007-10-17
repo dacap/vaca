@@ -37,9 +37,13 @@
 using namespace Vaca;
 
 Label::Label(const String &text, Widget *parent, Style style)
-  : Widget(_T("STATIC"), parent, style)
+  : Widget(WC_STATIC, parent, style)
 {
   setText(text);
+}
+
+Label::~Label()
+{
 }
 
 TextAlign Label::getTextAlign()
@@ -94,20 +98,34 @@ Size Label::preferredSize()
 Size Label::preferredSize(const Size &fitIn)
 {
   // TODO HTHEME stuff
-  // TODO SS_RIGHTJUST
-
-  int style = getStyle().regular & 0xffff;
-
-  if ((fitIn.w > 0) &&
-      (((style & 31) != SS_SIMPLE) &&
-       ((style & 31) != SS_LEFTNOWORDWRAP) &&
-       ((style & SS_ELLIPSISMASK) == 0))) {
+  
+  if ((fitIn.w > 0) && useWordWrap()) {
     ScreenGraphics g;
     g.setFont(getFont());
     return g.measureString(getText(), fitIn.w);
   }
 
   return preferredSize();
+}
+
+bool Label::useWordWrap()
+{
+  // TODO SS_RIGHTJUST
+
+  int style = getStyle().regular & 0xffff;
+
+  return (((style & 31) != SS_SIMPLE) &&
+	  ((style & 31) != SS_LEFTNOWORDWRAP) &&
+	  ((style & SS_ELLIPSISMASK) == 0));
+}
+
+int Label::getFlagsForDrawString()
+{
+  // TODO complete this
+  if (useWordWrap())
+    return DT_WORDBREAK;
+  else
+    return DT_SINGLELINE;
 }
 
 /**

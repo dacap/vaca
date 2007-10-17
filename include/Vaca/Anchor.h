@@ -41,38 +41,21 @@ namespace Vaca {
 /**
  * Defines an anchor constraint.
  */
-class Anchor : public Constraint
+class VACA_DLL Anchor : public Constraint
 {
   Rect mRefRect;
   int mBorders;
 
 public:
 
-  Anchor(const Rect &refRect, Borders borders)
-    : mRefRect(refRect)
-    , mBorders(borders)
-  {
-  }
+  Anchor(const Rect &refRect, Borders borders);
+  virtual ~Anchor();
 
-  Rect getRefRect() const
-  {
-    return mRefRect;
-  }
+  Rect getRefRect() const;
+  void setRefRect(const Rect &refRect);
 
-  void setRefRect(const Rect &refRect)
-  {
-    mRefRect = refRect;
-  }
-
-  Borders getBorders() const
-  {
-    return mBorders;
-  }
-
-  void setBorders(Borders borders)
-  {
-    mBorders = borders;
-  }
+  Borders getBorders() const;
+  void setBorders(Borders borders);
 
 }; // Anchor
 

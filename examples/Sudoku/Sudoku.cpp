@@ -32,7 +32,6 @@
 #include <time.h>
 
 #include "Vaca/Vaca.h"
-
 #include "table.h"
 
 using namespace Vaca;

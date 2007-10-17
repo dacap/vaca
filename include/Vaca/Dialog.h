@@ -85,6 +85,8 @@ public:
 
   Dialog(const String &title, Widget *parent = NULL, Style style = DialogStyle);
   Dialog(LPCTSTR className, const String &title, Widget *parent = NULL, Style style = DialogStyle);
+  virtual ~Dialog();
+
   void setReturnState(bool state);
 
   virtual bool doModal();
@@ -100,7 +102,7 @@ protected:
 //   virtual void onKeyDown(KeyEvent &ev);
 
   // reflection
-//   virtual bool onCommand(int commandCode, LRESULT &lResult);
+//   virtual bool onCommand(int id, int code, LRESULT &lResult);
 
   virtual bool wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult);
   virtual LRESULT defWndProc(UINT message, WPARAM wParam, LPARAM lParam);

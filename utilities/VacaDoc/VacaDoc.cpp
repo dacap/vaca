@@ -31,10 +31,9 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include <stdio.h>
-
 #include <windows.h>
 #include <stdio.h>
+#include <time.h>
 #include <vector>
 #include <list>
 #include <stack>
@@ -43,98 +42,20 @@
 #include <boost/signal.hpp>
 #include <boost/bind.hpp>
 
-// #include <boost/filesystem.hpp>
-// #include <boost/filesystem/operations.hpp>
-// #include <boost/filesystem/fstream.hpp>
-// #include <boost/regex.hpp>
-// #include <boost/algorithm/string/regex.hpp>
-// #include <boost/algorithm/string/replace.hpp>
-#include <boost/algorithm/string/split.hpp>
-
 #include "Vaca/Application.h"
 #include "Vaca/String.h"
 #include "Vaca/Exception.h"
 #include "Vaca/System.h"
+#include "Vaca/Debug.h"
 
 #include "XmlParser.h"
 #include "XmlNode.h"
 #include "XmlAttribute.h"
 #include "XmlStream.h"
+#include "CppNode.h"
 
 using namespace std;
-// using namespace boost;
-// using namespace boost::filesystem;
-// using namespace boost::algorithm;
 using namespace Vaca;
-
-// enum Access {
-//   Public,
-//   Protected,
-//   Private, 
-// };
-
-// template<class Container, class Type>
-// void remove_element(Container &container, const Type &element)
-// {
-//   container.erase(std::remove(container.begin(),
-// 			      container.end(),
-// 			      element),
-// 		  container.end());
-// }
-
-// template<class Container>
-// void print_container(Container &container)
-// {
-//   typename Container::iterator it;
-//   for (it=container.begin(); it != container.end(); ++it)
-//     cout << *it << " ";
-//   cout << endl;
-// }
-
-// class Node
-// {
-// public:
-//   XmlNode *node;
-//   String name;
-// };
-
-// class Member : public Node
-// {
-// public:
-//   String type;
-//   String syntax;
-// };
-
-// class Field : public Member
-// {
-// public:
-// };
-
-// class Method : public Member
-// {
-// public:
-// };
-
-// class Event : public Member
-// {
-// public:
-// };
-
-// class Signal : public Member
-// {
-// public:
-// };
-
-// class Namespace : public Node
-// {
-// public:
-// };
-
-// class Class : public Namespace
-// {
-// public:
-//   Namespace *parent;
-// };
 
 //////////////////////////////////////////////////////////////////////
 // Helper class to write in a file
@@ -197,19 +118,10 @@ private:
 //////////////////////////////////////////////////////////////////////
 // Documentation Generator
 
+Namespace *RootNamespace;
+
 namespace NodeEx
 {
-
-  struct compNameAttributeOfNodes {
-    bool operator()(XmlNode *node1, XmlNode *node2) const
-    {
-      return node1->getAttributeValue("name") < node2->getAttributeValue("name");
-    }
-  };
-
-  struct splitPredicate {
-    bool operator()(const Character &ch) const { return ch == ':'; }
-  };
   
   String getSingularOf(const String &name)
   {
@@ -268,14 +180,21 @@ namespace NodeEx
       return "";
   }
 
-  String resolveFileName(XmlNode *tag)
+  String resolveFileName(XmlNode *node)
   {
-    String fileName = tag->getName() + ".";
+    if (node->getParent() == NULL)
+      return "cover";
+      
+    String fileName;
 
-    // stack of parents tag
+    if (node->getName() == "chapter" ||
+	node->getName() == "section")
+      fileName += node->getName() + ".";
+
+    // stack of parents node
     stack<XmlNode *> parentsStack;
 
-    XmlNode *parent = tag->getParent();
+    XmlNode *parent = node->getParent();
     while (parent != NULL) {
       if (parent->getName() == "namespace" ||
 	  parent->getName() == "class" ||
@@ -288,7 +207,7 @@ namespace NodeEx
       }
       parent = parent->getParent();
     }
-      
+
     while (!parentsStack.empty()) {
       parent = parentsStack.top();
       parentsStack.pop();
@@ -296,8 +215,8 @@ namespace NodeEx
       fileName += getNameAttributeOfNode(parent) + ".";
     }
 
-    if (tag->getName() == "operator") {
-      String op = getNameAttributeOfNode(tag);
+    if (node->getName() == "operator") {
+      String op = getNameAttributeOfNode(node);
       //       fileName += "operator";
       for (String::iterator it = op.begin(); it!=op.end(); ++it) {
 	if ((*it >= 'a' && *it <= 'z' ) ||
@@ -309,123 +228,71 @@ namespace NodeEx
 	  fileName += String::fromInt(*it, 16, 2);
       }
     }
-    else if (tag->getName() == "ctor") {
+    else if (node->getName() == "ctor") {
       fileName += "Constructor";
     }
-    else if (tag->getName() == "dtor") {
+    else if (node->getName() == "dtor") {
       fileName += "Destructor";
     }
     else
-      fileName += getNameAttributeOfNode(tag);
+      fileName += getNameAttributeOfNode(node);
     
     return fileName;
   }
 
   XmlNode *resolveCrossRef(XmlNode *node, const String &name)
   {
-    list<XmlNode *> nodes;
-    list<XmlNode *> visited;
-    vector<VACA_STRING_BASE > names;
-    bool addChildren;
-    bool addParent;
+    while (node->getName() != "doc" &&
+	   node->getName() != "namespace" &&
+	   node->getName() != "class" &&
+	   node->getName() != "struct")
+      node = node->getParent();
 
-    // split something like "MyNamespace::MyClass" to "MyNamespace" and "MyClass"
-    boost::algorithm::split(names, name, splitPredicate(), boost::algorithm::token_compress_on);
-    
-//     nodes.push_back(node->getParent());
-    nodes.push_back(node);
-
-    while (!nodes.empty()) {
-      node = nodes.front();
-      nodes.erase(nodes.begin());
-
-      // this node wasn't visited?
-      if (find(visited.begin(), visited.end(), node) == visited.end()) {
-	visited.push_back(node);
-
-	addChildren = false;
-	addParent = true;
-
-	if (node->getName() == "namespace" ||
-	    node->getName() == "class" ||
-	    node->getName() == "struct" ||
-	    node->getName() == "enum" ||
-	    node->getName() == "typedef" ||
-	    node->getName() == "macro" ||
-	    node->getName() == "function" ||
-	    node->getName() == "field" ||
-	    node->getName() == "method" ||
-	    node->getName() == "operator" ||
-	    node->getName() == "event" ||
-	    node->getName() == "signal") {
-	  if (node->getAttributeValue("name") == names[0]) {
-	    // this is the last target?
-	    if (names.size() == 1)
-	      return node;
-	    // we enter in a namespace?
-	    else {
-	      // we resolve one name...
-	      names.erase(names.begin());
-
-	      // we can remove all visited nodes, and all the "nodes"
-	      // to visit, because from here, we must to visit only
-	      // the children of this node
-	      nodes.clear();
-	      visited.clear();
-	      visited.push_back(node);
-
-	      addChildren = true;
-	      addParent = false;
-	    }
-	  }
-	  else if (node->getName() == "namespace" ||
-		   node->getName() == "class" ||
-		   node->getName() == "struct") {
-	    addChildren = true;
-	  }
-	}
-	else if (node->getName() == "doc" ||
-		 node->getName() == "chapter" ||
-		 node->getName() == "section") {
-	  addChildren = true;
-	}
-
-	// go to children
-	if (addChildren) {
-	  list<XmlNode *> children = node->getChildren();
-	  for (list<XmlNode *>::iterator it = children.begin(); it != children.end(); ++it)
-	    nodes.push_back(*it);
-	}
-
-	// go to parent
-	if (addParent) {
-	  if (node->getParent() != NULL)
-	    nodes.push_back(node->getParent());
-	}
-      }
+    // reference in namespaces
+    CppNode *cppNode = RootNamespace->findByXmlNode(node);
+    if (cppNode != NULL) {
+      CppNode *ref = cppNode->resolveCrossRef(name);
+      if (ref != NULL)
+	return ref->xmlNode;
     }
 
+    // documentation reference
+    // TODO
+    
     return NULL;
   }
 
-  String preProcessTitle(XmlNode *tag)
+  String preProcessTitle(XmlNode *node)
   {
-    String name = getNameAttributeOfNode(tag);
-    if (tag->getName() == "namespace")     return name + " (Espacio de nombres)";
-    else if (tag->getName() == "class")    return name + " (Clase)";
-    else if (tag->getName() == "struct")   return name + " (Estructura)";
-    else if (tag->getName() == "enum")     return name + " (Enumeración)";
-    else if (tag->getName() == "typedef")  return name + " (Tipo de dato)";
-    else if (tag->getName() == "macro")    return name + " (Macro)";
-    else if (tag->getName() == "function") return name + " (Función)";
-    else if (tag->getName() == "ctor")     return name + " (Constructor)";
-    else if (tag->getName() == "dtor")     return name + " (Destructor)";
-    else if (tag->getName() == "field")    return name + " (Campo)";
-    else if (tag->getName() == "method")   return name + " (Método)";
-    else if (tag->getName() == "operator") return name + " (Operador)";
-    else if (tag->getName() == "event")    return name + " (Evento)";
-    else if (tag->getName() == "signal")   return name + " (Señal)";
-    return tag->getAttributeValue("title");
+    String name = getNameAttributeOfNode(node);
+    if (node->getName() == "namespace")     return name + " (Espacio de nombres)";
+    else if (node->getName() == "class")    return name + " (Clase)";
+    else if (node->getName() == "struct")   return name + " (Estructura)";
+    else if (node->getName() == "enum")     return name + " (Enumeración)";
+    else if (node->getName() == "typedef")  return name + " (Tipo de dato)";
+    else if (node->getName() == "macro")    return name + " (Macro)";
+    else if (node->getName() == "function") return name + " (Función)";
+    else if (node->getName() == "ctor")     return name + " (Constructor)";
+    else if (node->getName() == "dtor")     return name + " (Destructor)";
+    else if (node->getName() == "field")    return name + " (Campo)";
+    else if (node->getName() == "method")   return name + " (Método)";
+    else if (node->getName() == "operator") return name + " (Operador)";
+    else if (node->getName() == "event")    return name + " (Evento)";
+    else if (node->getName() == "signal")   return name + " (Señal)";
+    return node->getAttributeValue("title");
+  }
+
+  String getSectionTitle(XmlNode *node)
+  {
+    String title;
+    XmlAttribute *titleAttrib = node->getAttribute("title");
+
+    if (titleAttrib == NULL)
+      title = preProcessTitle(node);
+    else
+      title = titleAttrib->getValue();
+
+    return title;
   }
 
   String preProcessSyntax(XmlNode *node)
@@ -436,7 +303,13 @@ namespace NodeEx
     String res;
 
     for (; it != end && *it != '\0'; ++it) {
-      if (*it == '(' && (*(it+1)) != ')') {
+      if (*it == '{' && (*(it+1)) != '}') {
+	res += "{<br />  ";
+      }
+      else if (*it == '}' && (*(it-1)) != '{') {
+	res += "<br />}";
+      }
+      else if (*it == '(' && (*(it+1)) != ')') {
 	res += "(<br />   ";
       }
       else if (*it == ':') {
@@ -480,154 +353,22 @@ namespace NodeEx
     return res;
   }
 
-  String getSectionTitle(XmlNode *tag)
-  {
-    String title;
-    XmlAttribute *titleAttrib = tag->getAttribute("title");
-
-    if (titleAttrib == NULL)
-      title = preProcessTitle(tag);
-    else
-      title = titleAttrib->getValue();
-
-    return title;
-  }
-
-  // gets the base class node (or NULL if it doesn't exist)
-  XmlNode *getBaseClass(XmlNode *classNode)
-  {
-    String baseClassName;
-
-    // first try the "base" attribute
-    XmlAttribute *baseAttribute = classNode->getAttribute("base");
-    if (baseAttribute != NULL) {
-      baseClassName = baseAttribute->getValue();
-    }
-    // well, we can use the "syntax"
-    else {
-      XmlAttribute *syntaxAttribute = classNode->getAttribute("syntax");
-      if (syntaxAttribute == NULL)
-	return NULL;
-
-      String syntax = syntaxAttribute->getValue();
-
-      if (strchr(syntax.c_str(), ':') == NULL)
-	return NULL;
-    
-      String::reverse_iterator it = syntax.rbegin();
-      String::reverse_iterator end = syntax.rend();
-
-      // the last word of the "syntax" attribute, is the name of the
-      // base class
-      for (; it != end && !isspace(*it); ++it)
-	baseClassName.push_back(*it);
-
-      reverse(baseClassName.begin(), baseClassName.end());
-    }
-
-    return resolveCrossRef(classNode, baseClassName);
-  }
-
-  bool hasMembers(XmlNode *classNode)
-  {
-    list<XmlNode *> members = classNode->getChildren();
-    list<XmlNode *>::iterator it;
-
-    for (it = members.begin(); it != members.end(); ++it) {
-      if ((*it)->getName() == "ctor" ||
-	  (*it)->getName() == "dtor" ||
-	  (*it)->getName() == "field" ||
-	  (*it)->getName() == "method" ||
-	  (*it)->getName() == "operator" ||
-	  (*it)->getName() == "event" ||
-	  (*it)->getName() == "signal")
-	return true;
-    }
-
-    XmlNode *base = getBaseClass(classNode);
-    if (base != NULL)
-      return hasMembers(base);
-    else
-      return false;
-  }
-
-  vector<XmlNode *> getSubClasses(XmlNode *classNode, XmlNode *root)
-  {
-    vector<XmlNode *> subclasses;
-    stack<XmlNode *> nodeStack;
-    nodeStack.push(root);
-
-    while (!nodeStack.empty()) {
-      XmlNode *node = nodeStack.top();
-      nodeStack.pop();
-
-      if (node != classNode &&
-	  (node->getName() == "class" ||
-	   node->getName() == "struct")) {
-	// classNode is the baseclass of node?
-	if (classNode == getBaseClass(node))
-	  subclasses.push_back(node);
-      }
-
-      list<XmlNode *> children = node->getChildren();
-      for (list<XmlNode *>::iterator it = children.begin(); it != children.end(); ++it)
-	nodeStack.push(*it);
-    }
-
-    sort(subclasses.begin(), subclasses.end(), compNameAttributeOfNodes());
-
-    return subclasses;
-  }
-
-  vector<XmlNode *> getClassMembers(XmlNode *classNode)
-  {
-    String className = classNode->getAttributeValue("name");
-    vector<XmlNode *> members;
-    list<XmlNode *> children = classNode->getChildren();
-
-    for (list<XmlNode *>::iterator it = children.begin();
-	 it != children.end(); ++it) {
-      if ((*it)->getName() == "ctor" ||
-	  (*it)->getName() == "dtor" ||
-	  (*it)->getName() == "field" ||
-	  (*it)->getName() == "method" ||
-	  (*it)->getName() == "operator" ||
-	  (*it)->getName() == "event" ||
-	  (*it)->getName() == "signal") {
-	if ((*it)->getAttribute("__origClass") == NULL)
-	  (*it)->addAttribute(new XmlAttribute("__origClass",
-					       className));
-
-	members.push_back(*it);
-      }
-    }
-
-    XmlNode *base = getBaseClass(classNode);
-    if (base != NULL) {
-      vector<XmlNode *> baseMembers = getClassMembers(base);
-      vector<XmlNode *>::iterator it;
-      vector<XmlNode *>::iterator it2;
-
-      for (it = baseMembers.begin(); it != baseMembers.end(); ++it) {
-	for (it2 = members.begin(); it2 != members.end(); ++it2) {
-	  if ((*it)->getAttributeValue("name") == (*it2)->getAttributeValue("name") &&
-	      ((*it2)->getAttributeValue("__origClass") == className)) {
-	    (*it2)->setAttributeValue("__replaced", "true");
-	    break;
-	  }
-	}
-
-	if (it2 == members.end())
-	  members.push_back(*it);
-      }
-    }
-
-    return members;
-  }
-
 } // NodeEx namespace
 
 using namespace NodeEx;
+
+//////////////////////////////////////////////////////////////////////
+// TOC generator
+
+struct compNameOfXmlNode {
+
+  bool operator()(XmlNode *node1, XmlNode *node2) const
+  {
+    return (node1->getAttributeValue("name") <
+	    node2->getAttributeValue("name"));
+  }
+  
+};
 
 class TocGenerator : public File
 {
@@ -638,134 +379,271 @@ public:
   {
   }
 
-  void generate(XmlNode *root)
-  {
-    addToc(root);
-  }
+  virtual void generate(XmlNode *root) = 0;
 
   boost::signal<void (const String &fileName)> NewTocFile;
 
-private:
+protected:
   
-  void addToc(XmlNode *tag)
+  void addTocsInNode(XmlNode *xmlNode)
   {
-    list<XmlNode *> children = tag->getChildren();
-    String name = getNameAttributeOfNode(tag);
+    list<XmlNode *> children = xmlNode->getChildren();
+    String name = getNameAttributeOfNode(xmlNode);
+    Class *cppClass = NULL;
 
-    if (tag->getName() == "chapter" ||
-	tag->getName() == "section" ||
-	tag->getName() == "namespace" ||
-	tag->getName() == "class" ||
-	tag->getName() == "struct" ||
-	tag->getName() == "enum" ||
-	tag->getName() == "typedef" ||
-	tag->getName() == "macro" ||
-	tag->getName() == "function") {
+    if (xmlNode->getName() == "class" ||
+	xmlNode->getName() == "struct") {
+      cppClass = dynamic_cast<Class *>(RootNamespace->findByXmlNode(xmlNode));
+      if (cppClass == NULL)
+	throw Exception("Internal exception (class in XML tree but no in CPP tree)");
+    }
+    else
+      cppClass = NULL;
+
+    if (xmlNode->getName() == "doc" ||
+	xmlNode->getName() == "chapter" ||
+	xmlNode->getName() == "section" ||
+	xmlNode->getName() == "namespace" ||
+	xmlNode->getName() == "class" ||
+	xmlNode->getName() == "struct" ||
+	xmlNode->getName() == "enum" ||
+	xmlNode->getName() == "typedef" ||
+	xmlNode->getName() == "macro" ||
+	xmlNode->getName() == "function") {
       // section name is mandatory
       if (name.empty())
-	throw Exception("Tag '"+tag->getName()+"' without 'name' attribute.");
+	throw Exception("Tag '"+xmlNode->getName()+"' without 'name' attribute.");
 
       // title of the section
-      String title = getSectionTitle(tag);
+      String title = getSectionTitle(xmlNode);
 
       // is a leaf?
       bool leaf = children.empty();
 
-      if (tag->getName() == "chapter" ||
-	  tag->getName() == "section" ||
-	  tag->getName() == "namespace") {
-	if (!tag->getChild("section") &&
-	    !tag->getChild("namespace") &&
-	    !tag->getChild("class") &&
-	    !tag->getChild("struct") &&
-	    !tag->getChild("enum") &&
-	    !tag->getChild("typedef") &&
-	    !tag->getChild("macro") &&
-	    !tag->getChild("function"))
+      if (xmlNode->getName() == "chapter" ||
+	  xmlNode->getName() == "section" ||
+	  xmlNode->getName() == "namespace") {
+	if (!xmlNode->getChild("section") &&
+	    !xmlNode->getChild("namespace") &&
+	    !xmlNode->getChild("class") &&
+	    !xmlNode->getChild("struct") &&
+	    !xmlNode->getChild("enum") &&
+	    !xmlNode->getChild("typedef") &&
+	    !xmlNode->getChild("macro") &&
+	    !xmlNode->getChild("function"))
 	  leaf = true;
       }
-      else if (tag->getName() == "class" ||
-	       tag->getName() == "struct")
-	leaf = !hasMembers(tag);
-      else if (tag->getName() == "enum" ||
-	       tag->getName() == "typedef" ||
-	       tag->getName() == "macro" ||
-	       tag->getName() == "function")
+      else if (xmlNode->getName() == "class" ||
+	       xmlNode->getName() == "struct")
+	leaf = cppClass->members.empty();
+      else if (xmlNode->getName() == "enum" ||
+	       xmlNode->getName() == "typedef" ||
+	       xmlNode->getName() == "macro" ||
+	       xmlNode->getName() == "function")
 	leaf = true;
 
       // add the TOC entry
-      println(genToc(resolveFileName(tag)+".html",
-		     title,
-		     leaf));
-    }
+      addToc(resolveFileName(xmlNode)+".html", title, leaf);
 
-    println("<UL>");
+      if (!leaf) {
+	openSubnodes();
 
-    // "class" is special
-    if (tag->getName() == "class" ||
-	tag->getName() == "struct") {
-      if (hasMembers(tag)) {
-	println(genToc(resolveFileName(tag)+"Members.html", name+" (Miembros de)", true));
+	// "class" is special
+	if (xmlNode->getName() == "class" ||
+	    xmlNode->getName() == "struct") {
+	  // has members?
+	  if (!cppClass->members.empty()) {
+	    addToc(resolveFileName(xmlNode)+"Members.html", name+" (Miembros de)", true);
 
-	// addTocForMembers(tag, "ctor", "Constructors");
-	// addTocForMembers(tag, "ctor", "Destructors");
-	addTocForMembers(tag, "field",    "Fields");
-	addTocForMembers(tag, "method",   "Methods");
-	addTocForMembers(tag, "operator", "Operators");
-	addTocForMembers(tag, "event",    "Events");
-	addTocForMembers(tag, "signal",   "Signals");
+	    list<XmlNode *> childrenList = xmlNode->getChildren();
+	    vector<XmlNode *> childrenVector;
+
+	    // convert the list to a vector, so we can sort it
+	    childrenVector.resize(childrenList.size());
+	    copy(childrenList.begin(), childrenList.end(), childrenVector.begin());
+	    sort(childrenVector.begin(), childrenVector.end(), compNameOfXmlNode());
+
+	    addTocForMembers(xmlNode, "ctor",     "Constructors", childrenVector);
+	    addTocForMembers(xmlNode, "dtor",     "Destructors",  childrenVector);
+	    addTocForMembers(xmlNode, "field",    "Fields",       childrenVector);
+	    addTocForMembers(xmlNode, "method",   "Methods",      childrenVector);
+	    addTocForMembers(xmlNode, "operator", "Operators",    childrenVector);
+	    addTocForMembers(xmlNode, "event",    "Events",       childrenVector);
+	    addTocForMembers(xmlNode, "signal",   "Signals",      childrenVector);
+
+	    closeToc();
+	  }
+	}
+	else {
+	  // recurse through children
+	  for (list<XmlNode *>::iterator it = children.begin();
+	       it != children.end();
+	       ++it)
+	    addTocsInNode(*it);
+	}
+
+	closeSubnodes();
       }
-    }
-    else {
-      // recurse through children
-      for (list<XmlNode *>::iterator it = children.begin(); it != children.end(); ++it)
-	addToc(*it);
-    }
       
-    println("</UL>");
+      closeToc();
+    }
   }
 
-  void addTocForMembers(XmlNode *tag,
+  void addTocForMembers(XmlNode *node,
 			const String &memberType,
-			const String &fileNameSuffix)
+			const String &fileNameSuffix,
+			vector<XmlNode *> &children)
   {
-    list<XmlNode *> children = tag->getChildren();
-    list<XmlNode *>::iterator it;
+    vector<XmlNode *>::iterator it;
 
     // hasn't "memberType" nodes
-    if (tag->getChild(memberType) == NULL)
+    if (node->getChild(memberType) == NULL)
       return;
 
-    String summaryFile = resolveFileName(tag)+fileNameSuffix+".html";
-    println(genToc(summaryFile, getPluralOf(memberType), false));
-    
-    println("<UL>");
+    String summaryFile = resolveFileName(node)+fileNameSuffix+".html";
+    addToc(summaryFile, getPluralOf(memberType), false);
+    openSubnodes();
 
     for (it = children.begin();
 	 it != children.end(); ++it) {
       if ((*it)->getName() == memberType) {
 	String memberFileName = resolveFileName(*it)+".html";
-	println(genToc(memberFileName, preProcessTitle(*it), true));
+
+	addToc(memberFileName, preProcessTitle(*it), true);
+	closeToc();
       }
     }
 
+    closeSubnodes();
+    closeToc();
+  }
+
+  void addToc(const String &fileName, const String &title, bool leaf)
+  {
+    NewTocFile(fileName);
+    openToc(fileName, title, leaf);
+  }
+
+  virtual void openToc(const String &fileName, const String &title, bool leaf) = 0;
+  virtual void openSubnodes() = 0;
+  virtual void closeSubnodes() = 0;
+  virtual void closeToc() = 0;
+
+};
+
+//////////////////////////////////////////////////////////////////////
+// NAME.hhc generator
+
+class HhcTocGenerator : public TocGenerator
+{
+public:
+
+  HhcTocGenerator(const String &fileName)
+    : TocGenerator(fileName)
+  {
+  }
+
+  virtual void generate(XmlNode *root)
+  {
+    println("<UL>");
+    addTocsInNode(root);
     println("</UL>");
   }
 
-  String genToc(const String &fileName, const String &title, bool leaf)
-  {
-    NewTocFile(fileName);
+protected:
 
-    // return the new TOC text
-    return
-      "<LI><OBJECT type=\"text/sitemap\">"
-      "<param name=\"Name\" value=\""+title+"\" />"+
-      "<param name=\"Local\" value=\""+fileName+"\" />"+
-      (leaf ? String("<param name=\"ImageNumber\" value=\"11\" />"): "")+
-      "</OBJECT></LI>";
+  virtual void openToc(const String &fileName, const String &title, bool leaf)
+  {
+    println("<LI><OBJECT type=\"text/sitemap\">"
+	    "<param name=\"Name\" value=\""+title+"\" />"+
+	    "<param name=\"Local\" value=\""+fileName+"\" />"+
+	    (leaf ? String("<param name=\"ImageNumber\" value=\"11\" />"): "")+
+	    "</OBJECT></LI>");
+  }
+
+  virtual void openSubnodes()
+  {
+    println("<UL>");
+  }
+  
+  virtual void closeSubnodes()
+  {
+    println("</UL>");
+  }
+
+  virtual void closeToc()
+  {
+    // do nothing
   }
 
 };
+
+//////////////////////////////////////////////////////////////////////
+// contents.html generator
+
+class HtmlTocGenerator : public TocGenerator
+{
+public:
+
+  HtmlTocGenerator(const String &fileName)
+    : TocGenerator(fileName)
+  {
+  }
+
+  virtual void generate(XmlNode *root)
+  {
+    println("<html>");
+    println("	<head>");
+    println("		<title>Contents</title>");
+    println("		<link rel=\"stylesheet\" type=\"text/css\" href=\"tree.css\" />");
+    println("		<script src=\"tree.js\" language=\"javascript\" type=\"text/javascript\">");
+    println("		</script>");
+    println("	</head>");
+    println("	<body id=\"docBody\" style=\"background-color: #6699CC; color: White; margin: 0px 0px 0px 0px;\" onload=\"resizeTree()\" onresize=\"resizeTree()\" onselectstart=\"return false;\">");
+    println("		<div style=\"font-family: verdana; font-size: 8pt; cursor: pointer; margin: 6 4 8 2; text-align: right\" onmouseover=\"this.style.textDecoration='underline'\" onmouseout=\"this.style.textDecoration='none'\" onclick=\"syncTree(window.parent.frames[1].document.URL)\">sync toc</div>");
+    println("		<div id=\"tree\" style=\"top: 35px; left: 0px;\" class=\"treeDiv\">");
+    println("			<div id=\"treeRoot\" onselectstart=\"return false\" ondragstart=\"return false\">");
+
+    addTocsInNode(root);
+
+    println("			</div>");
+    println("		</div>");
+    println("	</body>");
+    println("</html>");
+  }
+
+protected:
+
+  virtual void openToc(const String &fileName, const String &title, bool leaf)
+  {
+    println("<div class=\"treeNode\">");
+
+    if (leaf)
+      println("<img src=\"treenodedot.gif\" class=\"treeNoLinkImage\" />");
+    else
+      println("<img src=\"treenodeplus.gif\" class=\"treeLinkImage\" onclick=\"expandCollapse(this.parentNode)\" />");
+
+    println("<a href=\""+fileName+"\" target=\"main\" class=\"treeUnselected\" onclick=\"clickAnchor(this)\">"+title+"</a>");
+  }
+
+  virtual void openSubnodes()
+  {
+    println("<div class=\"treeSubnodesHidden\">");
+  }
+  
+  virtual void closeSubnodes()
+  {
+    println("</div>");
+  }
+
+  virtual void closeToc()
+  {
+    println("</div>");
+  }
+
+};
+
+//////////////////////////////////////////////////////////////////////
 
 class VacaDocGenerator : private XmlParser
 {
@@ -787,6 +665,16 @@ public:
     : XmlParser(stream)
   {
     mRootDirectory = stream->getName().getFilePath().addPathComponent("doc");
+
+    // TODO
+    // FileSystem::createDirectory(mRootDirectory);
+    ::CreateDirectory(mRootDirectory.c_str(), NULL);
+
+//     if (!::PathIsDirectory(mRootDirectory.c_str())) {
+//       System::println("Directory "+mRootDirectory+" doesn't exist");
+//       throw;
+//     }
+    
   }
   
   void generate()
@@ -798,15 +686,81 @@ public:
       throw Exception("'" + mRoot->getName() + "' tag must has a 'name' attribute");
     }
 
+    RootNamespace = new Namespace(mRoot, NULL);
+    RootNamespace->resolveReferences();
+    RootNamespace->sortVectors();
+
     docLang = mRoot->getAttributeValue("lang");
     mDocTitle = mRoot->getAttributeValue("title");
-    mDocFeedback = mRoot->getAttributeValue("feedback");
+    mDocFeedback = mRoot->getAttributeValue("feedbackAddress");
     docCopyright = mRoot->getAttributeValue("copyright");
-    docCopyrightAddress = mRoot->getAttributeValue("copyright_address");
+    docCopyrightAddress = mRoot->getAttributeValue("copyrightAddress");
 
     // the first tag is the default topic
-    XmlNode *node = mRoot->getChildren().front();
-    String defaultTopic = resolveFileName(node)+".html";
+
+    XmlNode *node;
+    String defaultTopic = "cover.html";
+
+    // Create all .html files
+    {
+      // stack of parents tag
+      stack<XmlNode *> nodeStack;
+      nodeStack.push(mRoot);
+
+      while (!nodeStack.empty()) {
+	node = nodeStack.top();
+	nodeStack.pop();
+	
+	list<XmlNode *> children = node->getChildren();
+
+	if (node->getName() == "class" ||
+	    node->getName() == "struct") {
+	  Class *cppClass = dynamic_cast<Class *>(RootNamespace->findByXmlNode(node));
+	  if (cppClass != NULL) {
+	    createClassFile(resolveFileName(node)+".html", cppClass);
+
+	    if (!cppClass->members.empty()) {
+	      createMembersFile(resolveFileName(node)+"Members.html", cppClass);
+	      // createMembersOfTypeFile(resolveFileName(node)+"Constructors.html", node, *members, "ctor");
+	      // createMembersOfTypeFile(resolveFileName(node)+"Destructors.html",  node, *members, "dtor");
+	      createMembersOfTypeFile(resolveFileName(node)+"Fields.html", cppClass, "field");
+	      createMembersOfTypeFile(resolveFileName(node)+"Methods.html", cppClass ,"method");
+	      createMembersOfTypeFile(resolveFileName(node)+"Operators.html", cppClass, "operator");
+	      createMembersOfTypeFile(resolveFileName(node)+"Events.html", cppClass, "event");
+	      createMembersOfTypeFile(resolveFileName(node)+"Signals.html", cppClass, "signal");
+	    }
+
+	    for (vector<CppNode *>::iterator
+		   it = cppClass->children.begin();
+		 it != cppClass->children.end(); ++it) {
+	      Member *member = dynamic_cast<Member *>(*it);
+	      if (member != NULL)
+		createMemberFile(resolveFileName(member->xmlNode)+".html",
+				 cppClass, member);
+	    }
+	  }
+	}
+	else if (node->getName() == "enum" ||
+		 node->getName() == "typedef" ||
+		 node->getName() == "macro" ||
+		 node->getName() == "function") {
+	  createAtomTypeFile(resolveFileName(node)+".html", node);
+	}
+	else if (node->getName() == "doc" ||
+		 node->getName() == "chapter" ||
+		 node->getName() == "section" ||
+		 node->getName() == "namespace") {
+	  createChapterFile(resolveFileName(node)+".html", node);
+	  
+	  for (list<XmlNode *>::iterator it = children.begin(); it != children.end(); ++it)
+	    nodeStack.push(*it);
+	}
+	else {
+// 	  for (list<XmlNode *>::iterator it = children.begin(); it != children.end(); ++it)
+// 	    nodeStack.push(*it);
+	}
+      }
+    }
 
     // Index
     {
@@ -816,21 +770,11 @@ public:
 
     // TOC
     {
-      TocGenerator file(mRootDirectory.addPathComponent(mDocName)+".hhc");
-      file.NewTocFile.connect(boost::bind(&std::list<String>::push_back,
+      HhcTocGenerator file(mRootDirectory.addPathComponent(mDocName)+".hhc");
+      file.NewTocFile.connect(boost::bind(&list<String>::push_back,
 					  &mProjectFiles, boost::arg<1>()));
       file.generate(mRoot);
-
-      // a new file for the project
-//       mProjectFiles.push_back(fileName);
-
     }
-
-    // TOC (html)
-//     {
-//       File file("doc/contents.hhc");
-//       addTocHtml(mRoot, file);
-//     }
 
     // HHP (Project file to create CHM using hhc.exe utility)
     {
@@ -863,70 +807,13 @@ public:
       //file.println("[INFOTYPES]");
     }
 
-    // Create all .html files
-    String mainHtml;
-    {
-      String fileHtml;
-      // stack of parents tag
-      stack<XmlNode *> nodeStack;
-      nodeStack.push(mRoot);
-
-      while (!nodeStack.empty()) {
-	node = nodeStack.top();
-	nodeStack.pop();
-	
-	list<XmlNode *> children = node->getChildren();
-
-	if (node->getName() == "class" ||
-	    node->getName() == "struct") {
-	  vector<XmlNode *> members = getClassMembers(node);
-
-	  sort(members.begin(), members.end(), compNameAttributeOfNodes());
-
-	  createClassFile(fileHtml = resolveFileName(node)+".html", node);
-	  createMembersFile(resolveFileName(node)+"Members.html", node, members);
-// 	  createMembersOfTypeFile(resolveFileName(node)+"Constructors.html", node, members, "ctor");
-// 	  createMembersOfTypeFile(resolveFileName(node)+"Destructors.html",  node, members, "dtor");
-	  createMembersOfTypeFile(resolveFileName(node)+"Fields.html",       node, members, "field");
-	  createMembersOfTypeFile(resolveFileName(node)+"Methods.html",      node, members ,"method");
-	  createMembersOfTypeFile(resolveFileName(node)+"Operators.html",    node, members, "operator");
-	  createMembersOfTypeFile(resolveFileName(node)+"Events.html",       node, members, "event");
-	  createMembersOfTypeFile(resolveFileName(node)+"Signals.html",      node, members, "signal");
-	  
-	  for (list<XmlNode *>::iterator it = children.begin(); it != children.end(); ++it)
-	    createMemberFile(resolveFileName(*it)+".html", node, *it);
-	}
-	else if (node->getName() == "enum" ||
-		 node->getName() == "typedef" ||
-		 node->getName() == "macro" ||
-		 node->getName() == "function") {
-	  createAtomTypeFile(fileHtml = resolveFileName(node)+".html", node);
-	}
-	else if (node->getName() == "chapter" ||
-		 node->getName() == "section" ||
-		 node->getName() == "namespace") {
-	  createChapterFile(fileHtml = resolveFileName(node)+".html", node);
-	  
-	  for (list<XmlNode *>::iterator it = children.begin(); it != children.end(); ++it)
-	    nodeStack.push(*it);
-	}
-	else {
-	  for (list<XmlNode *>::iterator it = children.begin(); it != children.end(); ++it)
-	    nodeStack.push(*it);
-	}
-
-	if (mainHtml.empty())
-	  mainHtml = fileHtml;
-      }
-    }
-
     // index.html
     {
       File file(mRootDirectory.addPathComponent("index.html"));
       file.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Frameset//EN\">");
       file.println("<html>");
       file.println("	<head>");
-      file.println("		<meta name=\"Robots\" content=\"noindex\">");
+      file.println("		<meta name=\"Robots\" content=\"noindex\" />");
       file.println("		<title>"+mDocTitle+"</title>");
       file.println("		<script language=\"JavaScript\">");
       file.println("		// ensure this page is not loaded inside another frame");
@@ -938,7 +825,7 @@ public:
       file.println("	</head>");
       file.println("	<frameset cols=\"250,*\" framespacing=\"6\" bordercolor=\"#6699CC\">");
       file.println("		<frame name=\"contents\" src=\"contents.html\" frameborder=\"0\" scrolling=\"no\">");
-      file.println("		<frame name=\"main\" src=\""+mainHtml+".html\" frameborder=\"1\">");
+      file.println("		<frame name=\"main\" src=\""+defaultTopic+"\" frameborder=\"1\">");
       file.println("		<noframes>");
       file.println("			<p>This page requires frames, but your browser does not support them.</p>");
       file.println("		</noframes>");
@@ -946,12 +833,18 @@ public:
       file.println("</html>");
     }
 
+    // contents.html
+    {
+      HtmlTocGenerator file(mRootDirectory.addPathComponent("contents.html"));
+      file.generate(mRoot);
+    }
+
     ShellExecute(NULL, "open", "hhc.exe", String(mDocName+".hhp").c_str(), "doc", 0);
 
     delete mRoot;
   }
 
-private:
+protected:
 
   void headerTemplate(File &file, const String &title)
   {
@@ -987,13 +880,13 @@ private:
 
   void footerTemplate(File &file, const String &fileName, XmlNode *node)
   {
-    listNodesWithName(file, node, "section");
-    listNodesWithName(file, node, "class");
-    listNodesWithName(file, node, "struct");
-    listNodesWithName(file, node, "enum");
-    listNodesWithName(file, node, "typedef");
-    listNodesWithName(file, node, "macro");
-    listNodesWithName(file, node, "function");
+    listNodesWithTitle(file, node);
+    tableNodesWithName(file, node, "class");
+    tableNodesWithName(file, node, "struct");
+    tableNodesWithName(file, node, "enum");
+    tableNodesWithName(file, node, "typedef");
+    tableNodesWithName(file, node, "macro");
+    tableNodesWithName(file, node, "function");
 
     // more "See Also"? 
     list<XmlNode *> children = node->getChildren();
@@ -1002,8 +895,7 @@ private:
 	processSeeAlso(*it);
 
     // add the parent as "See Also"
-    if (node->getParent() != NULL &&
-	node->getParent() != mRoot) // parent != <doc> tag
+    if (node->getParent() != NULL)
       mSeeAlso.push_back(node->getParent());
 
     // See Also
@@ -1019,6 +911,13 @@ private:
       
       file.println("</p>");
     }
+
+    // index
+    file.println("<object type=\"application/x-oleobject\" classid=\"clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e\" viewastext=\"true\" style=\"display: none;\">");
+    file.println("<param name=\"Keyword\" value=\""+preProcessTitle(node)+"\"></param>");
+//     file.println("<param name=\"Keyword\" value=\"setDefault method, Button class\"></param>");
+//     file.println("<param name=\"Keyword\" value=\"Button.setDefault method\"></param>");
+    file.println("</object>");
 
     // Footer
     file.println("      <hr />");
@@ -1097,114 +996,109 @@ private:
   }
   
   // for "class" and "struct"
-  void createClassFile(const String &fileName, XmlNode *classNode)
+  void createClassFile(const String &fileName, Class *cppClass)
   {
-    String className = classNode->getAttributeValue("name");
-    String classTitle = preProcessTitle(classNode);
-    String syntaxText = preProcessSyntax(classNode);
+    String className = cppClass->name;
+    String classTitle = preProcessTitle(cppClass->xmlNode);
+    String syntaxText = preProcessSyntax(cppClass->xmlNode);
 
     File file(mRootDirectory.addPathComponent(fileName));
 
     headerTemplate(file, classTitle);
-    mCrossRef.push_back(classNode);
+    mCrossRef.push_back(cppClass->xmlNode);
 
     // Summary
-    XmlNode *summary = classNode->getChild("summary");
+    XmlNode *summary = cppClass->xmlNode->getChild("summary");
     if (summary != NULL)
       file.println("<p>"+getFormattedNodeText(summary)+"</p>");
 
     // Members of
-    if (hasMembers(classNode))
+    if (!cppClass->members.empty())
       file.println("<p>Para obtener una lista de todos los miembros de este tipo, vea "
-		   "<a href=\""+resolveFileName(classNode)+"Members.html\">" + className + " (Miembros de)</a>.</p>");
+		   "<a href=\""+resolveFileName(cppClass->xmlNode)+"Members.html\">"
+		   + className + " (Miembros de)</a>.</p>");
 
     // Hierarchy
-    printHierarchy(file, classNode);
+    printHierarchy(file, cppClass);
 
     // Syntax
     if (!syntaxText.empty())
       file.println("<div class=\"syntax\">"+syntaxText+"</div>");
 
     // Remarks
-    XmlNode *remarks = classNode->getChild("remarks");
+    XmlNode *remarks = cppClass->xmlNode->getChild("remarks");
     if (remarks != NULL) {
       file.println("<h4 class=\"dtH4\">Comentarios</h4>");
       file.println("<p>"+getFormattedNodeText(remarks)+"</p>");
     }
 
     // Example
-    XmlNode *example = classNode->getChild("example");
+    XmlNode *example = cppClass->xmlNode->getChild("example");
     if (example != NULL) {
       file.println("<h4 class=\"dtH4\">Ejemplo</h4>");
       file.println("<p>"+getFormattedNodeText(example)+"</p>");
     }
     
-    footerTemplate(file, fileName, classNode);
+    footerTemplate(file, fileName, cppClass->xmlNode);
   }
 
   // creates the "__ClassName__Members.html" file
-  void createMembersFile(const String &fileName,
-			 XmlNode *classNode,
-			 vector<XmlNode *> &members)
+  void createMembersFile(const String &fileName, Class *cppClass)
   {
-    if (!hasMembers(classNode))
-      return;
-    
-    String className = classNode->getAttributeValue("name");
-    String classTitle = className+" (Miembros de)";
-    String syntaxText = preProcessSyntax(classNode);
-
     File file(mRootDirectory.addPathComponent(fileName));
 
-    headerTemplate(file, classTitle);
+    headerTemplate(file, cppClass->name+" (Miembros de)");
 
     // Go to overview
-    file.println("<p><a href=\""+resolveFileName(classNode)+".html\">" + className + " (introducción)</a></p>");
+    file.println("<p><a href=\""+resolveFileName(cppClass->xmlNode)+".html\">" +
+		 cppClass->name + " (introducción)</a></p>");
 
     // Members
 
-    listMembersOfTypeAndAccess(file, classNode, members, "ctor",     "public");
-    listMembersOfTypeAndAccess(file, classNode, members, "field",    "public");
-    listMembersOfTypeAndAccess(file, classNode, members, "method",   "public");
-    listMembersOfTypeAndAccess(file, classNode, members, "operator", "public");
-    listMembersOfTypeAndAccess(file, classNode, members, "event",    "public");
-    listMembersOfTypeAndAccess(file, classNode, members, "signal",   "public");
+    listMembersOfTypeAndAccess(file, cppClass, "ctor",     PublicAccess);
+    listMembersOfTypeAndAccess(file, cppClass, "field",    PublicAccess);
+    listMembersOfTypeAndAccess(file, cppClass, "method",   PublicAccess);
+    listMembersOfTypeAndAccess(file, cppClass, "operator", PublicAccess);
+    listMembersOfTypeAndAccess(file, cppClass, "event",    PublicAccess);
+    listMembersOfTypeAndAccess(file, cppClass, "signal",   PublicAccess);
 
-    listMembersOfTypeAndAccess(file, classNode, members, "ctor",     "protected");
-    listMembersOfTypeAndAccess(file, classNode, members, "field",    "protected");
-    listMembersOfTypeAndAccess(file, classNode, members, "method",   "protected");
-    listMembersOfTypeAndAccess(file, classNode, members, "operator", "protected");
-    listMembersOfTypeAndAccess(file, classNode, members, "event",    "protected");
-    listMembersOfTypeAndAccess(file, classNode, members, "signal",   "protected");
+    listMembersOfTypeAndAccess(file, cppClass, "ctor",     ProtectedAccess);
+    listMembersOfTypeAndAccess(file, cppClass, "field",    ProtectedAccess);
+    listMembersOfTypeAndAccess(file, cppClass, "method",   ProtectedAccess);
+    listMembersOfTypeAndAccess(file, cppClass, "operator", ProtectedAccess);
+    listMembersOfTypeAndAccess(file, cppClass, "event",    ProtectedAccess);
+    listMembersOfTypeAndAccess(file, cppClass, "signal",   ProtectedAccess);
 
-    listMembersOfTypeAndAccess(file, classNode, members, "ctor",     "private");
-    listMembersOfTypeAndAccess(file, classNode, members, "field",    "private");
-    listMembersOfTypeAndAccess(file, classNode, members, "method",   "private");
-    listMembersOfTypeAndAccess(file, classNode, members, "operator", "private");
-    listMembersOfTypeAndAccess(file, classNode, members, "event",    "private");
-    listMembersOfTypeAndAccess(file, classNode, members, "signal",   "private");
+    listMembersOfTypeAndAccess(file, cppClass, "ctor",     PrivateAccess);
+    listMembersOfTypeAndAccess(file, cppClass, "field",    PrivateAccess);
+    listMembersOfTypeAndAccess(file, cppClass, "method",   PrivateAccess);
+    listMembersOfTypeAndAccess(file, cppClass, "operator", PrivateAccess);
+    listMembersOfTypeAndAccess(file, cppClass, "event",    PrivateAccess);
+    listMembersOfTypeAndAccess(file, cppClass, "signal",   PrivateAccess);
     
-    footerTemplate(file, fileName, classNode);
+    footerTemplate(file, fileName, cppClass->xmlNode);
   }
 
   // creates file like "__ClassName__Fields.html", "__ClassName__Methods.html", etc.
   void createMembersOfTypeFile(const String &fileName,
-			       XmlNode *classNode,
-			       vector<XmlNode *> &members,
+			       Class *cppClass,
 			       const String &memberType)
   {
-    vector<XmlNode *>::iterator it;
-    for (it=members.begin(); it!=members.end(); ++it) {
-      if ((*it)->getName() == memberType)
+    MembersIterator it;
+
+    for (it = cppClass->members.begin();
+	 it != cppClass->members.end(); ++it) {
+      if ((*it)->getKind() == memberType)
 	break;
     }
+    
     // hasn't "memberType" nodes?
-    if (it == members.end())
+    if (it == cppClass->members.end())
       return;
 
-    String className = classNode->getAttributeValue("name");
+    String className = cppClass->name;
     String title = className + " (" + getPluralOf(memberType) + " de)";
-    String syntaxText = preProcessSyntax(classNode);
+    String syntaxText = preProcessSyntax(cppClass->xmlNode);
       
     File file(mRootDirectory.addPathComponent(fileName));
 
@@ -1214,38 +1108,37 @@ private:
     file.println("<p>A continuación se enumeran "+naturalPhraseForMemberType(memberType)+
 		 " de la clase "+className+". Para obtener "
 		 "una lista completa de los miembros de la clase "+className+", vea el tema "+
-		 "<a href=\""+resolveFileName(classNode)+"Members.html\">" + className + " (Miembros de)</a>"+".</p>");
+		 "<a href=\""+resolveFileName(cppClass->xmlNode)+"Members.html\">" +
+		 className + " (Miembros de)</a>"+".</p>");
 
     // Members of type
 
-    listMembersOfTypeAndAccess(file, classNode, members, memberType, "public");
-    listMembersOfTypeAndAccess(file, classNode, members, memberType, "protected");
-    listMembersOfTypeAndAccess(file, classNode, members, memberType, "private");
+    listMembersOfTypeAndAccess(file, cppClass, memberType, PublicAccess);
+    listMembersOfTypeAndAccess(file, cppClass, memberType, ProtectedAccess);
+    listMembersOfTypeAndAccess(file, cppClass, memberType, PrivateAccess);
 
-    footerTemplate(file, fileName, classNode);
+    footerTemplate(file, fileName, cppClass->xmlNode);
   }
 
   // prints the table of members of the specified type and access
   void listMembersOfTypeAndAccess(File &file,
-				  XmlNode *classNode,
-				  vector<XmlNode *> &members,
+				  Class *cppClass,
 				  const String &memberType,
-				  const String &memberAccess)
+				  Access memberAccess)
   {
-    String className = classNode->getAttributeValue("name");
+    String className = cppClass->name;
     String title = getMembersOfTypeTitle(memberType, memberAccess);
     String imgFile = getImageFileName(memberType, memberAccess);
 
-    vector<XmlNode *>::iterator it;
+    MembersIterator it;
     bool first = true;
 
-    for (it = members.begin(); it != members.end(); ++it) {
-      if (// is the type of member
-	  (*it)->getName() == memberType &&
-	  // has the access?
-	  strncmp((*it)->getAttributeValue("syntax").c_str(),
-		  memberAccess.c_str(),
-		  memberAccess.size()) == 0) {
+    for (it = cppClass->members.begin();
+	 it != cppClass->members.end(); ++it) {
+      Member *member = *it;
+      
+      if (member->getKind() == memberType && // is the type of member
+	  member->access == memberAccess) { // has the access?
 
 	if (first) {
 	  first = false;
@@ -1260,32 +1153,29 @@ private:
 	  file.println("<img src=\""+imgFile+"\"></img>");
 
 	// static icon
-	if ((*it)->getAttributeValue("syntax").find(" static ") != String::npos) {
+	if (member->isStatic) {
 	  file.println("<img src=\"static.gif\"></img>");
 	}
 
 	// member name (and link)
-	file.println("<a href=\""+resolveFileName(*it)+".html\">"+
-		     getNameAttributeOfNode(*it)+"</a>");
+	file.println("<a href=\""+resolveFileName(member->xmlNode)+".html\">"+
+		     member->name+"</a>");
 
 	// inherited
-	XmlAttribute *__origClass = (*it)->getAttribute("__origClass");
-	if ((*it)->getAttribute("__origClass") != NULL) {
-	  String origClassName = __origClass->getValue();
-	  if (origClassName != className)
-	    file.println("(se hereda de <b>"+origClassName+"</b>)");
-	}
+	if (member->fromClass != NULL &&
+	    member->fromClass != cppClass)
+	  file.println("(se hereda de <b>"+member->fromClass->name+"</b>)");
 
 	// separator
 	file.println("</td><td width=\"50%\">");
 
 	// replaced
-	XmlAttribute *__replaced = (*it)->getAttribute("__replaced");
-	if ((*it)->getAttribute("__replaced") != NULL)
+	if (member->isReplaced && member->fromClass == cppClass)
 	  file.println("Reemplazado.");
 	
 	// summary
-	file.println((*it)->getChild("summary") != NULL ? getFormattedNodeText((*it)->getChild("summary")): "");
+	XmlNode *summary = member->xmlNode->getChild("summary");
+	file.println(summary != NULL ? getFormattedNodeText(summary): "");
 	file.println("</td></tr>");
       }
     }
@@ -1295,10 +1185,41 @@ private:
     }
   }
 
+  // prints the list of subnodes with the specified name
+  void listNodesWithTitle(File &file, XmlNode *node)
+  {
+    list<XmlNode *> children = node->getChildren();
+    list<XmlNode *>::iterator it;
+    bool first = true;
+
+    String name = node->getName() == "doc" ? "chapter": "section";
+
+    for (it = children.begin(); it != children.end(); ++it) {
+      XmlAttribute *titleAttrib = (*it)->getAttribute("title");
+      
+      if (titleAttrib != NULL) {
+	if (first) {
+	  first = false;
+	  file.println("<h3 class=\"dtH3\">"+getPluralOf(name)+"</h3>");
+	}
+	
+	// new item
+	file.println("<b><a href=\""+resolveFileName(*it)+".html\">"+titleAttrib->getValue()+"</a></b>");
+	file.println("<blockquote class=\"dtBlock\">");
+	file.println((*it)->getChild("summary") != NULL ? getFormattedNodeText((*it)->getChild("summary")): "");
+	file.println("</blockquote>");
+      }
+    }
+
+//     if (!first) {
+//       file.println("</div>");
+//     }
+  }
+
   // prints the table of subnodes with the specified name
-  void listNodesWithName(File &file,
-			 XmlNode *node,
-			 const String &name)
+  void tableNodesWithName(File &file,
+			  XmlNode *node,
+			  const String &name)
   {
     list<XmlNode *> children = node->getChildren();
     list<XmlNode *>::iterator it;
@@ -1345,23 +1266,23 @@ private:
       file.println("</table></div>");
     }
   }
-
+  
   void createMemberFile(const String &fileName,
-			XmlNode *classNode,
-			XmlNode *memberNode)
+			Class *cppClass,
+			Member *member)
   {
-    String className = classNode->getAttributeValue("name");
-    String memberName = memberNode->getAttributeValue("name");
-    String memberTitle = preProcessTitle(memberNode);
-    String syntaxText = preProcessSyntax(memberNode);
+    String className = cppClass->name;
+    String memberName = member->name;
+    String memberTitle = preProcessTitle(member->xmlNode);
+    String syntaxText = preProcessSyntax(member->xmlNode);
 
     File file(mRootDirectory.addPathComponent(fileName));
 
     headerTemplate(file, className+"::"+memberTitle);
-    mCrossRef.push_back(memberNode);
+    mCrossRef.push_back(member->xmlNode);
 
     // Summary
-    XmlNode *summary = memberNode->getChild("summary");
+    XmlNode *summary = member->xmlNode->getChild("summary");
     if (summary != NULL)
       file.println("<p>"+getFormattedNodeText(summary)+"</p>");
 
@@ -1370,11 +1291,11 @@ private:
       file.println("<div class=\"syntax\">"+syntaxText+"</div>");
 
     // Parameters
-    if (memberNode->getChild("param")) {
+    if (member->xmlNode->getChild("param")) {
       file.println("<h4 class=\"dtH4\">Parámetros</h4>");
       file.println("<dl>");
 
-      list<XmlNode *> children = memberNode->getChildren();
+      list<XmlNode *> children = member->xmlNode->getChildren();
       for (list<XmlNode *>::iterator it=children.begin(); it!=children.end(); ++it) {
 	if ((*it)->getName() == "param") {
 	  file.println("<dt>");
@@ -1388,29 +1309,20 @@ private:
     }
 
     // Remarks
-    XmlNode *remarks = memberNode->getChild("remarks");
+    XmlNode *remarks = member->xmlNode->getChild("remarks");
     if (remarks != NULL) {
       file.println("<h4 class=\"dtH4\">Comentarios</h4>");
       file.println("<p>"+getFormattedNodeText(remarks)+"</p>");
     }
 
     // Example
-    XmlNode *example = memberNode->getChild("example");
+    XmlNode *example = member->xmlNode->getChild("example");
     if (example != NULL) {
       file.println("<h4 class=\"dtH4\">Ejemplo</h4>");
       file.println("<p>"+getFormattedNodeText(example)+"</p>");
     }
-    
-//     file.println("      <object type=\"application/x-oleobject\" classid=\"clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e\" viewastext=\"true\" style=\"display: none;\">");
-//     file.println("        <param name=\"Keyword\" value=\"setDefault method\">");
-//     file.println("        </param>");
-//     file.println("        <param name=\"Keyword\" value=\"setDefault method, Button class\">");
-//     file.println("        </param>");
-//     file.println("        <param name=\"Keyword\" value=\"Button.setDefault method\">");
-//     file.println("        </param>");
-//     file.println("      </object>");
 
-    footerTemplate(file, fileName, memberNode);
+    footerTemplate(file, fileName, member->xmlNode);
   }
 
   String naturalPhraseForMemberType(const String &memberType)
@@ -1431,15 +1343,15 @@ private:
     return "";
   }
 
-  String getMembersOfTypeTitle(const String &memberType, const String &memberAccess)
+  String getMembersOfTypeTitle(const String &memberType, Access memberAccess)
   {
     String prefix, suffix;
-      
-    if (memberAccess == "public")
+
+    if (memberAccess == PublicAccess)
       suffix = (memberType == "signal") ? "públicas": "públicos";
-    else if (memberAccess == "protected")
+    else if (memberAccess == ProtectedAccess)
       suffix = (memberType == "signal") ? "protegidas": "protegidos";
-    else if (memberAccess == "private")
+    else if (memberAccess == PrivateAccess)
       suffix = (memberType == "signal") ? "privadas": "privados";
 
 //     if (memberType == "ctor")
@@ -1458,15 +1370,15 @@ private:
     return getPluralOf(memberType) + " " + suffix;
   }
 
-  String getImageFileName(String memberType, const String &memberAccess)
+  String getImageFileName(String memberType, Access memberAccess)
   {
     String prefix, suffix = ".gif";
 
-    if (memberAccess == "public")
+    if (memberAccess == PublicAccess)
       prefix = "pub";
-    else if (memberAccess == "protected")
+    else if (memberAccess == ProtectedAccess)
       prefix = "prot";
-    else if (memberAccess == "private")
+    else if (memberAccess == PrivateAccess)
       prefix = "priv";
 
     if (memberType == "ctor")
@@ -1477,29 +1389,29 @@ private:
     return prefix + memberType + suffix;
   }
 
-  void printHierarchy(File &file, XmlNode *classNode)
+  void printHierarchy(File &file, Class *cppClass)
   {
     file.println("<p>");
 
     ////////////////////////////////////////
     // print base classes
     
-    stack<XmlNode *> baseStack;
+    stack<Class *> baseStack;
 
-    XmlNode *base = getBaseClass(classNode);
-    while (base != NULL) {
-      baseStack.push(base);
-      base = getBaseClass(base);
+    Class *baseClass = cppClass->baseClass;
+    while (baseClass != NULL) {
+      baseStack.push(baseClass);
+      baseClass = baseClass->baseClass;
     }
 
     int indent = 0;
 
     while (!baseStack.empty()) {
-      base = baseStack.top();
+      baseClass = baseStack.top();
       baseStack.pop();
 
-      file.println("<a href=\""+resolveFileName(base)+".html\">"+
-		   getNameAttributeOfNode(base)+"</a><br />");
+      file.println("<a href=\""+resolveFileName(baseClass->xmlNode)+".html\">"+
+		   baseClass->name+"</a><br />");
 
       ++indent;
       for (int c=0; c<indent; ++c)
@@ -1509,20 +1421,20 @@ private:
     ////////////////////////////////////////
     // print classNode
 
-    file.println("<b>"+getNameAttributeOfNode(classNode)+"</b>");
+    file.println("<b>"+cppClass->name+"</b>");
     indent++;
 
     ////////////////////////////////////////
     // now print sub-classes
 
-    vector<XmlNode *> subclasses = getSubClasses(classNode, mRoot);
-
-    for (vector<XmlNode *>::iterator it = subclasses.begin(); it != subclasses.end(); ++it) {
+    for (vector<Class *>::iterator
+	   it = cppClass->subClasses.begin();
+	 it != cppClass->subClasses.end(); ++it) {
       file.println("<br />");
       for (int c=0; c<indent; ++c)
 	file.println("  ");
-      file.println("<a href=\""+resolveFileName(*it)+".html\">"+
-		   getNameAttributeOfNode(*it)+"</a>");
+      file.println("<a href=\""+resolveFileName((*it)->xmlNode)+".html\">"+
+		   (*it)->name+"</a>");
     }
 
     file.println("</p>");
@@ -1545,10 +1457,10 @@ private:
       return "";
 
     XmlNode *parentNode = contentNode->getParent();
-    std::list<XmlType *> typeString = contentNode->getTypeString();
+    list<XmlType *> typeString = contentNode->getTypeString();
     String res;
 
-    for (std::list<XmlType *>::iterator it=typeString.begin();
+    for (list<XmlType *>::iterator it=typeString.begin();
 	 it!=typeString.end(); ++it) {
       // XmlString
       if ((*it)->isString()) {
@@ -1558,8 +1470,12 @@ private:
       else if ((*it)->isNode()) {
 	XmlNode *node = (*it)->getNode();
 
+	// <br />
+	if (node->getName() == "br") {
+	  res += "<br />";
+	}
 	// <em></em>
-	if (node->getName() == "em") {
+	else if (node->getName() == "em") {
 	  res += "<em>" + node->getText() + "</em>";
 	}
 	// <b></b>
@@ -1577,6 +1493,10 @@ private:
 	// <para></para>
 	else if (node->getName() == "para") {
 	  res += "<p>" + getFormattedNodeText(node) + "<p>";
+	}
+	// <paramref></paramref>
+	else if (node->getName() == "paramref") {
+	  res += "<b>" + getFormattedNodeText(node) + "</b>";
 	}
 	// <see/>
 	else if (node->getName() == "see") {
@@ -1601,7 +1521,7 @@ private:
 	else if (node->getName() == "list") {
 	  String type = node->getAttributeValue("type");
 	  list<XmlNode *> children = node->getChildren();
-	  XmlNode *item, *desc;
+	  XmlNode *term, *desc;
 
 	  // bullet & number
 	  if (type == "bullet" || type == "number") {
@@ -1612,12 +1532,26 @@ private:
 	    
 	    for (list<XmlNode *>::iterator it = children.begin(); it != children.end(); ++it) {
 	      if ((*it)->getName() == "item") {
-		item = (*it)->getChild("term");
+		term = (*it)->getChild("term");
 		desc = (*it)->getChild("description");
 
-		res += "<li><b>" +
-		  getFormattedNodeText(item) + " - </b>" +
-		  getFormattedNodeText(desc) + "</li>";
+		res += "<li>";
+
+		// term
+		if (term != NULL) {
+		  res += "<b>" + getFormattedNodeText(term);
+		  if (desc != NULL) res += " - ";
+		  res += "</b>";
+		}
+
+		// desc
+		if (desc != NULL)
+		  res += getFormattedNodeText(desc);
+		
+		res += "</li>";
+	      }
+	      else {
+		throw Exception("Invalid tag inside <list></list>: \""+(*it)->getName()+"\"");
 	      }
 	    }
 	    if (type == "bullet")
@@ -1630,19 +1564,22 @@ private:
 	    res += "<div class=\"tablediv\"><table class=\"dtTABLE\" cellspacing=\"0\">";
 	    
 	    for (list<XmlNode *>::iterator it = children.begin(); it != children.end(); ++it) {
-	      item = (*it)->getChild("term");
+	      term = (*it)->getChild("term");
 	      desc = (*it)->getChild("description");
 
 	      if ((*it)->getName() == "listheader")
 		res +=
 		  "<tr valign=\"top\">"
-		  "<th width=\"50%\">" + getFormattedNodeText(item) + "</th>"
+		  "<th width=\"50%\">" + getFormattedNodeText(term) + "</th>"
 		  "<th width=\"50%\">" + getFormattedNodeText(desc) + "</th></tr>";
 	      else if ((*it)->getName() == "item")
 		res +=
 		  "<tr valign=\"top\">"
-		  "<td>" + getFormattedNodeText(item) + "</td>"
+		  "<td>" + getFormattedNodeText(term) + "</td>"
 		  "<td>" + getFormattedNodeText(desc) + "</td></tr>";
+	      else {
+		throw Exception("Invalid tag inside <list></list>: \""+(*it)->getName()+"\"");
+	      }
 	    }
 	    res += "</table></div>";
 	  }
@@ -1656,11 +1593,10 @@ private:
     
     return res;
   }
-
+  
 };
 
 //////////////////////////////////////////////////////////////////////
-//
 
 class XmlFileStream : public XmlStream
 {
@@ -1681,14 +1617,14 @@ public:
     fclose(mFile);
   }
 
-  virtual Vaca::String getName()
+  virtual String getName()
   {
     return mFileName;
   }
   
   virtual bool readLine(char *buf, int max)
   {
-    return fgets(buf, max, mFile);
+    return fgets(buf, max, mFile) != NULL;
   }
   
 };
@@ -1699,11 +1635,17 @@ class VacaDoc : public Application
 {
 public:
 
-  virtual void main(std::vector<String> args)
+  virtual void main(vector<String> args)
   {
+    // TODO remove this
+    if (args.size() < 2) {
+      args.push_back(String("..\\utilities\\VacaDoc\\Vaca.xml"));
+    }
+
     if (args.size() < 2) {
       System::println("Usage:");
-      System::println("VacaDoc.exe DocFile.xml");
+      System::println("  VacaDoc.exe DocFile.xml");
+      System::println("");
     }
     else {
       try {
@@ -1722,12 +1664,16 @@ public:
 int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		   LPSTR lpCmdLine, int nCmdShow)
 {
-  printf("start\n");
+  clock_t start = clock();
+  printf("Start\n");
 
   VacaDoc *app(new VacaDoc);
   app->run();
   delete app;
-  
-  printf("end\n");
+
+  clock_t end = clock();
+  printf("End (%d.%d)\n",
+	 (end-start) / CLOCKS_PER_SEC,
+	 100 * ((end-start) % CLOCKS_PER_SEC) / CLOCKS_PER_SEC);
   return 0;
 }

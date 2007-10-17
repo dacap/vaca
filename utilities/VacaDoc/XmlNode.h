@@ -33,46 +33,47 @@
 #define VACA_XMLNODE_H
 
 #include <list>
-
 #include "Vaca/String.h"
-
 #include "XmlType.h"
+
+using namespace std;
+using namespace Vaca;
 
 class XmlAttribute;
 
 class XmlNode : public XmlType
 {
-  Vaca::String mName;
+  String mName;
   XmlNode *mParent;
-  std::list<XmlNode *> mChildren;
-  std::list<XmlAttribute *> mAttributes;
-  std::list<XmlType *> mTypeString;
+  list<XmlNode *> mChildren;
+  list<XmlAttribute *> mAttributes;
+  list<XmlType *> mTypeString;
   
 public:
 
-  XmlNode(const Vaca::String &name);
+  XmlNode(const String &name);
   virtual ~XmlNode();
 
   virtual bool isNode() { return true; }
   virtual XmlNode *getNode() { return this; }
-  virtual Vaca::String getText();
+  virtual String getText();
 
-  Vaca::String getName();
+  String getName();
   XmlNode *getParent();
 
   void addChar(int character);
   void addChild(XmlNode *child);
   void addAttribute(XmlAttribute *attribute);
 
-  std::list<XmlNode *> getChildren();
-  std::list<XmlAttribute *> getAttributes();
-  std::list<XmlType *> getTypeString();
+  list<XmlNode *> getChildren();
+  list<XmlAttribute *> getAttributes();
+  list<XmlType *> getTypeString();
 
-  XmlNode *getChild(const Vaca::String &name);
-  XmlAttribute *getAttribute(const Vaca::String &name);
+  XmlNode *getChild(const String &name);
+  XmlAttribute *getAttribute(const String &name);
 
-  Vaca::String getAttributeValue(const Vaca::String &name);
-  void setAttributeValue(const Vaca::String &name, const Vaca::String &value);
+  String getAttributeValue(const String &name);
+  void setAttributeValue(const String &name, const String &value);
   
 };
 

@@ -49,3 +49,7 @@ Panel::Panel(LPCTSTR className, Widget *parent, Style style)
   : Widget(className, parent, style)
 {
 }
+
+Panel::~Panel()
+{
+}

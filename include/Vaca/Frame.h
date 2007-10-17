@@ -43,10 +43,12 @@
 
 namespace Vaca {
 
-class Icon;
-class MenuBar;
-class Menu;
 class CloseEvent;
+class Command;
+class Icon;
+class Menu;
+class MenuBar;
+class MenuItem;
 
 #define WithCaptionFrameStyle		(Style(WS_CAPTION, 0))
 
@@ -85,6 +87,7 @@ public:
 class VACA_DLL Frame : public Register<FrameClass>, public Widget
 {
   MenuBar *mMenuBar;		      // The menu bar.
+  std::vector<Command *> mCommands;   // collection of Commands that can be executed in this Frame
   std::vector<DockArea *> mDockAreas; // Areas where you can dock a tool-bar.
   bool mCounted;		      // true if this Frame is counted in the frames' list
 
@@ -106,13 +109,16 @@ public:
   Size getNonClientSize();
   virtual Rect getLayoutBounds();
 
+  void addCommand(Command *command);
+  void removeCommand(Command *command);
+  
   void addDockArea(DockArea *dockArea);
   void removeDockArea(DockArea *dockArea);
   void defaultDockAreas();
   void clearDockAreas();
   std::vector<DockArea *> getDockAreas();
-  DockArea &getDockArea(Side side);
-  virtual DockArea &getDefaultDockArea();
+  DockArea *getDockArea(Side side);
+  virtual DockArea *getDefaultDockArea();
 
   virtual Size preferredSize();
   virtual Size preferredSize(const Size &fitIn);
@@ -121,12 +127,12 @@ public:
   virtual bool isLayoutFree();
   virtual bool wantArrowCursor();
 
-  boost::signal<void (WidgetEvent &)> Activate;   ///< @see onActivate
-  boost::signal<void (WidgetEvent &)> Deactivate; ///< @see onDeactivate
-  boost::signal<void (CloseEvent &)> Close;      ///< @see onClose
+  boost::signal<void (Event &)> Activate;   ///< @see onActivate
+  boost::signal<void (Event &)> Deactivate; ///< @see onDeactivate
+  boost::signal<void (CloseEvent &)> Close; ///< @see onClose
 
   // static int getFramesCount();
-  static int getVisibleFramesByThread(int threadId);
+//   static int getVisibleFramesByThread(int threadId);
 
   virtual bool preTranslateMessage(MSG &msg);
 
@@ -138,8 +144,8 @@ protected:
   virtual bool onIdAction(int id);
 
   // new events
-  virtual void onActivate(WidgetEvent &ev);
-  virtual void onDeactivate(WidgetEvent &ev);
+  virtual void onActivate(Event &ev);
+  virtual void onDeactivate(Event &ev);
   virtual void onClose(CloseEvent &ev);
   virtual void onResizing(int edge, Rect &rc);
 
@@ -148,7 +154,9 @@ protected:
 private:
 
   void initialize(const String &title);
-//   Menu *getMenuByHmenu(HMENU hmenu);
+//   Menu *getMenuByHMENU(HMENU hmenu);
+  void updateMenuItem(MenuItem *menuItem);
+  
 };
 
 } // namespace Vaca

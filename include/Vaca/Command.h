@@ -32,27 +32,37 @@
 #ifndef VACA_COMMAND_H
 #define VACA_COMMAND_H
 
-#include <boost/signal.hpp>
-
 #include "Vaca/base.h"
 #include "Vaca/String.h"
 
+#include <boost/signal.hpp>
+
 namespace Vaca {
+
+class Event;
 
 class VACA_DLL CommandState
 {
   String *mText;
   bool *mEnabled;
   bool *mChecked;
+  bool *mRadio;
 
 public:
+
   CommandState();
   virtual ~CommandState();
 
   void setText(const String &text);
   void setEnabled(bool state);
   void setChecked(bool state);
-//   void setRadio(bool state);
+  void setRadio(bool state);
+
+  const String *getText() const;
+  const bool *isEnabled() const;
+  const bool *isChecked() const;
+  const bool *isRadio() const;
+  
 };
 
 /**
@@ -66,11 +76,11 @@ class VACA_DLL Command
 //   String mDescription; // Short description for the StatusBar or the ToolBar tip).
 
 public:
+
   Command(int id);
   virtual ~Command();
 
-  virtual void onAction();
-  virtual void onUpdate(CommandState &cs);
+  int getId() const;
 
 //   virtual const String &getText() const { return mText; }
 //   virtual const String &getToolTip() const { return mToolTip; }
@@ -78,6 +88,10 @@ public:
 
   boost::signal<void ()> Action;
   boost::signal<void (CommandState &)> Update;
+
+  // events
+  virtual void onAction();
+  virtual void onUpdate(CommandState &cmdState);
 
 };
 

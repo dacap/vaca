@@ -33,16 +33,18 @@
 #include "Vaca/Cursor.h"
 #include "Vaca/Application.h"
 #include "Vaca/Debug.h"
+#include "Vaca/ResourceException.h"
 
 using namespace Vaca;
 
 Cursor::Cursor(int cursorId)
 {
-  mHcursor = LoadCursor(Application::getHinstance(),
+  mHCURSOR = LoadCursor(Application::getHINSTANCE(),
 			MAKEINTRESOURCE(cursorId));
   mAutoDelete = true;
 
-  // TODO exception if (mHcursor == NULL)
+  if (mHCURSOR == NULL)
+    throw ResourceException();
 }
 
 Cursor::Cursor(SysCursor cursor)
@@ -50,6 +52,13 @@ Cursor::Cursor(SysCursor cursor)
   LPCTSTR sysCursor = IDC_ARROW;
 
   switch (cursor) {
+
+    // special cursor that has HCURSOR = NULL
+    case NoCursor:
+      mHCURSOR = NULL;
+      mAutoDelete = false;
+      return;
+
     case ArrowCursor:     sysCursor = IDC_ARROW; break;
     case CrosshairCursor: sysCursor = IDC_CROSS; break;
 // #ifdef IDC_HAND
@@ -74,46 +83,49 @@ Cursor::Cursor(SysCursor cursor)
 // #endif
   }
   
-  mHcursor = LoadCursor(NULL, sysCursor);
+  mHCURSOR = LoadCursor(NULL, sysCursor);
   mAutoDelete = false;
 
-  // TODO exception if (mHcursor == NULL)
+  if (mHCURSOR == NULL)
+    throw ResourceException();
 }
 
 Cursor::Cursor(const String &fileName)
 {
-  mHcursor = reinterpret_cast<HCURSOR>
-    (LoadImage(Application::getHinstance(),
+  mHCURSOR = reinterpret_cast<HCURSOR>
+    (LoadImage(Application::getHINSTANCE(),
 	       fileName.c_str(),
 	       IMAGE_CURSOR,
 	       0, 0, LR_LOADFROMFILE));
 
   mAutoDelete = true;
 
-  // TODO exception if (mHcursor == NULL)
+  if (mHCURSOR == NULL)
+    throw ResourceException();
 }
 
 Cursor::Cursor(const Cursor &cursor)
 {
   if (cursor.mAutoDelete) {
-    mHcursor = CopyCursor(cursor.mHcursor);
+    mHCURSOR = CopyCursor(cursor.mHCURSOR);
     mAutoDelete = true;
   }
   else {
-    mHcursor = cursor.mHcursor;
+    mHCURSOR = cursor.mHCURSOR;
     mAutoDelete = false;
   }
 
-  // TODO exception if (mHcursor == NULL)
+  if (mHCURSOR == NULL)
+    throw ResourceException();
 }
 
 Cursor::~Cursor()
 {
-  if (mHcursor != NULL && mAutoDelete)
-    DestroyCursor(mHcursor);
+  if (mHCURSOR != NULL && mAutoDelete)
+    DestroyCursor(mHCURSOR);
 }
 
-HCURSOR Cursor::getHcursor()
+HCURSOR Cursor::getHCURSOR()
 {
-  return mHcursor;
+  return mHCURSOR;
 }

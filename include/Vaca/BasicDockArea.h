@@ -47,6 +47,7 @@ class VACA_DLL BasicDockArea : public DockArea
 public:
 
   BasicDockArea(Side side, Widget *parent, Style style = BasicDockAreaStyle);
+  virtual ~BasicDockArea();
 
   virtual bool hitTest(DockBar *bar, const Point &cursor, const Point &anchor, bool fromInside);
   virtual DockInfo *createDefaultDockInfo(DockBar *bar);

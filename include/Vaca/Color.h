@@ -64,6 +64,7 @@ private:
 public:
 
   Color();
+  Color(const Color &color);
   Color(int r, int g, int b);
   virtual ~Color();
 

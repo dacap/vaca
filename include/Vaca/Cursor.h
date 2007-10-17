@@ -38,6 +38,7 @@
 namespace Vaca {
 
 enum SysCursor {
+  NoCursor,
   ArrowCursor,
   CrosshairCursor,
   HandCursor,
@@ -65,7 +66,7 @@ class String;
  */
 class VACA_DLL Cursor
 {
-  HCURSOR mHcursor;
+  HCURSOR mHCURSOR;
   bool mAutoDelete;
 
 public:
@@ -76,7 +77,7 @@ public:
   Cursor(const Cursor &cursor);
   virtual ~Cursor();
 
-  HCURSOR getHcursor();
+  HCURSOR getHCURSOR();
 
 };
 

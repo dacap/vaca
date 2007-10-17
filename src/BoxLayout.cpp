@@ -40,14 +40,14 @@ using namespace Vaca;
 // auxiliar function to known if a widget is expansive
 static bool WidgetIsExpansive(Widget *widget) 
 {
-  BoxConstraint *boxConstraint =
-    dynamic_cast<BoxConstraint *>(widget->getConstraint());
-
-  if (boxConstraint != NULL &&
-      boxConstraint->isExpansive())
-    return true;
-  else
+  Constraint *constraint = widget->getConstraint();
+  if (constraint == NULL)
     return false;
+
+  BoxConstraint *boxConstraint =
+    dynamic_cast<BoxConstraint *>(constraint);
+  assert(boxConstraint != NULL);
+  return boxConstraint->isExpansive();
 }
 
 //////////////////////////////////////////////////////////////////////

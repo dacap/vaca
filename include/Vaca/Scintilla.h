@@ -59,7 +59,9 @@ public:
 class VACA_DLL SciEditor : public SciRegister, public Widget
 {
 public:
+
   SciEditor(Widget *parent, Style style = SciEditorStyle);
+  virtual ~SciEditor();
 
   virtual void setFont(Font &font);
 

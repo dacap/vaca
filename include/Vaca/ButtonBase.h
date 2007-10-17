@@ -78,7 +78,7 @@ class VACA_DLL ButtonBase : public Widget
 {
 public:
 
-  ButtonBase(LPCTSTR className, Widget *parent, Style style);
+  ButtonBase(Widget *parent, Style style);
   virtual ~ButtonBase();
 
   bool isSelected();
@@ -87,14 +87,14 @@ public:
   virtual Size preferredSize();
 
   // signals
-  boost::signal<void (WidgetEvent &)> Action; ///< @see onAction
+  boost::signal<void (Event &)> Action; ///< @see onAction
 
 protected:
   // new events
-  virtual void onAction(WidgetEvent &ev);
+  virtual void onAction(Event &ev);
 
   // reflection
-  virtual bool onCommand(int commandCode, LRESULT &lResult);
+  virtual bool onCommand(int id, int code, LRESULT &lResult);
 };
 
 } // namespace Vaca

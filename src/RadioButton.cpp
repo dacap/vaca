@@ -32,7 +32,7 @@
 #include "stdvaca.h"
 #include "Vaca/RadioButton.h"
 #include "Vaca/Debug.h"
-#include "Vaca/WidgetEvent.h"
+#include "Vaca/Event.h"
 
 using namespace Vaca;
 
@@ -40,10 +40,14 @@ using namespace Vaca;
 // RadioButton
 
 RadioButton::RadioButton(const String &text, const RadioGroup &group, Widget *parent, Style style)
-  : ButtonBase(_T("BUTTON"), parent, style)
+  : ButtonBase(parent, style)
   , mRadioGroup(group)
 {
   setText(text);
+}
+
+RadioButton::~RadioButton()
+{
 }
 
 const RadioGroup &RadioButton::getRadioGroup() const
@@ -51,35 +55,27 @@ const RadioGroup &RadioButton::getRadioGroup() const
   return mRadioGroup;
 }
 
-bool RadioButton::onCommand(int commandCode, LRESULT &lResult)
+bool RadioButton::onCommand(int id, int code, LRESULT &lResult)
 {
-  if (ButtonBase::onCommand(commandCode, lResult))
-    return true;
-  else {
-    switch (commandCode) {
+  if (code == BN_CLICKED) {
+    Widget::Container siblings = getParent()->getChildren();
+    RadioGroup radioGroup(getRadioGroup());
 
-      case BN_CLICKED: {
-	Widget::Container siblings = getParent()->getChildren();
-	RadioGroup radioGroup(getRadioGroup());
+    for (Widget::Container::iterator it=siblings.begin(); it!=siblings.end(); ++it) {
+      RadioButton *sibling = dynamic_cast<RadioButton *>(*it);
 
-	for (Widget::Container::iterator it=siblings.begin(); it!=siblings.end(); ++it) {
-	  RadioButton *sibling = dynamic_cast<RadioButton *>(*it);
-
-	  if (sibling != NULL && sibling != this) {
-	    if (sibling->getRadioGroup() == radioGroup &&
-		sibling->isSelected()) {
-	      sibling->setSelected(false);
-	    }
-	  }
+      if (sibling != NULL && sibling != this) {
+	if (sibling->getRadioGroup() == radioGroup &&
+	    sibling->isSelected()) {
+	  sibling->setSelected(false);
 	}
-
-	setSelected(true);
-	break;
       }
-
     }
+
+    setSelected(true);
   }
-  return false;
+
+  return ButtonBase::onCommand(id, code, lResult);
 }
 
 //////////////////////////////////////////////////////////////////////

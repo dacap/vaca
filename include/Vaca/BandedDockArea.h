@@ -59,6 +59,7 @@ class VACA_DLL BandedDockArea : public DockArea
 public:
 
   BandedDockArea(Side side, Widget *parent, Style style = BandedDockAreaStyle);
+  virtual ~BandedDockArea();
 
   virtual bool hitTest(DockBar *bar, const Point &cursor, const Point &anchor, bool fromInside);
   virtual DockInfo *createDefaultDockInfo(DockBar *bar);

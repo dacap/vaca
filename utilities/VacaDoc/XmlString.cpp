@@ -40,7 +40,7 @@ XmlString::~XmlString()
 {
 }
   
-Vaca::String XmlString::getText()
+String XmlString::getText()
 {
   return mText;
 }

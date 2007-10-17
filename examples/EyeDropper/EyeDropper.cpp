@@ -113,7 +113,7 @@ protected:
   virtual void onMouseMove(MouseEvent &ev)
   {
     if (hasCapture()) {
-      Graphics g;
+      ScreenGraphics g;
       setBgColor(g.getPixel(System::getCursorPos()));
       invalidate(true);
     }

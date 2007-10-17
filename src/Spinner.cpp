@@ -33,7 +33,7 @@
 // #include "Vaca/Application.h"
 #include "Vaca/Spinner.h"
 // #include "Vaca/Debug.h"
-// #include "Vaca/WidgetEvent.h"
+// #include "Vaca/Event.h"
 
 using namespace Vaca;
 
@@ -43,22 +43,19 @@ Spinner::Spinner(Widget *parent, Style spinStyle, Style style)
   , mSpin(this, spinStyle)
 {
   mSpin.setBuddy(&mEdit);
-
-  // default values
-  setRange(0, 100);
-  setPosition(0);
 }
 
 Spinner::Spinner(int minValue, int maxValue, int posValue,
 		 Widget *parent, Style spinStyle, Style style)
   : Widget(SpinnerClass::getClassName(), parent, style)
   , mEdit("", this)
-  , mSpin(this, spinStyle)
+  , mSpin(minValue, maxValue, posValue, this, spinStyle)
 {
   mSpin.setBuddy(&mEdit);
+}
 
-  setRange(minValue, maxValue);
-  setPosition(posValue);
+Spinner::~Spinner()
+{
 }
 
 Size Spinner::preferredSize()
@@ -99,14 +96,31 @@ void Spinner::setRange(int minValue, int maxValue)
   mSpin.setRange(minValue, maxValue);
 }
 
-int Spinner::getPosition()
+int Spinner::getValue()
 {
-  return mSpin.getPosition();
+  return mSpin.getValue();
 }
 
-void Spinner::setPosition(int posValue)
+void Spinner::setValue(int posValue)
 {
-  mSpin.setPosition(posValue);
+  mSpin.setValue(posValue);
+}
+
+/**
+ * Returns the radix base used in Edit widget.
+ */
+int Spinner::getBase()
+{
+  return mSpin.getBase();
+}
+
+/**
+ * Sets the radix base to be used in the Edit widget. This can be 10
+ * for decimal or 16 for hexadecimal.
+ */
+void Spinner::setBase(int base)
+{
+  mSpin.setBase(base);
 }
 
 void Spinner::layout()

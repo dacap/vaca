@@ -32,10 +32,10 @@
 #ifndef VACA_LISTBOX_H
 #define VACA_LISTBOX_H
 
-#include <vector>
-
 #include "Vaca/base.h"
 #include "Vaca/Widget.h"
+
+#include <vector>
 
 namespace Vaca {
 
@@ -60,13 +60,14 @@ class VACA_DLL ListBox : public Widget
 public:
 
   ListBox(Widget *parent, Style style = ListBoxStyle);
+  virtual ~ListBox();
 
   int addItem(const String &text);
   void insertItem(int itemIndex, const String &text);
   void removeItem(int itemIndex);
 
   int getItemCount();
-  Rect getItemRect(int itemIndex);
+  Rect getItemBounds(int itemIndex);
 
   String getItemText(int itemIndex);
   void setItemText(int itemIndex, const String &text);
@@ -79,16 +80,16 @@ public:
   virtual Size preferredSize();
 
   // signals
-  boost::signal<void (WidgetEvent &)> Action;	 ///< @see onAction
-  boost::signal<void (WidgetEvent &)> SelChange; ///< @see onSelChange
+  boost::signal<void (Event &)> Action;	 ///< @see onAction
+  boost::signal<void (Event &)> SelChange; ///< @see onSelChange
 
 protected:
   // new events
-  virtual void onAction(WidgetEvent &ev);
-  virtual void onSelChange(WidgetEvent &ev);
+  virtual void onAction(Event &ev);
+  virtual void onSelChange(Event &ev);
 
   // reflection
-  virtual bool onCommand(int commandCode, LRESULT &lResult);
+  virtual bool onCommand(int id, int code, LRESULT &lResult);
 
 };
 

@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="Vaca"
-	ProjectGUID="{5DAB56B6-7E57-475D-8AE1-8DCDB7D3E2D6}"
+	ProjectGUID="{626AD85E-341D-48D0-9D57-B5FA5A75C538}"
 	RootNamespace="Vaca"
 	Keyword="Win32Proj">
 	<Platforms>
@@ -21,7 +21,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="C:\boost_1_33_1;..;../include"
-				PreprocessorDefinitions="VACA_SRC;WIN32;_DEBUG;_WINDOWS;_USRDLL;VACALIBRARY_EXPORTS;SECURITY_WIN32;_DLL;WINVER=0x0500;_WIN32_IE=0x0500;_WIN32_WINNT=0x0500"
+				PreprocessorDefinitions="VACA_SRC;WIN32;_DEBUG;_WINDOWS;_USRDLL;SECURITY_WIN32;WINVER=0x0500;_WIN32_IE=0x0500;_WIN32_WINNT=0x0500"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
@@ -36,7 +36,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ComCtl32.Lib Secur32.Lib MSImg32.Lib"
+				AdditionalDependencies="ComCtl32.Lib Secur32.Lib MSImg32.Lib ShLwApi.Lib"
 				OutputFile="$(OutDir)/vaca.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;C:\boost_1_33_1\bin\boost\libs\signals\build\libboost_signals.lib\vc-7_1\debug\runtime-link-static\threading-multi&quot;;&quot;C:\boost_1_33_1\bin\boost\libs\signals\build\libboost_signals.lib\vc-7_1\debug\runtime-link-static&quot;"
@@ -76,7 +76,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="C:\boost_1_33_1;..;../include"
-				PreprocessorDefinitions="VACA_SRC;WIN32;NDEBUG;_WINDOWS;_USRDLL;VACALIBRARY_EXPORTS;SECURITY_WIN32;WINVER=0x0500;_WIN32_IE=0x0500;_WIN32_WINNT=0x0500"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;SECURITY_WIN32;WINVER=0x0500;_WIN32_IE=0x0500;_WIN32_WINNT=0x0500"
 				RuntimeLibrary="1"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="3"
@@ -128,12 +128,12 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="C:\boost_1_33_1;..;../include"
-				PreprocessorDefinitions="VACA_STATIC;VACA_SRC;WIN32;_DEBUG;_WINDOWS;_USRDLL;SECURITY_WIN32;WINVER=0x0500;_WIN32_IE=0x0500;_WIN32_WINNT=0x0500"
+				PreprocessorDefinitions="VACA_STATIC;WIN32;_DEBUG;_WINDOWS;SECURITY_WIN32;WINVER=0x0500;_WIN32_IE=0x0500;_WIN32_WINNT=0x0500"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				RuntimeTypeInfo="TRUE"
-				UsePrecompiledHeader="3"
+				UsePrecompiledHeader="0"
 				PrecompiledHeaderThrough="stdvaca.h"
 				PrecompiledHeaderFile="$(IntDir)/vaca.pch"
 				WarningLevel="3"
@@ -159,6 +159,8 @@
 			<Tool
 				Name="VCXMLDataGeneratorTool"/>
 			<Tool
+				Name="VCWebDeploymentTool"/>
+			<Tool
 				Name="VCManagedWrapperGeneratorTool"/>
 			<Tool
 				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
@@ -172,7 +174,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="C:\boost_1_33_1;..;../include"
-				PreprocessorDefinitions="VACA_STATIC;VACA_SRC;WIN32;NDEBUG;_WINDOWS;_USRDLL;SECURITY_WIN32;WINVER=0x0500;_WIN32_IE=0x0500;_WIN32_WINNT=0x0500"
+				PreprocessorDefinitions="VACA_STATIC;WIN32;NDEBUG;_WINDOWS;SECURITY_WIN32;WINVER=0x0500;_WIN32_IE=0x0500;_WIN32_WINNT=0x0500"
 				RuntimeLibrary="1"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="3"
@@ -201,6 +203,8 @@
 			<Tool
 				Name="VCXMLDataGeneratorTool"/>
 			<Tool
+				Name="VCWebDeploymentTool"/>
+			<Tool
 				Name="VCManagedWrapperGeneratorTool"/>
 			<Tool
 				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
@@ -213,464 +217,178 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
-			<File
-				RelativePath="..\src\AnchorLayout.cpp">
-			</File>
-			<File
-				RelativePath="..\src\Application.cpp">
-			</File>
-			<File
-				RelativePath="..\src\BandedDockArea.cpp">
-			</File>
-			<File
-				RelativePath="..\src\BasicDockArea.cpp">
-			</File>
-			<File
-				RelativePath="..\src\BoxLayout.cpp">
-			</File>
-			<File
-				RelativePath="..\src\Button.cpp">
-			</File>
-			<File
-				RelativePath="..\src\ButtonBase.cpp">
-			</File>
-			<File
-				RelativePath="..\src\CheckBox.cpp">
-			</File>
-			<File
-				RelativePath="..\src\ClientLayout.cpp">
-			</File>
-			<File
-				RelativePath="..\src\Clipboard.cpp">
-			</File>
-			<File
-				RelativePath="..\src\Color.cpp">
-			</File>
-			<File
-				RelativePath="..\src\ColorDialog.cpp">
-			</File>
-			<File
-				RelativePath="..\src\Command.cpp">
-			</File>
-			<File
-				RelativePath="..\src\CommonDialog.cpp">
-			</File>
-			<File
-				RelativePath="..\src\Cursor.cpp">
-			</File>
-			<File
-				RelativePath="..\src\CustomButton.cpp">
-			</File>
-			<File
-				RelativePath="..\src\CustomLabel.cpp">
-			</File>
-			<File
-				RelativePath="..\src\Debug.cpp">
-			</File>
-			<File
-				RelativePath="..\src\Dialog.cpp">
-			</File>
-			<File
-				RelativePath="..\src\DockArea.cpp">
-			</File>
-			<File
-				RelativePath="..\src\DockBar.cpp">
-			</File>
-			<File
-				RelativePath="..\src\DockFrame.cpp">
-			</File>
-			<File
-				RelativePath="..\src\Edit.cpp">
-			</File>
-			<File
-				RelativePath="..\src\FileDialog.cpp">
-			</File>
-			<File
-				RelativePath="..\src\FindTextDialog.cpp">
-			</File>
-			<File
-				RelativePath="..\src\Font.cpp">
-			</File>
-			<File
-				RelativePath="..\src\FontDialog.cpp">
-			</File>
-			<File
-				RelativePath="..\src\Frame.cpp">
-			</File>
-			<File
-				RelativePath="..\src\Graphics.cpp">
-			</File>
-			<File
-				RelativePath="..\src\GroupBox.cpp">
-			</File>
-			<File
-				RelativePath="..\src\Icon.cpp">
-			</File>
-			<File
-				RelativePath="..\src\Image.cpp">
-			</File>
-			<File
-				RelativePath="..\src\ImageList.cpp">
-			</File>
-			<File
-				RelativePath="..\src\Keys.cpp">
-			</File>
-			<File
-				RelativePath="..\src\Label.cpp">
-			</File>
-			<File
-				RelativePath="..\src\Layout.cpp">
-			</File>
-			<File
-				RelativePath="..\src\LinkLabel.cpp">
-			</File>
-			<File
-				RelativePath="..\src\ListBox.cpp">
-			</File>
-			<File
-				RelativePath="..\src\Mdi.cpp">
-			</File>
-			<File
-				RelativePath="..\src\Menu.cpp">
-			</File>
-			<File
-				RelativePath="..\src\Mutex.cpp">
-			</File>
-			<File
-				RelativePath="..\src\Panel.cpp">
-			</File>
-			<File
-				RelativePath="..\src\Point.cpp">
-			</File>
-			<File
-				RelativePath="..\src\ProgressBar.cpp">
-			</File>
-			<File
-				RelativePath="..\src\RadioButton.cpp">
-			</File>
-			<File
-				RelativePath="..\src\ReBar.cpp">
-			</File>
-			<File
-				RelativePath="..\src\Rect.cpp">
-			</File>
-			<File
-				RelativePath="..\src\Scintilla.cpp">
-			</File>
-			<File
-				RelativePath="..\src\Size.cpp">
-			</File>
-			<File
-				RelativePath="..\src\Slider.cpp">
-			</File>
-			<File
-				RelativePath="..\src\SpinButton.cpp">
-			</File>
-			<File
-				RelativePath="..\src\Spinner.cpp">
-			</File>
-			<File
-				RelativePath="..\src\String.cpp">
-			</File>
-			<File
-				RelativePath="..\src\Style.cpp">
-			</File>
-			<File
-				RelativePath="..\src\System.cpp">
-			</File>
-			<File
-				RelativePath="..\src\Tab.cpp">
-			</File>
-			<File
-				RelativePath="..\src\Thread.cpp">
-			</File>
-			<File
-				RelativePath="..\src\ToggleButton.cpp">
-			</File>
-			<File
-				RelativePath="..\src\ToolBar.cpp">
-			</File>
-			<File
-				RelativePath="..\src\TreeNode.cpp">
-			</File>
-			<File
-				RelativePath="..\src\TreeView.cpp">
-			</File>
-			<File
-				RelativePath="..\src\Vaca.cpp">
-				<FileConfiguration
-					Name="Debug Shared|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release Shared|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug Static|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release Static|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\src\Widget.cpp">
-			</File>
+			<File RelativePath="..\src\Anchor.cpp"></File>
+			<File RelativePath="..\src\AnchorLayout.cpp"></File>
+			<File RelativePath="..\src\Application.cpp"></File>
+			<File RelativePath="..\src\BandedDockArea.cpp"></File>
+			<File RelativePath="..\src\BasicDockArea.cpp"></File>
+			<File RelativePath="..\src\BoxConstraint.cpp"></File>
+			<File RelativePath="..\src\BoxLayout.cpp"></File>
+			<File RelativePath="..\src\Button.cpp"></File>
+			<File RelativePath="..\src\ButtonBase.cpp"></File>
+			<File RelativePath="..\src\CancelableEvent.cpp"></File>
+			<File RelativePath="..\src\CheckBox.cpp"></File>
+			<File RelativePath="..\src\ClientLayout.cpp"></File>
+			<File RelativePath="..\src\Clipboard.cpp"></File>
+			<File RelativePath="..\src\CloseEvent.cpp"></File>
+			<File RelativePath="..\src\Color.cpp"></File>
+			<File RelativePath="..\src\ColorDialog.cpp"></File>
+			<File RelativePath="..\src\Command.cpp"></File>
+			<File RelativePath="..\src\CommonDialog.cpp"></File>
+			<File RelativePath="..\src\Component.cpp"></File>
+			<File RelativePath="..\src\Constraint.cpp"></File>
+			<File RelativePath="..\src\Cursor.cpp"></File>
+			<File RelativePath="..\src\CustomButton.cpp"></File>
+			<File RelativePath="..\src\CustomLabel.cpp"></File>
+			<File RelativePath="..\src\Debug.cpp"></File>
+			<File RelativePath="..\src\Dialog.cpp"></File>
+			<File RelativePath="..\src\DockArea.cpp"></File>
+			<File RelativePath="..\src\DockBar.cpp"></File>
+			<File RelativePath="..\src\DockFrame.cpp"></File>
+			<File RelativePath="..\src\DropFilesEvent.cpp"></File>
+			<File RelativePath="..\src\Edit.cpp"></File>
+			<File RelativePath="..\src\Event.cpp"></File>
+			<File RelativePath="..\src\FileDialog.cpp"></File>
+			<File RelativePath="..\src\FindTextDialog.cpp"></File>
+			<File RelativePath="..\src\Font.cpp"></File>
+			<File RelativePath="..\src\FontDialog.cpp"></File>
+			<File RelativePath="..\src\Frame.cpp"></File>
+			<File RelativePath="..\src\Graphics.cpp"></File>
+			<File RelativePath="..\src\GroupBox.cpp"></File>
+			<File RelativePath="..\src\Icon.cpp"></File>
+			<File RelativePath="..\src\Image.cpp"></File>
+			<File RelativePath="..\src\ImageList.cpp"></File>
+			<File RelativePath="..\src\KeyEvent.cpp"></File>
+			<File RelativePath="..\src\Keys.cpp"></File>
+			<File RelativePath="..\src\Label.cpp"></File>
+			<File RelativePath="..\src\Layout.cpp"></File>
+			<File RelativePath="..\src\LinkLabel.cpp"></File>
+			<File RelativePath="..\src\ListBox.cpp"></File>
+			<File RelativePath="..\src\ListView.cpp"></File>
+			<File RelativePath="..\src\Mdi.cpp"></File>
+			<File RelativePath="..\src\Menu.cpp"></File>
+			<File RelativePath="..\src\MenuItemEvent.cpp"></File>
+			<File RelativePath="..\src\MouseEvent.cpp"></File>
+			<File RelativePath="..\src\Mutex.cpp"></File>
+			<File RelativePath="..\src\Panel.cpp"></File>
+			<File RelativePath="..\src\Point.cpp"></File>
+			<File RelativePath="..\src\ProgressBar.cpp"></File>
+			<File RelativePath="..\src\RadioButton.cpp"></File>
+			<File RelativePath="..\src\ReBar.cpp"></File>
+			<File RelativePath="..\src\Rect.cpp"></File>
+			<File RelativePath="..\src\Region.cpp"></File>
+			<File RelativePath="..\src\Scintilla.cpp"></File>
+			<File RelativePath="..\src\Size.cpp"></File>
+			<File RelativePath="..\src\Slider.cpp"></File>
+			<File RelativePath="..\src\SpinButton.cpp"></File>
+			<File RelativePath="..\src\Spinner.cpp"></File>
+			<File RelativePath="..\src\String.cpp"></File>
+			<File RelativePath="..\src\Style.cpp"></File>
+			<File RelativePath="..\src\System.cpp"></File>
+			<File RelativePath="..\src\Tab.cpp"></File>
+			<File RelativePath="..\src\TableLayout.cpp"></File>
+			<File RelativePath="..\src\Thread.cpp"></File>
+			<File RelativePath="..\src\ToggleButton.cpp"></File>
+			<File RelativePath="..\src\ToolBar.cpp"></File>
+			<File RelativePath="..\src\TreeNode.cpp"></File>
+			<File RelativePath="..\src\TreeView.cpp"></File>
+			<File RelativePath="..\src\TreeViewEvent.cpp"></File>
+			<File RelativePath="..\src\Vaca.cpp"><FileConfiguration Name="Debug Shared|Win32"><Tool Name="VCCLCompilerTool" UsePrecompiledHeader="1"/></FileConfiguration><FileConfiguration Name="Release Shared|Win32"><Tool Name="VCCLCompilerTool" UsePrecompiledHeader="1"/></FileConfiguration><FileConfiguration Name="Debug Static|Win32"><Tool Name="VCCLCompilerTool" UsePrecompiledHeader="1"/></FileConfiguration><FileConfiguration Name="Release Static|Win32"> <Tool Name="VCCLCompilerTool" UsePrecompiledHeader="1"/></FileConfiguration></File>
+			<File RelativePath="..\src\Widget.cpp"></File>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
-			<File
-				RelativePath="..\include\Vaca\Anchor.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\AnchorLayout.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\Application.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\BandedDockArea.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\base.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\BasicDockArea.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\Bind.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\BoxConstraint.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\BoxLayout.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\Button.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\ButtonBase.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\CancellableEvent.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\CheckBox.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\ClientLayout.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\Clipboard.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\Color.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\ColorDialog.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\Command.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\CommonDialog.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\Constraint.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\Cursor.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\CustomButton.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\CustomLabel.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\Debug.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\Dialog.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\DockArea.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\DockBar.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\DockFrame.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\Edit.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\Event.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\Exception.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\FileDialog.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\FindTextDialog.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\Font.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\FontDialog.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\Frame.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\Graphics.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\GroupBox.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\Icon.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\Image.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\ImageList.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\Item.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\KeyEvent.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\Keys.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\Label.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\Layout.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\LinkLabel.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\ListBox.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\Mdi.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\Menu.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\MouseEvent.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\Mutex.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\Panel.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\Point.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\ProgressBar.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\RadioButton.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\ReBar.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\Rect.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\Register.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\Scintilla.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\ScopedLock.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\Size.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\Slider.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\SpinButton.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\Spinner.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\String.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\Style.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\System.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\Tab.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\Thread.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\ToggleButton.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\ToolBar.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\TreeNode.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\TreeView.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\TreeViewEvent.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\Vaca.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\View.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\Widget.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\WidgetClass.h">
-			</File>
-			<File
-				RelativePath="..\include\Vaca\WidgetEvent.h">
-			</File>
+			<File RelativePath="..\stdvaca.h"></File>
+			<File RelativePath="..\include\Vaca\Anchor.h"></File>
+			<File RelativePath="..\include\Vaca\AnchorLayout.h"></File>
+			<File RelativePath="..\include\Vaca\Application.h"></File>
+			<File RelativePath="..\include\Vaca\BandedDockArea.h"></File>
+			<File RelativePath="..\include\Vaca\base.h"></File>
+			<File RelativePath="..\include\Vaca\BasicDockArea.h"></File>
+			<File RelativePath="..\include\Vaca\Bind.h"></File>
+			<File RelativePath="..\include\Vaca\BoxConstraint.h"></File>
+			<File RelativePath="..\include\Vaca\BoxLayout.h"></File>
+			<File RelativePath="..\include\Vaca\Button.h"></File>
+			<File RelativePath="..\include\Vaca\ButtonBase.h"></File>
+			<File RelativePath="..\include\Vaca\CancelableEvent.h"></File>
+			<File RelativePath="..\include\Vaca\CheckBox.h"></File>
+			<File RelativePath="..\include\Vaca\ClientLayout.h"></File>
+			<File RelativePath="..\include\Vaca\Clipboard.h"></File>
+			<File RelativePath="..\include\Vaca\CloseEvent.h"></File>
+			<File RelativePath="..\include\Vaca\Color.h"></File>
+			<File RelativePath="..\include\Vaca\ColorDialog.h"></File>
+			<File RelativePath="..\include\Vaca\Command.h"></File>
+			<File RelativePath="..\include\Vaca\CommonDialog.h"></File>
+			<File RelativePath="..\include\Vaca\Component.h"></File>
+			<File RelativePath="..\include\Vaca\Constraint.h"></File>
+			<File RelativePath="..\include\Vaca\Cursor.h"></File>
+			<File RelativePath="..\include\Vaca\CustomButton.h"></File>
+			<File RelativePath="..\include\Vaca\CustomLabel.h"></File>
+			<File RelativePath="..\include\Vaca\DataGrid.h"></File>
+			<File RelativePath="..\include\Vaca\Debug.h"></File>
+			<File RelativePath="..\include\Vaca\Dialog.h"></File>
+			<File RelativePath="..\include\Vaca\DockArea.h"></File>
+			<File RelativePath="..\include\Vaca\DockBar.h"></File>
+			<File RelativePath="..\include\Vaca\DockFrame.h"></File>
+			<File RelativePath="..\include\Vaca\DropFilesEvent.h"></File>
+			<File RelativePath="..\include\Vaca\Edit.h"></File>
+			<File RelativePath="..\include\Vaca\Event.h"></File>
+			<File RelativePath="..\include\Vaca\Exception.h"></File>
+			<File RelativePath="..\include\Vaca\FileDialog.h"></File>
+			<File RelativePath="..\include\Vaca\FindTextDialog.h"></File>
+			<File RelativePath="..\include\Vaca\Font.h"></File>
+			<File RelativePath="..\include\Vaca\FontDialog.h"></File>
+			<File RelativePath="..\include\Vaca\Frame.h"></File>
+			<File RelativePath="..\include\Vaca\Graphics.h"></File>
+			<File RelativePath="..\include\Vaca\GroupBox.h"></File>
+			<File RelativePath="..\include\Vaca\Icon.h"></File>
+			<File RelativePath="..\include\Vaca\Image.h"></File>
+			<File RelativePath="..\include\Vaca\ImageList.h"></File>
+			<File RelativePath="..\include\Vaca\Item.h"></File>
+			<File RelativePath="..\include\Vaca\KeyEvent.h"></File>
+			<File RelativePath="..\include\Vaca\Keys.h"></File>
+			<File RelativePath="..\include\Vaca\Label.h"></File>
+			<File RelativePath="..\include\Vaca\Layout.h"></File>
+			<File RelativePath="..\include\Vaca\LinkLabel.h"></File>
+			<File RelativePath="..\include\Vaca\ListBox.h"></File>
+			<File RelativePath="..\include\Vaca\ListItem.h"></File>
+			<File RelativePath="..\include\Vaca\ListView.h"></File>
+			<File RelativePath="..\include\Vaca\Mdi.h"></File>
+			<File RelativePath="..\include\Vaca\Menu.h"></File>
+			<File RelativePath="..\include\Vaca\MenuItemEvent.h"></File>
+			<File RelativePath="..\include\Vaca\MouseEvent.h"></File>
+			<File RelativePath="..\include\Vaca\Mutex.h"></File>
+			<File RelativePath="..\include\Vaca\Panel.h"></File>
+			<File RelativePath="..\include\Vaca\Point.h"></File>
+			<File RelativePath="..\include\Vaca\ProgressBar.h"></File>
+			<File RelativePath="..\include\Vaca\RadioButton.h"></File>
+			<File RelativePath="..\include\Vaca\ReBar.h"></File>
+			<File RelativePath="..\include\Vaca\Rect.h"></File>
+			<File RelativePath="..\include\Vaca\Region.h"></File>
+			<File RelativePath="..\include\Vaca\Register.h"></File>
+			<File RelativePath="..\include\Vaca\ResourceException.h"></File>
+			<File RelativePath="..\include\Vaca\Scintilla.h"></File>
+			<File RelativePath="..\include\Vaca\ScopedLock.h"></File>
+			<File RelativePath="..\include\Vaca\Size.h"></File>
+			<File RelativePath="..\include\Vaca\Slider.h"></File>
+			<File RelativePath="..\include\Vaca\SpinButton.h"></File>
+			<File RelativePath="..\include\Vaca\Spinner.h"></File>
+			<File RelativePath="..\include\Vaca\String.h"></File>
+			<File RelativePath="..\include\Vaca\Style.h"></File>
+			<File RelativePath="..\include\Vaca\System.h"></File>
+			<File RelativePath="..\include\Vaca\Tab.h"></File>
+			<File RelativePath="..\include\Vaca\TableLayout.h"></File>
+			<File RelativePath="..\include\Vaca\Thread.h"></File>
+			<File RelativePath="..\include\Vaca\ToggleButton.h"></File>
+			<File RelativePath="..\include\Vaca\ToolBar.h"></File>
+			<File RelativePath="..\include\Vaca\TreeNode.h"></File>
+			<File RelativePath="..\include\Vaca\TreeView.h"></File>
+			<File RelativePath="..\include\Vaca\TreeViewEvent.h"></File>
+			<File RelativePath="..\include\Vaca\Vaca.h"></File>
+			<File RelativePath="..\include\Vaca\Widget.h"></File>
+			<File RelativePath="..\include\Vaca\WidgetClass.h"></File>
 		</Filter>
 		<Filter
 			Name="Resource Files"

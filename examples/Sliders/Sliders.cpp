@@ -100,7 +100,7 @@ protected:
   
   void onSliderChange(Slider *source, Slider *destination)
   {
-    destination->setPosition(source->getPosition());
+    destination->setValue(source->getValue());
   }
   
 };

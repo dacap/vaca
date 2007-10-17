@@ -33,16 +33,29 @@
 #include "Vaca/ImageList.h"
 #include "Vaca/Application.h"
 #include "Vaca/Debug.h"
+#include "Vaca/ResourceException.h"
 
 using namespace Vaca;
+
+ImageList::ImageList()
+{
+  mHIMAGELIST = NULL;
+  mAutoDelete = false;
+}
+
+ImageList::ImageList(HIMAGELIST hImageList, bool autoDelete)
+{
+  mHIMAGELIST = hImageList;
+  mAutoDelete = autoDelete;
+}
 
 /**
  * Loads a ImageList from a BITMAP resource.
  */
 ImageList::ImageList(int bitmapId, int widthPerIcon, Color maskColor)
 {
-  mHimagelist =
-    ImageList_LoadImage(Application::getHinstance(),
+  mHIMAGELIST =
+    ImageList_LoadImage(Application::getHINSTANCE(),
 			MAKEINTRESOURCE(bitmapId),
 			widthPerIcon,
 			1,
@@ -50,9 +63,10 @@ ImageList::ImageList(int bitmapId, int widthPerIcon, Color maskColor)
 			IMAGE_BITMAP,
 			0);
 
-  // TODO throw an exception
-  if (mHimagelist == NULL)
-    Beep(400, 100);
+  if (mHIMAGELIST == NULL)
+    throw ResourceException();
+
+  mAutoDelete = true;
 }
 
 /**
@@ -60,8 +74,8 @@ ImageList::ImageList(int bitmapId, int widthPerIcon, Color maskColor)
  */
 ImageList::ImageList(const String &fileName, int widthPerIcon, Color maskColor)
 {
-  mHimagelist =
-    ImageList_LoadImage(Application::getHinstance(),
+  mHIMAGELIST =
+    ImageList_LoadImage(Application::getHINSTANCE(),
 			fileName.c_str(), 
 			widthPerIcon,
 			1,
@@ -69,18 +83,40 @@ ImageList::ImageList(const String &fileName, int widthPerIcon, Color maskColor)
 			IMAGE_BITMAP,
 			LR_LOADFROMFILE);
 
-  // TODO throw an exception
-  if (mHimagelist == NULL)
-    Beep(400, 100);
+  if (mHIMAGELIST == NULL)
+    throw ResourceException();
+
+  mAutoDelete = true;
 }
 
 ImageList::~ImageList()
 {
-  if (mHimagelist != NULL)
-    ImageList_Destroy(mHimagelist);
+  if (mAutoDelete && mHIMAGELIST != NULL)
+    ImageList_Destroy(mHIMAGELIST);
 }
 
-HIMAGELIST ImageList::getHimagelist()
+bool ImageList::isValid()
 {
-  return mHimagelist;
+  return mHIMAGELIST != NULL;
+}
+
+int ImageList::getImageCount()
+{
+  assert(mHIMAGELIST != NULL);
+  
+  return ImageList_GetImageCount(mHIMAGELIST);
+}
+
+void ImageList::assign(HIMAGELIST hImageList, bool autoDelete)
+{
+  if (mAutoDelete && mHIMAGELIST != NULL)
+    ImageList_Destroy(mHIMAGELIST);
+
+  mHIMAGELIST = hImageList;
+  mAutoDelete = autoDelete;
+}
+
+HIMAGELIST ImageList::getHIMAGELIST()
+{
+  return mHIMAGELIST;
 }

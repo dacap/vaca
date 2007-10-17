@@ -39,6 +39,24 @@ using namespace Vaca;
 SpinButton::SpinButton(Widget *parent, Style style)
   : Widget(UPDOWN_CLASS, parent, style)
 {
+  // default values
+  setRange(0, 100);
+  setValue(0);
+}
+
+SpinButton::SpinButton(int minValue, int maxValue, int value,
+		       Widget *parent, Style style)
+  : Widget(UPDOWN_CLASS, parent, style)
+{
+  assert(minValue <= value);
+  assert(value <= maxValue);
+
+  setRange(minValue, maxValue);
+  setValue(value);
+}
+
+SpinButton::~SpinButton()
+{
 }
 
 Size SpinButton::preferredSize()
@@ -94,7 +112,7 @@ void SpinButton::setRange(int minValue, int maxValue)
   sendMessage(UDM_SETRANGE32, minValue, maxValue);
 }
 
-int SpinButton::getPosition()
+int SpinButton::getValue()
 {
   BOOL error;
   int res;
@@ -104,23 +122,40 @@ int SpinButton::getPosition()
   return !error ? res: 0;
 }
 
-void SpinButton::setPosition(int posValue)
+void SpinButton::setValue(int posValue)
 {
   sendMessage(UDM_SETPOS32, 0, posValue);
+}
+
+/**
+ * Returns the radix base used in the buddy widget (an Edit generally).
+ */
+int SpinButton::getBase()
+{
+  return sendMessage(UDM_GETBASE, 0, 0);
+}
+
+/**
+ * Sets the radix base to be used in the buddy widget (an Edit
+ * generally). This can be 10 for decimal or 16 for hexadecimal.
+ */
+void SpinButton::setBase(int base)
+{
+  sendMessage(UDM_SETBASE, base, 0);
 }
 
 Widget *SpinButton::getBuddy()
 {
   HWND hwndBuddy = reinterpret_cast<HWND>(sendMessage(UDM_GETBUDDY, 0, 0));
   if (hwndBuddy != NULL)
-    return Widget::fromHwnd(hwndBuddy);
+    return Widget::fromHWND(hwndBuddy);
   else
     return NULL;
 }
 
 void SpinButton::setBuddy(Widget *buddy)
 {
-  sendMessage(UDM_SETBUDDY, reinterpret_cast<WPARAM>(buddy->getHwnd()), 0);
+  sendMessage(UDM_SETBUDDY, reinterpret_cast<WPARAM>(buddy->getHWND()), 0);
 }
 
 void SpinButton::onChange(SpinButtonEvent &ev)
@@ -138,18 +173,10 @@ void SpinButton::onChange(SpinButtonEvent &ev)
 //   AfterChange(ev);
 // }
 
-// void SpinButton::onVScroll(int code, int pos/*, ScrollBar *scrollbar*/)
+// void SpinButton::onScroll(Orientation orientation, int code)
 // {
 //   if (code == TB_THUMBPOSITION) {
 //     SpinButtonEvent ev(this, pos, 0, TopSide);
-//     onAfterChange(ev);
-//   }
-// }
-
-// void SpinButton::onHScroll(int code, int pos/*, ScrollBar *scrollbar*/)
-// {
-//   if (code == TB_THUMBPOSITION) {
-//     SpinButtonEvent ev(this, pos, 0, LeftSide);
 //     onAfterChange(ev);
 //   }
 // }

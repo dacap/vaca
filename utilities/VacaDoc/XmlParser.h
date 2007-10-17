@@ -33,8 +33,10 @@
 #define VACA_XMLPARSER_H
 
 #include "Vaca/String.h"
-
 #include "XmlRawParser.h"
+
+using namespace std;
+using namespace Vaca;
 
 class XmlNode;
 
@@ -58,15 +60,15 @@ public:
 
 protected:
   
-  virtual XmlNode *onPrologTag(XmlNode *node);
-  virtual XmlNode *onStartTag(XmlNode *node);
-  virtual void onEndTag(XmlNode *node);
-  virtual XmlNode *onEmptyTag(XmlNode *node);
+  virtual XmlNode *onPrologTag(XmlNode *node) { return node; }
+  virtual XmlNode *onStartTag(XmlNode *node) { return node; }
+  virtual void onEndTag(XmlNode *node) { }
+  virtual XmlNode *onEmptyTag(XmlNode *node) { return node; }
 
 private:
 
   void onTextOutside(int character);
-  XmlNode *getXmlNodeFromTagDefinition(const Vaca::String &tagDefinition, TagType &tagType);
+  XmlNode *getXmlNodeFromTagDefinition(const String &tagDefinition, TagType &tagType);
 
 };
 

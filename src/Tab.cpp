@@ -34,7 +34,8 @@
 #include "Vaca/Font.h"
 #include "Vaca/Point.h"
 #include "Vaca/Debug.h"
-#include "Vaca/WidgetEvent.h"
+#include "Vaca/Event.h"
+#include "Vaca/ClientLayout.h"
 
 using namespace Vaca;
 
@@ -49,6 +50,10 @@ TabBase::TabBase(Widget *parent, Style style)
   : Widget(WC_TABCONTROL, parent, style)
 {
   mUserFont = NULL;
+}
+
+TabBase::~TabBase()
+{
 }
 
 Font &TabBase::getFont()
@@ -73,10 +78,10 @@ void TabBase::setFont(Font &font)
 Rect TabBase::getClientBounds()
 {
   RECT rc;
-  VACA_ASSERT(getHwnd() != NULL);
+  assert(getHWND() != NULL);
 
   rc = getBounds();
-  TabCtrl_AdjustRect(getHwnd(), FALSE, &rc);
+  TabCtrl_AdjustRect(getHWND(), FALSE, &rc);
   return Rect(&rc).offset(-getBounds().getOrigin());
 }
 
@@ -181,55 +186,60 @@ void TabBase::setMultiline(bool state)
   layout();
 }
 
-int TabBase::addPage(const String &text, int pageIndex)
+int TabBase::addPage(const String &text)
 {
-  VACA_ASSERT(getHwnd() != NULL);
+  return insertPage(-1, text);
+}
+
+int TabBase::insertPage(int pageIndex, const String &text)
+{
+  assert(getHWND() != NULL);
 
   TCITEM tci;
 
   tci.mask = TCIF_TEXT;
-  tci.pszText = const_cast<CHAR *>(text.c_str());
+  tci.pszText = const_cast<TCHAR *>(text.c_str());
   tci.cchTextMax = text.size();
 
   if (pageIndex < 0)
     pageIndex = getPageCount();
   
-  return TabCtrl_InsertItem(getHwnd(), pageIndex, &tci);
+  return TabCtrl_InsertItem(getHWND(), pageIndex, &tci);
 }
 
 void TabBase::removePage(int pageIndex)
 {
-  VACA_ASSERT(getHwnd() != NULL);
-  TabCtrl_DeleteItem(getHwnd(), pageIndex);
+  assert(getHWND() != NULL);
+  TabCtrl_DeleteItem(getHWND(), pageIndex);
 }
 
 int TabBase::getPageCount()
 {
-  VACA_ASSERT(getHwnd() != NULL);
-  return TabCtrl_GetItemCount(getHwnd());
+  assert(getHWND() != NULL);
+  return TabCtrl_GetItemCount(getHWND());
 }
 
 int TabBase::getRowCount()
 {
-  VACA_ASSERT(getHwnd() != NULL);
-  return TabCtrl_GetRowCount(getHwnd());
+  assert(getHWND() != NULL);
+  return TabCtrl_GetRowCount(getHWND());
 }
 
 int TabBase::getActivePage()
 {
-  VACA_ASSERT(getHwnd() != NULL);
-  return TabCtrl_GetCurSel(getHwnd());
+  assert(getHWND() != NULL);
+  return TabCtrl_GetCurSel(getHWND());
 }
 
 void TabBase::setActivePage(int pageIndex)
 {
-  VACA_ASSERT(getHwnd() != NULL);
-  TabCtrl_SetCurSel(getHwnd(), pageIndex);
+  assert(getHWND() != NULL);
+  TabCtrl_SetCurSel(getHWND(), pageIndex);
 }
 
 String TabBase::getPageText(int pageIndex)
 {
-  VACA_ASSERT(getHwnd() != NULL);
+  assert(getHWND() != NULL);
 
   TCITEM tci;
 
@@ -237,7 +247,7 @@ String TabBase::getPageText(int pageIndex)
   tci.pszText = new Character[1024];
   tci.cchTextMax = 1024;
 
-  if (TabCtrl_GetItem(getHwnd(), pageIndex, &tci) != FALSE) {
+  if (TabCtrl_GetItem(getHWND(), pageIndex, &tci) != FALSE) {
     String text(tci.pszText);
     delete tci.pszText;
     return text;
@@ -248,8 +258,8 @@ String TabBase::getPageText(int pageIndex)
 
 // void TabBase::setPadding(Size padding)
 // {
-//   VACA_ASSERT(getHwnd() != NULL);
-//   TabCtrl_SetPadding(getHwnd(), padding.w, padding.h);
+//   assert(getHWND() != NULL);
+//   TabCtrl_SetPadding(getHWND(), padding.w, padding.h);
 // }
 
 /**
@@ -257,12 +267,12 @@ String TabBase::getPageText(int pageIndex)
  */
 Size TabBase::getNonClientSize()
 {
-  VACA_ASSERT(getHwnd() != NULL);
+  assert(getHWND() != NULL);
 
   Rect clientRect(0, 0, 1, 1);
   RECT nonClientRect = clientRect;
 
-  TabCtrl_AdjustRect(getHwnd(), TRUE, &nonClientRect);
+  TabCtrl_AdjustRect(getHWND(), TRUE, &nonClientRect);
 
   return Rect(&nonClientRect).getSize() - clientRect.getSize();
 }
@@ -282,12 +292,28 @@ Size TabBase::preferredSize(const Size &fitIn)
 			       VACA_MAX(0, fitIn.h - ncSize.h)));
 }
 
+// /**
+//  * TCN_SELCHANGING
+//  */
+// void TabBase::onPageChanging(Event &ev)
+// {
+//   PageChanging(ev);
+// }
+
+/**
+ * TCN_SELCHANGE
+ */
+void TabBase::onPageChange(Event &ev)
+{
+  PageChange(ev);
+}
+
 bool TabBase::onNotify(LPNMHDR lpnmhdr, LRESULT &lResult)
 {
   switch (lpnmhdr->code) {
 
     case TCN_SELCHANGE: {
-      WidgetEvent ev(this);
+      Event ev(this);
       onPageChange(ev);
       break;
     }
@@ -297,28 +323,45 @@ bool TabBase::onNotify(LPNMHDR lpnmhdr, LRESULT &lResult)
   return false;
 }
 
-// /**
-//  * TCN_SELCHANGING
-//  */
-// void TabBase::onPageChanging(WidgetEvent &ev)
-// {
-//   PageChanging(ev);
-// }
-
-/**
- * TCN_SELCHANGE
- */
-void TabBase::onPageChange(WidgetEvent &ev)
-{
-  PageChange(ev);
-}
-
 //////////////////////////////////////////////////////////////////////
 // Tab
 
 Tab::Tab(Widget *parent, Style style)
   : TabBase(parent, style)
 {
+  setLayout(new ClientLayout);
+}
+
+Tab::~Tab()
+{
+}
+
+TabPage *Tab::getPage(int pageIndex)
+{
+  assert(pageIndex >= 0 && pageIndex < getPageCount());
+  
+  return dynamic_cast<TabPage *>(getChildren().at(pageIndex));
+}
+
+void Tab::onPageChange(Event &ev)
+{
+  TabBase::onPageChange(ev);
+
+  Container pages = getChildren();
+  int pageIndex = 0;
+  int selectedPage = getActivePage();
+
+  for (Container::iterator it = pages.begin();
+       it != pages.end();
+       ++it, ++pageIndex) {
+    TabPage *page = dynamic_cast<TabPage *>(*it);
+
+    assert(page != NULL);
+
+    page->setVisible(pageIndex == selectedPage);
+  }
+
+  layout();
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -329,5 +372,13 @@ TabPage::TabPage(const String &text, Tab *parent, Style style)
 {
   setText(text);
 
-  parent->addPage(text);
+  int pageIndex = parent->addPage(text);
+
+  // only the first inserted page is visible
+  if (pageIndex > 0)
+    setVisible(false);
+}
+
+TabPage::~TabPage()
+{
 }

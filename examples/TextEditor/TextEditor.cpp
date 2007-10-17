@@ -46,6 +46,7 @@ protected:
   Document *mDocument;
 
 public:
+  virtual ~View() { }
   virtual void onNotifyDocument() = 0;
 
   virtual Document *getDocument() { return mDocument; }
@@ -142,8 +143,9 @@ public:
   // creates a new view for the specified textEditor
   TextEditor(TextEditor &textEditor)
     : MdiChild(textEditor.getText(),
-	       static_cast<MdiClient *>(textEditor.getParent()),
+	       dynamic_cast<MdiClient *>(textEditor.getParent()),
 	       MdiChildStyle + ClientEdgeStyle)
+    , View()
     , mEditor(this)
   {
     // same document
@@ -216,7 +218,7 @@ public:
   // opens a file and put its text into the editor
   bool openFile()
   {
-    FILE *file = fopen(getFileName().c_str(), "rb");
+    FILE *file = _tfopen(getFileName().c_str(), _T("rb"));
     if (file != NULL) {
       char buf[4096];
       int bytesReaded;
@@ -239,7 +241,7 @@ public:
   // saves the text of the editor in a file
   bool saveFile()
   {
-    FILE *file = fopen(getFileName().c_str(), "wb");
+    FILE *file = _tfopen(getFileName().c_str(), _T("wb"));
     if (file != NULL) {
       int c, lines = mEditor.getLineCount();
       for (c=0; c<lines; c++) {
@@ -475,9 +477,9 @@ private:
   void onUpdate_forSave(MenuItemEvent &ev)
   {
     TextEditor *textEditor = getTextEditor();
-    ev.getMenuItem().setEnabled((textEditor != NULL)
-				&& (!(textEditor->hasFileName())
-				    || (textEditor->getEditor().isModified())));
+    ev.getMenuItem()->setEnabled((textEditor != NULL)
+				 && (!(textEditor->hasFileName())
+				     || (textEditor->getEditor().isModified())));
   }
 
   void onSaveAs()
@@ -487,7 +489,7 @@ private:
 
   void onUpdate_getTextEditor_Available(MenuItemEvent &ev)
   {
-    ev.getMenuItem().setEnabled(getTextEditor() != NULL);
+    ev.getMenuItem()->setEnabled(getTextEditor() != NULL);
   }
 
   void onExit()
@@ -506,8 +508,8 @@ private:
   void onUpdate_canUndo(MenuItemEvent &ev)
   {
     TextEditor *textEditor = getTextEditor();
-    ev.getMenuItem().setEnabled((textEditor != NULL)
-				&& (textEditor->getEditor().canUndo()));
+    ev.getMenuItem()->setEnabled((textEditor != NULL)
+				 && (textEditor->getEditor().canUndo()));
   }
 
   void onRedo()
@@ -518,8 +520,8 @@ private:
   void onUpdate_canRedo(MenuItemEvent &ev)
   {
     TextEditor *textEditor = getTextEditor();
-    ev.getMenuItem().setEnabled((textEditor != NULL)
-				&& (textEditor->getEditor().canRedo()));
+    ev.getMenuItem()->setEnabled((textEditor != NULL)
+				 && (textEditor->getEditor().canRedo()));
   }
 
   void onCut()
@@ -633,9 +635,9 @@ private:
     FontDialog dialog(mFont, this);
     if (dialog.doModal()) {
       Widget::Container editors = getMdiClient().getChildren();
-      
+
       for (Widget::Container::iterator it=editors.begin(); it!=editors.end(); ++it)
-	static_cast<TextEditor *>(*it)->getEditor().setFont(mFont);
+	dynamic_cast<TextEditor *>(*it)->getEditor().setFont(mFont);
     }
   }
 
@@ -645,13 +647,14 @@ private:
 
     // set the new state of ViewEol to all editors
     Widget::Container editors = getMdiClient().getChildren();
+
     for (Widget::Container::iterator it=editors.begin(); it!=editors.end(); ++it)
-      static_cast<TextEditor *>(*it)->getEditor().setViewEol(mViewEol);
+      dynamic_cast<TextEditor *>(*it)->getEditor().setViewEol(mViewEol);
   }
 
   void onUpdate_viewEol(MenuItemEvent &ev)
   {
-    ev.getMenuItem().setChecked(mViewEol);
+    ev.getMenuItem()->setChecked(mViewEol);
   }
 
   void onCloseWindow()
@@ -669,7 +672,8 @@ private:
   // when the user press the close button in a MdiChild (TextEditor child)
   void onCloseTextEditor(CloseEvent &ev)
   {
-    TextEditor *textEditor = static_cast<TextEditor *>(ev.getWidget());
+    TextEditor *textEditor = dynamic_cast<TextEditor *>(ev.getSource());
+
     // show the warning dialog
     if (closeTextEditor(textEditor, false)) {
       // the user really want to close this...
@@ -698,7 +702,7 @@ private:
 
     // for each children
     for (Widget::Container::iterator it=editors.begin(); it!=editors.end(); ++it) {
-      TextEditor *textEditor = static_cast<TextEditor *>(*it);
+      TextEditor *textEditor = dynamic_cast<TextEditor *>(*it);
       Document *document = textEditor->getDocument();
 
       // we already asked to close document?
@@ -722,7 +726,7 @@ private:
 
     // delete all TextEditors
     for (Widget::Container::iterator it=editors.begin(); it!=editors.end(); ++it) {
-      TextEditor *textEditor = static_cast<TextEditor *>(*it);
+      TextEditor *textEditor = dynamic_cast<TextEditor *>(*it);
       delete textEditor;
     }
   }
@@ -734,7 +738,7 @@ private:
   // returns the current text editor
   TextEditor *getTextEditor()
   {
-    return static_cast<TextEditor *>(getMdiClient().getActive());
+    return dynamic_cast<TextEditor *>(getMdiClient().getActive());
   }
 
   // adds file filters to the FileDialog
@@ -826,7 +830,7 @@ private:
     Widget::Container::iterator it;
 
     for (it=listOfTextEditors.begin(); it!=listOfTextEditors.end(); ++it) {
-      TextEditor *textEditor = static_cast<TextEditor *>(*it);
+      TextEditor *textEditor = dynamic_cast<TextEditor *>(*it);
 
       if (textEditor->getFileName() == fileName)
 	return textEditor;

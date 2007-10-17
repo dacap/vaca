@@ -49,7 +49,7 @@ Dialog::Dialog(const String &title, Widget *parent, Style style)
   create(DialogClass::getClassName(), parent, style);
   setText(title);
 
-  SetWindowLongPtr(getHwnd(), DWL_DLGPROC,
+  SetWindowLongPtr(getHWND(), DWL_DLGPROC,
 		   reinterpret_cast<LONG_PTR>(Dialog::globalDlgProc));
 
   mState = false;
@@ -68,6 +68,10 @@ Dialog::Dialog(LPCTSTR className, const String &title, Widget *parent, Style sty
   }
 
   mState = false;
+}
+
+Dialog::~Dialog()
+{
 }
 
 /**
@@ -93,7 +97,7 @@ bool Dialog::doModal()
 
   Thread *thread = Thread::getCurrent();
 
-  VACA_ASSERT(thread != NULL);
+  assert(thread != NULL);
   
   thread->doMessageLoopFor(this);
 
@@ -108,7 +112,7 @@ bool Dialog::preTranslateMessage(MSG &msg)
   if (Frame::preTranslateMessage(msg))
     return true;
 
-  if (IsDialogMessage(getHwnd(), &msg))
+  if (IsDialogMessage(getHWND(), &msg))
     return true;
 
   return false;
@@ -209,7 +213,7 @@ bool Dialog::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResul
 
 LRESULT Dialog::defWndProc(UINT message, WPARAM wParam, LPARAM lParam)
 {
-  return DefDlgProc(getHwnd(), message, wParam, lParam);
+  return DefDlgProc(getHWND(), message, wParam, lParam);
 }
 
 LRESULT CALLBACK Dialog::globalDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)

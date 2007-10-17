@@ -34,6 +34,9 @@
 
 #include "Vaca/String.h"
 
+using namespace std;
+using namespace Vaca;
+
 class XmlNode;
 
 class XmlType
@@ -42,7 +45,7 @@ public:
   virtual bool isString() { return false; }
   virtual bool isNode() { return false; }
   
-  virtual Vaca::String getText() = 0;
+  virtual String getText() = 0;
   virtual XmlNode *getNode() = 0;
 };
 

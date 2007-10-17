@@ -56,9 +56,15 @@ LinkLabel::LinkLabel(const String &url, const String &text, Widget *parent, Styl
   mTriState = Outside;
 }
 
+LinkLabel::~LinkLabel()
+{
+}
+
 void LinkLabel::setFont(Font &font)
 {
   Widget::setFont(font);
+
+  // update the underline font
   updateFont(font);
 }
 
@@ -85,7 +91,14 @@ void LinkLabel::onPaint(Graphics &g)
   g.setColor(getBgColor());
   g.fillRect(rc);
 
-  rc = getLinkRect(g);
+  Rect bounds = getLinkBounds(g);
+  int flags = getFlagsForDrawString();
+
+  switch (getTextAlign()) {
+    case LeftAlign:   flags |= DT_LEFT;   break;
+    case CenterAlign: flags |= DT_CENTER; break;
+    case RightAlign:  flags |= DT_RIGHT;  break;
+  }
 
   if (mTriState == Hover) {
     g.setFont(mUnderlineFont);
@@ -96,7 +109,10 @@ void LinkLabel::onPaint(Graphics &g)
     g.setColor(getLinkColor());
   }
 
-  g.drawString(getText(), rc.getOrigin());
+  if (isEnabled())
+    g.drawString(getText(), bounds, flags);
+  else
+    g.drawDisabledString(getText(), bounds, flags);
 }
 
 void LinkLabel::onMouseEnter(MouseEvent &ev)
@@ -107,7 +123,7 @@ void LinkLabel::onMouseEnter(MouseEvent &ev)
 void LinkLabel::onMouseMove(MouseEvent &ev)
 {
   ScreenGraphics g;
-  Rect rc = getLinkRect(g);
+  Rect rc = getLinkBounds(g);
 
   if (mTriState == Inside) {
     if (rc.contains(ev.getPoint())) {
@@ -143,7 +159,7 @@ void LinkLabel::onMouseDown(MouseEvent &ev)
     if (!mUrl.empty())
       ShellExecute(NULL, _T("open"), mUrl.c_str(), NULL, NULL, SW_SHOW);
 
-    WidgetEvent subEv(this);
+    Event subEv(this);
     onAction(subEv);
   }
 }
@@ -175,7 +191,7 @@ void LinkLabel::onSetCursor(int hitTest)
 /**
  * Called when the user press the mouse button down over the label.
  */
-void LinkLabel::onAction(WidgetEvent &ev)
+void LinkLabel::onAction(Event &ev)
 {
   Action(ev);
 }
@@ -185,19 +201,21 @@ void LinkLabel::updateFont(Font &font)
   mUnderlineFont = Font(font, Font::Style::Underline);
 }
 
-Rect LinkLabel::getLinkRect(Graphics &g)
+Rect LinkLabel::getLinkBounds(Graphics &g)
 {
   g.setFont(getFont());
 
   Rect rc = getClientBounds();
-  Size sz = g.measureString(getText());
+  Size sz = g.measureString(getText(), rc.w, getFlagsForDrawString());
   Point pt = rc.getOrigin();
 
   switch (getTextAlign()) {
     case CenterAlign: pt.x += rc.w/2 - sz.w/2; break;
     case RightAlign: pt.x += rc.w - sz.w; break;
+    default:
+      // do nothing
+      break;
   }
 
   return Rect(pt, sz);
 }
-

@@ -48,6 +48,7 @@ class VACA_DLL ToggleButton : public ButtonBase
 public:
 
   ToggleButton(const String &text, Widget *parent, Style style = ToggleButtonStyle);
+  virtual ~ToggleButton();
 
 };
 

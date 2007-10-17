@@ -33,7 +33,7 @@
 #include "Vaca/MDI.h"
 #include "Vaca/Application.h"
 #include "Vaca/Debug.h"
-#include "Vaca/WidgetEvent.h"
+#include "Vaca/Event.h"
 #include "Vaca/ClientLayout.h"
 #include "Vaca/Menu.h"
 
@@ -80,11 +80,11 @@ MdiChild::~MdiChild()
 void MdiChild::initialize()
 {
   // see TN005
-  ::PostMessage(getHwnd(), WM_MDIACTIVATE, 0, reinterpret_cast<LPARAM>(getHwnd()));
-  ::PostMessage(getHwnd(), WM_SETFOCUS, 0, 0);
+  ::PostMessage(getHWND(), WM_MDIACTIVATE, 0, reinterpret_cast<LPARAM>(getHWND()));
+  ::PostMessage(getHWND(), WM_SETFOCUS, 0, 0);
 
   Rect rc = getClientBounds();
-  ::PostMessage(getHwnd(), WM_SIZE, 0, MAKELPARAM(rc.w, rc.h));
+  ::PostMessage(getHWND(), WM_SIZE, 0, MAKELPARAM(rc.w, rc.h));
 
   // refresh the MdiListMenu (see TN007)
   if (getParent() != NULL)
@@ -95,27 +95,26 @@ void MdiChild::initialize()
  * Intercept commands from @c VACA_IDM_MDICHILD to activate this
  * MdiChild.
  */
-bool MdiChild::onCommand(int commandCode, LRESULT &lResult)
-{
-  if (Frame::onCommand(commandCode, lResult))
-    return true;
-  else {
-    // Note: why just don't call the DefFrameProc with WM_COMMAND? it
-    // looks like it doesn't work fine with menus that has
-    // MNS_NOTIFYBYPOS enabled
+// bool MdiChild::onCommand(int it, int code, LRESULT &lResult)
+// {
+//   if (Frame::onCommand(id, code, lResult))
+//     return true;
 
-    // the user selects a MdiChild from the MdiListMenu?
-    if (commandCode == 0) {
-      MdiClient *parent = static_cast<MdiClient *>(getParent());
-      VACA_ASSERT(parent != NULL);
+//   // Note: why just don't call the DefFrameProc with WM_COMMAND? it
+//   // looks like it doesn't work fine with menus that has
+//   // MNS_NOTIFYBYPOS enabled
 
-      parent->activate(this);
-      return true;
-    }
+//   // the user selects a MdiChild from the MdiListMenu?
+//   if (commandCode == 0) {
+//     MdiClient *parent = static_cast<MdiClient *>(getParent());
+//     assert(parent != NULL);
 
-    return false;
-  }
-}
+//     parent->activate(this);
+//     return true;
+//   }
+
+//   return false;
+// }
 
 /**
  * Intercepts the WM_MDIACTIVATE message to generate the
@@ -129,12 +128,12 @@ bool MdiChild::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lRes
   switch (message) {
 
     case WM_MDIACTIVATE: {
-      if (getHwnd() == (HWND)wParam) {
-	WidgetEvent ev(this);
+      if (getHWND() == (HWND)wParam) {
+	Event ev(this);
 	onDeactivate(ev);
       }
-      else if (getHwnd() == (HWND)lParam) {
-	WidgetEvent ev(this);
+      else if (getHWND() == (HWND)lParam) {
+	Event ev(this);
 	onActivate(ev);
       }
       break;
@@ -150,22 +149,22 @@ bool MdiChild::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lRes
  */
 LRESULT MdiChild::defWndProc(UINT message, WPARAM wParam, LPARAM lParam)
 {
-  return ::DefMDIChildProc(getHwnd(), message, wParam, lParam);
+  return ::DefMDIChildProc(getHWND(), message, wParam, lParam);
 }
 
 // Don't try to do this alternative (using WM_MDICREATE), it doesn't
 // fix the TN005 problem (also it doesn't support the extended styles WS_EX)
 #if 0				// don't remove this code, must be for
 				// historical purposes
-HWND MdiChild::createHwnd(LPCTSTR className, Widget *parent, Style style)
+HWND MdiChild::createHWND(LPCTSTR className, Widget *parent, Style style)
 {
-  HWND hClient = parent->getHwnd();
-  VACA_ASSERT(hClient != NULL);
+  HWND hClient = parent->getHWND();
+  assert(hClient != NULL);
 
   MDICREATESTRUCT mdics;
   mdics.szClass = className;
   mdics.szTitle = _T("");
-  mdics.hOwner = Application::getHinstance();
+  mdics.hOwner = Application::getHINSTANCE();
   mdics.x = CW_USEDEFAULT;
   mdics.y = CW_USEDEFAULT;
   mdics.cx = CW_USEDEFAULT;
@@ -184,14 +183,14 @@ HWND MdiChild::createHwnd(LPCTSTR className, Widget *parent, Style style)
  * Doesn't call DestroyWindow, it sends a WM_MDIDESTROY message to the
  * MdiClient parent to destroy the MdiChild.
  */
-void MdiChild::destroyHwnd(HWND hwnd)
+void MdiChild::destroyHWND(HWND hwnd)
 {
   // this can't be used
-  // ...getParent()->sendMessage(WM_MDIDESTROY, reinterpret_cast<WPARAM>(getHwnd()), 0);
+  // ...getParent()->sendMessage(WM_MDIDESTROY, reinterpret_cast<WPARAM>(getHWND()), 0);
 
   // we must be limited to use only the HWND...
   HWND hClient = ::GetParent(hwnd);
-  VACA_ASSERT(hClient != NULL);
+  assert(hClient != NULL);
   ::SendMessage(hClient, WM_MDIDESTROY, reinterpret_cast<WPARAM>(hwnd), 0);
 }
 
@@ -203,16 +202,20 @@ void MdiChild::destroyHwnd(HWND hwnd)
  * Container for MdiChild windows.
  */
 MdiClient::MdiClient(Widget *parent)
-  : Widget(NULL, NULL, NoStyle) // className must be NULL to avoid calling the Widget::createHwnd
+  : Widget(NULL, NULL, NoStyle) // className must be NULL to avoid calling the Widget::createHWND
 {
-  // now Widget::create calls MdiClient::createHwnd because MdiClient is constructed
+  // now Widget::create calls MdiClient::createHWND because MdiClient is constructed
   create(_T("MDICLIENT"), parent, MdiClientStyle);
+}
+
+MdiClient::~MdiClient()
+{
 }
 
 /**
  * Calls @c CreateWindowEx using a @c CLIENTCREATESTRUCT.
  */
-HWND MdiClient::createHwnd(LPCTSTR className, Widget *parent, Style style)
+HWND MdiClient::createHWND(LPCTSTR className, Widget *parent, Style style)
 {
   CLIENTCREATESTRUCT ccs;
 
@@ -224,9 +227,9 @@ HWND MdiClient::createHwnd(LPCTSTR className, Widget *parent, Style style)
 			style.regular,
 			CW_USEDEFAULT, CW_USEDEFAULT,
 			CW_USEDEFAULT, CW_USEDEFAULT,
-			parent ? parent->getHwnd(): (HWND)NULL,
+			parent ? parent->getHWND(): (HWND)NULL,
 			(HMENU)NULL,
-			Application::getHinstance(),
+			Application::getHINSTANCE(),
 			(LPVOID)&ccs);
 }
 
@@ -268,11 +271,11 @@ void MdiClient::arrangeIcons()
  */
 MdiChild *MdiClient::getActive()
 {
-  HWND hwnd = getHwnd();
-  VACA_ASSERT(hwnd != NULL);
+  HWND hwnd = getHWND();
+  assert(hwnd != NULL);
   HWND hwndChild = reinterpret_cast<HWND>(sendMessage(WM_MDIGETACTIVE, 0, 0));
   if (hwndChild != NULL)
-    return dynamic_cast<MdiChild *>(Widget::fromHwnd(hwndChild));
+    return dynamic_cast<MdiChild *>(Widget::fromHWND(hwndChild));
   else
     return NULL;
 }
@@ -283,11 +286,11 @@ MdiChild *MdiClient::getActive()
  */
 void MdiClient::activate(MdiChild *mdiChild)
 {
-  HWND hChildWnd = mdiChild->getHwnd();
-  VACA_ASSERT(hChildWnd != NULL);
+  HWND hChildWnd = mdiChild->getHWND();
+  assert(hChildWnd != NULL);
 
-  HWND hwnd = getHwnd();
-  VACA_ASSERT(hwnd != NULL);
+  HWND hwnd = getHWND();
+  assert(hwnd != NULL);
 
   sendMessage(WM_MDIACTIVATE, reinterpret_cast<WPARAM>(hChildWnd), 0);
 }
@@ -298,9 +301,9 @@ void MdiClient::activate(MdiChild *mdiChild)
  */
 void MdiClient::activateNext(MdiChild *mdiChild)
 {
-  HWND hChildWnd = mdiChild != NULL ? mdiChild->getHwnd(): NULL;
-  HWND hwnd = getHwnd();
-  VACA_ASSERT(hwnd != NULL);
+  HWND hChildWnd = mdiChild != NULL ? mdiChild->getHWND(): NULL;
+  HWND hwnd = getHWND();
+  assert(hwnd != NULL);
 
   sendMessage(WM_MDINEXT, reinterpret_cast<WPARAM>(hChildWnd), FALSE);
 }
@@ -311,9 +314,9 @@ void MdiClient::activateNext(MdiChild *mdiChild)
  */
 void MdiClient::activatePrevious(MdiChild *mdiChild)
 {
-  HWND hChildWnd = mdiChild != NULL ? mdiChild->getHwnd(): NULL;
-  HWND hwnd = getHwnd();
-  VACA_ASSERT(hwnd != NULL);
+  HWND hChildWnd = mdiChild != NULL ? mdiChild->getHWND(): NULL;
+  HWND hwnd = getHWND();
+  assert(hwnd != NULL);
 
   sendMessage(WM_MDINEXT, reinterpret_cast<WPARAM>(hChildWnd), TRUE);
 }
@@ -327,8 +330,8 @@ MdiChild *MdiClient::getChildById(int wID)
 
   for (Container::iterator it=children.begin();
        it!=children.end(); ++it) {
-    HWND hChild = (*it)->getHwnd();
-    VACA_ASSERT(hChild != NULL);
+    HWND hChild = (*it)->getHWND();
+    assert(hChild != NULL);
 
     if (GetWindowLong(hChild, GWL_ID) == wID)
       return static_cast<MdiChild *>(*it);
@@ -342,7 +345,7 @@ bool MdiClient::preTranslateMessage(MSG &msg)
   if (Widget::preTranslateMessage(msg))
     return true;
 
-  if (TranslateMDISysAccel(getHwnd(), &msg))
+  if (TranslateMDISysAccel(getHWND(), &msg))
     return true;
 
   return false;
@@ -383,21 +386,21 @@ MdiFrame::MdiFrame(const String &title, Widget *parent, Style style, bool custom
 
 MdiFrame::~MdiFrame()
 {
-  VACA_ASSERT(mMdiClient != NULL);
+  assert(mMdiClient != NULL);
   
   delete mMdiClient;
 }
 
 MdiClient &MdiFrame::getMdiClient()
 {
-  VACA_ASSERT(mMdiClient != NULL);
+  assert(mMdiClient != NULL);
 
   return *mMdiClient;
 }
 
 void MdiFrame::setMdiClient(MdiClient *mdiClient)
 {
-  VACA_ASSERT(mMdiClient == NULL);
+  assert(mMdiClient == NULL);
 
   mMdiClient = mdiClient;
 }
@@ -405,13 +408,13 @@ void MdiFrame::setMdiClient(MdiClient *mdiClient)
 /**
  * Why it's overrided? Because when the frame's menu bar changes, the
  * mMdiClient want a WM_MDISETMENU message to known the new hmenu
- * (MenuBar::getHmenu). TODO Why it's necessary?
+ * (MenuBar::getHMENU). TODO Why it's necessary?
  *
  * @see Frame::setMenuBar
  */
 void MdiFrame::setMenuBar(MenuBar *menubar)
 {
-  VACA_ASSERT(mMdiClient != NULL);
+  assert(mMdiClient != NULL);
   
   // call super class implementation
   Frame::setMenuBar(menubar);
@@ -421,13 +424,13 @@ void MdiFrame::setMenuBar(MenuBar *menubar)
 
   HMENU hFrameMenu, hWindowMenu;
 
-  hFrameMenu = menubar->getHmenu();
-  VACA_ASSERT(hFrameMenu != NULL);
+  hFrameMenu = menubar->getHMENU();
+  assert(hFrameMenu != NULL);
 
   MdiListMenu *mdiListMenu = menubar->getMdiListMenu();
   if (mdiListMenu != NULL) {
-    hWindowMenu = mdiListMenu->getHmenu();
-    VACA_ASSERT(hWindowMenu != NULL);
+    hWindowMenu = mdiListMenu->getHMENU();
+    assert(hWindowMenu != NULL);
   }
   else {
     hWindowMenu = NULL;
@@ -437,7 +440,7 @@ void MdiFrame::setMenuBar(MenuBar *menubar)
 			  reinterpret_cast<WPARAM>(hFrameMenu),
 			  reinterpret_cast<WPARAM>(hWindowMenu));
 
-  DrawMenuBar(getHwnd());
+  DrawMenuBar(getHWND());
 }
 
 /**
@@ -445,10 +448,10 @@ void MdiFrame::setMenuBar(MenuBar *menubar)
  */
 void MdiFrame::refreshMenuBar()
 {
-  VACA_ASSERT(mMdiClient != NULL);
+  assert(mMdiClient != NULL);
 
   mMdiClient->sendMessage(WM_MDIREFRESHMENU, 0, 0);
-  DrawMenuBar(getHwnd());
+  DrawMenuBar(getHWND());
 }
 
 /**
@@ -479,8 +482,8 @@ bool MdiFrame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lRes
  */
 LRESULT MdiFrame::defWndProc(UINT message, WPARAM wParam, LPARAM lParam)
 {
-  return DefFrameProc(getHwnd(),
-		      mMdiClient != NULL ? mMdiClient->getHwnd(): NULL,
+  return DefFrameProc(getHWND(),
+		      mMdiClient != NULL ? mMdiClient->getHWND(): NULL,
 		      message, wParam, lParam);
 }
 
@@ -508,7 +511,7 @@ static void activateSelectedChildren(MdiClient *mdiClient,
 {
   int index = listBox->getSelectedItem();
 
-  VACA_ASSERT(index >= 0 && index < mdiChildren->size());
+  assert(index >= 0 && index < mdiChildren->size());
 
   mdiClient->activate(static_cast<MdiChild *>((*mdiChildren)[index]));
 }
@@ -573,7 +576,7 @@ void MdiFrame::onMoreWindows()
   if (dlg.doModal()) {
     int index = listBox.getCurrentItem();
 
-    VACA_ASSERT(index >= 0 && index < mdiChildren.size());
+    assert(index >= 0 && index < mdiChildren.size());
 
     mMdiClient->activate(static_cast<MdiChild *>(mdiChildren[index]));
   }

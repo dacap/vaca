@@ -38,11 +38,32 @@ using namespace Vaca;
 ProgressBar::ProgressBar(Widget *parent, Style style)
   : Widget(PROGRESS_CLASS, parent, style)
 {
+  // default values
+  setRange(0, 100);
+  setValue(0);
 }
 
+ProgressBar::ProgressBar(int minValue, int maxValue,
+			 Widget *parent, Style style)
+  : Widget(PROGRESS_CLASS, parent, style)
+{
+  assert(minValue <= maxValue);
+  
+  setRange(minValue, maxValue);
+  setValue(minValue);	// default value
+}
+
+ProgressBar::~ProgressBar()
+{
+}
+
+/**
+ * PBM_SETBKCOLOR
+ * 
+ */
 void ProgressBar::setBgColor(Color color)
 {
-  VACA_ASSERT(getHwnd() != NULL);
+  assert(getHWND() != NULL);
 
   Widget::setBgColor(color);
   sendMessage(PBM_SETBKCOLOR, 0, color.getColorRef());
@@ -68,6 +89,10 @@ int ProgressBar::getMaximum()
   return sendMessage(PBM_GETRANGE, FALSE, 0);
 }
 
+/**
+ * PBM_GETRANGE
+ * 
+ */
 void ProgressBar::getRange(int &minValue, int &maxValue)
 {
   PBRANGE pbr;
@@ -76,22 +101,38 @@ void ProgressBar::getRange(int &minValue, int &maxValue)
   maxValue = pbr.iHigh;
 }
 
+/**
+ * PBM_SETRANGE32
+ * 
+ */
 void ProgressBar::setRange(int minValue, int maxValue)
 {
   sendMessage(PBM_SETRANGE32, minValue, maxValue);
 }
 
-int ProgressBar::getPosition()
+/**
+ * PBM_GETPOS
+ * 
+ */
+int ProgressBar::getValue()
 {
   return sendMessage(PBM_GETPOS, 0, 0);
 }
 
-void ProgressBar::setPosition(int posValue)
+/**
+ * PBM_SETPOS
+ * 
+ */
+void ProgressBar::setValue(int value)
 {
-  sendMessage(PBM_SETPOS, posValue, 0);
+  sendMessage(PBM_SETPOS, value, 0);
 }
 
-void ProgressBar::advancePosition(int increment)
+/**
+ * Increments the current progress bar value (position), in @a delta
+ * units (PBM_DELTAPOS).
+ */
+void ProgressBar::addValue(int delta)
 {
-  sendMessage(PBM_DELTAPOS, increment, 0);
+  sendMessage(PBM_DELTAPOS, delta, 0);
 }

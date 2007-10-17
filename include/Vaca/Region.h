@@ -36,6 +36,7 @@
 
 namespace Vaca {
 
+class Point;
 class Rect;
 
 /**
@@ -43,15 +44,46 @@ class Rect;
  */
 class VACA_DLL Region
 {
-  HRGN mHrgn;
+  HRGN mHRGN;
+  bool mAutoDelete;
   
 public:
 
   Region();
+  Region(HRGN hrgn, bool autoDelete);
   Region(const Rect &rc);
+  Region(const Region &rgn);
+  virtual ~Region();
 
-  HRGN getHrgn();
+  Region &operator=(const Region &rgn);
+  void assign(const Region &rgn);
 
+  Rect getBounds() const;
+
+  bool contains(const Point &pt) const;
+  bool contains(const Rect &rc) const;
+
+  bool operator==(const Region &rgn) const;
+  bool operator!=(const Region &rgn) const;
+
+  Region operator|(const Region &rgn) const;
+  Region operator+(const Region &rgn) const;
+  Region operator&(const Region &rgn) const;
+  Region operator-(const Region &rgn) const;
+  Region operator^(const Region &rgn) const;
+
+  Region &operator|=(const Region &rgn);
+  Region &operator+=(const Region &rgn);
+  Region &operator&=(const Region &rgn);
+  Region &operator-=(const Region &rgn);
+  Region &operator^=(const Region &rgn);
+
+  static Region fromRect(const Rect &rc);
+  static Region fromEllipse(const Rect &rc);
+  static Region fromRoundRect(const Rect &rc, int ellipseWidth, int ellipseHeight);
+
+  HRGN getHRGN();
+  
 };
 
 } // namespace Vaca

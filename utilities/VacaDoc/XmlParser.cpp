@@ -47,8 +47,8 @@ XmlParser::~XmlParser()
 XmlNode *XmlParser::parseRoot()
 {
   try {
-    Vaca::String tagDefinition;
-    std::stack<XmlNode *> nodeStack;
+    String tagDefinition;
+    stack<XmlNode *> nodeStack;
     XmlNode *root = NULL;
 
     currentNode = NULL;
@@ -88,13 +88,13 @@ XmlNode *XmlParser::parseRoot()
 	  
 	case End:
 	  if (nodeStack.empty()) {
-	    throw XmlException(Vaca::String("End tag '") +
+	    throw XmlException(String("End tag '") +
 			       node->getName() +
 			       "' not expected.");
 	  }
 	  else {
 	    if (node->getName() != parent->getName())
-	      throw XmlException(Vaca::String("End tag '") +
+	      throw XmlException(String("End tag '") +
 				 node->getName() +
 				 "' mismatch with start tag '" +
 				 parent->getName() + "'");
@@ -128,7 +128,7 @@ XmlNode *XmlParser::parseRoot()
     }
 
     if (!nodeStack.empty()) {
-      Vaca::String msg = "Expected end tags: ";
+      String msg = "Expected end tags: ";
       for (;;) {
 	msg += "'" + nodeStack.top()->getName() + "'";
 	nodeStack.pop();
@@ -145,29 +145,10 @@ XmlNode *XmlParser::parseRoot()
   catch (XmlException &e) {
     // add more information to the exception
     throw XmlException(getFileName() + ":" +
-		       Vaca::String::fromInt(getCurrentLine(), 10)
+		       String::fromInt(getCurrentLine(), 10)
 		       + ": " +
 		       e.getMessage());
   }
-}
-
-XmlNode *XmlParser::onPrologTag(XmlNode *node)
-{
-  return node;
-}
-
-XmlNode *XmlParser::onStartTag(XmlNode *node)
-{
-  return node;
-}
-
-void XmlParser::onEndTag(XmlNode *node)
-{
-}
-
-XmlNode *XmlParser::onEmptyTag(XmlNode *node)
-{
-  return node;
 }
 
 void XmlParser::onTextOutside(int character)
@@ -176,11 +157,11 @@ void XmlParser::onTextOutside(int character)
     currentNode->addChar(character);
 }
 
-XmlNode *XmlParser::getXmlNodeFromTagDefinition(const Vaca::String &tagDefinition,
+XmlNode *XmlParser::getXmlNodeFromTagDefinition(const String &tagDefinition,
 						TagType &tagType)
 {
-  Vaca::String::const_iterator it = tagDefinition.begin();
-  Vaca::String::const_iterator end = tagDefinition.end();
+  String::const_iterator it = tagDefinition.begin();
+  String::const_iterator end = tagDefinition.end();
   int lastChar = tagDefinition.empty() ? 0: tagDefinition[tagDefinition.size()-1];
       
   if (tagDefinition[0] == '?' ||
@@ -201,7 +182,7 @@ XmlNode *XmlParser::getXmlNodeFromTagDefinition(const Vaca::String &tagDefinitio
   }
 
   // name of the tag
-  Vaca::String name;
+  String name;
   for (; it != end && *it != '\0' && !isspace(*it); ++it)
     name.push_back(*it);
   XmlNode *node = new XmlNode(name);
@@ -228,8 +209,8 @@ XmlNode *XmlParser::getXmlNodeFromTagDefinition(const Vaca::String &tagDefinitio
       if (tagType == End)
 	throw XmlException("End tag can't have attributes");
 	
-      Vaca::String attrName;
-      Vaca::String attrValue;
+      String attrName;
+      String attrValue;
 
       for (; it != end && *it != '\0' && *it != '='; ++it) {
 	attrName.push_back(*it);

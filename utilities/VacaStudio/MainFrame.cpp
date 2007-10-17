@@ -38,15 +38,29 @@
 using namespace Vaca;
 
 MainFrame::MainFrame()
-  : Frame("VacaStudio", NULL, FrameStyle + InitiallyMaximizedFrameStyle)
+//   : MdiFrame("VacaStudio", NULL,
+// 	     MdiFrameStyle + InitiallyMaximizedFrameStyle)
+  : Frame("VacaStudio", NULL,
+	  FrameStyle + InitiallyMaximizedFrameStyle)
   , mFileMenu("&File")
   , mToolsMenu("&Tools")
-  , mMdi(this)
+  , mOutputBar(this)
 {
+  setBgColor(Color::Red);
+  
+  //////////////////////////////////////////////////////////////////////
+  // layout
+
   setLayout(new ClientLayout);
   setMenuBar(&mMenuBar);
 
+  //////////////////////////////////////////////////////////////////////
+  // menus
+
   MenuItem *menuItem;
+
+  menuItem = mFileMenu.add("&New");
+  menuItem->Action.connect(Bind(&MainFrame::onNewFile, this));
 
   menuItem = mFileMenu.add("&Exit");
   menuItem->Action.connect(Bind(&MainFrame::onExit, this));
@@ -56,6 +70,17 @@ MainFrame::MainFrame()
 
   mMenuBar.add(&mFileMenu);
   mMenuBar.add(&mToolsMenu);
+
+  //////////////////////////////////////////////////////////////////////
+  // dock bars
+
+  defaultDockAreas();
+  mOutputBar.dockIn(getDockArea(BottomSide));
+}
+
+void MainFrame::onNewFile()
+{
+//   new MdiChild("New file", this);
 }
 
 void MainFrame::onExit()

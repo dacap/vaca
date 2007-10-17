@@ -57,6 +57,10 @@ BasicDockArea::BasicDockArea(Side side, Widget *parent, Style style)
 {
 }
 
+BasicDockArea::~BasicDockArea()
+{
+}
+
 bool BasicDockArea::hitTest(DockBar *bar, const Point &cursor, const Point &anchor, bool fromInside)
 {
   Rect bounds = getAbsoluteClientBounds();
@@ -163,7 +167,7 @@ Size BasicDockArea::preferredSize()
     DockBar *dockBar = static_cast<DockBar *>(*it);
     DockInfo *dockInfo = dockBar->getDockInfo();
 
-    VACA_ASSERT(dockInfo != NULL);
+    assert(dockInfo != NULL);
 
     if (isHorizontal())
       size.h = size.h < dockInfo->getSize().h ? dockInfo->getSize().h: size.h;
@@ -183,7 +187,7 @@ void BasicDockArea::layout()
     DockBar *dockBar = static_cast<DockBar *>(*it);
     BasicDockInfo *dockInfo = static_cast<BasicDockInfo *>(dockBar->getDockInfo());
 
-    VACA_ASSERT(dockInfo != NULL);
+    assert(dockInfo != NULL);
 
     dockBar->setBounds(dockInfo->bounds);
     dockBar->layout();

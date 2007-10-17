@@ -34,7 +34,7 @@
 #include "Vaca/AnchorLayout.h"
 #include "Vaca/Anchor.h"
 #include "Vaca/ClientLayout.h"
-#include "Vaca/MouseEvent.h"
+#include "Vaca/Event.h"
 #include "Vaca/Debug.h"
 #include "Vaca/ImageList.h"
 #include "Vaca/DockFrame.h"
@@ -52,6 +52,15 @@ using namespace Vaca;
 ToolSet::ToolSet(Widget *parent, Style style)
   : Widget(TOOLBARCLASSNAME, parent, style)
 {
+  mLoadedImageList = NULL;
+}
+
+ToolSet::~ToolSet()
+{
+  if (mLoadedImageList != NULL) {
+    ImageList_Destroy(mLoadedImageList);
+    mLoadedImageList = NULL;
+  }
 }
 
 Size ToolSet::preferredSize()
@@ -95,12 +104,43 @@ Rect ToolSet::setRows(int rows, bool expand)
  * (TB_SETIMAGELIST)
  * 
  */
-void ToolSet::setImageList(ImageList *imageList)
+void ToolSet::setImageList(ImageList &imageList)
 {
+  assert(imageList.isValid());
+  
   sendMessage(TB_SETIMAGELIST, 0,
-	      reinterpret_cast<LPARAM>(imageList->getHimagelist()));
+	      reinterpret_cast<LPARAM>(imageList.getHIMAGELIST()));
+
+  // TODO
 //   sendMessage(TB_SETHOTIMAGELIST, 0,
-// 	      reinterpret_cast<LPARAM>(imageList->getHimagelist()));
+// 	      reinterpret_cast<LPARAM>(imageList.getHIMAGELIST()));
+}
+
+/**
+ * @param imageListId
+ * @li @c IDB_HIST_LARGE_COLOR
+ * @li @c IDB_HIST_SMALL_COLOR
+ * @li @c IDB_STD_LARGE_COLOR
+ * @li @c IDB_STD_SMALL_COLOR (default value).
+ * @li @c IDB_VIEW_LARGE_COLOR
+ * @li @c IDB_VIEW_SMALL_COLOR
+ */
+void ToolSet::loadStandardImageList(int imageListId)
+{
+  if (mLoadedImageList != NULL)
+    ImageList_Destroy(mLoadedImageList);
+
+  mLoadedImageList =
+    ImageList_Create(16, 16, ILC_COLOR16 | ILC_MASK, 0, 1);
+
+  if (mLoadedImageList != NULL) {
+    sendMessage(TB_SETIMAGELIST, 0,
+		reinterpret_cast<LPARAM>(mLoadedImageList));
+  
+    sendMessage(TB_LOADIMAGES,
+		IDB_STD_SMALL_COLOR,
+		reinterpret_cast<LPARAM>(HINST_COMMCTRL));
+  }
 }
 
 /**
@@ -211,7 +251,7 @@ void ToolSet::addSeparator(int width)
 void ToolSet::setButtonCommandId(int buttonIndex, int newCommandId)
 {
   BOOL res = sendMessage(TB_SETCMDID, buttonIndex, newCommandId);
-  VACA_ASSERT(res != FALSE);
+  assert(res != FALSE);
 }
 
 /**
@@ -233,6 +273,15 @@ std::vector<Size> ToolSet::getPreferredSizes()
   return mPreferredSizes;
 }
 
+bool ToolSet::onCommand(int id, int code, LRESULT &lResult)
+{
+  if (Widget::onCommand(id, code, lResult))
+    return true;
+
+  assert(getParent() != NULL);
+  return getParent()->sendMessage(WM_COMMAND, MAKEWPARAM(id, 0), 0) == 0;
+}
+
 bool ToolSet::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult)
 {
   if (Widget::wndProc(message, wParam, lParam, lResult))
@@ -248,12 +297,12 @@ bool ToolSet::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResu
 
     case WM_LBUTTONDOWN:
       // we are above the ToolSet?
-      // if (getHwnd() == ::WindowFromPoint(getAbsoluteCursorPos())) {
+      // if (getHWND() == ::WindowFromPoint(getAbsoluteCursorPos())) {
 
       // the mouse isn't above a button
       if (hitTest(Point(LOWORD(lParam), HIWORD(lParam))) < 0) {
 	// don't use the WM_LBUTTONDOWN message, send it to the parent
-	PostMessage(getParentHwnd(), WM_LBUTTONDOWN, wParam, lParam);
+	PostMessage(getParentHWND(), WM_LBUTTONDOWN, wParam, lParam);
 	lResult = FALSE;
 	// lResult = TRUE;
 	return true;
@@ -308,6 +357,10 @@ ToolBar::ToolBar(const String &title, Frame *parent, Style toolSetStyle, Style s
   layout();
 }
 
+ToolBar::~ToolBar()
+{
+}
+
 ToolSet &ToolBar::getSet()
 {
   return mSet;
@@ -340,6 +393,11 @@ Size ToolBar::getFloatingSize()
     measureGripper(false, LeftSide);
 }
 
+bool ToolBar::onIdAction(int id)
+{
+  return getOwnerFrame()->sendMessage(WM_COMMAND, MAKEWPARAM(id, 0), 0) == 0;
+}
+
 /**
  * When the ToolBar is docked in the top or bottom side, we must to
  * set the rows to 1, if it's docked in the left or right side we must
@@ -351,7 +409,7 @@ void ToolBar::onDocking()
 {
   DockBar::onDocking();
 
-  if (getDockArea().isHorizontal())
+  if (getDockArea()->isHorizontal())
     mSet.setRows(1, true);
   else
     mSet.setRows(mSet.getButtonCount(), false);

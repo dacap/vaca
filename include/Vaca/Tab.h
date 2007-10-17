@@ -40,6 +40,10 @@
 
 namespace Vaca {
 
+class TabBase;
+class Tab;
+class TabPage;
+
 #define TabBaseStyle		ChildStyle
 #define TabStyle		TabBaseStyle
 #define TabPageStyle		PanelStyle
@@ -64,6 +68,7 @@ class VACA_DLL TabBase : public Widget
 public:
 
   TabBase(Widget *parent, Style style = TabBaseStyle);
+  virtual ~TabBase();
 
   virtual Font &getFont();
   virtual void setFont(Font &font);
@@ -76,7 +81,8 @@ public:
   bool isMultiline();
   void setMultiline(bool state);
 
-  int addPage(const String &text, int pageIndex = -1);
+  int addPage(const String &text);
+  int insertPage(int pageIndex, const String &text);
   void removePage(int pageIndex);
 
   int getPageCount();
@@ -95,16 +101,16 @@ public:
   virtual Size preferredSize(const Size &fitIn);
 
   // signals
-//   boost::signal<void (WidgetEvent &ev)> PageChanging;
-  boost::signal<void (WidgetEvent &ev)> PageChange; ///< @see onPageChange
+//   boost::signal<void (Event &ev)> PageChanging;
+  boost::signal<void (Event &ev)> PageChange; ///< @see onPageChange
 
 protected:
   // reflection
   virtual bool onNotify(LPNMHDR lpnmhdr, LRESULT &lResult);
 
   // new events
-//   void onPageChanging(WidgetEvent &ev);
-  void onPageChange(WidgetEvent &ev);
+//   virtual void onPageChanging(Event &ev);
+  virtual void onPageChange(Event &ev);
 
 private:
 
@@ -119,13 +125,21 @@ private:
  * Automatic controls for page in a tab. This class automatically
  * controls the visibility of each page (AutoPage). 
  *
- * TODO This is class isn't ready yet.
+ * You don't need to setup a layout manager for this widget, because
+ * it uses the ClientLayout manager to arrange its TabPage(s).
  */
 class VACA_DLL Tab : public TabBase
 {
 public:
 
   Tab(Widget *parent, Style style = TabStyle);
+  virtual ~Tab();
+
+  TabPage *getPage(int pageIndex);
+
+protected:
+
+  virtual void onPageChange(Event &ev);
 
 };
 
@@ -144,7 +158,10 @@ public:
 class VACA_DLL TabPage : public Register<TabPageClass>, public Panel
 {
 public:
+
   TabPage(const String &text, Tab *parent, Style style = TabPageStyle);
+  virtual ~TabPage();
+  
 };
 
 } // namespace Vaca

@@ -67,10 +67,11 @@ public:
   Spinner(Widget *parent,
 	  Style spinStyle = SpinButtonStyle,
 	  Style style = SpinnerStyle);
-  Spinner(int minValue, int maxValue, int posValue,
+  Spinner(int minValue, int maxValue, int value,
 	  Widget *parent,
 	  Style spinStyle = SpinButtonStyle,
 	  Style style = SpinnerStyle);
+  virtual ~Spinner();
 
   virtual Size preferredSize();
 
@@ -82,8 +83,11 @@ public:
   void getRange(int &minValue, int &maxValue);
   void setRange(int minValue, int maxValue);
 
-  int getPosition();
-  void setPosition(int posValue);
+  int getValue();
+  void setValue(int value);
+
+  int getBase();
+  void setBase(int base);
 
   virtual void layout();
   

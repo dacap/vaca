@@ -32,6 +32,7 @@
 #include "stdvaca.h"
 #include "Vaca/Clipboard.h"
 #include "Vaca/Widget.h"
+#include "Vaca/System.h"
 
 using namespace Vaca;
 
@@ -46,7 +47,7 @@ Clipboard::~Clipboard()
 
 String Clipboard::getString() const
 {
-  HWND hwndOwner = mOwner ? mOwner->getHwnd(): NULL;
+  HWND hwndOwner = mOwner ? mOwner->getHWND(): NULL;
   String str;
 
   if (!IsClipboardFormatAvailable(CF_TEXT)) 
@@ -71,24 +72,39 @@ String Clipboard::getString() const
 
 void Clipboard::setString(const String &str)
 {
-  HWND hwndOwner = mOwner ? mOwner->getHwnd(): NULL;
+  HWND hwndOwner = mOwner ? mOwner->getHWND(): NULL;
 
   if (!OpenClipboard(hwndOwner))
     return;
 
   EmptyClipboard();
 
-  int len = str.size();
-  HGLOBAL hglobal = GlobalAlloc(GMEM_MOVEABLE, (len + 1));
-  LPTSTR lptstr = static_cast<LPTSTR>(GlobalLock(hglobal));
-#ifdef UNICODE
-  wcscpy(lptstr, str.c_str());
-#else
-  strcpy(lptstr, str.c_str());
-#endif
-  GlobalUnlock(hglobal);
+  if (System::isWinNT_2K_XP()) {
+    int len = str.size();
+    HGLOBAL hglobal = GlobalAlloc(GMEM_MOVEABLE, sizeof(TCHAR)*(len+1));
+    LPTSTR lptstr = static_cast<LPTSTR>(GlobalLock(hglobal));
+    str.copyTo(lptstr, len);
+    GlobalUnlock(hglobal);
  
-  SetClipboardData(CF_TEXT, hglobal);
+#ifdef _UNICODE
+    SetClipboardData(CF_UNICODETEXT, hglobal);
+#else
+    SetClipboardData(CF_TEXT, hglobal);
+#endif
+  }
+  else {
+#ifdef _UNICODE
+    // TODO convert the str to ANSI a copy the content to Clipboard
+#else
+    int len = str.size();
+    HGLOBAL hglobal = GlobalAlloc(GMEM_MOVEABLE, sizeof(TCHAR)*(len+1));
+    LPTSTR lptstr = static_cast<LPTSTR>(GlobalLock(hglobal));
+    str.copyTo(lptstr, len);
+    GlobalUnlock(hglobal);
+ 
+    SetClipboardData(CF_TEXT, hglobal);
+#endif
+  }
 
   CloseClipboard();
 }

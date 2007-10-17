@@ -58,7 +58,7 @@ protected:
       beginEdit(getCurrentItem());
   }
 
-  virtual void onAction(WidgetEvent &ev)
+  virtual void onAction(Event &ev)
   {
     ListBox::onAction(ev);
     beginEdit(getCurrentItem());
@@ -70,8 +70,9 @@ protected:
       delete endEdit();
   }
 
-  virtual void onVScroll(int code, int pos)
+  virtual void onScroll(Orientation orientation, int code)
   {
+//     if (orientation == Vertical)
     if (mEdit != NULL)
       delete endEdit();
   }
@@ -118,7 +119,7 @@ private:
   void layoutEdit()
   {
     if (mEdit != NULL)
-      mEdit->setBounds(getItemRect(mEditingItem));
+      mEdit->setBounds(getItemBounds(mEditingItem));
   }
 
 };

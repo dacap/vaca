@@ -33,8 +33,8 @@
 #define VACA_WIDGET_H
 
 #include "Vaca/base.h"
+#include "Vaca/Component.h"
 #include "Vaca/Color.h"
-#include "Vaca/Event.h"
 #include "Vaca/Graphics.h"
 #include "Vaca/Rect.h"
 #include "Vaca/Size.h"
@@ -48,12 +48,13 @@
 
 namespace Vaca {
 
-class Layout;
 class Constraint;
-class WidgetEvent;
-class KeyEvent;
-class MouseEvent;
 class Cursor;
+class DropFilesEvent;
+class Event;
+class KeyEvent;
+class Layout;
+class MouseEvent;
 
 //////////////////////////////////////////////////////////////////////
 // Win32 Regular Window Styles
@@ -141,9 +142,14 @@ class Cursor;
 #define NoStyle			(Style(0, 0))
 
 /**
- * Basic style for every child (WS_CHILD, WS_VISIBLE).
+ * A visible widget (WS_VISIBLE).
  */
-#define ChildStyle              (Style(WS_CHILD | WS_VISIBLE, 0))
+#define VisibleStyle            (Style(WS_VISIBLE, 0))
+
+/**
+ * Basic style for every child (WS_CHILD | WS_VISIBLE).
+ */
+#define ChildStyle              (Style(WS_CHILD, 0) + VisibleStyle)
 
 /**
  * Style to receive the focus in Dialogs (WS_TABSTOP).
@@ -166,25 +172,17 @@ class Cursor;
 
 #define ClipChildrenStyle	(Style(WS_CLIPCHILDREN, 0))
 
-/**
- * Use double-buffering to draw the widget (WS_EX_COMPOSITED)
- *
- * This works only on WinXP, in other platforms it's NoStyle because
- * CreateWindowEx fails if you specified WS_EX_COMPOSITED.
- *
- * @deprecated This has too much restrictions (in the same WinXP).
- */
-// #define DoubleBufferingStyle	(System::isWinXP() ? Style(0, WS_EX_COMPOSITED): NoStyle)
+#define AcceptFilesStyle	(Style(0, WS_EX_ACCEPTFILES))
 
 /**
- * Thrown when the Widget::createHwnd method returns NULL.
+ * Thrown when the Widget::createHWND method returns NULL.
  */
-class CreateHwndException : public Exception
+class CreateHWNDException : public Exception
 {
 public:
 
-  CreateHwndException() throw() : Exception() { }
-  virtual ~CreateHwndException() throw() { }
+  CreateHWNDException() throw() : Exception() { }
+  virtual ~CreateHWNDException() throw() { }
 
 };
 
@@ -195,6 +193,7 @@ public:
  * and its wndProc() converts the main messages to events.
  */
 class VACA_DLL Widget : private boost::noncopyable
+		      , public Component
 {
 public:
 
@@ -202,9 +201,10 @@ public:
 
 private:
 
-  HWND        mHwnd;     // The window handler to use with the Windows API.
+  HWND        mHWND;     // The window handler to use with the Windows API.
   Container   mChildren; // Collection of children of this widget.
   Widget     *mParent;   // The parent widget.
+  Color       mFgColor;
   Color       mBgColor;
   Constraint *mConstraint;
   Layout     *mLayout;
@@ -213,11 +213,9 @@ private:
   bool        mHasMouse : 1;	      // Flag to indicate that this widget has the mouse.
   bool        mDeleteAfterEvent : 1;  // Flag to indicate that we must delete the widget after the event.
 //   bool        mDisposeAfterEvent : 1; // Flag to indicate that we must dispose the widget after the event.
+  bool        mDoubleBuffering : 1;   // Automatic double-buffering
   int         mCriticalInner;         // Counts how many times we inner the globalWndProc using this widget.
   Font       *mFont;
-
-  // TODO something to remove this (it's only needed for WM_CTLCOLOR)
-  HBRUSH mHbrush;
 
   // TODO something to remove this (it's only needed for onSetCursor)
   WPARAM mWparam;
@@ -249,6 +247,9 @@ public:
   void addStyle(Style style);
   void removeStyle(Style style);
 
+  bool getDoubleBuffering();
+  void setDoubleBuffering(bool useDoubleBuffering);
+
   Rect getBounds();
   Rect getAbsoluteBounds();
   virtual Rect getClientBounds();
@@ -258,6 +259,7 @@ public:
   virtual Rect getLayoutBounds();
 
   void setBounds(const Rect &rc);
+  void setBounds(int x, int y, int w, int h);
 
   void center();
   void setOrigin(const Point &pt);
@@ -277,7 +279,9 @@ public:
   bool isEnabled();
   void setEnabled(bool state);
 
+  Color getFgColor();
   Color getBgColor();
+  virtual void setFgColor(Color color);
   virtual void setBgColor(Color color);
 
   int getOpacity();
@@ -302,10 +306,10 @@ public:
 
   int getThreadOwnerId();
 
-  HWND getHwnd();
-  HWND getParentHwnd();
+  HWND getHWND();
+  HWND getParentHWND();
 
-  static Widget *fromHwnd(HWND hwnd);
+  static Widget *fromHWND(HWND hwnd);
   static WNDPROC getGlobalWndProc();
 
 //   virtual Size minimumSize();
@@ -318,11 +322,20 @@ public:
   virtual bool wantArrowCursor();
   virtual bool keepEnabledSynchronised();
 
+  void dispose();
+  virtual bool preTranslateMessage(MSG &msg);
+  LRESULT sendMessage(UINT message, WPARAM wParam, LPARAM lParam);
+
+  // TODO public? I don't think so
+  void addChild(Widget *child, bool setParent);
+  void removeChild(Widget *child, bool setParent);
+
   // Signals are public, see TN004
   boost::signal<void (KeyEvent &)> KeyUp;   ///< @see onKeyUp
   boost::signal<void (KeyEvent &)> KeyDown; ///< @see onKeyDown
-  boost::signal<void (WidgetEvent &ev)> GotFocus; ///< @see onGotFocus
-  boost::signal<void (WidgetEvent &ev)> LostFocus; ///< @see onLostFocus
+  boost::signal<void (Event &ev)> GotFocus; ///< @see onGotFocus
+  boost::signal<void (Event &ev)> LostFocus; ///< @see onLostFocus
+  boost::signal<void (DropFilesEvent &ev)> DropFiles; ///< @see onDropFiles
 
   /**
    * Fired after the wndProc and/or defWndProc processed the current
@@ -331,16 +344,13 @@ public:
    * just one time, and then disconnected.
    */
 //   boost::signal<void ()> AfterEvent;
-
+  
 protected:
+
   // new events
   virtual void onDestroy();
   virtual void onPaint(Graphics &g);
   virtual void onResize(const Size &sz);
-  virtual bool onPowerQuerySuspend(bool interactive);
-  virtual void onPowerQuerySuspendFailed();
-  virtual void onPowerSuspend();
-  virtual void onPowerResumeSuspend();
   virtual void onMouseEnter(MouseEvent &ev);
   virtual void onMouseLeave();
   virtual void onMouseDown(MouseEvent &ev);
@@ -354,40 +364,35 @@ protected:
   virtual void onKeyUp(KeyEvent &ev);
   virtual void onKeyDown(KeyEvent &ev);
 //   virtual void onKeyTyped(KeyEvent &ev);
-  virtual void onGotFocus(WidgetEvent &ev);
-  virtual void onLostFocus(WidgetEvent &ev);
+  virtual void onGotFocus(Event &ev);
+  virtual void onLostFocus(Event &ev);
   virtual bool onIdAction(int id);
   virtual void onBeforePosChange();
   virtual void onAfterPosChange();
-  virtual void onVScroll(int code, int pos/*, ScrollBar *scrollbar*/);
-  virtual void onHScroll(int code, int pos/*, ScrollBar *scrollbar*/);
+  virtual void onScroll(Orientation orientation, int code);
+  virtual void onDropFiles(DropFilesEvent &ev);
 
   // reflection
-  virtual bool onCommand(int commandCode, LRESULT &lResult);
+  virtual bool onCommand(int id, int code, LRESULT &lResult);
   virtual bool onNotify(LPNMHDR lpnmhdr, LRESULT &lResult);
   virtual bool onDrawItem(Graphics &g, LPDRAWITEMSTRUCT lpDrawItem);
 
-protected:
-  // creation & destruction
+  // creation & message processing
   void create(LPCTSTR className, Widget *parent, Style style);
+  void subClass();
   virtual bool wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult);
   virtual LRESULT defWndProc(UINT message, WPARAM wParam, LPARAM lParam);
+
+  bool doPaint(Graphics &g);
+
 private:
-  virtual HWND createHwnd(LPCTSTR className, Widget *parent, Style style);
-  virtual void destroyHwnd(HWND hwnd);
+
+  virtual HWND createHWND(LPCTSTR className, Widget *parent, Style style);
+  virtual void destroyHWND(HWND hwnd);
   bool isDisposedAscendent();
-public:
-  void dispose();
-  virtual bool preTranslateMessage(MSG &msg);
-  LRESULT sendMessage(UINT message, WPARAM wParam, LPARAM lParam);
 
-  // TODO public? I don't think so
-  void addChild(Widget *child, bool setParent);
-  void removeChild(Widget *child, bool setParent);
-
-private:
   Container getEnabledSynchronisedGroup();
-//   Container getLayoutFreeGroup();
+  // Container getLayoutFreeGroup();
 
   static LRESULT CALLBACK globalWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 

@@ -34,16 +34,39 @@
 #include "Vaca/TreeViewEvent.h"
 #include "Vaca/System.h"
 #include "Vaca/Debug.h"
+#include "Vaca/ImageList.h"
 
 using namespace Vaca;
 
 TreeView::TreeView(Widget *parent, Style style)
   : Widget(WC_TREEVIEW, parent, style)
 {
-  mRoot.mTreeView = this;
+  mRoot.mOwner = this;
 
-//   Widget::setBgColor(Color(TreeView_GetBkColor(getHwnd())));
+//   Widget::setBgColor(Color(TreeView_GetBkColor(getHWND())));
   setBgColor(System::getColor(COLOR_WINDOW));
+}
+
+TreeView::~TreeView()
+{
+}
+
+void TreeView::setImageList(ImageList &imageList, int type)
+{
+  assert(getHWND() != NULL);
+  assert(imageList.isValid());
+
+  TreeView_SetImageList(getHWND(), imageList.getHIMAGELIST(), type);
+}
+
+void TreeView::setNormalImageList(ImageList &imageList)
+{
+  setImageList(imageList, LVSIL_NORMAL);
+}
+
+void TreeView::setStateImageList(ImageList &imageList)
+{
+  setImageList(imageList, LVSIL_STATE);
 }
 
 void TreeView::addNode(TreeNode *node)
@@ -53,28 +76,28 @@ void TreeView::addNode(TreeNode *node)
 
 TreeNode *TreeView::getSelectedNode()
 {
-  VACA_ASSERT(getHwnd() != NULL);
+  assert(getHWND() != NULL);
 
-  HTREEITEM htreeitem = TreeView_GetSelection(getHwnd());
+  HTREEITEM htreeitem = TreeView_GetSelection(getHWND());
   if (htreeitem != NULL)
-    return TreeNode::fromHtreeitem(getHwnd(), htreeitem);
+    return TreeNode::fromHTREEITEM(getHWND(), htreeitem);
   else
     return NULL;
 }
 
 void TreeView::setSelectedNode(TreeNode *node)
 {
-  VACA_ASSERT(getHwnd() != NULL);
+  assert(getHWND() != NULL);
 
-  TreeView_SelectItem(getHwnd(), node->getHtreeitem());
+  TreeView_SelectItem(getHWND(), node->getHTREEITEM());
 }
 
 void TreeView::setBgColor(Color color)
 {
-  VACA_ASSERT(getHwnd() != NULL);
+  assert(getHWND() != NULL);
 
   Widget::setBgColor(color);
-  TreeView_SetBkColor(getHwnd(), color.getColorRef());
+  TreeView_SetBkColor(getHWND(), color.getColorRef());
 }
 
 /**
@@ -82,8 +105,8 @@ void TreeView::setBgColor(Color color)
  */
 void TreeView::onBeforeExpand(TreeViewEvent &ev)
 {
-  ev.getTreeNode()->onBeforeExpand(ev);
   BeforeExpand(ev);
+  ev.getTreeNode()->onBeforeExpand(ev);
 }
 
 /**
@@ -91,32 +114,52 @@ void TreeView::onBeforeExpand(TreeViewEvent &ev)
  */
 void TreeView::onBeforeCollapse(TreeViewEvent &ev)
 {
-  ev.getTreeNode()->onBeforeCollapse(ev);
   BeforeCollapse(ev);
+  ev.getTreeNode()->onBeforeCollapse(ev);
 }
 
 void TreeView::onBeforeSelect(TreeViewEvent &ev)
 {
-  ev.getTreeNode()->onBeforeSelect(ev);
   BeforeSelect(ev);
+  ev.getTreeNode()->onBeforeSelect(ev);
+}
+
+/**
+ * You can cancel this event to cancel the label editing.
+ * 
+ */
+void TreeView::onBeforeLabelEdit(TreeViewEvent &ev)
+{
+  BeforeLabelEdit(ev);
+  ev.getTreeNode()->onBeforeLabelEdit(ev);
 }
 
 void TreeView::onAfterExpand(TreeViewEvent &ev)
 {
-  ev.getTreeNode()->onAfterExpand(ev);
   AfterExpand(ev);
+  ev.getTreeNode()->onAfterExpand(ev);
 }
 
 void TreeView::onAfterCollapse(TreeViewEvent &ev)
 {
-  ev.getTreeNode()->onAfterCollapse(ev);
   AfterCollapse(ev);
+  ev.getTreeNode()->onAfterCollapse(ev);
 }
 
 void TreeView::onAfterSelect(TreeViewEvent &ev)
 {
-  ev.getTreeNode()->onAfterSelect(ev);
   AfterSelect(ev);
+  ev.getTreeNode()->onAfterSelect(ev);
+}
+
+/**
+ * You can cancel this event to avoid to change the item text.
+ * 
+ */
+void TreeView::onAfterLabelEdit(TreeViewEvent &ev)
+{
+  ev.getTreeNode()->onAfterLabelEdit(ev);
+  AfterLabelEdit(ev);
 }
 
 bool TreeView::onNotify(LPNMHDR lpnmhdr, LRESULT &lResult)
@@ -128,19 +171,8 @@ bool TreeView::onNotify(LPNMHDR lpnmhdr, LRESULT &lResult)
       TreeNode *node = reinterpret_cast<TreeNode *>(lptvdi->item.lParam);
 
       if (lptvdi->item.mask & TVIF_TEXT) {
-	String text = node->getText();
-	if (!text.empty()) {
-	  // TODO threads!!!
-	  static LPTSTR buf = NULL;
-	  if (buf != NULL)
-	    delete buf;
-	  int length = text.size()+1;
-	  buf = new Character[length];
-	  text.copyTo(buf, length);
-	  lptvdi->item.pszText = reinterpret_cast<LPTSTR>(buf);
-	}
-	else
-	  lptvdi->item.pszText = reinterpret_cast<LPTSTR>(NULL);
+	mTmpBuffer = node->getText();
+	lptvdi->item.pszText = const_cast<LPTSTR>(mTmpBuffer.c_str());
       }
 
       if (lptvdi->item.mask & TVIF_IMAGE)
@@ -236,21 +268,36 @@ bool TreeView::onNotify(LPNMHDR lpnmhdr, LRESULT &lResult)
       return true;
     }
 
-//     case TVN_BEGINLABELEDIT: {
-//       LPNMTVDISPINFO lptvdi = reinterpret_cast<LPNMTVDISPINFO>(lpnmhdr);
-//       TreeNode *item = reinterpret_cast<TreeNode *>(lptvdi->item.lParam);
+    case TVN_BEGINLABELEDIT: {
+      LPNMTVDISPINFO lptvdi = reinterpret_cast<LPNMTVDISPINFO>(lpnmhdr);
+      TreeNode *node = reinterpret_cast<TreeNode *>(lptvdi->item.lParam);
 
-// //       ItemEvent(tree->evBeginLabelEdit, *ctrl, *item).fire();
-//       return true;
-//     }
+      TreeViewEvent ev(this, node);
+      onBeforeLabelEdit(ev);
 
-//     case TVN_ENDLABELEDIT: {
-//       LPNMTVDISPINFO lptvdi = reinterpret_cast<LPNMTVDISPINFO>(lpnmhdr);
-//       TreeNode *item = reinterpret_cast<TreeNode *>(lptvdi->item.lParam);
+      // cancel editing
+      lResult = ev.isCanceled() ? TRUE: FALSE; // TRUE cancels the editing
+      return true;
+    }
 
-// //       ItemEvent(tree->evEndLabelEdit, *ctrl, *item).fire();
-//       return true;
-//     }
+    case TVN_ENDLABELEDIT: {
+      LPNMTVDISPINFO lptvdi = reinterpret_cast<LPNMTVDISPINFO>(lpnmhdr);
+      TreeNode *node = reinterpret_cast<TreeNode *>(lptvdi->item.lParam);
+
+      TreeViewEvent ev(this, node,
+		       lptvdi->item.pszText != NULL ? String(lptvdi->item.pszText):
+						      String(""));
+
+      // the label editing was canceled by the user?
+      if (lptvdi->item.pszText == NULL)
+	ev.cancel();
+
+      onAfterLabelEdit(ev);
+
+      // cancel label change (this hasn't effect, because we use LPSTR_TEXTCALLBACK)
+      lResult = ev.isCanceled() ? FALSE: TRUE; // FALSE rejects the edited text
+      return true;
+    }
 
 //     case TVN_BEGINDRAG: {
 //       LPNMTVDISPINFO lptvdi = reinterpret_cast<LPNMTVDISPINFO>(lpnmhdr);

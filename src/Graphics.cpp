@@ -32,31 +32,73 @@
 #include "stdvaca.h"
 #include "Vaca/Graphics.h"
 #include "Vaca/Image.h"
+#include "Vaca/ImageList.h"
 #include "Vaca/Debug.h"
 #include "Vaca/Font.h"
 #include "Vaca/Rect.h"
 #include "Vaca/Point.h"
 #include "Vaca/Size.h"
 #include "Vaca/Widget.h"
+#include "Vaca/System.h"
+#include "Vaca/Region.h"
 
 using namespace Vaca;
 
-ScreenGraphics::ScreenGraphics()
-  : Graphics()
+std::list<Graphics::Pen *> Graphics::mPens;
+std::list<Graphics::Brush *> Graphics::mBrushes;
+
+//////////////////////////////////////////////////////////////////////
+// Graphics::Pen
+
+Graphics::Pen::Pen(int style, int width, COLORREF color)
+  : style(style)
+  , width(width)
+  , color(color)
 {
+  handle = CreatePen(style, width, color);
 }
+
+Graphics::Pen::~Pen()
+{
+  DeleteObject(reinterpret_cast<HGDIOBJ>(handle));
+}
+
+//////////////////////////////////////////////////////////////////////
+// Graphics::Brush
+
+Graphics::Brush::Brush(int style, int hatch, COLORREF color)
+  : style(style)
+  , hatch(hatch)
+  , color(color)
+{
+  LOGBRUSH lb;
+
+  lb.lbStyle = style;
+  lb.lbColor = color;
+  lb.lbHatch = hatch;
+
+  handle = CreateBrushIndirect(&lb);
+}
+
+Graphics::Brush::~Brush()
+{
+  DeleteObject(reinterpret_cast<HGDIOBJ>(handle));
+}
+
+//////////////////////////////////////////////////////////////////////
+// Graphics
 
 /**
  * Creates a Graphics context for the screen.
  */
 Graphics::Graphics()
 {
-  mHdc     = GetDC(NULL);
-  mRelease = true;
-  mDelete  = false;
-  mNoPaint = false;
-  mFont    = &Font::getDefault();
-  mPenSize = 1;
+  mHDC         = GetDC(NULL);
+  mAutoRelease = true;
+  mAutoDelete  = false;
+  mNoPaint     = false;
+  mFont        = &Font::getDefault();
+  mPenSize     = 1;
 }
 
 /**
@@ -64,28 +106,28 @@ Graphics::Graphics()
  */
 Graphics::Graphics(HDC hdc)
 {
-  VACA_ASSERT(hdc != NULL);
+  assert(hdc != NULL);
 
-  mHdc     = hdc;
-  mRelease = false;
-  mDelete  = false;
-  mNoPaint = false;
-  mFont    = NULL;
-  mPenSize = 1;
+  mHDC         = hdc;
+  mAutoRelease = false;
+  mAutoDelete  = false;
+  mNoPaint     = false;
+  mFont        = NULL;
+  mPenSize     = 1;
 }
 
 Graphics::Graphics(HDC hdc, Image &image)
 {
-  VACA_ASSERT(hdc != NULL);
+  assert(hdc != NULL);
 
-  mHdc     = CreateCompatibleDC(hdc);
-  mRelease = false;
-  mDelete  = true;
-  mNoPaint = false;
-  mFont    = NULL;
-  mPenSize = 1;
+  mHDC         = CreateCompatibleDC(hdc);
+  mAutoRelease = false;
+  mAutoDelete  = true;
+  mNoPaint     = false;
+  mFont        = NULL;
+  mPenSize     = 1;
   
-  SelectObject(mHdc, image.getHbitmap());
+  SelectObject(mHDC, image.getHBITMAP());
 }
 
 /**
@@ -93,11 +135,11 @@ Graphics::Graphics(HDC hdc, Image &image)
  */
 // Graphics::Graphics(Widget *widget)
 // {
-//   HWND hwnd = widget->getHwnd();
+//   HWND hwnd = widget->getHWND();
 
-//   VACA_ASSERT(hwnd != NULL);
+//   assert(hwnd != NULL);
 
-//   mHdc     = GetDC(hwnd);
+//   mHDC     = GetDC(hwnd);
 //   mRelease = true;
 //   mDelete  = false;
 //   mNoPaint = false;
@@ -106,12 +148,10 @@ Graphics::Graphics(HDC hdc, Image &image)
 
 Graphics::~Graphics()
 {
-  VACA_ASSERT(!(mRelease && mDelete));
-  
-  if (mRelease)
-    ReleaseDC(NULL, mHdc);
-  else if (mDelete)
-    DeleteDC(mHdc);
+  if (mAutoRelease)
+    ReleaseDC(NULL, mHDC);
+  else if (mAutoDelete)
+    DeleteDC(mHDC);
 }
 
 /**
@@ -130,10 +170,10 @@ bool Graphics::wasPainted()
 
 Rect Graphics::getClipBounds()
 {
-  VACA_ASSERT(mHdc != NULL);
+  assert(mHDC != NULL);
 
   RECT rc;
-  int res = ::GetClipBox(mHdc, &rc);
+  int res = ::GetClipBox(mHDC, &rc);
 
   if (res == NULLREGION ||
       res == ERROR)
@@ -144,39 +184,39 @@ Rect Graphics::getClipBounds()
 
 void Graphics::excludeClip(const Rect &rc)
 {
-  VACA_ASSERT(mHdc != NULL);
-  ExcludeClipRect(mHdc, rc.x, rc.y, rc.x+rc.w, rc.y+rc.h);
+  assert(mHDC != NULL);
+  ExcludeClipRect(mHDC, rc.x, rc.y, rc.x+rc.w, rc.y+rc.h);
 }
 
 void Graphics::intersectClip(const Rect &rc)
 {
-  VACA_ASSERT(mHdc != NULL);
-  IntersectClipRect(mHdc, rc.x, rc.y, rc.x+rc.w, rc.y+rc.h);
+  assert(mHDC != NULL);
+  IntersectClipRect(mHDC, rc.x, rc.y, rc.x+rc.w, rc.y+rc.h);
 }
 
 bool Graphics::isVisible(const Point &pt)
 {
-  VACA_ASSERT(mHdc != NULL);
-  return PtVisible(mHdc, pt.x, pt.y) != FALSE;
+  assert(mHDC != NULL);
+  return PtVisible(mHDC, pt.x, pt.y) != FALSE;
 }
 
 bool Graphics::isVisible(const Rect &rc)
 {
-  VACA_ASSERT(mHdc != NULL);
+  assert(mHDC != NULL);
   RECT rc2 = rc;
-  return RectVisible(mHdc, &rc2) != FALSE;
+  return RectVisible(mHDC, &rc2) != FALSE;
 }
 
 // void Graphics::setPaintMode()
 // {
-//   VACA_ASSERT(mHdc != NULL);
-//   SetROP2(mHdc, R2_NOT);
+//   assert(mHDC != NULL);
+//   SetROP2(mHDC, R2_NOT);
 // }
 
 // void Graphics::setNotMode()
 // {
-//   VACA_ASSERT(mHdc != NULL);
-//   SetROP2(mHdc, R2_NOT);
+//   assert(mHDC != NULL);
+//   SetROP2(mHDC, R2_NOT);
 // }
 
 Color Graphics::getColor()
@@ -211,30 +251,30 @@ void Graphics::setPenSize(int penSize)
 
 Color Graphics::getPixel(const Point &pt)
 {
-  VACA_ASSERT(mHdc != NULL);
+  assert(mHDC != NULL);
 
-  return Color(GetPixel(mHdc, pt.x, pt.y));
+  return Color(GetPixel(mHDC, pt.x, pt.y));
 }
 
 Color Graphics::getPixel(int x, int y)
 {
-  VACA_ASSERT(mHdc != NULL);
+  assert(mHDC != NULL);
 
-  return Color(GetPixel(mHdc, x, y));
+  return Color(GetPixel(mHDC, x, y));
 }
 
 void Graphics::setPixel(const Point &pt, Color color)
 {
-  VACA_ASSERT(mHdc != NULL);
+  assert(mHDC != NULL);
 
-  SetPixel(mHdc, pt.x, pt.y, color.getColorRef());
+  SetPixel(mHDC, pt.x, pt.y, color.getColorRef());
 }
 
 void Graphics::setPixel(int x, int y, Color color)
 {
-  VACA_ASSERT(mHdc != NULL);
+  assert(mHDC != NULL);
 
-  SetPixel(mHdc, x, y, color.getColorRef());
+  SetPixel(mHDC, x, y, color.getColorRef());
 }
 
 void Graphics::moveTo(const Point &pt)
@@ -249,62 +289,68 @@ void Graphics::lineTo(const Point &pt)
 
 void Graphics::moveTo(int x, int y)
 {
-  VACA_ASSERT(mHdc != NULL);
-  MoveToEx(mHdc, x, y, NULL);
+  assert(mHDC != NULL);
+  MoveToEx(mHDC, x, y, NULL);
 }
 
 void Graphics::lineTo(int x, int y)
 {
-  VACA_ASSERT(mHdc != NULL);
-  LineTo(mHdc, x, y);
+  assert(mHDC != NULL);
+
+  HGDIOBJ thePen = findHPEN(PS_SOLID, mPenSize, mColor.getColorRef());
+  HGDIOBJ oldPen = SelectObject(mHDC, thePen);
+
+  LineTo(mHDC, x, y);
+
+  SelectObject(mHDC, oldPen);
 }
 
 void Graphics::beginPath()
 {
-  VACA_ASSERT(mHdc != NULL);
-  BeginPath(mHdc);
+  assert(mHDC != NULL);
+  BeginPath(mHDC);
 }
 
-void Graphics::closePath()
+void Graphics::endPath()
 {
-  VACA_ASSERT(mHdc != NULL);
-  EndPath(mHdc);
+  assert(mHDC != NULL);
+  EndPath(mHDC);
 }
 
-void Graphics::stroke()
+void Graphics::strokePath()
 {
-  VACA_ASSERT(mHdc != NULL);
+  assert(mHDC != NULL);
 
-  HGDIOBJ newPen   = CreatePen(PS_SOLID, mPenSize, mColor.getColorRef());
-  HGDIOBJ oldPen   = SelectObject(mHdc, newPen);
-  HGDIOBJ newBrush = GetStockObject(NULL_BRUSH);
-  HGDIOBJ oldBrush = SelectObject(mHdc, newBrush);
-//   int oldMode = SetBkMode(mHdc, OPAQUE);
+  HGDIOBJ thePen   = findHPEN(PS_SOLID, mPenSize, mColor.getColorRef());
+  HGDIOBJ theBrush = findHBRUSH(BS_NULL, 0, 0);
+  HGDIOBJ oldPen   = SelectObject(mHDC, thePen);
+  HGDIOBJ oldBrush = SelectObject(mHDC, theBrush);
+//   int oldMode = SetBkMode(mHDC, OPAQUE);
 
-  StrokePath(mHdc);
+  StrokePath(mHDC);
 
-//   SetBkMode(mHdc, oldMode);
-  DeleteObject(SelectObject(mHdc, oldPen));
-  DeleteObject(SelectObject(mHdc, oldBrush));
+//   SetBkMode(mHDC, oldMode);
+  SelectObject(mHDC, oldPen);
+  SelectObject(mHDC, oldBrush);
 }
 
-void Graphics::fill()
+void Graphics::fillPath()
 {
-  VACA_ASSERT(mHdc != NULL);
+  assert(mHDC != NULL);
 
-  HGDIOBJ newPen   = CreatePen(PS_NULL, 0, 0);
-  HGDIOBJ oldPen   = SelectObject(mHdc, newPen);
-  HGDIOBJ newBrush = CreateSolidBrush(mColor.getColorRef());
-  HGDIOBJ oldBrush = SelectObject(mHdc, newBrush);
-//   int oldBkMode = SetBkMode(mHdc, OPAQUE);
-  int oldPolyFillMode = SetPolyFillMode(mHdc, ALTERNATE);
+  HGDIOBJ thePen   = findHPEN(PS_NULL, 0, 0);
+  HGDIOBJ theBrush = findHBRUSH(BS_SOLID, 0, mColor.getColorRef());
+  HGDIOBJ oldPen   = SelectObject(mHDC, thePen);
+  HGDIOBJ oldBrush = SelectObject(mHDC, theBrush);
+//   int oldBkMode = SetBkMode(mHDC, OPAQUE);
+  int oldPolyFillMode = SetPolyFillMode(mHDC, ALTERNATE);
 
-  FillPath(mHdc);
+  FillPath(mHDC);
 
-//   SetBkMode(mHdc, oldBkMode);
-  SetPolyFillMode(mHdc, oldPolyFillMode);
-  DeleteObject(SelectObject(mHdc, oldPen));
-  DeleteObject(SelectObject(mHdc, oldBrush));
+//   SetBkMode(mHDC, oldBkMode);
+  SetPolyFillMode(mHDC, oldPolyFillMode);
+  SelectObject(mHDC, oldPen);
+  SelectObject(mHDC, oldBrush);
 }
 
 void Graphics::drawString(const String &str, const Point &pt)
@@ -314,21 +360,55 @@ void Graphics::drawString(const String &str, const Point &pt)
 
 void Graphics::drawString(const String &str, int x, int y)
 {
-  VACA_ASSERT(mHdc != NULL);
+  assert(mHDC != NULL);
 
-  int oldMode = SetBkMode(mHdc, TRANSPARENT);
-  int oldColor = SetTextColor(mHdc, mColor.getColorRef());
+  int oldMode = SetBkMode(mHDC, TRANSPARENT);
+  int oldColor = SetTextColor(mHDC, mColor.getColorRef());
 
   if (mFont != NULL) {
-    HGDIOBJ oldFont = SelectObject(mHdc, reinterpret_cast<HGDIOBJ>(mFont->getHfont()));
-    TextOut(mHdc, x, y, str.c_str(), str.size());
-    SelectObject(mHdc, oldFont);
+    HGDIOBJ oldFont = SelectObject(mHDC, reinterpret_cast<HGDIOBJ>(mFont->getHFONT()));
+    TextOut(mHDC, x, y, str.c_str(), str.size());
+    SelectObject(mHDC, oldFont);
   }
   else
-    TextOut(mHdc, x, y, str.c_str(), str.size());
+    TextOut(mHDC, x, y, str.c_str(), str.size());
 
-  SetBkMode(mHdc, oldMode); 
-  SetTextColor(mHdc, oldColor);
+  SetBkMode(mHDC, oldMode); 
+  SetTextColor(mHDC, oldColor);
+}
+
+void Graphics::drawString(const String &str, const Rect &_rc, int flags)
+{
+  assert(mHDC != NULL);
+
+  int oldMode = SetBkMode(mHDC, TRANSPARENT);
+  int oldColor = SetTextColor(mHDC, mColor.getColorRef());
+
+  RECT rc = _rc;
+
+  if (mFont != NULL) {
+    HGDIOBJ oldFont = SelectObject(mHDC, reinterpret_cast<HGDIOBJ>(mFont->getHFONT()));
+    DrawText(mHDC, str.c_str(), str.size(), &rc, flags);
+    SelectObject(mHDC, oldFont);
+  }
+  else
+    DrawText(mHDC, str.c_str(), str.size(), &rc, flags);
+
+  SetBkMode(mHDC, oldMode); 
+  SetTextColor(mHDC, oldColor);
+}
+
+void Graphics::drawDisabledString(const String &str, const Rect &rc, int flags)
+{
+  Color oldColor = mColor;
+
+  setColor(System::getColor(COLOR_3DHIGHLIGHT));
+  drawString(str, Rect(rc.x+1, rc.y+1, rc.w, rc.h), flags);
+
+  setColor(System::getColor(COLOR_GRAYTEXT));
+  drawString(str, rc, flags);
+
+  mColor = oldColor;
 }
 
 void Graphics::drawImage(Image &image, int x, int y)
@@ -338,13 +418,13 @@ void Graphics::drawImage(Image &image, int x, int y)
 
 void Graphics::drawImage(Image &image, int dstX, int dstY, int srcX, int srcY, int width, int height)
 {
-  VACA_ASSERT(mHdc != NULL);
+  assert(mHDC != NULL);
 
   Graphics &source = image.getGraphics();
 
-  VACA_ASSERT(source.getHdc() != NULL);
+  assert(source.getHDC() != NULL);
   
-  BitBlt(mHdc, dstX, dstY, width, height, source.getHdc(), srcX, srcY, SRCCOPY);
+  BitBlt(mHDC, dstX, dstY, width, height, source.getHDC(), srcX, srcY, SRCCOPY);
 }
 
 void Graphics::drawImage(Image &image, int x, int y, Color bgColor)
@@ -354,16 +434,35 @@ void Graphics::drawImage(Image &image, int x, int y, Color bgColor)
 
 void Graphics::drawImage(Image &image, int dstX, int dstY, int srcX, int srcY, int width, int height, Color bgColor)
 {
-  VACA_ASSERT(mHdc != NULL);
+  assert(mHDC != NULL);
 
   Graphics &source = image.getGraphics();
 
-  VACA_ASSERT(source.getHdc() != NULL);
+  assert(source.getHDC() != NULL);
+
+#if 0				// WinCE
+  TransparentImage(mHDC, dstX, dstY, width, height,
+		   source.getHDC(), srcX, srcY, width, height,
+		   bgColor.getColorRef());
+#else
+    
+  HDC maskHDC = CreateCompatibleDC(mHDC);
+  HBITMAP theMask = CreateBitmap(width, height, 1, 1, NULL);
+  HGDIOBJ oldMask = SelectObject(maskHDC, theMask);
+  COLORREF oldBkColor = SetBkColor(source.getHDC(), bgColor.getColorRef());
   
-  // TODO
-//   MaskBlt(mHdc, dstX, dstY, width, height,
-// 	  source.getHdc(), srcX, srcY,
-// 	  NULL, 0, 0, MAKEROP4(SRCCOPY, SRCCOPY));
+  BitBlt(maskHDC, 0, 0, width, height,
+	 source.getHDC(), srcX, srcY, SRCCOPY);
+  
+  MaskBlt(mHDC, dstX, dstY, width, height,
+	  source.getHDC(), srcX, srcY,
+	  theMask, 0, 0, MAKEROP4(0x00AA0029, SRCCOPY)); // 0x00AA0029 is NOP
+
+  SetBkColor(source.getHDC(), oldBkColor);
+  DeleteObject(SelectObject(maskHDC, oldMask));
+  DeleteObject(maskHDC);
+
+#endif
 }
 
 void Graphics::drawImage(Image &image, const Point &pt)
@@ -386,6 +485,20 @@ void Graphics::drawImage(Image &image, const Point &pt, const Rect &rc, Color bg
   drawImage(image, pt.x, pt.y, rc.x, rc.y, rc.w, rc.h, bgColor);
 }
 
+void Graphics::drawImageList(ImageList &imageList, int imageIndex, int x, int y, int style)
+{
+  assert(mHDC != NULL);
+  assert(imageList.isValid());
+
+  ImageList_Draw(imageList.getHIMAGELIST(),
+		 imageIndex, mHDC, x, y, style);
+}
+
+void Graphics::drawImageList(ImageList &imageList, int imageIndex, const Point &pt, int style)
+{
+  drawImageList(imageList, imageIndex, pt.x, pt.y, style);
+}
+
 void Graphics::drawLine(const Point &pt1, const Point &pt2)
 {
   drawLine(pt1.x, pt1.y, pt2.x, pt2.y);
@@ -393,17 +506,17 @@ void Graphics::drawLine(const Point &pt1, const Point &pt2)
 
 void Graphics::drawLine(int x1, int y1, int x2, int y2)
 {
-  VACA_ASSERT(mHdc != NULL);
+  assert(mHDC != NULL);
 
   POINT oldPos;
-  HGDIOBJ newPen = CreatePen(PS_SOLID, mPenSize, mColor.getColorRef());
-  HGDIOBJ oldPen = SelectObject(mHdc, newPen);
+  HGDIOBJ thePen = findHPEN(PS_SOLID, mPenSize, mColor.getColorRef());
+  HGDIOBJ oldPen = SelectObject(mHDC, thePen);
 
-  MoveToEx(mHdc, x1, y1, &oldPos);
-  LineTo(mHdc, x2, y2);
-  MoveToEx(mHdc, oldPos.x, oldPos.y, NULL);
+  MoveToEx(mHDC, x1, y1, &oldPos);
+  LineTo(mHDC, x2, y2);
+  MoveToEx(mHDC, oldPos.x, oldPos.y, NULL);
 
-  DeleteObject(SelectObject(mHdc, oldPen));
+  SelectObject(mHDC, oldPen);
 }
 
 void Graphics::drawRect(const Rect &rc)
@@ -413,17 +526,17 @@ void Graphics::drawRect(const Rect &rc)
 
 void Graphics::drawRect(int x, int y, int w, int h)
 {
-  VACA_ASSERT(mHdc != NULL);
+  assert(mHDC != NULL);
 
-  HGDIOBJ newPen   = CreatePen(PS_SOLID, mPenSize, mColor.getColorRef());
-  HGDIOBJ newBrush = GetStockObject(NULL_BRUSH);
-  HGDIOBJ oldPen   = SelectObject(mHdc, newPen);
-  HGDIOBJ oldBrush = SelectObject(mHdc, newBrush);
+  HGDIOBJ thePen   = findHPEN(PS_SOLID, mPenSize, mColor.getColorRef());
+  HGDIOBJ theBrush = findHBRUSH(BS_NULL, 0, 0);
+  HGDIOBJ oldPen   = SelectObject(mHDC, thePen);
+  HGDIOBJ oldBrush = SelectObject(mHDC, theBrush);
 
-  Rectangle(mHdc, x, y, x+w, y+h);
+  Rectangle(mHDC, x, y, x+w, y+h);
 
-  DeleteObject(SelectObject(mHdc, oldPen));
-  SelectObject(mHdc, oldBrush);
+  SelectObject(mHDC, oldPen);
+  SelectObject(mHDC, oldBrush);
 }
 
 void Graphics::draw3dRect(const Rect &rc, Color topLeft, Color bottomRight)
@@ -433,20 +546,20 @@ void Graphics::draw3dRect(const Rect &rc, Color topLeft, Color bottomRight)
 
 void Graphics::draw3dRect(int x, int y, int w, int h, Color topLeft, Color bottomRight)
 {
-  VACA_ASSERT(mHdc != NULL);
+  assert(mHDC != NULL);
 
   POINT oldPos;
-  HGDIOBJ oldPen = SelectObject(mHdc, CreatePen(PS_SOLID, mPenSize, topLeft.getColorRef()));
-  MoveToEx(mHdc, x, y+h-2, &oldPos);
-  LineTo(mHdc, x, y);
-  LineTo(mHdc, x+w-1, y);
+  HGDIOBJ oldPen = SelectObject(mHDC, findHPEN(PS_SOLID, mPenSize, topLeft.getColorRef()));
+  MoveToEx(mHDC, x, y+h-2, &oldPos);
+  LineTo(mHDC, x, y);
+  LineTo(mHDC, x+w-1, y);
 
-  DeleteObject(SelectObject(mHdc, CreatePen(PS_SOLID, mPenSize, bottomRight.getColorRef())));
-  LineTo(mHdc, x+w-1, y+h-1);
-  LineTo(mHdc, x-1, y+h-1);
+  SelectObject(mHDC, findHPEN(PS_SOLID, mPenSize, bottomRight.getColorRef()));
+  LineTo(mHDC, x+w-1, y+h-1);
+  LineTo(mHDC, x-1, y+h-1);
 
-  DeleteObject(SelectObject(mHdc, oldPen));
-  MoveToEx(mHdc, oldPos.x, oldPos.y, NULL);
+  SelectObject(mHDC, oldPen);
+  MoveToEx(mHDC, oldPos.x, oldPos.y, NULL);
 }
 
 /**
@@ -460,17 +573,17 @@ void Graphics::drawEllipse(const Rect &rc)
 
 void Graphics::drawEllipse(int x, int y, int w, int h)
 {
-  VACA_ASSERT(mHdc != NULL);
+  assert(mHDC != NULL);
 
-  HGDIOBJ newPen   = CreatePen(PS_SOLID, mPenSize, mColor.getColorRef());
-  HGDIOBJ newBrush = GetStockObject(NULL_BRUSH);
-  HGDIOBJ oldPen   = SelectObject(mHdc, newPen);
-  HGDIOBJ oldBrush = SelectObject(mHdc, newBrush);
+  HGDIOBJ thePen   = findHPEN(PS_SOLID, mPenSize, mColor.getColorRef());
+  HGDIOBJ theBrush = findHBRUSH(BS_NULL, 0, 0);
+  HGDIOBJ oldPen   = SelectObject(mHDC, thePen);
+  HGDIOBJ oldBrush = SelectObject(mHDC, theBrush);
 
-  Ellipse(mHdc, x, y, x+w, y+h);
+  Ellipse(mHDC, x, y, x+w, y+h);
 
-  DeleteObject(SelectObject(mHdc, oldPen));
-  SelectObject(mHdc, oldBrush);
+  SelectObject(mHDC, oldPen);
+  SelectObject(mHDC, oldBrush);
 }
 
 /**
@@ -486,10 +599,10 @@ void Graphics::drawArc(const Rect &rc, int startAngle, int sweepAngle)
 
 void Graphics::drawArc(int x, int y, int w, int h, int startAngle, int sweepAngle)
 {
-  VACA_ASSERT(mHdc != NULL);
+  assert(mHDC != NULL);
 
-  HGDIOBJ newPen = CreatePen(PS_SOLID, mPenSize, mColor.getColorRef());
-  HGDIOBJ oldPen = SelectObject(mHdc, newPen);
+  HGDIOBJ thePen = findHPEN(PS_SOLID, mPenSize, mColor.getColorRef());
+  HGDIOBJ oldPen = SelectObject(mHDC, thePen);
   int x1, y1, x2, y2;
 
   x1 = x+w/2 + (int)(cos(startAngle*M_PI/180)*w);
@@ -497,9 +610,9 @@ void Graphics::drawArc(int x, int y, int w, int h, int startAngle, int sweepAngl
   x2 = x+w/2 + (int)(cos((startAngle+sweepAngle)*M_PI/180)*w);
   y2 = y+h/2 - (int)(sin((startAngle+sweepAngle)*M_PI/180)*h);
 
-  Arc(mHdc, x, y, x+w, y+h, x1, y1, x2, y2);
+  Arc(mHDC, x, y, x+w, y+h, x1, y1, x2, y2);
 
-  DeleteObject(SelectObject(mHdc, oldPen));
+  SelectObject(mHDC, oldPen);
 }
 
 void Graphics::drawPie(const Rect &rc, double startAngle, double sweepAngle)
@@ -509,12 +622,12 @@ void Graphics::drawPie(const Rect &rc, double startAngle, double sweepAngle)
 
 void Graphics::drawPie(int x, int y, int w, int h, double startAngle, double sweepAngle)
 {
-  VACA_ASSERT(mHdc != NULL);
+  assert(mHDC != NULL);
 
-  HGDIOBJ newPen   = CreatePen(PS_SOLID, mPenSize, mColor.getColorRef());
-  HGDIOBJ newBrush = GetStockObject(NULL_BRUSH);
-  HGDIOBJ oldPen   = SelectObject(mHdc, newPen);
-  HGDIOBJ oldBrush = SelectObject(mHdc, newBrush);
+  HGDIOBJ thePen   = findHPEN(PS_SOLID, mPenSize, mColor.getColorRef());
+  HGDIOBJ theBrush = findHBRUSH(BS_NULL, 0, 0);
+  HGDIOBJ oldPen   = SelectObject(mHDC, thePen);
+  HGDIOBJ oldBrush = SelectObject(mHDC, theBrush);
   int x1, y1, x2, y2;
 
   x1 = x+w/2 + (int)(cos(startAngle*M_PI/180)*w);
@@ -522,10 +635,10 @@ void Graphics::drawPie(int x, int y, int w, int h, double startAngle, double swe
   x2 = x+w/2 + (int)(cos((startAngle+sweepAngle)*M_PI/180)*w);
   y2 = y+h/2 - (int)(sin((startAngle+sweepAngle)*M_PI/180)*h);
 
-  Pie(mHdc, x, y, x+w, y+h, x1, y1, x2, y2);
+  Pie(mHDC, x, y, x+w, y+h, x1, y1, x2, y2);
 
-  DeleteObject(SelectObject(mHdc, oldPen));
-  SelectObject(mHdc, oldBrush);
+  SelectObject(mHDC, oldPen);
+  SelectObject(mHDC, oldBrush);
 }
 
 void Graphics::drawChord(const Rect &rc, double startAngle, double sweepAngle)
@@ -535,12 +648,12 @@ void Graphics::drawChord(const Rect &rc, double startAngle, double sweepAngle)
 
 void Graphics::drawChord(int x, int y, int w, int h, double startAngle, double sweepAngle)
 {
-  VACA_ASSERT(mHdc != NULL);
+  assert(mHDC != NULL);
 
-  HGDIOBJ newPen   = CreatePen(PS_SOLID, mPenSize, mColor.getColorRef());
-  HGDIOBJ newBrush = GetStockObject(NULL_BRUSH);
-  HGDIOBJ oldPen   = SelectObject(mHdc, newPen);
-  HGDIOBJ oldBrush = SelectObject(mHdc, newBrush);
+  HGDIOBJ thePen   = findHPEN(PS_SOLID, mPenSize, mColor.getColorRef());
+  HGDIOBJ theBrush = findHBRUSH(BS_NULL, 0, 0);
+  HGDIOBJ oldPen   = SelectObject(mHDC, thePen);
+  HGDIOBJ oldBrush = SelectObject(mHDC, theBrush);
   int x1, y1, x2, y2;
 
   x1 = x+w/2 + (int)(cos(startAngle*M_PI/180)*w);
@@ -548,10 +661,10 @@ void Graphics::drawChord(int x, int y, int w, int h, double startAngle, double s
   x2 = x+w/2 + (int)(cos((startAngle+sweepAngle)*M_PI/180)*w);
   y2 = y+h/2 - (int)(sin((startAngle+sweepAngle)*M_PI/180)*h);
 
-  Chord(mHdc, x, y, x+w, y+h, x1, y1, x2, y2);
+  Chord(mHDC, x, y, x+w, y+h, x1, y1, x2, y2);
 
-  DeleteObject(SelectObject(mHdc, oldPen));
-  SelectObject(mHdc, oldBrush);
+  SelectObject(mHDC, oldPen);
+  SelectObject(mHDC, oldBrush);
 }
 
 void Graphics::fillRect(const Rect &rc)
@@ -561,17 +674,17 @@ void Graphics::fillRect(const Rect &rc)
 
 void Graphics::fillRect(int x, int y, int w, int h)
 {
-  VACA_ASSERT(mHdc != NULL);
+  assert(mHDC != NULL);
 
-  HGDIOBJ newPen   = CreatePen(PS_NULL, 0, 0);
-  HGDIOBJ newBrush = CreateSolidBrush(mColor.getColorRef());
-  HGDIOBJ oldPen   = SelectObject(mHdc, newPen);
-  HGDIOBJ oldBrush = SelectObject(mHdc, newBrush);
+  HGDIOBJ thePen   = findHPEN(PS_NULL, 0, 0);
+  HGDIOBJ theBrush = findHBRUSH(BS_SOLID, 0, mColor.getColorRef());
+  HGDIOBJ oldPen   = SelectObject(mHDC, thePen);
+  HGDIOBJ oldBrush = SelectObject(mHDC, theBrush);
 
-  Rectangle(mHdc, x, y, x+w+1, y+h+1);
+  Rectangle(mHDC, x, y, x+w+1, y+h+1);
 
-  DeleteObject(SelectObject(mHdc, oldPen));
-  DeleteObject(SelectObject(mHdc, oldBrush));
+  SelectObject(mHDC, oldPen);
+  SelectObject(mHDC, oldBrush);
 }
 
 void Graphics::fillEllipse(const Rect &rc)
@@ -581,17 +694,17 @@ void Graphics::fillEllipse(const Rect &rc)
 
 void Graphics::fillEllipse(int x, int y, int w, int h)
 {
-  VACA_ASSERT(mHdc != NULL);
+  assert(mHDC != NULL);
 
-  HGDIOBJ newPen   = CreatePen(PS_NULL, 0, 0);
-  HGDIOBJ newBrush = CreateSolidBrush(mColor.getColorRef());
-  HGDIOBJ oldPen   = SelectObject(mHdc, newPen);
-  HGDIOBJ oldBrush = SelectObject(mHdc, newBrush);
+  HGDIOBJ thePen   = findHPEN(PS_NULL, 0, 0);
+  HGDIOBJ theBrush = findHBRUSH(BS_SOLID, 0, mColor.getColorRef());
+  HGDIOBJ oldPen   = SelectObject(mHDC, thePen);
+  HGDIOBJ oldBrush = SelectObject(mHDC, theBrush);
 
-  Ellipse(mHdc, x, y, x+w+1, y+h+1);
+  Ellipse(mHDC, x, y, x+w+1, y+h+1);
 
-  DeleteObject(SelectObject(mHdc, oldPen));
-  DeleteObject(SelectObject(mHdc, oldBrush));
+  SelectObject(mHDC, oldPen);
+  SelectObject(mHDC, oldBrush);
 }
 
 void Graphics::fillPie(const Rect &rc, double startAngle, double sweepAngle)
@@ -601,12 +714,12 @@ void Graphics::fillPie(const Rect &rc, double startAngle, double sweepAngle)
 
 void Graphics::fillPie(int x, int y, int w, int h, double startAngle, double sweepAngle)
 {
-  VACA_ASSERT(mHdc != NULL);
+  assert(mHDC != NULL);
 
-  HGDIOBJ newPen   = CreatePen(PS_NULL, 0, 0);
-  HGDIOBJ newBrush = CreateSolidBrush(mColor.getColorRef());
-  HGDIOBJ oldPen   = SelectObject(mHdc, newPen);
-  HGDIOBJ oldBrush = SelectObject(mHdc, newBrush);
+  HGDIOBJ thePen   = findHPEN(PS_NULL, 0, 0);
+  HGDIOBJ theBrush = findHBRUSH(BS_SOLID, 0, mColor.getColorRef());
+  HGDIOBJ oldPen   = SelectObject(mHDC, thePen);
+  HGDIOBJ oldBrush = SelectObject(mHDC, theBrush);
   int x1, y1, x2, y2;
 
   x1 = x+w/2 + (int)(cos(startAngle*M_PI/180)*w);
@@ -614,10 +727,10 @@ void Graphics::fillPie(int x, int y, int w, int h, double startAngle, double swe
   x2 = x+w/2 + (int)(cos((startAngle+sweepAngle)*M_PI/180)*w);
   y2 = y+h/2 - (int)(sin((startAngle+sweepAngle)*M_PI/180)*h);
 
-  Pie(mHdc, x, y, x+w, y+h, x1, y1, x2, y2);
+  Pie(mHDC, x, y, x+w, y+h, x1, y1, x2, y2);
 
-  DeleteObject(SelectObject(mHdc, oldPen));
-  DeleteObject(SelectObject(mHdc, oldBrush));
+  SelectObject(mHDC, oldPen);
+  SelectObject(mHDC, oldBrush);
 }
 
 void Graphics::fillChord(const Rect &rc, double startAngle, double sweepAngle)
@@ -627,12 +740,12 @@ void Graphics::fillChord(const Rect &rc, double startAngle, double sweepAngle)
 
 void Graphics::fillChord(int x, int y, int w, int h, double startAngle, double sweepAngle)
 {
-  VACA_ASSERT(mHdc != NULL);
+  assert(mHDC != NULL);
 
-  HGDIOBJ newPen   = CreatePen(PS_NULL, 0, 0);
-  HGDIOBJ newBrush = CreateSolidBrush(mColor.getColorRef());
-  HGDIOBJ oldPen   = SelectObject(mHdc, newPen);
-  HGDIOBJ oldBrush = SelectObject(mHdc, newBrush);
+  HGDIOBJ thePen   = findHPEN(PS_NULL, 0, 0);
+  HGDIOBJ theBrush = findHBRUSH(BS_SOLID, 0, mColor.getColorRef());
+  HGDIOBJ oldPen   = SelectObject(mHDC, thePen);
+  HGDIOBJ oldBrush = SelectObject(mHDC, theBrush);
   int x1, y1, x2, y2;
 
   x1 = x+w/2 + (int)(cos(startAngle*M_PI/180)*w);
@@ -640,10 +753,21 @@ void Graphics::fillChord(int x, int y, int w, int h, double startAngle, double s
   x2 = x+w/2 + (int)(cos((startAngle+sweepAngle)*M_PI/180)*w);
   y2 = y+h/2 - (int)(sin((startAngle+sweepAngle)*M_PI/180)*h);
 
-  Chord(mHdc, x, y, x+w, y+h, x1, y1, x2, y2);
+  Chord(mHDC, x, y, x+w, y+h, x1, y1, x2, y2);
 
-  DeleteObject(SelectObject(mHdc, oldPen));
-  DeleteObject(SelectObject(mHdc, oldBrush));
+  SelectObject(mHDC, oldPen);
+  SelectObject(mHDC, oldBrush);
+}
+
+void Graphics::fillRegion(const Region &rgn)
+{
+  assert(mHDC != NULL);
+
+  HGDIOBJ theBrush = findHBRUSH(BS_SOLID, 0, mColor.getColorRef());
+      
+  FillRgn(mHDC,
+	  const_cast<Region *>(&rgn)->getHRGN(),
+	  reinterpret_cast<HBRUSH>(theBrush));
 }
 
 void Graphics::fillGradientRect(const Rect &rc, Color startColor, Color endColor,
@@ -658,7 +782,7 @@ void Graphics::fillGradientRect(int x, int y, int w, int h,
 				Color startColor, Color endColor,
 				Orientation orientation)
 {
-  VACA_ASSERT(mHdc != NULL);
+  assert(mHDC != NULL);
   
   TRIVERTEX vert[2] ;
   GRADIENT_RECT gRect;
@@ -681,7 +805,7 @@ void Graphics::fillGradientRect(int x, int y, int w, int h,
   gRect.LowerRight = 1;
 
 #if (WINVER >= 0x0500)
-  GradientFill(mHdc, vert, 2, &gRect, 1,
+  GradientFill(mHDC, vert, 2, &gRect, 1,
 	       orientation == Horizontal ? GRADIENT_FILL_RECT_H:
 					   GRADIENT_FILL_RECT_V);
 #else
@@ -697,7 +821,7 @@ void Graphics::fillGradientRect(int x, int y, int w, int h,
   }
 
   if (pGF != NULL) {
-    pGF(mHdc, vert, 2, &gRect, 1,
+    pGF(mHDC, vert, 2, &gRect, 1,
 	orientation == Horizontal ? GRADIENT_FILL_RECT_H:
 				    GRADIENT_FILL_RECT_V);
   }
@@ -729,41 +853,41 @@ void Graphics::drawXorFrame(int x, int y, int w, int h, int border)
 
   HBITMAP hbitmap = CreateBitmap(8, 8, 1, 1, pattern);
   HBRUSH newBrush = CreatePatternBrush(hbitmap);
-  HANDLE oldBrush = SelectObject(mHdc, newBrush);
+  HANDLE oldBrush = SelectObject(mHDC, newBrush);
 
-  PatBlt(mHdc, x+border,   y,          w-border,  border,   PATINVERT);
-  PatBlt(mHdc, x+w-border, y+border,   border,    h-border, PATINVERT);
-  PatBlt(mHdc, x,          y+h-border, w-border,  border,   PATINVERT);
-  PatBlt(mHdc, x,          y,          border,    h-border, PATINVERT);
+  PatBlt(mHDC, x+border,   y,          w-border,  border,   PATINVERT);
+  PatBlt(mHDC, x+w-border, y+border,   border,    h-border, PATINVERT);
+  PatBlt(mHDC, x,          y+h-border, w-border,  border,   PATINVERT);
+  PatBlt(mHDC, x,          y,          border,    h-border, PATINVERT);
 
-  DeleteObject(SelectObject(mHdc, oldBrush));
+  DeleteObject(SelectObject(mHDC, oldBrush));
   DeleteObject(hbitmap);
 }
 
 Size Graphics::measureString(const String &str, int fitInWidth, int flags)
 {
-  VACA_ASSERT(mHdc != NULL);
+  assert(mHDC != NULL);
 
   RECT rc = Rect(0, 0, fitInWidth, 0);
   HGDIOBJ oldFont;
 
   if (mFont != NULL)
-    oldFont = SelectObject(mHdc, reinterpret_cast<HGDIOBJ>(mFont->getHfont()));
+    oldFont = SelectObject(mHDC, reinterpret_cast<HGDIOBJ>(mFont->getHFONT()));
 
   if (!str.empty()) {
-    DrawText(mHdc, str.c_str(), str.size(), &rc, flags | DT_CALCRECT);
+    DrawText(mHDC, str.c_str(), str.size(), &rc, flags | DT_CALCRECT);
   }
   else {
     SIZE sz;
 
-    if (GetTextExtentPoint32(mHdc, _T(" "), 1, &sz)) {
+    if (GetTextExtentPoint32(mHDC, _T(" "), 1, &sz)) {
       rc.right = sz.cx;
       rc.bottom = sz.cy;
     }
   }
 
   if (mFont != NULL)
-    SelectObject(mHdc, oldFont);
+    SelectObject(mHDC, oldFont);
 
   return Rect(&rc).getSize();
 }
@@ -791,12 +915,73 @@ Size Graphics::measureString(const String &str, int fitInWidth, int flags)
  */
 void Graphics::setRop2(int drawMode)
 {
-  VACA_ASSERT(mHdc != NULL);
+  assert(mHDC != NULL);
 
-  SetROP2(mHdc, drawMode);
+  SetROP2(mHDC, drawMode);
 }
 
-HDC Graphics::getHdc()
+HDC Graphics::getHDC()
 {
-  return mHdc;
+  return mHDC;
+}
+
+HPEN Graphics::findHPEN(int style, int width, COLORREF color)
+{
+  for (std::list<Pen *>::iterator it = mPens.begin();
+       it != mPens.end();
+       ++it) {
+    Pen *pen = *it;
+
+    if (pen->style == style &&
+	pen->width == width &&
+	pen->color == color)
+      return pen->handle;
+  }
+
+  Pen *pen = new Pen(style, width, color);
+  mPens.push_back(pen);
+  return pen->handle;
+}
+
+HBRUSH Graphics::findHBRUSH(int style, int hatch, COLORREF color)
+{
+  for (std::list<Brush *>::iterator it = mBrushes.begin();
+       it != mBrushes.end();
+       ++it) {
+    Brush *brush = *it;
+
+    if (brush->style == style &&
+	brush->hatch == hatch &&
+	brush->color == color)
+      return brush->handle;
+  }
+
+  Brush *brush = new Brush(style, hatch, color);
+  mBrushes.push_back(brush);
+  return brush->handle;
+}
+
+void Graphics::deleteHandles()
+{
+  for (std::list<Pen *>::iterator it = mPens.begin();
+       it != mPens.end();
+       ++it)
+    delete (*it);
+
+  for (std::list<Brush *>::iterator it = mBrushes.begin();
+       it != mBrushes.end();
+       ++it)
+    delete (*it);
+}
+
+//////////////////////////////////////////////////////////////////////
+// ScreenGraphics
+
+ScreenGraphics::ScreenGraphics()
+  : Graphics()
+{
+}
+
+ScreenGraphics::~ScreenGraphics()
+{
 }

@@ -92,6 +92,7 @@ class VACA_DLL OpenFileDialog : public FileDialog
 
 public:
   OpenFileDialog(const String &title, Widget *parent);
+  virtual ~OpenFileDialog();
 
   void setMultiselect(bool state);
 
@@ -108,6 +109,7 @@ class VACA_DLL SaveFileDialog : public FileDialog
 {
 public:
   SaveFileDialog(const String &title, Widget *parent);
+  virtual ~SaveFileDialog();
 
   void setFileName(const String &string);
 

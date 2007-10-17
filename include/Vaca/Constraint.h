@@ -32,6 +32,8 @@
 #ifndef VACA_CONSTRAINT_H
 #define VACA_CONSTRAINT_H
 
+#include "Vaca/base.h"
+
 namespace Vaca {
 
 /**
@@ -39,18 +41,12 @@ namespace Vaca {
  * specify conditions to different arrangements using a same Layout
  * manager.
  */
-class Constraint
+class VACA_DLL Constraint
 {
 public:
 
-  Constraint() {
-  }
-
-  Constraint(const Constraint &constraint) {
-  }
-
-  virtual ~Constraint() {
-  }
+  Constraint();
+  virtual ~Constraint();
 
 };
 

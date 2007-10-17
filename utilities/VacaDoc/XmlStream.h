@@ -34,11 +34,14 @@
 
 #include "Vaca/String.h"
 
+using namespace std;
+using namespace Vaca;
+
 class XmlStream
 {
 public:
 
-  virtual Vaca::String getName() = 0;
+  virtual String getName() = 0;
   virtual bool readLine(char *buf, int max) = 0;
   
 };

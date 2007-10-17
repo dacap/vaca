@@ -34,9 +34,12 @@
 
 #include "XmlType.h"
 
+using namespace std;
+using namespace Vaca;
+
 class XmlString : public XmlType
 {
-  Vaca::String mText;
+  String mText;
   
 public:
 
@@ -45,7 +48,7 @@ public:
 
   virtual bool isString() { return true; }
 
-  virtual Vaca::String getText();
+  virtual String getText();
   virtual XmlNode *getNode();
 
   void addChar(int character);

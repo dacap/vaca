@@ -43,12 +43,16 @@ ColorDialog::ColorDialog(Color color, Widget *parent)
     mCustomColors[i] = RGB(255, 255, 255);
 }
 
+ColorDialog::~ColorDialog()
+{
+}
+
 bool ColorDialog::doModal()
 {
   CHOOSECOLOR cc;
 
   cc.lStructSize = sizeof(CHOOSECOLOR);
-  cc.hwndOwner = getParentHwnd();
+  cc.hwndOwner = getParentHWND();
   cc.hInstance = NULL;
   cc.rgbResult = mColor.getColorRef();
   cc.lpCustColors = mCustomColors;

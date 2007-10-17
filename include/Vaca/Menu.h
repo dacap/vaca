@@ -51,37 +51,25 @@
 #include <boost/noncopyable.hpp>
 
 #include "Vaca/base.h"
+#include "Vaca/Component.h"
 #include "Vaca/String.h"
-// #include "Vaca/Command.h"
 #include "Vaca/Event.h"
 #include "Vaca/Keys.h"
 
 namespace Vaca {
 
+class Command;
 class MenuItemEvent;
 class MenuItem;
 class Menu;
 class MenuBar;
 class MdiListMenu;
 
-class MenuItemEvent : public Event
-{
-  MenuItem &mMenuItem;
-
-public:
-
-  MenuItemEvent(MenuItem &menuItem)
-    : mMenuItem(menuItem)
-  {
-  }
-
-  MenuItem &getMenuItem() { return mMenuItem; }
-};
-
 /**
  * A menu item.
  */
 class VACA_DLL MenuItem : private boost::noncopyable
+			, public Component
 {
   friend class Menu;
 
@@ -89,14 +77,12 @@ class VACA_DLL MenuItem : private boost::noncopyable
   Menu *mParent;
   String mText;
   int mId;
-//   Command mCommand;
   std::vector<Keys::Type> mShortcuts;
 
 public:
 
   MenuItem();
   MenuItem(const String &text, Keys::Type defaultShortcut = Keys::None, int id = -1);
-//   MenuItem(Command *command);
   virtual ~MenuItem();
 
   bool isAutoDelete();
@@ -117,11 +103,11 @@ public:
   void addShortcut(Keys::Type shortcut);
 //   void addShortcut(Shortcut shortcut);
 
-  virtual bool isMenu() const { return false; }
-  virtual bool isSeparator() const { return false; }
-  virtual bool isMdiList() const { return false; }
-
   virtual MenuItem *checkShortcuts(Keys::Type pressedKey);
+
+  virtual bool isMenu() const;
+  virtual bool isSeparator() const;
+  virtual bool isMdiList() const;
 
   // events
   virtual void onAction(MenuItemEvent &ev);
@@ -142,7 +128,7 @@ public:
   MenuSeparator();
   virtual ~MenuSeparator();
 
-  virtual bool isSeparator() const { return true; }
+  virtual bool isSeparator() const;
   
 };
 
@@ -172,13 +158,15 @@ public:
 
 private:
 
-  HMENU mHmenu;
+  HMENU mHMENU;
   Container mContainer;
 
 public:
 
   Menu();
-  Menu(const String &text);
+  explicit Menu(const String &text);
+  explicit Menu(int menuId);
+  explicit Menu(HMENU hmenu);
   virtual ~Menu();
 
   MenuItem *add(MenuItem *menuItem);
@@ -193,7 +181,7 @@ public:
   void remove(int index);
 
   MenuItem *getMenuItemByIndex(int index);
-  MenuItem *getMenuItemById(int index);
+  MenuItem *getMenuItemById(int id);
   int getMenuItemIndex(MenuItem *menuItem);
 //   int getFirstMenuItemIndexByRadio(MenuItem *menuItem);
 //   int getLastMenuItemIndexByRadio(MenuItem *menuItem);
@@ -204,11 +192,16 @@ public:
 
 //   PopupMenu *getPopupMenu();
 
-  virtual bool isMenu() const { return true; }
+  virtual bool isMenu() const;
 
-  Menu *getMenuByHmenu(HMENU hmenu);
+  Menu *getMenuByHMENU(HMENU hmenu);
 
-  HMENU getHmenu();
+  HMENU getHMENU();
+
+private:
+
+  void subClass();
+  
 };
 
 /**
@@ -220,6 +213,8 @@ class VACA_DLL MenuBar : public Menu
 public:
 
   MenuBar();
+  explicit MenuBar(int menuId);
+  virtual ~MenuBar();
 
   MdiListMenu *getMdiListMenu();
 
@@ -230,8 +225,9 @@ class VACA_DLL MdiListMenu : public Menu
 public:
 
   MdiListMenu(const String &text);
+  virtual ~MdiListMenu();
 
-  virtual bool isMdiList() const { return true; }
+  virtual bool isMdiList() const;
 
 };
 

@@ -29,43 +29,23 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_VIEW_H
-#define VACA_VIEW_H
+#include "stdvaca.h"
+#include "Vaca/DropFilesEvent.h"
+#include "Vaca/Widget.h"
 
-#error DEPRECATED
+using namespace Vaca;
 
-#include <boost/signal.hpp>
-
-#include "Vaca/base.h"
-
-namespace Vaca {
-
-/**
- * A view of the MVC pattern.
- *
- * TODO Make of this a class.
- * @deprecated
- */
-class VACA_DLL View
+DropFilesEvent::DropFilesEvent(Widget *widget, std::vector<String> &files)
+  : Event(widget)
+  , mFiles(files)
 {
-public:
+}
 
-  View();
+DropFilesEvent::~DropFilesEvent()
+{
+}
 
-//   void setController(Controller *controller);
-
-  // signals
-  boost::signal<void (View &)> Change;
-
-  // customizable
-private:
-//   virtual ControllerPtr createController() = 0;
-
-  // members
-private:
-//   ControllerPtr mController;
-};
-
-} // namespace Vaca
-
-#endif
+std::vector<String> DropFilesEvent::getFiles()
+{
+  return mFiles;
+}

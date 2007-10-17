@@ -38,6 +38,7 @@
 #include "Vaca/Mutex.h"
 #include "Vaca/ScopedLock.h"
 #include "Vaca/Debug.h"
+#include "Vaca/ImageList.h"
 
 using namespace Vaca;
 
@@ -179,6 +180,34 @@ String System::getShellFolderPath(int folderCsidl, bool create)
     return "";
 }
 
+void System::getImageList(ImageList &imageList, bool smallImage)
+{
+  HIMAGELIST himl;
+  SHFILEINFO shfi;
+
+  himl = reinterpret_cast<HIMAGELIST>
+    (SHGetFileInfo(_T(""),
+		   0, &shfi, sizeof(shfi),
+		   SHGFI_SYSICONINDEX |
+		   (smallImage ? SHGFI_SMALLICON:
+				 SHGFI_LARGEICON)));
+
+  if (himl != NULL)
+    imageList.assign(himl, false); // don't auto-delete
+}
+
+int System::getFileImageIndex(const String &fileName, bool smallImage)
+{
+  SHFILEINFO shfi;
+
+  SHGetFileInfo(fileName.c_str(), 0, &shfi, sizeof(shfi),
+		SHGFI_SYSICONINDEX |
+		(smallImage ? SHGFI_SMALLICON:
+			      SHGFI_LARGEICON));
+
+  return shfi.iIcon;
+}
+
 /**
  * Returns the screen size.
  */
@@ -218,7 +247,7 @@ Color System::getColor(int index)
 bool System::getKeyState(Keys::Type keyCode)
 {
   // you can't use getKeyState for modifiers
-  VACA_ASSERT((keyCode & Keys::Modifiers) == 0);
+  assert((keyCode & Keys::Modifiers) == 0);
   
   return (GetKeyState(keyCode) & 0x8000) != 0;
 }
@@ -231,6 +260,11 @@ Point System::getCursorPos()
   POINT pt;
   GetCursorPos(&pt);
   return Point(pt.x, pt.y);
+}
+
+void System::setCursorPos(const Point &pt)
+{
+  SetCursorPos(pt.x, pt.y);
 }
 
 String System::getUserName()

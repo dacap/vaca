@@ -46,6 +46,8 @@ class VACA_DLL ClientLayout : public Layout
 {
 public:
 
+  ClientLayout();
+
 //   virtual Size minimumSize(Widget *parent, Widget::Container &widgets);
   virtual Size preferredSize(Widget *parent, Widget::Container &widgets, const Size &fitIn);
 //   virtual Size maximumSize(Widget *parent, Widget::Container &widgets);

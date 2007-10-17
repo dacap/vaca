@@ -35,7 +35,11 @@
 using namespace Vaca;
 
 GroupBox::GroupBox(const String &text, Widget *parent, Style style)
-  : Widget(_T("BUTTON"), parent, style)
+  : Widget(WC_BUTTON, parent, style)
 {
   setText(text);
+}
+
+GroupBox::~GroupBox()
+{
 }

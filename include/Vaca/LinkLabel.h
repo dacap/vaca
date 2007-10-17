@@ -63,13 +63,14 @@ public:
 
   LinkLabel(const String &url, const String &text, Widget *parent, Style style = LinkLabelStyle);
   LinkLabel(const String &url, Widget *parent, Style style = LinkLabelStyle);
+  virtual ~LinkLabel();
 
   virtual void setFont(Font &font);
 
   virtual Color getLinkColor();
   virtual Color getHoverColor();
 
-  boost::signal<void (WidgetEvent &)> Action; ///< @see onAction
+  boost::signal<void (Event &)> Action; ///< @see onAction
 
 protected:
 
@@ -83,12 +84,12 @@ protected:
 //   virtual void onResize(const Size &sz);
 
   // new events
-  virtual void onAction(WidgetEvent &ev);
+  virtual void onAction(Event &ev);
 
 private:
 
   void updateFont(Font &font);
-  Rect getLinkRect(Graphics &g);
+  Rect getLinkBounds(Graphics &g);
 
 };
 

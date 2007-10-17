@@ -34,8 +34,7 @@
 
 #include "Vaca/base.h"
 #include "Vaca/Widget.h"
-
-#include "Vaca/CancellableEvent.h"
+#include "Vaca/CancelableEvent.h"
 
 namespace Vaca {
 
@@ -50,36 +49,25 @@ namespace Vaca {
 #define HotTrackSpinButtonStyle		(Style(UDS_HOTTRACK, 0))
 
 // TODO move this to "SpinButtonEvent.h"
-class SpinButtonEvent : public CancellableEvent
+class SpinButtonEvent : public CancelableEvent
 {
-  int mPosition;
+  int mValue;
   int mDelta;
   Side mSide;
 
 public:
 
-  SpinButtonEvent(Widget *widget, int position, int delta, Side side)
-    : CancellableEvent(widget)
-    , mPosition(position)
+  SpinButtonEvent(Widget *widget, int value, int delta, Side side)
+    : CancelableEvent(widget)
+    , mValue(value)
     , mDelta(delta)
     , mSide(side)
   {
   }
 
-  int getPosition()
-  {
-    return mPosition;
-  }
-
-  int getDelta()
-  {
-    return mDelta;
-  }
-
-  Side getPressedSide()
-  {
-    return mSide;
-  }
+  int getValue() { return mValue; }
+  int getDelta() { return mDelta; }
+  Side getSide() { return mSide; }
 
 };
 
@@ -91,6 +79,9 @@ class VACA_DLL SpinButton : public Widget
 public:
 
   SpinButton(Widget *parent, Style style = SpinButtonStyle);
+  SpinButton(int minValue, int maxValue, int value,
+	     Widget *parent, Style style = SpinButtonStyle);
+  virtual ~SpinButton();
 
   virtual Size preferredSize();
 
@@ -102,8 +93,11 @@ public:
   void getRange(int &minValue, int &maxValue);
   void setRange(int minValue, int maxValue);
 
-  int getPosition();
-  void setPosition(int posValue);
+  int getValue();
+  void setValue(int value);
+
+  int getBase();
+  void setBase(int base);
 
   Widget *getBuddy();
   void setBuddy(Widget *buddy);
@@ -119,8 +113,7 @@ protected:
 //   virtual void onBeforeChange(SpinButtonEvent &ev);
 //   virtual void onAfterChange(SpinButtonEvent &ev);
   // events
-//   virtual void onVScroll(int code, int pos/*, ScrollBar *scrollbar*/);
-//   virtual void onHScroll(int code, int pos/*, ScrollBar *scrollbar*/);
+//   virtual void onScroll(Orientation orientation, int code);
   // reflection
   virtual bool onNotify(LPNMHDR lpnmhdr, LRESULT &lResult);
 

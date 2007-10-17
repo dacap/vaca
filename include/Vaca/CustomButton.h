@@ -54,6 +54,7 @@ class VACA_DLL CustomButton : public Button
 public:
 
   CustomButton(const String &text, Widget *parent, Style style = CustomButtonStyle);
+  virtual ~CustomButton();
 
 protected:
 

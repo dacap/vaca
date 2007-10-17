@@ -41,7 +41,7 @@ namespace Vaca {
 
 #define VACA_VERSION     0
 #define VACA_SUB_VERSION 0
-#define VACA_WIP_VERSION 3
+#define VACA_WIP_VERSION 4
 
 #ifdef VACA_STATIC
   #define VACA_DLL
@@ -55,7 +55,7 @@ namespace Vaca {
 
 #if 1
   // Visual C++ has "max" and "min" has macros... so there is some
-  // problems using "std::max" and "std::min"
+// problems using "std::max" and "std::min"
   #define VACA_MIN(x,y)		((x) < (y) ? (x): (y))
   #define VACA_MAX(x,y)		((x) < (y) ? (y): (x))
 #else
@@ -131,13 +131,23 @@ typedef int Borders;
  *
  * This is just a helper function to avoid cryptic code.
  */
-template<class Container, class Type>
-void remove_element_from_container(Container &container, const Type &element)
+template<typename _ContainerType,
+	 typename _ElementType>
+void remove_element_from_container(_ContainerType &container,
+				   const _ElementType &element)
 {
-  container.erase(std::remove(container.begin(),
-			      container.end(),
-			      element),
-		  container.end());
+//   container.erase(std::remove(container.begin(),
+// 			      container.end(),
+// 			      element),
+// 		  container.end());
+
+  typename _ContainerType::iterator
+    it = std::find(container.begin(),
+		   container.end(),
+		   element);
+  
+  if (it != container.end())
+    container.erase(it);
 }
 
 } // namespace Vaca

@@ -85,18 +85,18 @@ public:
   }
 
   T &get(int x, int y) {
-    VACA_ASSERT(x >= 0 && x < 9 && y >= 0 && y < 9);
+    assert(x >= 0 && x < 9 && y >= 0 && y < 9);
     return mValues[y*9+x];
   }
 
   void put(int x, int y, const T &value) {
-    VACA_ASSERT(x >= 0 && x < 9 && y >= 0 && y < 9);
+    assert(x >= 0 && x < 9 && y >= 0 && y < 9);
     mValues[y*9+x] = value;
   }
 
   // table[row][column]
   T* operator[](const int &index) {
-    VACA_ASSERT(index >= 0 && index < 9);
+    assert(index >= 0 && index < 9);
     return &mValues[index*9];
   }
 

@@ -36,19 +36,23 @@
 using namespace Vaca;
 
 Button::Button(const String &text, Widget *parent, Style style)
-  : ButtonBase(_T("BUTTON"), parent, style)
+  : ButtonBase(parent, style)
 {
   setText(text);
+}
+
+Button::~Button()
+{
 }
 
 void Button::setDefault(bool state)
 {
   if (state) {
     addStyle(Style(BS_DEFPUSHBUTTON, 0));
-    SetWindowLong(getHwnd(), GWL_ID, IDOK);
+    SetWindowLong(getHWND(), GWL_ID, IDOK);
   }
   else {
     removeStyle(Style(BS_DEFPUSHBUTTON, 0));
-    SetWindowLong(getHwnd(), GWL_ID, 0);
+    SetWindowLong(getHWND(), GWL_ID, 0);
   }
 }

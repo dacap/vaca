@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="Anchors"
-	ProjectGUID="{A7924018-F529-4395-A684-E118E5BE84D0}"
-	RootNamespace="Anchors"
+	Name="EyeDropper"
+	ProjectGUID="{5D312469-FE7C-45E8-967B-F2F9AFB03B3F}"
+	RootNamespace="EyeDropper"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
@@ -36,12 +36,12 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(OutDir)/Anchors.exe"
+				OutputFile="$(OutDir)/Example.EyeDropper.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;C:\boost_1_33_1\bin\boost\libs\signals\build\libboost_signals.lib\vc-7_1\debug\runtime-link-static\threading-multi&quot;;&quot;C:\boost_1_33_1\bin\boost\libs\signals\build\libboost_signals.lib\vc-7_1\debug\runtime-link-static&quot;"
 				IgnoreDefaultLibraryNames="LIBCMTD.lib;LIBCD.lib"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(OutDir)/Anchors.pdb"
+				ProgramDatabaseFile="$(OutDir)/EyeDropper.pdb"
 				SubSystem="2"
 				TargetMachine="1"/>
 			<Tool
@@ -85,7 +85,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(OutDir)/Anchors.exe"
+				OutputFile="$(OutDir)/Example.EyeDropper.exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="TRUE"
 				SubSystem="2"
@@ -138,13 +138,13 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ComCtl32.Lib Secur32.Lib MSImg32.Lib"
-				OutputFile="$(OutDir)/Anchors.exe"
+				AdditionalDependencies="ComCtl32.Lib Secur32.Lib MSImg32.Lib ShLwApi.Lib"
+				OutputFile="$(OutDir)/Example.EyeDropper.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;C:\boost_1_33_1\bin\boost\libs\signals\build\libboost_signals.lib\vc-7_1\debug\runtime-link-static\threading-multi&quot;;&quot;C:\boost_1_33_1\bin\boost\libs\signals\build\libboost_signals.lib\vc-7_1\debug\runtime-link-static&quot;"
 				IgnoreDefaultLibraryNames="LIBCD.lib"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(OutDir)/Anchors.pdb"
+				ProgramDatabaseFile="$(OutDir)/EyeDropper.pdb"
 				SubSystem="2"
 				TargetMachine="1"/>
 			<Tool
@@ -190,13 +190,13 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ComCtl32.Lib Secur32.Lib MSImg32.Lib"
-				OutputFile="$(OutDir)/Anchors.exe"
+				AdditionalDependencies="ComCtl32.Lib Secur32.Lib MSImg32.Lib ShLwApi.Lib"
+				OutputFile="$(OutDir)/Example.EyeDropper.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;C:\boost_1_33_1\bin\boost\libs\signals\build\libboost_signals.lib\vc-7_1\debug\runtime-link-static\threading-multi&quot;;&quot;C:\boost_1_33_1\bin\boost\libs\signals\build\libboost_signals.lib\vc-7_1\debug\runtime-link-static&quot;"
 				IgnoreDefaultLibraryNames="LIBCD.lib"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(OutDir)/Anchors.pdb"
+				ProgramDatabaseFile="$(OutDir)/EyeDropper.pdb"
 				SubSystem="2"
 				TargetMachine="1"/>
 			<Tool
@@ -228,9 +228,7 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
-			<File
-				RelativePath="..\examples\Anchors\Anchors.cpp">
-			</File>
+			<File RelativePath="..\examples\EyeDropper\EyeDropper.cpp"></File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -241,6 +239,9 @@
 			Name="Resource Files"
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}">
+			<File RelativePath="..\examples\EyeDropper\EyeDropper.cur"></File>
+			<File RelativePath="..\examples\EyeDropper\EyeDropper.rc"></File>
+			<File RelativePath="..\examples\Vaca.ico"></File>
 		</Filter>
 	</Files>
 	<Globals>

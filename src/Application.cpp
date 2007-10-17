@@ -36,7 +36,7 @@
 
 using namespace Vaca;
 
-HINSTANCE Application::mHinstance = NULL;
+HINSTANCE Application::mHINSTANCE = NULL;
 Application *Application::mInstance = NULL;
 
 /**
@@ -46,10 +46,12 @@ Application *Application::mInstance = NULL;
 Application::Application()
   : Thread(true)
 {
-  VACA_ASSERT(Application::mHinstance == NULL);
-  VACA_ASSERT(Application::mInstance == NULL);
+  assert(Application::mHINSTANCE == NULL);
+  assert(Application::mInstance == NULL);
 
-  Application::mHinstance = ::GetModuleHandle(NULL);
+  CoInitialize(NULL);
+
+  Application::mHINSTANCE = ::GetModuleHandle(NULL);
   Application::mInstance = this;
 
   INITCOMMONCONTROLSEX icce;
@@ -61,29 +63,33 @@ Application::Application()
     ;
 
   InitCommonControlsEx(&icce);
-
 }
 
 Application::~Application()
 {
-  VACA_ASSERT(Application::mHinstance != NULL);
-  VACA_ASSERT(Application::mInstance == this);
+  assert(Application::mHINSTANCE != NULL);
+  assert(Application::mInstance == this);
 
-  Application::mHinstance = NULL;
+  Application::mHINSTANCE = NULL;
   Application::mInstance = NULL;
 
-  // close log the file
+  // delete brushes and pens
+  Graphics::deleteHandles();
+
+  // close the log file
   __vaca_trace(NULL, 0, NULL);
+
+  CoUninitialize();
 }
 
-Application &Application::instance()
+Application *Application::getInstance()
 {
-  return *mInstance;
+  return mInstance;
 }
 
-HINSTANCE Application::getHinstance()
+HINSTANCE Application::getHINSTANCE()
 {
-  return Application::mHinstance;
+  return Application::mHINSTANCE;
 }
 
 /**
@@ -93,49 +99,51 @@ HINSTANCE Application::getHinstance()
  */
 void Application::run()
 {
+  //////////////////////////////////////////////////////////////////////
+  // Convert the command-line to a vector of arguments...
   std::vector<String> args;
 
-  LPTSTR cmdline = GetCommandLine();
-  // int length = strlen(cmdline) + 1;
-  // int length = wcslen(cmdline) + 1;
-  // char *argbuf = new char[length];
-  // memcpy(argbuf, cmdline, length);
+  LPTSTR cmdline = _tcsdup(GetCommandLine());
+  Character quote;
 
-#ifdef UNICODE
-  LPTSTR argbuf = _wcsdup(cmdline);
-#else
-  LPTSTR argbuf = strdup(cmdline);
-#endif
-  int i = 0;
-  _TCHAR q;
-  
+  for (int i = 0; cmdline[i] != 0; ) {
+    // eat spaces
+    while (cmdline[i] != 0 && _istspace(cmdline[i]))
+      ++i;
 
-  while (argbuf[i]) {
-    while ((argbuf[i]) && (iswspace(argbuf[i])))
-      i++;
+    // string with quotes?
+    if (cmdline[i] == '\"' || cmdline[i] == '\'')
+      quote = cmdline[i++];
+    else if (cmdline[i] == 0)
+      break;
+    else
+      quote = 0;
 
-    if (argbuf[i]) {
-      if ((argbuf[i] == '\'') || (argbuf[i] == '"')) {
-	q = argbuf[i++];
-	if (!argbuf[i])
+    // read the string
+    String arg;
+    
+    for (; cmdline[i] != 0; ++i) {
+      // with quotes
+      if (quote != 0) {
+	if (cmdline[i] == quote) {
+	  ++i;
 	  break;
+	}
+	else if (cmdline[i] == '\\' && cmdline[i+1] == quote)
+	  ++i;
       }
-      else
-	q = 0;
+      // without quotes
+      else if (_istspace(cmdline[i]))
+	break;
 
-      args.push_back(String(&argbuf[i]));
-
-      while ((argbuf[i]) && ((q) ? (argbuf[i] != q) : (!iswspace(argbuf[i]))))
-	i++;
-
-      if (argbuf[i]) {
-	argbuf[i] = 0;
-	i++;
-      }
+      arg.push_back(cmdline[i]);
     }
+
+    args.push_back(arg);
   }
 
-  free(argbuf);
+  free(cmdline);
+  //////////////////////////////////////////////////////////////////////
 
   main(args);
   doMessageLoop();

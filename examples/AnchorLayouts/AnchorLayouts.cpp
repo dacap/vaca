@@ -134,7 +134,7 @@ class MainFrame : public MdiFrame
 public:
 
   MainFrame()
-    : MdiFrame("Anchors")
+    : MdiFrame("AnchorLayouts")
     , child1("Without anchors", NoBorder, this)
     , child2("With left, top, and bottom anchors", LeftBorder | TopBorder | BottomBorder, this)
     , child3("With right, top, and bottom anchors", RightBorder | TopBorder | BottomBorder, this)

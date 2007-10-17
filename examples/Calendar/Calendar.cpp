@@ -118,6 +118,10 @@ public:
 
     mPrevMonth.Action.connect(Bind(&MainFrame::onPrevMonth, this));
     mNextMonth.Action.connect(Bind(&MainFrame::onNextMonth, this));
+
+    // use double-buffering technique for this Widget when onPaint()
+    // event is received
+    setDoubleBuffering(true);
   }
 
   // arrange the prev-next month buttons
@@ -158,18 +162,14 @@ protected:
   {
     Frame::onResize(sz);
 
-    // when the window is resized, repaint the client area (without
-    // erasing the background, we use double-buffering)
-    invalidate(false);
+    // when the window is resized, repaint the client area
+    invalidate(true);
   }
 
   // the paint the calendar
-  virtual void onPaint(Graphics &gDest)
+  virtual void onPaint(Graphics &g)
   {
-    Size size = getClientBounds().getSize();
-    Image image(gDest, size); // Create the image for double-buffering
-    Graphics &g(image.getGraphics()); // Get the Graphics to draw in the image
-    Rect rc = Rect(size);	      // Area where we can draw
+    Rect rc = getClientBounds();
     
     // paint border
     g.draw3dRect(rc, Color::Gray, Color::White);
@@ -284,9 +284,6 @@ protected:
 	}
       }
     }
-
-    // draw the image on "gDest"
-    gDest.drawImage(image, getClientBounds().getOrigin());
   }
 
 private:

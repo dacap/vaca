@@ -57,6 +57,7 @@ class VACA_DLL CustomLabel : public Label
 public:
 
   CustomLabel(const String &text, Widget *parent, Style style = CustomLabelStyle);
+  virtual ~CustomLabel();
 
   virtual TextAlign getTextAlign();
   virtual void setTextAlign(TextAlign align);

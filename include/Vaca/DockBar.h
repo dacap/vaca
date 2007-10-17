@@ -118,21 +118,19 @@ public:
   bool isDocked();
   bool isFloating();
 
-  void dockIn(DockArea &dockArea);
+  void dockIn(DockArea *dockArea);
   void floatOut();
 
-  DockArea &getDockArea();
-  DockFrame &getDockFrame();
+  Frame *getOwnerFrame();
+  DockArea *getDockArea();
+  DockFrame *getDockFrame();
   DockInfo *getDockInfo();
 
   virtual Size getDockedSize(Side side);
   virtual Size getFloatingSize();
 
-private:
-  void makeDock(DockArea *dockArea, DockInfo *dockInfo);
-  void makeFloat(const Rect *rect = NULL);
-
 protected:
+
   // events
   virtual void onDestroy();
   virtual void onDockFrameClose(CloseEvent &ev);
@@ -155,6 +153,10 @@ protected:
   virtual bool isGripperVisible(bool docked, Side dockSide);
 
 private:
+
+  void makeDock(DockArea *dockArea, DockInfo *dockInfo);
+  void makeFloat(const Rect *rect = NULL);
+
   void beginDrag();
   void dragBar();
   void endDrag();
@@ -164,6 +166,7 @@ private:
   DockInfo *calcDestination(Rect &rc);
   void drawFeedbackShape(Graphics &g);
   void cleanFeedbackShape(Graphics &g);
+  DockArea *xorFeedbackShape(Graphics &g);
 
 };
 

@@ -59,13 +59,13 @@ String::String(const VACA_STRING_BASE &str)
 {
 }
 
-#ifdef UNICODE
+#ifdef _UNICODE
 String::String(const char *str)
   : VACA_STRING_BASE()
 {
   // TODO check if this really works
-  for (const char *p = str; *p; ++p)
-    push_back((WCHAR)*p);
+  for (const char *p = str; *p != 0; ++p)
+    push_back(static_cast<wchar_t>(*p));
 }
 
 String::String(const char *str, int length)
@@ -73,7 +73,12 @@ String::String(const char *str, int length)
 {
   // TODO check if this really works
   for (int c=0; c<length; ++c)
-    push_back((WCHAR)*p);
+    push_back(static_cast<wchar_t>(str[c]));
+}
+
+String::String(const wchar_t *str)
+  : VACA_STRING_BASE(str)
+{
 }
 #else
 String::String(const char *str)
@@ -85,12 +90,21 @@ String::String(const char *str, int length)
   : VACA_STRING_BASE(str, length)
 {
 }
-#endif
 
-#if UNICODE
-String::String(LPCTSTR str)
-  : VACA_STRING_BASE(str)
+String::String(const wchar_t *str)
+  : VACA_STRING_BASE()
 {
+  int len = wcslen(str)+1;
+  char *buf = new char[len];
+  int ret = WideCharToMultiByte(CP_ACP, 0, str, len, buf, len, NULL, NULL);
+
+  if (ret != 0)
+    assign(buf);
+  else {
+    // error!
+  }
+
+  delete buf;
 }
 #endif
 
@@ -98,67 +112,16 @@ String::~String()
 {
 }
 
-// remove this from the API
-String &String::format(LPCTSTR fmt, ...)
-{
-  _TCHAR buf[1024];		// TODO: overflow
-  va_list ap;
-
-  va_start(ap, fmt);
-#ifdef UNICODE
-  vswprintf(buf, fmt, ap);
-#else
-  vsprintf(buf, fmt, ap);
-#endif
-  va_end(ap);
-
-  this->assign(buf);
-  return *this;
-}
-
 void String::copyTo(LPTSTR dest, int size) const
 {
-#ifdef UNICODE
-  wcsncpy(dest, c_str(), size);
-#else
-  strncpy(dest, c_str(), size);
-#endif
+  _tcsncpy(dest, c_str(), size);
 }
-
-// String &String::operator+(int value)
-// {
-//   String tmp;
-
-//   div_t d;
-//   d.quot = value;
-//   d.rem = 0;
-
-//   int i = 0;
-//   do {
-//     d = div(d.quot, 10);
-//     tmp.push_back('0'+d.rem);
-//     i++;
-//   } while (d.quot != 0);
-
-// //   for (; i<m_precision; i++)
-// //     push_back('0');
-
-//   for (String::reverse_iterator it=tmp.rbegin(); it!=tmp.rend(); ++it)
-//     push_back(*it);
-
-//   return *this;
-// }
-
-// String &String::operator<<(int value)
-// {
-//   return operator+(value);
-// }
 
 String String::fromInt(int value, int base, int precision)
 {
   String str;
 
-  VACA_ASSERT(base > 0);
+  assert(base > 0);
 
   div_t d;
   d.quot = value;
@@ -185,20 +148,12 @@ String String::fromInt(int value, int base, int precision)
 
 int String::parseInt(int base)
 {
-#ifdef UNICODE
-  return wcstol(c_str(), NULL, base);
-#else
-  return strtol(c_str(), NULL, base);
-#endif
+  return _tcstol(c_str(), NULL, base);
 }
 
 double String::parseDouble()
 {
-#ifdef UNICODE
-  return wcstod(c_str(), NULL);
-#else
-  return strtod(c_str(), NULL);
-#endif
+  return _tcstod(c_str(), NULL);
 }
 
 /**
@@ -209,7 +164,7 @@ double String::parseDouble()
  */
 String String::getFilePath() const
 {
-  String::const_iterator it, it2;
+  const_iterator it, it2;
   String res;
 
   for (it=end()-1; it!=begin()-1; --it)
@@ -231,7 +186,7 @@ String String::getFilePath() const
  */
 String String::getFileName() const
 {
-  String::const_iterator it;
+  const_iterator it;
   String res;
 
   for (it=end()-1; it!=begin()-1; --it)
@@ -252,7 +207,7 @@ String String::getFileName() const
  */
 String String::getFileExtension() const
 {
-  String::const_iterator it;
+  const_iterator it;
   String res;
 
   for (it=end()-1; it!=begin()-1; --it)
@@ -276,7 +231,7 @@ String String::getFileExtension() const
  */
 String String::getFileTitle() const
 {
-  String::const_iterator it;
+  const_iterator it;
   String res;
 
   for (it=end()-1; it!=begin()-1; --it)

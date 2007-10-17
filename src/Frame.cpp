@@ -33,12 +33,12 @@
 #include "Vaca/Frame.h"
 #include "Vaca/Application.h"
 #include "Vaca/Register.h"
-#include "Vaca/Event.h"
+#include "Vaca/CloseEvent.h"
 #include "Vaca/Debug.h"
 #include "Vaca/Menu.h"
+#include "Vaca/MenuItemEvent.h"
 #include "Vaca/AnchorLayout.h"
-#include "Vaca/CloseEvent.h"
-#include "Vaca/KeyEvent.h"
+#include "Vaca/Event.h"
 #include "Vaca/Point.h"
 #include "Vaca/System.h"
 #include "Vaca/Mdi.h"
@@ -47,11 +47,26 @@
 #include "Vaca/ScopedLock.h"
 #include "Vaca/BandedDockArea.h"
 #include "Vaca/Icon.h"
+#include "Vaca/Command.h"
 
 using namespace Vaca;
 
-static Mutex visibleFramesMutex; // used to access "visibleFrames"
-static std::list<Frame *> visibleFrames; // visible frames of all threads
+// the "frm" isn't used (TODO check getCurrent != NULL)
+#define ADD_FRAME(frm)		Thread::getCurrent()->addFrame()
+#define REMOVE_FRAME(frm)	Thread::getCurrent()->removeFrame()
+
+// #define ADD_FRAME(frm)
+//       visibleFramesMutex.lock();
+//       visibleFrames.push_back(frm);
+//       visibleFramesMutex.unlock();
+
+// #define REMOVE_FRAME(frm)
+//     visibleFramesMutex.lock();
+//     remove_element_from_container(visibleFrames, frm);
+//     visibleFramesMutex.unlock();
+
+// static Mutex visibleFramesMutex; // used to access "visibleFrames"
+// static std::list<Frame *> visibleFrames; // visible frames of all threads
 
 /**
  * Creates a frame using the FrameClass.  Also, remember that by
@@ -81,7 +96,7 @@ void Frame::initialize(const String &title)
   mMenuBar = NULL;
   mCounted = false;
 
-  if (getHwnd() != NULL)
+  if (getHWND() != NULL)
     setText(title);
 }
 
@@ -92,6 +107,13 @@ Frame::~Frame()
     mMenuBar = NULL;
   }
 
+  for (std::vector<Command *>::iterator it = mCommands.begin();
+       it != mCommands.end();
+       ++it) {
+    Command *command = *it;
+    delete command;
+  }
+
   // see TN002
   dispose();
 }
@@ -99,19 +121,20 @@ Frame::~Frame()
 bool Frame::preTranslateMessage(MSG &msg)
 {
   if (mMenuBar != NULL) {
+    // TODO accelerators
     if (msg.message == WM_KEYDOWN) {
       Keys::Type keys = Keys::fromMessageParams(msg.wParam, msg.lParam);
       MenuItem *menuItem = mMenuBar->checkShortcuts(keys);
 
       if (menuItem != NULL) {
-	MenuItemEvent ev(*menuItem);
+	// update the menuItem status before (onUpdate stuff)
+	updateMenuItem(menuItem);
 
-	// remember to call onUpdate!!!
-	menuItem->onUpdate(ev);
-
-	// is menuItem enabled? ok, we can do the action
-	if (menuItem->isEnabled())
-	  menuItem->onAction(ev);
+	// is menuItem enabled?
+	if (menuItem->isEnabled()) {
+	  // ok, we can do the action
+	  onIdAction(menuItem->getId());
+	}
 
 	return true;
       }
@@ -129,9 +152,7 @@ void Frame::onDestroy()
   if (mCounted) {
     mCounted = false;
 
-    visibleFramesMutex.lock();
-    remove_element_from_container(visibleFrames, this);
-    visibleFramesMutex.unlock();
+    REMOVE_FRAME(this);
   }
 
   Widget::onDestroy();
@@ -154,18 +175,28 @@ bool Frame::onIdAction(int id)
   if (Widget::onIdAction(id))
     return true;
 
+  // use menu bar
   if (mMenuBar != NULL) {
     MenuItem *menuItem = mMenuBar->getMenuItemById(id);
 
-    VACA_TRACE("Frame::onIdAction(%d), menuItem=%p\n", id);
+    VACA_TRACE("Frame::onIdAction(%d), menuItem=%p\n", id, menuItem);
 
     if (menuItem != NULL) {
-      MenuItemEvent ev(*menuItem);
+      MenuItemEvent ev(menuItem);
       menuItem->onAction(ev);
     }
     else {
+      // TODO ToolBars
       // TODO Mdi stuff
     }
+  }
+
+  // call commands with the given ID
+  for (std::vector<Command *>::iterator it = mCommands.begin();
+       it != mCommands.end();
+       ++it) {
+    if ((*it)->getId() == id)
+      (*it)->onAction();
   }
 
   return false;
@@ -180,12 +211,12 @@ bool Frame::onIdAction(int id)
 //   }
 // }
 
-void Frame::onActivate(WidgetEvent &ev)
+void Frame::onActivate(Event &ev)
 {
   Activate(ev);
 }
 
-void Frame::onDeactivate(WidgetEvent &ev)
+void Frame::onDeactivate(Event &ev)
 {
   Deactivate(ev);
 }
@@ -260,8 +291,8 @@ bool Frame::isVisible()
  */
 void Frame::setVisible(bool visible)
 {
-  HWND hwnd = getHwnd();
-  VACA_ASSERT(hwnd != NULL);
+  HWND hwnd = getHWND();
+  assert(hwnd != NULL);
 
 //   bool oldState = ::IsWindowVisible(hwnd) ? true: false;
   bool oldState = isVisible();
@@ -287,9 +318,7 @@ void Frame::setVisible(bool visible)
     if (!mCounted) {
       mCounted = true;
 
-      visibleFramesMutex.lock();
-      visibleFrames.push_back(this);
-      visibleFramesMutex.unlock();
+      ADD_FRAME(this);
     }
   }
   // Hide the window. It looks simple, but the order of the commands
@@ -299,7 +328,7 @@ void Frame::setVisible(bool visible)
   else {
     // activate the parent
     if (getParent() != NULL)
-      ::SetActiveWindow(getParent()->getHwnd());
+      ::SetActiveWindow(getParent()->getHWND());
 
     // then hide this non-active window
     ::ShowWindow(hwnd, SW_HIDE);
@@ -308,9 +337,7 @@ void Frame::setVisible(bool visible)
     if (mCounted) {
       mCounted = false;
 
-      visibleFramesMutex.lock();
-      remove_element_from_container(visibleFrames, this);
-      visibleFramesMutex.unlock();
+      REMOVE_FRAME(this);
     }
   }
 }
@@ -323,7 +350,7 @@ void Frame::setVisible(bool visible)
  */
 // bool Frame::close()
 // {
-//   HWND hwnd = getHwnd();
+//   HWND hwnd = getHWND();
 
 //   WidgetEvent ev(this);
 //   sigClose(ev);
@@ -359,10 +386,10 @@ void Frame::setMenuBar(MenuBar *menuBar)
   }
 
   // change to the new menu bar
-  HWND hwnd = getHwnd();
-  HMENU hmenu = menuBar->getHmenu();
+  HWND hwnd = getHWND();
+  HMENU hmenu = menuBar->getHMENU();
   
-  VACA_ASSERT(hwnd != NULL && hmenu != NULL);
+  assert(hwnd != NULL && hmenu != NULL);
 
   ::SetMenu(hwnd, hmenu); // TODO check errors
 
@@ -376,7 +403,7 @@ void Frame::setMenuBar(MenuBar *menuBar)
 void Frame::setIcon(Icon *icon, bool bigIcon)
 {
   sendMessage(WM_SETICON, bigIcon ? ICON_BIG: ICON_SMALL,
-	      reinterpret_cast<LPARAM>(icon->getHicon()));
+	      reinterpret_cast<LPARAM>(icon->getHICON()));
 }
 
 /**
@@ -401,8 +428,8 @@ void Frame::setIcon(int iconId)
  */
 Size Frame::getNonClientSize()
 {
-  HWND hwnd = getHwnd();
-  VACA_ASSERT(hwnd != NULL);
+  HWND hwnd = getHWND();
+  assert(hwnd != NULL);
 
   Rect clientRect(0, 0, 1, 1);
   RECT nonClientRect = clientRect;
@@ -448,6 +475,16 @@ Rect Frame::getLayoutBounds()
   }
 
   return rc;
+}
+
+void Frame::addCommand(Command *command)
+{
+  mCommands.push_back(command);
+}
+
+void Frame::removeCommand(Command *command)
+{
+  remove_element_from_container(mCommands, command);
 }
 
 /**
@@ -517,16 +554,16 @@ std::vector<DockArea *> Frame::getDockAreas()
  * Returns the first DockArea in the specified @a side. Returns NULL
  * if there aren't registered a DockArea for the specified @a side.
  */
-DockArea &Frame::getDockArea(Side side)
+DockArea *Frame::getDockArea(Side side)
 {
   for (std::vector<DockArea *>::iterator it=mDockAreas.begin(); it!=mDockAreas.end(); ++it) {
     DockArea *dockArea = *it;
 
     if (dockArea->getSide() == side)
-      return *dockArea;
+      return dockArea;
   }
 
-  throw Exception("getDockArea fails! you must to add DockArea(s) in the specified side before.");
+  return NULL;
 }
 
 /**
@@ -535,12 +572,12 @@ DockArea &Frame::getDockArea(Side side)
  * returns the first DockArea that you added using addDockArea(); if
  * you use defaultDockAreas(), it will be the bar from the top side.
  */
-DockArea &Frame::getDefaultDockArea()
+DockArea *Frame::getDefaultDockArea()
 {
   if (!mDockAreas.empty())
-    return *mDockAreas.front();
-
-  throw Exception("getDefaultDockArea fails! you must to add DockArea(s) before.");
+    return mDockAreas.front();
+  else
+    return NULL;
 }
 
 Size Frame::preferredSize()
@@ -610,6 +647,29 @@ bool Frame::wantArrowCursor()
   return true;
 }
 
+void Frame::updateMenuItem(MenuItem *menuItem)
+{
+  assert(menuItem != NULL);
+  
+  MenuItemEvent ev(menuItem);
+  menuItem->onUpdate(ev);
+
+  CommandState cmdState;
+
+  for (std::vector<Command *>::iterator it = mCommands.begin();
+       it != mCommands.end();
+       ++it) {
+    Command *command = *it;
+    if (command->getId() == menuItem->getId())
+      command->onUpdate(cmdState);
+  }
+
+  if (cmdState.getText()   != NULL) menuItem->setText   (*cmdState.getText());
+  if (cmdState.isEnabled() != NULL) menuItem->setEnabled(*cmdState.isEnabled());
+  if (cmdState.isChecked() != NULL) menuItem->setChecked(*cmdState.isChecked());
+  if (cmdState.isRadio()   != NULL) menuItem->setRadio  (*cmdState.isRadio());
+}
+
 // int Frame::getFramesCount()
 // {
 //   // return framesCount;
@@ -618,24 +678,24 @@ bool Frame::wantArrowCursor()
 //   return count;
 // }
 
-int Frame::getVisibleFramesByThread(int threadId)
-{
-  ScopedLock lock(visibleFramesMutex);
-  int count = 0;
+// int Frame::getVisibleFramesByThread(int threadId)
+// {
+//   ScopedLock lock(visibleFramesMutex);
+//   int count = 0;
 
-  for (std::list<Frame *>::iterator it=visibleFrames.begin();
-       it!=visibleFrames.end(); ++it)
-    if ((*it)->getThreadOwnerId() == threadId)
-      count++;
+//   for (std::list<Frame *>::iterator it=visibleFrames.begin();
+//        it!=visibleFrames.end(); ++it)
+//     if ((*it)->getThreadOwnerId() == threadId)
+//       count++;
 
-  return count;
-}
+//   return count;
+// }
 
 /**
  * Used when WM_INITMENU or WM_INITMENUPOPUP message is received to
  * find the Menu of the mMenuBar, known only its HMENU.
  */
-// Menu *Frame::getMenuByHmenu(HMENU hmenu)
+// Menu *Frame::getMenuByHMENU(HMENU hmenu)
 // {
 //   MenuBar *menuBar = getMenuBar();
 //   Menu *lastMenu = NULL;
@@ -645,7 +705,7 @@ int Frame::getVisibleFramesByThread(int threadId)
 
 //   while (!stack.empty()) {
 //     lastMenu = stack.top();
-//     if (lastMenu->getHmenu() == hmenu)
+//     if (lastMenu->getHMENU() == hmenu)
 //       return lastMenu;
 
 //     stack.pop();
@@ -697,11 +757,11 @@ bool Frame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult
 
     case WM_ACTIVATE:
       if (wParam == WA_ACTIVE || wParam == WA_CLICKACTIVE) {
-	WidgetEvent ev(this);
+	Event ev(this);
 	onActivate(ev);
       }
       else if (wParam == WA_INACTIVE) {
-	WidgetEvent ev(this);
+	Event ev(this);
 	onDeactivate(ev);
       }
       break;
@@ -721,14 +781,14 @@ bool Frame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult
 	// HIWORD(wParam), in Win2K it's the whole wParam)
 	int index = HIWORD(wParam);
 
-	Menu *menu = getMenuByHmenu(hmenu);
+	Menu *menu = getMenuByHMENU(hmenu);
 
 	VACA_TRACE("hmenu=%p menu=%p index=%d\n", hmenu, menu, index);
 
 	if (menu != NULL) {
 	  MenuItem *menuItem = menu->getMenuItem(index);
 
-	  VACA_ASSERT(menuItem != NULL);
+	  assert(menuItem != NULL);
 
 	  MenuItemEvent ev(*menuItem);
 	  menuItem->onAction(ev);
@@ -756,7 +816,7 @@ bool Frame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult
 	    // position, not by its ID
 
 	    MdiFrame *mdiFrame = dynamic_cast<MdiFrame *>(this);
-	    VACA_ASSERT(mdiFrame != NULL);
+	    assert(mdiFrame != NULL);
 
 	    // this is from the MdiListMenu? we must to activate
 	    // other MdiChild...
@@ -776,12 +836,12 @@ bool Frame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult
 	      else {
 		// get the child with the ID of the menu
 		MdiChild *mdiChild = mdiFrame->getMdiClient().getChildById(mii.wID);
-		VACA_ASSERT(mdiChild != NULL);
+		assert(mdiChild != NULL);
 
 		// select that child
 		sendMessage(WM_COMMAND,
 			    MAKEWPARAM(mii.wID, 0),
-			    reinterpret_cast<LPARAM>(mdiChild->getHwnd()));
+			    reinterpret_cast<LPARAM>(mdiChild->getHWND()));
 	      }
 
 	      // 	      MENUINFO mi;
@@ -803,7 +863,7 @@ bool Frame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult
 // 	      VACA_TRACE("SYSCOMMAND %d 0x%x\n", mii.wID, mii.wID);
 
 	      MdiChild *mdiChild = mdiFrame->getMdiClient().getActive();
-	      VACA_ASSERT(mdiChild != NULL);
+	      assert(mdiChild != NULL);
 
 	      mdiChild->sendMessage(WM_SYSCOMMAND, mii.wID, 0);
 	    }
@@ -825,7 +885,7 @@ bool Frame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult
 #if 0
       // work arround for Win95, Win98, WinMe...
       if (System::isWin95_98_Me()) {
-	menu = mMenuBar != NULL ? mMenuBar->getMenuByHmenu(hmenu): NULL;
+	menu = mMenuBar != NULL ? mMenuBar->getMenuByHMENU(hmenu): NULL;
       }
       // in Win2K, WinXP, we can use MENUITEMINFO
       else if (System::isWinNT_2K_XP()) {
@@ -841,10 +901,11 @@ bool Frame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult
 
       if (menu != NULL) {
 	Menu::Container children = menu->getMenuItems();
+
+	// update menus
 	for (Menu::Container::iterator it=children.begin(); it!=children.end(); ++it) {
 	  MenuItem *menuItem = *it;
-	  MenuItemEvent ev(*menuItem);
-	  menuItem->onUpdate(ev);
+	  updateMenuItem(menuItem);
 	}
       }
       break;
@@ -865,7 +926,7 @@ bool Frame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult
 	LPNCCALCSIZE_PARAMS lpncsp = (LPNCCALCSIZE_PARAMS)lParam;
 	int left, top, right, bottom;
 
-	lResult = DefWindowProc(getHwnd(), message, wParam, lParam);
+	lResult = DefWindowProc(getHWND(), message, wParam, lParam);
 
 	left = top = right = bottom = 0;
 

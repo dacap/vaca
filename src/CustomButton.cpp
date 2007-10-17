@@ -58,16 +58,18 @@ CustomButton::CustomButton(const String &text, Widget *parent, Style style)
 {
 }
 
+CustomButton::~CustomButton()
+{
+}
+
 bool CustomButton::onDrawItem(Graphics &g, LPDRAWITEMSTRUCT lpDrawItem)
 {
-  VACA_ASSERT(lpDrawItem->CtlType == ODT_BUTTON);
+  assert(lpDrawItem->CtlType == ODT_BUTTON);
 
   mItemAction = lpDrawItem->itemState;
   mItemState = lpDrawItem->itemState;
 
-  onPaint(g);
-
-  return g.wasPainted();
+  return doPaint(g);
 }
 
 /**

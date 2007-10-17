@@ -58,9 +58,12 @@ void AnchorLayout::layout(Widget *parent, Widget::Container &widgets, const Rect
     if (widget->isLayoutFree())
       continue;
 
-    Anchor *anchor = dynamic_cast<Anchor *>(widget->getConstraint());
-    if (!anchor)
+    Constraint *constraint = widget->getConstraint();
+    if (constraint == NULL)
       continue;
+
+    Anchor *anchor = dynamic_cast<Anchor *>(constraint);
+    assert(anchor != NULL);
 
     Borders borders = anchor->getBorders();
     Rect rc = anchor->getRefRect();

@@ -91,6 +91,11 @@ public:
 
 private:
 
+  void bindButton(ButtonBase &button)
+  {
+    button.Action.connect(Bind(&MainFrame::updateLabel, this));
+  }
+
   void updateLabel()
   {
     mActions++;
@@ -99,11 +104,6 @@ private:
 
     // the labels are bigger and bigger, so a relayout isn't a bad idea
     layout();
-  }
-
-  void bindButton(ButtonBase &button)
-  {
-    button.Action.connect(Bind(&MainFrame::updateLabel, this));
   }
 
   void toggleDisabled()

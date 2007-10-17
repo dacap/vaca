@@ -49,7 +49,7 @@ class VACA_DLL Application : public Thread
 {
 private:
 
-  static HINSTANCE mHinstance;
+  static HINSTANCE mHINSTANCE;
   static Application *mInstance;
 
 public:
@@ -57,8 +57,8 @@ public:
   Application();
   virtual ~Application();
 
-  static Application &instance();
-  static HINSTANCE getHinstance();
+  static Application *getInstance();
+  static HINSTANCE getHINSTANCE();
 
   virtual void run();
 

@@ -31,7 +31,7 @@
 
 #include "stdvaca.h"
 #include "Vaca/ListBox.h"
-#include "Vaca/WidgetEvent.h"
+#include "Vaca/Event.h"
 #include "Vaca/Debug.h"
 #include "Vaca/System.h"
 
@@ -45,9 +45,13 @@ using namespace Vaca;
  * @param style Add the LBS_MULTIPLESEL if you want a multiselection ListBox.
  */
 ListBox::ListBox(Widget *parent, Style style)
-  : Widget(_T("LISTBOX"), parent, style)
+  : Widget(WC_LISTBOX, parent, style)
 {
   setBgColor(System::getColor(COLOR_WINDOW));
+}
+
+ListBox::~ListBox()
+{
 }
 
 /**
@@ -89,7 +93,7 @@ int ListBox::getItemCount()
  *
  * @a itemIndex is zero-based.
  */
-Rect ListBox::getItemRect(int itemIndex)
+Rect ListBox::getItemBounds(int itemIndex)
 {
   RECT rc;
   sendMessage(LB_GETITEMRECT, itemIndex, reinterpret_cast<LPARAM>(&rc));
@@ -163,7 +167,7 @@ Size ListBox::preferredSize()
   Rect rc;
 
   for (i=0; i<n; ++i) {
-    rc = getItemRect(i);
+    rc = getItemBounds(i);
     sz = Size(VACA_MAX(sz.w, rc.w), sz.h+rc.h);
   }
 
@@ -173,7 +177,7 @@ Size ListBox::preferredSize()
 /**
  * When the user press double-click in some item (LBN_DBLCLK).
  */
-void ListBox::onAction(WidgetEvent &ev)
+void ListBox::onAction(Event &ev)
 {
   Action(ev);
 }
@@ -181,23 +185,26 @@ void ListBox::onAction(WidgetEvent &ev)
 /**
  * When the user changes the current selected item (LBN_SELCHANGE).
  */
-void ListBox::onSelChange(WidgetEvent &ev)
+void ListBox::onSelChange(Event &ev)
 {
   SelChange(ev);
 }
 
-bool ListBox::onCommand(int commandCode, LRESULT &lResult)
+bool ListBox::onCommand(int id, int code, LRESULT &lResult)
 {
-  switch (commandCode) {
+  if (Widget::onCommand(id, code, lResult))
+    return true;
+
+  switch (code) {
 
     case LBN_DBLCLK: {
-      WidgetEvent ev(this);
+      Event ev(this);
       onAction(ev);
       return true;
     }
 
     case LBN_SELCHANGE: {
-      WidgetEvent ev(this);
+      Event ev(this);
       onSelChange(ev);
       return true;
     }
@@ -215,7 +222,7 @@ DragListBox::DragListBox(Widget *parent, Style style)
 {
   BOOL res;
 
-  res = MakeDragList(getHwnd());
+  res = MakeDragList(getHWND());
   
-  VACA_ASSERT(res != FALSE);	// TODO throw exception
+  assert(res != FALSE);	// TODO throw exception
 }

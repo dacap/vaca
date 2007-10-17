@@ -31,7 +31,7 @@
 
 #include "stdvaca.h"
 #include "Vaca/Edit.h"
-#include "Vaca/WidgetEvent.h"
+#include "Vaca/Event.h"
 #include "Vaca/Debug.h"
 #include "Vaca/System.h"
 
@@ -41,11 +41,14 @@ using namespace Vaca;
 // Edit
 
 Edit::Edit(const String &text, Widget *parent, Style style)
-  : Widget(_T("EDIT"), parent, style)
+  : Widget(WC_EDIT, parent, style)
 {
   setText(text);
-  // setCursor(Cursor::Text);
   setBgColor(System::getColor(COLOR_WINDOW));
+}
+
+Edit::~Edit()
+{
 }
 
 /**
@@ -62,57 +65,42 @@ int Edit::getTextLimit()
  */
 void Edit::setTextLimit(int textLimit)
 {
-  VACA_ASSERT(textLimit > 0);
+  assert(textLimit > 0);
 
   sendMessage(EM_SETLIMITTEXT, textLimit, 0);
 }
 
-// TextAlign::Type Edit::getTextAlign()
-// {
-//   int style = getStyle();
-
-//   if ((style & ES_CENTER) != 0)
-//     return TextAlign::Center;
-//   else if ((style & ES_RIGHT) != 0)
-//     return TextAlign::Right;
-//   else
-//     return TextAlign::Left;
-// }
-
-// void Edit::setTextAlign(TextAlign::Type align)
-// {
-//   int style = ES_LEFT;
-
-//   switch (align) {
-//     case TextAlign::Left:   style = ES_LEFT;   break;
-//     case TextAlign::Center: style = ES_CENTER; break;
-//     case TextAlign::Right:  style = ES_RIGHT;  break;
-//   }
-
-//   removeStyle(ES_LEFT | ES_CENTER | ES_RIGHT);
-//   addStyle(style);
-
-//   invalidate(true);
-// }
-
+/**
+ * Returns true if this Edit widget has read-only mode activated.
+ * 
+ */
 bool Edit::isReadOnly()
 {
   return (getStyle().regular & ES_READONLY) != 0 ? true: false;
 }
 
 /**
- * Wrapper for the EM_SETREADONLY message.
+ * Changes the read-only mode to @a readOnly. A read-only Edit widget
+ * can't be modified. It's a wrapper for the EM_SETREADONLY message.
  */
 void Edit::setReadOnly(bool readOnly)
 {
   sendMessage(EM_SETREADONLY, readOnly, 0);
 }
 
+/**
+ * Returns true if the user can undo the last operation (EM_CANUNDO).
+ * 
+ */
 bool Edit::canUndo()
 {
   return sendMessage(EM_CANUNDO, 0, 0) ? true: false;
 }
 
+/**
+ * Undoes the last user's operation in the Edit widget.
+ * 
+ */
 void Edit::undo()
 {
   sendMessage(EM_UNDO, 0, 0);
@@ -133,7 +121,7 @@ void Edit::selectAll()
 void Edit::selectRange(int startIndex, int endIndex)
 {
   // TODO
-  //VACA_ASSERT(startIndex >= 0 && startIndex <= endIndex && endIndex < getTextLength());
+  //assert(startIndex >= 0 && startIndex <= endIndex && endIndex < getTextLength());
 
   sendMessage(EM_SETSEL, startIndex, endIndex);
 }
@@ -179,17 +167,24 @@ Size Edit::preferredSize(const Size &fitIn)
   return textSize+border;
 }
 
-void Edit::onChange(WidgetEvent &ev)
+void Edit::onChange(Event &ev)
 {
   Change(ev);
 }
 
-bool Edit::onCommand(int commandCode, LRESULT &lResult)
+/**
+ * Converts the EN_CHANGE in onChange.
+ * 
+ */
+bool Edit::onCommand(int id, int code, LRESULT &lResult)
 {
-  switch (commandCode) {
+  if (Widget::onCommand(id, code, lResult))
+    return true;
+
+  switch (code) {
 	    
     case EN_CHANGE: {
-      WidgetEvent ev(this);
+      Event ev(this);
       onChange(ev);
       return true;
     }
@@ -204,6 +199,10 @@ bool Edit::onCommand(int commandCode, LRESULT &lResult)
 
 PasswordEdit::PasswordEdit(const String &text, Widget *parent, Style style)
   : Edit(text, parent, style)
+{
+}
+
+PasswordEdit::~PasswordEdit()
 {
 }
 
@@ -225,17 +224,21 @@ MultilineEdit::MultilineEdit(const String &text, Widget *parent, Style style)
 {
 }
 
+MultilineEdit::~MultilineEdit()
+{
+}
+
 bool MultilineEdit::getWantReturnMode()
 {
-  HWND hwnd = getHwnd();
-  VACA_ASSERT(hwnd != NULL);
+  HWND hwnd = getHWND();
+  assert(hwnd != NULL);
   return (GetWindowLong(hwnd, GWL_STYLE) & ES_WANTRETURN) != 0 ? true: false;
 }
 
 void MultilineEdit::setWantReturnMode(bool wantReturn)
 {
-  HWND hwnd = getHwnd();
-  VACA_ASSERT(hwnd != NULL);
+  HWND hwnd = getHWND();
+  assert(hwnd != NULL);
   int style = GetWindowLong(hwnd, GWL_STYLE) & ~ES_WANTRETURN;
   SetWindowLong(hwnd, GWL_STYLE, style | (wantReturn ? ES_WANTRETURN: 0));
 }
@@ -269,6 +272,11 @@ String MultilineEdit::getLine(int lineNo)
 int MultilineEdit::getLineLength(int lineNo)
 {
   return sendMessage(EM_LINELENGTH, lineNo, 0);
+}
+
+void MultilineEdit::scrollLines(int lines)
+{
+  sendMessage(EM_LINESCROLL, 0, lines);
 }
 
 //////////////////////////////////////////////////////////////////////

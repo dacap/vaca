@@ -35,7 +35,11 @@
 using namespace Vaca;
 
 CheckBox::CheckBox(const String &text, Widget *parent, Style style)
-  : ButtonBase(_T("BUTTON"), parent, style)
+  : ButtonBase(parent, style)
 {
   setText(text);
+}
+
+CheckBox::~CheckBox()
+{
 }

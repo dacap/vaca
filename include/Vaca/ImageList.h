@@ -45,16 +45,25 @@ class String;
 
 class VACA_DLL ImageList : private boost::noncopyable
 {
-  HIMAGELIST mHimagelist;
+  HIMAGELIST mHIMAGELIST;
+  bool mAutoDelete;
 
 public:
 
+  ImageList();
+  ImageList(HIMAGELIST hImageList, bool autoDelete);
 //   ImageList(Size sz);
   ImageList(int bitmapId, int widthPerIcon, Color maskColor);
   ImageList(const String &fileName, int widthPerIcon, Color maskColor);
   virtual ~ImageList();
 
-  HIMAGELIST getHimagelist();
+  bool isValid();
+
+  int getImageCount();
+  
+  void assign(HIMAGELIST hImageList, bool autoDelete);
+
+  HIMAGELIST getHIMAGELIST();
 
 };
 

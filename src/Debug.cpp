@@ -38,16 +38,6 @@
 
 using namespace Vaca;
 
-void Vaca::__vaca_assert(LPCSTR filename, UINT line, LPCSTR expr)
-{
-//   _TCHAR buf[4096];		// TODO buffer overflow
-//   swprintf(buf, _T("%s:%d: Assert failed \"%s\""), filename, line, expr);
-  char buf[4096];		// TODO buffer overflow
-  sprintf(buf, "%s:%d: [%d] Assert failed \"%s\"", filename, line, Thread::getCurrentId(), expr);
-  MessageBox(NULL, String(buf).c_str(), _T("Error"), MB_OK);
-  ExitProcess(1);
-}
-
 void Vaca::__vaca_trace(LPCSTR filename, UINT line, LPCSTR fmt, ...)
 {
   static Mutex mutex;

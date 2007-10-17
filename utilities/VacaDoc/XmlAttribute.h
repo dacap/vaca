@@ -32,38 +32,38 @@
 #ifndef VACA_XMLATTRIBUTE_H
 #define VACA_XMLATTRIBUTE_H
 
-#include <list>
-
 #include "Vaca/String.h"
-
 #include "XmlType.h"
+
+using namespace std;
+using namespace Vaca;
 
 class XmlNode;
 
 class XmlAttribute
 {
-  Vaca::String mName;
-  Vaca::String mValue;
+  String mName;
+  String mValue;
   
 public:
 
-  XmlAttribute(const Vaca::String &name, const Vaca::String &value)
+  XmlAttribute(const String &name, const String &value)
   {
     mName = name;
     mValue = value;
   }
 
-  Vaca::String getName()
+  String getName()
   {
     return mName;
   }
 
-  Vaca::String getValue()
+  String getValue()
   {
     return mValue;
   }
 
-  void setValue(const Vaca::String &value)
+  void setValue(const String &value)
   {
     mValue = value;
   }

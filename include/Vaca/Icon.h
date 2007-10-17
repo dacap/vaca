@@ -46,9 +46,7 @@ class String;
  */
 class VACA_DLL Icon : private boost::noncopyable
 {
-private:
-
-  HICON mHicon;
+  HICON mHICON;
 
 protected:
 
@@ -60,11 +58,11 @@ public:
   Icon(const String &fileName, const Size &sz = Size(0, 0));
   virtual ~Icon();
 
-  HICON getHicon();
+  HICON getHICON();
 
 protected:
 
-  void setHicon(HICON hicon);
+  void setHICON(HICON hicon);
 
 };
 

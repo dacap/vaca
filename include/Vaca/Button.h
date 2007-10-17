@@ -50,6 +50,7 @@ class VACA_DLL Button : public ButtonBase
 public:
 
   Button(const String &text, Widget *parent, Style style = ButtonStyle);
+  virtual ~Button();
 
   void setDefault(bool state);
 

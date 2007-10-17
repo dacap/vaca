@@ -33,8 +33,7 @@
 #include "Vaca/DockFrame.h"
 #include "Vaca/DockBar.h"
 #include "Vaca/ClientLayout.h"
-#include "Vaca/WidgetEvent.h"
-#include "Vaca/MouseEvent.h"
+#include "Vaca/Event.h"
 #include "Vaca/Debug.h"
 
 using namespace Vaca;
@@ -43,11 +42,11 @@ DockFrame::DockFrame(DockBar *dockBar, Widget *parent, Style style)
   : Frame(DockFrameClass::getClassName(), dockBar->getText(), parent, style)
   , mDockBar(dockBar)
 {
-  VACA_ASSERT(mDockBar != NULL);
+  assert(mDockBar != NULL);
 
   setLayout(new ClientLayout);
   bringToTop();
-  // SetWindowPos(getHwnd(), HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+  // SetWindowPos(getHWND(), HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 }
 
 DockFrame::~DockFrame()
@@ -102,7 +101,7 @@ bool DockFrame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lRe
     // must to send to it the same message)
     case WM_NCLBUTTONDOWN:
       if (wParam == HTCAPTION) {
-	VACA_ASSERT(mDockBar != NULL);
+	assert(mDockBar != NULL);
 
 	lResult = mDockBar->sendMessage(WM_LBUTTONDOWN, wParam, lParam);
 	return true;
@@ -114,7 +113,7 @@ bool DockFrame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lRe
       // double-click, he want to dock the DockBar)
     case WM_NCLBUTTONDBLCLK:
       if (wParam == HTCAPTION) {
-	VACA_ASSERT(mDockBar != NULL);
+	assert(mDockBar != NULL);
 
 	mDockBar->sendMessage(WM_LBUTTONDBLCLK, 0, 0); // TODO wParam and lParam
 	lResult = 0;
@@ -123,7 +122,7 @@ bool DockFrame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lRe
       break;
 
     case WM_MOUSEACTIVATE:
-      VACA_ASSERT(mDockBar != NULL);
+      assert(mDockBar != NULL);
 
       mDockBar->focusOwner();
       lResult = MA_NOACTIVATE;
@@ -138,7 +137,7 @@ bool DockFrame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lRe
       // when the user finish the sizing or moving action, focus the
       // owner of the DockBar
     case WM_EXITSIZEMOVE:
-      VACA_ASSERT(mDockBar != NULL);
+      assert(mDockBar != NULL);
       mDockBar->focusOwner();
       return false;
 

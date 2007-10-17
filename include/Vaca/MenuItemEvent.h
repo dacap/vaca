@@ -29,34 +29,25 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_CANCELLABLEEVENT_H
-#define VACA_CANCELLABLEEVENT_H
+#ifndef VACA_MENUITEMEVENT_H
+#define VACA_MENUITEMEVENT_H
 
-#include "Vaca/WidgetEvent.h"
+#include "Vaca/base.h"
+#include "Vaca/Event.h"
 
 namespace Vaca {
 
-class CancellableEvent : public WidgetEvent
+class MenuItem;
+
+class VACA_DLL MenuItemEvent : public Event
 {
-  bool mCanceled;		// The event was canceled.
 
 public:
 
-  CancellableEvent(Widget *widget)
-    : WidgetEvent(widget)
-    , mCanceled(false)
-  {
-  }
-  
-  /**
-   * Cancels the event.
-   */
-  void cancel() { mCanceled = true; }
+  MenuItemEvent(MenuItem *source);
+  virtual ~MenuItemEvent();
 
-  /**
-   * The event was canceled.
-   */
-  bool isCanceled() const { return mCanceled; }
+  MenuItem *getMenuItem();
 
 };
 

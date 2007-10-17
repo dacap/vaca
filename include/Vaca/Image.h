@@ -44,16 +44,15 @@ class Graphics;
  */
 class VACA_DLL Image
 {
-private:
-
-  HDC mFromHdc;
+  HDC mFromHDC;
   Size mSize;
-  HBITMAP mHbitmap;
+  HBITMAP mHBITMAP;
   Graphics *mGraphics;
 
 public:
 
   Image();
+  Image(int imageId);
   Image(const Size &sz);
   Image(const Size &sz, int bpp);
   Image(Graphics &g, const Size &sz);
@@ -68,7 +67,7 @@ public:
 
   Graphics &getGraphics();
 
-  HBITMAP getHbitmap();
+  HBITMAP getHBITMAP();
 
   Image &operator=(const Image &image);
 

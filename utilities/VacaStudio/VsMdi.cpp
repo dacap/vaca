@@ -34,12 +34,23 @@
 VsMdi::VsMdi(Widget *parent)
   : Panel(parent)
 {
+  setBgColor(Color(128, 128, 128));
 }
 
 void VsMdi::onPaint(Graphics &g)
 {
+  if (!mTabText.empty()) {
+//     (247, 243, 233)
+	    
+//     for (std::vector<String>::iterator it = mTabText.begin();
+// 	 it != mTabText.end();
+// 	 ++it) {
+//     }
+  }
 }
 
 void VsMdi::onMouseDown(MouseEvent &ev)
 {
+  mTabText.push_back("Tab");
+  invalidate(true);
 }

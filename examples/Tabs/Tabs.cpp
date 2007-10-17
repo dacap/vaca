@@ -158,14 +158,14 @@ private:
 
   void onUpdateMultiline(MenuItemEvent &ev)
   {
-    ev.getMenuItem().setChecked(mTab.isMultiline());
-    ev.getMenuItem().setEnabled(mTab.getSide() != LeftSide &&
-				mTab.getSide() != RightSide);
+    ev.getMenuItem()->setChecked(mTab.isMultiline());
+    ev.getMenuItem()->setEnabled(mTab.getSide() != LeftSide &&
+				 mTab.getSide() != RightSide);
   }
 
   void onUpdateSide(Side side, MenuItemEvent &ev)
   {
-    ev.getMenuItem().setRadio(mTab.getSide() == side);
+    ev.getMenuItem()->setRadio(mTab.getSide() == side);
   }
 
   void onPageLink(int page)

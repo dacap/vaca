@@ -54,7 +54,7 @@ bool FontDialog::doModal()
   CHOOSEFONT cf;
 
   cf.lStructSize = sizeof(CHOOSEFONT);
-  cf.hwndOwner = getParentHwnd();
+  cf.hwndOwner = getParentHWND();
   cf.hDC = NULL;
   cf.lpLogFont = &mLogFont;
   cf.iPointSize = 0; 
@@ -63,7 +63,7 @@ bool FontDialog::doModal()
   cf.lCustData = 0L; 
   cf.lpfnHook = (LPCFHOOKPROC)NULL; 
   cf.lpTemplateName = (LPTSTR)NULL; 
-  cf.hInstance = (HINSTANCE)Application::getHinstance();
+  cf.hInstance = (HINSTANCE)Application::getHINSTANCE();
   cf.lpszStyle = (LPTSTR)NULL; 
   cf.nFontType = SCREEN_FONTTYPE; 
   cf.nSizeMin = 4; 

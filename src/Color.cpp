@@ -107,6 +107,11 @@ Color::Color()
   mColorRef = 0;
 }
 
+Color::Color(const Color &color)
+{
+  mColorRef = color.mColorRef;
+}
+
 /**
  * Creates a RGB color.
  *

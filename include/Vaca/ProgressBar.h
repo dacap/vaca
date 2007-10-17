@@ -46,6 +46,9 @@ class VACA_DLL ProgressBar : public Widget
 public:
 
   ProgressBar(Widget *parent, Style style = ProgressBarStyle);
+  ProgressBar(int minValue, int maxValue,
+	      Widget *parent, Style style = ProgressBarStyle);
+  virtual ~ProgressBar();
 
   virtual void setBgColor(Color color);
 
@@ -56,9 +59,9 @@ public:
   void getRange(int &minValue, int &maxValue);
   void setRange(int minValue, int maxValue);
 
-  int getPosition();
-  void setPosition(int posValue);
-  void advancePosition(int increment);
+  int getValue();
+  void setValue(int value);
+  void addValue(int delta);
   
 };
 

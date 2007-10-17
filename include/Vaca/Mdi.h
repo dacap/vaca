@@ -81,13 +81,13 @@ public:
 
 protected:
   // reflection
-  virtual bool onCommand(int commandCode, LRESULT &lResult);
+  // virtual bool onCommand(int id, int code, LRESULT &lResult);
 
   virtual bool wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult);
   virtual LRESULT defWndProc(UINT message, WPARAM wParam, LPARAM lParam);
 
 private:
-  virtual void destroyHwnd(HWND hwnd);
+  virtual void destroyHWND(HWND hwnd);
 };
 
 /**
@@ -97,6 +97,7 @@ class VACA_DLL MdiClient : public Widget
 {
 public:
   MdiClient(Widget *parent);
+  virtual ~MdiClient();
 
   void cascade();
   void tileHorizontal();
@@ -116,7 +117,7 @@ public:
   virtual bool preTranslateMessage(MSG &msg);
 
 private:
-  virtual HWND createHwnd(LPCTSTR className, Widget *parent, Style style);
+  virtual HWND createHWND(LPCTSTR className, Widget *parent, Style style);
 };
 
 /**

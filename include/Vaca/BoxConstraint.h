@@ -43,26 +43,17 @@ namespace Vaca {
  * that Widget::preferredSize() (generally widgets like ListBox or
  * Edit should be expansive).
  */
-class BoxConstraint : public Constraint
+class VACA_DLL BoxConstraint : public Constraint
 {
   bool mExpansive;
 
 public:
 
-  BoxConstraint(bool expansive)
-    : mExpansive(expansive)
-  {
-  }
+  BoxConstraint(bool expansive);
+  virtual ~BoxConstraint();
 
-  bool isExpansive()
-  {
-    return mExpansive;
-  }
-
-  void setExpansive(bool expansive)
-  {
-    mExpansive = expansive;
-  }
+  bool isExpansive();
+  void setExpansive(bool expansive);
 
 };
 

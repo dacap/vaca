@@ -52,6 +52,7 @@ class VACA_DLL CheckBox : public ButtonBase
 public:
 
   CheckBox(const String &text, Widget *parent, Style style = CheckBoxStyle);
+  virtual ~CheckBox();
 
 //   // signals
 //   boost::signal<void (WidgetEvent &)> Check;

@@ -34,12 +34,15 @@
 
 #include "Vaca/Exception.h"
 
-class XmlException : public Vaca::Exception
+using namespace std;
+using namespace Vaca;
+
+class XmlException : public Exception
 {
 public:
   
-  XmlException(Vaca::String msg) throw()
-    : Vaca::Exception(msg.c_str())
+  XmlException(String msg) throw()
+    : Exception(msg.c_str())
   {
   }
 

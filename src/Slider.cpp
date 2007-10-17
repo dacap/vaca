@@ -32,12 +32,27 @@
 #include "stdvaca.h"
 #include "Vaca/Slider.h"
 #include "Vaca/Debug.h"
-#include "Vaca/WidgetEvent.h"
+#include "Vaca/Event.h"
 
 using namespace Vaca;
 
 Slider::Slider(Widget *parent, Style style)
   : Widget(TRACKBAR_CLASS, parent, style)
+{
+}
+
+Slider::Slider(int minValue, int maxValue, int value,
+	       Widget *parent, Style style)
+  : Widget(TRACKBAR_CLASS, parent, style)
+{
+  assert(minValue <= value);
+  assert(value <= maxValue);
+
+  setRange(minValue, maxValue);
+  setValue(value);
+}
+
+Slider::~Slider()
 {
 }
 
@@ -84,7 +99,7 @@ void Slider::setOrientation(Orientation orientation)
   
 //   // horizontal
 //   if (getOrientation() == Orientation::Horizontal) {
-//     VACA_ASSERT(side == Side::Top || side == Side::Bottom);
+//     assert(side == Side::Top || side == Side::Bottom);
     
 //     if (side == Side::Top)
 //       addStyle(Style(TBS_TOP, 0));
@@ -93,7 +108,7 @@ void Slider::setOrientation(Orientation orientation)
 //   }
 //   // vertical
 //   else {
-//     VACA_ASSERT(side == Side::Left || side == Side::Right);
+//     assert(side == Side::Left || side == Side::Right);
 
 //     if (side == Side::Left)
 //       addStyle(Style(TBS_LEFT, 0));
@@ -178,19 +193,19 @@ void Slider::setRange(int minValue, int maxValue)
   sendMessage(TBM_SETRANGE, TRUE, MAKELONG(minValue, maxValue));
 }
 
-int Slider::getPosition()
+int Slider::getValue()
 {
   return sendMessage(TBM_GETPOS, 0, 0);
 }
 
-void Slider::setPosition(int posValue)
+void Slider::setValue(int value)
 {
-  sendMessage(TBM_SETPOS, TRUE, posValue);
+  sendMessage(TBM_SETPOS, TRUE, value);
 }
 
-void Slider::onVScroll(int code, int pos/*, ScrollBar *scrollbar*/)
+void Slider::onScroll(Orientation orientation, int code)
 {
-  VACA_ASSERT(getOrientation() == Vertical);
+  assert(getOrientation() == orientation);
   
   switch (code) {
 
@@ -203,7 +218,7 @@ void Slider::onVScroll(int code, int pos/*, ScrollBar *scrollbar*/)
     case TB_THUMBPOSITION:
     case TB_THUMBTRACK:
     case TB_TOP: {
-      WidgetEvent ev(this);
+      Event ev(this);
       onChange(ev);
       return;
     }
@@ -211,33 +226,10 @@ void Slider::onVScroll(int code, int pos/*, ScrollBar *scrollbar*/)
   }
 
   // impossible
-  VACA_ASSERT(false);
+  assert(false);
 }
 
-void Slider::onHScroll(int code, int pos/*, ScrollBar *scrollbar*/)
-{
-  switch (code) {
-
-    case TB_BOTTOM:
-    case TB_ENDTRACK:
-    case TB_LINEDOWN:
-    case TB_LINEUP:
-    case TB_PAGEDOWN:
-    case TB_PAGEUP:
-    case TB_THUMBPOSITION:
-    case TB_THUMBTRACK:
-    case TB_TOP:
-      WidgetEvent ev(this);
-      onChange(ev);
-      return;
-
-  }
-
-  // impossible
-  VACA_ASSERT(false);
-}
-
-void Slider::onChange(WidgetEvent &ev)
+void Slider::onChange(Event &ev)
 {
   Change(ev);
 }

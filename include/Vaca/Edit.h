@@ -32,6 +32,7 @@
 #ifndef VACA_EDIT_H
 #define VACA_EDIT_H
 
+#include "Vaca/base.h"
 #include "Vaca/Widget.h"
 
 namespace Vaca {
@@ -39,19 +40,22 @@ namespace Vaca {
 /**
  * ES_RIGHT
  */
-#define RightAlignedEditStyle	Style(ES_RIGHT, 0)
+#define RightAlignedEditStyle		Style(ES_RIGHT, 0)
 
 /**
  * ES_READONLY 
  */
-#define ReadOnlyEditStyle	Style(ES_READONLY, 0)
+#define ReadOnlyEditStyle		Style(ES_READONLY, 0)
 
 /**
  * Default style for Edit: a visible child (ChildVisible), with tab
- * stop (TabStopStyle), and edge in its client-are (ClientEdgeStyle).
+ * stop (TabStopStyle), edge in its client-are (ClientEdgeStyle), and
+ * ES_AUTOHSCROLL.
  */
-#define EditStyle		(ChildStyle + TabStopStyle + ClientEdgeStyle)
-
+#define EditStyle		(ChildStyle +			\
+				 TabStopStyle +				\
+				 ClientEdgeStyle +			\
+				 Style(ES_AUTOHSCROLL, 0))
 /**
  * Default style for PasswordEdit: an EditStyle with ES_PASSWORD.
  */
@@ -70,20 +74,15 @@ class VACA_DLL Edit : public Widget
 public:
 
   Edit(const String &text, Widget *parent, Style style = EditStyle);
+  virtual ~Edit();
 
   int getTextLength();
 
   int getTextLimit();
   void setTextLimit(int textLimit);
 
-//   TextAlign::Type getTextAlign();
-//   void setTextAlign(TextAlign::Type align);
-
   bool isReadOnly();
   void setReadOnly(bool readOnly);
-
-//   virtual bool getPasswordMode();
-//   virtual void setPasswordMode(bool passwordMode);
 
   bool canUndo();
   void undo();
@@ -96,14 +95,14 @@ public:
   virtual Size preferredSize(const Size &fitIn);
 
   // signals
-  boost::signal<void (WidgetEvent &)> Change; ///< @see onChange
+  boost::signal<void (Event &)> Change; ///< @see onChange
 
 protected:
   // new events
-  virtual void onChange(WidgetEvent &ev);
+  virtual void onChange(Event &ev);
 
   // reflection
-  virtual bool onCommand(int commandCode, LRESULT &lResult);
+  virtual bool onCommand(int id, int code, LRESULT &lResult);
 };
 
 /**
@@ -114,6 +113,7 @@ class VACA_DLL PasswordEdit : public Edit
 public:
 
   PasswordEdit(const String &text, Widget *parent, Style style = PasswordEditStyle);
+  virtual ~PasswordEdit();
 
   Character getPasswordCharacter();
   void setPasswordCharacter(Character passwordChar);
@@ -127,6 +127,7 @@ class VACA_DLL MultilineEdit : public Edit
 public:
 
   MultilineEdit(const String &text, Widget *parent, Style style = MultilineEditStyle);
+  virtual ~MultilineEdit();
 
   bool getWantReturnMode();
   void setWantReturnMode(bool wantReturn);
@@ -134,6 +135,8 @@ public:
   int getLineCount();
   String getLine(int lineNo);
   int getLineLength(int lineNo);
+
+  void scrollLines(int lines);
 
 };
 

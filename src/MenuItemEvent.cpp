@@ -29,33 +29,22 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_WIDGETEVENT_H
-#define VACA_WIDGETEVENT_H
+#include "stdvaca.h"
+#include "Vaca/MenuItemEvent.h"
+#include "Vaca/Menu.h"
 
-#include "Vaca/Event.h"
+using namespace Vaca;
 
-namespace Vaca {
-
-class Widget;
-
-class WidgetEvent : public Event
+MenuItemEvent::MenuItemEvent(MenuItem *source)
+  : Event(source)
 {
-  Widget *mWidget;
+}
 
-public:
+MenuItemEvent::~MenuItemEvent()
+{
+}
 
-  WidgetEvent(Widget *widget)
-    : mWidget(widget)
-  {
-  }
-
-  Widget *getWidget()
-  {
-    return mWidget;
-  }
-
-};
-
-} // namespace Vaca
-
-#endif
+MenuItem *MenuItemEvent::getMenuItem()
+{
+  return dynamic_cast<MenuItem *>(getSource());
+}

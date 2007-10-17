@@ -37,29 +37,33 @@
 #include "Vaca/Layout.h"
 #include "Vaca/Constraint.h"
 #include "Vaca/System.h"
-#include "Vaca/MouseEvent.h"
-#include "Vaca/KeyEvent.h"
 #include "Vaca/Font.h"
 #include "Vaca/Thread.h"
 #include "Vaca/Mutex.h"
 #include "Vaca/Cursor.h"
+#include "Vaca/MouseEvent.h"
+#include "Vaca/KeyEvent.h"
+#include "Vaca/DropFilesEvent.h"
+#include "Vaca/Image.h"
+
+// comment this to use the old behaviour (using GWL_USERDATA to store
+// the "Widget" pointer)
+#define USE_PROP
 
 // uncomment this if you want message reporting in the "vaca.log"
-#define REPORT_MESSAGES
+// #define REPORT_MESSAGES
 
 using namespace Vaca;
 
-#ifndef NDEBUG
-static Mutex instanceCounterMutex; // used to access instanceCounter
-static int instanceCounter = 0;
-#endif
-
 static Mutex outsideWidgetMutex;     // used to access outsideWidget
-static Widget *outsideWidget = NULL; // widget used to call createHwnd
+static Widget *outsideWidget = NULL; // widget used to call createHWND
 
-// #define VACAPTRATOM (reinterpret_cast<LPCTSTR>(MAKELPARAM(vacaPtrAtom, 0)))
+#ifdef USE_PROP
+#define VACAATOM (reinterpret_cast<LPCTSTR>(MAKELPARAM(vacaAtom, 0)))
 
-// static ATOM vacaPtrAtom = 0;
+static Mutex vacaAtomMutex; // used to access vacaAtom
+static ATOM vacaAtom = 0;
+#endif
 
 /**
  * Creates a new widget with the specified @a className.
@@ -76,14 +80,16 @@ static Widget *outsideWidget = NULL; // widget used to call createHwnd
  */
 Widget::Widget(LPCTSTR className, Widget *parent, Style style)
 {
-  // TODO warning threads
-//   if (vacaPtrAtom == 0) {
-//     vacaPtrAtom = GlobalAddAtom("VacaPtr");
-//     VACA_ASSERT(vacaPtrAtom != 0);
-//   }
+  vacaAtomMutex.lock();
+  if (vacaAtom == 0) {
+    vacaAtom = GlobalAddAtom(_T("VacaAtom"));
+    assert(vacaAtom != 0);
+  }
+  vacaAtomMutex.unlock();
 
-  mHwnd = NULL;
+  mHWND = NULL;
   mParent = NULL;
+  mFgColor = System::getColor(COLOR_WINDOWTEXT);
   mBgColor = System::getColor(COLOR_3DFACE);
   mConstraint = NULL;
   mLayout = NULL;
@@ -91,18 +97,13 @@ Widget::Widget(LPCTSTR className, Widget *parent, Style style)
   mDisposed = false;
   mHasMouse = false;
   mDeleteAfterEvent = false;
+  mDoubleBuffering = false;
   mCriticalInner = 0;
   mFont = NULL;
-  mHbrush = NULL;
+//   mHbrush = NULL;
 
   if (className != NULL)
     create(className, parent, style);
-
-#ifndef NDEBUG
-  instanceCounterMutex.lock();
-    VACA_TRACE("new Widget (%p, %d) {\n", this, ++instanceCounter);
-  instanceCounterMutex.unlock();
-#endif
 }
 
 /**
@@ -113,16 +114,10 @@ Widget::Widget(LPCTSTR className, Widget *parent, Style style)
  */
 Widget::~Widget()
 {
-  if (mHbrush != NULL)
-    DeleteObject(mHbrush);
+//   if (mHbrush != NULL)
+//     DeleteObject(mHbrush);
 
   dispose();
-
-#ifndef NDEBUG
-  instanceCounterMutex.lock();
-    VACA_TRACE("} delete Widget (%p, %d)\n", this, --instanceCounter);
-  instanceCounterMutex.unlock();
-#endif
 }
 
 /**
@@ -234,14 +229,14 @@ Constraint *Widget::setConstraint(Constraint *constraint)
  */
 String Widget::getText()
 {
-  VACA_ASSERT(mHwnd != NULL);
+  assert(mHWND != NULL);
 
-  int len = ::GetWindowTextLength(mHwnd);
+  int len = ::GetWindowTextLength(mHWND);
   if (!len)
     return String("");
   else {
     LPTSTR buf = (LPTSTR)new _TCHAR[len+1];
-    ::GetWindowText(mHwnd, buf, len+1);
+    ::GetWindowText(mHWND, buf, len+1);
     String str = String(buf);
     delete buf;
     return str;
@@ -254,8 +249,8 @@ String Widget::getText()
  */
 void Widget::setText(const String &str)
 {
-  VACA_ASSERT(mHwnd != NULL);
-  ::SetWindowText(mHwnd, str.c_str());
+  assert(mHWND != NULL);
+  ::SetWindowText(mHWND, str.c_str());
 }
 
 /**
@@ -278,7 +273,7 @@ Font &Widget::getFont()
 void Widget::setFont(Font &font)
 {
   mFont = &font;
-  sendMessage(WM_SETFONT, reinterpret_cast<WPARAM>(mFont->getHfont()), TRUE);
+  sendMessage(WM_SETFONT, reinterpret_cast<WPARAM>(mFont->getHFONT()), TRUE);
 }
 
 /**
@@ -286,10 +281,10 @@ void Widget::setFont(Font &font)
  */
 Style Widget::getStyle()
 {
-  VACA_ASSERT(mHwnd != NULL);
+  assert(mHWND != NULL);
 
-  return Style(GetWindowLong(mHwnd, GWL_STYLE),
-	       GetWindowLong(mHwnd, GWL_EXSTYLE));
+  return Style(GetWindowLong(mHWND, GWL_STYLE),
+	       GetWindowLong(mHWND, GWL_EXSTYLE));
 }
 
 /**
@@ -298,10 +293,10 @@ Style Widget::getStyle()
  */
 void Widget::setStyle(Style style)
 {
-  VACA_ASSERT(mHwnd != NULL);
+  assert(mHWND != NULL);
 
-  SetWindowLong(mHwnd, GWL_STYLE, style.regular);
-  SetWindowLong(mHwnd, GWL_EXSTYLE, style.extended);
+  SetWindowLong(mHWND, GWL_STYLE, style.regular);
+  SetWindowLong(mHWND, GWL_EXSTYLE, style.extended);
 }
 
 /**
@@ -309,7 +304,7 @@ void Widget::setStyle(Style style)
  */
 void Widget::addStyle(Style style)
 {
-  VACA_ASSERT(mHwnd != NULL);
+  assert(mHWND != NULL);
 
   setStyle(getStyle() + style);
 }
@@ -319,33 +314,44 @@ void Widget::addStyle(Style style)
  */
 void Widget::removeStyle(Style style)
 {
-  VACA_ASSERT(mHwnd != NULL);
+  assert(mHWND != NULL);
 
   setStyle(getStyle() - style);
+}
+
+
+bool Widget::getDoubleBuffering()
+{
+  return mDoubleBuffering;
+}
+
+void Widget::setDoubleBuffering(bool useDoubleBuffering)
+{
+  mDoubleBuffering = useDoubleBuffering;
 }
 
 /**
  * Gets the dimensions of the entire bounding rectangle that enclose
  * the Widget. The bounds are relative to the upper-left corner of the
- * parent's client area, or absolute to the screen if this Widget
+ * widget's bounds, or absolute to the screen if this Widget
  * hasn't parent.
  *
  * @see getClientBounds, getAbsoluteBounds
  */
 Rect Widget::getBounds()
 {
-  VACA_ASSERT(mHwnd != NULL);
+  assert(mHWND != NULL);
 
   RECT rc;
-  ::GetWindowRect(mHwnd, &rc);
+  ::GetWindowRect(mHWND, &rc);
 
   if (mParent != NULL &&
-      (GetWindowLong(mHwnd, GWL_STYLE) & WS_CAPTION) == 0) {
+      (GetWindowLong(mHWND, GWL_STYLE) & WS_CAPTION) == 0) {
     POINT pt1 = Point(rc.left, rc.top);
     POINT pt2 = Point(rc.right, rc.bottom);
 
-    ::ScreenToClient(mParent->mHwnd, &pt1);
-    ::ScreenToClient(mParent->mHwnd, &pt2);
+    ::ScreenToClient(mParent->mHWND, &pt1);
+    ::ScreenToClient(mParent->mHWND, &pt2);
 
     return Rect(pt1.x, pt1.y, pt2.x-pt1.x, pt2.y-pt1.y);
   }
@@ -362,10 +368,10 @@ Rect Widget::getBounds()
  */
 Rect Widget::getAbsoluteBounds()
 {
-  VACA_ASSERT(mHwnd != NULL);
+  assert(mHWND != NULL);
 
   RECT rc;
-  ::GetWindowRect(mHwnd, &rc);
+  ::GetWindowRect(mHWND, &rc);
 
   return Rect(&rc);
 }
@@ -381,8 +387,8 @@ Rect Widget::getAbsoluteBounds()
 Rect Widget::getClientBounds()
 {
   RECT rc;
-  VACA_ASSERT(mHwnd != NULL);
-  ::GetClientRect(mHwnd, &rc);
+  assert(mHWND != NULL);
+  ::GetClientRect(mHWND, &rc);
   return Rect(&rc);
 }
 
@@ -395,7 +401,7 @@ Rect Widget::getClientBounds()
 Rect Widget::getAbsoluteClientBounds()
 {
   RECT rc = getClientBounds();
-  ::MapWindowPoints(mHwnd, NULL, (POINT *)&rc, 2);
+  ::MapWindowPoints(mHWND, NULL, (POINT *)&rc, 2);
   return Rect(&rc);
 }
 
@@ -417,15 +423,20 @@ Rect Widget::getLayoutBounds()
  */
 void Widget::setBounds(const Rect &rc)
 {
-  VACA_ASSERT(mHwnd != NULL);
+  assert(mHWND != NULL);
 
   /* TODO remove this
-  ::SetWindowPos(mHwnd, NULL,
+  ::SetWindowPos(mHWND, NULL,
 		 rc.left, rc.top, rc.getWidth(), rc.getHeight(),
 		 SWP_NOZORDER | SWP_NOACTIVATE);
   */
 
-  ::MoveWindow(mHwnd, rc.x, rc.y, rc.w, rc.h, TRUE);
+  ::MoveWindow(mHWND, rc.x, rc.y, rc.w, rc.h, TRUE);
+}
+
+void Widget::setBounds(int x, int y, int w, int h)
+{
+  setBounds(Rect(x, y, w, h));
 }
 
 /**
@@ -489,16 +500,16 @@ void Widget::setSize(int w, int h)
 
 void Widget::validate()
 {
-  VACA_ASSERT(mHwnd != NULL);
-  ValidateRect(mHwnd, NULL);
+  assert(mHWND != NULL);
+  ValidateRect(mHWND, NULL);
 }
 
 void Widget::validate(const Rect &rc)
 {
-  RECT rc2 = rc;
+  assert(mHWND != NULL);
 
-  VACA_ASSERT(mHwnd != NULL);
-  ValidateRect(mHwnd, &rc2);
+  RECT rc2 = rc;
+  ValidateRect(mHWND, &rc2);
 }
 
 /**
@@ -509,16 +520,16 @@ void Widget::validate(const Rect &rc)
  */
 void Widget::invalidate(bool eraseBg)
 {
-  VACA_ASSERT(mHwnd != NULL);
-  InvalidateRect(mHwnd, NULL, eraseBg);
+  assert(mHWND != NULL);
+  InvalidateRect(mHWND, NULL, eraseBg);
 }
 
 void Widget::invalidate(const Rect &rc, bool eraseBg)
 {
   RECT rc2 = rc;
 
-  VACA_ASSERT(mHwnd != NULL);
-  InvalidateRect(mHwnd, &rc2, eraseBg);
+  assert(mHWND != NULL);
+  InvalidateRect(mHWND, &rc2, eraseBg);
 }
 
 /**
@@ -527,8 +538,8 @@ void Widget::invalidate(const Rect &rc, bool eraseBg)
  */
 void Widget::update()
 {
-  VACA_ASSERT(mHwnd != NULL);
-  UpdateWindow(mHwnd);
+  assert(mHWND != NULL);
+  UpdateWindow(mHWND);
 }
 
 /**
@@ -540,19 +551,19 @@ void Widget::update()
  */
 bool Widget::isVisible()
 {
-  VACA_ASSERT(mHwnd != NULL);
+  assert(mHWND != NULL);
 
-  return IsWindowVisible(mHwnd) != FALSE;
+  return IsWindowVisible(mHWND) != FALSE;
 }
 
 void Widget::setVisible(bool visible)
 {
-  VACA_ASSERT(mHwnd != NULL);
+  assert(mHWND != NULL);
 
   if (visible)
-    ShowWindow(mHwnd, SW_SHOW);
+    ShowWindow(mHWND, SW_SHOW);
   else
-    ShowWindow(mHwnd, SW_HIDE);
+    ShowWindow(mHWND, SW_HIDE);
 }
 
 /**
@@ -562,9 +573,9 @@ void Widget::setVisible(bool visible)
  */
 bool Widget::isEnabled()
 {
-  VACA_ASSERT(mHwnd != NULL);
+  assert(mHWND != NULL);
 
-  return IsWindowEnabled(mHwnd) != FALSE;
+  return IsWindowEnabled(mHWND) != FALSE;
 }
 
 /**
@@ -574,15 +585,25 @@ bool Widget::isEnabled()
  */
 void Widget::setEnabled(bool state)
 {
-  VACA_ASSERT(mHwnd != NULL);
+  assert(mHWND != NULL);
 
-  EnableWindow(mHwnd, state ? TRUE: FALSE);
+  EnableWindow(mHWND, state ? TRUE: FALSE);
 }
 
 /**
- * Gets the background color. This color is used when the
- * WM_ERASEBKGND message is received. The default value is the
- * Color(GetSysColor(COLOR_3DFACE)).
+ * Gets the foreground color.
+ *
+ * @return The current foreground color for the widget.
+ *
+ * @see setFgColor
+ */
+Color Widget::getFgColor()
+{
+  return mFgColor;
+}
+
+/**
+ * Gets the background color.
  *
  * @return The current background color for the widget.
  *
@@ -594,8 +615,21 @@ Color Widget::getBgColor()
 }
 
 /**
- * Sets the background color. When the WM_ERASEBKGND message is
- * received, this color will be used to erase the background.
+ * Sets the foreground color. This color is used when WM_CTLCOLOR*
+ * messages are received. The default value is the
+ * Color(GetSysColor(COLOR_WINDOWTEXT)).
+ *
+ * @see getFgColor
+ */
+void Widget::setFgColor(Color color)
+{
+  mFgColor = color;
+}
+
+/**
+ * Sets the background color. This color is used on WM_ERASEBKGND and
+ * WM_COLORCTL* messages. The default value is the
+ * Color(GetSysColor(COLOR_3DFACE)).
  *
  * @see getBgColor
  */
@@ -628,7 +662,7 @@ typedef BOOL (WINAPI * SLWAProc)(HWND hwnd, COLORREF crKey, BYTE bAlpha, DWORD d
  */
 int Widget::getOpacity()
 {
-  VACA_ASSERT(mHwnd != NULL);
+  assert(mHWND != NULL);
 
   HMODULE hUser32 = GetModuleHandle(_T("USER32.DLL"));
   GLWAProc pGLWA;
@@ -640,9 +674,9 @@ int Widget::getOpacity()
   if (pGLWA == NULL) {
     return 255;
   }
-  else if (GetWindowLong(mHwnd, GWL_EXSTYLE) & WS_EX_LAYERED) {
+  else if (GetWindowLong(mHWND, GWL_EXSTYLE) & WS_EX_LAYERED) {
     BYTE opacity;
-    pGLWA(mHwnd, NULL, &opacity, NULL);
+    pGLWA(mHWND, NULL, &opacity, NULL);
     return opacity;
   }
   else {
@@ -657,8 +691,8 @@ int Widget::getOpacity()
  */
 void Widget::setOpacity(int opacity)
 {
-  VACA_ASSERT(mHwnd != NULL);
-  VACA_ASSERT(opacity >= 0 && opacity < 256);
+  assert(mHWND != NULL);
+  assert(opacity >= 0 && opacity < 256);
 
   HMODULE  hUser32 = GetModuleHandle(_T("USER32.DLL"));
   SLWAProc pSLWA = (SLWAProc)GetProcAddress(hUser32, "SetLayeredWindowAttributes");
@@ -669,14 +703,14 @@ void Widget::setOpacity(int opacity)
     return;
   }
   else if (opacity == 255) {
-    SetWindowLong(mHwnd, GWL_EXSTYLE,
-		  GetWindowLong(mHwnd, GWL_EXSTYLE) & (~WS_EX_LAYERED));
+    SetWindowLong(mHWND, GWL_EXSTYLE,
+		  GetWindowLong(mHWND, GWL_EXSTYLE) & (~WS_EX_LAYERED));
   }
   else {
-    SetWindowLong(mHwnd, GWL_EXSTYLE,
-  		  GetWindowLong(mHwnd, GWL_EXSTYLE) | WS_EX_LAYERED);
+    SetWindowLong(mHWND, GWL_EXSTYLE,
+  		  GetWindowLong(mHWND, GWL_EXSTYLE) | WS_EX_LAYERED);
 
-    pSLWA(mHwnd, 0, opacity, LWA_ALPHA);
+    pSLWA(mHWND, 0, opacity, LWA_ALPHA);
   }
 }
 
@@ -692,35 +726,8 @@ void Widget::setOpacity(int opacity)
  */
 void Widget::setCursor(const Cursor &cursor)
 {
-//   LPCTSTR sysCursor = IDC_ARROW;
-
-//   switch (cursor) {
-//     case Cursor::Arrow:     sysCursor = IDC_ARROW; break;
-//     case Cursor::Crosshair: sysCursor = IDC_CROSS; break;
-// // #ifdef IDC_HAND
-//     case Cursor::Hand:      sysCursor = IDC_HAND; break;
-// // #endif
-//     case Cursor::Help:      sysCursor = IDC_HELP; break;
-//     case Cursor::Text:      sysCursor = IDC_IBEAM; break;
-//     case Cursor::Forbidden: sysCursor = IDC_NO; break;
-//     case Cursor::Move:      sysCursor = IDC_SIZEALL; break;
-//     case Cursor::SizeE:     sysCursor = IDC_SIZEWE; break;
-//     case Cursor::SizeN:     sysCursor = IDC_SIZENS; break;
-//     case Cursor::SizeNE:    sysCursor = IDC_SIZENESW; break;
-//     case Cursor::SizeNW:    sysCursor = IDC_SIZENWSE; break;
-//     case Cursor::SizeS:     sysCursor = IDC_SIZENS; break;
-//     case Cursor::SizeSE:    sysCursor = IDC_SIZENWSE; break;
-//     case Cursor::SizeSW:    sysCursor = IDC_SIZENESW; break;
-//     case Cursor::SizeW:     sysCursor = IDC_SIZEWE; break;
-//     case Cursor::UpArrow:   sysCursor = IDC_UPARROW; break;
-//     case Cursor::Wait:      sysCursor = IDC_WAIT; break;
-// // #ifdef IDC_APPSTARTING
-//     case Cursor::WaitBg:    sysCursor = IDC_APPSTARTING; break;
-// // #endif
-// //     case Cursor::Custom: return;
-//   }
-
-  ::SetCursor(const_cast<Cursor *>(&cursor)->getHcursor());
+  // getHCURSOR can be NULL, like the Cursor(NoCursor)
+  ::SetCursor(const_cast<Cursor *>(&cursor)->getHCURSOR());
 }
 
 /**
@@ -728,8 +735,8 @@ void Widget::setCursor(const Cursor &cursor)
  */
 void Widget::focus()
 {
-  VACA_ASSERT(mHwnd != NULL);
-  SetFocus(mHwnd);
+  assert(mHWND != NULL);
+  SetFocus(mHWND);
 }
 
 /**
@@ -739,8 +746,8 @@ void Widget::focus()
  */
 void Widget::acquireCapture()
 {
-  VACA_ASSERT(mHwnd != NULL);
-  SetCapture(mHwnd);
+  assert(mHWND != NULL);
+  SetCapture(mHWND);
 }
 
 /**
@@ -748,8 +755,8 @@ void Widget::acquireCapture()
  */
 void Widget::releaseCapture()
 {
-  VACA_ASSERT(mHwnd != NULL);
-  VACA_ASSERT(mHwnd == GetCapture());
+  assert(mHWND != NULL);
+  assert(mHWND == GetCapture());
 
   ReleaseCapture();
 }
@@ -759,9 +766,9 @@ void Widget::releaseCapture()
  */
 bool Widget::hasCapture()
 {
-  VACA_ASSERT(mHwnd != NULL);
+  assert(mHWND != NULL);
 
-  return mHwnd == GetCapture();
+  return mHWND == GetCapture();
 }
 
 /**
@@ -777,13 +784,13 @@ bool Widget::hasMouse()
  */
 void Widget::bringToTop()
 {
-  VACA_ASSERT(mHwnd != NULL);
-  BringWindowToTop(mHwnd);
+  assert(mHWND != NULL);
+  BringWindowToTop(mHWND);
 }
 
 /**
  * Shows a message box, locking the widget. It's like call Win32's
- * MessageBox using the Widget's mHwnd (Widget::getHwnd).
+ * MessageBox using the Widget's mHWND (Widget::getHWND).
  *
  * The next code is a tipical example where is displayed a message box
  * with the "Yes" and "No" buttons (@c MB_YESNO), an icon to indicate
@@ -831,7 +838,7 @@ void Widget::bringToTop()
  */
 int Widget::msgBox(String text, String title, int flags)
 {
-  return MessageBox(mHwnd, text.c_str(), title.c_str(), flags);
+  return MessageBox(mHWND, text.c_str(), title.c_str(), flags);
 }
 
 /**
@@ -863,15 +870,15 @@ int Widget::msgBox(String text, String title, int flags)
 
 /**
  * Indicates that this widget must be deleted (with C++ "delete"
- * operator), after current event ends. It's a safe way to do delete
- * the WidgetEvent::getWidget().
+ * operator) after current event ends. It's a safe way to delete
+ * the Event::getSource().
  *
  * @see @ref TN006
  */
 void Widget::deleteAfterEvent()
 {
   // we can't call deleteAfterEvent if we are outside an event
-  VACA_ASSERT(mCriticalInner > 0);
+  assert(mCriticalInner > 0);
 
   mDeleteAfterEvent = true;
 }
@@ -881,30 +888,30 @@ void Widget::deleteAfterEvent()
  */
 int Widget::getThreadOwnerId()
 {
-  VACA_ASSERT(mHwnd != NULL);
+  assert(mHWND != NULL);
 
-  return GetWindowThreadProcessId(mHwnd, NULL);
+  return GetWindowThreadProcessId(mHWND, NULL);
 }
 
 /**
  * Returns the HWND of this Widget. This can't be NULL.
  *
- * @see fromHwnd, getParentHwnd
+ * @see fromHWND, getParentHWND
  */
-HWND Widget::getHwnd()
+HWND Widget::getHWND()
 {
-  return mHwnd;
+  return mHWND;
 }
 
 /**
  * Returns the HWND
  *
- * @see getHwnd
+ * @see getHWND
  */
-HWND Widget::getParentHwnd()
+HWND Widget::getParentHWND()
 {
   Widget *parent = getParent();
-  return parent ? parent->getHwnd(): NULL;
+  return parent != NULL ? parent->getHWND(): NULL;
 }
 
 /**
@@ -913,12 +920,16 @@ HWND Widget::getParentHwnd()
  * Widget. In other words, you should use this only if you known that
  * the HWND was created inside Vaca bounds.
  *
- * @see getHwnd
+ * @see getHWND
  */
-Widget *Widget::fromHwnd(HWND hwnd)
+Widget *Widget::fromHWND(HWND hwnd)
 {
+  // unbox the pointer
+#ifdef USE_PROP
+  return reinterpret_cast<Widget *>(GetProp(hwnd, VACAATOM));
+#else
   return reinterpret_cast<Widget *>(GetWindowLongPtr(hwnd, GWL_USERDATA));
-//   return static_cast<Widget *>(GetProp(hwnd, VACAPTRATOM));
+#endif
 }
 
 /**
@@ -1009,6 +1020,7 @@ void Widget::layout()
  */
 bool Widget::isLayoutFree()
 {
+  // a widget is free of layout if it's hidden
   return ((getStyle().regular & WS_VISIBLE) == WS_VISIBLE) ? false: true;
 }
 
@@ -1053,16 +1065,16 @@ bool Widget::keepEnabledSynchronised()
  * @warning If you override this method, you @b MUST to call dipose()
  *          in your destructor.
  *
- * @see dispose, destroyHwnd, @ref TN002
+ * @see dispose, destroyHWND, @ref TN002
  */
 void Widget::onDestroy()
 {
-  VACA_ASSERT(mHwnd != NULL);
+  assert(mHWND != NULL);
 
   if (getParent() != NULL) {
     // this is very important!!! we can't set the parent of the HWND:
     // this can generate ugly effects for MDI, and also
-    // MdiChild::destroyHwnd needs the parent HWND
+    // MdiChild::destroyHWND needs the parent HWND
     getParent()->removeChild(this, false);
   }
 
@@ -1085,24 +1097,34 @@ void Widget::onDestroy()
   }
 
   // assert again
-  VACA_ASSERT(mHwnd != NULL);
+  assert(mHWND != NULL);
 
   // restore the old window-procedure
   if (mSuperWndProc != NULL)
-    SetWindowLongPtr(mHwnd, GWLP_WNDPROC,
+    SetWindowLongPtr(mHWND, GWLP_WNDPROC,
 		     reinterpret_cast<LONG_PTR>(mSuperWndProc));
+  
+  // Please!!! don't remove the pointer from the widget
+  // ...
+  //   #ifdef USE_PROP
+  //     RemoveProp(mHWND, VACAATOM);
+  //   #else
+  //     SetWindowLongPtr(mHWND, GWL_USERDATA, static_cast<LONG_PTR>(NULL));
+  //   #endif
+  // ...
 
-  // don't remove the pointer to the widget
-  //   SetWindowLongPtr(mHwnd, GWL_USERDATA, static_cast<LONG_PTR>(NULL));
-  //   RemoveProp(mHwnd, VACAPTRATOM);
+  // call the destroyHWND
+  destroyHWND(mHWND);
 
-  // call the destroyHwnd
-  destroyHwnd(mHwnd);
+//   if (Frame::getVisibleFramesByThread(Thread::getCurrentId()) == 0)
+  Thread *currentThread = Thread::getCurrent();
+  if (currentThread != NULL &&	// == NULL could be if the application
+				// hasn't an Application instance
+      currentThread->hasFrames() == 0)
+    PostQuitMessage(0);		// this thread doesn't have more
+				// Frames to continue...
 
-  if (Frame::getVisibleFramesByThread(Thread::getCurrentId()) == 0)
-    PostQuitMessage(0);
-
-  mHwnd = NULL;
+  mHWND = NULL;
 }
 
 /**
@@ -1143,56 +1165,11 @@ void Widget::onResize(const Size &sz)
 }
 
 /**
- * The computer will be suspended, this method returns @c true if the
- * computer can be suspended or @c false if your application can't
- * handle the power suspension.
- *
- * Called when the WM_POWERBROADCAST message is received with the
- * wParam == PBT_APMQUERYSUSPEND. If @c interactive is true you should
- * ask to the user what to do with unsaved data.
- */
-bool Widget::onPowerQuerySuspend(bool interactive)
-{
-  return true;
-}
-
-/**
- * This method is called when some application returns @c false to the
- * Widget::powerQuerySuspend (really, to the WM_POWERBROADCAST with
- * PBT_APMQUERYSUSPEND message), so the suspension can't be done.
- *
- * Called when the WM_POWERBROADCAST message is received with the
- * wParam == PBT_APMQUERYSUSPENDFAILED.
- */
-void Widget::onPowerQuerySuspendFailed()
-{
-}
-
-/**
- * Called when the system will be suspended.
- *
- * Called when the WM_POWERBROADCAST message is received with the
- * wParam == PBT_APMSUSPEND.
- */
-void Widget::onPowerSuspend()
-{
-}
-
-/**
- * Called when the system is resumed from a suspension.
- *
- * Called when the WM_POWERBROADCAST message is received with the
- * wParam == PBT_APMRESUMESUSPEND.
- */
-void Widget::onPowerResumeSuspend()
-{
-}
-
-/**
  * The mouse enters in the Widget.
  */
 void Widget::onMouseEnter(MouseEvent &ev)
 {
+  // do nothing
 }
 
 /**
@@ -1200,6 +1177,7 @@ void Widget::onMouseEnter(MouseEvent &ev)
  */
 void Widget::onMouseLeave()
 {
+  // do nothing
 }
 
 /**
@@ -1207,6 +1185,7 @@ void Widget::onMouseLeave()
  */
 void Widget::onMouseDown(MouseEvent &ev)
 {
+  // do nothing
 }
 
 /**
@@ -1215,6 +1194,7 @@ void Widget::onMouseDown(MouseEvent &ev)
  */
 void Widget::onMouseUp(MouseEvent &ev)
 {
+  // do nothing
 }
 
 /**
@@ -1222,6 +1202,7 @@ void Widget::onMouseUp(MouseEvent &ev)
  */
 void Widget::onDoubleClick(MouseEvent &ev)
 {
+  // do nothing
 }
 
 /**
@@ -1230,12 +1211,13 @@ void Widget::onDoubleClick(MouseEvent &ev)
  */
 void Widget::onMouseMove(MouseEvent &ev)
 {
+  // do nothing
 }
 
 // /**
 //  * The mouse was for a short period of time above the widget.
 //  */
-// void Widget::onMouseHover(MouseEvent &ev)
+// void Widget::onMouseHover(MouseHoverEvent &ev)
 // {
 // }
 
@@ -1245,6 +1227,7 @@ void Widget::onMouseMove(MouseEvent &ev)
  */
 void Widget::onMouseWheel(MouseEvent &ev)
 {
+  // do nothing
 }
 
 /**
@@ -1253,18 +1236,50 @@ void Widget::onMouseWheel(MouseEvent &ev)
  */
 void Widget::onCancelMode()
 {
+  // do nothing
 }
 
 /**
  * Set the mouse's cursor depending of its position. If you override
  * this method, you shouldn't call Widget::onSetCursor if you don't
  * want the default behaviour.
+ *
+ * @param hitTest One of the following values:
+ * @li HTERROR
+ * @li HTTRANSPARENT
+ * @li HTNOWHERE
+ * @li HTCLIENT
+ * @li HTCAPTION
+ * @li HTSYSMENU
+ * @li HTGROWBOX
+ * @li HTSIZE
+ * @li HTMENU
+ * @li HTHSCROLL
+ * @li HTVSCROLL
+ * @li HTMINBUTTON
+ * @li HTMAXBUTTON
+ * @li HTREDUCE
+ * @li HTZOOM
+ * @li HTLEFT
+ * @li HTSIZEFIRST
+ * @li HTRIGHT
+ * @li HTTOP
+ * @li HTTOPLEFT
+ * @li HTTOPRIGHT
+ * @li HTBOTTOM
+ * @li HTBOTTOMLEFT
+ * @li HTBOTTOMRIGHT
+ * @li HTSIZELAST
+ * @li HTBORDER
+ * @li HTOBJECT
+ * @li HTCLOSE
+ * @li HTHELP
  */
 void Widget::onSetCursor(int hitTest)
 {
   // if we have a mSuperWndProc, use it
   if (mSuperWndProc != NULL) {
-    CallWindowProc(mSuperWndProc, mHwnd, WM_SETCURSOR, mWparam, mLparam);
+    CallWindowProc(mSuperWndProc, mHWND, WM_SETCURSOR, mWparam, mLparam);
   }
   // if we aren't in the client area, maybe the defWndProc known more
   // about the cursor (like the cursors in Frame to resize the it)
@@ -1295,12 +1310,12 @@ void Widget::onKeyDown(KeyEvent &ev)
   KeyDown(ev);
 }
 
-void Widget::onGotFocus(WidgetEvent &ev)
+void Widget::onGotFocus(Event &ev)
 {
   GotFocus(ev);
 }
 
-void Widget::onLostFocus(WidgetEvent &ev)
+void Widget::onLostFocus(Event &ev)
 {
   LostFocus(ev);
 }
@@ -1337,12 +1352,13 @@ void Widget::onAfterPosChange()
 {
 }
 
-void Widget::onVScroll(int code, int pos/*, ScrollBar *scrollbar*/)
+void Widget::onScroll(Orientation orientation, int code)
 {
 }
 
-void Widget::onHScroll(int code, int pos/*, ScrollBar *scrollbar*/)
+void Widget::onDropFiles(DropFilesEvent &ev)
 {
+  DropFiles(ev);
 }
 
 /**
@@ -1353,7 +1369,7 @@ void Widget::onHScroll(int code, int pos/*, ScrollBar *scrollbar*/)
  *          commands that this widget by self generated, sent to the parent,
  *          and finally was reflected to this widget again.
  */
-bool Widget::onCommand(int commandCode, LRESULT &lResult)
+bool Widget::onCommand(int id, int code, LRESULT &lResult)
 {
   return false;
 }
@@ -1381,9 +1397,9 @@ bool Widget::onDrawItem(Graphics &g, LPDRAWITEMSTRUCT lpDrawItem)
 // TODO timer
 // void Widget::addTimer(Timer<Widget> *timer)
 // {
-//   VACA_ASSERT(mHwnd != NULL);
+//   assert(mHWND != NULL);
 //   timer->setID(m_timerIDcount);
-//   SetTimer(mHwnd, m_timerIDcount, timer->getTimeOut(), NULL);
+//   SetTimer(mHWND, m_timerIDcount, timer->getTimeOut(), NULL);
 //   m_timerIDcount++;
 // }
 
@@ -1394,9 +1410,10 @@ bool Widget::onDrawItem(Graphics &g, LPDRAWITEMSTRUCT lpDrawItem)
  */
 void Widget::addChild(Widget *child, bool setParent)
 {
-  VACA_ASSERT(mHwnd != NULL);
-  VACA_ASSERT(child->mHwnd != NULL);
-  VACA_ASSERT(child->mParent == NULL);
+  assert(mHWND != NULL);
+  assert(child != NULL);
+  assert(child->mHWND != NULL);
+  assert(child->mParent == NULL);
 
   mChildren.push_back(child);
 
@@ -1404,7 +1421,7 @@ void Widget::addChild(Widget *child, bool setParent)
 
   if (setParent) {
     child->addStyle(Style(WS_CHILD, 0));
-    ::SetParent(child->mHwnd, mHwnd);
+    ::SetParent(child->mHWND, mHWND);
     // sendMessage(WM_UPDATEUISTATE, UIS_SET..., 0);
   }
 }
@@ -1416,14 +1433,15 @@ void Widget::addChild(Widget *child, bool setParent)
  */
 void Widget::removeChild(Widget *child, bool setParent)
 {
-  VACA_ASSERT(mHwnd != NULL);
-  VACA_ASSERT(child->mHwnd != NULL);
-  VACA_ASSERT(child->mParent == this);
+  assert(mHWND != NULL);
+  assert(child != NULL);
+  assert(child->mHWND != NULL);
+  assert(child->mParent == this);
 
   remove_element_from_container(mChildren, child);
 
   if (setParent) {
-    ::SetParent(child->mHwnd, NULL);
+    ::SetParent(child->mHWND, NULL);
     child->removeStyle(Style(WS_CHILD, 0));
   }
 
@@ -1461,8 +1479,8 @@ Widget::Container Widget::getEnabledSynchronisedGroup()
 // }
 
 /**
- * It creates the HWND (mHwnd) to be used in the Widget. The only way
- * to customize this routine is overloading the Widget::createHwnd()
+ * It creates the HWND (mHWND) to be used in the Widget. The only way
+ * to customize this routine is overloading the Widget::createHWND()
  * method, calling Widget::Widget() with NULL as @c className, and
  * finally calling Widget::create() from the constructor of your own
  * widget class (for example MdiClient::MdiClient()).
@@ -1471,41 +1489,54 @@ Widget::Container Widget::getEnabledSynchronisedGroup()
  * in your own class if you used a NULL className in Widget's
  * constructor).
  *
- * @see dispose, createHwnd, @ref TN002
+ * @see dispose, createHWND, @ref TN002
  */
 void Widget::create(LPCTSTR className, Widget *parent, Style style)
 {
-  VACA_ASSERT(mHwnd == NULL);
-  VACA_ASSERT(parent == NULL || parent->mHwnd != NULL);
+  assert(mHWND == NULL);
+  assert(parent == NULL || parent->mHWND != NULL);
 
-  // create the mHwnd handler
+  // create the HWND handler
   outsideWidgetMutex.lock();
-    VACA_ASSERT(outsideWidget == NULL);
+    assert(outsideWidget == NULL);
 
     outsideWidget = this;
-    mHwnd = createHwnd(className, parent, style);
+    mHWND = createHWND(className, parent, style);
     outsideWidget = NULL;
 
   outsideWidgetMutex.unlock();
 
-  if (mHwnd == NULL)
-    throw CreateHwndException();
+  if (mHWND == NULL)
+    throw CreateHWNDException();
 
-  // set the GWL_WNDPROC to globalWndProc
-  mSuperWndProc = reinterpret_cast<WNDPROC>(SetWindowLongPtr(mHwnd,
-							     GWLP_WNDPROC,
-							     reinterpret_cast<LONG_PTR>(getGlobalWndProc())));
-  if (mSuperWndProc == getGlobalWndProc())
-    mSuperWndProc = NULL;
-
-  // set the GWL_USERDATA
-  LONG_PTR oldData = SetWindowLongPtr(mHwnd, GWL_USERDATA, reinterpret_cast<LONG_PTR>(this));
-  VACA_ASSERT(oldData == 0);
-//   SetProp(mHwnd, VACAPTRATOM, static_cast<HANDLE>(this));
+  subClass();
 
   // add the widget to its parent
   if (parent != NULL)
     parent->addChild(this, false);
+}
+
+void Widget::subClass()
+{
+  assert(mHWND != NULL);
+
+  // set the GWL_WNDPROC to globalWndProc
+  mSuperWndProc = reinterpret_cast<WNDPROC>
+    (SetWindowLongPtr(mHWND,
+		      GWLP_WNDPROC,
+		      reinterpret_cast<LONG_PTR>(getGlobalWndProc())));
+  if (mSuperWndProc == getGlobalWndProc())
+    mSuperWndProc = NULL;
+
+  // box the pointer
+#ifdef USE_PROP
+  SetProp(mHWND, VACAATOM, reinterpret_cast<HANDLE>(this));
+#else
+  LONG_PTR oldData = SetWindowLongPtr(mHWND, GWL_USERDATA, reinterpret_cast<LONG_PTR>(this));
+  assert(oldData == 0);
+#endif
+
+  // TODO get the font from the hwnd
 
   // set the default font of the widget
   setFont(Font::getDefault());
@@ -1520,21 +1551,21 @@ void Widget::create(LPCTSTR className, Widget *parent, Style style)
  *
  * @see create, @ref TN002
  */
-HWND Widget::createHwnd(LPCTSTR className, Widget *parent, Style style)
+HWND Widget::createHWND(LPCTSTR className, Widget *parent, Style style)
 {
   return CreateWindowEx(style.extended, className, _T(""),
 			style.regular,
 			CW_USEDEFAULT, CW_USEDEFAULT,
 			CW_USEDEFAULT, CW_USEDEFAULT,
-			parent ? parent->getHwnd(): (HWND)NULL,
+			parent ? parent->getHWND(): (HWND)NULL,
 			(HMENU)NULL,
-			Application::getHinstance(),
+			Application::getHINSTANCE(),
 			reinterpret_cast<LPVOID>(this));
 }
 
 /**
  * Destroys the HWND. It's virtual because maybe there are other ways
- * to destroy the window (like the MdiChild::destroyHwnd).
+ * to destroy the window (like the MdiChild::destroyHWND).
  *
  * @warning If you override this method, you @b MUST to call dipose()
  *          in your destructor.
@@ -1545,9 +1576,9 @@ HWND Widget::createHwnd(LPCTSTR className, Widget *parent, Style style)
  *
  * @see dispose, onDestroy, @ref TN002
  */
-void Widget::destroyHwnd(HWND hwnd)
+void Widget::destroyHWND(HWND hwnd)
 {
-  DestroyWindow(mHwnd);
+  DestroyWindow(mHWND);
 }
 
 /** 
@@ -1615,15 +1646,18 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResul
   switch (message) {
 
     case WM_ERASEBKGND:
+      // see TN011
       if (mSuperWndProc == NULL) {
 	HDC hdc = reinterpret_cast<HDC>(wParam);
-	{
+	// erase background only in when the widget doesn't use
+	// double-buffering
+	if (!mDoubleBuffering) {
 	  Graphics g(hdc);
 	  g.setColor(getBgColor());
 	  g.fillRect(g.getClipBounds());
 	  // TODO fill only the invalid region
 // 	  RECT rc;
-// 	  if (GetUpdateRect(mHwnd, &rc, FALSE))
+// 	  if (GetUpdateRect(mHWND, &rc, FALSE))
 // 	    g.fillRect(Rect(&rc));
 	}
 	lResult = TRUE;
@@ -1632,16 +1666,16 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResul
       break;
 
     case WM_PAINT:
+      // see TN011
       if (mSuperWndProc == NULL) {
 	PAINTSTRUCT ps;
 	bool painted;
-	HDC hdc = BeginPaint(mHwnd, &ps);
+	HDC hdc = BeginPaint(mHWND, &ps);
 	{
 	  Graphics g(hdc);
-	  onPaint(g);
-	  painted = g.wasPainted();
+	  painted = doPaint(g);
 	}
-	EndPaint(mHwnd, &ps);
+	EndPaint(mHWND, &ps);
 
 	if (painted) {
 	  lResult = TRUE;
@@ -1652,7 +1686,7 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResul
 
     case WM_DRAWITEM: {
       LPDRAWITEMSTRUCT lpDrawItem = (LPDRAWITEMSTRUCT)lParam;
-      Widget *child = Widget::fromHwnd(lpDrawItem->hwndItem);
+      Widget *child = Widget::fromHWND(lpDrawItem->hwndItem);
       HDC hdc = lpDrawItem->hDC;
       bool painted;
       {
@@ -1672,27 +1706,8 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResul
       break;
     }
 
-    case WM_POWERBROADCAST: {
-      switch (wParam) {
-
-	case PBT_APMQUERYSUSPEND:
-	  if (onPowerQuerySuspend((lParam & 1) == 1 ? true: false))
-	    lResult = TRUE;
-	  else
-	    lResult = BROADCAST_QUERY_DENY;
-	  ret = true;
-	  break;
-
-	case PBT_APMQUERYSUSPENDFAILED:
-	  onPowerQuerySuspendFailed();
-	  break;
-
-      }
-      break;
-    }
-
     case WM_SETCURSOR:
-      if (WindowFromPoint(System::getCursorPos()) == mHwnd) {
+      if (WindowFromPoint(System::getCursorPos()) == mHWND) {
 	onSetCursor(LOWORD(lParam));
 	lResult = TRUE;
 	ret = true;
@@ -1712,10 +1727,15 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResul
     case WM_LBUTTONDOWN:
     case WM_RBUTTONDOWN:
     case WM_MBUTTONDOWN: {
-      MouseEvent ev(this, Point(LOWORD(lParam), HIWORD(lParam)), 1,
-		    message == WM_LBUTTONDOWN ? MouseButtons::Left:
-		    message == WM_RBUTTONDOWN ? MouseButtons::Right:
-		    message == WM_MBUTTONDOWN ? MouseButtons::Middle: MouseButtons::None, wParam);
+      MouseEvent
+	ev(this,				           // widget
+	   Point(LOWORD(lParam), HIWORD(lParam)),	   // pt
+	   1,						   // clicks
+	   wParam,					   // flags
+	   message == WM_LBUTTONDOWN ? MouseButtons::Left: // button
+	   message == WM_RBUTTONDOWN ? MouseButtons::Right:
+	   message == WM_MBUTTONDOWN ? MouseButtons::Middle:
+				       MouseButtons::None);
 
       onMouseDown(ev);
       break;
@@ -1724,10 +1744,16 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResul
     case WM_LBUTTONUP:
     case WM_MBUTTONUP:
     case WM_RBUTTONUP: {
-      MouseEvent ev(this, Point(LOWORD(lParam), HIWORD(lParam)), 1,
-		    message == WM_LBUTTONUP ? MouseButtons::Left:
-		    message == WM_RBUTTONUP ? MouseButtons::Right:
-		    message == WM_MBUTTONUP ? MouseButtons::Middle: MouseButtons::None, wParam);
+      MouseEvent
+	ev(this,				         // widget
+	   Point(LOWORD(lParam), HIWORD(lParam)),	 // pt
+	   1,					         // clicks
+	   wParam,					 // flags
+	   message == WM_LBUTTONUP ? MouseButtons::Left: // button
+	   message == WM_RBUTTONUP ? MouseButtons::Right:
+	   message == WM_MBUTTONUP ? MouseButtons::Middle:
+				     MouseButtons::None);
+
       onMouseUp(ev);
       break;
     }
@@ -1735,17 +1761,26 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResul
     case WM_LBUTTONDBLCLK:
     case WM_MBUTTONDBLCLK:
     case WM_RBUTTONDBLCLK: {
-      MouseEvent ev(this, Point(LOWORD(lParam), HIWORD(lParam)), 1,
-		    message == WM_LBUTTONDBLCLK ? MouseButtons::Left:
-		    message == WM_RBUTTONDBLCLK ? MouseButtons::Right:
-		    message == WM_MBUTTONDBLCLK ? MouseButtons::Middle: MouseButtons::None, wParam);
+      MouseEvent
+	ev(this,				             // widget
+	   Point(LOWORD(lParam), HIWORD(lParam)),	     // pt
+	   2,					             // clicks
+	   wParam,				             // flags
+	   message == WM_LBUTTONDBLCLK ? MouseButtons::Left: // button
+	   message == WM_RBUTTONDBLCLK ? MouseButtons::Right:
+	   message == WM_MBUTTONDBLCLK ? MouseButtons::Middle:
+					 MouseButtons::None);
       onDoubleClick(ev);
       break;
     }
 
     case WM_MOUSEMOVE: {
-      MouseEvent ev(this, Point(LOWORD(lParam), HIWORD(lParam)), 1,
-		    MouseButtons::None, wParam);
+      MouseEvent
+	ev(this,				    // widget
+	   Point(LOWORD(lParam), HIWORD(lParam)),   // pt
+	   0,					    // clicks
+	   wParam,				    // flags
+	   MouseButtons::None);			    // button
 
       if (!mHasMouse) {
 	onMouseEnter(ev);
@@ -1754,7 +1789,7 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResul
 	TRACKMOUSEEVENT tme;
 	tme.cbSize = sizeof(TRACKMOUSEEVENT);
 	tme.dwFlags = TME_LEAVE;// | TME_HOVER
-	tme.hwndTrack = mHwnd;
+	tme.hwndTrack = mHWND;
 	_TrackMouseEvent(&tme);
       }
 
@@ -1762,16 +1797,24 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResul
       break;
     }
 
-#ifdef WM_MOUSEWHEEL
+// #ifdef WM_MOUSEWHEEL
     case WM_MOUSEWHEEL: {
-      MouseEvent ev(this, Point(LOWORD(lParam), HIWORD(lParam)), 1,
-		    MouseButtons::None, LOWORD(wParam),
-		    ((short)HIWORD(wParam)) / WHEEL_DELTA);
+      // the lParam specifies the coordinates of the cursor relative
+      // to the screen (not to client area)
+      Point clientOrigin = getAbsoluteClientBounds().getOrigin();
+      MouseEvent
+	ev(this,				   // widget
+	   Point(LOWORD(lParam) - clientOrigin.x,
+		 HIWORD(lParam) - clientOrigin.y), // pt
+	   0,					   // clicks
+	   LOWORD(wParam),			   // flags
+	   MouseButtons::None,			   // button
+	   ((short)HIWORD(wParam)) / WHEEL_DELTA); // delta
+
       onMouseWheel(ev);
-//       sigMouseWheel(ev);
       break;
     }
-#endif
+// #endif
 
 //       // TODO think about this
 //     case WM_MOUSEHOVER: {
@@ -1817,17 +1860,19 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResul
 
     case WM_COMMAND:
       if (reinterpret_cast<HWND>(lParam) != NULL) {
-	// the LOWORD(lParam) is the ID of the control
 	HWND hwndCtrl = reinterpret_cast<HWND>(lParam);
-	Widget *ctrl = Widget::fromHwnd(hwndCtrl);
+	Widget *ctrl = Widget::fromHWND(hwndCtrl);
 	if (ctrl != NULL)
-	  ret = ctrl->onCommand(HIWORD(wParam), lResult);
+	  ret = ctrl->onCommand(LOWORD(wParam), // id
+				HIWORD(wParam), // code
+				lResult);
       }
       // accelerator or a menu
       else if (HIWORD(wParam) == 1 ||
 	       HIWORD(wParam) == 0) {
 	if (onIdAction(LOWORD(wParam))) {
-	  lResult = 0;
+	  // ...onIdAction returns true when processed the command
+	  lResult = 0;		// processed
 	  ret = true;
 	}
       }
@@ -1835,7 +1880,7 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResul
 
     case WM_NOTIFY: {
       LPNMHDR lpnmhdr = reinterpret_cast<LPNMHDR>(lParam);
-      Widget *ctrl = Widget::fromHwnd(lpnmhdr->hwndFrom);
+      Widget *ctrl = Widget::fromHWND(lpnmhdr->hwndFrom);
       if (ctrl != NULL)
 	ret = ctrl->onNotify(lpnmhdr, lResult);
       break;
@@ -1872,7 +1917,7 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResul
 
       // synchronise all enable-state group
       for (Container::iterator it=group.begin(); it!=group.end(); ++it) {
-	HWND hwndChild = (*it)->getHwnd();
+	HWND hwndChild = (*it)->getHWND();
 
 	if (hwndChild != hParam)
 	  EnableWindow(hwndChild, static_cast<BOOL>(wParam));
@@ -1884,13 +1929,13 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResul
     }
 
     case WM_SETFOCUS: {
-      WidgetEvent ev(this);
+      Event ev(this);
       onGotFocus(ev);
       break;
     }
 
     case WM_KILLFOCUS: {
-      WidgetEvent ev(this);
+      Event ev(this);
       onLostFocus(ev);
       break;
     }
@@ -1920,7 +1965,7 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResul
 	// synchronise/repaint all the group
 	for (Container::iterator it=group.begin(); it!=group.end(); ++it) {
 	  Widget *child = *it;
-	  if (child->getHwnd() == hParam) {
+	  if (child->getHWND() == hParam) {
 	    keepActive = true;
 	    syncGroup = false;
 	    break;
@@ -1931,7 +1976,7 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResul
 	if (syncGroup) {
 	  for (Container::iterator it=group.begin(); it!=group.end(); ++it) {
 	    Widget *child = *it;
-	    if ((child->getHwnd() != mHwnd) && (child->getHwnd() != hParam))
+	    if ((child->getHWND() != mHWND) && (child->getHWND() != hParam))
 	      child->sendMessage(WM_NCACTIVATE, keepActive, static_cast<LPARAM>(-1));
 	  }
 	}
@@ -1942,23 +1987,24 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResul
       break;
 
     case WM_CTLCOLORBTN:
+    case WM_CTLCOLORDLG:
     case WM_CTLCOLOREDIT:
     case WM_CTLCOLORLISTBOX:
+    case WM_CTLCOLORMSGBOX:
+    case WM_CTLCOLORSCROLLBAR:
     case WM_CTLCOLORSTATIC: {
       HDC hdc = reinterpret_cast<HDC>(wParam);
       HWND hwndCtrl = reinterpret_cast<HWND>(lParam);
-      Widget *ctrl = Widget::fromHwnd(hwndCtrl);
+      Widget *ctrl = Widget::fromHWND(hwndCtrl);
       if (ctrl != NULL) {
+	COLORREF fgColor = ctrl->getFgColor().getColorRef();
 	COLORREF bgColor = ctrl->getBgColor().getColorRef();
 
-	if (mHbrush != NULL)
-	  DeleteObject(mHbrush);
-
+	SetTextColor(hdc, fgColor);
 	SetBkColor(hdc, bgColor);
-	// SetTextColor(hdc, ...);
 
-	mHbrush = CreateSolidBrush(bgColor);
-	lResult = reinterpret_cast<LRESULT>(mHbrush);
+	HBRUSH hBrush = Graphics::findHBRUSH(BS_SOLID, 0, bgColor);
+	lResult = reinterpret_cast<LRESULT>(hBrush);
 	ret = true;
       }
       break;
@@ -1975,26 +2021,51 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResul
     case WM_VSCROLL:
     case WM_HSCROLL:
       {
-	// TODO use GetScrollInfo for the position of the scroll-bar,
-	//      it's 32bits, the HIWORD(wParam) has a 16bits limit
+	Orientation orientation =
+	  (message == WM_VSCROLL) ? Vertical:
+				    Horizontal;
+	  
+	// Note: onScroll() doesn't receive the nPos=HIWORD(wParam)
+	// because it has a limit of 16-bits.  Instead you should use
+	// GetScrollInfo to get the position of the scroll-bar, it has
+	// the full 32 bits
 	
 	// reflect the message? (it's useful for the "Slider" widget)
 	if (lParam != 0) {
-	  Widget *ctrl = Widget::fromHwnd(reinterpret_cast<HWND>(lParam));
+	  Widget *ctrl = Widget::fromHWND(reinterpret_cast<HWND>(lParam));
 	  if (ctrl != NULL) {
-	    if (message == WM_VSCROLL)
-	      ctrl->onVScroll(LOWORD(wParam), HIWORD(wParam));
-	    else if (message == WM_HSCROLL)
-	      ctrl->onHScroll(LOWORD(wParam), HIWORD(wParam));
+	    ctrl->onScroll(orientation, LOWORD(wParam));
 	  }
 	}
-	
-	if (message == WM_VSCROLL)
-	  onVScroll(LOWORD(wParam), HIWORD(wParam));
-	else if (message == WM_HSCROLL)
-	  onHScroll(LOWORD(wParam), HIWORD(wParam));
+
+	onScroll(orientation, LOWORD(wParam));
       }
       break;
+
+    case WM_DROPFILES: {
+      // TODO
+      // DragQueryPoint(hDrop);
+      HDROP hDrop = reinterpret_cast<HDROP>(wParam);
+      std::vector<String> files;
+      int index, count, length;
+
+      count = DragQueryFile(hDrop, 0xFFFFFFFF, NULL, 0);
+      for (index=0; index<count; ++index) {
+	length = DragQueryFile(hDrop, index, NULL, 0);
+	if (length > 0) {
+	  LPTSTR lpstr = new TCHAR[length+1];
+	  DragQueryFile(hDrop, index, lpstr, length+1);
+	  files.push_back(lpstr);
+	}
+      }
+
+      DragFinish(hDrop);
+
+      // generate the event
+      DropFilesEvent ev(this, files);
+      onDropFiles(ev);
+      break;
+    }
 
   }
 
@@ -2008,9 +2079,62 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResul
 LRESULT Widget::defWndProc(UINT message, WPARAM wParam, LPARAM lParam)
 {
   if (mSuperWndProc != NULL)
-    return CallWindowProc(mSuperWndProc, mHwnd, message, wParam, lParam);
+    return CallWindowProc(mSuperWndProc, mHWND, message, wParam, lParam);
   else
-    return DefWindowProc(mHwnd, message, wParam, lParam);
+    return DefWindowProc(mHWND, message, wParam, lParam);
+}
+
+bool Widget::doPaint(Graphics &g)
+{
+  bool painted = false;
+
+  // use double buffering?
+  if (mDoubleBuffering) {
+    // get the clip bounds
+    Rect clipBounds = g.getClipBounds();
+    // isn't it empty?
+    if (!clipBounds.isEmpty()) {
+      // create the image for double-buffering (of the size of
+      // the clipping bounds)
+      Image image(g, clipBounds.getSize());
+      // get the Graphics to draw in the image
+      Graphics &g2(image.getGraphics());
+
+      // special coordinates transformation (to make
+      // transparent the "g2" to onPaint)
+      SetViewportOrgEx(g2.getHDC(), -clipBounds.x, -clipBounds.y, NULL);
+
+      // clear the background of the image
+      g2.setColor(getBgColor());
+      g2.fillRect(clipBounds);
+
+      // configure defaults
+      g2.setFont(getFont());
+      g2.setColor(getFgColor());
+      
+      // paint on g2
+      onPaint(g2);
+      painted = g2.wasPainted();
+
+      // restore the viewport origin (so drawImage works fine)
+      SetViewportOrgEx(g2.getHDC(), 0, 0, NULL);
+
+      // bit transfer from image to graphics device
+      g.drawImage(image, clipBounds.getOrigin());
+    }
+  }
+  // draw directly to the screen
+  else {
+    // configure defaults
+    g.setFont(getFont());
+    g.setColor(getFgColor());
+
+    // paint on g
+    onPaint(g);
+    painted = g.wasPainted();
+  }
+
+  return painted;
 }
 
 bool Widget::preTranslateMessage(MSG &msg)
@@ -2032,8 +2156,8 @@ bool Widget::preTranslateMessage(MSG &msg)
  */
 LRESULT Widget::sendMessage(UINT message, WPARAM wParam, LPARAM lParam)
 {
-  VACA_ASSERT(mHwnd != NULL);
-  return ::SendMessage(mHwnd, message, wParam, lParam);
+  assert(mHWND != NULL);
+  return ::SendMessage(mHWND, message, wParam, lParam);
 }
 
 bool Widget::isDisposedAscendent()
@@ -2078,11 +2202,11 @@ void Widget::dispose()
 /**
  * The global procedure for Win32 used in all registered WNDCLASSes.
  * It's unique goal is to get the Widget pointer from HWND userdata
- * using Widget::fromHwnd, and to call its wndProc method.
+ * using Widget::fromHWND, and to call its wndProc method.
  */
 LRESULT CALLBACK Widget::globalWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-  Widget *widget = Widget::fromHwnd(hwnd);
+  Widget *widget = Widget::fromHWND(hwnd);
 
 #ifdef REPORT_MESSAGES
   String preString =
@@ -2293,7 +2417,7 @@ LRESULT CALLBACK Widget::globalWndProc(HWND hwnd, UINT message, WPARAM wParam, L
     widget->mLparam = lParam;
 
     // AfterEvent must be empty
-//     VACA_ASSERT(widget->AfterEvent.empty());
+//     assert(widget->AfterEvent.empty());
 
     // call the wndProc() only if the widget isn't disposed
     if (!widget->mDisposed)   // TODO we need isDisposedAscendent()???
@@ -2328,7 +2452,7 @@ LRESULT CALLBACK Widget::globalWndProc(HWND hwnd, UINT message, WPARAM wParam, L
     outsideWidgetMutex.unlock();
 
     if (widget != NULL) {
-      widget->mHwnd = hwnd;
+      widget->mHWND = hwnd;
       return widget->defWndProc(message, wParam, lParam);
     }
   }

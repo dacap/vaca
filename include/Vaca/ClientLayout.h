@@ -49,7 +49,7 @@ public:
   ClientLayout();
 
 //   virtual Size minimumSize(Widget *parent, Widget::Container &widgets);
-  virtual Size preferredSize(Widget *parent, Widget::Container &widgets, const Size &fitIn);
+  virtual Size getPreferredSize(Widget *parent, Widget::Container &widgets, const Size &fitIn);
 //   virtual Size maximumSize(Widget *parent, Widget::Container &widgets);
 
   virtual void layout(Widget *parent, Widget::Container &widgets, const Rect &rc);

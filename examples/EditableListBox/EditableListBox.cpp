@@ -29,7 +29,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/Vaca.h"
+#include <Vaca/Vaca.h>
 
 using namespace Vaca;
 
@@ -38,15 +38,15 @@ using namespace Vaca;
 
 class EditableListBox : public ListBox
 {
-  Edit *mEdit;
-  int mEditingItem;
+  Edit *m_edit;
+  int m_editingItem;
 
 public:
 
   EditableListBox(Widget *parent)
     : ListBox(parent)
-    , mEdit(NULL)
   {
+    m_edit = NULL;
   }
 
 protected:
@@ -66,15 +66,14 @@ protected:
 
   virtual void onBeforePosChange()
   {
-    if (mEdit != NULL)
-      delete endEdit();
+    if (m_edit != NULL)
+      endEdit();
   }
 
   virtual void onScroll(Orientation orientation, int code)
   {
-//     if (orientation == Vertical)
-    if (mEdit != NULL)
-      delete endEdit();
+    if (m_edit != NULL)
+      endEdit();
   }
 
 private:
@@ -87,39 +86,38 @@ private:
 
   void onEditLostFocus()
   {
-    if (mEdit != NULL)
-      endEdit()->deleteAfterEvent();
+    if (m_edit != NULL)
+      endEdit();
   }
 
   void beginEdit(int index)
   {
-    if (index >= 0 && mEdit == NULL) {
+    if (index >= 0 && m_edit == NULL) {
       // create an Edit widget without client-edge
-      mEdit = new Edit(getItemText(index), this, EditStyle - ClientEdgeStyle);
-      mEdit->KeyDown.connect(Bind(&EditableListBox::onEditKeyDown, this));
-      mEdit->LostFocus.connect(Bind(&EditableListBox::onEditLostFocus, this));
-      mEdit->selectAll();
-      mEdit->focus();
+      m_edit = new Edit(getItemText(index), this, EditStyle - ClientEdgeStyle);
+      m_edit->KeyDown.connect(Bind(&EditableListBox::onEditKeyDown, this));
+      m_edit->LostFocus.connect(Bind(&EditableListBox::onEditLostFocus, this));
+      m_edit->selectAll();
+      m_edit->acquireFocus();
 
-      mEditingItem = index;
+      m_editingItem = index;
 
       layoutEdit();
     }
   }
 
-  Edit *endEdit()
+  void endEdit()
   {
-    setItemText(mEditingItem, mEdit->getText());
+    setItemText(m_editingItem, m_edit->getText());
 
-    Edit *widget = mEdit;
-    mEdit = NULL;
-    return widget;
+    delete_widget(m_edit);
+    m_edit = NULL;
   }
 
   void layoutEdit()
   {
-    if (mEdit != NULL)
-      mEdit->setBounds(getItemBounds(mEditingItem));
+    if (m_edit != NULL)
+      m_edit->setBounds(getItemBounds(m_editingItem));
   }
 
 };
@@ -129,55 +127,55 @@ private:
 
 class MainFrame : public Frame
 {
-  EditableListBox mListBox;
-  Panel mBottomPanel;
-  Button mAddButton;
-  Button mRemoveButton;
-  int mCounter;
+  EditableListBox m_listBox;
+  Panel m_bottomPanel;
+  Button m_addButton;
+  Button m_removeButton;
+  int m_counter;
 
 public:
 
   MainFrame()
     : Frame("EditableListBox")
-    , mListBox(this)
-    , mBottomPanel(this)
-    , mAddButton("Add", &mBottomPanel)
-    , mRemoveButton("Remove", &mBottomPanel)
-    , mCounter(0)
+    , m_listBox(this)
+    , m_bottomPanel(this)
+    , m_addButton("Add", &m_bottomPanel)
+    , m_removeButton("Remove", &m_bottomPanel)
+    , m_counter(0)
   {
     setLayout(new BoxLayout(Vertical, false)); // no-homogeneous
-    mListBox.setConstraint(new BoxConstraint(true)); // expansive
-    mBottomPanel.setLayout(new BoxLayout(Horizontal, true, 0)); // homogeneous, border=0
+    m_listBox.setConstraint(new BoxConstraint(true)); // expansive
+    m_bottomPanel.setLayout(new BoxLayout(Horizontal, true, 0)); // homogeneous, border=0
 
     for (int c=0; c<10; c++)
       onAdd();
 
-    mAddButton.Action.connect(Bind(&MainFrame::onAdd, this));
-    mRemoveButton.Action.connect(Bind(&MainFrame::onRemove, this));
+    m_addButton.Action.connect(Bind(&MainFrame::onAdd, this));
+    m_removeButton.Action.connect(Bind(&MainFrame::onRemove, this));
 
-    setSize(preferredSize());
+    setSize(getPreferredSize());
   }
 
 private:
 
   void onAdd()
   {
-    int index = mListBox.addItem("Item number "+String::fromInt(++mCounter));
-    mListBox.setCurrentItem(index);
-    mListBox.focus();
+    int index = m_listBox.addItem("Item number "+String::fromInt(++m_counter));
+    m_listBox.setCurrentItem(index);
+    m_listBox.acquireFocus();
   }
 
   void onRemove()
   {
-    int index = mListBox.getCurrentItem();
+    int index = m_listBox.getCurrentItem();
     if (index >= 0)
-      mListBox.removeItem(mListBox.getCurrentItem());
+      m_listBox.removeItem(m_listBox.getCurrentItem());
 
-    mListBox.setCurrentItem(index);
-    if (mListBox.getCurrentItem() < 0)
-      mListBox.setCurrentItem(mListBox.getItemCount()-1);
+    m_listBox.setCurrentItem(index);
+    if (m_listBox.getCurrentItem() < 0)
+      m_listBox.setCurrentItem(m_listBox.getItemCount()-1);
 
-    mListBox.focus();
+    m_listBox.acquireFocus();
   }
 
 };
@@ -186,10 +184,10 @@ private:
 
 class Example : public Application
 {
-  MainFrame mMainWnd;
+  MainFrame m_mainFrame;
 public:
   virtual void main(std::vector<String> args) {
-    mMainWnd.setVisible(true);
+    m_mainFrame.setVisible(true);
   }
 };
 

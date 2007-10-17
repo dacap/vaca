@@ -39,71 +39,71 @@ using namespace Vaca;
 
 Spinner::Spinner(Widget *parent, Style spinStyle, Style style)
   : Widget(SpinnerClass::getClassName(), parent, style)
-  , mEdit("", this)
-  , mSpin(this, spinStyle)
+  , m_edit("", this)
+  , m_spin(this, spinStyle)
 {
-  mSpin.setBuddy(&mEdit);
+  m_spin.setBuddy(&m_edit);
 }
 
 Spinner::Spinner(int minValue, int maxValue, int posValue,
 		 Widget *parent, Style spinStyle, Style style)
   : Widget(SpinnerClass::getClassName(), parent, style)
-  , mEdit("", this)
-  , mSpin(minValue, maxValue, posValue, this, spinStyle)
+  , m_edit("", this)
+  , m_spin(minValue, maxValue, posValue, this, spinStyle)
 {
-  mSpin.setBuddy(&mEdit);
+  m_spin.setBuddy(&m_edit);
 }
 
 Spinner::~Spinner()
 {
 }
 
-Size Spinner::preferredSize()
-{
-  Size edit(mEdit.preferredSize());
-  Size spin(mSpin.preferredSize());
-  return Size(edit.w - 2 + spin.w,
-	      VACA_MAX(edit.h, spin.h));
-}
+// Size Spinner::preferredSize()
+// {
+//   Size edit(m_edit.preferredSize());
+//   Size spin(m_spin.preferredSize());
+//   return Size(edit.w - 2 + spin.w,
+// 	      VACA_MAX(edit.h, spin.h));
+// }
 
 Edit &Spinner::getEdit()
 {
-  return mEdit;
+  return m_edit;
 }
 
 SpinButton &Spinner::getSpinButton()
 {
-  return mSpin;
+  return m_spin;
 }
 
 int Spinner::getMinimum()
 {
-  return mSpin.getMinimum();
+  return m_spin.getMinimum();
 }
 
 int Spinner::getMaximum()
 {
-  return mSpin.getMaximum();
+  return m_spin.getMaximum();
 }
 
 void Spinner::getRange(int &minValue, int &maxValue)
 {
-  mSpin.getRange(minValue, maxValue);
+  m_spin.getRange(minValue, maxValue);
 }
 
 void Spinner::setRange(int minValue, int maxValue)
 {
-  mSpin.setRange(minValue, maxValue);
+  m_spin.setRange(minValue, maxValue);
 }
 
 int Spinner::getValue()
 {
-  return mSpin.getValue();
+  return m_spin.getValue();
 }
 
 void Spinner::setValue(int posValue)
 {
-  mSpin.setValue(posValue);
+  m_spin.setValue(posValue);
 }
 
 /**
@@ -111,7 +111,7 @@ void Spinner::setValue(int posValue)
  */
 int Spinner::getBase()
 {
-  return mSpin.getBase();
+  return m_spin.getBase();
 }
 
 /**
@@ -120,21 +120,30 @@ int Spinner::getBase()
  */
 void Spinner::setBase(int base)
 {
-  mSpin.setBase(base);
+  m_spin.setBase(base);
 }
 
 void Spinner::layout()
 {
-  Rect bounds(getLayoutBounds());
-  Size spin(mSpin.preferredSize());
+  Rect bounds = getLayoutBounds();
+  Size spin = m_spin.getPreferredSize();
 
-  mEdit.setBounds(Rect(bounds.x,
+  m_edit.setBounds(Rect(bounds.x,
 		       bounds.y,
 		       bounds.w-spin.w+2,
 		       bounds.h));
 
-  mSpin.setBounds(Rect(bounds.x+bounds.w-spin.w,
+  m_spin.setBounds(Rect(bounds.x+bounds.w-spin.w,
 		       bounds.y,
 		       spin.w,
 		       bounds.h));
+}
+
+void Spinner::onPreferredSize(Size &sz)
+{
+  Size edit(m_edit.getPreferredSize());
+  Size spin(m_spin.getPreferredSize());
+
+  sz = Size(edit.w - 2 + spin.w,
+	    VACA_MAX(edit.h, spin.h));
 }

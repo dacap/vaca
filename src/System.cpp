@@ -193,7 +193,7 @@ void System::getImageList(ImageList &imageList, bool smallImage)
 				 SHGFI_LARGEICON)));
 
   if (himl != NULL)
-    imageList.assign(himl, false); // don't auto-delete
+    imageList.assign(himl, SelfDestruction(false));
 }
 
 int System::getFileImageIndex(const String &fileName, bool smallImage)
@@ -235,7 +235,7 @@ Rect System::getWorkAreaBounds()
 }
 
 /**
- * Returns color from the system. It's a wrapper for the GetSysColor
+ * Returns color from the system. It's a wrapper for the Win32's GetSysColor.
  *
  * @param sysColor Can be a constant like COLOR_3DFACE
  */
@@ -317,8 +317,8 @@ String System::getFriendlyUserName()
 
 int System::getOS()
 {
-  static OS::Type cached = OS::Unknown;
   static Mutex mutex;
+  static OS::Type cached = OS::Unknown;
 
   ScopedLock lock(mutex);
 

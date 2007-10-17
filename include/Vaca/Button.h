@@ -38,12 +38,13 @@ namespace Vaca {
 
 /**
  * Default style for Button: a visible child (ChildVisible), with tab
- * stop (TabStopStyle), and BS_PUSHBUTTON.
+ * stop (FocusableStyle), and BS_PUSHBUTTON.
  */
-#define ButtonStyle		(ChildStyle + TabStopStyle + Style(BS_PUSHBUTTON, 0))
+#define ButtonStyle		(ChildStyle + FocusableStyle + Style(BS_PUSHBUTTON, 0))
 
 /**
- * Handles a pusheable button.
+ * Handles a pusheable button. These are the more common buttons, like
+ * "OK" or "Cancel".
  */
 class VACA_DLL Button : public ButtonBase
 {
@@ -52,6 +53,7 @@ public:
   Button(const String &text, Widget *parent, Style style = ButtonStyle);
   virtual ~Button();
 
+  bool isDefault();
   void setDefault(bool state);
 
 };

@@ -1,3 +1,44 @@
+Important note about static version
+----------------------------------------------------------------------
+
+When compile the static version of the library, remember to use the
+-DVACA_STATIC=1 flag in your compiler to avoid using the DLL imports
+routines.
+
+
+How to compile Vaca manually?
+----------------------------------------------------------------------
+
+(Imagining that you decompressed the Vaca.zip in the "Vaca/" directory)
+
+To compile the source code with your compiler you should:
+* First of all compile boost 1.33.1 (this is the hard part :)
+* After that, you have to compile the Vaca sources using some
+  special flags:
+  - because Vaca uses dynamic_cast, compile using Run-Time Type
+    information, there are some compilers that doesn't need flags
+    by default (like GCC), but Visual C++ needs the /GR flag;
+  - make the boost root directory as a include-path (e.g. -Ic:/boost_1_33_1),
+    to access the <boost/*.hpp> files;
+  - put the "Vaca/include/" directory in the include-paths list, to access
+    the "Vaca/*.h" files;
+  - put the "Vaca/" directory in the include-paths list, to access "stdvaca.h";
+  - you must to define some constants:
+    * -DVACA_SRC (the most important one, all the source code of Vaca
+      library must be compiled using this flag, the examples and
+      applications must be compiled without this flag)
+    * -DVACA_STATIC when you don't want to use the DLL, and you just want to
+      to use the static library
+    * -DWINVER=0x0500
+    * -D_WIN32_IE=0x0500
+    * -D_WIN32_WINNT=0x0500
+    * -DUNICODE and -D_UNICODE to add Unicode support
+    * -D_DEBUG when you want debug information
+    * -DNDEBUG when you don't want debug information
+  - finally compile all the *.cpp using that flags and put all the
+    objects files (.o .obj) in a library file (.lib .a).
+
+
 Visual C++ 7.1
 ----------------------------------------------------------------------
 
@@ -16,7 +57,15 @@ your requirements:
   BOOSTDIR = c:/boost_1_33_1
   BOOSTLIBS = ...
 
+  (you can use an enviroment variable for BOOSTDIR)
+
 In the future will be a better solution (maybe a Jamfile)
+
+You can use:
+
+  make [DEBUG=1] [STATIC=1] [PROFILE=1] [UNICODE=1]
+
+To compile a specific variant of Vaca library.
 
 
 Scintilla

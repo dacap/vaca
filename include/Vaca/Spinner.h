@@ -41,10 +41,12 @@
 
 namespace Vaca {
 
-#define SpinnerStyle		(ChildStyle +				\
-				 ClipChildrenStyle +			\
-				 Style(0, WS_EX_CONTROLPARENT))
+#define SpinnerStyle		(ChildStyle +		\
+				 ContainerStyle)
 
+/**
+ * Win32 class used by the Spinner class.
+ */
 class SpinnerClass : public WidgetClass
 {
 public:
@@ -59,8 +61,8 @@ public:
  */
 class VACA_DLL Spinner : public Register<SpinnerClass>, public Widget
 {
-  Edit mEdit;
-  SpinButton mSpin;
+  Edit m_edit;
+  SpinButton m_spin;
   
 public:
 
@@ -73,7 +75,7 @@ public:
 	  Style style = SpinnerStyle);
   virtual ~Spinner();
 
-  virtual Size preferredSize();
+//   virtual Size preferredSize();
 
   Edit &getEdit();
   SpinButton &getSpinButton();
@@ -90,6 +92,11 @@ public:
   void setBase(int base);
 
   virtual void layout();
+
+protected:
+
+  // events
+  virtual void onPreferredSize(Size &sz);
   
 };
 

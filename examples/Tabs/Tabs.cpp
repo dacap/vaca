@@ -29,162 +29,160 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/Vaca.h"
+#include <Vaca/Vaca.h>
 
 using namespace Vaca;
 
 class MainFrame : public Frame
 {
-  MenuBar mMenuBar;
-  Menu mAppMenu;
-  Menu mOptionsMenu;
-  Menu mSideMenu;
-  TabBase mTab;
-  Label mLabelHere;
-  Label mLabelLast;
-  LinkLabel mLabel0;
-  LinkLabel mLabel1;
-  LinkLabel mLabel2;
-  LinkLabel mLabel3;
-  Font mTabFont;
+  TabBase m_tab;
+  Label m_labelHere;
+  Label m_labelLast;
+  LinkLabel m_label0;
+  LinkLabel m_label1;
+  LinkLabel m_label2;
+  LinkLabel m_label3;
+  Font m_tabFont;
 
 public:
 
   MainFrame()
     : Frame("Tabs")
-    , mAppMenu("&Tabs")
-    , mOptionsMenu("&Options")
-    , mSideMenu("&Side")
-    , mTab(this)
-    , mLabelHere("", &mTab)
-    , mLabelLast("Start", &mTab)
-    , mLabel0("Go to page0", &mTab)
-    , mLabel1("Go to page1", &mTab)
-    , mLabel2("Go to page2", &mTab)
-    , mLabel3("Go to page3", &mTab)
-    , mTabFont(Font::getDefault())
+    , m_tab(this)
+    , m_labelHere("", &m_tab)
+    , m_labelLast("Start", &m_tab)
+    , m_label0("Go to page0", &m_tab)
+    , m_label1("Go to page1", &m_tab)
+    , m_label2("Go to page2", &m_tab)
+    , m_label3("Go to page3", &m_tab)
+    , m_tabFont(*Font::getDefault())
   {
-    initializeMenuBar();
-    setMenuBar(&mMenuBar);
+    setMenuBar(createMenuBar());
     setLayout(new ClientLayout);
 
-    // mTab
-    mTab.setLayout(new BoxLayout(Vertical, false));
+    // m_tab
+    m_tab.setLayout(new BoxLayout(Vertical, false));
 
-    mTab.addPage("Page0");
-    mTab.addPage("Page1");
-    mTab.addPage("Page2");
-    mTab.addPage("Page3");
+    m_tab.addPage("Page0");
+    m_tab.addPage("Page1");
+    m_tab.addPage("Page2");
+    m_tab.addPage("Page3");
 
-    mTab.PageChange.connect(Bind(&MainFrame::onPageChange, this));
+    m_tab.PageChange.connect(Bind(&MainFrame::onPageChange, this));
 
     // labels
-    mLabel0.Action.connect(Bind(&MainFrame::onPageLink, this, 0));
-    mLabel1.Action.connect(Bind(&MainFrame::onPageLink, this, 1));
-    mLabel2.Action.connect(Bind(&MainFrame::onPageLink, this, 2));
-    mLabel3.Action.connect(Bind(&MainFrame::onPageLink, this, 3));
+    m_label0.Action.connect(Bind(&MainFrame::onPageLink, this, 0));
+    m_label1.Action.connect(Bind(&MainFrame::onPageLink, this, 1));
+    m_label2.Action.connect(Bind(&MainFrame::onPageLink, this, 2));
+    m_label3.Action.connect(Bind(&MainFrame::onPageLink, this, 3));
 
     updatePage();
 
-    setSize(256, preferredSize().h);
+    setSize(256, getPreferredSize().h);
   }
 
 private:
 
-  void initializeMenuBar()
+  MenuBar *createMenuBar()
   {
+    MenuBar *menuBar  = new MenuBar();
+    Menu *appMenu     = new Menu("&Tabs");
+    Menu *optionsMenu = new Menu("&Options");
+    Menu *sideMenu    = new Menu("&Side");
     MenuItem *menuItem;
 
     // Tabs/Exit
-    menuItem = mAppMenu.add("E&xit");
-    menuItem->Action.connect(Bind(&MainFrame::dispose, this));
+    menuItem = appMenu->add("E&xit");
+    menuItem->Action.connect(Bind(&MainFrame::setVisible, this, false));
 
     // Options/Change Font
-    menuItem = mOptionsMenu.add("Change &Font");
+    menuItem = optionsMenu->add("Change &Font");
     menuItem->Action.connect(Bind(&MainFrame::onChangeFont, this));
 
     // Options/Multiline
-    menuItem = mOptionsMenu.add("&Multiline");
+    menuItem = optionsMenu->add("&Multiline");
     menuItem->Action.connect(Bind(&MainFrame::onMultiline, this));
     menuItem->Update.connect(Bind(&MainFrame::onUpdateMultiline, this));
 
     // Options/Side
-    mOptionsMenu.add(&mSideMenu);
+    optionsMenu->add(sideMenu);
 
     // Options/Side/Top
-    menuItem = mSideMenu.add("&Top");
-    menuItem->Action.connect(Bind(&Tab::setSide, &mTab, TopSide));
+    menuItem = sideMenu->add("&Top");
+    menuItem->Action.connect(Bind(&Tab::setSide, &m_tab, TopSide));
     menuItem->Update.connect(Bind(&MainFrame::onUpdateSide, this, TopSide, boost::arg<1>()));
 
     // Options/Side/Left
-    menuItem = mSideMenu.add("&Left");
-    menuItem->Action.connect(Bind(&Tab::setSide, &mTab, LeftSide));
+    menuItem = sideMenu->add("&Left");
+    menuItem->Action.connect(Bind(&Tab::setSide, &m_tab, LeftSide));
     menuItem->Update.connect(Bind(&MainFrame::onUpdateSide, this, LeftSide, boost::arg<1>()));
 
     // Options/Side/Bottom
-    menuItem = mSideMenu.add("&Bottom");
-    menuItem->Action.connect(Bind(&Tab::setSide, &mTab, BottomSide));
+    menuItem = sideMenu->add("&Bottom");
+    menuItem->Action.connect(Bind(&Tab::setSide, &m_tab, BottomSide));
     menuItem->Update.connect(Bind(&MainFrame::onUpdateSide, this, BottomSide, boost::arg<1>()));
 
     // Options/Side/Right
-    menuItem = mSideMenu.add("&Right");
-    menuItem->Action.connect(Bind(&Tab::setSide, &mTab, RightSide));
+    menuItem = sideMenu->add("&Right");
+    menuItem->Action.connect(Bind(&Tab::setSide, &m_tab, RightSide));
     menuItem->Update.connect(Bind(&MainFrame::onUpdateSide, this, RightSide, boost::arg<1>()));
 
     // Menu bar
-    mMenuBar.add(&mAppMenu);
-    mMenuBar.add(&mOptionsMenu);
-    mMenuBar.add("&Read me")->
+    menuBar->add(appMenu);
+    menuBar->add(optionsMenu);
+    menuBar->add("&Read me")->
       Action.connect(Bind(&MainFrame::msgBox, this,
 			  "A Tab widget with pages in Left or Right sides\n"
 			  "must be Multiline. Also, when you use themes on\n"
 			  "WinXP, you can't use Left or Right sides at all.\n",
 			  "Win32 Limitation", MB_OK));
+    
+    return menuBar;
   }
 
   void onChangeFont()
   {
-    FontDialog dialog(mTabFont, this);
+    FontDialog dialog(&m_tabFont, this);
     if (dialog.doModal()) {
-      mTab.setFont(mTabFont);
-      mTab.invalidate(true);
+      m_tab.setFont(&m_tabFont);
+      m_tab.invalidate(true);
     }
   }
 
   void onMultiline()
   {
-    mTab.setMultiline(!mTab.isMultiline());
+    m_tab.setMultiline(!m_tab.isMultiline());
   }
 
   void onUpdateMultiline(MenuItemEvent &ev)
   {
-    ev.getMenuItem()->setChecked(mTab.isMultiline());
-    ev.getMenuItem()->setEnabled(mTab.getSide() != LeftSide &&
-				 mTab.getSide() != RightSide);
+    ev.getMenuItem()->setChecked(m_tab.isMultiline());
+    ev.getMenuItem()->setEnabled(m_tab.getSide() != LeftSide &&
+				 m_tab.getSide() != RightSide);
   }
 
   void onUpdateSide(Side side, MenuItemEvent &ev)
   {
-    ev.getMenuItem()->setRadio(mTab.getSide() == side);
+    ev.getMenuItem()->setRadio(m_tab.getSide() == side);
   }
 
   void onPageLink(int page)
   {
-    mTab.setActivePage(page);
+    m_tab.setActivePage(page);
     updatePage();
   }
 
   void onPageChange()
   {
     updatePage();
-    mLabelLast.setText("Last selected " + mTab.getPageText(mTab.getActivePage()));
+    m_labelLast.setText("Last selected " + m_tab.getPageText(m_tab.getActivePage()));
   }
 
 private:
 
   void updatePage()
   {
-    mLabelHere.setText("We are in " + mTab.getPageText(mTab.getActivePage()));
+    m_labelHere.setText("We are in " + m_tab.getPageText(m_tab.getActivePage()));
   }
 
 };
@@ -193,10 +191,10 @@ private:
 
 class Example : public Application
 {
-  MainFrame mMainWnd;
+  MainFrame m_mainFrame;
 public:
   virtual void main(std::vector<String> args) {
-    mMainWnd.setVisible(true);
+    m_mainFrame.setVisible(true);
   }
 };
 

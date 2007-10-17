@@ -63,7 +63,7 @@ ProgressBar::~ProgressBar()
  */
 void ProgressBar::setBgColor(Color color)
 {
-  assert(getHWND() != NULL);
+  assert(::IsWindow(getHWND()));
 
   Widget::setBgColor(color);
   sendMessage(PBM_SETBKCOLOR, 0, color.getColorRef());
@@ -73,11 +73,11 @@ void ProgressBar::setBgColor(Color color)
 // {
 // }
 
-Size ProgressBar::preferredSize()
-{
-  // WinXP with themes needs at least 10 pixels of height
-  return Size(16, 16);
-}
+// Size ProgressBar::preferredSize()
+// {
+//   // WinXP with themes needs at least 10 pixels of height
+//   return Size(16, 16);
+// }
 
 int ProgressBar::getMinimum()
 {
@@ -135,4 +135,10 @@ void ProgressBar::setValue(int value)
 void ProgressBar::addValue(int delta)
 {
   sendMessage(PBM_DELTAPOS, delta, 0);
+}
+
+void ProgressBar::onPreferredSize(Size &sz)
+{
+  // WinXP with themes needs at least 10 pixels of height
+  sz = Size(16, 16);
 }

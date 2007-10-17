@@ -45,6 +45,11 @@ Button::~Button()
 {
 }
 
+bool Button::isDefault()
+{
+  return (getStyle().regular & BS_DEFPUSHBUTTON) != 0;
+}
+
 void Button::setDefault(bool state)
 {
   if (state) {

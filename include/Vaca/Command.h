@@ -43,10 +43,10 @@ class Event;
 
 class VACA_DLL CommandState
 {
-  String *mText;
-  bool *mEnabled;
-  bool *mChecked;
-  bool *mRadio;
+  String *m_text;
+  bool *m_enabled;
+  bool *m_checked;
+  bool *m_radio;
 
 public:
 

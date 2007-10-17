@@ -46,7 +46,7 @@ namespace Vaca {
 
 #define FlatToolSetStyle (Style(TBSTYLE_FLAT, 0))
 
-#define ToolBarStyle	ChildStyle
+#define ToolBarStyle	DockBarStyle
 
 class ImageList;
 
@@ -60,15 +60,15 @@ class ImageList;
  */
 class VACA_DLL ToolSet : public Widget
 {
-  std::vector<Size> mPreferredSizes;
-  HIMAGELIST mLoadedImageList;
+  std::vector<Size> m_preferredSizes;
+  HIMAGELIST m_loadedImageList;
 
 public:
 
   ToolSet(Widget *parent, Style style = ToolSetStyle);
   virtual ~ToolSet();
 
-  virtual Size preferredSize();
+//   virtual Size preferredSize();
 //   virtual Size preferredSize(const Size &fitIn);
 
   int getButtonCount();
@@ -93,6 +93,8 @@ public:
   void updatePreferredSizes();
 
 protected:
+  // events
+  virtual void onPreferredSize(Size &sz);
   // reflection
   virtual bool onCommand(int id, int code, LRESULT &lResult);
 //   virtual void onMouseDown(MouseEvent &ev);

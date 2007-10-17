@@ -85,15 +85,15 @@ int RadioGroup::radioGroupCounter = 0;
 
 RadioGroup::RadioGroup()
 {
-  mGroupId = ++RadioGroup::radioGroupCounter;
+  m_groupId = ++RadioGroup::radioGroupCounter;
 }
 
 RadioGroup::RadioGroup(const RadioGroup &group)
 {
-  mGroupId = group.mGroupId;
+  m_groupId = group.m_groupId;
 }
 
 bool RadioGroup::operator==(const RadioGroup &other) const
 {
-  return mGroupId == other.mGroupId;
+  return m_groupId == other.m_groupId;
 }

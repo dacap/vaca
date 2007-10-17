@@ -35,17 +35,29 @@
 
 using namespace Vaca;
 
+/**
+ * Creates the event.
+ * 
+ * @param widget Source of the event.
+ * @param files The list of dropped files.
+ */
 DropFilesEvent::DropFilesEvent(Widget *widget, std::vector<String> &files)
   : Event(widget)
-  , mFiles(files)
+  , m_files(files)
 {
 }
 
+/**
+ * Destroys the event.
+ */
 DropFilesEvent::~DropFilesEvent()
 {
 }
 
+/**
+ * @return The list of dropped files.
+ */
 std::vector<String> DropFilesEvent::getFiles()
 {
-  return mFiles;
+  return m_files;
 }

@@ -41,13 +41,13 @@ namespace Vaca {
 class Widget;
 
 /**
- * A common dialog box to find text.
+ * A common dialog box to find (or replace) text.
  */
 class VACA_DLL FindTextDialog : public Dialog
 {
-  bool mReplace;
-  UINT mFindMsgId;
-  FINDREPLACE mFindReplace;
+  bool m_replace;
+  UINT m_findMsgId;
+  FINDREPLACE m_findReplace;
 
 public:
 

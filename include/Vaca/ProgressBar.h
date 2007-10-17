@@ -52,7 +52,7 @@ public:
 
   virtual void setBgColor(Color color);
 
-  virtual Size preferredSize();
+//   virtual Size preferredSize();
 
   int getMinimum();
   int getMaximum();
@@ -62,6 +62,10 @@ public:
   int getValue();
   void setValue(int value);
   void addValue(int delta);
+
+protected:
+  // events
+  virtual void onPreferredSize(Size &sz);
   
 };
 

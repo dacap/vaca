@@ -37,8 +37,9 @@
 namespace Vaca {
 
 /**
- * A Widget style: it is a pair of values: regular style (a set of @c WS_
- * values) and extended style (a set of @c WS_EX_ values).
+ * A Widget style: it is a pair of values: regular style (a set of
+ * Win32 @c WS_ values) and extended style (a set of Win32 @c WS_EX_
+ * values).
  *
  * You can add and substract styles with the + and - operators.
  *

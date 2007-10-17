@@ -157,12 +157,31 @@ std::vector<int> ListBox::getSelectedItems()
 {
   std::vector<int> items;
   int count = sendMessage(LB_GETSELITEMS, 0, 0);
+
+  // TODO
+  
   return items;
 }
 
-Size ListBox::preferredSize()
+// Size ListBox::preferredSize()
+// {
+//   Size sz(4, 4);		// TODO HTHEME stuff
+//   int i, n = getItemCount();
+//   Rect rc;
+
+//   for (i=0; i<n; ++i) {
+//     rc = getItemBounds(i);
+//     sz = Size(VACA_MAX(sz.w, rc.w), sz.h+rc.h);
+//   }
+
+//   return sz;
+// }
+
+void ListBox::onPreferredSize(Size &sz)
 {
-  Size sz(4, 4);		// TODO HTHEME stuff
+  // TODO HTHEME stuff
+  sz = Size(4, 4);
+  
   int i, n = getItemCount();
   Rect rc;
 
@@ -170,8 +189,6 @@ Size ListBox::preferredSize()
     rc = getItemBounds(i);
     sz = Size(VACA_MAX(sz.w, rc.w), sz.h+rc.h);
   }
-
-  return sz;
 }
 
 /**

@@ -1,3 +1,19 @@
-- EditableListBox has an irreproducible bug (??? I think it hasn't bugs).
+- Fix the DockInfo problem when DockAreas area changes.
+  + The problem is: A DockBar, when it's docked, holds a custom DockInfo 
+    from the DockArea where it was docked. If you change the kind of
+    DockAreas, the DockInfo is a type of DockInfo for the old DockArea
+    kind.
+  + Example:
+    A DockBar is docked in a BasicDockArea, floatOut() the DockBar, we
+    change to BandedDockArea, double click in its title (to dock the
+    bar) FATAL ERROR: the held DockInfo in the DockBar is for
+    BasicDockInfo, not for BandedDockInfo!!!
+  + The solution could be to delete all DockInfos from all DockBars
+    when we changes the DockAreas.
+  + This error is possible only in the example (in the real life, an
+    application should never change the DockAreas)
+
 - Sudoku can be enter in a infinite loop in its level generator
   (mainly the swapCellToFixDigitCollision method).
+
+- Double buffering doesn't work with owner-drawn controls.

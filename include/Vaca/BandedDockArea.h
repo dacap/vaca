@@ -54,7 +54,7 @@ class VACA_DLL BandedDockArea : public DockArea
 	       , size(0) { }
   };
 
-  std::vector<BandInfo> mBandInfo;
+  std::vector<BandInfo> m_bandInfo;
 
 public:
 
@@ -66,12 +66,13 @@ public:
   virtual DockInfo *createDockInfo(DockBar *bar, const Point &cursor, const Point &anchor);
   virtual void drawXorDockInfoShape(Graphics &g, DockInfo *dockInfo);
 
-  virtual Size preferredSize();
+//   virtual Size preferredSize();
 
   virtual void layout();
 
 protected:
   // events
+  virtual void onPreferredSize(Size &sz);
   virtual void onPaint(Graphics &g);
   virtual void onAddDockBar(DockBar *dockBar);
   virtual void onRemoveDockBar(DockBar *dockBar);

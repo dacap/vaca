@@ -30,308 +30,849 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "Vaca/Vaca.h"
-
+#include <cmath>
 #include <ctime>
+#include <boost/bind/placeholders.hpp>
+
+#include "resource.h"
+#include "Date.h"
+#include "Calendar.h"
+#include "SectionHeader.h"
+#include "SectionContent.h"
 
 using namespace Vaca;
 
-const String monthNames[] = {
-  "January", "February", "March", "April",
-  "May", "June", "July", "August",
-  "September", "October", "November", "December"
+//////////////////////////////////////////////////////////////////////
+
+struct Contact {
+  String name;
+  String address;
+  String telephone;
+  String email;
+  String homepage;
+
+  bool operator<(const Contact &contact) const
+  {
+    return name < contact.name;
+  }
 };
 
-const String dayNames[] = { "S", "M", "T", "W", "T", "F", "S" };
+struct Reminder {
+  Date date;
+  String desc;
 
-//////////////////////////////////////////////////////////////////////
-// Easy Date
-
-class Date
-{
-  std::time_t t;
-  struct std::tm tm;
-
-public:
-  Date() {
-    t = std::time(NULL);
-    tm = *std::localtime(&t);
-  }
-  
-  int getDay() const { return tm.tm_mday; }	  // 1-31
-  int getMonth() const { return tm.tm_mon+1; }	  // 1-12
-  int getYear() const { return tm.tm_year+1900; } // 1900-2038
-  int getDayOfWeek() const { return tm.tm_wday; }   // 0-6
-
-  String getMonthName() const { return monthNames[tm.tm_mon]; }
-
-  void setDay(int day) { tm.tm_mday = day; t=std::mktime(&tm); } // 1-31
-
-  void prevDay() { tm.tm_mday++; t=std::mktime(&tm); }
-  void nextDay() { tm.tm_mday++; t=std::mktime(&tm); }
-
-  void prevMonth() { tm.tm_mon--; t=std::mktime(&tm); }
-  void nextMonth() { tm.tm_mon++; t=std::mktime(&tm); }
-
-  bool operator==(const Date &date) const
+  bool operator<(const Reminder &reminder) const
   {
-    return
-      getYear() == date.getYear() &&
-      getMonth() == date.getMonth() &&
-      getDay() == date.getDay();
+    return date < reminder.date;
   }
-
 };
 
 //////////////////////////////////////////////////////////////////////
-// The calendar
 
-class MainFrame : public Frame
+Font verdana("Verdana", 8);
+
+void setup_widget(Widget *widget)
 {
-  Date mVisibleDate;
-  Button mPrevMonth;
-  Button mNextMonth;
-  Font mFontTitle;
-  Font mFontContent;
-  Font mFontBottom;
-  MenuBar mMenuBar;
-  Menu mCalendarMenu;
-  Menu mOptionsMenu;
+  widget->setFont(&verdana);
+  widget->setBgColor(Color::White);
+
+  Widget::Container descendants = widget->getChildren();
+  std::for_each(descendants.begin(),
+		descendants.end(),
+		setup_widget);
+}
+
+//////////////////////////////////////////////////////////////////////
+
+class ContactForm : public Panel
+{
+  Label mLabelName;
+  Edit mEditName;
+  Label mLabelAddress;
+  Edit mEditAddress;
+  Label mLabelTelephone;
+  Edit mEditTelephone;
+  Label mLabelEmail;
+  Edit mEditEmail;
+  Label mLabelHomePage;
+  Edit mEditHomePage;
+  Panel mBottom;
+  Button mSave;
+  Button mCancel;
+
+public:
+
+  ContactForm(Contact *contact, Widget *parent)
+    : Panel(parent)
+    , mLabelName("Name:", this)
+    , mEditName(contact != NULL ? contact->name: "", this)
+    , mLabelAddress("Address:", this)
+    , mEditAddress(contact != NULL ? contact->address: "", this)
+    , mLabelTelephone("Telephone:", this)
+    , mEditTelephone(contact != NULL ? contact->telephone: "", this)
+    , mLabelEmail("E-mail:", this)
+    , mEditEmail(contact != NULL ? contact->email: "", this)
+    , mLabelHomePage("Home page:", this)
+    , mEditHomePage(contact != NULL ? contact->homepage: "", this)
+    , mBottom(this)
+    , mSave("Save", &mBottom)
+    , mCancel("Cancel", &mBottom)
+  {
+    setLayout(new BoxLayout(Vertical, false));
+    mBottom.setLayout(new BoxLayout(Horizontal, true, 0));
+
+    mEditName.acquireFocus();
+    mSave.setDefault(true);
+
+    setup_widget(this);
+  }
+
+  Button &getSaveButton() { return mSave; }
+  Button &getCancelButton() { return mCancel; }
+
+  void fillContact(Contact *contact)
+  {
+    contact->name      = mEditName.getText();
+    contact->address   = mEditAddress.getText();
+    contact->telephone = mEditTelephone.getText();
+    contact->email     = mEditEmail.getText();
+    contact->homepage  = mEditHomePage.getText();
+  }
+  
+};
+
+//////////////////////////////////////////////////////////////////////
+
+class ReminderPanel : public Panel
+{
+  Date *mDate;
+  Label mLabel;
+  MultilineEdit mEdit;
   
 public:
 
-  MainFrame()
-    : Frame("Calendar", NULL,
-	    FrameStyle +
-	    ClipChildrenStyle) // the clip-children style avoid to
-			       // paint above the buttons
-    , mPrevMonth("<", this)
-    , mNextMonth(">", this)
-    , mFontTitle("Verdana", 12)
-    , mFontContent("Verdana", 8)
-    , mFontBottom("Verdana", 8, Font::Style::Bold)
-    , mCalendarMenu("&Calendar")
-    , mOptionsMenu("&Options")
+  boost::signal<void (const Date &date, const String &desc)> Save;
+
+  ReminderPanel(Widget *parent)
+    : Panel(parent)
+    , mDate(NULL)
+    , mLabel("", this)
+    , mEdit("", this, MultilineEditStyle
+// 		      + FocusableStyle
+		      - AutoHorizontalScrollEditStyle
+		      + AutoVerticalScrollEditStyle)
   {
-    initializeMenuBar();
-    setMenuBar(&mMenuBar);
-    setSize(getNonClientSize()+Size(156, 180));
-
-    mPrevMonth.Action.connect(Bind(&MainFrame::onPrevMonth, this));
-    mNextMonth.Action.connect(Bind(&MainFrame::onNextMonth, this));
-
-    // use double-buffering technique for this Widget when onPaint()
-    // event is received
-    setDoubleBuffering(true);
+    setLayout(new BoxLayout(Vertical, false));
+    mEdit.setConstraint(new BoxConstraint(true));
   }
 
-  // arrange the prev-next month buttons
-  virtual void layout()
+  virtual ~ReminderPanel()
+  {
+    if (mDate != NULL) {
+      Save(*mDate, mEdit.getText());
+      delete mDate;
+    }
+  }
+
+  bool setDate(const Date &date, const String &desc)
+  {
+    bool hide = false;
+
+    if (mDate != NULL) {
+      Save(*mDate, mEdit.getText());
+      hide = date == *mDate;
+      delete mDate;
+      mDate = NULL;
+    }
+
+    if (hide)
+      return false;
+
+    mDate = new Date(date);
+    mLabel.setText(weekdayNames[date.getDayOfWeek()] + ", " +
+		   date.getMonthName() + " " +
+		   String::fromInt(date.getDay()) + " " +
+		   String::fromInt(date.getYear()));
+    mEdit.setText(desc);
+    mEdit.acquireFocus();
+    mEdit.selectAll();
+    return true;
+  }
+  
+  boost::signal<void (Event &)> &getEditChangeSignal()
+  {
+    return mEdit.Change;
+  }
+
+//   void d()
+//   {
+//     mEdit.releaseFocus();
+//   }
+
+};
+
+//////////////////////////////////////////////////////////////////////
+
+String AddressBookFileName;
+
+typedef std::vector<Reminder> Reminders;
+typedef std::vector<Contact *> Contacts;
+typedef std::vector<String> Todos;
+
+class AddressBook
+{
+  Reminders mReminders;
+  Contacts mContacts;
+  Todos mTodos;
+
+public:
+
+  virtual ~AddressBook()
+  {
+    for (Contacts::iterator it = mContacts.begin();
+	 it != mContacts.end(); ++it)
+      delete *it;
+  }
+
+  //////////////////////////////////////////////////////////////////////
+  // Contacts
+
+  Contacts *getContacts()
+  {
+    return &mContacts;
+  }
+
+  void addContact(Contact *contact)
+  {
+    mContacts.push_back(contact);
+  }
+  
+  //////////////////////////////////////////////////////////////////////
+  // Reminders
+
+  bool isValidReminder(Reminders::iterator it)
+  {
+    return it != mReminders.end();
+  }
+
+  Reminders::iterator getReminder(const Date &date)
+  {
+    Reminders::iterator it;
+
+    for (it = mReminders.begin(); it != mReminders.end(); ++it)
+      if (it->date == date)
+	break;
+
+    return it;
+  }
+
+  // returns true if mReminders was modified
+  bool replaceReminder(const Date &date, const String &desc)
+  {
+    Reminders::iterator it = getReminder(date);
+
+    if (it != mReminders.end()) {
+      if (desc.empty())
+	mReminders.erase(it);
+      else if (it->desc != desc)
+	it->desc = desc;
+      else
+	return false;		// no changes
+    }
+    else if (!desc.empty()) {
+      Reminder reminder;
+      reminder.date = date;
+      reminder.desc = desc;
+      mReminders.push_back(reminder);
+    }
+    else
+      return false;		// no changes
+
+    sort(mReminders.begin(), mReminders.end());
+    return true;		// reminders changed
+  }
+  
+  //////////////////////////////////////////////////////////////////////
+  // Load and save
+
+  void load()
+  {
+    FILE *f = fopen(AddressBookFileName.c_str(), "rt");
+    if (f != NULL) {
+      char buf[4096];
+      int section = 0;
+
+      while (fgets(buf, sizeof(buf), f)) {
+	// clean trailing characters
+	int len = strlen(buf);
+	while ((len = strlen(buf)) > 0 &&
+	       buf[len-1] == '\r' ||
+	       buf[len-1] == '\n')
+	  buf[len-1] = 0;
+
+	// change of section
+	if (String("CONTACTS") == buf)
+	  section = 1;
+	else if (String("REMINDERS") == buf)
+	  section = 2;
+	else if (String("TODOS") == buf)
+	  section = 3;
+
+	// in which section?
+	switch (section) {
+
+	  // Contacts
+	  case 1: {
+	    Contact *contact = new Contact;
+	    int tokNum = 0;
+	    String tok;
+	    char *p;
+
+	    for (char *p = buf; ; ++p) {
+	      if (*p == '\t' || *p == 0) {
+		switch (tokNum) {
+		  case 1: contact->name = tok; break;
+		  case 2: contact->address = tok; break;
+		  case 3: contact->telephone = tok; break;
+		  case 4: contact->email = tok; break;
+		  case 5: contact->homepage = tok; break;
+		}
+		if (*p == 0)
+		  break;
+
+		tokNum++;
+		tok.clear();
+	      }
+	      else {
+		tok.push_back(*p);
+	      }
+	    }
+
+	    if (!contact->name.empty())
+	      mContacts.push_back(contact);
+	    else
+	      delete contact;
+	    break;
+	  }
+
+	    // Reminders
+	  case 2: {
+	    Reminder reminder;
+	    int tokNum = 0;
+	    String tok;
+	    char *p;
+
+	    for (char *p = buf; ; ++p) {
+	      if (*p == '\t' || *p == 0) {
+		switch (tokNum) {
+		  case 1: reminder.date = Date(tok); break;
+		  case 2: reminder.desc = tok; break;
+		}
+		if (*p == 0)
+		  break;
+
+		tokNum++;
+		tok.clear();
+	      }
+	      else {
+		tok.push_back(*p);
+	      }
+	    }
+
+	    if (tokNum == 2)
+	      mReminders.push_back(reminder);
+	    break;
+	  }
+
+	    // Todos
+	  case 3: {
+	    break;
+	  }
+	    
+	}
+      }
+      fclose(f);
+    }
+  }
+
+  void save()
+  {
+    FILE *f = fopen(AddressBookFileName.c_str(), "wt");
+    if (f != NULL) {
+      fprintf(f, "CONTACTS\n");
+      for (Contacts::iterator it = mContacts.begin();
+	   it != mContacts.end(); ++it) {
+	fprintf(f, "\t%s\t%s\t%s\t%s\t%s\n",
+		(*it)->name.c_str(),
+		(*it)->address.c_str(),
+		(*it)->telephone.c_str(),
+		(*it)->email.c_str(),
+		(*it)->homepage.c_str());
+      }
+
+      fprintf(f, "REMINDERS\n");
+      for (Reminders::iterator it = mReminders.begin();
+	   it != mReminders.end(); ++it) {
+	fprintf(f, "\t%s\t%s\n",
+		it->date.getISO().c_str(),
+		it->desc.c_str());
+      }
+
+      fprintf(f, "TODOS\n");
+
+      fclose(f);
+    }
+  }
+  
+};
+
+//////////////////////////////////////////////////////////////////////
+
+#if 0
+class ContactLabel : public LightingPanel
+{
+  int mHot;
+
+public:
+
+  ContactLabel(const String &text, Widget *parent)
+    : LightingPanel(parent, PanelStyle + FocusableStyle - ContainerStyle)
+  {
+    setText(text);
+//     setLightSpeed(0.1);
+    setLightSpeed(0.75);
+
+    mHot = -1;
+  }
+
+  boost::signal<void ()> Action;
+
+protected:
+
+  virtual void onPreferredSize(Size &sz)
   {
     ScreenGraphics g;
-    g.setFont(mFontTitle);
-    int titleHeight = g.measureString(" ").h;
+    g.setFont(getFont());
 
-    mPrevMonth.setBounds(Rect(0, 0, 16, titleHeight));
-    mNextMonth.setBounds(Rect(getClientBounds().w-16, 0, 16, titleHeight));
+    sz = g.measureString(getText()) + Size(2, 2);
+  }
+  
+  virtual void onPaint(Graphics &g)
+  {
+    Rect bounds = getClientBounds();
+    double light = getLightLevel();
+
+    Color bgColor1 = Color::White;
+    Color bgColor2 = Color(0, 140, 200);
+    Color fgColor1 = Color::Black;
+    Color fgColor2 = Color::White;
+
+    Brush brush(bgColor1*(1-light) + bgColor2*light);
+    g.fillRect(brush, bounds);
+
+    g.setFont(getFont());
+    g.setColor(fgColor1*(1-light) + fgColor2*light);
+    g.drawString(getText(), bounds.x+1, bounds.y+1);
+  }
+
+  void onMouseDown(MouseEvent &ev)
+  {
+    LightingPanel::onMouseDown(ev);
+
+    acquireFocus();
+    Action();
+  }
+
+  virtual void onSetCursor(int hitTest)
+  {
+    if (hitTest = HTCLIENT)
+      setCursor(Cursor(HandCursor));
+    else
+      LightingPanel::onSetCursor(hitTest);
+  }
+  
+};
+#endif
+
+class ContactLabel : public LinkLabel
+{
+public:
+
+  ContactLabel(const String &text, Widget *parent)
+    : LinkLabel(text, parent, LinkLabelStyle)
+  {
   }
 
 protected:
 
-  // before to change the size
-  virtual void onResizing(int edge, Rect &rc)
+  virtual void onPreferredSize(Size &sz)
   {
-    Frame::onResizing(edge, rc);
-    
-    // the size must be multiple of 7
-    if (edge == WMSZ_RIGHT ||
-	edge == WMSZ_TOPRIGHT ||
-	edge == WMSZ_BOTTOMRIGHT) {
-      rc.w = 3 + ((rc.w-3) / 7) * 7;
-    }
-    else if (edge == WMSZ_LEFT ||
-	     edge == WMSZ_TOPLEFT ||
-	     edge == WMSZ_BOTTOMLEFT) {
-      int w = rc.w;
-      rc.w = 3 + ((rc.w-3) / 7) * 7;
-      rc.x += w-rc.w;
-    }
+    ScreenGraphics g;
+    g.setFont(getFont());
+
+    sz = g.measureString(getText()) + Size(2, 2);
   }
 
-  // after the size is changed
-  virtual void onResize(const Size &sz)
+  virtual void onPaint(Graphics &g)
   {
-    Frame::onResize(sz);
+    Rect bounds = getClientBounds();
+//     double light = getLightLevel();
 
-    // when the window is resized, repaint the client area
+    Color bgColor1 = Color::White;
+    Color bgColor2 = Color(0, 140, 200);
+    Color fgColor1 = Color::Black;
+    Color fgColor2 = Color::White;
+
+    Brush brush(hasMouse() ? bgColor2: bgColor1);
+    g.fillRect(brush, bounds);
+
+    g.setFont(getFont());
+    g.setColor(hasMouse() ? fgColor2: fgColor1);
+    g.drawString(getText(), bounds.x+1, bounds.y+1);
+  }
+
+  virtual void onMouseLeave()
+  {
+    LinkLabel::onMouseLeave();
     invalidate(true);
   }
 
-  // the paint the calendar
-  virtual void onPaint(Graphics &g)
+//   void onMouseDown(MouseEvent &ev)
+//   {
+//     LightingPanel::onMouseDown(ev);
+
+//     acquireFocus();
+//     Action();
+//   }
+
+//   virtual void onSetCursor(int hitTest)
+//   {
+//     if (hitTest = HTCLIENT)
+//       setCursor(Cursor(HandCursor));
+//     else
+//       LightingPanel::onSetCursor(hitTest);
+//   }
+  
+};
+
+
+//////////////////////////////////////////////////////////////////////
+
+class MainFrame : public Dialog
+{
+  AddressBook mAddressBook;
+//   ImageList mImageList;
+  Font mHeaderFont;
+  SectionHeader mContactsHeader;
+  SectionContent mContactsContent;
+  SectionHeader mCalendarHeader;
+  SectionContent mCalendarContent;
+  Calendar mCalendar;
+  ReminderPanel mReminderPanel;
+  SectionHeader mTodoHeader;
+  SectionContent mTodoContent;
+  SectionHeader *mSelectedHeader;
+
+public:
+
+  MainFrame()
+    : Dialog("AddressBook for " + System::getUserName() + " (WIP)",
+	     NULL,
+	     DialogStyle
+	     + ResizableFrameStyle
+	     - ModalDialogStyle
+	     + VerticalScrollStyle)
+// 	     FrameStyle
+// 	     - ResizableFrameStyle
+// 	     - MaximizableFrameStyle)
+//     , mImageList(IDB_IMAGELIST, 16, Color::White)
+    , mHeaderFont("Verdana", 10, Font::Style::Bold)
+    , mContactsHeader("Contacts", Color(100, 200, 255), this)
+    , mContactsContent(this)
+    , mCalendarHeader("Calendar", Color(100, 200, 100), this)
+    , mCalendarContent(this)
+    , mCalendar(&mCalendarContent)
+    , mReminderPanel(&mCalendarContent)
+    , mTodoHeader("To Do", Color(255, 120, 120), this)
+    , mTodoContent(this)
+    , mSelectedHeader(NULL)
   {
-    Rect rc = getClientBounds();
+    setup_widget(this);
+    setLayout(new BoxLayout(Vertical, false, 4, 1));
+    setIcon(IDI_ADDBOOK);
     
-    // paint border
-    g.draw3dRect(rc, Color::Gray, Color::White);
-    rc.shrink(1);
+    mContactsHeader.setFont(&mHeaderFont);
+    mCalendarHeader.setFont(&mHeaderFont);
+    mTodoHeader    .setFont(&mHeaderFont);
 
-    // measure title size
-    g.setFont(mFontTitle);
-    String monthName(mVisibleDate.getMonthName());
-    Size titleSize = g.measureString(monthName);
+    mContactsHeader.Action.connect(Bind(&MainFrame::onSelectHeader, this));
+    mCalendarHeader.Action.connect(Bind(&MainFrame::onSelectHeader, this));
+    mTodoHeader    .Action.connect(Bind(&MainFrame::onSelectHeader, this));
 
-    // measure bottom size
-    g.setFont(mFontBottom);
-    String yearString(String::fromInt(mVisibleDate.getYear(), 10, 4));
-    Size bottomSize = g.measureString(yearString);
-    int bottom = bottomSize.h+4;
+    // New task
+//     addEntry(&mTodoContent, "[ New task ]");
 
-    // paint title background
-    g.setFont(mFontTitle);
-    g.fillGradientRect(Rect(rc.x, rc.y, rc.w, titleSize.h),
-		       Color(0, 150, 170),
-		       Color(0, 180, 190),
-		       Vertical);
+    // when a date is clicked in the calendar, onSelectDate is called
+    mCalendar.Action.connect(Bind(&MainFrame::onSelectDate, this));
+    mCalendar.GetDateInfo.connect(Bind(&MainFrame::onGetDateInfo, this));
 
-    // paint title text
-    g.setColor(Color(255, 255, 255));
-    g.drawString(monthName, rc.x+rc.w/2-titleSize.w/2, 2);
+    // when the reminder must be saved
+    mReminderPanel.Save.connect(Bind(&MainFrame::onSaveReminder, this));
 
-    // paint content background
-    g.fillGradientRect(Rect(rc.x, rc.y+titleSize.h, rc.w, rc.h-titleSize.h),
-		       Color::White,
-		       Color(220, 230, 240),
-		       Vertical);
+    // when edit a reminder
+    mReminderPanel.getEditChangeSignal()
+      .connect(Bind(&SectionContent::animateVisibility,
+		    &mCalendarContent,
+		    true));  
 
-    // paint bottom line
-    g.setColor(Color(0, 0, 180));
-    g.setFont(mFontBottom);
-    g.drawString(yearString, rc.x+rc.w/2-bottomSize.w/2, rc.y+rc.h-bottomSize.h);
+    mReminderPanel.setVisible(false);
 
-    // paint content
-    rc = Rect(rc.x, rc.y+titleSize.h, rc.w, rc.h-titleSize.h-bottomSize.h);
-    Size boxSize(rc.w/7, rc.h/7);
+    // hide all sections
+    onSelectHeader(NULL);
 
-    Date currentDate;		// today
-    Date iterator = mVisibleDate;
-    iterator.setDay(1);		// go to first day of the month
+    // load the address book data
+    mAddressBook.load();
 
-    bool start = false;
-    bool end = false;
+    // generate the list of contacts from the loaded data
+    generateContactsContent();
 
-    g.setFont(mFontContent);
-
-    // through rows
-    for (int j=0; j<7; j++) {
-      // through columns
-      for (int i=0; i<7; i++) {
-	// a box in the table
-	Rect box(Point(rc.x+i*boxSize.w, rc.y+j*boxSize.h), boxSize+1);
-	box.shrink(1);
-
-	// paint headers (week day)
-	if (j == 0) {
-	  // paint the header background
-	  g.fillGradientRect(box,
-			     Color(190, 190, 190),
-			     Color(220, 220, 220),
-			     Vertical);
-
-	  g.setColor(Color(255, 255, 255));
-	  g.fillRect(box.x+1, box.y+1, box.w-2, 1);
-
-	  // paint the header text
-	  String dayString(dayNames[i]);
-	  Size daySize = g.measureString(dayString);
-
-	  g.setColor(Color(0, 0, 0));
-	  g.drawString(dayString, box.x+box.w/2-daySize.w/2, box.y+box.h/2-daySize.h/2);
-
-	  continue;
-	}
-
-	// start painting days?
-	if (!start && i == iterator.getDayOfWeek())
-	  start = true;
-
-	// paint the day box
-	if (start && !end) {
-	  // is this day today?
-	  bool isToday = iterator == currentDate;
-
-	  // paint the day background
-	  g.fillGradientRect(box,
-			     isToday ? Color(255, 255, 0): Color(220, 220, 230),
-			     isToday ? Color(255, 255, 255): Color(255, 255, 255),
-			     Vertical);
-
-	  g.setColor(Color(255, 255, 255));
-	  g.fillRect(box.x+1, box.y+1, box.w-2, 1);
-
-	  // paint the day text
-	  String dayString(String::fromInt(iterator.getDay()));
-	  Size daySize = g.measureString(dayString);
-
-	  g.setColor(Color(0, 0, 0));
-	  g.drawString(dayString, box.x+box.w/2-daySize.w/2, box.y+box.h/2-daySize.h/2);
-
-	  // go to next day
-	  iterator.nextDay();
-
-	  // the month changes?
-	  if (iterator.getMonth() != mVisibleDate.getMonth())
-	    end = true;
-	}
-      }
+    // put this frame in the right side of the work-area
+    {
+      Rect workBounds = System::getWorkAreaBounds();
+      Size sz(getNonClientSize().w + 256, workBounds.h);
+      setBounds(Rect(Point(workBounds.x+workBounds.w-sz.w,
+			   workBounds.y+workBounds.h-sz.h),
+		     sz));
     }
   }
 
-private:
-
-  void initializeMenuBar()
+  virtual ~MainFrame()
   {
-    MenuItem *menuItem;
-
-    menuItem = mCalendarMenu.add("E&xit");
-    menuItem->Action.connect(Bind(&MainFrame::dispose, this));
-
-    menuItem = mOptionsMenu.add("&Change Title Font");
-    menuItem->Action.connect(Bind(&MainFrame::onChangeTitleFont, this));
-
-    menuItem = mOptionsMenu.add("&Change Content Font");
-    menuItem->Action.connect(Bind(&MainFrame::onChangeContentFont, this));
-
-    menuItem = mOptionsMenu.add("&Change Bottom Font");
-    menuItem->Action.connect(Bind(&MainFrame::onChangeBottomFont, this));
-
-    mMenuBar.add(&mCalendarMenu);
-    mMenuBar.add(&mOptionsMenu);
+    cleanContactsContent();
   }
 
-  void onChangeFont(Font &font)
+  virtual void layout()
   {
-    FontDialog dialog(font, this);
-    if (dialog.doModal()) {
+    Dialog::layout();
+
+    Size client = getClientBounds().getSize();
+    Size pref = getPreferredSize();
+
+    if (client.h >= pref.h)
+      hideScrollBar(Vertical);
+    else {
+      ScrollInfo si;
+      si.minPos = 0;
+      si.maxPos = pref.h;
+      si.pageSize = client.h;
+      si.pos = getScrollPos(Vertical);
+      setScrollInfo(Vertical, si);
+    }
+  }
+
+  virtual Rect getLayoutBounds()
+  {
+    Rect rc = Dialog::getLayoutBounds();
+    return Rect(rc.x, rc.y-getScrollPos(Vertical), rc.w, rc.h);
+  }
+
+protected:
+
+  // events
+
+  virtual void onScroll(Orientation orientation, int code)
+  {
+    ScrollInfo si = getScrollInfo(orientation);
+    int oldPos = si.pos;
+
+    switch (code) {
+      case SB_LINELEFT: 
+	si.pos -= 32;
+	break;
+      case SB_LINERIGHT: 
+	si.pos += 32;
+	break;
+      case SB_PAGELEFT:
+	si.pos -= si.pageSize;
+	break;
+      case SB_PAGERIGHT:
+	si.pos += si.pageSize;
+	break;
+      case SB_THUMBTRACK: 
+	si.pos = si.trackPos;
+	break;
+      default:
+	break;
+    }
+
+    setScrollPos(orientation, si.pos);
+    si.pos = getScrollPos(orientation);
+
+    if (si.pos != oldPos) {
+      ScrollWindowEx(getHWND(),
+		     (orientation == Horizontal) ? oldPos - si.pos: 0,
+		     (orientation == Vertical  ) ? oldPos - si.pos: 0,
+		     NULL, NULL, NULL, NULL,
+		     SW_ERASE | SW_INVALIDATE);
+
       layout();
-      invalidate(false);
+//       invalidate(true);
     }
   }
-
-  void onChangeTitleFont  () { onChangeFont(mFontTitle);   }
-  void onChangeContentFont() { onChangeFont(mFontContent); }
-  void onChangeBottomFont () { onChangeFont(mFontBottom);  }
-
-  void onPrevMonth()
+  
+private:
+  
+  void cleanContactsContent()
   {
-    mVisibleDate.prevMonth();
-    invalidate(false);
+    Container children = mContactsContent.getChildren();
+    for_each(children.begin(), children.end(), delete_widget);
+  }
+  
+  void generateContactsContent()
+  {
+    Contacts *contacts = mAddressBook.getContacts();
+    ContactLabel *entry;
+
+    for (Contacts::iterator it = contacts->begin();
+	 it != contacts->end(); ++it) {
+      Contact *contact = *it;
+
+      // A new entry for each contact
+      entry = new ContactLabel("> " + contact->name, &mContactsContent);
+      entry->Action.connect(Bind(&MainFrame::onShowContact, this, contact));
+    }
+
+    // New Contact
+    entry = new ContactLabel("[ New Contact ]", &mContactsContent);
+    entry->Action.connect(Bind(&MainFrame::onNewContact, this));
+
+    setup_widget(&mContactsContent);
+  }
+  
+  void onSelectHeader(SectionHeader *header)
+  {
+    // restore old selected header
+    if (mSelectedHeader != NULL)
+      mSelectedHeader->back();
+
+    // new selected header
+    mSelectedHeader = header;
+
+    // start animation for resizing Content...
+    mContactsContent.animateVisibility(header == &mContactsHeader);
+    mCalendarContent.animateVisibility(header == &mCalendarHeader);
+    mTodoContent    .animateVisibility(header == &mTodoHeader);
+
+    // disable ReminderPanel?
+    mReminderPanel.setVisible(mSelectedHeader == &mCalendarHeader);
+    mReminderPanel.setEnabled(mSelectedHeader == &mCalendarHeader);
+
+    // relayout
+    layout();
   }
 
-  void onNextMonth()
+  //////////////////////////////////////////////////////////////////////
+
+  void onNewContact()
   {
-    mVisibleDate.nextMonth();
-    invalidate(false);
+    cleanContactsContent();
+
+    ContactForm *form = new ContactForm(NULL, &mContactsContent);
+    form->getSaveButton().Action.connect(Bind(&MainFrame::onSaveOrCancelNewContact, this, form, true));
+    form->getCancelButton().Action.connect(Bind(&MainFrame::onSaveOrCancelNewContact, this, form, false));
+
+    // mContactsContent size changes
+    mContactsContent.animateVisibility(mSelectedHeader == &mContactsHeader);
   }
+
+  void onSaveOrCancelNewContact(ContactForm *form, bool save)
+  {
+    if (save) {
+      Contact *contact = new Contact;
+      form->fillContact(contact);
+
+      mAddressBook.addContact(contact);
+      mAddressBook.save();
+    }
+
+    // regenerate mContactsContent
+    cleanContactsContent();
+    generateContactsContent();
+
+    // mContactsContent size changes
+    mContactsContent.animateVisibility(mSelectedHeader == &mContactsHeader);
+  }
+
+  //////////////////////////////////////////////////////////////////////
+  
+  void onShowContact(Contact *contact)
+  {
+    cleanContactsContent();
+    
+    ContactForm *form = new ContactForm(contact, &mContactsContent);
+    form->getSaveButton().Action.connect(Bind(&MainFrame::onSaveOrCancelExistentContact, this, form, true, contact));
+    form->getCancelButton().Action.connect(Bind(&MainFrame::onSaveOrCancelExistentContact, this, form, false, contact));
+
+    // mContactsContent size changes
+    mContactsContent.animateVisibility(mSelectedHeader == &mContactsHeader);
+  }
+
+  void onSaveOrCancelExistentContact(ContactForm *form, bool save, Contact *contact)
+  {
+    if (save) {
+      form->fillContact(contact);
+      mAddressBook.save();
+    }
+
+    // regenerate mContactsContent
+    cleanContactsContent();
+    generateContactsContent();
+
+    // mContactsContent size changes
+    mContactsContent.animateVisibility(mSelectedHeader == &mContactsHeader);
+  }
+
+  //////////////////////////////////////////////////////////////////////
+
+  void onGetDateInfo(const Date &date, bool &hasReminder, bool &isBirthday)
+  {
+    Reminders::iterator reminder = mAddressBook.getReminder(date);
+
+    if (mAddressBook.isValidReminder(reminder))
+      hasReminder = true;
+
+    // TODO isBrithday
+  }
+
+  void onSelectDate(const Date &date)
+  {
+    Reminders::iterator reminder = mAddressBook.getReminder(date);
+    String desc = mAddressBook.isValidReminder(reminder) ? reminder->desc: "";
+
+    mReminderPanel.setVisible(mReminderPanel.setDate(date, desc));
+//     if (mReminderPanel.setDate(date, desc))
+//       mReminderPanel.setVisible(true);
+//     else {
+//       mReminderPanel.d();
+//       Beep(400, 100);
+//     }
+    layout();
+    
+    mCalendarContent.animateVisibility(mSelectedHeader == &mCalendarHeader);
+  }
+
+  void onSaveReminder(const Date &date, const String &desc)
+  {
+    if (mAddressBook.replaceReminder(date, desc))
+      mAddressBook.save();
+
+    // mReminderPanel.setVisible(false);
+    layout();
+
+    mCalendarContent.animateVisibility(mSelectedHeader == &mCalendarHeader);
+  }
+  
+  //////////////////////////////////////////////////////////////////////
 
 };
 
@@ -339,18 +880,27 @@ private:
 
 class Example : public Application
 {
-  MainFrame mMainWnd;
 public:
-  virtual void main(std::vector<String> args) {
-    mMainWnd.setVisible(true);
+
+  virtual void main(std::vector<String> args)
+  {
+    AddressBookFileName =
+      args[0].getFilePath() +
+      "\\AddressBook for " +
+      System::getUserName() + ".txt";
+
+    MainFrame mainFrame;
+    mainFrame.setVisible(true);
+
+    doMessageLoop();
   }
+
 };
 
 int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
-		   LPSTR lpCmdLine, int nCmdShow)
+ 		   LPSTR lpCmdLine, int nCmdShow)
 {
-  Example *app(new Example);
-  app->run();
-  delete app;
+  Example app;
+  app.run();
   return 0;
 }

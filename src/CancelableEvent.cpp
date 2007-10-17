@@ -36,7 +36,7 @@ using namespace Vaca;
 
 CancelableEvent::CancelableEvent(Component *source)
   : Event(source)
-  , mCanceled(false)
+  , m_canceled(false)
 {
 }
 
@@ -49,7 +49,7 @@ CancelableEvent::~CancelableEvent()
  */
 void CancelableEvent::cancel()
 {
-  mCanceled = true;
+  m_canceled = true;
 }
 
 /**
@@ -57,5 +57,5 @@ void CancelableEvent::cancel()
  */
 bool CancelableEvent::isCanceled() const
 {
-  return mCanceled;
+  return m_canceled;
 }

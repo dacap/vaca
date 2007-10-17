@@ -40,13 +40,13 @@
 #include <queue>
 #include <algorithm>
 #include <boost/signal.hpp>
-#include <boost/bind.hpp>
 
 #include "Vaca/Application.h"
 #include "Vaca/String.h"
 #include "Vaca/Exception.h"
 #include "Vaca/System.h"
 #include "Vaca/Debug.h"
+#include "Vaca/Bind.h"
 
 #include "XmlParser.h"
 #include "XmlNode.h"
@@ -771,8 +771,7 @@ public:
     // TOC
     {
       HhcTocGenerator file(mRootDirectory.addPathComponent(mDocName)+".hhc");
-      file.NewTocFile.connect(boost::bind(&list<String>::push_back,
-					  &mProjectFiles, boost::arg<1>()));
+      file.NewTocFile.connect(Bind(&list<String>::push_back, &mProjectFiles));
       file.generate(mRoot);
     }
 

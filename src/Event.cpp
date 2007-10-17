@@ -34,16 +34,29 @@
 
 using namespace Vaca;
 
+/**
+ * Creates the event.
+ *
+ * @param source The component which generates the event.
+ */
 Event::Event(Component *source)
-  : mSource(source)
+  : m_source(source)
 {
 }
 
+/**
+ * Destroys the event.
+ */
 Event::~Event()
 {
 }
 
+/**
+ * Gets the event's source.
+ *
+ * @return The component which generates the event.
+ */
 Component *Event::getSource()
 {
-  return mSource;
+  return m_source;
 }

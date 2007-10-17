@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
-<doc xmlns="http://127.0.0.1/~DAC/VacaDoc.xsd"
-     lang="es"
+<doc lang="es"
      name="Vaca"
      title="Biblioteca de clases de Vaca"
      feedbackAddress="davidcapello@gmail.com"
@@ -10,8 +9,8 @@
   <content>
     <para>
       Bienvenido a Vaca, una biblioteca para desarrollar aplicaciones
-      bajo Windows, utilizando el lenguage de programación C++ junto
-      a las bibliotecas STL y Boost.
+      bajo Windows, utilizando el lenguaje de programación C++ junto a
+      las bibliotecas STL y Boost.
     </para>
   </content>
 
@@ -26,9 +25,9 @@
 
     <content>
       <para>
-	Teniendo tantas alternativas (wxWidgets, GTK+, etc.), que son
-	de tan buena calidad, la pregunta es casi obligatoria: ¿Por
-	qué una nueva biblioteca?
+	Teniendo tantas alternativas (wxWidgets, GTK+, etc.) de tan
+	buena calidad, la pregunta es casi obligatoria: ¿Por qué una
+	nueva biblioteca?
       </para>
       <para>
 	Hace tiempo que estaba intentado encontrar alguna biblioteca
@@ -43,18 +42,18 @@
 	facilidades que yo estaba buscando.
       </para>
       <para>
-	La wxWidgets o GTK+ son muy buenas bibliotecas, pero son
-	buenas para propósitos "astronómicos". Si usted desea crear un
-	sistema seguro, robusto, y por sobre toda las cosas, portable,
-	su opción es wxWidgets o GTK+ (o Qt). Ahora si usted desea
-	crear una aplicación <em>open-source</em>, o un sistema a
-	pequeña escala, que sólo debe hacer algunas tareas básicas, o
-	no requiere de portabilidad porque el cliente (o el negocio)
-	no la necesita, Vaca puede ser una buena opción.
+	La wxWidgets o GTK+ son muy buenas, pero para propósitos
+	"astronómicos". Si usted desea crear un sistema seguro,
+	robusto, y por sobre toda las cosas, portable, su opción es
+	wxWidgets o GTK+ (o Qt). Ahora si usted desea crear una
+	aplicación <em>open-source</em>, o un sistema a pequeña
+	escala, que sólo debe hacer algunas tareas básicas, o no
+	requiere de portabilidad porque el cliente (o el negocio) no
+	la necesita, Vaca puede ser una buena opción.
       </para>
       <para>
-	Por eso creé Vaca. Para darme (y darle) la posibilidad de
-	programar pequeñas aplicaciones para Windows, utilizando C++,
+	Por eso diseñé Vaca. Para darme (y darle) la posibilidad de
+	programar pequeñas aplicaciones bajo Windows, utilizando C++,
 	y sin necesidad de agregar gigantescas dependencias como
 	pueden ser wxWidgets o GTK+ (MFC es más pequeña, pero
 	propietaria, sólo se consigue por medio de Microsoft).
@@ -337,9 +336,9 @@ public:
 
       <section name="Borders" title="Borders">
 	<summary>
+	  Tipo de dato para representar un conjunto de bordes.
 	</summary>
 	<typedef name="Borders" syntax="typedef int Borders;">
-	  Tipo de dato para representar un conjunto de bordes.
 	</typedef>
 	<macro name="NoBorder" syntax="#define NoBorder 0"></macro>
 	<macro name="LeftBorder" syntax="#define LeftBorder 1"></macro>
@@ -384,8 +383,11 @@ public:
 
       <class name="Component" syntax="class Component;">
 	<summary>
-	  Clase base para los componentes de Vaca que generan eventos.
+	  Clase base para los componentes de Vaca.
 	</summary>
+	<remarks>
+	  Un componente puede generar eventos.
+	</remarks>
 	<ctor syntax="public Component();"></ctor>
 	<dtor syntax="public virtual ~Component();"></dtor>
       </class>
@@ -414,12 +416,66 @@ public:
       </enum>
 
       <class name="Point" syntax="class Point">
-	<field name="x" syntax="public int x;"></field>
-	<field name="y" syntax="public int y;"></field>
-	<ctor syntax="public Point();"></ctor>
-	<ctor syntax="public Point(int x, int y);"></ctor>
-	<ctor syntax="public Point(const Point &amp;point);"></ctor>
-	<ctor syntax="public explicit Point(const Size &amp;size);"></ctor>
+	<field name="x" syntax="public int x;">
+	  <summary>
+	    Coordenada del punto en el eje X (en píxeles).
+	  </summary>
+	  <remarks>
+	    Cero (0) indica el borde izquierdo de la pantalla (o área
+	    cliente).
+	  </remarks>
+	</field>
+	<field name="y" syntax="public int y;">
+	  <summary>
+	    Coordenada del punto en el eje Y (en píxeles).
+	  </summary>
+	  <remarks>
+	    Cero (0) indica el borde superior de la pantalla (o área
+	    cliente).
+	  </remarks>
+	</field>
+	<ctor syntax="public Point();">
+	  <summary>
+	    Crea un nuevo punto con coordenadas (0, 0).
+	  </summary>
+	</ctor>
+	<ctor syntax="public Point(int x, int y);">
+	  <summary>
+	    Crea un nuevo punto con las coordenadas
+	    (<paramref>x</paramref>, <paramref>y</paramref>) especificadas.
+	  </summary>
+	</ctor>
+	<ctor syntax="public Point(const Point &amp;point);">
+	  <summary>
+	    Copia el punto <paramref>point</paramref> especificado.
+	  </summary>
+	</ctor>
+	<ctor syntax="public explicit Point(const Size &amp;size);">
+	  <summary>
+	    Convierte un tamaño (<paramref>size</paramref>) en un
+	    punto.
+	  </summary>
+	  <remarks>
+	    Tenga en cuenta que este constructor debe ser utilizado de
+	    forma explícita para evitar confusiones al programador.
+	  </remarks>
+	</ctor>
+	<operator name="operator=" syntax="public const Point &amp;operator=(const Point &amp;pt);"></operator>
+	<operator name="operator+=" syntax="public const Point &amp;operator+=(const Point &amp;pt);"></operator>
+	<operator name="operator-=" syntax="public const Point &amp;operator-=(const Point &amp;pt);"></operator>
+	<operator name="operator+=" syntax="public const Point &amp;operator+=(int value);"></operator>
+	<operator name="operator-=" syntax="public const Point &amp;operator-=(int value);"></operator>
+	<operator name="operator*=" syntax="public const Point &amp;operator*=(int value);"></operator>
+	<operator name="operator/=" syntax="public const Point &amp;operator/=(int value);"></operator>
+	<operator name="operator+" syntax="public Point operator+(const Point &amp;pt) const;"></operator>
+	<operator name="operator-" syntax="public Point operator-(const Point &amp;pt) const;"></operator>
+	<operator name="operator+" syntax="public Point operator+(int value) const;"></operator>
+	<operator name="operator-" syntax="public Point operator-(int value) const;"></operator>
+	<operator name="operator*" syntax="public Point operator*(int value) const;"></operator>
+	<operator name="operator/" syntax="public Point operator/(int value) const;"></operator>
+	<operator name="operator-" syntax="public Point operator-() const;"></operator>
+	<operator name="operator==" syntax="public bool operator==(const Point &amp;pt) const;"></operator>
+	<operator name="operator!=" syntax="public bool operator!=(const Point &amp;pt) const;"></operator>
       </class>
 
       <class name="Rect" syntax="class Rect">
@@ -429,7 +485,7 @@ public:
 	<field name="h" syntax="public int h;"></field>
 	<ctor syntax="public Rect();"></ctor>
 	<ctor syntax="public Rect(int w, int h);"></ctor>
-	<ctor syntax="public explicit Rect(const Size &size);"></ctor>
+	<ctor syntax="public explicit Rect(const Size &amp;size);"></ctor>
 	<ctor syntax="public Rect(const Rect &amp;rect);"></ctor>
 	<ctor syntax="public Rect(const Point &amp;point, const Size &amp;size);"></ctor>
 	<ctor syntax="public Rect(const Point &amp;point1, const Point &amp;point2);"></ctor>
@@ -467,8 +523,9 @@ public:
 
       <enum name="Side" syntax="enum Side { LeftSide, TopSide, RightSide, BottomSide };">
 	<summary>
-	  Representa un único lado de un objeto: lado izquierdo, lado
-	  derecho, parte superior, o parte inferior.
+	  Representa un único lado de un objeto: lado izquierdo
+	  (LeftSide), derecho (RightSide), superior (TopSide),
+	  inferior (BottomSide).
 	</summary>
       </enum>
 
@@ -498,6 +555,16 @@ public:
 	<ctor syntax="public String(const char *str, int length);"></ctor>
 	<ctor syntax="public String(const wchar_t *str);"></ctor>
 	<ctor syntax="public virtual ~String();"></ctor>
+	<method name="copyTo" syntax="public void copyTo(LPTSTR dest, int size) const;"></method>
+	<method name="fromInt" syntax="public static String fromInt(int value, int base = 10, int precision = 0);"></method>
+	<method name="parseInt" syntax="public int parseInt(int base = 10);"></method>
+	<method name="fromDouble" syntax="public static String fromDouble(double value);"></method>
+	<method name="parseDouble" syntax="public double parseDouble();"></method>
+	<method name="getFilePath" syntax="public String getFilePath() const;"></method>
+	<method name="getFileName" syntax="public String getFileName() const;"></method>
+	<method name="getFileExtension" syntax="public String getFileExtension() const;"></method>
+	<method name="getFileTitle" syntax="public String getFileTitle() const;"></method>
+	<method name="addPathComponent" syntax="public String addPathComponent(const String &component) const;"></method>
       </class>
 
       <section name="Style" title="Style">
@@ -538,9 +605,11 @@ public:
 	<macro name="AcceptFilesStyle" syntax="#define AcceptFilesStyle (Style(0, WS_EX_ACCEPTFILES))"></macro>
       </section>
 
-      <enum name="TextAlign" syntax="enum TextAlign { LeftAlign, CenterAlign, RightAlign };"></enum>
+      <enum name="TextAlign" syntax="enum TextAlign { LeftAlign, CenterAlign, RightAlign };">
+      </enum>
 
-      <enum name="VerticalAlign" syntax="enum VerticalAlign { TopAlign, MiddleAlign, BottomAlign };"></enum>
+      <enum name="VerticalAlign" syntax="enum VerticalAlign { TopAlign, MiddleAlign, BottomAlign };">
+      </enum>
 
     </section>
 
@@ -565,6 +634,9 @@ public:
 	  
 	</para>
       </content>
+
+      <function name="delete_widget" syntax="void delete_widget(Widget *widget);">
+      </function>
 
       <class name="BandedDockArea" syntax="class BandedDockArea : public DockArea">
 	<summary>
@@ -726,7 +798,13 @@ public:
 	</ctor>
 	<dtor syntax="public virtual ~Widget();">
           <summary>
+	    Libera la memoria utilizada por el Widget.
 	  </summary>
+	  <remakrs>
+	    <para>
+	      Vea la <see cref="TN002"/> para mayor información.
+	    </para>
+	  </remakrs>
 	</dtor>
 	<method name="getParent" syntax="public Widget *getParent();">
 	  <summary>
@@ -1177,7 +1255,7 @@ public:
           <summary>
 	  </summary>
 	</event>
-	<event name="onDropFiles" syntax="protected virtual void onDropFiles(DropFilesEvent &ev);">
+	<event name="onDropFiles" syntax="protected virtual void onDropFiles(DropFilesEvent &amp;ev);">
           <summary>
 	  </summary>
 	</event>
@@ -1209,7 +1287,7 @@ public:
           <summary>
 	  </summary>
 	</method>
-	<method name="doPaint" syntax="protected bool doPaint(Graphics &g);">
+	<method name="doPaint" syntax="protected bool doPaint(Graphics &amp;g);">
           <summary>
 	  </summary>
 	</method>
@@ -1523,7 +1601,7 @@ public:
 	  <summary>
 	  </summary>
 	</ctor>
-	<ctor syntax="public Graphics(HDC hdc, Image &image);">
+	<ctor syntax="public Graphics(HDC hdc, Image &amp;image);">
 	  <summary>
 	  </summary>
 	</ctor>
@@ -1657,9 +1735,15 @@ public:
     
     <section name="TN001" title="TN001 Proceso de registración de clases (RegisterClass)">
       <summary>
+	Cómo hace Vaca para registrar las clases de Win32 antes que un
+	ventana sea creada.
       </summary>
       <content>
 	<para>
+	  Vaca crea los HWNDs mediante CreateWindow, en el mismo
+	  constructor de Widget (<see cref="Widget::Widget"/>), esto
+	  implica que RegisterClass deba ser llamado antes de dicho
+	  constructor.
 	</para>
       </content>
     </section>
@@ -1669,6 +1753,53 @@ public:
       </summary>
       <content>
 	<para>
+	  ¿Cómo se eliminan los Widget hijos? Generalmente el
+	  proceso es completamente automático.
+	  <list type="bullet">
+	    <item>
+	      <term>Instancias</term>
+	      <description>
+		<para>
+		  Los Widget que son miembros del padre como
+		  instancias (como se muestra en la mayoría de los
+		  ejemplos de Vaca), son removidos automáticamente de
+		  la lista de hijos del padre antes de llegar al
+		  destructor ~Widget del padre mismo.
+		</para>
+		<para>
+		  Por ejemplo, supongamos que tenemos:
+		</para>
+		<code>class MainFrame : public Frame
+{
+  Label mLabel;
+public:
+  MainFrame()
+    : mLabel("Mi etiqueta", this)
+  {
+    ...
+  }
+};
+</code>
+		<para>
+		  El orden de llamada de los destructores es:
+		</para>
+		<code>MainFrame::~MainFrame (por MainFrame)
+  Label::~Label (por mLabel)
+  Widget::~Widget (por mLabel)
+Frame::~Frame (por MainFrame)
+Widget::~Widget (por MainFrame)
+</code>
+	      </description>
+	    </item>
+	    <item>
+	      <term>Punteros</term>
+	      <description>
+		Los Widget creados con el operador <c>new</c> y que
+		quedaron en la lista del padre en el destructor
+		~Widget, son eliminados automáticamente del padre
+	      </description>
+	    </item>
+	  </list>
 	</para>
       </content>
     </section>
@@ -1885,7 +2016,8 @@ public:
       <class name="noncopyable">
 	<summary>
 	  Una clase derivada de noncopyable no puede ser copiada por
-	  ningún medio: ni utilizando el constructor copia, ni el operator==.
+	  ningún medio: ni utilizando el constructor copia, ni el
+	  operator de asignación (operator=).
 	</summary>
       </class>
 

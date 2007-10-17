@@ -48,9 +48,9 @@ class VACA_DLL ListItem : private boost::noncopyable
 {
   friend class ListView;
 
-  std::vector<String> mText;
-  // ListItem *mParent;
-  ListView *mOwner;
+  std::vector<String> m_text;
+  // ListItem *m_parent;
+  ListView *m_owner;
 
 public:
 

@@ -40,7 +40,8 @@
 
 namespace Vaca {
 
-#define TreeViewStyle		(ChildStyle + TabStopStyle +		\
+#define TreeViewStyle		(ChildStyle +				\
+				 FocusableStyle +			\
 				 ClientEdgeStyle +			\
 				 Style(TVS_LINESATROOT | TVS_HASBUTTONS | \
 				       TVS_HASLINES | TVS_SHOWSELALWAYS | \
@@ -59,9 +60,9 @@ class VACA_DLL TreeView : public Widget
 {
   friend class TreeNode;
   
-  TreeNode mRoot;
-  String mTmpBuffer; // to use LPSTR_TEXTCALLBACK we need some space
-		     // to allocate text temporally
+  TreeNode m_root;
+  String   m_tmpBuffer; // to use LPSTR_TEXTCALLBACK we need some space
+                        // to allocate text temporally
 
 public:
 

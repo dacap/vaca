@@ -29,32 +29,48 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
+#include <algorithm>
 #include <time.h>
 
-#include "Vaca/Vaca.h"
-#include "table.h"
+#include <Vaca/Vaca.h>
+#include "grid.h"
 
 using namespace Vaca;
 
 //////////////////////////////////////////////////////////////////////
+// Algorithms
+
+template<typename InputIterator, typename BinaryOperation>
+void
+compare_with_all(InputIterator first, InputIterator last,
+		 BinaryOperation binary_op)
+{
+  for ( ; first != last; ++first) {
+    InputIterator second = first;
+    for (++second; second != last; ++second)
+      binary_op(*first, *second);
+  }
+}
+
+template<typename InputIterator, typename Predicate>
+bool
+exist(InputIterator first, InputIterator last, Predicate pred)
+{
+  for ( ; first != last; ++first)
+    if (pred(*first))
+      return true;
+  return false;
+}
+
+//////////////////////////////////////////////////////////////////////
 // constants
-
-const Point NullCell = Point(-1, -1);
-
-const Point boxOffset[] = {
-  Point(0, 0), Point(3, 0), Point(6, 0),
-  Point(0, 3), Point(3, 3), Point(6, 3),
-  Point(0, 6), Point(3, 6), Point(6, 6)
-};
 
 const Point historyOffsets[] = {
   Point(32*0/3+32/3/2, 32*0/3+32/3/2),
   Point(32*1/3+32/3/2, 32*0/3+32/3/2),
   Point(32*2/3+32/3/2, 32*0/3+32/3/2),
-
   Point(32*0/3+32/3/2, 32*1/3+32/3/2),
   Point(32*2/3+32/3/2, 32*1/3+32/3/2),
-
   Point(32*0/3+32/3/2, 32*2/3+32/3/2),
   Point(32*1/3+32/3/2, 32*2/3+32/3/2),
   Point(32*2/3+32/3/2, 32*2/3+32/3/2),
@@ -88,14 +104,14 @@ public:
     mBottom.setLayout(new BoxLayout(Horizontal, true, 0));
     mSeedEdit.setConstraint(new BoxConstraint(true));
 
-    mSeedEdit.focus();
+    mSeedEdit.acquireFocus();
     mSeedEdit.selectAll();
     mOk.Action.connect(Bind(&InsertSeedDialog::defaultOkAction, this));
     mCancel.Action.connect(Bind(&InsertSeedDialog::defaultCancelAction, this));
 
     mOk.setDefault(true);
 
-    setSize(preferredSize());
+    setSize(getPreferredSize());
     center();
   }
 
@@ -110,16 +126,72 @@ public:
 
 class MainFrame : public Frame
 {
-  table<int> mTable;		     // digit for each cell
-  table<bool> mExposed;              // is the cell exposed (visible) from the beginning?
-  table<bool> mWarning;              // is the cell in warning? (has collisions with other cell)
-  table<std::vector<int> > mHistory; // history of digits for each cell
-  Point mHighlighted;		     // current highlighted cell
-  Font mFont;			     // font for the digits
-  Font mFontSmall;		     // font for the digits of the history
-  Font mFontBold;		     // font for the warnings and for same-digits
-  MenuBar mMenuBar;		     // the menu bar
-  Menu mGameMenu;		     // the game menu
+  ////////////////////////////////////////
+  // a cell
+
+  struct cell {
+    int digit;
+    bool given;
+    bool warning;
+    std::vector<int> history;
+    cell() {
+      digit = 0;
+      given = false;
+      warning = false;
+    }
+  };
+
+  ////////////////////////////////////////
+  // a predicates and functors
+
+  struct is_digit {
+    int digit;
+    is_digit(int digit) : digit(digit) { }
+    bool operator()(cell &c) { return digit == c.digit; }
+  };
+
+  struct set_warning {
+    void operator()(cell& c) {
+      c.warning = false;
+    }
+    void operator()(cell& c1, cell& c2) {
+      if (&c1 != &c2 &&
+	  c1.digit != 0 &&
+	  c1.digit == c2.digit) {
+	c1.warning = true;
+	c2.warning = true;
+      }
+    }
+  };
+
+  struct set_given_to_true {
+    void operator()(cell& c) {
+      c.given = true;
+    }
+  };
+
+  struct if_given_is_true {
+    bool operator()(const cell& c) {
+      return c.given;
+    }
+  };
+
+  ////////////////////////////////////////
+  // types
+
+  typedef grid<cell>::iterator grid_iterator;
+  typedef grid<cell>::box_iterator box_iterator;
+  typedef grid<cell>::col_iterator col_iterator;
+  typedef grid<cell>::row_iterator row_iterator;
+
+  ////////////////////////////////////////
+  // members
+
+  grid<cell> m_puzzle;
+  grid_iterator m_hotCell;
+  Font m_font;			     // font for the digits
+  Font m_fontSmall;		     // font for the digits of the history
+  Font m_fontBold;		     // font for the warnings and for same-digits
 
 public:
 
@@ -128,24 +200,18 @@ public:
     : Frame("Sudoku", NULL, FrameStyle
 			    - MaximizableFrameStyle // can't be maximized
 			    - ResizableFrameStyle)  // can't change the size
-    , mFont("Verdana", 10)
-    , mFontSmall("Verdana", 7)
-    , mFontBold("Verdana", 10, Font::Style::Bold)
-    , mGameMenu("&Game")
+    , m_font("Verdana", 10)
+    , m_fontSmall("Verdana", 7)
+    , m_fontBold("Verdana", 10, Font::Style::Bold)
   {
-    mGameMenu.add("&New\tCtrl+Shift+N", Keys::Control | Keys::Shift | Keys::N)
-      ->Action.connect(Bind(&MainFrame::onNew, this));
-    mGameMenu.add("New with &seed\tCtrl+N", Keys::Control | Keys::N)
-      ->Action.connect(Bind(&MainFrame::onNewWithSeed, this));
-    mGameMenu.addSeparator();
-    mGameMenu.add("&Exit")->Action.connect(Bind(&MainFrame::dispose, this));
-    mMenuBar.add(&mGameMenu);
-    mMenuBar.add("&Help")->Action.connect(Bind(&MainFrame::onHelp, this));
+    m_hotCell = m_puzzle.end();
 
     setBgColor(Color::White);
-    setMenuBar(&mMenuBar);
+    setMenuBar(createMenuBar());
     setSize(getNonClientSize()+Size(32*9, 32*9));
     center();
+
+    setDoubleBuffered(true);
 
     onNew();
   }
@@ -156,162 +222,145 @@ protected:
   virtual void onPaint(Graphics &g)
   {
     Rect rc = getClientBounds();
-    Point pt;
 
-    // draw horizontal and vertical lines
-    for (int i=0; i<=2; i++) {
-      g.setColor(Color::Black);
-      if (i > 0) {
-	g.drawRect(0, i*rc.h/3, rc.w, 2);
-	g.drawRect(i*rc.w/3, 0, 2, rc.h);
-      }
-      g.setColor(Color::Gray);
-      for (int j=1; j<=2; j++) {
-	g.drawRect(0, i*rc.h/3+j*rc.h/9, rc.w, 1);
-	g.drawRect(i*rc.w/3+j*rc.w/9, 0, 1, rc.h);
-      }
-    }
+    // paint the 9x9 grid
+    for (grid_iterator it = m_puzzle.begin(); it != m_puzzle.end(); ++it) {
+      Rect cellBounds = getCellBounds(it);
+      Color color;
 
-    for (pt.y=0; pt.y<9; pt.y++) {
-      for (pt.x=0; pt.x<9; pt.x++) {
-	Rect cell = getCellRect(pt);
-	Color color;
+      // cell background color
+      if (it->warning)
+	color = Color::Red;
+      else if (it->given)
+	color = Color(240, 240, 240);
+      else if (m_hotCell == it)
+	color = Color::Yellow;
+      else
+	color = Color::White;
 
-	// cell background color
-	if (mWarning[pt] && mExposed[pt])
-	  color = Color::Black;
-	else if (mWarning[pt])
-	  color = Color::Red;
-	else if (mExposed[pt])
-	  color = Color(240, 240, 240);
-	else if (mHighlighted == pt)
-	  color = Color::Yellow;
-	else
-	  color = Color::White;
+      // paint cell background
+      Brush brush(color);
+      g.fillRect(brush, cellBounds);
 
-	// paint cell background
-	g.setColor(color);
-	g.fillRect(cell);
+      // paint text inside the cell
+      if (it->digit != 0 || !it->history.empty()) {
+	// warning
+	if (it->warning) {
+	  g.setColor(Color::White);
+	  g.setFont(&m_fontBold);
+	}
+	// hot or normal
+	else {
+	  g.setColor(Color::Black);
+	  g.setFont(m_hotCell != m_puzzle.end() &&
+		    it->digit == m_hotCell->digit ? &m_fontBold: // hot
+						   &m_font); // normal
+	}
 
-	if (mTable[pt] != 0 || !mHistory[pt].empty()) {
-	  // normal
-	  if (!mWarning[pt]) {
-	    g.setColor(Color::Black);
-	    g.setFont(mHighlighted != NullCell &&
-		      mTable[mHighlighted] == mTable[pt] ? mFontBold:
-							   mFont);
+	if (it->digit != 0) {
+	  String text = String::fromInt(it->digit);
+	  Size textSize = g.measureString(text);
+	  g.drawString(text,
+		       cellBounds.x + (cellBounds.w - textSize.w)/2,
+		       cellBounds.y + (cellBounds.h - textSize.h)/2);
+	}
 
-	  }
-	  // warning
-	  else {
-	    g.setColor(Color::White);
-	    g.setFont(mFontBold);
-	  }
+	if (!it->history.empty()) {
+	  int c = 0;
 
-	  if (mTable[pt] != 0) {
-	    String text = String::fromInt(mTable[pt]);
-	    Size textSize = g.measureString(text);
-	    g.drawString(text,
-			 cell.x + (cell.w - textSize.w)/2,
-			 cell.y + (cell.h - textSize.h)/2);
-	  }
-
-	  // history
-	  if (!mHistory[pt].empty()) {
-	    int c = 0;
-
-	    g.setFont(mFontSmall);
+	  g.setFont(&m_fontSmall);
+	  if (!it->warning)
 	    g.setColor(Color(190, 190, 190));
 
-	    for (std::vector<int>::iterator it=mHistory[pt].begin();
-		 it!=mHistory[pt].end();
-		 ++it) {
-	      String text = String::fromInt(*it);
-	      Size textSize = g.measureString(text);
+	  for (std::vector<int>::iterator it2=it->history.begin();
+	       it2!=it->history.end(); ++it2) {
+	    String text = String::fromInt(*it2);
+	    Size textSize = g.measureString(text);
 
-	      g.drawString(text,
-			   cell.x + historyOffsets[c].x - textSize.w/2,
-			   cell.y + historyOffsets[c].y - textSize.h/2);
+	    g.drawString(text,
+			 cellBounds.x + historyOffsets[c].x - textSize.w/2,
+			 cellBounds.y + historyOffsets[c].y - textSize.h/2);
 
-	      c++;
-	    }
+	    c++;
 	  }
 	}
+      }
+    }
+	
+    // draw horizontal and vertical lines to split 3x3 regions and cells
+    Pen blackPen(Color::Black);
+    Pen grayPen(Color::Gray);
+    
+    for (int i=0; i<=2; i++) {
+      if (i > 0) {
+	g.drawRect(blackPen, 0, i*rc.h/3, rc.w, 2);
+	g.drawRect(blackPen, i*rc.w/3, 0, 2, rc.h);
+      }
+
+      for (int j=1; j<=2; j++) {
+	g.drawRect(grayPen, 0, i*rc.h/3+j*rc.h/9, rc.w, 1);
+	g.drawRect(grayPen, i*rc.w/3+j*rc.w/9, 0, 1, rc.h);
       }
     }
   }
 
   // when the mouse move through the client area, change the current
-  // highlighted cell
+  // hot cell
   virtual void onMouseMove(MouseEvent &ev)
   {
-    Point pt, oldCell = mHighlighted;
-    Rect rc = getClientBounds();
+    grid_iterator oldHot = m_hotCell;
+    m_hotCell = m_puzzle.end();
 
-    mHighlighted = NullCell;
-
-    for (pt.y=0; pt.y<9; pt.y++)
-      for (pt.x=0; pt.x<9; pt.x++)
-	if (getCellRect(pt).contains(ev.getPoint())) {
-	  mHighlighted = pt;
-	  break;
-	}
-
-    if (mHighlighted != oldCell) {
-      invalidateCellsWithDigit(oldCell);
-      invalidateCellsWithDigit(mHighlighted);
+    for (grid_iterator it = m_puzzle.begin(); it != m_puzzle.end(); ++it) {
+      if (getCellBounds(it).contains(ev.getPoint())) {
+	m_hotCell = it;
+	break;
+      }
     }
-  }
 
+    if (m_hotCell != oldHot)
+      invalidate(true);
+  }
+  
   // if the mouse leave the client area, remove the highlight
   virtual void onMouseLeave()
   {
-    if (mHighlighted != NullCell) {
-      invalidateCellsWithDigit(mHighlighted);
-      mHighlighted = NullCell;
+    if (m_hotCell != m_puzzle.end()) {
+      invalidate(true);
+      m_hotCell = m_puzzle.end();
     }
-  }
-
-  // convert double-click to a single-click
-  virtual void onDoubleClick(MouseEvent &ev)
-  {
-    onMouseDown(ev);
   }
 
   // push into or pop from the history an element
   virtual void onMouseDown(MouseEvent &ev)
   {
-    if ((mHighlighted != NullCell) &&
-	(!mExposed[mHighlighted])) {
-      Point pt = mHighlighted;
-
-      invalidateCellsWithDigit(pt);
-
+    if ((m_hotCell != m_puzzle.end()) &&
+	(!m_hotCell->given)) {
       // pop an element from history
       if (ev.getButton() == MouseButtons::Right) {
-	if (!mHistory[pt].empty()) {
-	  mTable[pt] = mHistory[pt].back();
-	  mHistory[pt].pop_back();
+	if (!m_hotCell->history.empty()) {
+	  m_hotCell->digit = m_hotCell->history.back();
+	  m_hotCell->history.pop_back();
 	}
 	else
-	  mTable[pt] = 0;
+	  m_hotCell->digit = 0;
       }
       // remove all
       else if (ev.getButton() == MouseButtons::Middle) {
-	mHistory[pt].clear();
+	m_hotCell->history.clear();
       }
       // push a digit into history
       else {
 	// push the current entry into history
-	pushIntoHistory(pt);
+	pushIntoHistory(*m_hotCell);
 
 	// clear the digit
-	mTable[pt] = 0;
+	m_hotCell->digit = 0;
       }
 
-      invalidateCellsWithDigit(pt);
-      invalidateWarnings();
+      updateWarnings();
       checkWin();
+      invalidate(true);
     }
   }
 
@@ -323,39 +372,97 @@ protected:
       (keyCode >= Keys::D0 && keyCode <= Keys::D9) ? keyCode - Keys::D0:
       ((keyCode >= Keys::NumPad0 && keyCode <= Keys::NumPad9) ? keyCode - Keys::NumPad0:
 								-1);
-    if ((mHighlighted != NullCell) && (digit >= 0) &&
-	(!mExposed[mHighlighted])) {
-      Point pt = mHighlighted;
-
-      invalidateCellsWithDigit(pt);
-
+    if ((digit >= 0) && (m_hotCell != m_puzzle.end()) && (!m_hotCell->given)) {
       // push the current entry into history
       if (digit != 0)
-	pushIntoHistory(pt);
+	pushIntoHistory(*m_hotCell);
 
       // replace the digit in the table
-      mTable[pt] = digit;
+      m_hotCell->digit = digit;
 
       // remove the new selected entry from the history
-      remove_element_from_container(mHistory[pt], mTable[pt]);
+      remove_element_from_container(m_hotCell->history,
+				    m_hotCell->digit);
+
+      // check warning & win
+      updateWarnings();
+      checkWin();
 
       // redraw
-      invalidateCellsWithDigit(pt);
-      invalidateWarnings();
-      checkWin();
+      invalidate(true);
 
       ev.consume();
     }
+//     // fill history
+//     else if (keyCode == Keys::H) {
+//       // fill history
+//       for (grid_iterator it = m_puzzle.begin(); it != m_puzzle.end(); ++it) {
+// 	if (!it->given) {
+// 	  it->history.clear();
+
+// 	  for (int digit=1; digit<=9; ++digit) {
+// 	    if (it->digit == digit)
+// 	      continue;
+	      
+// 	    if (!exist(m_puzzle.col_begin(it.col()), m_puzzle.col_end(it.col()), is_digit(digit)) &&
+// 		!exist(m_puzzle.row_begin(it.row()), m_puzzle.row_end(it.row()), is_digit(digit)) &&
+// 		!exist(m_puzzle.box_begin(it.box()), m_puzzle.box_end(it.box()), is_digit(digit)))
+// 	      it->history.push_back(digit);
+// 	  }
+// 	}
+//       }
+//       // help
+//       for (grid_iterator it = m_puzzle.begin(); it != m_puzzle.end(); ++it) {
+// 	if (!it->given && it->digit == 0) {
+// 	  if (it->history.size() == 1) {
+// 	    it->digit = it->history.front();
+// 	    it->history.clear();
+// 	  }
+// 	}
+//       }
+//       invalidate(true);
+//     }
   }
 
 private:
 
+  MenuBar *createMenuBar()
+  {
+    Menu *gameMenu = new Menu("&Game");
+    gameMenu->add("&New\tCtrl+Shift+N", Keys::Control | Keys::Shift | Keys::N)
+      ->Action.connect(Bind(&MainFrame::onNew, this));
+    gameMenu->add("New with &seed\tCtrl+N", Keys::Control | Keys::N)
+      ->Action.connect(Bind(&MainFrame::onNewWithSeed, this));
+    gameMenu->addSeparator();
+    gameMenu->add("&Exit")->Action.connect(Bind(&MainFrame::setVisible, this, false));
+
+    MenuBar *menuBar = new MenuBar;
+    menuBar->add(gameMenu);
+    menuBar->add("&Help")->Action.connect(Bind(&MainFrame::onHelp, this));
+
+    return menuBar;
+  }
+  
   //////////////////////////////////////////////////////////////////////
   // signal bindings
 
   void onNew()
   {
     generateGame(rand());
+
+//     for (int c=0; c<0xffff; ++c) {
+//       generateGame(c);
+//       for (grid_iterator it = m_puzzle.begin(); it != m_puzzle.end(); ++it) {
+// 	if (it->given) {
+// 	  printf("%d", it->digit);
+// 	}
+// 	else {
+// 	  printf(".");
+// 	}
+//       }
+//       printf("   vaca (%d)\n", c);
+//       fflush(stdout);
+//     }
   }
 
   void onNewWithSeed()
@@ -380,131 +487,54 @@ private:
   }
 
   //////////////////////////////////////////////////////////////////////
-  // logic
 
-  void pushIntoHistory(Point pt)
+  void pushIntoHistory(cell& cell)
   {
     // push the current entry into history
-    if ((mTable[pt] != 0) &&
-	(std::find(mHistory[pt].begin(),
-		   mHistory[pt].end(),
-		   mTable[pt]) == mHistory[pt].end())) {
+    if ((cell.digit != 0) &&
+	(std::find(cell.history.begin(),
+		   cell.history.end(),
+		   cell.digit) == cell.history.end())) {
       // history too big?
-      if (mHistory[pt].size() == 8)
-	mHistory[pt].erase(mHistory[pt].begin());
+      if (cell.history.size() == 9)
+	cell.history.erase(cell.history.begin());
 
       // put the new element
-      mHistory[pt].push_back(mTable[pt]);
+      cell.history.push_back(cell.digit);
     }
   }
 
-  Rect getCellRect(const Point &pt)
+  Rect getCellBounds(grid_iterator it)
   {
-    if (pt != NullCell) {
-      Rect rc = getClientBounds();
-      int dx = 1+((pt.x>0) && (pt.x%3)==0?1:0);
-      int dy = 1+((pt.y>0) && (pt.y%3)==0?1:0);
-      return Rect(rc.x+pt.x*rc.w/9+dx,
-		  rc.y+pt.y*rc.h/9+dy, rc.w/9-dx, rc.h/9-dy);
-    }
-    else
-      return Rect();
+    Rect rc = getClientBounds();
+    return Rect(rc.x + it.col()*rc.w/9,
+		rc.y + it.row()*rc.h/9,
+		rc.w/9+1, rc.h/9+1);
   }
 
-  void invalidateCellRect(const Point &pt)
+  void updateWarnings()
   {
-    if (pt != NullCell)
-      invalidate(getCellRect(pt), false);
-  }
-
-  void invalidateCellsWithDigit(Point point)
-  {
-    if (point != NullCell) {
-      Point pt;
-
-      for (pt.y=0; pt.y<9; pt.y++)
-	for (pt.x=0; pt.x<9; pt.x++)
-	  if (mTable[pt] == mTable[point])
-	    invalidateCellRect(pt);
-    }
-  }
-
-  void invalidateWarnings()
-  {
-    table<bool> oldWarning = mWarning;
-    Point pt;
-
-    checkWarnings();
-
-    // invalidate cells where warning state changes
-    for (pt.y=0; pt.y<9; pt.y++)
-      for (pt.x=0; pt.x<9; pt.x++)
-	if (oldWarning[pt] != mWarning[pt])
-	  invalidateCellRect(pt);
-  }
-
-  void checkWarnings()
-  {
-    int c, x, y, u, v;
-
     // clear warnings
-    mWarning.reset(false);
-
-    // nine boxes, nine rows, nine columns
-    for (c=0; c<9; c++) {
-      // check a box
-      for (y=boxOffset[c].y; y<boxOffset[c].y+3; y++) {
-	for (x=boxOffset[c].x; x<boxOffset[c].x+3; x++) {
-	  for (v=boxOffset[c].y; v<boxOffset[c].y+3; v++) {
-	    for (u=boxOffset[c].x; u<boxOffset[c].x+3; u++) {
-	      if (mTable[v][u] != 0 &&
-		  y != v && x != u && mTable[v][u] == mTable[y][x]) {
-		mWarning[v][u] = true;
-		mWarning[y][x] = true;
-	      }
-	    }
-	  }
-	}
-      }
-
-      // check a row
-      for (x=0; x<9; x++) {
-	for (u=0; u<9; u++) {
-	  if (mTable[c][u] != 0 &&
-	      x != u && mTable[c][u] == mTable[c][x]) {
-	    mWarning[c][u] = true;
-	    mWarning[c][x] = true;
-	  }
-	}
-      }
-
-      // check a column
-      for (y=0; y<9; y++) {
-	for (v=0; v<9; v++) {
-	  if (mTable[v][c] != 0 &&
-	      y != v && mTable[v][c] == mTable[y][c]) {
-	    mWarning[v][c] = true;
-	    mWarning[y][c] = true;
-	  }
-	}
-      }
+    std::for_each(m_puzzle.begin(), m_puzzle.end(), set_warning());
+      
+    // nine boxes, rows, and columns
+    for (int c=0; c<9; c++) {
+      compare_with_all(m_puzzle.box_begin(c), m_puzzle.box_end(c), set_warning());
+      compare_with_all(m_puzzle.col_begin(c), m_puzzle.col_end(c), set_warning());
+      compare_with_all(m_puzzle.row_begin(c), m_puzzle.row_end(c), set_warning());
     }
   }
 
   void checkWin()
   {
-    int x, y;
+    for (grid_iterator it = m_puzzle.begin(); it != m_puzzle.end(); ++it)
+      if (it->digit == 0 || it->warning)
+	return;
 
-    for (y=0; y<9; y++)
-      for (x=0; x<9; x++)
-	if (mTable[y][x] == 0 || mWarning[y][x])
-	  return;
+    msgBox("You win!!!", "Congratulations", MB_OK);
 
-    msgBox("You win!!!",
-	   "Congratulations",
-	   MB_OK);
-
-    mExposed.reset(true);
+    // set all to given
+    std::for_each(m_puzzle.begin(), m_puzzle.end(), set_given_to_true());
     invalidate(false);
   }
 
@@ -513,194 +543,240 @@ private:
     srand(gameNumber);
     setText("Sudoku (Game " + String::fromInt(gameNumber) + ")");
 
-    mHighlighted = NullCell;
+    // no hot cell
+    m_hotCell = m_puzzle.end();
 
-    // clear the table and the history
-    mTable.reset(0);
-    for (table<std::vector<int> >::iterator it=mHistory.begin(); it!=mHistory.end(); ++it)
-      it->clear();
+    // reset the grid
+    for (grid_iterator it = m_puzzle.begin(); it != m_puzzle.end(); ++it) {
+      it->digit = 0;
+      it->warning = false;
+      it->given = false;
+      it->history.clear();
+    }
 
     // fill all boxes with all digits
-    int i, j;
-    for (i=0; i<9; i++)
-      for (j=0; j<9; j++)
-	fillBoxWithDigit(boxOffset[j].x, boxOffset[j].y, i+1);
+    for (int digit=1; digit<=9; digit++)
+      for (int box=0; box<9; box++)
+	fillBoxWithDigit(box, digit);
 
-    // make blank the cells that the player should fill
-    std::vector<Point> digits[9];
-    Point pt;
-    for (pt.y=0; pt.y<9; pt.y++)
-      for (pt.x=0; pt.x<9; pt.x++)
-	if (mTable[pt] != 0)
-	  digits[mTable[pt]-1].push_back(pt);
+    grid<cell> puzzle;
 
-    // leave 30 digits exposed
-    mExposed.reset(false);
-    int lucky[9];
-    for (i=0; i<9; i++) lucky[i] = 3;
-    for (i=0; i<3; i++) lucky[rand()%9]++;
-    for (i=0; i<9; i++) {
-      for (j=0; j<lucky[i]; j++) {
-	do {
-	  // select a cell to expose
-	  pt = digits[i][rand() % digits[i].size()];
-	  // check if this box is too exposed (maximum of 4 exposed
-	  // cells per box)
-	} while (getExposedCellsInBox(pt) >= 4);
+    // now we must create "the givens" (the exposed digits)
+    do {
+      // make a copy of the generated puzzle
+      puzzle = m_puzzle;
 
-	remove_element_from_container(digits[i], pt);
-
-	mExposed[pt] = true;
+      // make a vector to known where is each digit in the grid
+      std::vector<grid_iterator> digits[9];
+      for (grid_iterator it = puzzle.begin(); it != puzzle.end(); ++it)
+	if (it->digit != 0)
+	  digits[it->digit-1].push_back(it);
+    
+      std::vector<int> givens_for_digit(9, 0);
+      for (int i=0; i<31; i++) {
+	int digit = rand()%9;
+	while (true) {
+	  if (givens_for_digit[digit] < 4) {
+	    givens_for_digit[digit]++;
+	    break;
+	  }
+	  digit = (digit+1)%9;
+	}
       }
-    }
 
-    // set to 0 non-exposed cells
-    for (i=0; i<9; i++)
-      for (j=0; j<9; j++)
-	if (!mExposed[i][j])
-	  mTable[i][j] = 0;
+      for (int i=0; i<9; i++) {
+	for (int j=0; j<givens_for_digit[i]; j++) {
+	  grid_iterator it = digits[i][rand() % digits[i].size()];
+	  remove_element_from_container(digits[i], it);
+	  it->given = true;
+	}
+      }
 
-    // check warnings
-    checkWarnings();
+      // set to 0 non-given cells
+      for (grid_iterator it = puzzle.begin(); it != puzzle.end(); ++it)
+	if (!it->given)
+	  it->digit = 0;
+
+      // is the sudoku is not soluble, regenerate...
+    } while (!isSoluble(puzzle));
+
+    // set to 0 non-given cells
+    for (grid_iterator it = puzzle.begin(); it != puzzle.end(); ++it)
+      if (!it->given)
+	it->digit = 0;
+
+    m_puzzle = puzzle;
+
+    updateWarnings();
     invalidate(true);
   }
-
-  int getExposedCellsInBox(Point point)
+  
+  int getGivensCountInBox(int box)
   {
-    Point pt;
-    int exposedCount = 0;
-    for (pt.y=(point.y/3)*3; pt.y<(point.y/3)*3+3; pt.y++) {
-      for (pt.x=(point.x/3)*3; pt.x<(point.x/3)*3+3; pt.x++) {
-	if (mExposed[pt])
-	  exposedCount++;
+    return std::count_if(m_puzzle.box_begin(box), m_puzzle.box_end(box),
+			 if_given_is_true());
+  }
+  
+  // put a digit in its 3x3 box
+  void fillBoxWithDigit(int box, int digit)
+  {
+    int cellCount;		// current cell collisions
+    int bestCount = -1;		// how many collisions has that cell
+    grid_iterator bestCell;	// cell where are less collisions
+    std::vector<grid_iterator> chances;
+
+    for (box_iterator it = m_puzzle.box_begin(box);
+	 it != m_puzzle.box_end(box); ++it) {
+      if (it->digit == 0) {
+	cellCount = countDigitCollisionsInRowAndColumn(it, digit);
+	if (cellCount == 0)
+	  chances.push_back(it);
+
+	if (bestCount < 0 ||
+	    bestCount > cellCount) {
+	  bestCount = cellCount;
+	  bestCell = it;
+	}
       }
     }
-    return exposedCount;
-  }
-
-  // put a digit in its 3x3 box
-  void fillBoxWithDigit(int u, int v, int digit)
-  {
-    int c, x, y;
-    int values[9];		// values of the 3x3 box
-    bool blanks[9];		// blank places to put a digit
-    bool posibles[9];		// places where the digit don't generate warnings
-    std::vector<int> chances;	// vector with the true-indexes of "posibles"
-    int cellCount;		// current cell collisions
-    int bestCell;		// cell where are less collisions
-    int bestCount = -1;		// how many collisions has that cell
-    
-    c = 0;
-    for (y=0; y<3; y++)
-      for (x=0; x<3; x++) {
-	values[c] = mTable[v+y][u+x];
-	blanks[c] = (values[c] == 0);
-	if (blanks[c]) {
-	  cellCount = countDigitCollisionsInRowAndColumn(u+x, v+y, digit);
-	  posibles[c] = (cellCount == 0);
-
-	  if (bestCount < 0 ||
-	      bestCount > cellCount) {
-	    bestCount = cellCount;
-	    bestCell = c;
-	  }
-	}
-	else
-	  posibles[c] = false;
-	c++;
-      }
-
-    // chances
-    for (c=0; c<9; c++)
-      if (posibles[c])
-	chances.push_back(c);
 
     // excelent, we found a good place to put the digit
     if (!chances.empty()) {
-      // put the digit
-      c = chances[rand() % chances.size()];
-      mTable[v+(c/3)][u+(c%3)] = digit;
+      // put the digit in a random place
+      chances[rand() % chances.size()]->digit = digit;
     }
     // bad news, we must swap cells to avoid the collision
     else {
       // put the digit
-      c = bestCell;
-      mTable[v+(c/3)][u+(c%3)] = digit;
+      bestCell->digit = digit;
 
       // swap cells
-      swapCellToFixDigitCollision(u+(c%3), v+(c/3), digit);
+      fixCellCollisions(bestCell);
     }
   }
-
-  int countDigitCollisionsInRowAndColumn(int x, int y, int digit)
+  
+  int countDigitCollisionsInRowAndColumn(grid_iterator it, int digit)
   {
-    int collisions = 0;
-    for (int c=0; c<9; c++) {
-      if (mTable[y][c] == digit) collisions++;
-      if (mTable[c][x] == digit) collisions++;
-    }
-    return collisions;
+    int count =
+      std::count_if(m_puzzle.col_begin(it.col()), m_puzzle.col_end(it.col()), is_digit(digit)) +
+      std::count_if(m_puzzle.row_begin(it.row()), m_puzzle.row_end(it.row()), is_digit(digit));
+    return count > 0 && it->digit == digit ? count-1: count;
   }
 
   // try to swap cells to fix the collision with the cell at (x,y)
-  void swapCellToFixDigitCollision(int x, int y, int digit)
+  void fixCellCollisions(grid_iterator cell)
   {
-    // look up 9 cells in the row and the column that cross at (x,y) position
-    for (int c=0; c<9; c++) {
-      // check if the c-column in the y-row (cy-cell), has the same
-      // digit that the xy-cell (remember to avoid x == c)
-      if (x != c && mTable[y][c] == digit) {
+    int col = cell.col();
+    int row = cell.row();
+
+    // look up 9 cells in the row that cross at "cell" position
+    for (row_iterator it = m_puzzle.row_begin(row); it != m_puzzle.row_end(row); ++it) {
+      if (it != cell && it->digit == cell->digit) {
 	// find other row to swap
-	for (int q=(y/3)*3; q<(y/3)*3+3; q++) {
-	  // the q-row can't be at the same row as (x,y) (the y-row)
- 	  if (q != y) {
-	    mTable[y][c] = 0;	// make this cell temporary blank
+	for (int q=(row/3)*3; q<(row/3)*3+3; q++) {
+ 	  if (q != row) {
+	    // make this cell temporary blank
+	    int old_digit = it->digit;
+	    it->digit = 0;
+
+	    grid_iterator swapable = m_puzzle.at(it.col(), q);
 
 	    // check if I move the cell in the y-row to the cell in
 	    // the q-row, there aren't a collision
-	    if (countDigitCollisionsInRowAndColumn(c, q, digit) == 0) {
+	    if (countDigitCollisionsInRowAndColumn(swapable, old_digit) == 0) {
 	      // anyway, swap the cells
-	      mTable[y][c] = mTable[q][c];
-	      mTable[q][c] = digit;
+	      it->digit = swapable->digit;
+	      swapable->digit = old_digit;
 
 	      // well, now we should check if this movement doesn't
 	      // make another warning...
-	      if (mTable[y][c] &&
-		  countDigitCollisionsInRowAndColumn(c, y, mTable[y][c]) > 0)
-		swapCellToFixDigitCollision(c, y, mTable[y][c]);
+	      if (it->digit != 0 &&
+		  countDigitCollisionsInRowAndColumn(it, it->digit) > 0)
+		fixCellCollisions(it);
 
 	      break;
 	    }
-	    // restore the old value
-	    else {
-	      mTable[y][c] = digit;
-	    }
-	  }
-	}
-      }
-      // now for the column (is symmetrical to the row)
-      if (y != c && mTable[c][x] == digit) {
-	for (int q=(x/3)*3; q<(x/3)*3+3; q++) {
-	  if (q != x) {
-	    mTable[c][x] = 0;
-
-	    if (countDigitCollisionsInRowAndColumn(q, c, digit) == 0) {
-	      mTable[c][x] = mTable[c][q];
-	      mTable[c][q] = digit;
-
-	      if (mTable[c][x] &&
-		  countDigitCollisionsInRowAndColumn(x, c, mTable[c][x]) > 0)
-		swapCellToFixDigitCollision(x, c, mTable[c][x]);
-
-	      break;
-	    }
-	    else {
-	      mTable[c][x] = digit;
-	    }
+	    else
+	      it->digit = old_digit;
 	  }
 	}
       }
     }
+
+    for (col_iterator it = m_puzzle.col_begin(col); it != m_puzzle.col_end(col); ++it) {
+      if (it != cell && it->digit == cell->digit) {
+	// find other row to swap
+	for (int q=(col/3)*3; q<(col/3)*3+3; q++) {
+ 	  if (q != col) {
+	    // make this cell temporary blank
+	    int old_digit = it->digit;
+	    it->digit = 0;
+
+	    grid_iterator swapable = m_puzzle.at(q, it.row());
+
+	    // check if I move the cell in the y-row to the cell in
+	    // the q-row, there aren't a collision
+	    if (countDigitCollisionsInRowAndColumn(swapable, old_digit) == 0) {
+	      // anyway, swap the cells
+	      it->digit = swapable->digit;
+	      swapable->digit = old_digit;
+
+	      // well, now we should check if this movement doesn't
+	      // make another warning...
+	      if (it->digit != 0 &&
+		  countDigitCollisionsInRowAndColumn(it, it->digit) > 0)
+		fixCellCollisions(it);
+
+	      break;
+	    }
+	    else
+	      it->digit = old_digit;
+	  }
+	}
+      }
+    }
+  }
+
+  // basic Sudoku solver
+  static bool isSoluble(grid<cell> puzzle)
+  {
+    bool continue_working;
+    bool all_filled;
+
+    do {
+      for (grid_iterator it = puzzle.begin(); it != puzzle.end(); ++it) {
+	if (it->given)
+	  continue;
+
+	it->history.clear();
+
+	for (int digit=1; digit<=9; ++digit) {
+	  if (it->digit == digit)
+	    continue;
+	      
+	  if (!exist(puzzle.col_begin(it.col()), puzzle.col_end(it.col()), is_digit(digit)) &&
+	      !exist(puzzle.row_begin(it.row()), puzzle.row_end(it.row()), is_digit(digit)) &&
+	      !exist(puzzle.box_begin(it.box()), puzzle.box_end(it.box()), is_digit(digit)))
+	    it->history.push_back(digit);
+	}
+      }
+
+      all_filled = true;
+      continue_working = false;
+      for (grid_iterator it = puzzle.begin(); it != puzzle.end(); ++it) {
+	if (!it->given && it->digit == 0) {
+	  if (it->history.size() == 1) {
+	    it->digit = it->history.front();
+	    it->history.clear();
+	    continue_working = true;
+	  }
+	  else
+	    all_filled = false;
+	}
+      }
+    } while (continue_working);
+
+    return all_filled;
   }
 
 };
@@ -709,10 +785,10 @@ private:
 
 class Example : public Application
 {
-  MainFrame mMainWnd;
+  MainFrame m_mainFrame;
 public:
   virtual void main(std::vector<String> args) {
-    mMainWnd.setVisible(true);
+    m_mainFrame.setVisible(true);
   }
 };
 

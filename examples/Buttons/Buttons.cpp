@@ -29,63 +29,63 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/Vaca.h"
+#include <Vaca/Vaca.h>
 
 using namespace Vaca;
 
 class MainFrame : public Frame
 {
-  Panel mLeftPanel;
-  Panel mRightPanel;
-  Button mButton;
-  ToggleButton mToggleButton;
-  CheckBox mCheckBox;
-  RadioGroup mRadioGroup1;
-  RadioGroup mRadioGroup2;
-  RadioButton mRadioButton1;
-  RadioButton mRadioButton2;
-  RadioButton mRadioButton3;
-  RadioButton mRadioButton4;
-  Label mLabel1;
-  Label mLabel2;
-  ToggleButton mDisableButton;
-  int mActions;
+  Panel m_leftPanel;
+  Panel m_rightPanel;
+  Button m_button;
+  ToggleButton m_toggleButton;
+  CheckBox m_checkBox;
+  RadioGroup m_radioGroup1;
+  RadioGroup m_radioGroup2;
+  RadioButton m_radioButton1;
+  RadioButton m_radioButton2;
+  RadioButton m_radioButton3;
+  RadioButton m_radioButton4;
+  Label m_label1;
+  Label m_label2;
+  ToggleButton m_disableButton;
+  int m_actions;
 
 public:
 
   MainFrame()
     : Frame("Buttons")
-    , mLeftPanel(this)
-    , mRightPanel(this)
-    , mButton("Button", &mLeftPanel)
-    , mToggleButton("ToggleButton", &mLeftPanel)
-    , mCheckBox("CheckBox", &mLeftPanel)
-    , mRadioButton1("RadioButton1_Group1", mRadioGroup1, &mLeftPanel)
-    , mRadioButton2("RadioButton2_Group1", mRadioGroup1, &mLeftPanel)
-    , mRadioButton3("RadioButton3_Group2", mRadioGroup2, &mLeftPanel)
-    , mRadioButton4("RadioButton4_Group2", mRadioGroup2, &mLeftPanel)
-    , mLabel1("", &mRightPanel)
-    , mLabel2("", &mRightPanel)
-    , mDisableButton("All Disabled", &mRightPanel)
-    , mActions(-1)
+    , m_leftPanel(this)
+    , m_rightPanel(this)
+    , m_button("Button", &m_leftPanel)
+    , m_toggleButton("ToggleButton", &m_leftPanel)
+    , m_checkBox("CheckBox", &m_leftPanel)
+    , m_radioButton1("RadioButton1_Group1", m_radioGroup1, &m_leftPanel)
+    , m_radioButton2("RadioButton2_Group1", m_radioGroup1, &m_leftPanel)
+    , m_radioButton3("RadioButton3_Group2", m_radioGroup2, &m_leftPanel)
+    , m_radioButton4("RadioButton4_Group2", m_radioGroup2, &m_leftPanel)
+    , m_label1("", &m_rightPanel)
+    , m_label2("", &m_rightPanel)
+    , m_disableButton("All Disabled", &m_rightPanel)
+    , m_actions(-1)
   {
     setLayout(new BoxLayout(Horizontal, true)); // homogeneous
-    mLeftPanel.setLayout(new BoxLayout(Vertical, true)); // homogeneous
-    mRightPanel.setLayout(new BoxLayout(Vertical, false)); // no-homogeneous
+    m_leftPanel.setLayout(new BoxLayout(Vertical, true)); // homogeneous
+    m_rightPanel.setLayout(new BoxLayout(Vertical, false)); // no-homogeneous
 
     updateLabel();
 
-    bindButton(mButton);
-    bindButton(mToggleButton);
-    bindButton(mCheckBox);
-    bindButton(mRadioButton1);
-    bindButton(mRadioButton2);
-    bindButton(mRadioButton3);
-    bindButton(mRadioButton4);
+    bindButton(m_button);
+    bindButton(m_toggleButton);
+    bindButton(m_checkBox);
+    bindButton(m_radioButton1);
+    bindButton(m_radioButton2);
+    bindButton(m_radioButton3);
+    bindButton(m_radioButton4);
 
-    mDisableButton.Action.connect(Bind(&MainFrame::toggleDisabled, this));
+    m_disableButton.Action.connect(Bind(&MainFrame::toggleDisabled, this));
 
-    setSize(preferredSize());
+    setSize(getPreferredSize());
     center();
   }
 
@@ -98,9 +98,9 @@ private:
 
   void updateLabel()
   {
-    mActions++;
-    mLabel1.setText(String("Action signal fired ") + String::fromInt(mActions) + " time(s)");
-    mLabel2.setText(String("CheckBox's ") + (mCheckBox.isSelected() ? "checked": " unchecked"));
+    m_actions++;
+    m_label1.setText(String("Action signal fired ") + String::fromInt(m_actions) + " time(s)");
+    m_label2.setText(String("CheckBox's ") + (m_checkBox.isSelected() ? "checked": "unchecked"));
 
     // the labels are bigger and bigger, so a relayout isn't a bad idea
     layout();
@@ -108,14 +108,14 @@ private:
 
   void toggleDisabled()
   {
-    bool state = !mDisableButton.isSelected();
-    mButton.setEnabled(state);
-    mToggleButton.setEnabled(state);
-    mCheckBox.setEnabled(state);
-    mRadioButton1.setEnabled(state);
-    mRadioButton2.setEnabled(state);
-    mRadioButton3.setEnabled(state);
-    mRadioButton4.setEnabled(state);
+    bool state = !m_disableButton.isSelected();
+    m_button.setEnabled(state);
+    m_toggleButton.setEnabled(state);
+    m_checkBox.setEnabled(state);
+    m_radioButton1.setEnabled(state);
+    m_radioButton2.setEnabled(state);
+    m_radioButton3.setEnabled(state);
+    m_radioButton4.setEnabled(state);
   }
 
 };
@@ -124,10 +124,10 @@ private:
 
 class Example : public Application
 {
-  MainFrame mMainWnd;
+  MainFrame m_mainFrame;
 public:
   virtual void main(std::vector<String> args) {
-    mMainWnd.setVisible(true);
+    m_mainFrame.setVisible(true);
   }
 };
 

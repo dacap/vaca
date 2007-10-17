@@ -42,13 +42,13 @@ using namespace Vaca;
  * Creates a new anchor layout.
  */
 AnchorLayout::AnchorLayout(const Size &refSize)
-  : mRefSize(refSize)
+  : m_refSize(refSize)
 {
 }
 
 void AnchorLayout::layout(Widget *parent, Widget::Container &widgets, const Rect &parentRc)
 {
-  Size delta(parentRc.getSize() - mRefSize);
+  Size delta(parentRc.getSize() - m_refSize);
 
   beginMovement(widgets);
 
@@ -68,9 +68,9 @@ void AnchorLayout::layout(Widget *parent, Widget::Container &widgets, const Rect
     Borders borders = anchor->getBorders();
     Rect rc = anchor->getRefRect();
 
-    bool left = (borders & LeftBorder) != NoBorder;
-    bool top = (borders & TopBorder) != NoBorder;
-    bool right = (borders & RightBorder) != NoBorder;
+    bool left   = (borders & LeftBorder  ) != NoBorder;
+    bool top    = (borders & TopBorder   ) != NoBorder;
+    bool right  = (borders & RightBorder ) != NoBorder;
     bool bottom = (borders & BottomBorder) != NoBorder;
 
     if (left && right) {

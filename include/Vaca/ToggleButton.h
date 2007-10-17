@@ -37,7 +37,7 @@
 namespace Vaca {
 
 #define ToggleButtonStyle	(ChildStyle +				\
-				 TabStopStyle +				\
+				 FocusableStyle +			\
 				 Style(BS_AUTOCHECKBOX | BS_PUSHLIKE, 0))
   
 /**

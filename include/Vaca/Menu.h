@@ -73,11 +73,11 @@ class VACA_DLL MenuItem : private boost::noncopyable
 {
   friend class Menu;
 
-  bool mAutoDelete;
-  Menu *mParent;
-  String mText;
-  int mId;
-  std::vector<Keys::Type> mShortcuts;
+//   bool mAutoDelete;
+  Menu  *m_parent;
+  String m_text;
+  int    m_id;
+  std::vector<Keys::Type> m_shortcuts;
 
 public:
 
@@ -85,7 +85,7 @@ public:
   MenuItem(const String &text, Keys::Type defaultShortcut = Keys::None, int id = -1);
   virtual ~MenuItem();
 
-  bool isAutoDelete();
+//   bool isAutoDelete();
 
   Menu *getParent();
   int getId();
@@ -158,8 +158,8 @@ public:
 
 private:
 
-  HMENU mHMENU;
-  Container mContainer;
+  HMENU m_HMENU;
+  Container m_container;
 
 public:
 
@@ -207,7 +207,6 @@ private:
 /**
  * A menu bar, has a collection of Menus.
  */
-
 class VACA_DLL MenuBar : public Menu
 {
 public:
@@ -220,6 +219,9 @@ public:
 
 };
 
+/** 
+ * A menu that has the list of all MdiChild.
+ */
 class VACA_DLL MdiListMenu : public Menu
 {
 public:

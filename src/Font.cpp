@@ -36,15 +36,15 @@
 
 using namespace Vaca;
 
-Font *Font::defaultFont;
+Font *Font::defaultFont = NULL;
 
 /**
  * Constructs an invalid font.
  */
 Font::Font()
-  : mHFONT(NULL)
+  : m_HFONT(NULL)
 {
-  mAutoDelete = false;
+  m_autoDelete = false;
 }
 
 Font::Font(const Font &font)
@@ -66,7 +66,7 @@ Font::Font(const Font &font, Font::Style::Type style)
 }
 
 Font::Font(String familyName, int size, Font::Style::Type style)
-  : mHFONT(NULL)
+  : m_HFONT(NULL)
 {
   ScreenGraphics g;
   LOGFONT lf;
@@ -94,21 +94,21 @@ Font::Font(String familyName, int size, Font::Style::Type style)
  * Wrapper constructor for HFONT.
  */
 Font::Font(HFONT hfont)
-  : mHFONT(NULL)
+  : m_HFONT(NULL)
 {
   assign(hfont);
 }
 
 Font::Font(LPLOGFONT lplf)
-  : mHFONT(NULL)
+  : m_HFONT(NULL)
 {
   assign(lplf);
 }
 
 Font::~Font()
 {
-  if (mHFONT != NULL && mAutoDelete)
-    DeleteObject(mHFONT);
+  if (m_HFONT != NULL && m_autoDelete)
+    DeleteObject(m_HFONT);
 
   if (this == Font::defaultFont)
     Font::defaultFont = NULL;
@@ -116,13 +116,13 @@ Font::~Font()
 
 bool Font::isValid()
 {
-  return mHFONT != NULL;
+  return m_HFONT != NULL;
 }
 
 /**
  * Returns the size of the font in points.
  */
-int Font::getSize()
+int Font::getPointSize()
 {
   LOGFONT lf;
   if (getLogFont(&lf))
@@ -180,24 +180,24 @@ void Font::assign(const Font &font)
 
 void Font::assign(HFONT hfont)
 {
-  if (mHFONT != NULL && mAutoDelete) {
-    DeleteObject(mHFONT);
-    mHFONT = NULL;
+  if (m_HFONT != NULL && m_autoDelete) {
+    DeleteObject(m_HFONT);
+    m_HFONT = NULL;
   }
 
-  mHFONT = hfont;
-  mAutoDelete = false;
+  m_HFONT = hfont;
+  m_autoDelete = false;
 }
 
 void Font::assign(LPLOGFONT lplf)
 {
-  if (mHFONT != NULL && mAutoDelete) {
-    DeleteObject(mHFONT);
-    mHFONT = NULL;
+  if (m_HFONT != NULL && m_autoDelete) {
+    DeleteObject(m_HFONT);
+    m_HFONT = NULL;
   }
 
-  mHFONT = CreateFontIndirect(lplf);
-  mAutoDelete = true;
+  m_HFONT = CreateFontIndirect(lplf);
+  m_autoDelete = true;
 }
 
 // FontMetrics Font::getMetrics()
@@ -205,26 +205,26 @@ void Font::assign(LPLOGFONT lplf)
 //   return FontMetrics(this);
 // }
 
-Font &Font::getDefault()
+Font *Font::getDefault()
 {
   if (!Font::defaultFont)
     Font::defaultFont = new Font(reinterpret_cast<HFONT>(GetStockObject(DEFAULT_GUI_FONT)));
 
   assert(Font::defaultFont != NULL);
 
-  return *Font::defaultFont;
+  return Font::defaultFont;
 }
 
 HFONT Font::getHFONT()
 {
-  return mHFONT;
+  return m_HFONT;
 }
 
 bool Font::getLogFont(LPLOGFONT lplf) const
 {
-  assert(mHFONT != NULL);
+  assert(m_HFONT != NULL);
 
-  return GetObject(mHFONT,
+  return GetObject(m_HFONT,
 		   sizeof(LOGFONT),
 		   reinterpret_cast<LPVOID>(lplf)) != 0;
 }

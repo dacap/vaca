@@ -35,13 +35,12 @@
 #include "Vaca/Widget.h"
 #include "Vaca/Debug.h"
 #include "Vaca/Application.h"
-// #include "Vaca/Bind.h"
 
 using namespace Vaca;
 
-FontDialog::FontDialog(Font &font, Widget *parent)
+FontDialog::FontDialog(Font *font, Widget *parent)
   : CommonDialog(parent)
-  , mFont(font)
+  , m_font(font)
 {
 }
 
@@ -56,7 +55,7 @@ bool FontDialog::doModal()
   cf.lStructSize = sizeof(CHOOSEFONT);
   cf.hwndOwner = getParentHWND();
   cf.hDC = NULL;
-  cf.lpLogFont = &mLogFont;
+  cf.lpLogFont = &m_logFont;
   cf.iPointSize = 0; 
   cf.Flags = CF_SCREENFONTS | CF_LIMITSIZE;
   cf.rgbColors = RGB(0,0,0); 
@@ -69,11 +68,11 @@ bool FontDialog::doModal()
   cf.nSizeMin = 4; 
   cf.nSizeMax = 72; 
 
-  if (mFont.getLogFont(&mLogFont))
+  if (m_font->getLogFont(&m_logFont))
     cf.Flags |= CF_INITTOLOGFONTSTRUCT;
 
   if (ChooseFont(&cf)) {
-    mFont.assign(&mLogFont);
+    m_font->assign(&m_logFont);
     return true;
   }
   else
@@ -82,6 +81,6 @@ bool FontDialog::doModal()
 
 bool FontDialog::getLogFont(LPLOGFONT lplf) const
 {
-  CopyMemory(lplf, &mLogFont, sizeof(LOGFONT));
+  CopyMemory(lplf, &m_logFont, sizeof(LOGFONT));
   return true;
 }

@@ -39,11 +39,11 @@ using namespace Vaca;
 
 Cursor::Cursor(int cursorId)
 {
-  mHCURSOR = LoadCursor(Application::getHINSTANCE(),
-			MAKEINTRESOURCE(cursorId));
-  mAutoDelete = true;
+  m_HCURSOR = LoadCursor(Application::getHINSTANCE(),
+			 MAKEINTRESOURCE(cursorId));
+  m_autoDelete = true;
 
-  if (mHCURSOR == NULL)
+  if (m_HCURSOR == NULL)
     throw ResourceException();
 }
 
@@ -55,8 +55,8 @@ Cursor::Cursor(SysCursor cursor)
 
     // special cursor that has HCURSOR = NULL
     case NoCursor:
-      mHCURSOR = NULL;
-      mAutoDelete = false;
+      m_HCURSOR = NULL;
+      m_autoDelete = false;
       return;
 
     case ArrowCursor:     sysCursor = IDC_ARROW; break;
@@ -83,49 +83,49 @@ Cursor::Cursor(SysCursor cursor)
 // #endif
   }
   
-  mHCURSOR = LoadCursor(NULL, sysCursor);
-  mAutoDelete = false;
+  m_HCURSOR = LoadCursor(NULL, sysCursor);
+  m_autoDelete = false;
 
-  if (mHCURSOR == NULL)
+  if (m_HCURSOR == NULL)
     throw ResourceException();
 }
 
 Cursor::Cursor(const String &fileName)
 {
-  mHCURSOR = reinterpret_cast<HCURSOR>
+  m_HCURSOR = reinterpret_cast<HCURSOR>
     (LoadImage(Application::getHINSTANCE(),
 	       fileName.c_str(),
 	       IMAGE_CURSOR,
 	       0, 0, LR_LOADFROMFILE));
 
-  mAutoDelete = true;
+  m_autoDelete = true;
 
-  if (mHCURSOR == NULL)
+  if (m_HCURSOR == NULL)
     throw ResourceException();
 }
 
 Cursor::Cursor(const Cursor &cursor)
 {
-  if (cursor.mAutoDelete) {
-    mHCURSOR = CopyCursor(cursor.mHCURSOR);
-    mAutoDelete = true;
+  if (cursor.m_autoDelete) {
+    m_HCURSOR = CopyCursor(cursor.m_HCURSOR);
+    m_autoDelete = true;
   }
   else {
-    mHCURSOR = cursor.mHCURSOR;
-    mAutoDelete = false;
+    m_HCURSOR = cursor.m_HCURSOR;
+    m_autoDelete = false;
   }
 
-  if (mHCURSOR == NULL)
+  if (m_HCURSOR == NULL)
     throw ResourceException();
 }
 
 Cursor::~Cursor()
 {
-  if (mHCURSOR != NULL && mAutoDelete)
-    DestroyCursor(mHCURSOR);
+  if (m_HCURSOR != NULL && m_autoDelete)
+    DestroyCursor(m_HCURSOR);
 }
 
 HCURSOR Cursor::getHCURSOR()
 {
-  return mHCURSOR;
+  return m_HCURSOR;
 }

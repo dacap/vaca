@@ -1,31 +1,88 @@
+
+----------------------------------------------------------------------
+General
+----------------------------------------------------------------------
+
+- Look at 'TODO' in source code
+- Fix Timer class: tick events can break all the message processing
+  (see BouncingBalls for an example of this bug).
+
+
+----------------------------------------------------------------------
+Layout Managers
+----------------------------------------------------------------------
+
+- complete TableLayout
+- Bix layout manager: a mix between columns, rows, and matrices.
+
+
+----------------------------------------------------------------------
+Widgets
+----------------------------------------------------------------------
+
+- ReBar
+- DataGrid (the DataGrids example is a good start)
+- ScrollBar?
+- FlatScrollBar?
+- Header?
+- MessageBox? (you can use Widget::msgBox at the moment)
+- PageSetupDialog
+- RichEdit?
+
+
+----------------------------------------------------------------------
+Examples
+----------------------------------------------------------------------
+
+- BouncingBall (fix resize wait, and fix timer break)
+- FontMetrics (finish it)
+- PensBrushes (finish Brushes stuff)
+- Trees (memory leaks, see Components, and big problems with
+  destruction of nodes)
+- DataGrids (complete)
+- Sudoku (double-buffered, with better hot-tracking, better cell
+  handle, and fix the "infinite-loop" bug in the level generator)
+
+
+----------------------------------------------------------------------
+Utilities
+----------------------------------------------------------------------
+
+- AddressBook (fix it, and complete it)
+- VacaDoc doesn't compile with UNICODE support
+
+
+----------------------------------------------------------------------
+API
+----------------------------------------------------------------------
+
+- complete tool-bars behaviour
+  + add Command <-> ToolBar interaction.
+
+- Accelerators
+
 - DL_BEGINDRAG, DL_CANCELDRAG, DL_DRAGGING, DL_DROPPED
 
 - document why getOrientation() and setOrientation() don't exist for
-  Spinner (is because the UDS_HORZ style can't be changed after up-down
+  Spinner (it's because the UDS_HORZ style can't be changed after up-down
   control is created).
 
 - complete:
       onBeforePosChange();
       onAfterPosChange();
-      onVScroll();
-      onHScroll();
 
 - check the WM_WINDOWPOSCHANGING message, it's the key.
 
 - methods to use: EnableScrollBar
 
-- all HTHEME stuff (add "Theme" class).
+- All HTHEME stuff (add "Theme" class).
   + IsAppThemed
-
-- write more about the "Alternatives" in the index page.
-
-- setVisible for a Widget (not only for a Frame)
 
 - Add support for FlashWindowEx.
 
 - See what to do with the Command class.
 
-- remember the WM_MENUSELECT message for status-bars.
+- Remember the WM_MENUSELECT message for status-bars.
 
 - add support for DrawFrameControl, DrawState, DrawEdge
   as
@@ -39,4 +96,15 @@
 
 - a "MVC: Model View Controller" pattern (also known as Observer pattern).
 
-- look for 'TODO'
+- Graphics::widenPath()
+
+- finish GraphicsPath class
+
+
+----------------------------------------------------------------------
+Documentation
+----------------------------------------------------------------------
+
+- Write more about the "Alternatives" in the index page. (I'll be
+  written it on Spanish)
+- There are a lot of methods without documentation.

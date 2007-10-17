@@ -29,7 +29,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/Vaca.h"
+#include <Vaca/Vaca.h>
 
 using namespace Vaca;
 
@@ -41,6 +41,11 @@ public:
   InfiniteTreeNode(const String &text)
     : TreeNode(text)
   {
+  }
+
+  virtual ~InfiniteTreeNode()
+  {
+    
   }
 
   virtual bool hasChildren()
@@ -72,22 +77,22 @@ public:
 
 class MainFrame : public Frame
 {
-  TreeView mTreeView;
-  Label mLabel;
+  TreeView m_treeView;
+  Label m_label;
 
 public:
 
   MainFrame()
     : Frame("Trees")
-    , mTreeView(this)
-    , mLabel("", this)
+    , m_treeView(this)
+    , m_label("", this)
   {
     // layout
     setLayout(new BoxLayout(Vertical, false));
-    mTreeView.setConstraint(new BoxConstraint(true));
+    m_treeView.setConstraint(new BoxConstraint(true));
 
     // add the first node (the most simple node without children)
-    mTreeView.addNode(new TreeNode("Leaf node"));
+    m_treeView.addNode(new TreeNode("Leaf node"));
 
     // creates a node with three sub-nodes
     TreeNode *node = new TreeNode("Node with children");
@@ -96,23 +101,23 @@ public:
     node->addNode(new TreeNode("Leaf C"));
 
     // add the second node (a node that has children)
-    mTreeView.addNode(node);
+    m_treeView.addNode(node);
 
     // add the third node (a custom node, the infinite node that we defined)
-    mTreeView.addNode(new InfiniteTreeNode("Infinite Node"));
+    m_treeView.addNode(new InfiniteTreeNode("Infinite Node"));
 
     // bind some events
-    mTreeView.AfterExpand.connect(Bind(&MainFrame::onAfter, this, boost::arg<1>(), "expanded"));
-    mTreeView.AfterCollapse.connect(Bind(&MainFrame::onAfter, this, boost::arg<1>(), "collapsed"));
-    mTreeView.AfterSelect.connect(Bind(&MainFrame::onAfter, this, boost::arg<1>(), "selected"));
-    mTreeView.AfterLabelEdit.connect(Bind(&MainFrame::onAfter, this, boost::arg<1>(), "edited"));
+    m_treeView.AfterExpand.connect(Bind(&MainFrame::onAfter, this, boost::arg<1>(), "expanded"));
+    m_treeView.AfterCollapse.connect(Bind(&MainFrame::onAfter, this, boost::arg<1>(), "collapsed"));
+    m_treeView.AfterSelect.connect(Bind(&MainFrame::onAfter, this, boost::arg<1>(), "selected"));
+    m_treeView.AfterLabelEdit.connect(Bind(&MainFrame::onAfter, this, boost::arg<1>(), "edited"));
   }
 
 protected:
 
   void onAfter(TreeViewEvent &ev, String action)
   {
-    mLabel.setText("You "+action+" \""+ev.getTreeNode()->getText()+"\" item.");
+    m_label.setText("You "+action+" \""+ev.getTreeNode()->getText()+"\" item.");
     // the label could be bigger, relayout...
     layout();
   }
@@ -123,10 +128,10 @@ protected:
 
 class Example : public Application
 {
-  MainFrame mMainWnd;
+  MainFrame m_mainFrame;
 public:
   virtual void main(std::vector<String> args) {
-    mMainWnd.setVisible(true);
+    m_mainFrame.setVisible(true);
   }
 };
 

@@ -62,11 +62,11 @@ struct MouseButtons {
  */
 class VACA_DLL MouseEvent : public Event
 {
-  Point mPoint;
-  int mClicks;
-  int mFlags;
-  MouseButtons::Type mTrigger;
-  int mDelta;
+  Point m_point;
+  int m_clicks;
+  int m_flags;
+  MouseButtons::Type m_trigger;
+  int m_delta;
 
 public:
 

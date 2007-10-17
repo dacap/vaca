@@ -71,8 +71,8 @@ namespace Vaca {
 #endif
 
 /**
- * Base for every button (it's like a wrapper for the "Button" class
- * of Win32).
+ * Base for every button (it's a wrapper for the "BUTTON" class of
+ * Win32).
  */
 class VACA_DLL ButtonBase : public Widget
 {
@@ -84,12 +84,15 @@ public:
   bool isSelected();
   void setSelected(bool state);
 
-  virtual Size preferredSize();
+//   virtual Size preferredSize();
 
   // signals
   boost::signal<void (Event &)> Action; ///< @see onAction
 
 protected:
+  // events
+  virtual void onPreferredSize(Size &sz);
+
   // new events
   virtual void onAction(Event &ev);
 

@@ -42,10 +42,12 @@
 
 namespace Vaca {
 
-#ifdef VACA_FLEX_STRING
-#  define VACA_STRING_BASE flex_string<Character>
-#else
-#  define VACA_STRING_BASE std::basic_string<Character>
+#ifndef VACA_STRING_BASE
+#  ifdef VACA_FLEX_STRING
+#    define VACA_STRING_BASE flex_string<Character>
+#  else
+#    define VACA_STRING_BASE std::basic_string<Character>
+#  endif
 #endif
 
 /**
@@ -72,11 +74,11 @@ public:
 
   // String <-> int
   static String fromInt(int value, int base = 10, int precision = 0);
-  int parseInt(int base = 10);
+  int parseInt(int base = 10) const;
 
   // String <-> double
-  static String fromDouble(double value);
-  double parseDouble();
+  static String fromDouble(double value, int precision);
+  double parseDouble() const;
 
   //////////////////////////////////////////////////////////////////////
   // File names & paths

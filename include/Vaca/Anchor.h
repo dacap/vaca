@@ -39,16 +39,20 @@
 namespace Vaca {
 
 /**
- * Defines an anchor constraint.
+ * Anchor constraint. You should setup an Anchor contraint for every
+ * widget controled by an AnchorLayout.
+ *
+ * @see AnchorLayout.
  */
 class VACA_DLL Anchor : public Constraint
 {
-  Rect mRefRect;
-  int mBorders;
+  Rect m_refRect;
+  int m_borders;
 
 public:
 
   Anchor(const Rect &refRect, Borders borders);
+  Anchor(const Anchor &anchor);
   virtual ~Anchor();
 
   Rect getRefRect() const;

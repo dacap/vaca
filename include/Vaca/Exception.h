@@ -43,7 +43,7 @@ namespace Vaca {
  */
 class Exception : public std::exception
 {
-  String mMessage;
+  String m_message;
   
 public:
 
@@ -56,7 +56,7 @@ public:
     : std::exception()
   {
     try {
-      mMessage = message.c_str();
+      m_message = message.c_str();
     }
     catch (...) {
       // do nothing
@@ -69,7 +69,7 @@ public:
 
   String getMessage()
   {
-    return mMessage;
+    return m_message;
   }
 
 };

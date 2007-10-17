@@ -55,8 +55,8 @@ using namespace Vaca;
 FindTextDialog::FindTextDialog(bool replace, Widget *parent)
   : Dialog(NULL, "", NULL, NoStyle)
 {
-  mReplace = replace;
-  mFindMsgId = RegisterWindowMessage(FINDMSGSTRING);
+  m_replace = replace;
+  m_findMsgId = RegisterWindowMessage(FINDMSGSTRING);
 
   // now Widget::create calls FindTextDialog::createHWND because FindTextDialog is constructed
   create(NULL, parent, NoStyle);
@@ -64,43 +64,43 @@ FindTextDialog::FindTextDialog(bool replace, Widget *parent)
 
 FindTextDialog::~FindTextDialog()
 {
-  if (mReplace)
-    delete mFindReplace.lpstrReplaceWith;
+  if (m_replace)
+    delete m_findReplace.lpstrReplaceWith;
 
-  delete mFindReplace.lpstrFindWhat;
+  delete m_findReplace.lpstrFindWhat;
 }
 
 HWND FindTextDialog::createHWND(LPCTSTR className, Widget *parent, Style style)
 {
-  ZeroMemory(&mFindReplace, sizeof(mFindReplace));
+  ZeroMemory(&m_findReplace, sizeof(m_findReplace));
 
-  mFindReplace.lStructSize = sizeof(mFindReplace);
-  mFindReplace.hwndOwner = parent->getHWND();
-  // mFindReplace.hInstance = NULL;//Application::getHINSTANCE();
-  mFindReplace.Flags = 0
+  m_findReplace.lStructSize = sizeof(m_findReplace);
+  m_findReplace.hwndOwner = parent->getHWND();
+  // m_findReplace.hInstance = NULL;//Application::getHINSTANCE();
+  m_findReplace.Flags = 0
     | FR_DOWN
     | FR_ENABLEHOOK
     ;
 
-  mFindReplace.lpstrFindWhat = new Character[FINDREPLACE_BUFSIZE];
-  mFindReplace.wFindWhatLen = FINDREPLACE_BUFSIZE;
+  m_findReplace.lpstrFindWhat = new Character[FINDREPLACE_BUFSIZE];
+  m_findReplace.wFindWhatLen = FINDREPLACE_BUFSIZE;
 
-  ZeroMemory(mFindReplace.lpstrFindWhat, mFindReplace.wFindWhatLen);
+  ZeroMemory(m_findReplace.lpstrFindWhat, m_findReplace.wFindWhatLen);
 
-  // mFindReplace.lCustData = 0;
-  mFindReplace.lpfnHook = &FindTextDialog::hookProc;
-  // mFindReplace.lpfnHook = NULL;
-  // mFindReplace.lpTemplateName = NULL;
+  // m_findReplace.lCustData = 0;
+  m_findReplace.lpfnHook = &FindTextDialog::hookProc;
+  // m_findReplace.lpfnHook = NULL;
+  // m_findReplace.lpTemplateName = NULL;
 
-  if (mReplace) {
-    mFindReplace.lpstrReplaceWith = mReplace ? new Character[FINDREPLACE_BUFSIZE]: NULL;
-    mFindReplace.wReplaceWithLen = mReplace ? FINDREPLACE_BUFSIZE: 0;
+  if (m_replace) {
+    m_findReplace.lpstrReplaceWith = m_replace ? new Character[FINDREPLACE_BUFSIZE]: NULL;
+    m_findReplace.wReplaceWithLen = m_replace ? FINDREPLACE_BUFSIZE: 0;
 
-    ZeroMemory(mFindReplace.lpstrReplaceWith, mFindReplace.wReplaceWithLen);
+    ZeroMemory(m_findReplace.lpstrReplaceWith, m_findReplace.wReplaceWithLen);
   }
 
-  return !mReplace ? ::FindText(&mFindReplace):
-		     ::ReplaceText(&mFindReplace);
+  return !m_replace ? ::FindText(&m_findReplace):
+		     ::ReplaceText(&m_findReplace);
 }
 
 bool FindTextDialog::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult)
@@ -112,10 +112,10 @@ bool FindTextDialog::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT
 
 String FindTextDialog::getFindWhat()
 {
-  assert(getHWND() != NULL);
+  assert(::IsWindow(getHWND()));
 
   HWND hwnd = GetDlgItem(getHWND(), WIN32_ID_FINDWHAT);
-  if (hwnd != NULL) {
+  if (::IsWindow(hwnd)) {
     int len = GetWindowTextLength(hwnd);
     if (len > 0) {
       LPTSTR buf = (LPTSTR)new _TCHAR[len+1];
@@ -131,10 +131,10 @@ String FindTextDialog::getFindWhat()
 
 String FindTextDialog::getReplaceWith()
 {
-  assert(getHWND() != NULL);
+  assert(::IsWindow(getHWND()));
 
   HWND hwnd = GetDlgItem(getHWND(), WIN32_ID_REPLACEWITH);
-  if (hwnd != NULL) {
+  if (::IsWindow(hwnd)) {
     int len = GetWindowTextLength(hwnd);
     if (len > 0) {
       LPTSTR buf = (LPTSTR)new _TCHAR[len+1];
@@ -160,7 +160,7 @@ bool FindTextDialog::isMatchCase()
 
 bool FindTextDialog::isBackward()
 {
-  if (mReplace)
+  if (m_replace)
     return false;
   else
     return IsDlgButtonChecked(getHWND(), WIN32_ID_DIRBACKWARD) == BST_CHECKED;
@@ -168,7 +168,7 @@ bool FindTextDialog::isBackward()
 
 bool FindTextDialog::isForward()
 {
-  if (mReplace)
+  if (m_replace)
     return true;
   else
     return IsDlgButtonChecked(getHWND(), WIN32_ID_DIRFORWARD) == BST_CHECKED;
@@ -239,7 +239,7 @@ UINT_PTR CALLBACK FindTextDialog::hookProc(HWND hdlg, UINT message, WPARAM wPara
   }
 
 //   if (dlg != NULL) {
-//     if (dlg->mFindMsgId == message) {
+//     if (dlg->m_findMsgId == message) {
 //       Beep(200, 10);
 //     }
 //   }

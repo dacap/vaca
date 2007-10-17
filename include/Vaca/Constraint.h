@@ -38,7 +38,7 @@ namespace Vaca {
 
 /**
  * Abstract class to represent a constraint. Constraints are useful to
- * specify conditions to different arrangements using a same Layout
+ * specify conditions to different arrangements using the same Layout
  * manager.
  */
 class VACA_DLL Constraint
@@ -46,6 +46,7 @@ class VACA_DLL Constraint
 public:
 
   Constraint();
+  Constraint(const Constraint &constraint);
   virtual ~Constraint();
 
 };

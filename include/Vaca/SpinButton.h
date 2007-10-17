@@ -51,28 +51,28 @@ namespace Vaca {
 // TODO move this to "SpinButtonEvent.h"
 class SpinButtonEvent : public CancelableEvent
 {
-  int mValue;
-  int mDelta;
-  Side mSide;
+  int m_value;
+  int m_delta;
+  Side m_side;
 
 public:
 
   SpinButtonEvent(Widget *widget, int value, int delta, Side side)
     : CancelableEvent(widget)
-    , mValue(value)
-    , mDelta(delta)
-    , mSide(side)
+    , m_value(value)
+    , m_delta(delta)
+    , m_side(side)
   {
   }
 
-  int getValue() { return mValue; }
-  int getDelta() { return mDelta; }
-  Side getSide() { return mSide; }
+  int getValue() { return m_value; }
+  int getDelta() { return m_delta; }
+  Side getSide() { return m_side; }
 
 };
 
 /**
- * SpinButton (Up-Down window control wrapper)
+ * SpinButton (Up-Down Win32 control wrapper)
  */
 class VACA_DLL SpinButton : public Widget
 {
@@ -83,7 +83,7 @@ public:
 	     Widget *parent, Style style = SpinButtonStyle);
   virtual ~SpinButton();
 
-  virtual Size preferredSize();
+//   virtual Size preferredSize();
 
   bool isHorizontal();
   bool isVertical();
@@ -108,6 +108,9 @@ public:
 //   boost::signal<void (SpinButtonEvent &)> AfterChange;
   
 protected:
+  // events
+  virtual void onPreferredSize(Size &sz);
+
   // new events
   virtual void onChange(SpinButtonEvent &ev);
 //   virtual void onBeforeChange(SpinButtonEvent &ev);

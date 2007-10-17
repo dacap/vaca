@@ -61,7 +61,7 @@ static HHOOK dragHook = NULL;
 static bool isControlPressed = false;
 static HWND hwndDockWnd = NULL;
 
-// based on the code of James Brown
+// based on the code of James Brown (http://www.catch22.net)
 static LRESULT CALLBACK dragHookProc(int code, WPARAM wParam, LPARAM lParam)
 {
   ULONG state = (ULONG)lParam;
@@ -97,19 +97,19 @@ DockBar::DockBar(const String &title, Frame *parent, Style style)
 {
   setText(title);
 
-  mDockArea = NULL;
-  mDrag = NULL;
-  mDockFrame = NULL;
-  mDockFrameGarbage = NULL;
-  mOwner = parent;
-  mDockInfo = NULL;
+  m_dockArea = NULL;
+  m_drag = NULL;
+  m_dockFrame = NULL;
+//   m_dockFrameGarbage = NULL;
+  m_owner = parent;
+  m_dockInfo = NULL;
 
-  mFullDrag = false;
-  mFloatingGripper = false;
+  m_fullDrag = false;
+  m_floatingGripper = false;
 
 //   BOOL param = FALSE;
 //   SystemParametersInfo(SPI_GETDRAGFULLWINDOWS, 0, reinterpret_cast<PVOID>(&param), 0);
-//   mFullDrag = param;
+//   m_fullDrag = param;
 
   setVisible(false);
 
@@ -119,13 +119,25 @@ DockBar::DockBar(const String &title, Frame *parent, Style style)
 
 DockBar::~DockBar()
 {
-  dispose();
+//   dispose();
+
+  assert(m_drag == NULL);
+
+  // undock, and delete DockFrame or DockFrameGarbage
+  cleanUp();
+
+  // delete DockInfo
+  if (m_dockInfo != NULL) {
+    delete m_dockInfo;
+    m_dockInfo = NULL;
+  }
+  
 }
 
 /**
  * You can use setVisible() to hide or show the DockBar. If you hide
- * the DockBar, this method deletes the mDockFrame if it exist, or
- * remove the DockBar from the DockArea. All is automatic.
+ * the DockBar, this method deletes the #Vaca::DockFrame if it exist, or
+ * remove the DockBar from the #Vaca::DockArea. All is automatic.
  */
 void DockBar::setVisible(bool visible)
 {
@@ -134,24 +146,24 @@ void DockBar::setVisible(bool visible)
   if (!visible)
     cleanUp();
   else {
-    if (mDockArea == NULL && mDockFrame == NULL)
+    if (m_dockArea == NULL && m_dockFrame == NULL)
       // TODO save the old state, and dock when is necessary
       makeFloat(NULL);
   }
 }
 
-Size DockBar::preferredSize()
-{
-  Size gripperSize = measureGripper(isDocked(),
-				    isDocked() ? mDockArea->getSide(): LeftSide);
+// Size DockBar::preferredSize()
+// {
+//   Size gripperSize = measureGripper(isDocked(),
+// 				    isDocked() ? m_dockArea->getSide(): LeftSide);
 
-  return Widget::preferredSize() + gripperSize;
-}
+//   return Widget::preferredSize() + gripperSize;
+// }
 
 // Size DockBar::preferredSize(const Size &fitIn)
 // {
 //   Size gripperSize = measureGripper(isDocked(),
-// 				    isDocked() ? mDockArea->getSide(): LeftSide);
+// 				    isDocked() ? m_dockArea->getSide(): LeftSide);
 
 //   return Widget::preferredSize(fitIn - gripperSize);
 // }
@@ -164,11 +176,11 @@ Rect DockBar::getLayoutBounds()
   Rect rc = Widget::getLayoutBounds();
 
   if (isGripperVisible(isDocked(),
-		       isDocked() ? mDockArea->getSide(): LeftSide)) {
+		       isDocked() ? m_dockArea->getSide(): LeftSide)) {
     Side gripperSide = getGripperSide(isDocked(),
-				      isDocked() ? mDockArea->getSide(): LeftSide);
+				      isDocked() ? m_dockArea->getSide(): LeftSide);
     Size gripperSize = measureGripper(isDocked(),
-				      isDocked() ? mDockArea->getSide(): LeftSide);
+				      isDocked() ? m_dockArea->getSide(): LeftSide);
 
     switch (gripperSide) {
       case LeftSide:
@@ -198,12 +210,12 @@ Rect DockBar::getLayoutBounds()
  */
 void DockBar::setFullDrag(bool state)
 {
-  mFullDrag = state;
+  m_fullDrag = state;
 }
 
 bool DockBar::isFullDrag()
 {
-  return mFullDrag;
+  return m_fullDrag;
 }
 
 /**
@@ -212,11 +224,11 @@ bool DockBar::isFullDrag()
  */
 void DockBar::setFloatingGripper(bool state)
 {
-  mFloatingGripper = state;
+  m_floatingGripper = state;
 
   if (isFloating()) {
-    mDockFrame->setSize(mDockFrame->preferredSize());
-    mDockFrame->invalidate(true);
+    m_dockFrame->setSize(m_dockFrame->getPreferredSize());
+    m_dockFrame->invalidate(true);
   }
 }
 
@@ -225,7 +237,7 @@ void DockBar::setFloatingGripper(bool state)
  */
 bool DockBar::isFloatingGripper()
 {
-  return mFloatingGripper;
+  return m_floatingGripper;
 }
 
 /**
@@ -233,7 +245,7 @@ bool DockBar::isFloatingGripper()
  */
 bool DockBar::isDocked()
 {
-  return mDockArea != NULL;
+  return m_dockArea != NULL;
 }
 
 /**
@@ -241,7 +253,7 @@ bool DockBar::isDocked()
  */
 bool DockBar::isFloating()
 {
-  return mDockFrame != NULL;
+  return m_dockFrame != NULL;
 }
 
 void DockBar::dockIn(DockArea *dockArea)
@@ -249,12 +261,12 @@ void DockBar::dockIn(DockArea *dockArea)
   assert(dockArea != NULL);
   
   // does it have DockInfo?
-  if (mDockInfo == NULL) {
+  if (m_dockInfo == NULL) {
     // create the default one
-    mDockInfo = dockArea->createDefaultDockInfo(this);
+    m_dockInfo = dockArea->createDefaultDockInfo(this);
   }
 
-  makeDock(dockArea, mDockInfo);
+  makeDock(dockArea, m_dockInfo);
 }
 
 void DockBar::floatOut()
@@ -264,22 +276,22 @@ void DockBar::floatOut()
 
 Frame *DockBar::getOwnerFrame()
 {
-  return mOwner;
+  return m_owner;
 }
 
 DockArea *DockBar::getDockArea()
 {
-  return mDockArea;
+  return m_dockArea;
 }
 
 DockFrame *DockBar::getDockFrame()
 {
-  return mDockFrame;
+  return m_dockFrame;
 }
 
 DockInfo *DockBar::getDockInfo()
 {
-  return mDockInfo;
+  return m_dockInfo;
 }
 
 Size DockBar::getDockedSize(Side side)
@@ -297,12 +309,12 @@ void DockBar::makeDock(DockArea *dockArea, DockInfo *dockInfo)
   bool redock = false;
 
   // redock in the same dock area?
-  if (mDockArea != NULL && dockArea == mDockArea) {
+  if (m_dockArea != NULL && dockArea == m_dockArea) {
     Widget::setVisible(false);
     
     redock = true;
-    mDockArea->onRedock(this, mDrag->dockIn);
-    mDockArea->removeDockBar(this);
+    m_dockArea->onRedock(this, m_drag->dockIn);
+    m_dockArea->removeDockBar(this);
   }
   // hide the DockBar (disposing the DockFrame if exists)
   else {
@@ -310,107 +322,118 @@ void DockBar::makeDock(DockArea *dockArea, DockInfo *dockInfo)
   }
 
   // set the new DockInfo?
-  if (mDockInfo != dockInfo) {
-    if (mDockInfo != NULL)
-      delete mDockInfo;
+  if (m_dockInfo != dockInfo) {
+    if (m_dockInfo != NULL)
+      delete m_dockInfo;
 
-    mDockInfo = dockInfo;
+    m_dockInfo = dockInfo;
   }
 
   // set the new DockArea
-  mDockArea = dockArea;
-  mDockArea->addDockBar(this);
+  m_dockArea = dockArea;
+  m_dockArea->addDockBar(this);
 
   setVisible(true);
 
   onDocking();
 
-  mDockArea->getParent()->layout();
+  m_dockArea->getParent()->layout();
 }
 
 void DockBar::makeFloat(const Rect *rect)
 {
   Size floatingSize = getFloatingSize();
 
-  if (mDockFrame == NULL) {
+  if (m_dockFrame == NULL) {
     setVisible(false);
 
-    mDockFrame = new DockFrame(this, mOwner);
-    mDockFrame->addChild(this, true);
-    mDockFrame->Close.connect(Bind(&DockBar::onDockFrameClose, this));
-    mDockFrame->Destroy.connect(Bind(&DockBar::onDockFrameDestroy, this));
+    m_dockFrame = new DockFrame(this, m_owner);
+    m_dockFrame->addChild(this, true);
+    m_dockFrame->Close.connect(Bind(&DockBar::onDockFrameClose, this));
+    // m_dockFrame->Destroy.connect(Bind(&DockBar::onDockFrameDestroy, this));
 
     setVisible(true);
 
-    mDockFrame->layout();
+    m_dockFrame->layout();
   }
 
   if (rect != NULL) {
-    if (mDrag != NULL && mDrag->startDocked)
-      mDockFrame->setBounds(Rect(rect->getOrigin(),
-				 mDockFrame->getNonClientSize() + floatingSize));
+    if (m_drag != NULL && m_drag->startDocked)
+      m_dockFrame->setBounds(Rect(rect->getOrigin(),
+				 m_dockFrame->getNonClientSize() + floatingSize));
     else
-      mDockFrame->setBounds(*rect);
+      m_dockFrame->setBounds(*rect);
   }
   else {
-    mDockFrame->setBounds(Rect(mOwner->getAbsoluteClientBounds().getOrigin(),
-			       mDockFrame->getNonClientSize() + floatingSize));
+    m_dockFrame->setBounds(Rect(m_owner->getAbsoluteClientBounds().getOrigin(),
+			       m_dockFrame->getNonClientSize() + floatingSize));
   }
 
-  mDockFrame->setVisible(true);
+  m_dockFrame->setVisible(true);
 
   focusOwner();
   onFloating();
 }
 
-void DockBar::onDestroy()
+// void DockBar::onDestroy()
+// {
+//   assert(m_drag == NULL);
+
+//   // undock, and delete DockFrame or DockFrameGarbage
+//   cleanUp();
+
+//   // delete DockInfo
+//   if (m_dockInfo != NULL) {
+//     delete m_dockInfo;
+//     m_dockInfo = NULL;
+//   }
+
+// //   Widget::onDestroy();
+// }
+
+void DockBar::onPreferredSize(Size &sz)
 {
-  assert(mDrag == NULL);
-
-  // undock, and delete DockFrame or DockFrameGarbage
-  cleanUp();
-
-  // delete DockInfo
-  if (mDockInfo != NULL) {
-    delete mDockInfo;
-    mDockInfo = NULL;
-  }
-
-  Widget::onDestroy();
+  Widget::onPreferredSize(sz);
+  sz += measureGripper(isDocked(),
+		       isDocked() ? m_dockArea->getSide(): LeftSide);
 }
 
 /**
- * Called when mDockFrame is closed by its "Close" button.
+ * Called when m_dockFrame is closed by its "Close" button.
  */
 void DockBar::onDockFrameClose(CloseEvent &ev)
 {
   Widget::setVisible(false);
 
-  mDockFrame->removeChild(this, true);
-  mDockFrame->Destroy.disconnect_all_slots();
-  mDockFrame->deleteAfterEvent();
-  mDockFrame = NULL;
+  m_dockFrame->removeChild(this, true);
+//   m_dockFrame->Destroy.disconnect_all_slots();
+  // TODO XXXX check this
+//   m_dockFrame->deleteAfterEvent();
+  delete_widget(m_dockFrame);
+  m_dockFrame = NULL;
 }
 
 /**
- * Called when mDockFrame is destroyed by its parent. In this case
- * mDockFrameGarbage hold the mDockFrame pointer to be deleted,
- * because the mDockFrame is in its disposition process, we can't
- * delete right now the mDockFrame, so we must to hold on the pointer
+ * Called when m_dockFrame is destroyed by its parent. In this case
+ * m_dockFrameGarbage holds the m_dockFrame pointer to be deleted,
+ * because the m_dockFrame is in its disposition process, we can't
+ * delete right now the m_dockFrame, so we must to hold on the pointer
  * to postpone its deletion.
  */
-void DockBar::onDockFrameDestroy()
-{
-  assert(mDockFrame != NULL);
+// void DockBar::onDockFrameDestroy()
+// {
+//   assert(m_dockFrame != NULL);
 
-  if (getParent() == mDockFrame) {
-    mDockFrame->removeChild(this, false);
-    // we can't delete mDockFrame here (we come from its signal),
-    // we must to postpone its deletetion
-    mDockFrameGarbage = mDockFrame;
-    mDockFrame = NULL;
-  }
-}
+//   if (getParent() == m_dockFrame) {
+// //     m_dockFrame->removeChild(this, false);
+//     m_dockFrame->removeChild(this, true);
+    
+//     // we can't delete m_dockFrame here (we come from its signal),
+//     // we must to postpone its deletetion
+//     m_dockFrameGarbage = m_dockFrame;
+//     m_dockFrame = NULL;
+//   }
+// }
 
 /**
  * Calls paintGripper().
@@ -422,24 +445,24 @@ void DockBar::onPaint(Graphics &g)
 
 /**
  * When the gripper is visible in the floating state
- * (mFloatingGripper == true), we must to repaint the DockBar's
+ * (m_floatingGripper == true), we must to repaint the DockBar's
  * gripper when the DockBar is resized.
  */
 void DockBar::onResize(const Size &sz)
 {
   Widget::onResize(sz);
 
-  if (mFloatingGripper)
+  if (m_floatingGripper)
     invalidate(true);
 }
 
 void DockBar::onMouseDown(MouseEvent &ev)
 {
   // we are dragging?
-  if (mDrag != NULL) {
+  if (m_drag != NULL) {
     // cancel drag
     if (ev.getButton() == MouseButtons::Right) {
-      if (!mFullDrag) {
+      if (!m_fullDrag) {
 	ScreenGraphics g;
 	cleanFeedbackShape(g);
       }
@@ -458,7 +481,7 @@ void DockBar::onMouseDown(MouseEvent &ev)
     if (hasCapture()) {
       beginDrag();
 
-      if (!mFullDrag) {
+      if (!m_fullDrag) {
 	ScreenGraphics g;
 	drawFeedbackShape(g);
       }
@@ -469,34 +492,33 @@ void DockBar::onMouseDown(MouseEvent &ev)
 void DockBar::onMouseMove(MouseEvent &ev)
 {
   if (hasCapture()) {
-    assert(mDrag != NULL);
+    assert(m_drag != NULL);
 
     //////////////////////////////////////////////////////////////////////
     // does the mouse or the control key change?
     Point newPos = System::getCursorPos();
     bool newCtrl = System::getKeyState(Keys::ControlKey);
 
-    if (mDrag->oldMousePos == newPos &&
-	mDrag->oldCtrlState == newCtrl)
+    if (m_drag->oldMousePos == newPos &&
+	m_drag->oldCtrlState == newCtrl)
       return;
 
-    mDrag->oldMousePos = newPos;
-    mDrag->oldCtrlState = newCtrl;
+    m_drag->oldMousePos = newPos;
+    m_drag->oldCtrlState = newCtrl;
     //////////////////////////////////////////////////////////////////////
 
     ScreenGraphics g;
 
-    if (!mFullDrag)
+    if (!m_fullDrag)
       cleanFeedbackShape(g);
 
-    if (mDrag->dockIn != NULL)
-      delete mDrag->dockIn;
-    mDrag->dockIn = calcDestination(mDrag->currentRect);
+    if (m_drag->dockIn != NULL)
+      delete m_drag->dockIn;
+    m_drag->dockIn = calcDestination(m_drag->currentRect);
 
-    if (mFullDrag)
+    if (m_fullDrag)
       dragBar();
-
-    if (!mFullDrag)
+    else
       drawFeedbackShape(g);
   }
 }
@@ -504,9 +526,9 @@ void DockBar::onMouseMove(MouseEvent &ev)
 void DockBar::onMouseUp(MouseEvent &ev)
 {
   if (hasCapture()) {
-    assert(mDrag != NULL);
+    assert(m_drag != NULL);
 
-    if (!mFullDrag) {
+    if (!m_fullDrag) {
       ScreenGraphics g;
       cleanFeedbackShape(g);
 
@@ -519,23 +541,23 @@ void DockBar::onMouseUp(MouseEvent &ev)
 
 void DockBar::onDoubleClick(MouseEvent &ev)
 {
-  assert(mOwner != NULL);
+  assert(m_owner != NULL);
 
   // is floating? dock it in the last dock position remembered
   if (isFloating()) {
     DockArea *dockArea = NULL;
 
     // the DockBar has DockInfo, so use it
-    if (mDockInfo != NULL)
-      dockArea = mOwner->getDockArea(mDockInfo->getSide());
+    if (m_dockInfo != NULL)
+      dockArea = m_owner->getDockArea(m_dockInfo->getSide());
     // create a default DockInfo
     else {
-      dockArea = mOwner->getDefaultDockArea();
+      dockArea = m_owner->getDefaultDockArea();
       if (dockArea != NULL)
-	mDockInfo = dockArea->createDefaultDockInfo(this);
+	m_dockInfo = dockArea->createDefaultDockInfo(this);
     }
 
-    if (dockArea != NULL && mDockInfo != NULL)
+    if (dockArea != NULL && m_dockInfo != NULL)
       dockIn(dockArea);
     // else { do nothing, we can't dock the tool-bar, so it should
     // continue floating }
@@ -544,8 +566,8 @@ void DockBar::onDoubleClick(MouseEvent &ev)
 
 void DockBar::onCancelMode()
 {
-  if (mDrag != NULL) {
-    if (!mFullDrag) {
+  if (m_drag != NULL) {
+    if (!m_fullDrag) {
       ScreenGraphics g;
       cleanFeedbackShape(g);
     }
@@ -585,12 +607,12 @@ void DockBar::onResizingFrame(DockFrame *frame, int edge, Rect &rc)
 void DockBar::paintGripper(Graphics &g)
 {
   if (isGripperVisible(isDocked(), 
-		       isDocked() ? mDockArea->getSide(): LeftSide)) {
+		       isDocked() ? m_dockArea->getSide(): LeftSide)) {
     Color topLeft = System::getColor(COLOR_3DHIGHLIGHT);
     Color bottomRight = System::getColor(COLOR_3DSHADOW);
     Rect rc = getClientBounds();
     Side gripperSide = getGripperSide(isDocked(), 
-				      isDocked() ? mDockArea->getSide(): LeftSide);
+				      isDocked() ? m_dockArea->getSide(): LeftSide);
 
     switch (gripperSide) {
 
@@ -659,9 +681,10 @@ bool DockBar::isGripperVisible(bool docked, Side dockSide)
     return false;
 }
 
+// creates the DragInfo to start dragging this DockBar...
 void DockBar::beginDrag()
 {
-  assert(mDrag == NULL);
+  assert(m_drag == NULL);
   
   // install the keyboard hook (to hook the CONTROL key changes, and
   // the ESC key)
@@ -669,69 +692,70 @@ void DockBar::beginDrag()
   hwndDockWnd = getHWND();
   dragHook = SetWindowsHookEx(WH_KEYBOARD, dragHookProc, NULL, Thread::getCurrentId()); 
 
-//   if (mDockArea != NULL)
-//     mDockArea->onBeginDockBarDrag(this);
+//   if (m_dockArea != NULL)
+//     m_dockArea->onBeginDockBarDrag(this);
 
   // if the DockBar is floating, bring the DockFrame to top
-  if (mDockFrame != NULL)
-    mDockFrame->bringToTop();
+  if (m_dockFrame != NULL)
+    m_dockFrame->bringToTop();
 
   //////////////////////////////////////////////////////////////////////
   // create the DragInfo...
-  mDrag = new DragInfo;
-  mDrag->startDocked = isDocked();
-  mDrag->currentRect = mDockFrame != NULL ? mDockFrame->getAbsoluteBounds():
-					    this->getAbsoluteBounds();
-  mDrag->startRect    = mDrag->currentRect;
-  mDrag->begMousePos  = System::getCursorPos();
-  mDrag->oldMousePos  = System::getCursorPos();
-  mDrag->oldCtrlState = System::getKeyState(Keys::ControlKey);
+  m_drag = new DragInfo;
+  m_drag->startDocked = isDocked();
+  m_drag->currentRect =
+    m_dockFrame != NULL ? m_dockFrame->getAbsoluteBounds():
+			 this->getAbsoluteBounds().inflate(getNonClientSizeForADockFrame());
+  m_drag->startRect    = m_drag->currentRect;
+  m_drag->begMousePos  = System::getCursorPos();
+  m_drag->oldMousePos  = System::getCursorPos();
+  m_drag->oldCtrlState = System::getKeyState(Keys::ControlKey);
 
   // calculate the position of the anchor point (offset where
   // the cursor is in the client area)
   Point anchor;
   Rect bounds = getAbsoluteClientBounds();
-  anchor = mDrag->begMousePos - bounds.getOrigin();
+  anchor = m_drag->begMousePos - bounds.getOrigin();
   anchor.x = anchor.x < 0 ? 0: (anchor.x >= bounds.w ? bounds.w-1: anchor.x);
   anchor.y = anchor.y < 0 ? 0: (anchor.y >= bounds.h ? bounds.h-1: anchor.y);
-  mDrag->anchorPos = anchor;
+  m_drag->anchorPos = anchor;
 
   Rect dummy;
-  mDrag->inArea = NULL;
-  mDrag->dockIn = calcDestination(dummy);
-  mDrag->inArea = mDockArea;
+  m_drag->inArea = NULL;
+  m_drag->dockIn = calcDestination(dummy);
+  m_drag->inArea = m_dockArea;
   // ...done.
   //////////////////////////////////////////////////////////////////////
 }
 
-// moves the DockBar to the place that indicates the current mDrag information
+// moves the DockBar to the place that indicates the current m_drag information
 void DockBar::dragBar()
 {
   // inside a dock bar
-  if (mDrag->dockIn != NULL) {
-    makeDock(mOwner->getDockArea(mDrag->dockIn->getSide()),
-	     mDrag->dockIn);
+  if (m_drag->dockIn != NULL) {
+    makeDock(m_owner->getDockArea(m_drag->dockIn->getSide()),
+	     m_drag->dockIn);
 
-    // now "mDockInfo" is "mDrag->dockIn", so avoid to delete it in endDrag()
-    assert(mDockInfo == mDrag->dockIn);
-    mDrag->dockIn = NULL;
+    // now "m_dockInfo" is "m_drag->dockIn", so avoid to delete it in endDrag()
+    assert(m_dockInfo == m_drag->dockIn);
+    m_drag->dockIn = NULL;
   }
   // floating
   else {
-    makeFloat(&mDrag->currentRect);
+    makeFloat(&m_drag->currentRect);
   }
 }
 
-// destroys the DragInfo (mDrag)
+// destroys the DragInfo (m_drag)
 void DockBar::endDrag()
 {
-  assert(mDrag != NULL);
+  assert(m_drag != NULL);
   
   // destroy the DragInfo...
-  if (mDrag->dockIn != NULL)
-    delete mDrag->dockIn;
-  delete mDrag;
-  mDrag = NULL;
+  if (m_drag->dockIn != NULL)
+    delete m_drag->dockIn;
+  delete m_drag;
+  m_drag = NULL;
 
   // we don't use anymore the keyboard hook
   if (dragHook != NULL) {
@@ -743,41 +767,43 @@ void DockBar::endDrag()
   hwndDockWnd = NULL;
 
       // end dragging
-//     if (mDockArea != NULL)
-//       mDockArea->onEndDockBarDrag(this, mDrag->dockIn);
+//     if (m_dockArea != NULL)
+//       m_dockArea->onEndDockBarDrag(this, m_drag->dockIn);
 
   releaseCapture();
 }
 
+// used to hide the DockBar, mainly deletes the m_dockFrame and removes
+// this DockBar from m_dockArea (if it isn't NULL)
 void DockBar::cleanUp()
 {
-  // undock (dispose the DockArea)
-  if (mDockArea != NULL) {
-    if (mDockArea->getHWND() != NULL) {
-      mDockArea->removeDockBar(this);
-      mDockArea->getParent()->layout();
+  // undock
+  if (m_dockArea != NULL) {
+    if (m_dockArea->getHWND() != NULL) {
+      m_dockArea->removeDockBar(this);
+      m_dockArea->getParent()->layout();
     }
 
-    mDockArea = NULL;
+    m_dockArea = NULL;
   }
 
-  // dispose the DockFrame
-  if (mDockFrame != NULL) {
-    mDockFrame->Close.disconnect_all_slots();
-    mDockFrame->Destroy.disconnect_all_slots();
+  // delete the DockFrame
+  if (m_dockFrame != NULL) {
+    m_dockFrame->Close.disconnect_all_slots();
+    // m_dockFrame->Destroy.disconnect_all_slots();
 
-    if (mDockFrame->getHWND() != NULL)
-      mDockFrame->removeChild(this, true);
+    if (m_dockFrame->getHWND() != NULL)
+      m_dockFrame->removeChild(this, true);
 
-    delete mDockFrame;
-    mDockFrame = NULL;
+    delete_widget(m_dockFrame);
+    m_dockFrame = NULL;
   }
 
   // delete garbage
-  if (mDockFrameGarbage != NULL) {
-    delete mDockFrameGarbage;
-    mDockFrameGarbage = NULL;
-  }
+//   if (m_dockFrameGarbage != NULL) {
+//     delete m_dockFrameGarbage;
+//     m_dockFrameGarbage = NULL;
+//   }
 }
 
 /**
@@ -785,27 +811,27 @@ void DockBar::cleanUp()
  */
 void DockBar::focusOwner()
 {
-  if (mOwner != NULL)
-    mOwner->focus();
+  if (m_owner != NULL)
+    m_owner->acquireFocus();
 }
 
 DockInfo *DockBar::calcDestination(Rect &rc)
 {
   Point cursor = System::getCursorPos();
-  Point pt = mDrag->startRect.getOrigin() + cursor - mDrag->begMousePos;
-  Size sz = !mDrag->startDocked ? mDrag->startRect.getSize():
-				  getFloatingSize();
+  Point pt = m_drag->startRect.getOrigin() + cursor - m_drag->begMousePos;
+  Size sz = !m_drag->startDocked ? m_drag->startRect.getSize():
+				  getFloatingSize() + getNonClientSizeForADockFrame();
 
   rc = Rect(pt, sz);
 
-  if (!System::getKeyState(Keys::ControlKey) && (mOwner != NULL)) {
+  if (!System::getKeyState(Keys::ControlKey) && (m_owner != NULL)) {
     // for each dock area
-    std::vector<DockArea *> dockAreas = mOwner->getDockAreas();
+    std::vector<DockArea *> dockAreas = m_owner->getDockAreas();
     std::vector<DockArea *>::reverse_iterator it;
 
     // add the inArea, it has priority
-    if (mDrag->inArea != NULL)
-      dockAreas.push_back(mDrag->inArea);
+    if (m_drag->inArea != NULL)
+      dockAreas.push_back(m_drag->inArea);
 
     for (it=dockAreas.rbegin(); it!=dockAreas.rend(); ++it) {
       DockArea *dockArea = *it;
@@ -813,11 +839,11 @@ DockInfo *DockBar::calcDestination(Rect &rc)
       // we can dock here?
       if (dockArea->hitTest(this,		      // this dock bar
 			    cursor,		      // cursor position
-			    mDrag->anchorPos,         // anchor position
-			    mDrag->inArea == dockArea // from inside?
+			    m_drag->anchorPos,         // anchor position
+			    m_drag->inArea == dockArea // from inside?
 			    )) {
 	// return a new DockInfo
-	return dockArea->createDockInfo(this, cursor, mDrag->anchorPos);
+	return dockArea->createDockInfo(this, cursor, m_drag->anchorPos);
       }
     }
   }
@@ -827,8 +853,8 @@ DockInfo *DockBar::calcDestination(Rect &rc)
 
 void DockBar::drawFeedbackShape(Graphics &g)
 {
-  if (mDrag->dockIn != NULL)
-    mDrag->inArea = xorFeedbackShape(g);
+  if (m_drag->dockIn != NULL)
+    m_drag->inArea = xorFeedbackShape(g);
   else
     xorFeedbackShape(g);
 }
@@ -840,21 +866,32 @@ void DockBar::cleanFeedbackShape(Graphics &g)
 
 DockArea *DockBar::xorFeedbackShape(Graphics &g)
 {
-  assert(mDrag != NULL);
+  assert(m_drag != NULL);
 
   // clean docked shape
-  if (mDrag->dockIn != NULL) {
-    DockArea *dockArea = mOwner->getDockArea(mDrag->dockIn->getSide());
+  if (m_drag->dockIn != NULL) {
+    DockArea *dockArea = m_owner->getDockArea(m_drag->dockIn->getSide());
 
     assert(dockArea != NULL);
     
-    dockArea->drawXorDockInfoShape(g, mDrag->dockIn);
+    dockArea->drawXorDockInfoShape(g, m_drag->dockIn);
 
     return dockArea;
   }
   // clean floating rectangle
   else {
-    g.drawXorFrame(mDrag->currentRect);
+    g.drawXorFrame(m_drag->currentRect);
     return NULL;
   }
+}
+
+Size DockBar::getNonClientSizeForADockFrame()
+{
+  Rect clientRect(0, 0, 1, 1);
+  RECT nonClientRect = clientRect;
+  Style style = DockFrameStyle;
+
+  ::AdjustWindowRectEx(&nonClientRect, style.regular, false, style.extended);
+
+  return Rect(&nonClientRect).getSize() - clientRect.getSize();
 }

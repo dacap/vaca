@@ -29,7 +29,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/Vaca.h"
+#include <Vaca/Vaca.h>
 
 using namespace Vaca;
 
@@ -44,7 +44,7 @@ public:
  
     // use double-buffering technique for this Widget when onPaint()
     // event is received
-    setDoubleBuffering(true);
+    setDoubleBuffered(true);
   }
 
   // paint event
@@ -56,8 +56,8 @@ public:
 
     // draw focus
     if (hasFocusVisualAspect()) {
-      g.setColor(Color::Black);
-      g.drawRect(bounds);
+      Pen pen(Color::Black);
+      g.drawRect(pen, bounds);
       bounds.shrink(1);
     }
 
@@ -94,33 +94,33 @@ public:
 
 class MainFrame : public Frame
 {
-  ColoredButton mButton1;
-  ColoredButton mButton2;
-  ColoredButton mButton3;
-  ColoredButton mButton4;
+  ColoredButton m_button1;
+  ColoredButton m_button2;
+  ColoredButton m_button3;
+  ColoredButton m_button4;
 
 public:
 
   MainFrame()
     : Frame("ColoredButton")
-    , mButton1("Red Button", Color(255, 150, 150), this)
-    , mButton2("Green Button", Color(150, 255, 150), this)
-    , mButton3("Blue Button", Color(150, 150, 255), this)
-    , mButton4("Custom Button", Color(200, 200, 200), this)
+    , m_button1("Red Button", Color(255, 150, 150), this)
+    , m_button2("Green Button", Color(150, 255, 150), this)
+    , m_button3("Blue Button", Color(150, 150, 255), this)
+    , m_button4("Custom Button", Color(200, 200, 200), this)
   {
     setLayout(new BoxLayout(Vertical, true));
 
-    mButton4.Action.connect(Bind(&MainFrame::onSelectColor, this));
+    m_button4.Action.connect(Bind(&MainFrame::onSelectColor, this));
 
-    setSize(preferredSize());
+    setSize(getPreferredSize());
   }
 
   void onSelectColor()
   {
-    ColorDialog dlg(mButton4.getBgColor(), this);
+    ColorDialog dlg(m_button4.getBgColor(), this);
     if (dlg.doModal()) {
-      mButton4.setBgColor(dlg.getColor());
-      mButton4.invalidate(true);
+      m_button4.setBgColor(dlg.getColor());
+      m_button4.invalidate(true);
     }
   }
 
@@ -130,10 +130,10 @@ public:
 
 class Example : public Application
 {
-  MainFrame mMainWnd;
+  MainFrame m_mainFrame;
 public:
   virtual void main(std::vector<String> args) {
-    mMainWnd.setVisible(true);
+    m_mainFrame.setVisible(true);
   }
 };
 

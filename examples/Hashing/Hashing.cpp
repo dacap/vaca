@@ -29,7 +29,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/Vaca.h"
+#include <Vaca/Vaca.h>
 
 #include "md5.h"
 #include "sha1.h"
@@ -98,51 +98,51 @@ static String SHA1File(const String &fileName)
 
 class MainFrame : public Frame
 {
-  Label mHelpLabel;
-  ListView mFilesList;
-  Panel mBottomPanel;
-  Panel mLeftBottomPanel;
-  Panel mRightBottomPanel;
-  Edit mMd5Edit;
-  Edit mShaEdit;
-  LinkLabel mMd5Label;
-  LinkLabel mShaLabel;
-  ImageList mImageList;
+  Label m_helpLabel;
+  ListView m_filesList;
+  Panel m_bottomPanel;
+  Panel m_leftBottomPanel;
+  Panel m_rightBottomPanel;
+  Edit m_md5Edit;
+  Edit m_shaEdit;
+  LinkLabel m_md5Label;
+  LinkLabel m_shaLabel;
+  ImageList m_imageList;
 
 public:
 
   MainFrame()
     : Frame("Hashing")
-    , mHelpLabel("Drop files to the list", this)
-    , mFilesList(this, ListViewStyle + AcceptFilesStyle + SingleSelectionListViewStyle)
-    , mBottomPanel(this) 
-    , mLeftBottomPanel(&mBottomPanel)
-    , mRightBottomPanel(&mBottomPanel)
-    , mMd5Edit("", &mLeftBottomPanel, EditStyle + ReadOnlyEditStyle)
-    , mShaEdit("", &mLeftBottomPanel, EditStyle + ReadOnlyEditStyle)
-    , mMd5Label("http://www.faqs.org/rfcs/rfc1321.html", "RFC 1321 - The MD5 Message-Digest Algorithm", &mRightBottomPanel)
-    , mShaLabel("http://www.faqs.org/rfcs/rfc3174.html", "RFC 3174 - US Secure Hash Algorithm 1 (SHA1)", &mRightBottomPanel)
+    , m_helpLabel("Drop files to the list", this)
+    , m_filesList(this, ListViewStyle + AcceptFilesStyle + SingleSelectionListViewStyle)
+    , m_bottomPanel(this) 
+    , m_leftBottomPanel(&m_bottomPanel)
+    , m_rightBottomPanel(&m_bottomPanel)
+    , m_md5Edit("", &m_leftBottomPanel, EditStyle + ReadOnlyEditStyle)
+    , m_shaEdit("", &m_leftBottomPanel, EditStyle + ReadOnlyEditStyle)
+    , m_md5Label("http://www.faqs.org/rfcs/rfc1321.html", "RFC 1321 - The MD5 Message-Digest Algorithm", &m_rightBottomPanel)
+    , m_shaLabel("http://www.faqs.org/rfcs/rfc3174.html", "RFC 3174 - US Secure Hash Algorithm 1 (SHA1)", &m_rightBottomPanel)
   {
     setLayout(new BoxLayout(Vertical, false, 0));
-    mFilesList.setConstraint(new BoxConstraint(true));
-    mBottomPanel.setLayout(new BoxLayout(Horizontal, false, 0));
-    mLeftBottomPanel.setConstraint(new BoxConstraint(true));
-    mLeftBottomPanel.setLayout(new BoxLayout(Vertical, true, 0));
-    mRightBottomPanel.setLayout(new BoxLayout(Vertical, true, 0));
+    m_filesList.setConstraint(new BoxConstraint(true));
+    m_bottomPanel.setLayout(new BoxLayout(Horizontal, false, 0));
+    m_leftBottomPanel.setConstraint(new BoxConstraint(true));
+    m_leftBottomPanel.setLayout(new BoxLayout(Vertical, true, 0));
+    m_rightBottomPanel.setLayout(new BoxLayout(Vertical, true, 0));
 
     // setup report view
-    mFilesList.setViewType(ListView::Report);
-    mFilesList.addColumn("Filename");
-    mFilesList.addColumn("MD5");
-    mFilesList.addColumn("SHA1");
+    m_filesList.setViewType(ListView::Report);
+    m_filesList.addColumn("Filename");
+    m_filesList.addColumn("MD5");
+    m_filesList.addColumn("SHA1");
 
     // signals
-    mFilesList.DropFiles.connect(Bind(&MainFrame::onDropFilesInFilesList, this));
-    mFilesList.AfterSelect.connect(Bind(&MainFrame::onSelectFileInList, this));
+    m_filesList.DropFiles.connect(Bind(&MainFrame::onDropFilesInFilesList, this));
+    m_filesList.AfterSelect.connect(Bind(&MainFrame::onSelectFileInList, this));
 
     // image list (get the small image list from the system)
-    System::getImageList(mImageList, true);
-    mFilesList.setSmallImageList(&mImageList);
+    System::getImageList(m_imageList, true);
+    m_filesList.setSmallImageList(&m_imageList);
   }
 
 private:
@@ -151,7 +151,7 @@ private:
   {
     std::vector<String> files = ev.getFiles();
     
-    // mFilesList.removeAllItems();
+    // m_filesList.removeAllItems();
 
     // add items in the list
     for (std::vector<String>::iterator
@@ -162,25 +162,25 @@ private:
 
       // add the new item and hold its index
       int itemIndex =
-	mFilesList.addItem((*it).getFileName(), imageIndex);
+	m_filesList.addItem((*it).getFileName(), imageIndex);
 
       // calculates the MD5 and SHA1 of the file
-      mFilesList.setItemText(itemIndex, MD5File(*it), 1);
-      mFilesList.setItemText(itemIndex, SHA1File(*it), 2);
+      m_filesList.setItemText(itemIndex, MD5File(*it), 1);
+      m_filesList.setItemText(itemIndex, SHA1File(*it), 2);
     }
 
     // set preferred with for each column
-    int n = mFilesList.getColumnCount();
+    int n = m_filesList.getColumnCount();
     for (int i=0; i<n; ++i)
-      mFilesList.setPreferredColumnWidth(i, true);
+      m_filesList.setPreferredColumnWidth(i, true);
   }
 
   void onSelectFileInList(ListViewEvent &ev)
   {
     int itemIndex = ev.getItemIndex();
     if (itemIndex >= 0) {
-      mMd5Edit.setText(mFilesList.getItemText(itemIndex, 1));
-      mShaEdit.setText(mFilesList.getItemText(itemIndex, 2));
+      m_md5Edit.setText(m_filesList.getItemText(itemIndex, 1));
+      m_shaEdit.setText(m_filesList.getItemText(itemIndex, 2));
     }
   }
   
@@ -190,10 +190,10 @@ private:
 
 class Example : public Application
 {
-  MainFrame mMainWnd;
+  MainFrame m_mainFrame;
 public:
   virtual void main(std::vector<String> args) {
-    mMainWnd.setVisible(true);
+    m_mainFrame.setVisible(true);
   }
 };
 

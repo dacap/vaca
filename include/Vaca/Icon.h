@@ -46,7 +46,7 @@ class String;
  */
 class VACA_DLL Icon : private boost::noncopyable
 {
-  HICON mHICON;
+  HICON m_HICON;
 
 protected:
 
@@ -66,6 +66,9 @@ protected:
 
 };
 
+/**
+ * An icon that is shared (isn't destroyed).
+ */
 class VACA_DLL SharedIcon : public Icon
 {
 public:

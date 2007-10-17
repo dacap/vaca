@@ -54,26 +54,26 @@ class TabPage;
 /**
  * Widget that contains tabs to switch between them. This class
  * doesn't controls pages automatically, it's useful when you want a
- * special behaviour for the tabs (see Tabular example). If you want
- * to put widgets in the pages, and swap them when the user change the
- * pages, you should use the Tab widget.
+ * special behaviour for the tabs (see Tabs example). If you want
+ * to put one Panel in the each page, and swap them when the user
+ * change the pages, you should use the Tab widget.
  *
  * @see Tab
  */
 class VACA_DLL TabBase : public Widget
 {
-  Font *mUserFont;
-  Font mTabFont;
+  Font *m_userFont;
+  Font *m_tabFont;
 
 public:
 
   TabBase(Widget *parent, Style style = TabBaseStyle);
   virtual ~TabBase();
 
-  virtual Font &getFont();
-  virtual void setFont(Font &font);
+  virtual Font *getFont();
+  virtual void setFont(Font *font);
 
-  virtual Rect getClientBounds();
+  virtual Rect getLayoutBounds();
 
   Side getSide();
   void setSide(Side side);
@@ -97,14 +97,17 @@ public:
 
   Size getNonClientSize();
 
-  virtual Size preferredSize();
-  virtual Size preferredSize(const Size &fitIn);
+//   virtual Size preferredSize();
+//   virtual Size preferredSize(const Size &fitIn);
 
   // signals
 //   boost::signal<void (Event &ev)> PageChanging;
   boost::signal<void (Event &ev)> PageChange; ///< @see onPageChange
 
 protected:
+  // events
+  virtual void onPreferredSize(Size &sz);
+  
   // reflection
   virtual bool onNotify(LPNMHDR lpnmhdr, LRESULT &lResult);
 
@@ -122,8 +125,7 @@ private:
 // Tab
 
 /**
- * Automatic controls for page in a tab. This class automatically
- * controls the visibility of each page (AutoPage). 
+ * This class automatically controls the visibility of each page (TabPage). 
  *
  * You don't need to setup a layout manager for this widget, because
  * it uses the ClientLayout manager to arrange its TabPage(s).

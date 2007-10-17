@@ -53,8 +53,8 @@ using namespace Vaca;
 
 CustomButton::CustomButton(const String &text, Widget *parent, Style style)
   : Button(text, parent, style)
-  , mItemAction(0)
-  , mItemState(0)
+  , m_itemAction(0)
+  , m_itemState(0)
 {
 }
 
@@ -66,8 +66,8 @@ bool CustomButton::onDrawItem(Graphics &g, LPDRAWITEMSTRUCT lpDrawItem)
 {
   assert(lpDrawItem->CtlType == ODT_BUTTON);
 
-  mItemAction = lpDrawItem->itemState;
-  mItemState = lpDrawItem->itemState;
+  m_itemAction = lpDrawItem->itemState;
+  m_itemState = lpDrawItem->itemState;
 
   return doPaint(g);
 }
@@ -77,7 +77,7 @@ bool CustomButton::onDrawItem(Graphics &g, LPDRAWITEMSTRUCT lpDrawItem)
  */
 bool CustomButton::isDrawEntire()
 {
-  return (mItemAction & ODA_DRAWENTIRE) == ODA_DRAWENTIRE;
+  return (m_itemAction & ODA_DRAWENTIRE) == ODA_DRAWENTIRE;
 }
 
 /**
@@ -87,7 +87,7 @@ bool CustomButton::isDrawEntire()
  */
 bool CustomButton::isFocusChanged()
 {
-  return (mItemAction & ODA_FOCUS) == ODA_FOCUS;
+  return (m_itemAction & ODA_FOCUS) == ODA_FOCUS;
 }
 
 /**
@@ -98,7 +98,7 @@ bool CustomButton::isFocusChanged()
  */
 bool CustomButton::isSelectionChanged()
 {
-  return (mItemAction & ODA_SELECT) == ODA_SELECT;
+  return (m_itemAction & ODA_SELECT) == ODA_SELECT;
 }
 
 // /**
@@ -106,7 +106,7 @@ bool CustomButton::isSelectionChanged()
 //  */
 // bool CustomButton::isStateChecked()
 // {
-//   return mItemState & ODS_CHECKED;
+//   return m_itemState & ODS_CHECKED;
 // }
 
 /**
@@ -114,7 +114,7 @@ bool CustomButton::isSelectionChanged()
  */
 bool CustomButton::hasDefaultOptionVisualAspect()
 {
-  return (mItemState & ODS_DEFAULT) == ODS_DEFAULT;
+  return (m_itemState & ODS_DEFAULT) == ODS_DEFAULT;
 }
 
 /**
@@ -122,7 +122,7 @@ bool CustomButton::hasDefaultOptionVisualAspect()
  */
 bool CustomButton::hasDisabledVisualAspect()
 {
-  return (mItemState & ODS_DISABLED) == ODS_DISABLED;
+  return (m_itemState & ODS_DISABLED) == ODS_DISABLED;
 }
 
 /**
@@ -130,7 +130,7 @@ bool CustomButton::hasDisabledVisualAspect()
  */
 bool CustomButton::hasFocusVisualAspect()
 {
-  return (mItemState & ODS_FOCUS) == ODS_FOCUS;
+  return (m_itemState & ODS_FOCUS) == ODS_FOCUS;
 }
 
 // /**
@@ -138,17 +138,17 @@ bool CustomButton::hasFocusVisualAspect()
 //  */
 // bool CustomButton::hasGrayedVisualAspect()
 // {
-//   return mItemState & ODS_GRAYED;
+//   return m_itemState & ODS_GRAYED;
 // }
 
 // bool CustomButton::hasHotLightVisualAspect()
 // {
-//   return mItemState & ODS_HOTLIGHT;
+//   return m_itemState & ODS_HOTLIGHT;
 // }
 
 // bool CustomButton::hasInactiveVisualAspect()
 // {
-//   return mItemState & ODS_INACTIVE;
+//   return m_itemState & ODS_INACTIVE;
 // }
 
 /**
@@ -157,7 +157,7 @@ bool CustomButton::hasFocusVisualAspect()
  */
 bool CustomButton::hasNoAccelVisualAspect()
 {
-  return (mItemState & ODS_NOACCEL) == ODS_NOACCEL;
+  return (m_itemState & ODS_NOACCEL) == ODS_NOACCEL;
 }
 
 /**
@@ -166,10 +166,10 @@ bool CustomButton::hasNoAccelVisualAspect()
  */
 bool CustomButton::hasNoFocusRectVisualAspect()
 {
-  return (mItemState & ODS_NOFOCUSRECT) == ODS_NOFOCUSRECT;
+  return (m_itemState & ODS_NOFOCUSRECT) == ODS_NOFOCUSRECT;
 }
 
 bool CustomButton::hasSelectedVisualAspect()
 {
-  return (mItemState & ODS_SELECTED) == ODS_SELECTED;
+  return (m_itemState & ODS_SELECTED) == ODS_SELECTED;
 }

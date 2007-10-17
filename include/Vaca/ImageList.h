@@ -38,6 +38,7 @@
 #include "Vaca/base.h"
 #include "Vaca/Image.h"
 #include "Vaca/Color.h"
+#include "Vaca/SelfDestruction.h"
 
 namespace Vaca {
 
@@ -45,13 +46,13 @@ class String;
 
 class VACA_DLL ImageList : private boost::noncopyable
 {
-  HIMAGELIST mHIMAGELIST;
-  bool mAutoDelete;
+  HIMAGELIST m_HIMAGELIST;
+  bool m_selfDestruction;
 
 public:
 
   ImageList();
-  ImageList(HIMAGELIST hImageList, bool autoDelete);
+  ImageList(HIMAGELIST hImageList, SelfDestruction selfDestruction);
 //   ImageList(Size sz);
   ImageList(int bitmapId, int widthPerIcon, Color maskColor);
   ImageList(const String &fileName, int widthPerIcon, Color maskColor);
@@ -61,9 +62,13 @@ public:
 
   int getImageCount();
   
-  void assign(HIMAGELIST hImageList, bool autoDelete);
+  void assign(HIMAGELIST hImageList, SelfDestruction selfDestruction);
 
   HIMAGELIST getHIMAGELIST();
+
+private:
+
+  void destroy();
 
 };
 

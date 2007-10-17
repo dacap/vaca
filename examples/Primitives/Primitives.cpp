@@ -30,28 +30,28 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "stdvaca.h"		// M_PI mainly
-#include "Vaca/Vaca.h"
+#include <Vaca/Vaca.h>
 
 using namespace Vaca;
 
 class MainFrame : public Frame
 {
-  ToggleButton mFill;
+  ToggleButton m_fill;
 
 public:
 
   MainFrame()
     : Frame("Graphics Primitives")
-    , mFill("Fill", this)
+    , m_fill("Fill", this)
   {
     setLayout(new AnchorLayout(Size(100, 100)));
     setSize(getNonClientSize()+Size(256, 256));
 
-    mFill.setConstraint(new Anchor(Rect(10, 75, 80, 20), BottomBorder));
+    m_fill.setConstraint(new Anchor(Rect(10, 75, 80, 20), BottomBorder));
 
     // when the "Fill" button is pressed, we must to call:
     // ((MainFrame *)this)->invalidate(true);
-    mFill.Action.connect(Bind(&MainFrame::invalidate, this, true));
+    m_fill.Action.connect(Bind(&MainFrame::invalidate, this, true));
   }
 
   virtual void onResize(const Size &sz)
@@ -62,28 +62,43 @@ public:
 
   virtual void onPaint(Graphics &g)
   {
-    bool fill = mFill.isSelected();
+    bool fill = m_fill.isSelected();
     Rect rc = getClientBounds();
 
     Size extra = Size((int)(cos(M_PI*45/180)*rc.w/2),
 		      (int)(sin(M_PI*45/180)*rc.h/2));
 
-    g.setColor(Color::Red);
-    g.drawArc(rc, 0, 45);
-    g.drawLine(Point(rc.x, rc.y+rc.h/2),
+    Pen pen(Color::Red);
+    g.drawArc(pen, rc, 0, 45);
+    g.drawLine(pen,
+	       Point(rc.x, rc.y+rc.h/2),
 	       rc.getCenter()+Point(-extra.w, extra.h));
 
     if (!fill) {
-      g.setColor(Color::Black);   g.drawRect(Rect(rc.getCenter()-Point(extra), extra*2));
-      g.setColor(Color::Green);   g.drawEllipse(Rect(rc.x, rc.getCenter().y-rc.h/4, rc.w, rc.h/2));
-      g.setColor(Color::Blue);    g.drawPie(rc, 135, 45);
-      g.setColor(Color::Magenta); g.drawChord(rc, 45+2, 90-4);
+      pen.setColor(Color::Black);
+      g.drawRect(pen, Rect(rc.getCenter()-Point(extra), extra*2));
+
+      pen.setColor(Color::Green);
+      g.drawEllipse(pen, Rect(rc.x, rc.getCenter().y-rc.h/4, rc.w, rc.h/2));
+
+      pen.setColor(Color::Blue);
+      g.drawPie(pen, rc, 135, 45);
+
+      pen.setColor(Color::Magenta);
+      g.drawChord(pen, rc, 45+2, 90-4);
     }
     else {
-      g.setColor(Color::Black);   g.fillRect(Rect(rc.getCenter()-Point(extra), extra*2));
-      g.setColor(Color::Green);   g.fillEllipse(Rect(rc.x, rc.getCenter().y-rc.h/4, rc.w, rc.h/2));
-      g.setColor(Color::Blue);    g.fillPie(rc, 135, 45);
-      g.setColor(Color::Magenta); g.fillChord(rc, 45+2, 90-4);
+      Brush brush(Color::Black);
+      g.fillRect(brush, Rect(rc.getCenter()-Point(extra), extra*2));
+
+      brush.setColor(Color::Green);
+      g.fillEllipse(brush, Rect(rc.x, rc.getCenter().y-rc.h/4, rc.w, rc.h/2));
+
+      brush.setColor(Color::Blue);
+      g.fillPie(brush, rc, 135, 45);
+
+      brush.setColor(Color::Magenta);
+      g.fillChord(brush, rc, 45+2, 90-4);
     }
   }
 
@@ -93,10 +108,10 @@ public:
 
 class Example : public Application
 {
-  MainFrame mMainWnd;
+  MainFrame m_mainFrame;
 public:
   virtual void main(std::vector<String> args) {
-    mMainWnd.setVisible(true);
+    m_mainFrame.setVisible(true);
   }
 };
 

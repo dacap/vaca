@@ -29,41 +29,41 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/Vaca.h"
+#include <Vaca/Vaca.h>
 
 using namespace Vaca;
 
 class MainFrame : public Frame
 {
-  ListView mListView;
-  ImageList mImageList;
-  Panel mBottom;
-  Button mBrowseButton;
-  Button mRefreshButton;
+  ListView m_listView;
+  ImageList m_imageList;
+  Panel m_bottom;
+  Button m_browseButton;
+  Button m_refreshButton;
 
 public:
 
   MainFrame()
-    : Frame("SystemImageList")
-    , mListView(this)
-    , mBottom(this)
-    , mBrowseButton("Browse to get more icons...", &mBottom)
-    , mRefreshButton("Refresh list", &mBottom)
+    : Frame("System_imageList")
+    , m_listView(this)
+    , m_bottom(this)
+    , m_browseButton("Browse to get more icons...", &m_bottom)
+    , m_refreshButton("Refresh list", &m_bottom)
   {
     setLayout(new BoxLayout(Vertical, false));
-    mListView.setConstraint(new BoxConstraint(true));
-    mBottom.setLayout(new BoxLayout(Horizontal, true));
+    m_listView.setConstraint(new BoxConstraint(true));
+    m_bottom.setLayout(new BoxLayout(Horizontal, true));
 
     // get the system image-list
-    System::getImageList(mImageList, false);
+    System::getImageList(m_imageList, false);
 
     // setup the ListView
-    mListView.setViewType(ListView::Icon);
-    mListView.setNormalImageList(&mImageList);
+    m_listView.setViewType(ListView::Icon);
+    m_listView.setNormalImageList(&m_imageList);
 
     // bindings
-    mBrowseButton.Action.connect(Bind(&MainFrame::onBrowse, this));
-    mRefreshButton.Action.connect(Bind(&MainFrame::onRefresh, this));
+    m_browseButton.Action.connect(Bind(&MainFrame::onBrowse, this));
+    m_refreshButton.Action.connect(Bind(&MainFrame::onRefresh, this));
 
     // first refresh
     onRefresh();
@@ -79,12 +79,12 @@ protected:
 
   void onRefresh()
   {
-    mListView.removeAllItems();
+    m_listView.removeAllItems();
 
     // add one item for each image in the system image-list
-    int i, count = mImageList.getImageCount();
+    int i, count = m_imageList.getImageCount();
     for (i = 0; i < count; ++i) {
-      mListView.addItem("Image #"+String::fromInt(i), i);
+      m_listView.addItem("Image #"+String::fromInt(i), i);
     }
   }
   
@@ -94,10 +94,10 @@ protected:
 
 class Example : public Application
 {
-  MainFrame mMainWnd;
+  MainFrame m_mainFrame;
 public:
   virtual void main(std::vector<String> args) {
-    mMainWnd.setVisible(true);
+    m_mainFrame.setVisible(true);
   }
 };
 

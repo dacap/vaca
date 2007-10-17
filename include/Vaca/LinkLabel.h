@@ -37,14 +37,15 @@
 #include "Vaca/base.h"
 #include "Vaca/CustomLabel.h"
 // #include "Vaca/Panel.h"
-#include "Vaca/Font.h"
 
 namespace Vaca {
 
-#define LinkLabelStyle		CustomLabelStyle
+#define LinkLabelStyle		(CustomLabelStyle + FocusableStyle)
+
+class Font;
 
 /**
- * A link to internet.
+ * A link to Internet (or whatever you want).
  */
 class VACA_DLL LinkLabel : public CustomLabel
 // class VACA_DLL LinkLabel : public Panel
@@ -55,17 +56,17 @@ class VACA_DLL LinkLabel : public CustomLabel
     Hover
   };
 
-  int mTriState;
-  String mUrl;
-  Font mUnderlineFont;
+  int m_state;
+  String m_url;
+  Font *m_underlineFont;
 
 public:
 
-  LinkLabel(const String &url, const String &text, Widget *parent, Style style = LinkLabelStyle);
+  LinkLabel(const String &urlOrText, const String &text, Widget *parent, Style style = LinkLabelStyle);
   LinkLabel(const String &url, Widget *parent, Style style = LinkLabelStyle);
   virtual ~LinkLabel();
 
-  virtual void setFont(Font &font);
+  virtual void setFont(Font *font);
 
   virtual Color getLinkColor();
   virtual Color getHoverColor();
@@ -82,13 +83,18 @@ protected:
   virtual void onMouseDown(MouseEvent &ev);
   virtual void onSetCursor(int hitTest);
 //   virtual void onResize(const Size &sz);
+  virtual void onGotFocus(Event &ev);
+  virtual void onLostFocus(Event &ev);
+  virtual void onKeyDown(KeyEvent &ev);
 
   // new events
   virtual void onAction(Event &ev);
 
 private:
 
-  void updateFont(Font &font);
+  void init(String text);
+  void action();
+  void updateFont(Font *font);
   Rect getLinkBounds(Graphics &g);
 
 };

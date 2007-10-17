@@ -29,40 +29,40 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/Vaca.h"
+#include <Vaca/Vaca.h>
 
 using namespace Vaca;
 
 class MainFrame : public Frame
 {
-  SpinButton mSpinButton1;
-  SpinButton mSpinButton2;
-  SpinButton mSpinButton3;
-  Spinner mSpinner1;
-  Spinner mSpinner2;
+  SpinButton m_spinButton1;
+  SpinButton m_spinButton2;
+  SpinButton m_spinButton3;
+  Spinner m_spinner1;
+  Spinner m_spinner2;
 
 public:
 
   MainFrame()
     : Frame("Spinners")
-    , mSpinButton1(this)
-    , mSpinButton2(this, SpinButtonStyle + HorizontalSpinButtonStyle)
-    , mSpinButton3(this, SpinButtonStyle + HotTrackSpinButtonStyle)
-    , mSpinner1(0, 10, 0, this)
-    , mSpinner2(-5, 5, 0, this)
+    , m_spinButton1(this)
+    , m_spinButton2(this, SpinButtonStyle + HorizontalSpinButtonStyle)
+    , m_spinButton3(this, SpinButtonStyle + HotTrackSpinButtonStyle)
+    , m_spinner1(0, 10, 0, this)
+    , m_spinner2(-5, 5, 0, this)
   {
     setLayout(new BoxLayout(Vertical, false));
-    mSpinButton1.setConstraint(new BoxConstraint(true));
-    mSpinButton2.setConstraint(new BoxConstraint(true));
-    mSpinButton3.setConstraint(new BoxConstraint(true));
+    m_spinButton1.setConstraint(new BoxConstraint(true));
+    m_spinButton2.setConstraint(new BoxConstraint(true));
+    m_spinButton3.setConstraint(new BoxConstraint(true));
 
-    mSpinButton1.Change.connect(Bind(&MainFrame::onSpinButtonChange, this,
-				     boost::arg<1>(), &mSpinner1));
+    m_spinButton1.Change.connect(Bind(&MainFrame::onSpinButtonChange, this,
+				      boost::arg<1>(), &m_spinner1));
     
-    mSpinButton2.Change.connect(Bind(&MainFrame::onSpinButtonChange, this,
-				     boost::arg<1>(), &mSpinner2));
-
-    setSize(Size(256, 256));
+    m_spinButton2.Change.connect(Bind(&MainFrame::onSpinButtonChange, this,
+				      boost::arg<1>(), &m_spinner2));
+    
+    setSize(Size(200, 160));
     center();
   }
 
@@ -79,10 +79,10 @@ protected:
 
 class Example : public Application
 {
-  MainFrame mMainWnd;
+  MainFrame m_mainFrame;
 public:
   virtual void main(std::vector<String> args) {
-    mMainWnd.setVisible(true);
+    m_mainFrame.setVisible(true);
   }
 };
 

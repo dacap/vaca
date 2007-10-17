@@ -29,7 +29,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/Vaca.h"
+#include <Vaca/Vaca.h>
 
 using namespace Vaca;
 
@@ -55,18 +55,19 @@ enum {
 
 class Console : public MultilineEdit
 {
-  Font mFont;
+  Font m_font;
   
 public:
 
   Console(Widget *parent)
     : MultilineEdit("", parent, MultilineEditStyle + ScrollStyle)
-    , mFont("Courier New", 10)
+    , m_font("Courier New", 10)
   {
-    setFont(mFont);
+    setFont(&m_font);
     setBgColor(Color::Black);
     setFgColor(Color(0, 220, 0));
   }
+
 
   void println(const String &str)
   {
@@ -80,46 +81,46 @@ public:
 
 class MainFrame : public Frame
 {
-  Console mConsole;
-  ToolBar mToolBar;
+  Console m_console;
+  ToolBar m_toolBar;
 
 public:
 
   MainFrame()
     : Frame("StdCommands")
-    , mConsole(this)
-    , mToolBar("Standard", this, ToolSetStyle + FlatToolSetStyle)
+    , m_console(this)
+    , m_toolBar("Standard", this, ToolSetStyle + FlatToolSetStyle)
   {
     setLayout(new ClientLayout);
 
     // load the standard buttons
-    mToolBar.getSet().loadStandardImageList();
+    m_toolBar.getSet().loadStandardImageList();
 
-    mToolBar.getSet().addButton(STD_FILENEW, CMD_FILENEW, TBSTATE_ENABLED);
-    mToolBar.getSet().addButton(STD_FILEOPEN, CMD_FILEOPEN, TBSTATE_ENABLED);
-    mToolBar.getSet().addButton(STD_FILESAVE, CMD_FILESAVE, TBSTATE_ENABLED);
-    mToolBar.getSet().addSeparator();
-    mToolBar.getSet().addButton(STD_PRINT, CMD_PRINT, TBSTATE_ENABLED);
-    mToolBar.getSet().addButton(STD_PRINTPRE, CMD_PRINTPRE, TBSTATE_ENABLED);
-    mToolBar.getSet().addSeparator();
-    mToolBar.getSet().addButton(STD_CUT, CMD_CUT, TBSTATE_ENABLED);
-    mToolBar.getSet().addButton(STD_COPY, CMD_COPY, TBSTATE_ENABLED);
-    mToolBar.getSet().addButton(STD_PASTE, CMD_PASTE, TBSTATE_ENABLED);
-    mToolBar.getSet().addButton(STD_DELETE, CMD_DELETE, TBSTATE_ENABLED);
-    mToolBar.getSet().addSeparator();
-    mToolBar.getSet().addButton(STD_UNDO, CMD_UNDO, TBSTATE_ENABLED);
-    mToolBar.getSet().addButton(STD_REDOW, CMD_REDOW, TBSTATE_ENABLED);
-    mToolBar.getSet().addSeparator();
-    mToolBar.getSet().addButton(STD_PROPERTIES, CMD_PROPERTIES, TBSTATE_ENABLED);
-    mToolBar.getSet().addButton(STD_FIND, CMD_FIND, TBSTATE_ENABLED);
-    mToolBar.getSet().addButton(STD_REPLACE, CMD_REPLACE, TBSTATE_ENABLED);
-    mToolBar.getSet().addButton(STD_HELP, CMD_HELP, TBSTATE_ENABLED);
+    m_toolBar.getSet().addButton(STD_FILENEW, CMD_FILENEW, TBSTATE_ENABLED);
+    m_toolBar.getSet().addButton(STD_FILEOPEN, CMD_FILEOPEN, TBSTATE_ENABLED);
+    m_toolBar.getSet().addButton(STD_FILESAVE, CMD_FILESAVE, TBSTATE_ENABLED);
+    m_toolBar.getSet().addSeparator();
+    m_toolBar.getSet().addButton(STD_PRINT, CMD_PRINT, TBSTATE_ENABLED);
+    m_toolBar.getSet().addButton(STD_PRINTPRE, CMD_PRINTPRE, TBSTATE_ENABLED);
+    m_toolBar.getSet().addSeparator();
+    m_toolBar.getSet().addButton(STD_CUT, CMD_CUT, TBSTATE_ENABLED);
+    m_toolBar.getSet().addButton(STD_COPY, CMD_COPY, TBSTATE_ENABLED);
+    m_toolBar.getSet().addButton(STD_PASTE, CMD_PASTE, TBSTATE_ENABLED);
+    m_toolBar.getSet().addButton(STD_DELETE, CMD_DELETE, TBSTATE_ENABLED);
+    m_toolBar.getSet().addSeparator();
+    m_toolBar.getSet().addButton(STD_UNDO, CMD_UNDO, TBSTATE_ENABLED);
+    m_toolBar.getSet().addButton(STD_REDOW, CMD_REDOW, TBSTATE_ENABLED);
+    m_toolBar.getSet().addSeparator();
+    m_toolBar.getSet().addButton(STD_PROPERTIES, CMD_PROPERTIES, TBSTATE_ENABLED);
+    m_toolBar.getSet().addButton(STD_FIND, CMD_FIND, TBSTATE_ENABLED);
+    m_toolBar.getSet().addButton(STD_REPLACE, CMD_REPLACE, TBSTATE_ENABLED);
+    m_toolBar.getSet().addButton(STD_HELP, CMD_HELP, TBSTATE_ENABLED);
 
     // setup the defaults dock areas
     defaultDockAreas();
 
     // put the tool bar in the top dock area
-    mToolBar.dockIn(getDockArea(TopSide));
+    m_toolBar.dockIn(getDockArea(TopSide));
   }
 
 protected:
@@ -127,21 +128,24 @@ protected:
   virtual bool onIdAction(int id)
   {
     switch (id) {
-      case CMD_FILENEW:    mConsole.println("CMD_FILENEW"); break;
-      case CMD_FILEOPEN:   mConsole.println("CMD_FILEOPEN"); break;
-      case CMD_FILESAVE:   mConsole.println("CMD_FILESAVE"); break;
-      case CMD_PRINT:      mConsole.println("CMD_PRINT"); break;
-      case CMD_PRINTPRE:   mConsole.println("CMD_PRINTPRE"); break;
-      case CMD_CUT:        mConsole.println("CMD_CUT"); break;
-      case CMD_COPY:       mConsole.println("CMD_COPY"); break;
-      case CMD_PASTE:      mConsole.println("CMD_PASTE"); break;
-      case CMD_DELETE:     mConsole.println("CMD_DELETE"); break;
-      case CMD_UNDO:       mConsole.println("CMD_UNDO"); break;
-      case CMD_REDOW:      mConsole.println("CMD_REDOW"); break;
-      case CMD_PROPERTIES: mConsole.println("CMD_PROPERTIES"); break;
-      case CMD_FIND:       mConsole.println("CMD_FIND"); break;
-      case CMD_REPLACE:    mConsole.println("CMD_REPLACE"); break;
-      case CMD_HELP:       mConsole.println("CMD_HELP"); break;
+      case CMD_FILENEW:
+	m_console.println("CMD_FILENEW");
+	msgBox("New file...", "New", MB_OK);
+	break;
+      case CMD_FILEOPEN:   m_console.println("CMD_FILEOPEN"); break;
+      case CMD_FILESAVE:   m_console.println("CMD_FILESAVE"); break;
+      case CMD_PRINT:      m_console.println("CMD_PRINT"); break;
+      case CMD_PRINTPRE:   m_console.println("CMD_PRINTPRE"); break;
+      case CMD_CUT:        m_console.println("CMD_CUT"); break;
+      case CMD_COPY:       m_console.println("CMD_COPY"); break;
+      case CMD_PASTE:      m_console.println("CMD_PASTE"); break;
+      case CMD_DELETE:     m_console.println("CMD_DELETE"); break;
+      case CMD_UNDO:       m_console.println("CMD_UNDO"); break;
+      case CMD_REDOW:      m_console.println("CMD_REDOW"); break;
+      case CMD_PROPERTIES: m_console.println("CMD_PROPERTIES"); break;
+      case CMD_FIND:       m_console.println("CMD_FIND"); break;
+      case CMD_REPLACE:    m_console.println("CMD_REPLACE"); break;
+      case CMD_HELP:       m_console.println("CMD_HELP"); break;
       default:
 	return false;		// "id" not used
     }
@@ -154,10 +158,10 @@ protected:
 
 class Example : public Application
 {
-  MainFrame mMainWnd;
+  MainFrame m_mainFrame;
 public:
   virtual void main(std::vector<String> args) {
-    mMainWnd.setVisible(true);
+    m_mainFrame.setVisible(true);
   }
 };
 

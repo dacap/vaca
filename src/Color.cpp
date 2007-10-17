@@ -104,12 +104,12 @@ const Color Color::Blue(0x00, 0x00, 0xff);
  */
 Color::Color()
 {
-  mColorRef = 0;
+  m_colorRef = 0;
 }
 
 Color::Color(const Color &color)
 {
-  mColorRef = color.mColorRef;
+  m_colorRef = color.m_colorRef;
 }
 
 /**
@@ -121,7 +121,7 @@ Color::Color(const Color &color)
  */
 Color::Color(int r, int g, int b)
 {
-  mColorRef = RGB(r, g, b);
+  m_colorRef = RGB(r, g, b);
 }
 
 Color::~Color()
@@ -133,7 +133,7 @@ Color::~Color()
  */
 int Color::getR() const
 {
-  return GetRValue(mColorRef);
+  return GetRValue(m_colorRef);
 }
 
 /**
@@ -141,7 +141,7 @@ int Color::getR() const
  */
 int Color::getG() const
 {
-  return GetGValue(mColorRef);
+  return GetGValue(m_colorRef);
 }
 
 /**
@@ -149,7 +149,7 @@ int Color::getG() const
  */
 int Color::getB() const
 {
-  return GetBValue(mColorRef);
+  return GetBValue(m_colorRef);
 }
 
 Color Color::negative()
@@ -161,6 +161,22 @@ Color Color::toBlackAndWhite()
 {
   return (getR()*30+getG()*59+getB()*11)/100 < 128 ? Color::Black:
 						     Color::White;
+}
+
+Color &Color::operator=(const Color &color)
+{
+  m_colorRef = color.m_colorRef;
+  return *this;
+}
+
+bool Color::operator==(const Color &color) const
+{
+  return m_colorRef == color.m_colorRef;
+}
+
+bool Color::operator!=(const Color &color) const
+{
+  return m_colorRef != color.m_colorRef;
 }
 
 /**
@@ -249,10 +265,10 @@ Color Color::operator/(double value) const
 
 Color::Color(COLORREF rgb)
 {
-  mColorRef = rgb;
+  m_colorRef = rgb;
 }
 
 COLORREF Color::getColorRef() const
 {
-  return mColorRef;
+  return m_colorRef;
 }

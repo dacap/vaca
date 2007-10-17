@@ -45,8 +45,8 @@ class Widget;
  */
 class VACA_DLL KeyEvent : public Event
 {
-  bool mConsumed;		// the event was consumed?
-  int mKeys;
+  bool m_consumed;		// the event was consumed?
+  int m_keys;
 
 public:
 

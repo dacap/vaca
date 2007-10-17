@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="EditableListBox"
-	ProjectGUID="{3CC0424F-0DA3-41C2-AE29-CC1FC52BEC48}"
+	ProjectGUID="{B36A80A1-82C3-4DA6-95E3-172A00DB6CDF}"
 	RootNamespace="EditableListBox"
 	Keyword="Win32Proj">
 	<Platforms>
@@ -36,7 +36,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(OutDir)/Example.EditableListBox.exe"
+				OutputFile="$(OutDir)/EditableListBox.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;C:\boost_1_33_1\bin\boost\libs\signals\build\libboost_signals.lib\vc-7_1\debug\runtime-link-static\threading-multi&quot;;&quot;C:\boost_1_33_1\bin\boost\libs\signals\build\libboost_signals.lib\vc-7_1\debug\runtime-link-static&quot;"
 				IgnoreDefaultLibraryNames="LIBCMTD.lib;LIBCD.lib"
@@ -85,7 +85,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(OutDir)/Example.EditableListBox.exe"
+				OutputFile="$(OutDir)/EditableListBox.exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="TRUE"
 				SubSystem="2"
@@ -138,8 +138,8 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ComCtl32.Lib Secur32.Lib MSImg32.Lib ShLwApi.Lib"
-				OutputFile="$(OutDir)/Example.EditableListBox.exe"
+				AdditionalDependencies="ComCtl32.Lib Secur32.Lib MSImg32.Lib ShLwApi.Lib winmm.Lib"
+				OutputFile="$(OutDir)/EditableListBox.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;C:\boost_1_33_1\bin\boost\libs\signals\build\libboost_signals.lib\vc-7_1\debug\runtime-link-static\threading-multi&quot;;&quot;C:\boost_1_33_1\bin\boost\libs\signals\build\libboost_signals.lib\vc-7_1\debug\runtime-link-static&quot;"
 				IgnoreDefaultLibraryNames="LIBCD.lib"
@@ -190,8 +190,8 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ComCtl32.Lib Secur32.Lib MSImg32.Lib ShLwApi.Lib"
-				OutputFile="$(OutDir)/Example.EditableListBox.exe"
+				AdditionalDependencies="ComCtl32.Lib Secur32.Lib MSImg32.Lib ShLwApi.Lib winmm.Lib"
+				OutputFile="$(OutDir)/EditableListBox.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;C:\boost_1_33_1\bin\boost\libs\signals\build\libboost_signals.lib\vc-7_1\debug\runtime-link-static\threading-multi&quot;;&quot;C:\boost_1_33_1\bin\boost\libs\signals\build\libboost_signals.lib\vc-7_1\debug\runtime-link-static&quot;"
 				IgnoreDefaultLibraryNames="LIBCD.lib"

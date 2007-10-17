@@ -65,9 +65,10 @@ void ButtonBase::setSelected(bool state)
 /**
  * Returns the preferred size for the button.
  */
+/*
 Size ButtonBase::preferredSize()
 {
-  assert(getHWND() != NULL);
+  assert(::IsWindow(getHWND()));
 
   int style = getStyle().regular;
 
@@ -125,6 +126,74 @@ Size ButtonBase::preferredSize()
     // maybe a BS_GROUPBOX...
     // just returns the size of the text
     return textSize;
+#if 0
+  }
+#endif
+}
+*/
+
+void ButtonBase::onPreferredSize(Size &sz)
+{
+  assert(::IsWindow(getHWND()));
+
+  int style = getStyle().regular;
+
+  bool pushLike =
+    ((style & 15) == BS_PUSHBUTTON) ||
+    ((style & 15) == BS_DEFPUSHBUTTON) ||
+    ((style & 15) == BS_USERBUTTON) ||
+    ((style & 15) == BS_OWNERDRAW) ||
+    ((style & BS_PUSHLIKE) != 0);
+
+#if 0				// TODO
+  SIZE size;
+
+  // Button_GetIdealSize only in WinXP
+  if (pushLike &&
+      (System::isWinXP()) &&
+      (sendMessage(BCM_GETIDEALSIZE, 0,
+		   reinterpret_cast<LPARAM>(&size)) != FALSE)) {
+    sz = Size(&size);
+  }
+  // ...well, we must to do this by hand...
+  else {
+#endif
+    // first of all, obtain the text's size
+    Size textSize;
+    {
+      ScreenGraphics g;
+      g.setFont(getFont());
+      textSize = g.measureString(getText());
+    }
+
+    // push-like
+    if (pushLike) {
+      Size border(6, 6);
+
+      // has 3d borders?
+      if ((style & BS_FLAT) == 0)
+	border += Size(GetSystemMetrics(SM_CXEDGE),
+		       GetSystemMetrics(SM_CYEDGE))*2;
+
+      sz = Size(66, 0).createUnion(textSize+border);
+    }
+    // check-box
+    else if ((style & 15) == BS_CHECKBOX ||
+	     (style & 15) == BS_AUTOCHECKBOX ||
+	     (style & 15) == BS_3STATE ||
+	     (style & 15) == BS_AUTO3STATE) {
+      sz = Size(textSize.h+6+textSize.w, textSize.h);
+    }
+    // radio
+    else if ((style & 15) == BS_RADIOBUTTON ||
+	     (style & 15) == BS_AUTORADIOBUTTON) {
+      sz = Size(textSize.h+6+textSize.w, textSize.h);
+    }
+    // maybe a BS_GROUPBOX...
+    else {
+      // just returns the size of the text
+      sz = textSize;
+    }
 #if 0
   }
 #endif

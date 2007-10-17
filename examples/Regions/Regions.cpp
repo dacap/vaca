@@ -29,7 +29,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/Vaca.h"
+#include <Vaca/Vaca.h>
 
 #include <cmath>
 
@@ -37,28 +37,28 @@ using namespace Vaca;
 
 class Regions : public Panel
 {
-  Region *mRegion;
-  Point mStartPoint;
-  Point mOldPoint;
-  bool mReadOnly;
-  bool mErasing;
-  bool mEllipses;
+  Region *m_region;
+  Point m_startPoint;
+  Point m_oldPoint;
+  bool m_readOnly;
+  bool m_erasing;
+  bool m_ellipses;
 
 public:
 
   Regions(Widget *parent)
     : Panel(parent, PanelStyle + ClientEdgeStyle)
-    , mRegion(NULL)
-    , mReadOnly(true)
+    , m_region(NULL)
+    , m_readOnly(true)
   {
     setBgColor(Color::White);
   }
 
   void setRegion(Region *region, bool readOnly, bool ellipses = false)
   {
-    mRegion = region;
-    mReadOnly = readOnly;
-    mEllipses = ellipses;
+    m_region = region;
+    m_readOnly = readOnly;
+    m_ellipses = ellipses;
 
     invalidate(true);
   }
@@ -67,27 +67,27 @@ protected:
     
   virtual void onPaint(Graphics &g)
   {
-    if (mRegion != NULL) {
-      g.setColor(mReadOnly ? Color::Gray: Color::Red);
-      g.fillRegion(*mRegion);
+    if (m_region != NULL) {
+      Brush brush(m_readOnly ? Color::Gray: Color::Red);
+      g.fillRegion(brush, *m_region);
     }
   }
 
   virtual void onMouseDown(MouseEvent &ev)
   {
-    if (mRegion != NULL &&
-	!mReadOnly &&
+    if (m_region != NULL &&
+	!m_readOnly &&
 	!hasCapture()) {
       acquireCapture();
 
-      mStartPoint =
-	mOldPoint = System::getCursorPos();
+      m_startPoint =
+	m_oldPoint = System::getCursorPos();
 
       ScreenGraphics g;
-      xorRect(g, mOldPoint);
+      xorRect(g, m_oldPoint);
 
       // with right mouse button we erase 
-      mErasing = ev.getButton() == MouseButtons::Right;
+      m_erasing = ev.getButton() == MouseButtons::Right;
     }
   }
 
@@ -98,13 +98,13 @@ protected:
 
       // clean the feedback rectangle
       ScreenGraphics g;
-      xorRect(g, mOldPoint);
+      xorRect(g, m_oldPoint);
 
       // draw the feedback rectangle in new position
       xorRect(g, newPoint);
       
       // the old point is now the new point
-      mOldPoint = newPoint;
+      m_oldPoint = newPoint;
     }
   }
 
@@ -117,26 +117,26 @@ protected:
 
       // clean the feedback rectangle
       ScreenGraphics g;
-      xorRect(g, mOldPoint);
+      xorRect(g, m_oldPoint);
 
       // new rectangle (absolute coordinates)
-      Rect newRect(VACA_MIN(mStartPoint.x, mOldPoint.x),
-		   VACA_MIN(mStartPoint.y, mOldPoint.y),
-		   abs(mStartPoint.x-mOldPoint.x)+1,
-		   abs(mStartPoint.y-mOldPoint.y)+1);
+      Rect newRect(VACA_MIN(m_startPoint.x, m_oldPoint.x),
+		   VACA_MIN(m_startPoint.y, m_oldPoint.y),
+		   abs(m_startPoint.x-m_oldPoint.x)+1,
+		   abs(m_startPoint.y-m_oldPoint.y)+1);
 
       // translate to client area (relative)
       newRect.offset(-getAbsoluteClientBounds().getOrigin());
 
       Region newRegion =
-	mEllipses ? Region::fromEllipse(newRect):
-		    Region::fromRect(newRect);
+	m_ellipses ? Region::fromEllipse(newRect):
+		     Region::fromRect(newRect);
 
       // update the region
-      if (mErasing)
-	*mRegion = (*mRegion) - newRegion; // substract
+      if (m_erasing)
+	*m_region = (*m_region) - newRegion; // substract
       else
-	*mRegion = (*mRegion) | newRegion; // union
+	*m_region = (*m_region) | newRegion; // union
 
       invalidate(true);
     }
@@ -146,18 +146,20 @@ private:
 
   void xorRect(Graphics &g, const Point &pt)
   {
-    Rect rc(VACA_MIN(mStartPoint.x, pt.x),
-	    VACA_MIN(mStartPoint.y, pt.y),
-	    abs(mStartPoint.x-pt.x)+1,
-	    abs(mStartPoint.y-pt.y)+1);
+    Rect rc(VACA_MIN(m_startPoint.x, pt.x),
+	    VACA_MIN(m_startPoint.y, pt.y),
+	    abs(m_startPoint.x-pt.x)+1,
+	    abs(m_startPoint.y-pt.y)+1);
     
     g.setRop2(R2_NOTXORPEN);
-    g.intersectClip(getAbsoluteClientBounds());
+    g.intersectClipRect(getAbsoluteClientBounds());
 
-    if (mEllipses)
-      g.drawEllipse(rc);
+    Pen pen(Color::Black);			// TODO XorPen?
+
+    if (m_ellipses)
+      g.drawEllipse(pen, rc);
     else
-      g.drawRect(rc);
+      g.drawRect(pen, rc);
 
     g.setRop2(R2_COPYPEN);
   }
@@ -166,35 +168,35 @@ private:
 
 class MainFrame : public Frame
 {
-  TabBase mTab;
-  Regions mRegions;
-  Region mRegionA;
-  Region mRegionB;
-  Region mRegion;
+  TabBase m_tab;
+  Regions m_regions;
+  Region m_regionA;
+  Region m_regionB;
+  Region m_region;
 
 public:
   
   MainFrame()
     : Frame("Regions")
-    , mTab(this)
-    , mRegions(&mTab)
+    , m_tab(this)
+    , m_regions(&m_tab)
   {
     setLayout(new ClientLayout);
-    mTab.setLayout(new BoxLayout(Vertical, true)); // as ClientLayout,
+    m_tab.setLayout(new BoxLayout(Vertical, true)); // as ClientLayout,
 						   // but with borders
 
-    mTab.addPage("Region A");
-    mTab.addPage("Region B");
-    mTab.addPage("Union: A | B");
-    mTab.addPage("Intersect: A && B");
-    mTab.addPage("Substract: A - B");
-    mTab.addPage("Substract: B - A");
-    mTab.addPage("Xor: A ^ B");
+    m_tab.addPage("Region A");
+    m_tab.addPage("Region B");
+    m_tab.addPage("Union: A | B");
+    m_tab.addPage("Intersect: A && B");
+    m_tab.addPage("Substract: A - B");
+    m_tab.addPage("Substract: B - A");
+    m_tab.addPage("Xor: A ^ B");
 
-    mTab.PageChange.connect(Bind(&MainFrame::onPageChange, this));
+    m_tab.PageChange.connect(Bind(&MainFrame::onPageChange, this));
 
-    mRegionA = Region::fromRect(Rect(32, 32, 64, 64));
-    mRegionB = Region::fromEllipse(Rect(48, 48, 64, 64));
+    m_regionA = Region::fromRect(Rect(32, 32, 64, 64));
+    m_regionB = Region::fromEllipse(Rect(48, 48, 64, 64));
 
     onPageChange();
   }
@@ -203,41 +205,41 @@ private:
 
   void onPageChange()
   {
-    int pageIndex = mTab.getActivePage();
+    int pageIndex = m_tab.getActivePage();
 
     switch (pageIndex) {
       // Region A
       case 0:
-	mRegions.setRegion(&mRegionA, false);
+	m_regions.setRegion(&m_regionA, false);
 	break;
       // Region B
       case 1:
-	mRegions.setRegion(&mRegionB, false, true);
+	m_regions.setRegion(&m_regionB, false, true);
 	break;
       // A | B
       case 2:
-	mRegion = mRegionA | mRegionB;
-	mRegions.setRegion(&mRegion, true);
+	m_region = m_regionA | m_regionB;
+	m_regions.setRegion(&m_region, true);
 	break;
       // A & B
       case 3: 
-	mRegion = mRegionA & mRegionB;
-	mRegions.setRegion(&mRegion, true);
+	m_region = m_regionA & m_regionB;
+	m_regions.setRegion(&m_region, true);
 	break;
       // A - B
       case 4: 
-	mRegion = mRegionA - mRegionB;
-	mRegions.setRegion(&mRegion, true);
+	m_region = m_regionA - m_regionB;
+	m_regions.setRegion(&m_region, true);
 	break;
       // B - A
       case 5: 
-	mRegion = mRegionB - mRegionA;
-	mRegions.setRegion(&mRegion, true);
+	m_region = m_regionB - m_regionA;
+	m_regions.setRegion(&m_region, true);
 	break;
       // A ^ B
       case 6:
-	mRegion = mRegionA ^ mRegionB;
-	mRegions.setRegion(&mRegion, true);
+	m_region = m_regionA ^ m_regionB;
+	m_regions.setRegion(&m_region, true);
 	break;
     }
   }
@@ -248,10 +250,10 @@ private:
 
 class Example : public Application
 {
-  MainFrame mMainWnd;
+  MainFrame m_mainFrame;
 public:
   virtual void main(std::vector<String> args) {
-    mMainWnd.setVisible(true);
+    m_mainFrame.setVisible(true);
   }
 };
 

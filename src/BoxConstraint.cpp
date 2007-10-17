@@ -35,7 +35,13 @@
 using namespace Vaca;
 
 BoxConstraint::BoxConstraint(bool expansive)
-  : mExpansive(expansive)
+  : m_expansive(expansive)
+{
+}
+
+BoxConstraint::BoxConstraint(const BoxConstraint &boxConstraint)
+  : Constraint(boxConstraint)
+  , m_expansive(boxConstraint.m_expansive)
 {
 }
 
@@ -45,10 +51,10 @@ BoxConstraint::~BoxConstraint()
 
 bool BoxConstraint::isExpansive()
 {
-  return mExpansive;
+  return m_expansive;
 }
 
 void BoxConstraint::setExpansive(bool expansive)
 {
-  mExpansive = expansive;
+  m_expansive = expansive;
 }

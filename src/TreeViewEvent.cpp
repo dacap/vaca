@@ -37,8 +37,8 @@ using namespace Vaca;
 
 TreeViewEvent::TreeViewEvent(TreeView *treeView, TreeNode *treeNode, String label)
   : CancelableEvent(treeView)
-  , mTreeNode(treeNode)
-  , mLabel(label)
+  , m_treeNode(treeNode)
+  , m_label(label)
 {
 }
 
@@ -48,11 +48,11 @@ TreeViewEvent::~TreeViewEvent()
 
 TreeNode *TreeViewEvent::getTreeNode()
 {
-  return mTreeNode;
+  return m_treeNode;
 }
 
 String TreeViewEvent::getLabel()
 {
-  return mLabel;
+  return m_label;
 }
 

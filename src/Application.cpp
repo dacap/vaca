@@ -33,11 +33,12 @@
 #include "Vaca/Debug.h"
 #include "Vaca/Application.h"
 #include "Vaca/Frame.h"
+#include "Vaca/Timer.h"
 
 using namespace Vaca;
 
-HINSTANCE Application::mHINSTANCE = NULL;
-Application *Application::mInstance = NULL;
+HINSTANCE Application::m_HINSTANCE = NULL;
+Application *Application::m_instance = NULL;
 
 /**
  * Initializes the variables of the Application class. Also calls the
@@ -46,13 +47,13 @@ Application *Application::mInstance = NULL;
 Application::Application()
   : Thread(true)
 {
-  assert(Application::mHINSTANCE == NULL);
-  assert(Application::mInstance == NULL);
+  assert(Application::m_HINSTANCE == NULL);
+  assert(Application::m_instance == NULL);
 
   CoInitialize(NULL);
 
-  Application::mHINSTANCE = ::GetModuleHandle(NULL);
-  Application::mInstance = this;
+  Application::m_HINSTANCE = ::GetModuleHandle(NULL);
+  Application::m_instance = this;
 
   INITCOMMONCONTROLSEX icce;
   icce.dwSize = sizeof(INITCOMMONCONTROLSEX);
@@ -67,11 +68,13 @@ Application::Application()
 
 Application::~Application()
 {
-  assert(Application::mHINSTANCE != NULL);
-  assert(Application::mInstance == this);
+  assert(Application::m_HINSTANCE != NULL);
+  assert(Application::m_instance == this);
 
-  Application::mHINSTANCE = NULL;
-  Application::mInstance = NULL;
+  Timer::finishTimerThread();
+
+  Application::m_HINSTANCE = NULL;
+  Application::m_instance = NULL;
 
   // delete brushes and pens
   Graphics::deleteHandles();
@@ -84,12 +87,12 @@ Application::~Application()
 
 Application *Application::getInstance()
 {
-  return mInstance;
+  return m_instance;
 }
 
 HINSTANCE Application::getHINSTANCE()
 {
-  return Application::mHINSTANCE;
+  return Application::m_HINSTANCE;
 }
 
 /**
@@ -145,6 +148,21 @@ void Application::run()
   free(cmdline);
   //////////////////////////////////////////////////////////////////////
 
+  VACA_TRACE("Calling main(...)\n");
   main(args);
+
+  VACA_TRACE("before default doMessageLoop()\n");
   doMessageLoop();
+  VACA_TRACE("after default doMessageLoop()\n");
+}
+
+/**
+ * The application entry point <em>"a la"</em> Java.
+ *
+ * After calling run(), main() is executed, and when this finish,
+ * the doMessageLoop() is automatically executed.
+ */
+void Application::main(std::vector<String> args)
+{
+  // do nothing
 }

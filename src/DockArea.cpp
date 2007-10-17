@@ -40,28 +40,39 @@ using namespace Vaca;
 
 DockArea::DockArea(Side side, Widget *parent, Style style)
   : Widget(DockAreaClass::getClassName(), parent, style)
-  , mSide(side)
+  , m_side(side)
 {
 }
 
 DockArea::~DockArea()
 {
-  dispose();
+//   dispose();
+
+  Widget::Container children = getChildren();
+  Widget::Container::iterator it;
+
+  for (it=children.begin(); it!=children.end(); ++it) {
+    DockBar *dockBar = static_cast<DockBar *>(*it);
+
+    removeDockBar(dockBar);
+    dockBar->m_dockArea = NULL;
+    dockBar->setVisible(false);
+  }
 }
 
 bool DockArea::isHorizontal()
 {
-  return mSide == TopSide || mSide == BottomSide;
+  return m_side == TopSide || m_side == BottomSide;
 }
 
 bool DockArea::isVertical()
 {
-  return mSide == LeftSide || mSide == RightSide;
+  return m_side == LeftSide || m_side == RightSide;
 }
 
 Side DockArea::getSide()
 {
-  return mSide;
+  return m_side;
 }
 
 /**
@@ -159,18 +170,18 @@ void DockArea::onRedock(DockBar *dockBar, DockInfo *newDockInfo)
  * Overrided to remove all dock bars from the dock area before to call
  * Widget::onDestroy (it's to avoid children to be destroyed).
  */
-void DockArea::onDestroy()
-{
-  Widget::Container children = getChildren();
-  Widget::Container::iterator it;
+// void DockArea::onDestroy()
+// {
+//   Widget::Container children = getChildren();
+//   Widget::Container::iterator it;
 
-  for (it=children.begin(); it!=children.end(); ++it) {
-    DockBar *dockBar = static_cast<DockBar *>(*it);
+//   for (it=children.begin(); it!=children.end(); ++it) {
+//     DockBar *dockBar = static_cast<DockBar *>(*it);
 
-    removeDockBar(dockBar);
-    dockBar->mDockArea = NULL;
-    dockBar->setVisible(false);
-  }
+//     removeDockBar(dockBar);
+//     dockBar->m_dockArea = NULL;
+//     dockBar->setVisible(false);
+//   }
 
-  Widget::onDestroy();
-}
+// //   Widget::onDestroy();
+// }

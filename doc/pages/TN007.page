@@ -22,7 +22,7 @@ parent (an @c MdiClient) to update the @c MdiListMenu.
      Vaca::Widget::MdiChild::MdiChild,
      Vaca::Widget::MdiListMenu
 
-<h2>Why are styles specified in createHwnd is them can be changed later?</h2>
+<h2>Why are styles specified in createHwnd if them can be changed later?</h2>
 
 That is not true, there are some styles that MUST be specified
 in the creation of the HWND and can't be changed latter. For example:

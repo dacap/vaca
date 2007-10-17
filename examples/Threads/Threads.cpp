@@ -29,7 +29,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/Vaca.h"
+#include <Vaca/Vaca.h>
 
 using namespace Vaca;
 
@@ -37,14 +37,14 @@ static Mutex beepMutex;	  // mutex used to access to the Beep function
 
 class MainFrame : public Frame
 {
-  Label mLabel;
+  Label m_label;
 public:
   MainFrame(int num)
     : Frame(String("Thread"))
-    , mLabel(String("Thread ID ")+String::fromInt(num), this)
+    , m_label(String("Thread ID ")+String::fromInt(num), this)
   {
     setLayout(new ClientLayout);
-    setSize(preferredSize());
+    setSize(getPreferredSize());
   }
 };
 
@@ -106,7 +106,7 @@ public:
   void onKillAll(ThreadWithFrame *threads, int size)
   {
     for (int c=0; c<size; ++c)
-      threads[c].postQuitMessage();
+      threads[c].breakMessageLoop();
   }
 
 };

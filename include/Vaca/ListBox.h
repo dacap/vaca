@@ -41,10 +41,11 @@ namespace Vaca {
 
 /**
  * Default style for ListBox: a visible child (ChildVisible), with tab
- * stop (TabStopStyle), with client-edges (ClientEdgeStyle), and
+ * stop (FocusableStyle), with client-edges (ClientEdgeStyle), and
  * scroll bars (ScrollStyle), and LBS_NOINTEGRALHEIGHT | LBS_NOTIFY.
  */
-#define ListBoxStyle		(ChildStyle + TabStopStyle +	\
+#define ListBoxStyle		(ChildStyle +			\
+				 FocusableStyle +		\
 				 ClientEdgeStyle +		\
 				 ScrollStyle +			\
 				 Style(LBS_NOINTEGRALHEIGHT |	\
@@ -77,13 +78,16 @@ public:
 
   std::vector<int> getSelectedItems();
 
-  virtual Size preferredSize();
+//   virtual Size preferredSize();
 
   // signals
   boost::signal<void (Event &)> Action;	 ///< @see onAction
   boost::signal<void (Event &)> SelChange; ///< @see onSelChange
 
 protected:
+  // events
+  virtual void onPreferredSize(Size &sz);
+
   // new events
   virtual void onAction(Event &ev);
   virtual void onSelChange(Event &ev);

@@ -39,14 +39,14 @@ using namespace Vaca;
 
 ImageList::ImageList()
 {
-  mHIMAGELIST = NULL;
-  mAutoDelete = false;
+  m_HIMAGELIST = NULL;
+  m_selfDestruction = false;
 }
 
-ImageList::ImageList(HIMAGELIST hImageList, bool autoDelete)
+ImageList::ImageList(HIMAGELIST hImageList, SelfDestruction selfDestruction)
 {
-  mHIMAGELIST = hImageList;
-  mAutoDelete = autoDelete;
+  m_HIMAGELIST = hImageList;
+  m_selfDestruction = selfDestruction.isEnabled();
 }
 
 /**
@@ -54,7 +54,7 @@ ImageList::ImageList(HIMAGELIST hImageList, bool autoDelete)
  */
 ImageList::ImageList(int bitmapId, int widthPerIcon, Color maskColor)
 {
-  mHIMAGELIST =
+  m_HIMAGELIST =
     ImageList_LoadImage(Application::getHINSTANCE(),
 			MAKEINTRESOURCE(bitmapId),
 			widthPerIcon,
@@ -63,10 +63,10 @@ ImageList::ImageList(int bitmapId, int widthPerIcon, Color maskColor)
 			IMAGE_BITMAP,
 			0);
 
-  if (mHIMAGELIST == NULL)
+  if (m_HIMAGELIST == NULL)
     throw ResourceException();
 
-  mAutoDelete = true;
+  m_selfDestruction = true;
 }
 
 /**
@@ -74,7 +74,7 @@ ImageList::ImageList(int bitmapId, int widthPerIcon, Color maskColor)
  */
 ImageList::ImageList(const String &fileName, int widthPerIcon, Color maskColor)
 {
-  mHIMAGELIST =
+  m_HIMAGELIST =
     ImageList_LoadImage(Application::getHINSTANCE(),
 			fileName.c_str(), 
 			widthPerIcon,
@@ -83,40 +83,47 @@ ImageList::ImageList(const String &fileName, int widthPerIcon, Color maskColor)
 			IMAGE_BITMAP,
 			LR_LOADFROMFILE);
 
-  if (mHIMAGELIST == NULL)
+  if (m_HIMAGELIST == NULL)
     throw ResourceException();
 
-  mAutoDelete = true;
+  m_selfDestruction = true;
 }
 
 ImageList::~ImageList()
 {
-  if (mAutoDelete && mHIMAGELIST != NULL)
-    ImageList_Destroy(mHIMAGELIST);
+  destroy();
 }
 
 bool ImageList::isValid()
 {
-  return mHIMAGELIST != NULL;
+  return m_HIMAGELIST != NULL;
 }
 
 int ImageList::getImageCount()
 {
-  assert(mHIMAGELIST != NULL);
+  assert(m_HIMAGELIST != NULL);
   
-  return ImageList_GetImageCount(mHIMAGELIST);
+  return ImageList_GetImageCount(m_HIMAGELIST);
 }
 
-void ImageList::assign(HIMAGELIST hImageList, bool autoDelete)
+void ImageList::assign(HIMAGELIST hImageList, SelfDestruction selfDestruction)
 {
-  if (mAutoDelete && mHIMAGELIST != NULL)
-    ImageList_Destroy(mHIMAGELIST);
+  destroy();
 
-  mHIMAGELIST = hImageList;
-  mAutoDelete = autoDelete;
+  m_HIMAGELIST = hImageList;
+  m_selfDestruction = selfDestruction.isEnabled();
 }
 
 HIMAGELIST ImageList::getHIMAGELIST()
 {
-  return mHIMAGELIST;
+  return m_HIMAGELIST;
+}
+
+void ImageList::destroy()
+{
+  if (m_HIMAGELIST != NULL && m_selfDestruction) {
+    ImageList_Destroy(m_HIMAGELIST);
+
+    m_HIMAGELIST = NULL;
+  }
 }

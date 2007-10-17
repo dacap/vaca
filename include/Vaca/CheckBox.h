@@ -40,9 +40,9 @@ namespace Vaca {
 
 /**
  * Default style for CheckBox: a visible child (ChildVisible), with
- * tab stop (TabStopStyle), and BS_AUTOCHECKBOX.
+ * tab stop (FocusableStyle), and BS_AUTOCHECKBOX.
  */
-#define CheckBoxStyle		(ChildStyle + TabStopStyle + Style(BS_AUTOCHECKBOX, 0))
+#define CheckBoxStyle		(ChildStyle + FocusableStyle + Style(BS_AUTOCHECKBOX, 0))
 
 /**
  * Handles a check box button.
@@ -53,10 +53,6 @@ public:
 
   CheckBox(const String &text, Widget *parent, Style style = CheckBoxStyle);
   virtual ~CheckBox();
-
-//   // signals
-//   boost::signal<void (WidgetEvent &)> Check;
-//   boost::signal<void (WidgetEvent &)> Uncheck;
 
 };
 

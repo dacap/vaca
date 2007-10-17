@@ -29,7 +29,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/Vaca.h"
+#include <Vaca/Vaca.h>
 
 using namespace Vaca;
 
@@ -37,15 +37,15 @@ using namespace Vaca;
 
 class Console : public MultilineEdit
 {
-  Font mFont;
+  Font m_font;
   
 public:
 
   Console(Widget *parent)
     : MultilineEdit("", parent, MultilineEditStyle + ScrollStyle)
-    , mFont("Courier New", 10)
+    , m_font("Courier New", 10)
   {
-    setFont(mFont);
+    setFont(&m_font);
     setBgColor(Color::Black);
     setFgColor(Color(0, 220, 0));
   }
@@ -62,19 +62,19 @@ public:
 
 class MyCommand : public Command // class used by method 2
 {
-  Console &mConsole;
+  Console &m_console;
 
 public:
 
   MyCommand(int id, Console &console)
     : Command(id) 
-    , mConsole(console)
+    , m_console(console)
   {
   }
 
   virtual void onAction()
   {
-    mConsole.println("MyCommand::onAction("+
+    m_console.println("MyCommand::onAction("+
 		     String::fromInt(getId())+")");
   }
 
@@ -84,17 +84,16 @@ public:
 
 class MainFrame : public Frame
 {
-  MenuBar mMenuBar;
-  Console mConsole;
+  Console m_console;
 
 public:
 
   MainFrame()
     : Frame("Alternatives to hook a command")
-    , mConsole(this)
+    , m_console(this)
   {
     setLayout(new ClientLayout);
-    setMenuBar(&mMenuBar);
+    setMenuBar(new MenuBar);
 
     // method 1: Hook the command in Command::Action signal
     Command *command;
@@ -103,7 +102,7 @@ public:
     addCommand(command);
 
     // method 2: Hook the command in MyCommand::onAction event
-    addCommand(new MyCommand(1001, mConsole));
+    addCommand(new MyCommand(1001, m_console));
 
     // method 3: Hook the command in MenuItem::Action signal
     MenuItem *menuItem;
@@ -112,44 +111,44 @@ public:
 			    1000);
 
     menuItem->Action.connect(Bind(&MainFrame::onMenuItemSlot, this));
-    mMenuBar.add(menuItem);
+    getMenuBar()->add(menuItem);
 
     menuItem = new MenuItem("&Cmd2(Ctrl+2)",
 			    Keys::Control | Keys::D2,
 			    1001);
 
     menuItem->Action.connect(Bind(&MainFrame::onMenuItemSlot, this));
-    mMenuBar.add(menuItem);
+    getMenuBar()->add(menuItem);
   }
   
 
 protected:
 
-  // method 3: Hook the command in onIdAction
+  // method 4: Hook the command in onIdAction
   virtual bool onIdAction(int id)
   {
     // print a message about the execution of this method
-    mConsole.println("MainFrame::onIdAction("+String::fromInt(id)+")");
+    m_console.println("MainFrame::onIdAction("+String::fromInt(id)+")");
 
     // Frame::onIdAction() does the MenuItems and Commands stuff
     Frame::onIdAction(id);
 
     // print a separator
-    mConsole.println("");
+    m_console.println("");
     return true;
   }
 
-  // method used by method 3
+  // routine used by method 3
   void onMenuItemSlot(MenuItemEvent &ev)
   {
-    mConsole.println("MainFrame::onMenuItemSlot("+
+    m_console.println("MainFrame::onMenuItemSlot("+
 		     String::fromInt(ev.getMenuItem()->getId())+")");
   }
 
-  // method used by method 1
+  // routine used by method 1
   void onCommandSlot(Command *cmd)
   {
-    mConsole.println("MainFrame::onCommandSlot("+
+    m_console.println("MainFrame::onCommandSlot("+
 		     String::fromInt(cmd->getId())+")");
   }
 
@@ -159,10 +158,10 @@ protected:
 
 class Example : public Application
 {
-  MainFrame mMainWnd;
+  MainFrame m_mainFrame;
 public:
   virtual void main(std::vector<String> args) {
-    mMainWnd.setVisible(true);
+    m_mainFrame.setVisible(true);
   }
 };
 

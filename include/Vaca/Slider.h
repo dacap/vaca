@@ -48,7 +48,7 @@ public:
 	 Widget *parent, Style style = SliderStyle);
   virtual ~Slider();
 
-  virtual Size preferredSize();
+//   virtual Size preferredSize();
 
   Orientation getOrientation();
   void setOrientation(Orientation orientation);
@@ -74,7 +74,9 @@ public:
 
 protected:
   // events
+  virtual void onPreferredSize(Size &sz);
   virtual void onScroll(Orientation orientation, int code);
+  
   // new events
   virtual void onChange(Event &ev);
   

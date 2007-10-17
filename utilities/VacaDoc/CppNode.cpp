@@ -346,8 +346,7 @@ bool Class::resolveReferences()
 //       for (; it != end && !_istspace(*it); ++it)
 // 	baseClassName.push_back(*it);
 
-      String::size_type size = syntax.size();
-      String::size_type c = size-1;
+      int c = syntax.size()-1;
 
       for (; c>=0 && !_istspace(syntax[c]); --c)
 	;

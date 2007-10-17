@@ -146,12 +146,21 @@ String String::fromInt(int value, int base, int precision)
   return str;
 }
 
-int String::parseInt(int base)
+int String::parseInt(int base) const
 {
   return _tcstol(c_str(), NULL, base);
 }
 
-double String::parseDouble()
+String String::fromDouble(double value, int precision)
+{
+  TCHAR buf[256];		// TODO buf overflow
+
+  _stprintf(buf, "%.*g", precision, value);
+
+  return String(buf);
+}
+
+double String::parseDouble() const
 {
   return _tcstod(c_str(), NULL);
 }

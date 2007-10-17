@@ -40,10 +40,10 @@ using namespace Vaca;
 
 Image::Image()
 {
-  mFromHDC = NULL;
-  mSize = Size(0, 0);
-  mHBITMAP = NULL;
-  mGraphics = NULL;
+  m_fromHDC = NULL;
+  m_size = Size(0, 0);
+  m_HBITMAP = NULL;
+  m_graphics = NULL;
 }
 
 /**
@@ -53,35 +53,35 @@ Image::Image()
  */
 Image::Image(int imageId)
 {
-  mFromHDC = GetDC(GetDesktopWindow());
+  m_fromHDC = GetDC(GetDesktopWindow());
 
   // HBITMAP
-  mHBITMAP = LoadBitmap(Application::getHINSTANCE(),
-			MAKEINTRESOURCE(imageId));
+  m_HBITMAP = LoadBitmap(Application::getHINSTANCE(),
+			 MAKEINTRESOURCE(imageId));
 
-  if (mHBITMAP == NULL)
+  if (m_HBITMAP == NULL)
     throw ResourceException();
 
-  // get the size from the mHBITMAP
+  // get the size from the m_HBITMAP
   BITMAPCOREHEADER bc;
   ZeroMemory(&bc, sizeof(bc));
   bc.bcSize = sizeof(bc);
-  GetDIBits(mFromHDC, mHBITMAP, 0, 0, NULL,
+  GetDIBits(m_fromHDC, m_HBITMAP, 0, 0, NULL,
 	    reinterpret_cast<BITMAPINFO *>(&bc), 0);
-  mSize = Size(bc.bcWidth, bc.bcHeight);
+  m_size = Size(bc.bcWidth, bc.bcHeight);
 
   // graphics
-  mGraphics = NULL;
+  m_graphics = NULL;
 }
 
 Image::Image(const Size &sz)
 {
   assert(sz.w > 0 && sz.h > 0);
 
-  mFromHDC = GetDC(GetDesktopWindow());
-  mSize = sz;
-  mHBITMAP = CreateCompatibleBitmap(mFromHDC, sz.w, sz.h);
-  mGraphics = NULL;
+  m_fromHDC = GetDC(GetDesktopWindow());
+  m_size = sz;
+  m_HBITMAP = CreateCompatibleBitmap(m_fromHDC, sz.w, sz.h);
+  m_graphics = NULL;
 }
 
 Image::Image(const Size &sz, int bpp)
@@ -107,31 +107,31 @@ Image::Image(const Size &sz, int bpp)
   binf.bmiHeader = bhdr;
 
   char *bits = NULL;
-  mFromHDC = GetDC(GetDesktopWindow());
-  mSize = sz;
-  mHBITMAP = CreateDIBSection(mFromHDC, &binf, DIB_RGB_COLORS,
-			      reinterpret_cast<void**>(&bits),
-			      NULL, 0);
-  mGraphics = NULL;
+  m_fromHDC = GetDC(GetDesktopWindow());
+  m_size = sz;
+  m_HBITMAP = CreateDIBSection(m_fromHDC, &binf, DIB_RGB_COLORS,
+			       reinterpret_cast<void**>(&bits),
+			       NULL, 0);
+  m_graphics = NULL;
 }
 
-Image::Image(Graphics &g, const Size &sz)
+Image::Image(const Size &sz, Graphics &g)
 {
   assert(g.getHDC() != NULL);
   assert(sz.w > 0 && sz.h > 0);
 
-  mFromHDC = g.getHDC();
-  mSize = sz;
-  mHBITMAP = CreateCompatibleBitmap(mFromHDC, mSize.w, mSize.h);
-  mGraphics = NULL;
+  m_fromHDC = g.getHDC();
+  m_size = sz;
+  m_HBITMAP = CreateCompatibleBitmap(m_fromHDC, m_size.w, m_size.h);
+  m_graphics = NULL;
 }
 
 Image::Image(const Image &image)
 {
-  mFromHDC = image.mFromHDC;
-  mSize = image.getSize();
-  mHBITMAP = CreateCompatibleBitmap(mFromHDC, mSize.w, mSize.h);
-  mGraphics = NULL;
+  m_fromHDC = image.m_fromHDC;
+  m_size = image.getSize();
+  m_HBITMAP = CreateCompatibleBitmap(m_fromHDC, m_size.w, m_size.h);
+  m_graphics = NULL;
 
   image.copyTo(*this);
 }
@@ -143,48 +143,48 @@ Image::~Image()
 
 bool Image::isValid()
 {
-  return mHBITMAP != NULL;
+  return m_HBITMAP != NULL;
 }
 
 int Image::getWidth() const
 {
-  return mSize.w;
+  return m_size.w;
 }
 
 int Image::getHeight() const
 {
-  return mSize.h;
+  return m_size.h;
 }
 
 Size Image::getSize() const
 {
-  return mSize;
+  return m_size;
 }
 
 Graphics &Image::getGraphics()
 {
-  if (mGraphics == NULL) {
-    assert(mFromHDC != NULL);
+  if (m_graphics == NULL) {
+    assert(m_fromHDC != NULL);
 
-    mGraphics = new Graphics(mFromHDC, *this);
+    m_graphics = new Graphics(m_fromHDC, *this);
   }
 
-  return *mGraphics;
+  return *m_graphics;
 }
 
 HBITMAP Image::getHBITMAP()
 {
-  return mHBITMAP;
+  return m_HBITMAP;
 }
 
 Image &Image::operator=(const Image &image)
 {
   destroy();
 
-  mFromHDC = image.mFromHDC;
-  mSize = image.getSize();
-  mHBITMAP = CreateCompatibleBitmap(mFromHDC, mSize.w, mSize.h);
-  mGraphics = NULL;
+  m_fromHDC = image.m_fromHDC;
+  m_size = image.getSize();
+  m_HBITMAP = CreateCompatibleBitmap(m_fromHDC, m_size.w, m_size.h);
+  m_graphics = NULL;
 
   image.copyTo(*this);
   return *this;
@@ -192,14 +192,14 @@ Image &Image::operator=(const Image &image)
 
 void Image::destroy()
 {
-  if (mHBITMAP != NULL) {
-    DeleteObject(mHBITMAP);
-    mHBITMAP = NULL;
+  if (m_HBITMAP != NULL) {
+    DeleteObject(m_HBITMAP);
+    m_HBITMAP = NULL;
   }
 
-  if (mGraphics != NULL) {
-    delete mGraphics;
-    mGraphics = NULL;
+  if (m_graphics != NULL) {
+    delete m_graphics;
+    m_graphics = NULL;
   }
 }
 

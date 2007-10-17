@@ -48,8 +48,8 @@ namespace Vaca {
  */
 class VACA_DLL CustomButton : public Button
 {
-  UINT mItemAction;
-  UINT mItemState;
+  UINT m_itemAction;
+  UINT m_itemState;
 
 public:
 

@@ -37,46 +37,46 @@ using namespace Vaca;
 
 Layout::Layout()
 {
-  mHDWP = NULL;
+  m_HDWP = NULL;
 }
 
 Layout::~Layout()
 {
-  assert(mHDWP == NULL);
+  assert(m_HDWP == NULL);
 }
 
 void Layout::beginMovement(const Widget::Container &widgets)
 {
-  mHDWP = BeginDeferWindowPos(widgets.size());
+  m_HDWP = BeginDeferWindowPos(widgets.size());
 
-  mRelayoutWidgets.clear();
+  m_relayoutWidgets.clear();
 }
 
 void Layout::moveWidget(Widget *widget, const Rect &rc)
 {
-  if (mHDWP != NULL) {
-    mHDWP = DeferWindowPos(mHDWP, widget->getHWND(), NULL,
+  if (m_HDWP != NULL) {
+    m_HDWP = DeferWindowPos(m_HDWP, widget->getHWND(), NULL,
 			   rc.x, rc.y, rc.w, rc.h, 
 			   SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOACTIVATE);
   }
 
 //   if (widget->getBounds() == rc)
-  mRelayoutWidgets.push_back(widget);
+  m_relayoutWidgets.push_back(widget);
 }
 
 void Layout::endMovement()
 {
-  if (mHDWP != NULL) {
-    EndDeferWindowPos(mHDWP);
-    mHDWP = NULL;
+  if (m_HDWP != NULL) {
+    EndDeferWindowPos(m_HDWP);
+    m_HDWP = NULL;
   }
 
-  for (Widget::Container::iterator it=mRelayoutWidgets.begin();
-       it!=mRelayoutWidgets.end(); ++it) {
+  for (Widget::Container::iterator it=m_relayoutWidgets.begin();
+       it!=m_relayoutWidgets.end(); ++it) {
     (*it)->layout();
   }
 
-  mRelayoutWidgets.clear();
+  m_relayoutWidgets.clear();
 }
 
 // Size Layout::minimumSize(Widget *parent, Widget::Container &widgets)
@@ -84,7 +84,7 @@ void Layout::endMovement()
 //   return Size(0, 0);
 // }
 
-Size Layout::preferredSize(Widget *parent, Widget::Container &widgets, const Size &fitIn)
+Size Layout::getPreferredSize(Widget *parent, Widget::Container &widgets, const Size &fitIn)
 {
   return Size(0, 0);
 }

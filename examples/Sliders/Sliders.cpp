@@ -29,13 +29,13 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/Vaca.h"
+#include <Vaca/Vaca.h>
 
 using namespace Vaca;
 
 class SlidersPanel : public Panel
 {
-  Slider *mSlider[6];
+  Slider *m_slider[6];
 
 public:
 
@@ -48,46 +48,46 @@ public:
 
     for (int c=0; c<6; ++c) {
       // create the slider
-      mSlider[c] = new Slider(this);
+      m_slider[c] = new Slider(this);
 
       // sliders have a range of 0-100 by default
-      mSlider[c]->setRange(0, c < 2 ? 100: 10);
+      m_slider[c]->setRange(0, c < 2 ? 100: 10);
       
       // sliders are horizontal by default
-      mSlider[c]->setOrientation(orientation);
+      m_slider[c]->setOrientation(orientation);
 
       // sliders don't have tick marks by default, so we'll show tick
       // marks on sliders 2, 3, and 5
       if (c == 2 || c == 3 || c == 5) {
 	// set tick marks to a visible state
-	mSlider[c]->setVisibleTickMarks(true);
+	m_slider[c]->setVisibleTickMarks(true);
 
 	// add a tick mark in the middle (the first and the last tick
 	// marks are added automatically)
-	mSlider[c]->addTickMark((mSlider[c]->getMinimum() +
-				 mSlider[c]->getMaximum()) / 2);
+	m_slider[c]->addTickMark((m_slider[c]->getMinimum() +
+				 m_slider[c]->getMaximum()) / 2);
       }
     }
 
-    mSlider[0]->pointToSide(isHorz ? BottomSide: RightSide);
-    mSlider[1]->pointToSide(isHorz ? TopSide:    LeftSide);
-    mSlider[2]->pointToSide(isHorz ? BottomSide: RightSide);
-    mSlider[3]->pointToSide(isHorz ? TopSide:    LeftSide);
-    mSlider[4]->pointNowhere();
-    mSlider[5]->pointNowhere();
+    m_slider[0]->pointToSide(isHorz ? BottomSide: RightSide);
+    m_slider[1]->pointToSide(isHorz ? TopSide:    LeftSide);
+    m_slider[2]->pointToSide(isHorz ? BottomSide: RightSide);
+    m_slider[3]->pointToSide(isHorz ? TopSide:    LeftSide);
+    m_slider[4]->pointNowhere();
+    m_slider[5]->pointNowhere();
   }
 
   virtual ~SlidersPanel()
   {
     for (int c=0; c<6; ++c)
-      delete mSlider[c];
+      delete m_slider[c];
   }
 
   void connectSliders()
   {
     for (int c=0; c<3; ++c) {
-      Slider *s1 = mSlider[c*2  ];
-      Slider *s2 = mSlider[c*2+1];
+      Slider *s1 = m_slider[c*2  ];
+      Slider *s2 = m_slider[c*2+1];
 
       s1->Change.connect(Bind(&SlidersPanel::onSliderChange, this, s1, s2));
       s2->Change.connect(Bind(&SlidersPanel::onSliderChange, this, s2, s1));
@@ -107,38 +107,38 @@ protected:
 
 class MainFrame : public Frame
 {
-  Panel mTopPanel;
-  SlidersPanel mLeftPanel;
-  SlidersPanel mRightPanel;
-  Button mButton;
+  Panel m_topPanel;
+  SlidersPanel m_leftPanel;
+  SlidersPanel m_rightPanel;
+  Button m_button;
 
 public:
 
   MainFrame()
     : Frame("Sliders")
-    , mTopPanel(this)
-    , mLeftPanel(Horizontal, &mTopPanel)
-    , mRightPanel(Vertical, &mTopPanel)
-    , mButton("Connect Sliders", this)
+    , m_topPanel(this)
+    , m_leftPanel(Horizontal, &m_topPanel)
+    , m_rightPanel(Vertical, &m_topPanel)
+    , m_button("Connect Sliders", this)
   {
     // prepare layout
     setLayout(new BoxLayout(Vertical, false)); // no-homogeneous
-    mTopPanel.setConstraint(new BoxConstraint(true)); // expansible
-    mTopPanel.setLayout(new BoxLayout(Horizontal, true, 0)); // homogeneous, no-border
+    m_topPanel.setConstraint(new BoxConstraint(true)); // expansible
+    m_topPanel.setLayout(new BoxLayout(Horizontal, true, 0)); // homogeneous, no-border
 
-    // when the "mButton" is pressed, this is the sequence of commands
+    // when the "m_button" is pressed, this is the sequence of commands
     // to execute:
     //   ...
-    //   mLeftPanel.connectSliders();
-    //   mRightPanel.connectSliders();
-    //   mButton.setEnabled(false);
+    //   m_leftPanel.connectSliders();
+    //   m_rightPanel.connectSliders();
+    //   m_button.setEnabled(false);
     //   ...
-    mButton.Action.connect(Bind(&SlidersPanel::connectSliders, &mLeftPanel));
-    mButton.Action.connect(Bind(&SlidersPanel::connectSliders, &mRightPanel));
-    mButton.Action.connect(Bind(&Button::setEnabled, &mButton, false));
+    m_button.Action.connect(Bind(&SlidersPanel::connectSliders, &m_leftPanel));
+    m_button.Action.connect(Bind(&SlidersPanel::connectSliders, &m_rightPanel));
+    m_button.Action.connect(Bind(&Button::setEnabled, &m_button, false));
 
     // set the size, center the frame, and we are done
-    setSize(preferredSize());
+    setSize(getPreferredSize());
     center();
   }
 
@@ -148,10 +148,10 @@ public:
 
 class Example : public Application
 {
-  MainFrame mMainWnd;
+  MainFrame m_mainFrame;
 public:
   virtual void main(std::vector<String> args) {
-    mMainWnd.setVisible(true);
+    m_mainFrame.setVisible(true);
   }
 };
 

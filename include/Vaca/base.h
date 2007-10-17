@@ -41,7 +41,7 @@ namespace Vaca {
 
 #define VACA_VERSION     0
 #define VACA_SUB_VERSION 0
-#define VACA_WIP_VERSION 4
+#define VACA_WIP_VERSION 5
 
 #ifdef VACA_STATIC
   #define VACA_DLL
@@ -55,7 +55,7 @@ namespace Vaca {
 
 #if 1
   // Visual C++ has "max" and "min" has macros... so there is some
-// problems using "std::max" and "std::min"
+  // problems using "std::max" and "std::min"
   #define VACA_MIN(x,y)		((x) < (y) ? (x): (y))
   #define VACA_MAX(x,y)		((x) < (y) ? (y): (x))
 #else
@@ -69,6 +69,14 @@ namespace Vaca {
  * or 16-bits (short) if you compile with Unicode support.
  */
 typedef TCHAR Character;
+
+/**
+ * Horizontal or Vertical orientation.
+ */
+enum Orientation {
+  Horizontal,
+  Vertical
+};
 
 /**
  * Horizontal alignment.
@@ -86,14 +94,6 @@ enum VerticalAlign {
   TopAlign,
   MiddleAlign,
   BottomAlign
-};
-
-/**
- * Horizontal or Vertical orientation.
- */
-enum Orientation {
-  Horizontal,
-  Vertical
 };
 
 /**

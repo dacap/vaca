@@ -40,9 +40,9 @@ using namespace Vaca;
 
 DockFrame::DockFrame(DockBar *dockBar, Widget *parent, Style style)
   : Frame(DockFrameClass::getClassName(), dockBar->getText(), parent, style)
-  , mDockBar(dockBar)
+  , m_dockBar(dockBar)
 {
-  assert(mDockBar != NULL);
+  assert(m_dockBar != NULL);
 
   setLayout(new ClientLayout);
   bringToTop();
@@ -51,33 +51,33 @@ DockFrame::DockFrame(DockBar *dockBar, Widget *parent, Style style)
 
 DockFrame::~DockFrame()
 {
-  dispose();
+//   dispose();
 }
 
 /**
- * The DockFrame are enabled synchronised with its parents (generally
- * a Frame).
+ * The DockFrame are synchronized with its parents (generally a
+ * Frame).
  */
-bool DockFrame::keepEnabledSynchronised()
+bool DockFrame::keepSynchronized()
 {
   return true;
 }
 
-void DockFrame::onDestroy()
-{
-  Destroy();
+// void DockFrame::onDestroy()
+// {
+//   Destroy();
 
-  Frame::onDestroy();
-}
+//   Frame::onDestroy();
+// }
 
 /**
- * Generates the DockBar::onResizingFrame() event for mDockBar member.
+ * Generates the DockBar::onResizingFrame() event for m_dockBar member.
  */
 void DockFrame::onResizing(int edge, Rect &rc)
 {
   Frame::onResizing(edge, rc);
 
-  mDockBar->onResizingFrame(this, edge, rc);
+  m_dockBar->onResizingFrame(this, edge, rc);
 }
 
 bool DockFrame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult)
@@ -101,9 +101,9 @@ bool DockFrame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lRe
     // must to send to it the same message)
     case WM_NCLBUTTONDOWN:
       if (wParam == HTCAPTION) {
-	assert(mDockBar != NULL);
+	assert(m_dockBar != NULL);
 
-	lResult = mDockBar->sendMessage(WM_LBUTTONDOWN, wParam, lParam);
+	lResult = m_dockBar->sendMessage(WM_LBUTTONDOWN, wParam, lParam);
 	return true;
       }
       break;
@@ -113,18 +113,18 @@ bool DockFrame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lRe
       // double-click, he want to dock the DockBar)
     case WM_NCLBUTTONDBLCLK:
       if (wParam == HTCAPTION) {
-	assert(mDockBar != NULL);
+	assert(m_dockBar != NULL);
 
-	mDockBar->sendMessage(WM_LBUTTONDBLCLK, 0, 0); // TODO wParam and lParam
+	m_dockBar->sendMessage(WM_LBUTTONDBLCLK, 0, 0); // TODO wParam and lParam
 	lResult = 0;
 	return true;
       }
       break;
 
     case WM_MOUSEACTIVATE:
-      assert(mDockBar != NULL);
+      assert(m_dockBar != NULL);
 
-      mDockBar->focusOwner();
+      m_dockBar->focusOwner();
       lResult = MA_NOACTIVATE;
       return true;
 
@@ -137,8 +137,8 @@ bool DockFrame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lRe
       // when the user finish the sizing or moving action, focus the
       // owner of the DockBar
     case WM_EXITSIZEMOVE:
-      assert(mDockBar != NULL);
-      mDockBar->focusOwner();
+      assert(m_dockBar != NULL);
+      m_dockBar->focusOwner();
       return false;
 
   }

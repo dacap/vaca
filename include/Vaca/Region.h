@@ -33,32 +33,43 @@
 #define VACA_REGION_H
 
 #include "Vaca/base.h"
+#include "Vaca/SelfDestruction.h"
 
 namespace Vaca {
 
 class Point;
 class Rect;
+class Size;
 
 /**
- * A region, it can be simple as a rectangle, or complex as any shape.
+ * A region, it can be simple as a rectangle, complex as any shape,
+ * but also can be empty.
  */
 class VACA_DLL Region
 {
-  HRGN mHRGN;
-  bool mAutoDelete;
+  HRGN m_HRGN;
+  bool m_selfDestruction;
   
 public:
 
   Region();
-  Region(HRGN hrgn, bool autoDelete);
+  Region(HRGN hrgn, SelfDestruction selfDestruction);
   Region(const Rect &rc);
   Region(const Region &rgn);
   virtual ~Region();
 
+  bool isEmpty() const;
+  bool isSimple() const;
+  bool isComplex() const;
+
   Region &operator=(const Region &rgn);
   void assign(const Region &rgn);
+  void assign(HRGN hrgn, SelfDestruction selfDestruction);
 
   Rect getBounds() const;
+
+  Region &offset(int dx, int dy);
+  Region &offset(const Point &point);
 
   bool contains(const Point &pt) const;
   bool contains(const Rect &rc) const;
@@ -80,9 +91,13 @@ public:
 
   static Region fromRect(const Rect &rc);
   static Region fromEllipse(const Rect &rc);
-  static Region fromRoundRect(const Rect &rc, int ellipseWidth, int ellipseHeight);
+  static Region fromRoundRect(const Rect &rc, const Size &ellipseSize);
 
   HRGN getHRGN();
+
+private:
+
+  void destroy();
   
 };
 

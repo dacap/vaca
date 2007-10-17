@@ -29,7 +29,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/Vaca.h"
+#include <Vaca/Vaca.h>
 
 using namespace Vaca;
 
@@ -47,44 +47,44 @@ class MainFrame : public Dialog
     Aborting
   };
 
-  ProgressBar mProgressBar1;	// normal progress bar
-  ProgressBar mProgressBar2;	// smooth progress bar
-  Button mStart;
-  Button mClose;
-  State mState;			// current state
+  ProgressBar m_progressBar1;	// normal progress bar
+  ProgressBar m_progressBar2;	// smooth progress bar
+  Button m_start;
+  Button m_close;
+  State m_state;			// current state
 
 public:
 
   MainFrame()
     : Dialog("ProgressBars")
-    , mProgressBar1(this)
-    , mProgressBar2(this, ProgressBarStyle + SmoothProgressBarStyle)
-    , mStart("Start", this)
-    , mClose("Close", this)
+    , m_progressBar1(this)
+    , m_progressBar2(this, ProgressBarStyle + SmoothProgressBarStyle)
+    , m_start("Start", this)
+    , m_close("Close", this)
   {
     // a box layout manager with vertical orientation and no-homogeneous
     setLayout(new BoxLayout(Vertical, false));
 
     // set the ranges of the progress bars
-    mProgressBar1.setRange(0, 100);
-    mProgressBar2.setRange(0, 100);
+    m_progressBar1.setRange(0, 100);
+    m_progressBar2.setRange(0, 100);
 
     // the "Start" button is the default one
-    mStart.setDefault(true);
+    m_start.setDefault(true);
 
     // call "onStart" when the "Start" button is pressed
-    mStart.Action.connect(Bind(&MainFrame::onStart, this));
+    m_start.Action.connect(Bind(&MainFrame::onStart, this));
 
     // the defaultCancelAction of dialogs generates an "WM_CLOSE"
     // message that is converted to the "onClose" event
-    mClose.Action.connect(Bind(&MainFrame::defaultCancelAction, this));
+    m_close.Action.connect(Bind(&MainFrame::defaultCancelAction, this));
 
     // the application is waiting to work (the user should press the
     // "Start" button)
-    mState = WaitingToWork;
+    m_state = WaitingToWork;
 
     // set the size of the Frame
-    setSize(Size(256, preferredSize().h));
+    setSize(Size(256, getPreferredSize().h));
     center();
   }
 
@@ -93,12 +93,12 @@ protected:
   // when the "Start/Pause/Continue/Restart" button is pressed...
   void onStart()
   {
-    switch (mState) {
+    switch (m_state) {
 
       case WaitingToWork:
       case Paused:
-	mState = Working;
-	mStart.setText("Pause"); // convert the button to "Pause"...
+	m_state = Working;
+	m_start.setText("Pause"); // convert the button to "Pause"...
 
 	// this is "The Loop", where the real work is done
 	do {
@@ -106,13 +106,13 @@ protected:
 	  Thread::getCurrent()->pumpMessageQueue();
 
 	  // work done
-	  if (mProgressBar1.getValue() == mProgressBar1.getMaximum()) {
-	    mState = WorkDone;
-	    mStart.setText("Restart"); // convert the button to "Restart"
+	  if (m_progressBar1.getValue() == m_progressBar1.getMaximum()) {
+	    m_state = WorkDone;
+	    m_start.setText("Restart"); // convert the button to "Restart"
 	  }
 	  else {
-	    mProgressBar1.addValue(1);
-	    mProgressBar2.addValue(1);
+	    m_progressBar1.addValue(1);
+	    m_progressBar2.addValue(1);
 
 	    // in our case, the "real work" is sleep :) ...but for
 	    // your application this could be "loading a file"...
@@ -120,24 +120,24 @@ protected:
 	  }
 
 	  // still working?
-	} while (mState == Working);
-	// aborting work? dispose the frame...
-	if (mState == Aborting)
-	  dispose();
+	} while (m_state == Working);
+	// aborting work? hide the frame...
+	if (m_state == Aborting)
+	  setVisible(false);
 	break;
 
       case Working:
-	mState = Paused;
-	mStart.setText("Continue"); // convert the button to "Continue"
+	m_state = Paused;
+	m_start.setText("Continue"); // convert the button to "Continue"
 	break;
 
       // the work is done? the user press the "Restart" button
       case WorkDone:
 	// restart progress bars
-	mProgressBar1.setValue(mProgressBar1.getMinimum());
-	mProgressBar2.setValue(mProgressBar2.getMinimum());
-	mStart.setText("Start"); // convert the button to "Start"
-	mState = WaitingToWork;
+	m_progressBar1.setValue(m_progressBar1.getMinimum());
+	m_progressBar2.setValue(m_progressBar2.getMinimum());
+	m_start.setText("Start"); // convert the button to "Start"
+	m_state = WaitingToWork;
 	break;
 
       case Aborting:
@@ -149,43 +149,36 @@ protected:
   virtual void onClose(CloseEvent &ev)
   {
     // work in progress? (we are in "The Loop")
-    if (mState == Working) {
+    if (m_state == Working) {
       // display a warning message
       if (msgBox("The application is working.\r\n"
 		 "Do you really want to close it?",
 		 "Warning",
 		 MB_YESNO | MB_ICONWARNING | MB_DEFBUTTON2) == IDYES) {
 	// the user really want to close the window, abort the work
-	mState = Aborting;
+	m_state = Aborting;
       }
 
       // cancel the close event, don't hide the Dialog
       ev.cancel();
     }
     // need more time?
-    else if (mState == Paused) {
+    else if (m_state == Paused) {
       // display a warning message
       if (msgBox("The application is paused, but doesn't finish its work.\r\n"
 		 "Do you really want to close it?",
 		 "Warning",
 		 MB_YESNO | MB_ICONWARNING | MB_DEFBUTTON2) == IDYES) {
-	// the dialog implementation just hide the window
+	// hide the dialog
 	Dialog::onClose(ev);
-
-	// so we should dispose the Frame
-	dispose();
       }
       else
 	// cancel the close event, don't hide the Dialog
 	ev.cancel();
     }
-    // the work is done (or never start), close the Dialog...
+    // the work is done (or never start), hide the Dialog...
     else {
-      // the dialog implementation just hide the window
       Dialog::onClose(ev);
-
-      // so we should dispose the Frame
-      dispose();
     }
   }
 
@@ -195,10 +188,10 @@ protected:
 
 class Example : public Application
 {
-  MainFrame mMainWnd;
+  MainFrame m_mainFrame;
 public:
   virtual void main(std::vector<String> args) {
-    mMainWnd.setVisible(true);
+    m_mainFrame.setVisible(true);
   }
 };
 

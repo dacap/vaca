@@ -37,6 +37,11 @@
 
 namespace Vaca {
 
+/**
+ * System mouse cursors.
+ *
+ * @see #Vaca::Cursor::Cursor(SysCursor)
+ */
 enum SysCursor {
   NoCursor,
   ArrowCursor,
@@ -66,14 +71,14 @@ class String;
  */
 class VACA_DLL Cursor
 {
-  HCURSOR mHCURSOR;
-  bool mAutoDelete;
+  HCURSOR m_HCURSOR;
+  bool m_autoDelete;
 
 public:
 
-  Cursor(int cursorId);
-  Cursor(SysCursor cursor);
-  Cursor(const String &fileName);
+  explicit Cursor(int cursorId);
+  explicit Cursor(SysCursor cursor);
+  explicit Cursor(const String &fileName);
   Cursor(const Cursor &cursor);
   virtual ~Cursor();
 

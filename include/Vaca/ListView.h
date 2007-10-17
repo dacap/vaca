@@ -40,7 +40,8 @@
 
 namespace Vaca {
 
-#define ListViewStyle		(ChildStyle + TabStopStyle +	\
+#define ListViewStyle		(ChildStyle +		\
+				 FocusableStyle +	\
 				 ClientEdgeStyle)
 
 #define SingleSelectionListViewStyle (Style(LVS_SINGLESEL, 0))

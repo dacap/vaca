@@ -38,7 +38,7 @@ namespace Vaca {
 
 class VACA_DLL CancelableEvent : public Event
 {
-  bool mCanceled;		// the event was canceled
+  bool m_canceled;		// the event was canceled
 
 public:
 

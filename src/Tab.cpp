@@ -49,36 +49,35 @@ using namespace Vaca;
 TabBase::TabBase(Widget *parent, Style style)
   : Widget(WC_TABCONTROL, parent, style)
 {
-  mUserFont = NULL;
+  m_userFont = NULL;
+  m_tabFont = NULL;
 }
 
 TabBase::~TabBase()
 {
+  if (m_tabFont != NULL)
+    delete m_tabFont;
 }
 
-Font &TabBase::getFont()
+Font *TabBase::getFont()
 {
-  return mUserFont != NULL ? *mUserFont: Widget::getFont();
+  return m_userFont != NULL ? m_userFont: Widget::getFont();
 }
 
-void TabBase::setFont(Font &font)
+void TabBase::setFont(Font *font)
 {
-  mUserFont = &font;
+  m_userFont = font;
   updateFont();
 }
 
 /**
- * Returns the client rectangle area of the Tab, it's the area inside
- * the pages.
- *
- * @warning It isn't like Win32 GetClientRect, because here we
- *          returns the area inside the pages.  It's like to call
- *          Win32 TabCtrl_AdjustRect.
+ * Returns the area where the pages should be positioned. It's like
+ * Win32 TabCtrl_AdjustRect.
  */
-Rect TabBase::getClientBounds()
+Rect TabBase::getLayoutBounds()
 {
   RECT rc;
-  assert(getHWND() != NULL);
+  assert(::IsWindow(getHWND()));
 
   rc = getBounds();
   TabCtrl_AdjustRect(getHWND(), FALSE, &rc);
@@ -88,7 +87,7 @@ Rect TabBase::getClientBounds()
 void TabBase::updateFont()
 {
   LOGFONT lf;
-  if (getFont().getLogFont(&lf)) {
+  if (getFont()->getLogFont(&lf)) {
     int style = getStyle().regular;
 
     if ((style & TCS_VERTICAL) != 0) {
@@ -106,8 +105,11 @@ void TabBase::updateFont()
       lf.lfOrientation = 0;
     }
 
-    mTabFont.assign(&lf);
-    Widget::setFont(mTabFont);
+    if (m_tabFont != NULL)
+      delete m_tabFont;
+    m_tabFont = new Font(&lf);
+
+    Widget::setFont(m_tabFont);
   }
 
   // layout children
@@ -135,7 +137,7 @@ Side TabBase::getSide()
 /**
  * Sets the side of the pages.
  *
- * @warning You can't use Side::Left and Side::Right sides in a Tab
+ * @warning You can't use LeftSide and RightSide sides in a Tab
  *          with isMultiline() == false. This routine will set the Tab
  *          in a multiline style automatically if you try this.
  * 
@@ -193,7 +195,7 @@ int TabBase::addPage(const String &text)
 
 int TabBase::insertPage(int pageIndex, const String &text)
 {
-  assert(getHWND() != NULL);
+  assert(::IsWindow(getHWND()));
 
   TCITEM tci;
 
@@ -209,37 +211,37 @@ int TabBase::insertPage(int pageIndex, const String &text)
 
 void TabBase::removePage(int pageIndex)
 {
-  assert(getHWND() != NULL);
+  assert(::IsWindow(getHWND()));
   TabCtrl_DeleteItem(getHWND(), pageIndex);
 }
 
 int TabBase::getPageCount()
 {
-  assert(getHWND() != NULL);
+  assert(::IsWindow(getHWND()));
   return TabCtrl_GetItemCount(getHWND());
 }
 
 int TabBase::getRowCount()
 {
-  assert(getHWND() != NULL);
+  assert(::IsWindow(getHWND()));
   return TabCtrl_GetRowCount(getHWND());
 }
 
 int TabBase::getActivePage()
 {
-  assert(getHWND() != NULL);
+  assert(::IsWindow(getHWND()));
   return TabCtrl_GetCurSel(getHWND());
 }
 
 void TabBase::setActivePage(int pageIndex)
 {
-  assert(getHWND() != NULL);
+  assert(::IsWindow(getHWND()));
   TabCtrl_SetCurSel(getHWND(), pageIndex);
 }
 
 String TabBase::getPageText(int pageIndex)
 {
-  assert(getHWND() != NULL);
+  assert(::IsWindow(getHWND()));
 
   TCITEM tci;
 
@@ -258,16 +260,16 @@ String TabBase::getPageText(int pageIndex)
 
 // void TabBase::setPadding(Size padding)
 // {
-//   assert(getHWND() != NULL);
+//   assert(::IsWindow(getHWND()));
 //   TabCtrl_SetPadding(getHWND(), padding.w, padding.h);
 // }
 
 /**
- * @warning This function couldn't work for Tab with getSide() != Side::Top.
+ * @warning This function couldn't work for Tab with getSide() != TopSide.
  */
 Size TabBase::getNonClientSize()
 {
-  assert(getHWND() != NULL);
+  assert(::IsWindow(getHWND()));
 
   Rect clientRect(0, 0, 1, 1);
   RECT nonClientRect = clientRect;
@@ -277,20 +279,20 @@ Size TabBase::getNonClientSize()
   return Rect(&nonClientRect).getSize() - clientRect.getSize();
 }
 
-Size TabBase::preferredSize()
-{
-  return getNonClientSize() + Widget::preferredSize();
-}
+// Size TabBase::preferredSize()
+// {
+//   return getNonClientSize() + Widget::preferredSize();
+// }
 
-Size TabBase::preferredSize(const Size &fitIn)
-{
-  Size ncSize(getNonClientSize());
+// Size TabBase::preferredSize(const Size &fitIn)
+// {
+//   Size ncSize(getNonClientSize());
 
-  return
-    ncSize +
-    Widget::preferredSize(Size(VACA_MAX(0, fitIn.w - ncSize.w),
-			       VACA_MAX(0, fitIn.h - ncSize.h)));
-}
+//   return
+//     ncSize +
+//     Widget::preferredSize(Size(VACA_MAX(0, fitIn.w - ncSize.w),
+// 			       VACA_MAX(0, fitIn.h - ncSize.h)));
+// }
 
 // /**
 //  * TCN_SELCHANGING
@@ -301,11 +303,27 @@ Size TabBase::preferredSize(const Size &fitIn)
 // }
 
 /**
+ * Event generated when the user select a new page. Use
+ * getActivePage() to known which page was selected.
+ *
  * TCN_SELCHANGE
  */
 void TabBase::onPageChange(Event &ev)
 {
   PageChange(ev);
+}
+
+void TabBase::onPreferredSize(Size &sz)
+{
+  Size ncSize = getNonClientSize();
+
+  if (sz.w > 0 || sz.h > 0) {
+    sz = Size(VACA_MAX(0, sz.w - ncSize.w),
+	      VACA_MAX(0, sz.h - ncSize.h));
+  }
+
+  Widget::onPreferredSize(sz);
+  sz += ncSize;
 }
 
 bool TabBase::onNotify(LPNMHDR lpnmhdr, LRESULT &lResult)

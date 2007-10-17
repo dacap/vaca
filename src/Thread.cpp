@@ -35,6 +35,7 @@
 #include "Vaca/Mutex.h"
 #include "Vaca/ScopedLock.h"
 #include "Vaca/Frame.h"
+#include "Vaca/Timer.h"
 
 #include <algorithm>
 
@@ -55,21 +56,24 @@ static DWORD WINAPI ThreadProxy(LPVOID thread)
  */
 Thread::Thread(bool useCurrent)
 {
-  mFrameCount = 0;
+  m_frameCount = 0;
+  m_breakLoop = false;
 
+  // use current thread
   if (useCurrent) {
-    mJoinable = false;
-    mHANDLE = GetCurrentThread();
-    mId = GetCurrentThreadId();
+    m_joinable = false;
+    m_handle = GetCurrentThread();
+    m_id = GetCurrentThreadId();
   }
+  // create a new suspended thread
   else {
-    mJoinable = true;
-    mHANDLE = CreateThread(NULL, 0,
-			    ThreadProxy,
-			    reinterpret_cast<void *>(this),
-			    CREATE_SUSPENDED, &mId);
+    m_joinable = true;
+    m_handle = CreateThread(NULL, 0,
+			   ThreadProxy,
+			   reinterpret_cast<void *>(this),
+			   CREATE_SUSPENDED, &m_id);
 
-    VACA_TRACE("new Thread (%p, %d) {\n", mHANDLE, mId);
+    VACA_TRACE("new Thread (%p, %d) {\n", this, m_id);
   }
 
   activeThreadsMutex.lock();
@@ -79,11 +83,11 @@ Thread::Thread(bool useCurrent)
 
 Thread::~Thread()
 {
-  if (mJoinable && mHANDLE != NULL) {
-    CloseHandle(reinterpret_cast<HANDLE>(mHANDLE));
-    mHANDLE = NULL;
+  if (m_joinable && m_handle != NULL) {
+    CloseHandle(reinterpret_cast<HANDLE>(m_handle));
+    m_handle = NULL;
 
-    VACA_TRACE("} delete Thread (%p, %d)\n", this, mId);
+    VACA_TRACE("} delete Thread (%p, %d)\n", this, m_id);
   }
 
   activeThreadsMutex.lock();
@@ -96,7 +100,7 @@ Thread::~Thread()
  */
 int Thread::getId()
 {
-  return mId;
+  return m_id;
 }
 
 /**
@@ -106,7 +110,7 @@ int Thread::getId()
  */
 void Thread::execute()
 {
-  assert(mJoinable != false);
+  assert(m_joinable != false);
 
   resume();
 }
@@ -116,9 +120,9 @@ void Thread::execute()
  */
 void Thread::suspend()
 {
-  assert(mHANDLE != NULL);
+  assert(m_handle != NULL);
 
-  SuspendThread(mHANDLE);
+  SuspendThread(m_handle);
 }
 
 /**
@@ -126,9 +130,9 @@ void Thread::suspend()
  */
 void Thread::resume()
 {
-  assert(mHANDLE != NULL);
+  assert(m_handle != NULL);
 
-  ResumeThread(mHANDLE);
+  ResumeThread(m_handle);
 }
 
 /**
@@ -137,14 +141,14 @@ void Thread::resume()
  */
 void Thread::join()
 {
-  assert(mHANDLE != NULL);
-  assert(mJoinable != false);
+  assert(m_handle != NULL);
+  assert(m_joinable != false);
 
-  WaitForSingleObject(reinterpret_cast<HANDLE>(mHANDLE), INFINITE);
-  CloseHandle(reinterpret_cast<HANDLE>(mHANDLE));
-  mHANDLE = NULL;
+  WaitForSingleObject(reinterpret_cast<HANDLE>(m_handle), INFINITE);
+  CloseHandle(reinterpret_cast<HANDLE>(m_handle));
+  m_handle = NULL;
 
-  VACA_TRACE("} join Thread (%p, %d)\n", this, mId);
+  VACA_TRACE("} join Thread (%p, %d)\n", this, m_id);
 }
 
 /**
@@ -159,9 +163,9 @@ void Thread::join()
  */
 void Thread::setPriority(int priority)
 {
-  assert(mHANDLE != NULL);
+  assert(m_handle != NULL);
 
-  SetThreadPriority(mHANDLE, priority);
+  SetThreadPriority(m_handle, priority);
 }
 
 /**
@@ -198,27 +202,23 @@ int Thread::getCurrentId()
  * Sends a WM_QUIT message to the queue of this thread. In practice,
  * this method breaks doMessageLoop() or doMessageLoopFor().
  */
-void Thread::postQuitMessage()
-{
-  PostThreadMessage(getId(), WM_QUIT, 0, 0);
-}
+// void Thread::postQuitMessage()
+// {
+//   ::PostMessage(NULL, WM_NULL, 0, 0);
+// //   PostThreadMessage(getId(), WM_QUIT, 0, 0);
+// }
 
 /**
- * Does the message loop until the first quit message is received. A
- * quit message (PostQuitMessage) is generated when a Frame that isn't
- * an MdiChild is destroyed.
+ * Does the message loop while there are visible @ref Frame Frames.
+ *
+ * @see Frame::setVisible
  */
 void Thread::doMessageLoop()
 {
   assert(getId() == Thread::getCurrentId());
 
-  // there are Frames in this thread?
-//   if (Frame::getVisibleFramesByThread(getId()) == 0)
-  if (!hasFrames())
-    return;
-
   // message loop
-  MSG msg;
+  Message msg;
   while (getMessage(msg))
     processMessage(msg);
 }
@@ -232,7 +232,7 @@ void Thread::doMessageLoopFor(Widget *widget)
 
   // get widget HWND
   HWND hwnd = widget->getHWND();
-  assert(hwnd != NULL);
+  assert(::IsWindow(hwnd));
 
   // get parent HWND
   HWND hparent = widget->getParentHWND();
@@ -242,9 +242,8 @@ void Thread::doMessageLoopFor(Widget *widget)
     ::EnableWindow(hparent, FALSE);
 
   // message loop
-  MSG msg;
-  while (::IsWindowVisible(hwnd) &&
-	 getMessage(msg))
+  Message msg;
+  while (widget->isVisible() && getMessage(msg))
     processMessage(msg);
 
   // enable the parent HWND
@@ -254,35 +253,50 @@ void Thread::doMessageLoopFor(Widget *widget)
 
 void Thread::pumpMessageQueue()
 {
-  MSG msg;
+  Message msg;
   while (peekMessage(msg))
     processMessage(msg);
 }
 
-bool Thread::getMessage(MSG &msg)
+void Thread::breakMessageLoop()
 {
+  m_breakLoop = true;
+  ::PostThreadMessage(getId(), WM_NULL, 0, 0);
+}
+
+bool Thread::getMessage(Message &msg)
+{
+  // break this loop?
+  if (m_breakLoop)
+    return false;
+
+  // get the message from the queue
   msg.hwnd = NULL;
   BOOL bRet = ::GetMessage(&msg, NULL, 0, 0);
 
-  // done
+  // WM_QUIT received?
   if (bRet == 0) {
     return false;
   }
   // error
   else if (bRet == -1) {
-    /// TODO check the error
+    // TODO check the error
   }
+
+  // WM_NULL message... maybe Timers
+  if (msg.message == WM_NULL)
+    Timer::pollTimers();
 
   return true;
 }
 
-bool Thread::peekMessage(MSG &msg)
+bool Thread::peekMessage(Message &msg)
 {
   msg.hwnd = NULL;
   return ::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE) != FALSE;
 }
 
-void Thread::processMessage(MSG &msg)
+void Thread::processMessage(Message &msg)
 {
   if (!preTranslateMessage(msg)) {
     // Send preTranslateMessage to the active window (useful for
@@ -308,7 +322,7 @@ void Thread::processMessage(MSG &msg)
  * Widget pointer (using Widget::fromHWND()) and then (if it isn't
  * NULL), call its Widget::preTranslateMessage().
  */
-bool Thread::preTranslateMessage(MSG &msg)
+bool Thread::preTranslateMessage(Message &msg)
 {
   if (msg.hwnd != NULL) {
     Widget *widget = Widget::fromHWND(msg.hwnd);
@@ -330,18 +344,17 @@ bool Thread::preTranslateMessage(MSG &msg)
   return false;
 }
 
-bool Thread::hasFrames()
-{
-  return mFrameCount > 0;
-}
-
 void Thread::addFrame()
 {
-  ++mFrameCount;
+  ++m_frameCount;
 }
 
 void Thread::removeFrame()
 {
-  --mFrameCount;
-}
+  --m_frameCount;
 
+  // when this thread doesn't have more Frames to continue we must to
+  // break the current message loop
+  if (m_frameCount == 0)
+    breakMessageLoop();
+}

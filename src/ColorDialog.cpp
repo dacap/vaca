@@ -37,10 +37,10 @@ using namespace Vaca;
 
 ColorDialog::ColorDialog(Color color, Widget *parent)
   : CommonDialog(parent)
-  , mColor(color)
+  , m_color(color)
 {
   for (int i=0; i<16; ++i)
-    mCustomColors[i] = RGB(255, 255, 255);
+    m_customColors[i] = RGB(255, 255, 255);
 }
 
 ColorDialog::~ColorDialog()
@@ -54,8 +54,8 @@ bool ColorDialog::doModal()
   cc.lStructSize = sizeof(CHOOSECOLOR);
   cc.hwndOwner = getParentHWND();
   cc.hInstance = NULL;
-  cc.rgbResult = mColor.getColorRef();
-  cc.lpCustColors = mCustomColors;
+  cc.rgbResult = m_color.getColorRef();
+  cc.lpCustColors = m_customColors;
   cc.Flags = 0
     | CC_ANYCOLOR
     | CC_FULLOPEN
@@ -67,7 +67,7 @@ bool ColorDialog::doModal()
 //   cc.lpTemplateName;
 
   if (ChooseColor(&cc)) {
-    mColor = Color(cc.rgbResult);
+    m_color = Color(cc.rgbResult);
     return true;
   }
   else
@@ -76,5 +76,5 @@ bool ColorDialog::doModal()
 
 Color ColorDialog::getColor() const
 {
-  return mColor;
+  return m_color;
 }

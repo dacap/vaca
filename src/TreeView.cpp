@@ -41,7 +41,7 @@ using namespace Vaca;
 TreeView::TreeView(Widget *parent, Style style)
   : Widget(WC_TREEVIEW, parent, style)
 {
-  mRoot.mOwner = this;
+  m_root.m_owner = this;
 
 //   Widget::setBgColor(Color(TreeView_GetBkColor(getHWND())));
   setBgColor(System::getColor(COLOR_WINDOW));
@@ -53,7 +53,7 @@ TreeView::~TreeView()
 
 void TreeView::setImageList(ImageList &imageList, int type)
 {
-  assert(getHWND() != NULL);
+  assert(::IsWindow(getHWND()));
   assert(imageList.isValid());
 
   TreeView_SetImageList(getHWND(), imageList.getHIMAGELIST(), type);
@@ -71,12 +71,12 @@ void TreeView::setStateImageList(ImageList &imageList)
 
 void TreeView::addNode(TreeNode *node)
 {
-  mRoot.addNode(node);
+  m_root.addNode(node);
 }
 
 TreeNode *TreeView::getSelectedNode()
 {
-  assert(getHWND() != NULL);
+  assert(::IsWindow(getHWND()));
 
   HTREEITEM htreeitem = TreeView_GetSelection(getHWND());
   if (htreeitem != NULL)
@@ -87,14 +87,14 @@ TreeNode *TreeView::getSelectedNode()
 
 void TreeView::setSelectedNode(TreeNode *node)
 {
-  assert(getHWND() != NULL);
+  assert(::IsWindow(getHWND()));
 
   TreeView_SelectItem(getHWND(), node->getHTREEITEM());
 }
 
 void TreeView::setBgColor(Color color)
 {
-  assert(getHWND() != NULL);
+  assert(::IsWindow(getHWND()));
 
   Widget::setBgColor(color);
   TreeView_SetBkColor(getHWND(), color.getColorRef());
@@ -171,8 +171,8 @@ bool TreeView::onNotify(LPNMHDR lpnmhdr, LRESULT &lResult)
       TreeNode *node = reinterpret_cast<TreeNode *>(lptvdi->item.lParam);
 
       if (lptvdi->item.mask & TVIF_TEXT) {
-	mTmpBuffer = node->getText();
-	lptvdi->item.pszText = const_cast<LPTSTR>(mTmpBuffer.c_str());
+	m_tmpBuffer = node->getText();
+	lptvdi->item.pszText = const_cast<LPTSTR>(m_tmpBuffer.c_str());
       }
 
       if (lptvdi->item.mask & TVIF_IMAGE)

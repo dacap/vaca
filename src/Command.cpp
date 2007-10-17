@@ -39,56 +39,56 @@ using namespace Vaca;
 
 CommandState::CommandState()
 {
-  mText = NULL;
-  mEnabled = NULL;
-  mChecked = NULL;
-  mRadio = NULL;
+  m_text = NULL;
+  m_enabled = NULL;
+  m_checked = NULL;
+  m_radio = NULL;
 }
 
 CommandState::~CommandState()
 {
-  if (mText != NULL) delete mText;
-  if (mEnabled != NULL) delete mEnabled;
-  if (mChecked != NULL) delete mChecked;
-  if (mRadio != NULL) delete mRadio;
+  if (m_text != NULL) delete m_text;
+  if (m_enabled != NULL) delete m_enabled;
+  if (m_checked != NULL) delete m_checked;
+  if (m_radio != NULL) delete m_radio;
 }
 
 void CommandState::setText(const String &text)
 {
-  if (mText != NULL) delete mText;
-  mText = new String(text);
+  if (m_text != NULL) delete m_text;
+  m_text = new String(text);
 }
 
 void CommandState::setEnabled(bool state)
 {
-  if (mEnabled != NULL) delete mEnabled;
-  mEnabled = new bool(state);
+  if (m_enabled != NULL) delete m_enabled;
+  m_enabled = new bool(state);
 }
 
 void CommandState::setChecked(bool state)
 {
-  if (mChecked != NULL) delete mChecked;
-  mChecked = new bool(state);
+  if (m_checked != NULL) delete m_checked;
+  m_checked = new bool(state);
 }
 
 const String *CommandState::getText() const
 {
-  return mText;
+  return m_text;
 }
 
 const bool *CommandState::isEnabled() const
 {
-  return mEnabled;
+  return m_enabled;
 }
 
 const bool *CommandState::isChecked() const
 {
-  return mChecked;
+  return m_checked;
 }
 
 const bool *CommandState::isRadio() const
 {
-  return mRadio;
+  return m_radio;
 }
 
 //////////////////////////////////////////////////////////////////////

@@ -52,13 +52,32 @@ Component::Component()
   VACA_TRACE("new Component (%d, %p)\n", ++instanceCounter, this);
   instanceCounterMutex.unlock();
 #endif
+
+  m_refCount = 0;
 }
 
 Component::~Component()
 {
+  assert(m_refCount == 0);
+
 #ifndef NDEBUG
   instanceCounterMutex.lock();
   VACA_TRACE("delete Component (%d, %p)\n", --instanceCounter, this);
   instanceCounterMutex.unlock();
 #endif
+}
+
+void Component::ref()
+{
+  m_refCount++;
+}
+
+void Component::unref()
+{
+  m_refCount--;
+}
+
+int Component::getRefCount()
+{
+  return m_refCount;
 }

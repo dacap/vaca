@@ -29,15 +29,15 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/Vaca.h"
+#include <Vaca/Vaca.h>
 
 using namespace Vaca;
 
 class Scribble : public Panel
 {
-  Image mImage;
-  Point mPoint[3];
-  bool mErasing;
+  Image m_image;
+  Point m_point[3];
+  bool m_erasing;
 
 public:
 
@@ -60,16 +60,16 @@ protected:
     Graphics &g(newImage.getGraphics());
 
     // clear the new image with a white background
-    g.setColor(Color::White);
-    g.fillRect(0, 0, imageSize.w, imageSize.h);
+    Brush whiteBrush(Color::White);
+    g.fillRect(whiteBrush, 0, 0, imageSize.w, imageSize.h);
 
     // draw the old image in the center of the new image
-    if (mImage.isValid()) {
-      g.drawImage(mImage, Point(imageSize/2 - mImage.getSize()/2));
+    if (m_image.isValid()) {
+      g.drawImage(m_image, Point(imageSize/2 - m_image.getSize()/2));
     }
 
     // clone the image
-    mImage = newImage;
+    m_image = newImage; // TODO I don't like this clone idiom (maybe m_image = newImage.clone() would be better)
 
     // redraw all the image
     invalidate(false);
@@ -79,7 +79,7 @@ protected:
   {
     // draw only the clip area
     Rect rc = g.getClipBounds();
-    g.drawImage(mImage, rc.getOrigin(), rc);
+    g.drawImage(m_image, rc.getOrigin(), rc);
   }
 
   virtual void onMouseDown(MouseEvent &ev)
@@ -88,10 +88,10 @@ protected:
       acquireCapture();
 
       for (int c=0; c<3; ++c)
-	mPoint[c] = ev.getPoint();
+	m_point[c] = ev.getPoint();
 
       // with right mouse button we erase 
-      mErasing = ev.getButton() == MouseButtons::Right;
+      m_erasing = ev.getButton() == MouseButtons::Right;
     }
   }
 
@@ -99,7 +99,7 @@ protected:
   {
     if (hasCapture()) {
       // get the graphics from the to draw into the image
-      Graphics &g(mImage.getGraphics());
+      Graphics &g(m_image.getGraphics());
 
       // we must to use "System::getCursorPos()" (absolute cursor
       // position), because "ev.getPoint()" is useful only inside the
@@ -110,44 +110,41 @@ protected:
 	- getAbsoluteClientBounds().getOrigin();
 
       // rotate points
-      mPoint[0] = mPoint[1];
-      mPoint[1] = mPoint[2];
-      mPoint[2] = newPoint;
+      m_point[0] = m_point[1];
+      m_point[1] = m_point[2];
+      m_point[2] = newPoint;
 
-      // pen size
-      int penSize;
+      // pen
+      Color color(m_erasing ? Color::White: Color::Black);
+      Pen pen(color, m_erasing ? 64: 1);
 
-      // erase
-      if (mErasing) {
-	g.setColor(Color::White);
-	g.setPenSize(penSize = 64);
-	g.drawLine(mPoint[1], mPoint[2]);
-      }
-      // draw
-      else {
-	g.setColor(Color::Black);
-	g.setPenSize(penSize = 1);
-	g.drawLine(mPoint[1], mPoint[2]);
+      // draw (or erase)
+      g.drawLine(pen, m_point[1], m_point[2]);
 
-	// this add an extra style to the trace (more realistic)
-	g.beginPath();
-	g.moveTo(mPoint[0]);
-	g.lineTo(mPoint[1]);
-	g.lineTo(mPoint[2]);
+      // we are drawing?
+      if (!m_erasing) {
+	// this adds an extra style to the trace (more realistic)
+	g.beginPath();		// TODO remove this, use GraphicsPath
+	g.moveTo(m_point[0]);
+	g.lineTo(pen, m_point[1]);
+	g.lineTo(pen, m_point[2]);
 	g.endPath();
-	g.fillPath();
+
+	Brush brush(color);
+	g.fillPath(brush);
       }
 
       // invalidate the drawn area
-      Point minPoint = mPoint[0];
-      Point maxPoint = mPoint[0];
+      Point minPoint = m_point[0];
+      Point maxPoint = m_point[0];
       for (int c = 1; c < 3; ++c) {
-	if (minPoint.x > mPoint[c].x) minPoint.x = mPoint[c].x;
-	if (minPoint.y > mPoint[c].y) minPoint.y = mPoint[c].y;
-	if (maxPoint.x < mPoint[c].x) maxPoint.x = mPoint[c].x;
-	if (maxPoint.y < mPoint[c].y) maxPoint.y = mPoint[c].y;
+	if (minPoint.x > m_point[c].x) minPoint.x = m_point[c].x;
+	if (minPoint.y > m_point[c].y) minPoint.y = m_point[c].y;
+	if (maxPoint.x < m_point[c].x) maxPoint.x = m_point[c].x;
+	if (maxPoint.y < m_point[c].y) maxPoint.y = m_point[c].y;
       }
-      invalidate(Rect(minPoint-penSize, maxPoint+penSize), false);
+      invalidate(Rect(minPoint-pen.getWidth(),
+		      maxPoint+pen.getWidth()), false);
     }
   }
 
@@ -164,13 +161,13 @@ protected:
 
 class MainFrame : public Frame
 {
-  Scribble mScrible;
+  Scribble m_scrible;
 
 public:
   
   MainFrame()
     : Frame("Scribble")
-    , mScrible(this)
+    , m_scrible(this)
   {
     setLayout(new ClientLayout);
   }
@@ -181,10 +178,10 @@ public:
 
 class Example : public Application
 {
-  MainFrame mMainWnd;
+  MainFrame m_mainFrame;
 public:
   virtual void main(std::vector<String> args) {
-    mMainWnd.setVisible(true);
+    m_mainFrame.setVisible(true);
   }
 };
 

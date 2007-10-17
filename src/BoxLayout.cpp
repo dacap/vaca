@@ -58,28 +58,48 @@ BoxLayout::BoxLayout(Orientation orientation,
 		     int borderSize,
 		     int childSpacing)
 {
-  mOrientation = orientation;
-  mHomogeneous = homogeneous;
-  mBorder = borderSize;
-  mChildSpacing = childSpacing;
+  m_orientation = orientation;
+  m_homogeneous = homogeneous;
+  m_border = borderSize;
+  m_childSpacing = childSpacing;
 }
 
 bool BoxLayout::isHorizontal()
 {
-  return mOrientation == Horizontal;
+  return m_orientation == Horizontal;
 }
 
 bool BoxLayout::isVertical()
 {
-  return mOrientation == Vertical;
+  return m_orientation == Vertical;
 }
 
 bool BoxLayout::isHomogeneous()
 {
-  return mHomogeneous;
+  return m_homogeneous;
 }
 
-Size BoxLayout::preferredSize(Widget *parent, Widget::Container &widgets, const Size &fitIn)
+int BoxLayout::getBorder()
+{
+  return m_border;
+}
+
+void BoxLayout::setBorder(int border)
+{
+  m_border = border;
+}
+
+int BoxLayout::getChildSpacing()
+{
+  return m_childSpacing;
+}
+
+void BoxLayout::setChildSpacing(int childSpacing)
+{
+  m_childSpacing = childSpacing;
+}
+
+Size BoxLayout::getPreferredSize(Widget *parent, Widget::Container &widgets, const Size &fitIn)
 {
 #define GET_CHILD_SIZE(w, h)			\
   {						\
@@ -94,7 +114,7 @@ Size BoxLayout::preferredSize(Widget *parent, Widget::Container &widgets, const 
   {						\
     if (isHomogeneous())			\
       sz.w *= childCount;			\
-    sz.w += mChildSpacing * (childCount-1);	\
+    sz.w += m_childSpacing * (childCount-1);	\
   }
 
   int childCount = 0;
@@ -105,8 +125,8 @@ Size BoxLayout::preferredSize(Widget *parent, Widget::Container &widgets, const 
   }
 
   Size sz(0, 0);
-  Size _fitIn(VACA_MAX(0, fitIn.w-mBorder*2),
-	      VACA_MAX(0, fitIn.h-mBorder*2));
+  Size _fitIn(VACA_MAX(0, fitIn.w-m_border*2),
+	      VACA_MAX(0, fitIn.h-m_border*2));
 
   for (Widget::Container::iterator it=widgets.begin(); it!=widgets.end(); ++it) {
     Widget *widget = *it;
@@ -114,7 +134,7 @@ Size BoxLayout::preferredSize(Widget *parent, Widget::Container &widgets, const 
     if (widget->isLayoutFree())
       continue;
 
-    Size pref = widget->preferredSize(_fitIn);
+    Size pref = widget->getPreferredSize(_fitIn);
 
     if (isHorizontal()) {
       GET_CHILD_SIZE(w, h);
@@ -133,10 +153,10 @@ Size BoxLayout::preferredSize(Widget *parent, Widget::Container &widgets, const 
     }
   }
 
-  sz.w += mBorder*2;
-  sz.h += mBorder*2;
+  sz.w += m_border*2;
+  sz.h += m_border*2;
 
-  // VACA_TRACE("BoxLayout::preferredSize(%d, %d);\n", sz.w, sz.h);
+  // VACA_TRACE("BoxLayout::getPreferredSize(%d, %d);\n", sz.w, sz.h);
 
   return sz;
 }
@@ -146,14 +166,14 @@ void BoxLayout::layout(Widget *parent, Widget::Container &widgets, const Rect &r
 #define FIXUP(x, y, w, h)						\
   {									\
     if (childCount > 0) {						\
-      x = rc.x+mBorder;							\
-      y = rc.y+mBorder;							\
-      h = VACA_MAX(1, rc.h - mBorder*2);				\
+      x = rc.x+m_border;							\
+      y = rc.y+m_border;							\
+      h = VACA_MAX(1, rc.h - m_border*2);				\
 									\
       if (isHomogeneous()) {						\
 	width = (rc.w							\
-		 - mBorder*2						\
-		 - mChildSpacing * (childCount - 1));			\
+		 - m_border*2						\
+		 - m_childSpacing * (childCount - 1));			\
 	extra = width / childCount;					\
       }									\
       else if (expandCount > 0) {					\
@@ -168,8 +188,8 @@ void BoxLayout::layout(Widget *parent, Widget::Container &widgets, const Rect &r
 	    Size fitIn;							\
 	    fitIn.w = 0;						\
 	    fitIn.h = h;						\
-	    pref = widget->preferredSize(fitIn);			\
-	    prefDiff = widget->preferredSize();				\
+	    pref = widget->getPreferredSize(fitIn);			\
+	    prefDiff = widget->getPreferredSize();			\
 	    width -= pref.w - prefDiff.w;				\
 	  }								\
 	}								\
@@ -200,12 +220,12 @@ void BoxLayout::layout(Widget *parent, Widget::Container &widgets, const Rect &r
 	  Size fitIn;							\
 	  fitIn.w = 0;							\
 	  fitIn.h = h;							\
-	  pref = widget->preferredSize(fitIn);				\
+	  pref = widget->getPreferredSize(fitIn);			\
 									\
-	  child_width = pref.w;/* + child->padding * 2; */		\
+	  child_width = pref.w;						\
 									\
 	  if (WidgetIsExpansive(widget)) {				\
-	    prefDiff = widget->preferredSize();				\
+	    prefDiff = widget->getPreferredSize();			\
 	    child_width -= pref.w - prefDiff.w;				\
 									\
 	    if (expandCount == 1)					\
@@ -218,7 +238,7 @@ void BoxLayout::layout(Widget *parent, Widget::Container &widgets, const Rect &r
 	  }								\
 	}								\
 									\
-	w = VACA_MAX(1, child_width/*  - child->padding * 2 */);	\
+	w = VACA_MAX(1, child_width);					\
 									\
 	if (isHorizontal())						\
 	  cpos = Rect(x, y, w, h);					\
@@ -226,8 +246,7 @@ void BoxLayout::layout(Widget *parent, Widget::Container &widgets, const Rect &r
 	  cpos = Rect(y, x, h, w);					\
 									\
 	moveWidget(widget, cpos);					\
-	/* x = x + child->padding; */					\
-	x += child_width + mChildSpacing;				\
+	x += child_width + m_childSpacing;				\
       }									\
     }									\
   }
@@ -251,10 +270,10 @@ void BoxLayout::layout(Widget *parent, Widget::Container &widgets, const Rect &r
 
   beginMovement(widgets);
 
-  pref = preferredSize(parent, widgets, Size(0, 0)); // fitIn doesn't matter
+  pref = getPreferredSize(parent, widgets, Size(0, 0)); // fitIn doesn't matter
 //   pref = preferredSize(parent, widgets,
-// 		       isHorizontal() ? Size(0, VACA_MAX(0, rc.h-mBorder)):
-// 					Size(VACA_MAX(0, rc.w-mBorder), 0));
+// 		       isHorizontal() ? Size(0, VACA_MAX(0, rc.h-m_border)):
+// 					Size(VACA_MAX(0, rc.w-m_border), 0));
 
   if (isHorizontal()) {
     FIXUP(x, y, w, h);

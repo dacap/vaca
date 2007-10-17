@@ -29,48 +29,48 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/Vaca.h"
+#include <Vaca/Vaca.h>
 
 using namespace Vaca;
 
 class MainFrame : public Dialog
 {
-  Label mUsernameLabel;
-  Edit mUsernameEdit;
-  Label mPasswordLabel;
-  PasswordEdit mPasswordEdit;
-  CheckBox mAdministrator;
-  Button mLoginButton;
-  Button mCancelButton;
+  Label m_usernameLabel;
+  Edit m_usernameEdit;
+  Label m_passwordLabel;
+  PasswordEdit m_passwordEdit;
+  CheckBox m_administrator;
+  Button m_loginButton;
+  Button m_cancelButton;
 
 public:
 
   MainFrame()
     : Dialog("FreeOfLayout")
-    , mUsernameLabel("&Username:", this)
-    , mUsernameEdit("", this)
-    , mPasswordLabel("&Password:", this)
-    , mPasswordEdit("", this)
-    , mAdministrator("&Administrador account", this)
-    , mLoginButton("&Login", this)
-    , mCancelButton("&Cancel", this)
+    , m_usernameLabel("&Username:", this)
+    , m_usernameEdit("", this)
+    , m_passwordLabel("&Password:", this)
+    , m_passwordEdit("", this)
+    , m_administrator("&Administrador account", this)
+    , m_loginButton("&Login", this)
+    , m_cancelButton("&Cancel", this)
   {
     // if we don't setup a layout manager through this->setLayout(),
     // we are free of layout manager...
 
-    mUsernameLabel.setBounds(2,                   2,          70,  23);
-    mUsernameEdit .setBounds(2+70+2,              2,          130, 23);
-    mPasswordLabel.setBounds(2,                   2+(23+2)*1, 70,  23);
-    mPasswordEdit .setBounds(2+70+2,              2+(23+2)*1, 130, 23);
-    mAdministrator.setBounds(2+70+2,              2+(23+2)*2, 130, 23);
-    mLoginButton  .setBounds(2+70+2+130-(66+2)*2, 2+(23+2)*3, 66,  23);
-    mCancelButton .setBounds(2+70+2+130-(66+2)*1, 2+(23+2)*3, 66,  23);
+    m_usernameLabel.setBounds(2,                   2,          70,  23);
+    m_usernameEdit .setBounds(2+70+2,              2,          130, 23);
+    m_passwordLabel.setBounds(2,                   2+(23+2)*1, 70,  23);
+    m_passwordEdit .setBounds(2+70+2,              2+(23+2)*1, 130, 23);
+    m_administrator.setBounds(2+70+2,              2+(23+2)*2, 130, 23);
+    m_loginButton  .setBounds(2+70+2+130-(66+2)*2, 2+(23+2)*3, 66,  23);
+    m_cancelButton .setBounds(2+70+2+130-(66+2)*1, 2+(23+2)*3, 66,  23);
 
-    mLoginButton.setDefault(true);
+    m_loginButton.setDefault(true);
 
-    mLoginButton.Action.connect(Bind(&MainFrame::defaultOkAction, this));
-    mCancelButton.Action.connect(Bind(&MainFrame::defaultCancelAction, this));
-    mAdministrator.Action.connect(Bind(&MainFrame::onAdministrator, this));
+    m_loginButton.Action.connect(Bind(&MainFrame::defaultOkAction, this));
+    m_cancelButton.Action.connect(Bind(&MainFrame::defaultCancelAction, this));
+    m_administrator.Action.connect(Bind(&MainFrame::onAdministrator, this));
 
     setSize(getNonClientSize() +
 	    Size(2+70+2+130+2, 2+(23+2)*4));
@@ -79,18 +79,18 @@ public:
 
   String getUserName()
   {
-    return mUsernameEdit.getText();
+    return m_usernameEdit.getText();
   }
   
 protected:
 
   void onAdministrator()
   {
-    bool enabled = !mAdministrator.isSelected();
-    mUsernameLabel.setEnabled(enabled);
-    mUsernameEdit.setEnabled(enabled);
+    bool enabled = !m_administrator.isSelected();
+    m_usernameLabel.setEnabled(enabled);
+    m_usernameEdit.setEnabled(enabled);
     if (!enabled)
-      mUsernameEdit.setText("root");
+      m_usernameEdit.setText("root");
   }
 
 };

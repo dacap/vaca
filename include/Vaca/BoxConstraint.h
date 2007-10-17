@@ -42,14 +42,18 @@ namespace Vaca {
  * be expansive or not. An expansive widget tries to ocuppy more space
  * that Widget::preferredSize() (generally widgets like ListBox or
  * Edit should be expansive).
+ *
+ * If you don't setup an BoxConstraint for a widget controlled by a
+ * BoxLayout, the widget'll be known as non-expansive.
  */
 class VACA_DLL BoxConstraint : public Constraint
 {
-  bool mExpansive;
+  bool m_expansive;
 
 public:
 
   BoxConstraint(bool expansive);
+  BoxConstraint(const BoxConstraint &boxConstraint);
   virtual ~BoxConstraint();
 
   bool isExpansive();

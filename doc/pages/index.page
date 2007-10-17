@@ -6,15 +6,11 @@
 
 @image html Vaca.gif
 
-@b Consideration: This is an important note, I speak Spanish, I don't
-speak English and I don't known how to write in this language. So this
-documentation is only a draft that will never be official. Why I don't
-write it in Spanish? Because more people want English documentation
-than Spanish one. Also this is not a literary novel, this is
-just a document to known what does the library, I try to use the more
-simple language constructions here (also you'll find a borring
-lecture). If you found a mistake, please,
-<a href="http://www.davidcapello.com.ar/">report it to me</a>.
+@b Consideration: I speak Spanish and I don't know how to write in English.
+This documentation is only a draft that will never be official. This is not
+a literary novel, this is just a document to know what the library does.
+If you find a mistake, please, report it to me to
+<a href="mailto:dacap@users.sourceforge.net">dacap@users.sourceforge.net</a>.
 
 @b Warning: This library is under development, there aren't a stable
 release. The API is mutating in this development stage. Please, if you
@@ -39,30 +35,36 @@ and Boost (the Boost.Signals library is just perfect).
     examples.
 @li Technical Notes about how more common (or uncommon) problems were solved.
 
-<h2>Message &mdash; Event &mdash; Signal (MES)</h2>
+<h2>Message &mdash; Event &mdash; Signal (MES) Architecture</h2>
 
-A @em message is received from Windows OS with a @c WM_ constant value.
-A global @ref Vaca::Widget::globalWndProc "WndProc" extracts the @c GWL_USERDATA
-from the @c HWND that received the message.  In the @c GWL_USERDATA is located
-an instance of the @ref Vaca::Widget "Widget" class. This instance is used to
-call the @ref Vaca::Widget::wndProc "Widget::wndProc" method to process
-the message. Depending the message it calls other method (an @em event) that
-can be override (like @ref Vaca::Widget::onPaint "onPaint",
-@ref Vaca::Widget::onResize "onResize", etc.). Some default
-implementations of the events fire a @em signal related to the event.
-The signal can be intercepted by anyone (like a C# delegate). Signals
-are the only variable members of classes that can be public, and its
-name must begin with a capital letter (like
-@ref Vaca::Button::Action "Action").
+Definitions:
 
-@li A @em message is message received from Windows (a @c WM_... constant).
-@li An @em event is a virtual method (a @c on... method).
-@li A @em signal is @c boost::signal<> (a public member variable that start with capital letter).
+- A @em message is a message received from Windows (e.g. @c WM_KEYDOWN).
+- An @em event is a virtual method (e.g. @c #Vaca::Widget::onKeyDown method).
+- A @em signal is a variable member which anybody can connect their callbacks
+  (e.g. @c #Vaca::Widget::KeyDown signal).
 
-Vaca uses virtual methods to handle events, and signals for events
-that should be intercepted by the parent window. Maybe in the future,
-signals will exist for every event (like events and delegates in .NET
-framework).
+General behavior:
+
+- A @em message is received from Windows OS with a @c WM_ constant value (e.g. @c WM_PAINT).
+- A global WndProc (@ref Vaca::Widget::getGlobalWndProc) extracts the @c GWL_USERDATA
+  from the @c HWND that received the message.
+- In the @c GWL_USERDATA is located an instance of the #Vaca::Widget class
+  (<b>new versions of Vaca stores the Widget pointer in the "VacaAtom" property</b>, see
+  #Vaca::Widget::fromHWND for more information).
+- This instance is used to call the #Vaca::Widget::wndProc method to process
+  the message.
+- Depending the message it calls other method (an @em event) that can be override
+  (like #Vaca::Widget::onPaint, #Vaca::Widget::onResize, etc.).
+- Some default implementations of the events fire a @em signal related to the event.
+- The signal can be intercepted by anyone (like a C# delegate).
+- Signals are the only variable members of classes that should be public, and their
+  names must begin with a capital letter (like #Vaca::Button::Action).
+
+Generally in Vaca we define virtual methods to handle events in the
+widget itself, and signals for events that should be intercepted by
+the parent window. Maybe in the future, signals will exist for every
+event (like events and delegates in .NET framework).
 
 <h2>Alternatives</h2>
 
@@ -75,8 +77,9 @@ Do you try to remember all that macros? Impossible.
 
 <h3>wxWidgets</h3>
 
-Same as MFC, but it's free. Also, they don't like C++ templates.
-Anyway this could be a good alternative for really-big projects.
+Same as MFC, but it's free. It don't use C++ templates (and so STL
+containers). Anyway this could be a good alternative for really big
+projects.
 
 <h3>GTK</h3>
 
@@ -85,7 +88,7 @@ It doesn't support the native look and feel of Windows.
 <h3>Qt</h3>
 
 License problem for the Windows version. Also it needs a
-preprecompiler making of C++ a new language: C+++
+pre-precompiler to use the new language: C+++
 
 <h3>SmartWin++</h3>
 
@@ -95,9 +98,8 @@ what we think.
 
 <h3>Add here your favorite one...</h3>
 
-Sure that I forget a lot of libraries (like Fox, fltk, VCF, and other
-super underground libraries like Windows++), but each one has
-something that I don't like it.
+Sure that I forget a lot of libraries (like Fox, fltk, VCF,
+Windows++. etc.), but each one has something that I didn't like it.
 
 Generally, one thing that I don't like of some libraries is the fact
 that they have a (poor) visual editor that ("generally") is developed

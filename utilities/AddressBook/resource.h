@@ -1,0 +1,2 @@
+#define IDI_ADDBOOK 		100
+#define IDB_IMAGELIST		101

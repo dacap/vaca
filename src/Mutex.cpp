@@ -43,45 +43,45 @@ using namespace Vaca;
  */
 Mutex::Mutex(bool multiProcess, LPCTSTR mutexName)
 {
-  mCriticalSection = !multiProcess;
+  m_criticalSection = !multiProcess;
   
-  if (mCriticalSection) {
+  if (m_criticalSection) {
     // critical sections can't have a name
     assert(mutexName == NULL);
 
-    mData = new CRITICAL_SECTION;
-    InitializeCriticalSection(reinterpret_cast<LPCRITICAL_SECTION>(mData));
+    m_data = new CRITICAL_SECTION;
+    InitializeCriticalSection(reinterpret_cast<LPCRITICAL_SECTION>(m_data));
   }
   else {
-    mData = CreateMutex(NULL, FALSE, mutexName);
-    // if (mData == 0 || mData == INVALID_HANDLE_VALUE)
+    m_data = CreateMutex(NULL, FALSE, mutexName);
+    // if (m_data == 0 || m_data == INVALID_HANDLE_VALUE)
     // throw 
   }
 }
 
 Mutex::~Mutex()
 {
-  if (mCriticalSection) {
-    DeleteCriticalSection(reinterpret_cast<LPCRITICAL_SECTION>(mData));
-    delete reinterpret_cast<LPCRITICAL_SECTION>(mData);
+  if (m_criticalSection) {
+    DeleteCriticalSection(reinterpret_cast<LPCRITICAL_SECTION>(m_data));
+    delete reinterpret_cast<LPCRITICAL_SECTION>(m_data);
   }
   else {
-    CloseHandle(mData);
+    CloseHandle(m_data);
   }
 }
 
 void Mutex::lock()
 {
-  if (mCriticalSection)
-    EnterCriticalSection(reinterpret_cast<LPCRITICAL_SECTION>(mData));
+  if (m_criticalSection)
+    EnterCriticalSection(reinterpret_cast<LPCRITICAL_SECTION>(m_data));
   else
-    WaitForSingleObject(mData, INFINITE);
+    WaitForSingleObject(m_data, INFINITE);
 }
 
 void Mutex::unlock()
 {
-  if (mCriticalSection)
-    LeaveCriticalSection(reinterpret_cast<LPCRITICAL_SECTION>(mData));
+  if (m_criticalSection)
+    LeaveCriticalSection(reinterpret_cast<LPCRITICAL_SECTION>(m_data));
   else
-    ReleaseMutex(mData);
+    ReleaseMutex(m_data);
 }

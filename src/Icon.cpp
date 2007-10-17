@@ -43,7 +43,7 @@ using namespace Vaca;
 
 Icon::Icon()
 {
-  mHICON = NULL;
+  m_HICON = NULL;
 }
 
 /**
@@ -51,12 +51,12 @@ Icon::Icon()
  */
 Icon::Icon(int iconId, const Size &sz)
 {
-  mHICON = reinterpret_cast<HICON>(LoadImage(Application::getHINSTANCE(),
-					     MAKEINTRESOURCE(iconId),
-					     IMAGE_ICON,
-					     sz.w, sz.h, 0));
+  m_HICON = reinterpret_cast<HICON>(LoadImage(Application::getHINSTANCE(),
+					      MAKEINTRESOURCE(iconId),
+					      IMAGE_ICON,
+					      sz.w, sz.h, 0));
 
-  if (mHICON == NULL)
+  if (m_HICON == NULL)
     throw ResourceException();
 }
 
@@ -65,29 +65,29 @@ Icon::Icon(int iconId, const Size &sz)
  */
 Icon::Icon(const String &fileName, const Size &sz)
 {
-  mHICON = reinterpret_cast<HICON>(LoadImage(Application::getHINSTANCE(),
-					     fileName.c_str(),
-					     IMAGE_ICON,
-					     sz.w, sz.h, LR_LOADFROMFILE));
+  m_HICON = reinterpret_cast<HICON>(LoadImage(Application::getHINSTANCE(),
+					      fileName.c_str(),
+					      IMAGE_ICON,
+					      sz.w, sz.h, LR_LOADFROMFILE));
 
-  if (mHICON == NULL)
+  if (m_HICON == NULL)
     throw ResourceException();
 }
 
 Icon::~Icon()
 {
-  if (mHICON != NULL)
-    DestroyIcon(mHICON);
+  if (m_HICON != NULL)
+    DestroyIcon(m_HICON);
 }
 
 HICON Icon::getHICON()
 {
-  return mHICON;
+  return m_HICON;
 }
 
 void Icon::setHICON(HICON hicon)
 {
-  mHICON = hicon;
+  m_HICON = hicon;
 }
 
 //////////////////////////////////////////////////////////////////////

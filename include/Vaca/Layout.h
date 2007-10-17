@@ -41,13 +41,13 @@ namespace Vaca {
 
 /**
  * A Layout must setup the position of a collection of widgets. It's
- * an easy way to lay out the widgets without worrying about the exact
- * position of them.
+ * used to arrange the widgets quickly without worrying about the
+ * exact position of them.
  */
 class VACA_DLL Layout
 {
-  HDWP mHDWP;
-  Widget::Container mRelayoutWidgets;
+  HDWP m_HDWP;
+  Widget::Container m_relayoutWidgets;
 
 public:
 
@@ -59,7 +59,7 @@ public:
   void endMovement();
 
 //   virtual Size minimumSize(Widget *parent, Widget::Container &widgets);
-  virtual Size preferredSize(Widget *parent, Widget::Container &widgets, const Size &fitIn);
+  virtual Size getPreferredSize(Widget *parent, Widget::Container &widgets, const Size &fitIn);
 //   virtual Size maximumSize(Widget *parent, Widget::Container &widgets);
 
   virtual void layout(Widget *parent, Widget::Container &widgets, const Rect &rc) = 0;

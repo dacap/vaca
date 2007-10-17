@@ -16,6 +16,8 @@ Here is a list of some classes/methods with this behavior:
   * Vaca::Menu::addSeparator(),
   * Vaca::Menu::insert(const String &, int),
   * Vaca::Menu::insertSeparator() deletes MenuItem's automatically.
+- Vaca::Frame::addCommand
 - Vaca::Frame::addDockArea
+- Vaca::MdiClient::setMdiClient
 
 */

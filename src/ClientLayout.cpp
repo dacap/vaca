@@ -54,14 +54,14 @@ ClientLayout::ClientLayout()
 //   return sz;
 // }
 
-Size ClientLayout::preferredSize(Widget *parent, Widget::Container &widgets, const Size &fitIn)
+Size ClientLayout::getPreferredSize(Widget *parent, Widget::Container &widgets, const Size &fitIn)
 {
   Size sz(0, 0);
 
   for (Widget::Container::iterator it=widgets.begin(); it!=widgets.end(); ++it) {
     Widget *widget = *it;
     if (!widget->isLayoutFree()) {
-      Size pref = widget->preferredSize(fitIn);
+      Size pref = widget->getPreferredSize(fitIn);
       if (sz.w < pref.w) sz.w = pref.w;
       if (sz.h < pref.h) sz.h = pref.h;
     }

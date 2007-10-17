@@ -35,6 +35,7 @@
 #include "Vaca/Frame.h"
 #include "Vaca/Point.h"
 #include "Vaca/Debug.h"
+#include "Vaca/Pen.h"
 
 using namespace Vaca;
 
@@ -152,31 +153,33 @@ void BasicDockArea::drawXorDockInfoShape(Graphics &g, DockInfo *_dockInfo)
 		    dockBarBounds.getSize());
 
   g.setRop2(R2_NOTXORPEN);
-  g.drawRect(externRect);
-  g.drawRect(internRect.shrink(1));
+  Pen pen(Color::Black);	// TODO it's necessary... maybe XorPen?
+//   g.drawRect(pen, externRect);
+//   g.drawRect(pen, internRect.shrink(1));
+  g.drawRect(pen, internRect);
   g.setRop2(R2_COPYPEN);
 }
 
-Size BasicDockArea::preferredSize()
-{
-  Widget::Container children = getChildren();
-  Widget::Container::iterator it;
-  Size size(0, 0);
+// Size BasicDockArea::preferredSize()
+// {
+//   Widget::Container children = getChildren();
+//   Widget::Container::iterator it;
+//   Size size(0, 0);
 
-  for (it=children.begin(); it!=children.end(); ++it) {
-    DockBar *dockBar = static_cast<DockBar *>(*it);
-    DockInfo *dockInfo = dockBar->getDockInfo();
+//   for (it=children.begin(); it!=children.end(); ++it) {
+//     DockBar *dockBar = static_cast<DockBar *>(*it);
+//     DockInfo *dockInfo = dockBar->getDockInfo();
 
-    assert(dockInfo != NULL);
+//     assert(dockInfo != NULL);
 
-    if (isHorizontal())
-      size.h = size.h < dockInfo->getSize().h ? dockInfo->getSize().h: size.h;
-    else
-      size.w = size.w < dockInfo->getSize().w ? dockInfo->getSize().w: size.w;
-  }
+//     if (isHorizontal())
+//       size.h = size.h < dockInfo->getSize().h ? dockInfo->getSize().h: size.h;
+//     else
+//       size.w = size.w < dockInfo->getSize().w ? dockInfo->getSize().w: size.w;
+//   }
 
-  return size;
-}
+//   return size;
+// }
 
 void BasicDockArea::layout()
 {
@@ -191,5 +194,25 @@ void BasicDockArea::layout()
 
     dockBar->setBounds(dockInfo->bounds);
     dockBar->layout();
+  }
+}
+
+void BasicDockArea::onPreferredSize(Size &sz)
+{
+  Widget::Container children = getChildren();
+  Widget::Container::iterator it;
+
+  sz = Size(0, 0);
+
+  for (it=children.begin(); it!=children.end(); ++it) {
+    DockBar *dockBar = static_cast<DockBar *>(*it);
+    DockInfo *dockInfo = dockBar->getDockInfo();
+
+    assert(dockInfo != NULL);
+
+    if (isHorizontal())
+      sz.h = sz.h < dockInfo->getSize().h ? dockInfo->getSize().h: sz.h;
+    else
+      sz.w = sz.w < dockInfo->getSize().w ? dockInfo->getSize().w: sz.w;
   }
 }

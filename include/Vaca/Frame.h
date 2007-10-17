@@ -64,7 +64,8 @@ class MenuItem;
 
 #define InitiallyMaximizedFrameStyle	(Style(WS_MAXIMIZE, 0))
 
-#define FrameStyle			(WithCaptionFrameStyle +	\
+#define FrameStyle			(ContainerStyle +		\
+					 WithCaptionFrameStyle +	\
 					 WithSystemMenuFrameStyle +	\
 					 MinimizableFrameStyle +	\
 					 MaximizableFrameStyle +	\
@@ -82,14 +83,14 @@ public:
 /**
  * Controls a frame window that can be minimized, maximized, etc.
  * Every application should contain (at least) one frame window (or a
- * window derived from a frame).
+ * window derived from Frame like Dialog).
  */
 class VACA_DLL Frame : public Register<FrameClass>, public Widget
 {
-  MenuBar *mMenuBar;		      // The menu bar.
-  std::vector<Command *> mCommands;   // collection of Commands that can be executed in this Frame
-  std::vector<DockArea *> mDockAreas; // Areas where you can dock a tool-bar.
-  bool mCounted;		      // true if this Frame is counted in the frames' list
+  MenuBar *m_menuBar;		       // The menu bar.
+  std::vector<Command *> m_commands;   // collection of Commands that can be executed in this Frame
+  std::vector<DockArea *> m_dockAreas; // Areas where you can dock a tool-bar.
+  bool m_counted;		       // true if this Frame is counted in the frames' list
 
 public:
 
@@ -101,7 +102,7 @@ public:
   virtual void setVisible(bool visible);
 
   MenuBar *getMenuBar();
-  virtual void setMenuBar(MenuBar *menuBar);
+  virtual MenuBar *setMenuBar(MenuBar *menuBar);
 
   void setIcon(Icon *icon, bool bigIcon);
   void setIcon(int iconId);
@@ -115,17 +116,17 @@ public:
   void addDockArea(DockArea *dockArea);
   void removeDockArea(DockArea *dockArea);
   void defaultDockAreas();
-  void clearDockAreas();
+  void deleteDockAreas();
   std::vector<DockArea *> getDockAreas();
   DockArea *getDockArea(Side side);
   virtual DockArea *getDefaultDockArea();
 
-  virtual Size preferredSize();
-  virtual Size preferredSize(const Size &fitIn);
+//   virtual Size preferredSize();
+//   virtual Size preferredSize(const Size &fitIn);
 
   virtual void layout();
   virtual bool isLayoutFree();
-  virtual bool wantArrowCursor();
+  virtual bool keepSynchronized();
 
   boost::signal<void (Event &)> Activate;   ///< @see onActivate
   boost::signal<void (Event &)> Deactivate; ///< @see onDeactivate
@@ -138,7 +139,8 @@ public:
 
 protected:
   // events
-  virtual void onDestroy();
+  virtual void onPreferredSize(Size &sz);
+//   virtual void onDestroy();
   virtual void onResize(const Size &sz);
 //   virtual void onKeyDown(KeyEvent &ev);
   virtual bool onIdAction(int id);
@@ -156,6 +158,7 @@ private:
   void initialize(const String &title);
 //   Menu *getMenuByHMENU(HMENU hmenu);
   void updateMenuItem(MenuItem *menuItem);
+  Container getSynchronizedGroup();
   
 };
 

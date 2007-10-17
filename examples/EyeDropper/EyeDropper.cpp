@@ -29,37 +29,33 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/Vaca.h"
+#include <Vaca/Vaca.h>
 #include "resource.h"
 
 using namespace Vaca;
 
 class EyeDropper : public Panel
 {
-  Font mFont;
-  Cursor mCursor;
-  bool mHexFormat;
+  Font m_font;
+  Cursor m_cursor;
+  bool m_isHexFormat;
   
 public:
 
   EyeDropper(Widget *parent)
     : Panel(parent)
-    , mFont("Courier", 10)
-    , mCursor(IDC_EYEDROPPER)
-    , mHexFormat(false)
+    , m_font("Courier", 10)
+    , m_cursor(IDC_EYEDROPPER)
+    , m_isHexFormat(false)
   {
     setBgColor(Color::Black);
+    setPreferredSize(Size(64, 64));
   }
 
   void setHexFormat(bool hexFormat)
   {
-    mHexFormat = hexFormat;
+    m_isHexFormat = hexFormat;
     invalidate(true);
-  }
-
-  virtual Size preferredSize()
-  {
-    return Size(64, 64);
   }
 
 protected:
@@ -68,25 +64,24 @@ protected:
   {
     Rect rc = getClientBounds();
     Color bg = getBgColor();
-
-    g.setColor(Color::Black);
-    g.drawRect(rc);
-
-    rc.shrink(1);
-    g.setColor(Color::White);
-    g.drawRect(rc);
+    Pen blackPen(Color::Black);
+    Pen whitePen(Color::White);
+    
+    g.drawRect(blackPen, rc);
 
     rc.shrink(1);
-    g.setColor(Color::Black);
-    g.drawRect(rc);
+    g.drawRect(whitePen, rc);
 
-    g.setFont(mFont);
+    rc.shrink(1);
+    g.drawRect(blackPen, rc);
+
+    g.setFont(&m_font);
 
     // draw the text
 
     String str;
 
-    if (mHexFormat)
+    if (m_isHexFormat)
       str = "#" +
 	String::fromInt(bg.getR(), 16, 2) +
 	String::fromInt(bg.getG(), 16, 2) +
@@ -107,7 +102,7 @@ protected:
   virtual void onMouseDown(MouseEvent &ev)
   {
     acquireCapture();
-    setCursor(mCursor);
+    setCursor(m_cursor);
   }
 
   virtual void onMouseMove(MouseEvent &ev)
@@ -129,9 +124,9 @@ protected:
 
 class MainFrame : public Frame
 {
-  Label mLabel;
-  EyeDropper mEyeDropper;
-  ToggleButton mHex;
+  Label m_label;
+  EyeDropper m_eyeDropper;
+  ToggleButton m_hexFormat;
 
 public:
 
@@ -139,21 +134,21 @@ public:
     : Frame("Eye Dropper", NULL, FrameStyle
 				 - ResizableFrameStyle
 				 - MaximizableFrameStyle)
-    , mLabel("Drag from the box to the pixel\r\n"
+    , m_label("Drag from the box to the pixel\r\n"
 	     "that you want to get its color", this)
-    , mEyeDropper(this)
-    , mHex("Hex", this)
+    , m_eyeDropper(this)
+    , m_hexFormat("Hex", this)
   {
     setLayout(new BoxLayout(Vertical, false));
-    mHex.Action.connect(Bind(&MainFrame::onHexToggle, this));
-    setSize(preferredSize());
+    m_hexFormat.Action.connect(Bind(&MainFrame::onHexToggle, this));
+    setSize(getPreferredSize());
   }
 
 protected:
 
   void onHexToggle()
   {
-    mEyeDropper.setHexFormat(mHex.isSelected());
+    m_eyeDropper.setHexFormat(m_hexFormat.isSelected());
   }
 
 };
@@ -162,10 +157,10 @@ protected:
 
 class Example : public Application
 {
-  MainFrame mMainWnd;
+  MainFrame m_mainFrame;
 public:
   virtual void main(std::vector<String> args) {
-    mMainWnd.setVisible(true);
+    m_mainFrame.setVisible(true);
   }
 };
 

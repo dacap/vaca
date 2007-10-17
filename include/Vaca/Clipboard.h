@@ -44,9 +44,7 @@ class Widget;
  */
 class VACA_DLL Clipboard
 {
-private:
-
-  Widget *mOwner;
+  Widget *m_owner;
 
 public:
 

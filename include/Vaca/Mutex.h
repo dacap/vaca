@@ -47,8 +47,8 @@ namespace Vaca {
  */
 class VACA_DLL Mutex : private boost::noncopyable
 {
-  bool mCriticalSection;
-  void *mData;
+  bool m_criticalSection;
+  void *m_data;
 
 public:
 

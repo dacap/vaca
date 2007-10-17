@@ -41,10 +41,17 @@ namespace Vaca {
  */
 class VACA_DLL Component
 {
+  int m_refCount;
+  
 public:
 
   Component();
   virtual ~Component();
+
+  void ref();
+  void unref();
+
+  int getRefCount();
 
 };
 

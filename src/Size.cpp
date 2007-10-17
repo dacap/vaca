@@ -178,3 +178,4 @@ Size::operator SIZE() const
   sz.cy = h;
   return sz;
 }
+

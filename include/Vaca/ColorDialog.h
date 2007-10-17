@@ -47,8 +47,8 @@ class Widget;
  */
 class VACA_DLL ColorDialog : public CommonDialog
 {
-  Color mColor;
-  COLORREF mCustomColors[16];
+  Color m_color;
+  COLORREF m_customColors[16];
 
 public:
 

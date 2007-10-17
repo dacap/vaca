@@ -49,8 +49,8 @@ class VACA_DLL Application : public Thread
 {
 private:
 
-  static HINSTANCE mHINSTANCE;
-  static Application *mInstance;
+  static HINSTANCE m_HINSTANCE;
+  static Application *m_instance;
 
 public:
 
@@ -62,15 +62,10 @@ public:
 
   virtual void run();
 
-protected:
+private:
 
-  /**
-   * The application entry point <em>"a la"</em> Java.
-   *
-   * After calling run(), main() is executed, and when this finish,
-   * the doMessageLoop() is automatically executed.
-   */
-  virtual void main(std::vector<String> args) = 0;
+  virtual void main(std::vector<String> args);
+
 };
 
 } // namespace Vaca

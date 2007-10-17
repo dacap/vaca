@@ -43,12 +43,12 @@ namespace Vaca {
 class Widget;
 
 /**
- * A common dialog.
+ * Base class for common dialogs.
  */
 class VACA_DLL CommonDialog : private boost::noncopyable
 			    , public Component
 {
-  Widget *mParent;
+  Widget *m_parent;
 
 public:
 

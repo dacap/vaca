@@ -40,7 +40,7 @@ class Component;
 
 class VACA_DLL Event
 {
-  Component *mSource;
+  Component *m_source;
 
 public:
 

@@ -52,21 +52,21 @@ using namespace Vaca;
 ToolSet::ToolSet(Widget *parent, Style style)
   : Widget(TOOLBARCLASSNAME, parent, style)
 {
-  mLoadedImageList = NULL;
+  m_loadedImageList = NULL;
 }
 
 ToolSet::~ToolSet()
 {
-  if (mLoadedImageList != NULL) {
-    ImageList_Destroy(mLoadedImageList);
-    mLoadedImageList = NULL;
+  if (m_loadedImageList != NULL) {
+    ImageList_Destroy(m_loadedImageList);
+    m_loadedImageList = NULL;
   }
 }
 
-Size ToolSet::preferredSize()
-{
-  return mPreferredSizes[getRows()];
-}
+// Size ToolSet::preferredSize()
+// {
+//   return m_preferredSizes[getRows()];
+// }
 
 /**
  * (TB_BUTTONCOUNT).
@@ -127,15 +127,15 @@ void ToolSet::setImageList(ImageList &imageList)
  */
 void ToolSet::loadStandardImageList(int imageListId)
 {
-  if (mLoadedImageList != NULL)
-    ImageList_Destroy(mLoadedImageList);
+  if (m_loadedImageList != NULL)
+    ImageList_Destroy(m_loadedImageList);
 
-  mLoadedImageList =
+  m_loadedImageList =
     ImageList_Create(16, 16, ILC_COLOR16 | ILC_MASK, 0, 1);
 
-  if (mLoadedImageList != NULL) {
+  if (m_loadedImageList != NULL) {
     sendMessage(TB_SETIMAGELIST, 0,
-		reinterpret_cast<LPARAM>(mLoadedImageList));
+		reinterpret_cast<LPARAM>(m_loadedImageList));
   
     sendMessage(TB_LOADIMAGES,
 		IDB_STD_SMALL_COLOR,
@@ -270,7 +270,12 @@ int ToolSet::hitTest(const Point &pt)
 
 std::vector<Size> ToolSet::getPreferredSizes()
 { 
-  return mPreferredSizes;
+  return m_preferredSizes;
+}
+
+void ToolSet::onPreferredSize(Size &sz)
+{
+  sz = m_preferredSizes[getRows()];
 }
 
 bool ToolSet::onCommand(int id, int code, LRESULT &lResult)
@@ -314,9 +319,13 @@ bool ToolSet::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResu
   return Widget::wndProc(message, wParam, lParam, lResult);
 }
 
+/**
+ * Updates the preferred sizes of the tool-set when it has different
+ * number of rows.
+ */
 void ToolSet::updatePreferredSizes()
 {
-  mPreferredSizes.clear();
+  m_preferredSizes.clear();
 
   int maxRows = getButtonCount();
   int origRows = getRows();
@@ -329,15 +338,14 @@ void ToolSet::updatePreferredSizes()
     //////////////////////////////////////////////////////////////////////
 
     // add a null preferred size (for rows=0)
-    mPreferredSizes.push_back(Size(0, 0));
+    m_preferredSizes.push_back(Size(0, 0));
 
     // add a each preferred size for specified rows
     for (int rows=1; rows<=maxRows; ++rows)
-      mPreferredSizes.push_back(setRows(rows, false).getSize());
+      m_preferredSizes.push_back(setRows(rows, false).getSize());
 
     setRows(origRows, false);
   }
-
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -426,8 +434,8 @@ void ToolBar::onResizingFrame(DockFrame *frame, int edge, Rect &rc)
 {
   DockBar::onResizingFrame(frame, edge, rc);
 
-  Size prefSize = frame->preferredSize();
-  Size extraSize = prefSize - preferredSize();
+  Size prefSize = frame->getPreferredSize();
+  Size extraSize = prefSize - getPreferredSize();
   std::vector<Size> preferredSizes = mSet.getPreferredSizes();
   int rows, maxRows = preferredSizes.size()-1;
 
@@ -436,7 +444,7 @@ void ToolBar::onResizingFrame(DockFrame *frame, int edge, Rect &rc)
     // WMSZ_RIGHT
     if (edge == WMSZ_RIGHT && preferredSizes[rows].w+extraSize.w <= rc.w) {
       mSet.setRows(mRowsWhenFloating = rows, false);
-      prefSize = frame->preferredSize();
+      prefSize = frame->getPreferredSize();
       rc.setSize(prefSize);
       return;
     }
@@ -446,7 +454,7 @@ void ToolBar::onResizingFrame(DockFrame *frame, int edge, Rect &rc)
 //       prefSize = preferredSizes[rows] + extraSize;
 
       mSet.setRows(mRowsWhenFloating = rows, false);
-      prefSize = frame->preferredSize();
+      prefSize = frame->getPreferredSize();
       rc = Rect(Point(rc.x+rc.w-prefSize.w, rc.y), prefSize);
       return;
     }
@@ -456,7 +464,7 @@ void ToolBar::onResizingFrame(DockFrame *frame, int edge, Rect &rc)
 //       prefSize = preferredSizes[rows] + extraSize;
 
       mSet.setRows(mRowsWhenFloating = rows, false);
-      prefSize = frame->preferredSize();
+      prefSize = frame->getPreferredSize();
       rc.setSize(prefSize);
       return;
     }
@@ -466,7 +474,7 @@ void ToolBar::onResizingFrame(DockFrame *frame, int edge, Rect &rc)
 //       prefSize = preferredSizes[rows] + extraSize;
 
       mSet.setRows(mRowsWhenFloating = rows, false);
-      prefSize = frame->preferredSize();
+      prefSize = frame->getPreferredSize();
       rc = Rect(Point(rc.x, rc.y+rc.h-prefSize.h), prefSize);
       return;
     }

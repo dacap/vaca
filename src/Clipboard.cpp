@@ -38,7 +38,7 @@ using namespace Vaca;
 
 Clipboard::Clipboard(Widget *owner)
 {
-  mOwner = owner;
+  m_owner = owner;
 }
 
 Clipboard::~Clipboard()
@@ -47,7 +47,7 @@ Clipboard::~Clipboard()
 
 String Clipboard::getString() const
 {
-  HWND hwndOwner = mOwner ? mOwner->getHWND(): NULL;
+  HWND hwndOwner = m_owner ? m_owner->getHWND(): NULL;
   String str;
 
   if (!IsClipboardFormatAvailable(CF_TEXT)) 
@@ -72,13 +72,14 @@ String Clipboard::getString() const
 
 void Clipboard::setString(const String &str)
 {
-  HWND hwndOwner = mOwner ? mOwner->getHWND(): NULL;
+  HWND hwndOwner = m_owner ? m_owner->getHWND(): NULL;
 
   if (!OpenClipboard(hwndOwner))
     return;
 
   EmptyClipboard();
 
+  // NT, 2K and XP
   if (System::isWinNT_2K_XP()) {
     int len = str.size();
     HGLOBAL hglobal = GlobalAlloc(GMEM_MOVEABLE, sizeof(TCHAR)*(len+1));
@@ -92,9 +93,10 @@ void Clipboard::setString(const String &str)
     SetClipboardData(CF_TEXT, hglobal);
 #endif
   }
+  // 98, Me
   else {
 #ifdef _UNICODE
-    // TODO convert the str to ANSI a copy the content to Clipboard
+    // TODO convert the str to ANSI and copy the content to Clipboard
 #else
     int len = str.size();
     HGLOBAL hglobal = GlobalAlloc(GMEM_MOVEABLE, sizeof(TCHAR)*(len+1));

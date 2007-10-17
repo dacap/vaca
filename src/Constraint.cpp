@@ -38,6 +38,10 @@ Constraint::Constraint()
 {
 }
 
+Constraint::Constraint(const Constraint &constraint)
+{
+}
+
 Constraint::~Constraint()
 {
 }

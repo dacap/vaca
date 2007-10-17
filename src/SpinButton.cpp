@@ -59,15 +59,15 @@ SpinButton::~SpinButton()
 {
 }
 
-Size SpinButton::preferredSize()
-{
-  Widget *buddy = getBuddy();
+// Size SpinButton::preferredSize()
+// {
+//   Widget *buddy = getBuddy();
 
-  if (buddy != NULL)
-    return Size(17, buddy->preferredSize().h);
-  else
-    return Size(17, 17);
-}
+//   if (buddy != NULL)
+//     return Size(17, buddy->preferredSize().h);
+//   else
+//     return Size(17, 17);
+// }
 
 bool SpinButton::isHorizontal()
 {
@@ -156,6 +156,16 @@ Widget *SpinButton::getBuddy()
 void SpinButton::setBuddy(Widget *buddy)
 {
   sendMessage(UDM_SETBUDDY, reinterpret_cast<WPARAM>(buddy->getHWND()), 0);
+}
+
+void SpinButton::onPreferredSize(Size &sz)
+{
+  Widget *buddy = getBuddy();
+
+  if (buddy != NULL)
+    sz = Size(17, buddy->getPreferredSize().h);
+  else
+    sz = Size(17, 17);
 }
 
 void SpinButton::onChange(SpinButtonEvent &ev)

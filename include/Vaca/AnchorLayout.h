@@ -48,7 +48,7 @@ namespace Vaca {
  */
 class VACA_DLL AnchorLayout : public Layout
 {
-  Size mRefSize;
+  Size m_refSize;
 
 public:
 

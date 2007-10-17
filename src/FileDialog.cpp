@@ -45,19 +45,19 @@ using namespace Vaca;
 
 FileDialog::FileDialog(const String &title, Widget *parent)
   : CommonDialog(parent)
-  , mTitle(title)
-  , mDefaultExtension("")
-  , mShowReadOnly(false)
-  , mShowHelp(false)
-  , mDefaultFilter(0)
+  , m_title(title)
+  , m_defaultExtension("")
+  , m_showReadOnly(false)
+  , m_showHelp(false)
+  , m_defaultFilter(0)
 {
-  mFileName = new TCHAR[FILENAME_BUFSIZE];
-  ZeroMemory(mFileName, sizeof(TCHAR[FILENAME_BUFSIZE]));
+  m_fileName = new TCHAR[FILENAME_BUFSIZE];
+  ZeroMemory(m_fileName, sizeof(TCHAR[FILENAME_BUFSIZE]));
 }
 
 FileDialog::~FileDialog()
 {
-  delete mFileName;
+  delete m_fileName;
 }
 
 /**
@@ -65,7 +65,7 @@ FileDialog::~FileDialog()
  */
 void FileDialog::setTitle(const String &str)
 {
-  mTitle = str;
+  m_title = str;
 }
 
 /**
@@ -75,7 +75,7 @@ void FileDialog::setTitle(const String &str)
  */
 void FileDialog::setDefaultExtension(const String &str)
 {
-  mDefaultExtension = str;
+  m_defaultExtension = str;
 }
 
 /**
@@ -84,7 +84,7 @@ void FileDialog::setDefaultExtension(const String &str)
  */
 void FileDialog::setShowReadOnly(bool state)
 {
-  mShowReadOnly = state;
+  m_showReadOnly = state;
 }
 
 /**
@@ -93,44 +93,44 @@ void FileDialog::setShowReadOnly(bool state)
  */
 void FileDialog::setShowHelp(bool state)
 {
-  mShowHelp = state;
+  m_showHelp = state;
 }
 
 void FileDialog::addFilter(const String &extensions, const String &description, bool defaultFilter)
 {
-  mFilters.push_back(std::make_pair(extensions, description));
+  m_filters.push_back(std::make_pair(extensions, description));
 
   if (defaultFilter)
-    mDefaultFilter = mFilters.size();
+    m_defaultFilter = m_filters.size();
 }
 
 String FileDialog::getFileName()
 {
-  return String(mFileName);
+  return String(m_fileName);
 }
 
 void FileDialog::setFileName(const String &fileName)
 {
-  fileName.copyTo(mFileName, FILENAME_BUFSIZE);
+  fileName.copyTo(m_fileName, FILENAME_BUFSIZE);
 }
 
 LPTSTR FileDialog::getOriginalFileName()
 {
-  return mFileName;
+  return m_fileName;
 }
 
 bool FileDialog::doModal()
 {
-  // make the mFiltersString
-  mFiltersString.clear();
-  for (std::vector<std::pair<String, String> >::iterator it=mFilters.begin();
-       it!=mFilters.end(); ++it) {
-    mFiltersString.append(it->first);
-    mFiltersString.push_back('\0');
-    mFiltersString.append(it->second);
-    mFiltersString.push_back('\0');
+  // make the m_filtersString
+  m_filtersString.clear();
+  for (std::vector<std::pair<String, String> >::iterator it=m_filters.begin();
+       it!=m_filters.end(); ++it) {
+    m_filtersString.append(it->first);
+    m_filtersString.push_back('\0');
+    m_filtersString.append(it->second);
+    m_filtersString.push_back('\0');
   }
-  mFiltersString.push_back('\0');
+  m_filtersString.push_back('\0');
 
   // fill the OPENFILENAME structure
   OPENFILENAME ofn;
@@ -148,16 +148,16 @@ bool FileDialog::doModal()
 #endif
   ofn.hwndOwner = getParentHWND();
   ofn.hInstance = Application::getHINSTANCE();
-  ofn.lpstrFilter = mFiltersString.c_str();
+  ofn.lpstrFilter = m_filtersString.c_str();
   ofn.lpstrCustomFilter = NULL;
   ofn.nMaxCustFilter = 0;
-  ofn.nFilterIndex = mDefaultFilter;
-  ofn.lpstrFile = mFileName;
+  ofn.nFilterIndex = m_defaultFilter;
+  ofn.lpstrFile = m_fileName;
   ofn.nMaxFile = FILENAME_BUFSIZE;
   ofn.lpstrFileTitle = NULL;
   ofn.nMaxFileTitle = 0;
   ofn.lpstrInitialDir = NULL;
-  ofn.lpstrTitle = mTitle.c_str();
+  ofn.lpstrTitle = m_title.c_str();
   ofn.Flags = 0
 // #define OFN_CREATEPROMPT 0x2000
 // #define OFN_ENABLEHOOK 32
@@ -166,7 +166,7 @@ bool FileDialog::doModal()
 // #define OFN_ENABLETEMPLATEHANDLE 128
     | OFN_EXPLORER
 // #define OFN_EXTENSIONDIFFERENT 0x400
-    | (mShowReadOnly ? 0: OFN_HIDEREADONLY)
+    | (m_showReadOnly ? 0: OFN_HIDEREADONLY)
     | OFN_LONGNAMES
     | OFN_NOCHANGEDIR
 // | OFN_NODEREFERENCELINKS
@@ -177,7 +177,7 @@ bool FileDialog::doModal()
 // | OFN_NOVALIDATE
 // #define OFN_READONLY 1
 // #define OFN_SHAREAWARE 0x4000
-    | (mShowHelp ? OFN_SHOWHELP: 0)
+    | (m_showHelp ? OFN_SHOWHELP: 0)
     ;
 // | OFN_SHAREFALLTHROUGH
 // | OFN_SHARENOWARN
@@ -189,7 +189,7 @@ bool FileDialog::doModal()
 
   ofn.nFileOffset = 0;
   ofn.nFileExtension = 0;
-  ofn.lpstrDefExt = mDefaultExtension.c_str();
+  ofn.lpstrDefExt = m_defaultExtension.c_str();
   ofn.lCustData = 0;
   ofn.lpfnHook = NULL;
   ofn.lpTemplateName = NULL;
@@ -207,7 +207,7 @@ bool FileDialog::doModal()
 
 OpenFileDialog::OpenFileDialog(const String &title, Widget *parent)
   : FileDialog(title, parent)
-  , mMultiselect(false)
+  , m_multiselect(false)
 {
 }
 
@@ -220,14 +220,14 @@ OpenFileDialog::~OpenFileDialog()
  */
 void OpenFileDialog::setMultiselect(bool state)
 {
-  mMultiselect = state;
+  m_multiselect = state;
 }
 
 std::vector<String> OpenFileDialog::getFileNames()
 {
   std::vector<String> result;
 
-  if (mMultiselect) {
+  if (m_multiselect) {
     LPTSTR ptr, start;
     String path;
 
@@ -255,7 +255,7 @@ std::vector<String> OpenFileDialog::getFileNames()
 bool OpenFileDialog::showDialog(LPOPENFILENAME lpofn)
 {
   lpofn->Flags |= 0
-    | (mMultiselect ? OFN_ALLOWMULTISELECT: 0)
+    | (m_multiselect ? OFN_ALLOWMULTISELECT: 0)
     | OFN_FILEMUSTEXIST
     | OFN_PATHMUSTEXIST
     ;

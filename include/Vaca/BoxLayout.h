@@ -42,10 +42,10 @@ namespace Vaca {
 
 class VACA_DLL BoxLayout : public Layout
 {
-  Orientation mOrientation;
-  bool mHomogeneous;
-  int mBorder;
-  int mChildSpacing;
+  Orientation m_orientation;
+  bool m_homogeneous;
+  int m_border;
+  int m_childSpacing;
 
 public:
 
@@ -59,7 +59,13 @@ public:
 
   bool isHomogeneous();
 
-  virtual Size preferredSize(Widget *parent, Widget::Container &widgets, const Size &fitIn);
+  int getBorder();
+  void setBorder(int border);
+
+  int getChildSpacing();
+  void setChildSpacing(int childSpacing);
+
+  virtual Size getPreferredSize(Widget *parent, Widget::Container &widgets, const Size &fitIn);
 
 protected:
 

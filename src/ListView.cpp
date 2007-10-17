@@ -55,7 +55,7 @@ ListView::~ListView()
 
 void ListView::setBgColor(Color color)
 {
-  assert(getHWND() != NULL);
+  assert(::IsWindow(getHWND()));
 
   Widget::setBgColor(color);
   ListView_SetBkColor(getHWND(), color.getColorRef());
@@ -63,28 +63,28 @@ void ListView::setBgColor(Color color)
 
 Color ListView::getTextColor()
 {
-  assert(getHWND() != NULL);
+  assert(::IsWindow(getHWND()));
 
   return Color(ListView_GetTextColor(getHWND()));
 }
 
 void ListView::setTextColor(Color color)
 {
-  assert(getHWND() != NULL);
+  assert(::IsWindow(getHWND()));
 
   ListView_SetTextColor(getHWND(), color.getColorRef());
 }
 
 Color ListView::getTextBgColor()
 {
-  assert(getHWND() != NULL);
+  assert(::IsWindow(getHWND()));
 
   return Color(ListView_GetTextBkColor(getHWND()));
 }
 
 void ListView::setTextBgColor(Color color)
 {
-  assert(getHWND() != NULL);
+  assert(::IsWindow(getHWND()));
 
   ListView_SetTextBkColor(getHWND(), color.getColorRef());
 }
@@ -101,7 +101,7 @@ void ListView::setTextBgColor(Color color)
 
 // Size ListView::preferredSize(const Size &fitIn)
 // {
-//   assert(getHWND() != NULL);
+//   assert(::IsWindow(getHWND()));
 
 //   DWORD res =
 //     sendMessage(LVM_APPROXIMATEVIEWRECT,
@@ -145,7 +145,7 @@ void ListView::setViewType(ListView::Type type)
 
 void ListView::setImageList(ImageList *imageList, int type)
 {
-  assert(getHWND() != NULL);
+  assert(::IsWindow(getHWND()));
   assert(imageList != NULL && imageList->isValid());
 
   ListView_SetImageList(getHWND(), imageList->getHIMAGELIST(), type);
@@ -173,7 +173,7 @@ int ListView::addColumn(const String &header, TextAlign textAlign)
 
 int ListView::insertColumn(int columnIndex, const String &header, TextAlign textAlign)
 {
-  assert(getHWND() != NULL);
+  assert(::IsWindow(getHWND()));
 
   bool withDummyColumn = false;
   
@@ -196,7 +196,7 @@ int ListView::insertColumn(int columnIndex, const String &header, TextAlign text
     ;
   lvc.pszText = const_cast<LPTSTR>(header.c_str());
 
-  int res = ListView_InsertColumn(getHWND(), columnIndex, &lvc);
+  ListView_InsertColumn(getHWND(), columnIndex, &lvc);
 
   if (withDummyColumn) {
     removeDummyColumn();
@@ -214,7 +214,7 @@ int ListView::insertColumn(int columnIndex, const String &header, TextAlign text
  */
 void ListView::removeColumn(int columnIndex)
 {
-  assert(getHWND() != NULL);
+  assert(::IsWindow(getHWND()));
 
   // MSDN says that column with columnIndex == 0 can't be deleted, but
   // I tested it on Win2K and all work just fine
@@ -228,7 +228,7 @@ void ListView::removeColumn(int columnIndex)
  */
 int ListView::getColumnCount()
 {
-  assert(getHWND() != NULL);
+  assert(::IsWindow(getHWND()));
 
   HWND hHeader = ListView_GetHeader(getHWND());
   if (hHeader != NULL)
@@ -239,7 +239,7 @@ int ListView::getColumnCount()
 
 Rect ListView::getColumnBounds(int columnIndex)
 {
-  assert(getHWND() != NULL);
+  assert(::IsWindow(getHWND()));
 
   HWND hHeader = ListView_GetHeader(getHWND());
   if (hHeader != NULL) {
@@ -259,7 +259,7 @@ Rect ListView::getColumnBounds(int columnIndex)
  */
 int ListView::getColumnWidth(int columnIndex)
 {
-  assert(getHWND() != NULL);
+  assert(::IsWindow(getHWND()));
 
   return ListView_GetColumnWidth(getHWND(), columnIndex);
 }
@@ -271,7 +271,7 @@ int ListView::getColumnWidth(int columnIndex)
  */
 void ListView::setColumnWidth(int columnIndex, int width)
 {
-  assert(getHWND() != NULL);
+  assert(::IsWindow(getHWND()));
 
   ListView_SetColumnWidth(getHWND(), columnIndex, width);
 }
@@ -284,7 +284,7 @@ void ListView::setColumnWidth(int columnIndex, int width)
  */
 void ListView::setPreferredColumnWidth(int columnIndex, bool useHeader)
 {
-  assert(getHWND() != NULL);
+  assert(::IsWindow(getHWND()));
 
   ListView_SetColumnWidth(getHWND(),
 			  columnIndex,
@@ -309,7 +309,7 @@ int ListView::addItem(const String &text, int imageIndex)
  */
 int ListView::insertItem(int itemIndex, const String &text, int imageIndex)
 {
-  assert(getHWND() != NULL);
+  assert(::IsWindow(getHWND()));
 
   LVITEM lvi;
 
@@ -328,7 +328,7 @@ int ListView::insertItem(int itemIndex, const String &text, int imageIndex)
  */
 void ListView::removeItem(int itemIndex)
 {
-  assert(getHWND() != NULL);
+  assert(::IsWindow(getHWND()));
 
   ListView_DeleteItem(getHWND(), itemIndex);
 }
@@ -339,7 +339,7 @@ void ListView::removeItem(int itemIndex)
  */
 void ListView::removeAllItems()
 {
-  assert(getHWND() != NULL);
+  assert(::IsWindow(getHWND()));
 
   ListView_DeleteAllItems(getHWND());
 }
@@ -350,7 +350,7 @@ void ListView::removeAllItems()
  */
 int ListView::getItemCount()
 {
-  assert(getHWND() != NULL);
+  assert(::IsWindow(getHWND()));
   
   return ListView_GetItemCount(getHWND());
 }
@@ -361,7 +361,7 @@ int ListView::getItemCount()
  */
 Rect ListView::getItemBounds(int itemIndex, int code)
 {
-  assert(getHWND() != NULL);
+  assert(::IsWindow(getHWND()));
 
   RECT rc;
   if (ListView_GetItemRect(getHWND(), itemIndex, &rc, code))
@@ -377,7 +377,7 @@ Rect ListView::getItemBounds(int itemIndex, int code)
  */
 String ListView::getItemText(int itemIndex, int columnIndex)
 {
-  assert(getHWND() != NULL);
+  assert(::IsWindow(getHWND()));
 
   int size = 4096;		// TODO how to get the text length of
 				// the item?
@@ -397,7 +397,7 @@ String ListView::getItemText(int itemIndex, int columnIndex)
  */
 void ListView::setItemText(int itemIndex, const String &text, int columnIndex)
 {
-  assert(getHWND() != NULL);
+  assert(::IsWindow(getHWND()));
 
   ListView_SetItemText(getHWND(),
 		       itemIndex,
@@ -411,7 +411,7 @@ void ListView::setItemText(int itemIndex, const String &text, int columnIndex)
  */
 void ListView::editItemText(int itemIndex)
 {
-  assert(getHWND() != NULL);
+  assert(::IsWindow(getHWND()));
 
   // TODO it returns an HWND for the Edit control
   ListView_EditLabel(getHWND(), itemIndex);
@@ -423,7 +423,7 @@ void ListView::editItemText(int itemIndex)
  */
 // int ListView::getCurrentItem()
 // {
-//   assert(getHWND() != NULL);
+//   assert(::IsWindow(getHWND()));
 
 //   return ::ListView_GetSelectionMark(getHWND());
 // }
@@ -442,7 +442,7 @@ void ListView::editItemText(int itemIndex)
 
 // void ListView::sortItems(std::less<ListItem> functor)
 // {
-//   assert(getHWND() != NULL);
+//   assert(::IsWindow(getHWND()));
 
 //   ListView_SortItems(getHWND(),
 // 		     CompareListViewItems,

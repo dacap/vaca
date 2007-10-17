@@ -39,10 +39,12 @@
 
 namespace Vaca {
 
-#define PanelStyle		(ChildStyle +			\
-				 ClipChildrenStyle +		\
-				 Style(0, WS_EX_CONTROLPARENT))
+#define PanelStyle		(ChildStyle +		\
+				 ContainerStyle)
 
+/**
+ * Win32 class used by the Panel class.
+ */
 class PanelClass : public WidgetClass
 {
 public:

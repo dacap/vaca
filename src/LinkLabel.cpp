@@ -35,32 +35,50 @@
 #include "Vaca/MouseEvent.h"
 #include "Vaca/Cursor.h"
 #include "Vaca/Debug.h"
+#include "Vaca/Font.h"
+#include "Vaca/Brush.h"
+#include "Vaca/Pen.h"
+#include "Vaca/KeyEvent.h"
+
+#include <boost/algorithm/string/find.hpp>
 
 using namespace Vaca;
 
-LinkLabel::LinkLabel(const String &url, Widget *parent, Style style)
-  : CustomLabel(url, parent, style)
-  , mUrl(url)
+/**
+ * It creates a LinkLabel.
+ *
+ * @param urlOrText If it contains "www", "://", or "@@", the
+ *                  LinkLabel'll open the browser when it's clicked.
+ *                  If not, it's just like test, and you should hook
+ *                  the LinkLabel::Action signal or
+ *                  LinkLabel::onAction event.
+ */
+LinkLabel::LinkLabel(const String &urlOrText, Widget *parent, Style style)
+  : CustomLabel(urlOrText, parent, style)
 {
-  setText(url);
-  updateFont(getFont());
-  mTriState = Outside;
+  // is a URL?
+  if (urlOrText.find_first_of("www") != String::npos ||
+      urlOrText.find_first_of("://") != String::npos ||
+      urlOrText.find_first_of("@") != String::npos)
+    m_url = urlOrText;
+
+  init(urlOrText);
 }
 
 LinkLabel::LinkLabel(const String &url, const String &text, Widget *parent, Style style)
   : CustomLabel(text, parent, style)
-  , mUrl(url)
+  , m_url(url)
 {
-  setText(text);
-  updateFont(getFont());
-  mTriState = Outside;
+  init(text);
 }
 
 LinkLabel::~LinkLabel()
 {
+  if (m_underlineFont != NULL)
+    delete m_underlineFont;
 }
 
-void LinkLabel::setFont(Font &font)
+void LinkLabel::setFont(Font *font)
 {
   Widget::setFont(font);
 
@@ -81,15 +99,15 @@ Color LinkLabel::getHoverColor()
 /**
  * Draws the background and the label. By default, the background
  * color is getBgColor() and the label color is getLinkColor(), if the
- * mouse is over the label, it's drawn using the mUnderlineFont font and
+ * mouse is over the label, it's drawn using the m_underlineFont font and
  * the getHoverColor() color.
  */
 void LinkLabel::onPaint(Graphics &g)
 {
   Rect rc = getClientBounds();
+  Brush brush(getBgColor());
 
-  g.setColor(getBgColor());
-  g.fillRect(rc);
+  g.fillRect(brush, rc);
 
   Rect bounds = getLinkBounds(g);
   int flags = getFlagsForDrawString();
@@ -100,8 +118,8 @@ void LinkLabel::onPaint(Graphics &g)
     case RightAlign:  flags |= DT_RIGHT;  break;
   }
 
-  if (mTriState == Hover) {
-    g.setFont(mUnderlineFont);
+  if (m_state == Hover) {
+    g.setFont(m_underlineFont);
     g.setColor(getHoverColor());
   }
   else {
@@ -109,15 +127,20 @@ void LinkLabel::onPaint(Graphics &g)
     g.setColor(getLinkColor());
   }
 
+  // draw text
   if (isEnabled())
     g.drawString(getText(), bounds, flags);
   else
     g.drawDisabledString(getText(), bounds, flags);
+
+  // draw focus
+  if (hasFocus())
+    g.drawFocus(bounds);
 }
 
 void LinkLabel::onMouseEnter(MouseEvent &ev)
 {
-  mTriState = Inside;
+  m_state = Inside;
 }
 
 void LinkLabel::onMouseMove(MouseEvent &ev)
@@ -125,29 +148,26 @@ void LinkLabel::onMouseMove(MouseEvent &ev)
   ScreenGraphics g;
   Rect rc = getLinkBounds(g);
 
-  if (mTriState == Inside) {
+  if (m_state == Inside) {
     if (rc.contains(ev.getPoint())) {
       invalidate(true);
-//       setCursor(Cursor::Hand);
-      mTriState = Hover;
+      m_state = Hover;
     }
   }
-  else if (mTriState == Hover) {
+  else if (m_state == Hover) {
     if (!rc.contains(ev.getPoint())) {
       invalidate(true);
-//       setCursor(Cursor::Arrow);
-      mTriState = Inside;
+      m_state = Inside;
     }
   }
 }
 
 void LinkLabel::onMouseLeave()
 {
-  if (mTriState == Hover) {
+  if (m_state == Hover)
     invalidate(true);
-//     setCursor(Cursor::Arrow);
-  }
-  mTriState = Outside;
+
+  m_state = Outside;
 }
 
 /**
@@ -155,12 +175,10 @@ void LinkLabel::onMouseLeave()
  */
 void LinkLabel::onMouseDown(MouseEvent &ev)
 {
-  if (mTriState == Hover) {
-    if (!mUrl.empty())
-      ShellExecute(NULL, _T("open"), mUrl.c_str(), NULL, NULL, SW_SHOW);
-
-    Event subEv(this);
-    onAction(subEv);
+  if (m_state == Hover) {
+    acquireFocus();
+    
+    action();
   }
 }
 
@@ -169,13 +187,36 @@ void LinkLabel::onMouseDown(MouseEvent &ev)
  */
 void LinkLabel::onSetCursor(int hitTest)
 {
-  switch (mTriState) {
+  switch (m_state) {
     case Hover:
       setCursor(Cursor(HandCursor));
       break;
     default:
       setCursor(Cursor(ArrowCursor));
       break;
+  }
+}
+
+void LinkLabel::onGotFocus(Event &ev)
+{
+  CustomLabel::onGotFocus(ev);
+  invalidate(true);
+}
+
+void LinkLabel::onLostFocus(Event &ev)
+{
+  CustomLabel::onGotFocus(ev);
+  invalidate(true);
+}
+
+void LinkLabel::onKeyDown(KeyEvent &ev)
+{
+  CustomLabel::onKeyDown(ev);
+
+  if (hasFocus() &&
+      (ev.getKeyCode() == Keys::Space ||
+       ev.getKeyCode() == Keys::Enter)) {
+    action();
   }
 }
 
@@ -196,9 +237,32 @@ void LinkLabel::onAction(Event &ev)
   Action(ev);
 }
 
-void LinkLabel::updateFont(Font &font)
+void LinkLabel::init(String text)
 {
-  mUnderlineFont = Font(font, Font::Style::Underline);
+  m_underlineFont = NULL;
+
+  updateFont(getFont());
+  m_state = Outside;
+
+  setText(text);
+}
+
+void LinkLabel::action()
+{
+  if (!m_url.empty())
+    ShellExecute(NULL, _T("open"), m_url.c_str(), NULL, NULL, SW_SHOW);
+
+  Event ev(this);
+  onAction(ev);
+}
+
+void LinkLabel::updateFont(Font *font)
+{
+  assert(font != NULL);
+
+  if (m_underlineFont != NULL)
+    delete m_underlineFont;
+  m_underlineFont = new Font(*font, Font::Style::Underline);
 }
 
 Rect LinkLabel::getLinkBounds(Graphics &g)

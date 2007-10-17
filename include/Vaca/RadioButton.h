@@ -37,17 +37,19 @@
 namespace Vaca {
 
 #define RadioButtonStyle	(ChildStyle +			\
-				 TabStopStyle +			\
+				 FocusableStyle +		\
 				 Style(BS_RADIOBUTTON, 0))
   
 /**
- * Groups a set of @ref RadioButton "RadioButtons".
+ * Groups a set of @ref RadioButton "RadioButtons". It's used to known
+ * which RadioButton should be desactived when the user select a
+ * RadioButton of its same group.
  */
 class VACA_DLL RadioGroup
 {
   static int radioGroupCounter;
 
-  int mGroupId;
+  int m_groupId;
 
 public:
   RadioGroup();
@@ -57,8 +59,10 @@ public:
 };
 
 /**
- * Handles a radio button. It is not a BS_AUTORADIOBUTTON, it's only
- * an BS_RADIOBUTTON (so you can't have the Q261192 bug).
+ * Handles a radio button.
+ *
+ * @warning It is not a BS_AUTORADIOBUTTON, it's only an
+ *          BS_RADIOBUTTON (so you can't have the Q261192 bug).
  */
 class VACA_DLL RadioButton : public ButtonBase
 {

@@ -55,6 +55,10 @@ class Event;
 class KeyEvent;
 class Layout;
 class MouseEvent;
+class Widget;
+
+void VACA_DLL delete_widget(Widget *widget);
+void __internal_checked_delete_widget(Widget *widget);
 
 //////////////////////////////////////////////////////////////////////
 // Win32 Regular Window Styles
@@ -149,12 +153,13 @@ class MouseEvent;
 /**
  * Basic style for every child (WS_CHILD | WS_VISIBLE).
  */
-#define ChildStyle              (Style(WS_CHILD, 0) + VisibleStyle)
+#define ChildStyle              (Style(WS_CHILD | WS_VISIBLE, 0))
 
 /**
- * Style to receive the focus in Dialogs (WS_TABSTOP).
+ * Style to indicate that a Widget can receive the focus in Dialogs
+ * (WS_TABSTOP).
  */
-#define TabStopStyle            (Style(WS_TABSTOP, 0))
+#define FocusableStyle		(Style(WS_TABSTOP, 0))
 
 /**
  * The widget has both scroll bars (WS_HSCROLL | WS_VSCROLL).
@@ -170,8 +175,16 @@ class MouseEvent;
  */
 #define ClientEdgeStyle         (Style(0, WS_EX_CLIENTEDGE))
 
-#define ClipChildrenStyle	(Style(WS_CLIPCHILDREN, 0))
+/**
+ * Style for container widgets (WS_CLIPCHILDREN | WS_EX_CONTROLPARENT).
+ */
+// #define ClipChildrenStyle	(Style(WS_CLIPCHILDREN, 0))
+#define ContainerStyle		(Style(WS_CLIPCHILDREN,		\
+				       WS_EX_CONTROLPARENT))
 
+/**
+ * Use this style if you want to receive the onDropFiles() event.
+ */
 #define AcceptFilesStyle	(Style(0, WS_EX_ACCEPTFILES))
 
 /**
@@ -187,6 +200,17 @@ public:
 };
 
 /**
+ * Auxiliary structure to get scroll information.
+ */
+struct ScrollInfo
+{
+  int minPos, maxPos;
+  int pageSize;
+  int pos;
+  int trackPos;
+};
+
+/**
  * Base class for every control in an window.
  *
  * This is the core of Vaca, calls CreateWindowEx and DestroyWindow,
@@ -195,31 +219,38 @@ public:
 class VACA_DLL Widget : private boost::noncopyable
 		      , public Component
 {
+  friend void delete_widget(Widget *widget);
+  friend void Vaca::__internal_checked_delete_widget(Widget *widget);
+  
 public:
 
   typedef std::vector<Widget *> Container;
 
 private:
 
-  HWND        mHWND;     // The window handler to use with the Windows API.
-  Container   mChildren; // Collection of children of this widget.
-  Widget     *mParent;   // The parent widget.
-  Color       mFgColor;
-  Color       mBgColor;
-  Constraint *mConstraint;
-  Layout     *mLayout;
-  WNDPROC     mSuperWndProc;
-  bool        mDisposed : 1;	      // This widget was disposed before.
-  bool        mHasMouse : 1;	      // Flag to indicate that this widget has the mouse.
-  bool        mDeleteAfterEvent : 1;  // Flag to indicate that we must delete the widget after the event.
-//   bool        mDisposeAfterEvent : 1; // Flag to indicate that we must dispose the widget after the event.
-  bool        mDoubleBuffering : 1;   // Automatic double-buffering
-  int         mCriticalInner;         // Counts how many times we inner the globalWndProc using this widget.
-  Font       *mFont;
+  HWND        m_HWND;     // The window handler to use with the Windows API
+  Container   m_children; // Unsorted collection of children
+  Widget     *m_parent;   // The parent widget
+  Color       m_fgColor;
+  Color       m_bgColor;
+  Constraint *m_constraint;
+  Layout     *m_layout;
+  bool        m_hasMouse : 1;	      // Flag to indicate that this widget has the mouse.
+  bool        m_deleteAfterEvent : 1; // Flag to indicate that we must delete the widget after the event.
+  bool        m_doubleBuffered : 1;   // Use an automatic double-buffering technique
+  Font       *m_font;
+  Size       *m_preferredSize;
 
   // TODO something to remove this (it's only needed for onSetCursor)
-  WPARAM mWparam;
-  LPARAM mLparam;
+  WPARAM m_wparam;
+  LPARAM m_lparam;
+
+  ////////////////////////////////////////
+  // Special hooks...
+  WNDPROC m_baseWndProc;	        // procedure of the original Win32 control (like BUTTON or EDIT)
+  WNDPROC m_defWndProc;		        // used to replace the DefWindowProc by other procedure (like DefFrameProc)
+  void (*m_destroyHWNDProc)(HWND hwnd); // used by MdiChild to use WM_MDIDESTROY instead of DestroyWindow
+  ////////////////////////////////////////
 
 public:
 
@@ -239,20 +270,20 @@ public:
   virtual String getText();
   virtual void setText(const String &str);
 
-  virtual Font &getFont();
-  virtual void setFont(Font &font);
+  virtual Font *getFont();
+  virtual void setFont(Font *font);
 
   Style getStyle();
   void setStyle(Style style);
   void addStyle(Style style);
   void removeStyle(Style style);
 
-  bool getDoubleBuffering();
-  void setDoubleBuffering(bool useDoubleBuffering);
+  bool isDoubleBuffered();
+  void setDoubleBuffered(bool doubleBuffered);
 
   Rect getBounds();
   Rect getAbsoluteBounds();
-  virtual Rect getClientBounds();
+  Rect getClientBounds();
   Rect getAbsoluteClientBounds();
 
   // TODO public virtual
@@ -287,22 +318,34 @@ public:
   int getOpacity();
   void setOpacity(int opacity);
 
-//   Cursor &getCursor();
   void setCursor(const Cursor &cursor);
 
-  void focus();
+  void acquireFocus();
+  void releaseFocus();
   void acquireCapture();
   void releaseCapture();
-  bool hasCapture();
+  bool hasFocus();
   bool hasMouse();
+  bool hasMouseAbove();
+  bool hasCapture();
+
   void bringToTop();
+  void sendToBack();
+  void moveAfter(Widget *brother);
+  void moveBefore(Widget *brother);
 
-  int msgBox(String text, String title, int flags);
+  ScrollInfo getScrollInfo(Orientation orientation);
+  void setScrollInfo(Orientation orientation, const ScrollInfo &scrollInfo);
+  int getScrollPos(Orientation orientation);
+  void setScrollPos(Orientation orientation, int pos);
+  Point getScrollPoint();
+  void setScrollPoint(const Point &pt);
+  void hideScrollBar(Orientation orientation);
 
-//   Point getCursorPos();
-//   Point getAbsoluteCursorPos();
+//   void setTimer(int timerId, int millisecondsForTimeOut);
+//   void killTimer(int timerId);
 
-  void deleteAfterEvent();
+  int msgBox(const String &text, const String &title, int flags);
 
   int getThreadOwnerId();
 
@@ -312,17 +355,18 @@ public:
   static Widget *fromHWND(HWND hwnd);
   static WNDPROC getGlobalWndProc();
 
+  Size getPreferredSize();
+  Size getPreferredSize(const Size &fitIn);
+  void setPreferredSize(const Size &fixedSize);
+  
 //   virtual Size minimumSize();
-  virtual Size preferredSize();
-  virtual Size preferredSize(const Size &fitIn);
+//   virtual Size preferredSize();
+//   virtual Size preferredSize(const Size &fitIn);
 //   virtual Size maximumSize();
 
   virtual void layout();
   virtual bool isLayoutFree();
-  virtual bool wantArrowCursor();
-  virtual bool keepEnabledSynchronised();
-
-  void dispose();
+  
   virtual bool preTranslateMessage(MSG &msg);
   LRESULT sendMessage(UINT message, WPARAM wParam, LPARAM lParam);
 
@@ -337,20 +381,13 @@ public:
   boost::signal<void (Event &ev)> LostFocus; ///< @see onLostFocus
   boost::signal<void (DropFilesEvent &ev)> DropFiles; ///< @see onDropFiles
 
-  /**
-   * Fired after the wndProc and/or defWndProc processed the current
-   * message. When it's fired, all slots are disconnected, so if you
-   * bind something to this, the binded method/function will be called
-   * just one time, and then disconnected.
-   */
-//   boost::signal<void ()> AfterEvent;
-  
 protected:
 
   // new events
-  virtual void onDestroy();
+  virtual void onPreferredSize(Size &sz);
   virtual void onPaint(Graphics &g);
   virtual void onResize(const Size &sz);
+//   virtual void onTimer(int timerId);
   virtual void onMouseEnter(MouseEvent &ev);
   virtual void onMouseLeave();
   virtual void onMouseDown(MouseEvent &ev);
@@ -380,19 +417,17 @@ protected:
   // creation & message processing
   void create(LPCTSTR className, Widget *parent, Style style);
   void subClass();
+  LRESULT defWndProc(UINT message, WPARAM wParam, LPARAM lParam);
   virtual bool wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult);
-  virtual LRESULT defWndProc(UINT message, WPARAM wParam, LPARAM lParam);
 
   bool doPaint(Graphics &g);
+
+  void setDefWndProc(WNDPROC proc);
+  void setDestroyHWNDProc(void (*proc)(HWND));
 
 private:
 
   virtual HWND createHWND(LPCTSTR className, Widget *parent, Style style);
-  virtual void destroyHWND(HWND hwnd);
-  bool isDisposedAscendent();
-
-  Container getEnabledSynchronisedGroup();
-  // Container getLayoutFreeGroup();
 
   static LRESULT CALLBACK globalWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 

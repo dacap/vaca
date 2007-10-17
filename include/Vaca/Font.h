@@ -38,7 +38,7 @@
 namespace Vaca {
 
 /**
- * A text font.
+ * A font to be used in Graphics context.
  */
 class VACA_DLL Font
 {
@@ -59,8 +59,8 @@ private:
 
   static Font *defaultFont;
 
-  HFONT mHFONT;
-  bool mAutoDelete;
+  HFONT m_HFONT;
+  bool m_autoDelete;
 
 public:
 
@@ -74,7 +74,7 @@ public:
 
   bool isValid();
 
-  int getSize();
+  int getPointSize();
   Font::Style::Type getStyle();
 
   Font &operator=(const Font &font);
@@ -82,7 +82,7 @@ public:
   void assign(HFONT hfont);
   void assign(LPLOGFONT lplf);
 
-  static Font &getDefault();
+  static Font *getDefault();
 
 //   FontMetrics getMetrics();
 

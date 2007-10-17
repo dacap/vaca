@@ -1,4 +1,96 @@
+Vaca 0.0.5
+
+- about examples:
+  - rewritten the AnchorLayouts example.
+  - modified Sudoku example.
+  - removed Calendar example (AddressBook utility is better).
+  - removed SimpleWorld example (HelloWorld is good enough).
+  - removed Curves example (Maths replaced it).
+  - renamed TimerThread to ThreadKiller (to avoid confusion with
+    internal TimerThread class).
+  - new examples: AddressBook, AutoCompletion, BouncingBalls,
+    ComboBoxes, DataGrids, FontMetrics, Maths, PensBrushes.
+- fixed potential bugs for WM_DRAWITEM and WM_PAINT when the
+  area to draw is empty.
+- added focus to LinkLabel.
+- added Widget::setPreferredSize and Widget::getPreferredSize,
+  and renamed preferredSize to onPreferredSize.
+- renamed setDoubleBuffering -> setDoubleBuffered (like Java)
+- moved Widget::keepEnabledSynchronised -> Frame::keepSynchronized.
+- fixed double-buffering for CustomButton.
+- added Pen and Brush classes.
+- fixed Menu::getMdiListMenu.
+- renamed Widget::focus to Widget::acquireFocus.
+- added ComboBox widget.
+- added profile option for MinGW in Makefile.
+- added more Bind overloads.
+- finally done (and enhanced) all the memory management:
+  - removed "dispose", "isDisposedAscendent", "onDestroy", and
+    "deleteAfterEvent" methods of Widget class.
+  - removed "Widget::mDisposed" and "Widget::mCriticalInner" fields.
+  - added the "delete_widget" function in the Vaca namespace.
+  - added "ref", "unref", and "getRefCount" in Component.
+  - MenuBars should be used dynamically.
+- added all methods to control scroll and widget displacement:
+  - getScrollInfo, setScrollInfo;
+  - getScrollPos, setScrollPos;
+  - getScrollPoint, setScrollPoint;
+  - bringToTop, sendToBack, moveAfter, moveBefore;
+- removed Widget::wantArrowCursor (deprecated).
+- renamed TabStopStyle to FocusableStyle.
+- new widget style ContainerStyle: for all widgets that are containrs:
+  Frame, Panel, GroupBox, etc. (this style includes WS_CLIPCHILDREN and
+  WS_EX_CONTROLPARENT).
+- onDoubleClick() is automatically converted to onMouseDown() by
+  default.
+- added the Timer class (to control periodic tasks in milliseconds),
+  it doesn't uses the WM_TIMER message.
+- fixed Edit::preferredSize.
+- fixed double-buffering with clipping regions.
+- replaced postQuitMessage() (the WM_QUIT message isn't used anymore),
+  with breakMessageLoop() (using an internal flag).
+- better solution for onClose() event: now when a Frame is closed,
+  it's just hidden (like Dialogs). The message loop ends when all
+  frames are hidden (not disposed, just hidden).
+- getClientBounds() now isn't virtual (and it's like Win32
+  GetClientRect).
+- now GroupBox works (see PensBrushes example).
+
+Vaca 0.0.4
+
+- 11 new examples: BoxLayouts, CommandsAlt, Curves, FreeOfLayout,
+  Hashing, Images, MenuResource, MiniExplorer, Regions, StdCommands,
+  SystemImageList.
+- new addCommand/removeCommand in Frame.
+- merged "onHScroll" and "onVScroll" in "onScroll" event.
+- removed all onPower* events (you should use wndProc() for this kind
+  of specific tasks).
+- added automatic double-buffering option.
+- fixed Unicode support for Clipboard on Win2K/XP.
+- renamed "WidgetEvent" to "Event", and "WidgetEvent::getWidget" to
+  "Event::getSource".
+- added Component class.
+- removed VACA_ASSERT, use just "assert".
+- changed ProgressBar with a state-machine.
+- renamed getHwnd to getHWND (and all similar methods).
+- added TableLayout.
+- new Graphics::drawImageList
+- fixed TVN_GETDISPINFO for multi-threads.
+- fixed a lot of warnings (-Wall flag is activated now).
+- Tab::addPage split in addPage and insertPage.
+- renamed SpinButton::[gs]etPosition -> [gs]etValue.
+- renamed ListBox::getItemRect -> ListBox::getItemBounds.
+- added Widget::onDropFiles() and AcceptFilesStyle.
+- fixed the "double-click of dead" in ToolBars example (but still,
+  this examples has bugs, see BUGS.txt).
+- fixed preferred size of buttons on WinXP.
+- fixed "running on background" bug of ProgressBar example.
+- rewritten (fixed) the command-line parser in Application::run().
+- Graphics() constructor is protected, you should use ScreenGraphics()
+  to get a Graphics class to control the screen.
+
 Vaca 0.0.3
+
 - added VacaDoc.
 - new Scribble example.
 - new EyeDropper example.
@@ -25,6 +117,7 @@ Vaca 0.0.3
 - added Frame::onResizing and DockBar::onResizingFrame.
 
 Vaca 0.0.2
+
 - added thread support (Thread/MessengerThread/Mutex/ScopedLock).
 - renamed Widget::getWidgetPtr to Widget::getHwnd.
 - added Edit::preferredSize(fitIn).
@@ -61,6 +154,7 @@ Vaca 0.0.2
 - View class temporally deprecated.
 
 Vaca 0.0.1
+
 - Anchor, AnchorLayout, Application, BasicWidget, Bind, BoxLayout,
   Button, ButtonBase, CheckBox, ClientLayout, Clipboard, Color,
   Constraint, CustomColor, CustomLabel, Dialog, DockArea, Edit, Event,

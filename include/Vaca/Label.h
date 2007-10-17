@@ -102,14 +102,16 @@ public:
   virtual TextAlign getTextAlign();
   virtual void setTextAlign(TextAlign align);
 
-  virtual Size preferredSize();
-  virtual Size preferredSize(const Size &fitIn);
+//   virtual Size preferredSize();
+//   virtual Size preferredSize(const Size &fitIn);
 
 protected:
   
   bool useWordWrap();
   int getFlagsForDrawString();
 
+  // events
+  virtual void onPreferredSize(Size &sz);
   virtual void onResize(const Size &sz);
 
 };

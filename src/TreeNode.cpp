@@ -38,22 +38,22 @@
 using namespace Vaca;
 
 TreeNode::TreeNode(const String &text, int imageIndex, int selectedImageIndex)
-  : mText(text)
-  , mImage(imageIndex)
-  , mSelectedImage(selectedImageIndex)
+  : m_text(text)
+  , m_image(imageIndex)
+  , m_selectedImage(selectedImageIndex)
 {
-  mParent = NULL;
-  mHTREEITEM = NULL;
-  mOwner = NULL;
+  m_parent = NULL;
+  m_HTREEITEM = NULL;
+  m_owner = NULL;
 }
 
 TreeNode::~TreeNode()
 {
-  if (mOwner)
-    TreeView_DeleteItem(mOwner->getHWND(), mHTREEITEM);
+  if (m_owner)
+    TreeView_DeleteItem(m_owner->getHWND(), m_HTREEITEM);
 
-  for (Container::iterator it=mChildren.begin();
-       it!=mChildren.end(); ++it)
+  for (Container::iterator it=m_children.begin();
+       it!=m_children.end(); ++it)
     delete *it;
 }
 
@@ -63,26 +63,26 @@ TreeNode::~TreeNode()
  */
 void TreeNode::addNode(TreeNode *node)
 {
-  assert(node->mHTREEITEM == NULL && node->mParent == NULL);
+  assert(node->m_HTREEITEM == NULL && node->m_parent == NULL);
 
-  this->mChildren.push_back(node);
+  this->m_children.push_back(node);
 
-  node->mParent = this;
-  node->addToTreeView(this->mOwner);
+  node->m_parent = this;
+  node->addToTreeView(this->m_owner);
 }
 
 TreeNode *TreeNode::getParent()
 {
-  if (mOwner != NULL &&
-      &mOwner->mRoot == mParent)
+  if (m_owner != NULL &&
+      &m_owner->m_root == m_parent)
     return NULL;
   else
-    return mParent;
+    return m_parent;
 }
 
 TreeView *TreeNode::getTreeView()
 {
-  return mOwner;
+  return m_owner;
 }
 
 /**
@@ -91,12 +91,12 @@ TreeView *TreeNode::getTreeView()
  */
 TreeNode::Container TreeNode::getChildren()
 {
-  return mChildren;
+  return m_children;
 }
 
 /**
  * Returns true if this node should have the plus sign to be
- * expanded. The default implementation returns true if the mChildren
+ * expanded. The default implementation returns true if the m_children
  * member has elements. If you override this method isn't necessary to
  * call the base implementation.
  * 
@@ -112,7 +112,7 @@ TreeNode::Container TreeNode::getChildren()
  */
 bool TreeNode::hasChildren()
 {
-  return !mChildren.empty();
+  return !m_children.empty();
 }
 
 /**
@@ -131,7 +131,7 @@ bool TreeNode::hasChildren()
  */
 String TreeNode::getText()
 {
-  return mText;
+  return m_text;
 }
 
 /**
@@ -153,7 +153,7 @@ String TreeNode::getText()
  */
 int TreeNode::getImage()
 {
-  return mImage;
+  return m_image;
 }
 
 /**
@@ -165,7 +165,7 @@ int TreeNode::getImage()
  */
 int TreeNode::getSelectedImage()
 {
-  return mSelectedImage;
+  return m_selectedImage;
 }
 
 /**
@@ -175,7 +175,7 @@ int TreeNode::getSelectedImage()
  */
 void TreeNode::setText(const String &text)
 {
-  mText = text;
+  m_text = text;
 }
 
 /**
@@ -185,7 +185,7 @@ void TreeNode::setText(const String &text)
  */
 void TreeNode::setImage(int imageIndex)
 {
-  mImage = imageIndex;
+  m_image = imageIndex;
 }
 
 /**
@@ -195,12 +195,12 @@ void TreeNode::setImage(int imageIndex)
  */
 void TreeNode::setSelectedImage(int selectedImageIndex)
 {
-  mSelectedImage = selectedImageIndex;
+  m_selectedImage = selectedImageIndex;
 }
 
 HTREEITEM TreeNode::getHTREEITEM()
 {
-  return mHTREEITEM;
+  return m_HTREEITEM;
 }
 
 TreeNode *TreeNode::fromHTREEITEM(HWND hwnd, HTREEITEM htreeitem)
@@ -253,7 +253,7 @@ void TreeNode::onAfterSelect(TreeViewEvent &ev)
 }
 
 /**
- * The default implementation changes the mText field to be returned
+ * The default implementation changes the m_text field to be returned
  * in getText() only if @a ev wasn't canceled.
  * 
  */
@@ -261,18 +261,18 @@ void TreeNode::onAfterLabelEdit(TreeViewEvent &ev)
 {
   // if the event isn't cancelled, change the label
   if (!ev.isCanceled())
-    mText = ev.getLabel();
+    m_text = ev.getLabel();
 }
 
 void TreeNode::addToTreeView(TreeView *treeView)
 {
-  assert(mOwner == NULL);
+  assert(m_owner == NULL);
 
-  mOwner = treeView;
+  m_owner = treeView;
   if (treeView) {
     TVINSERTSTRUCT is;
 
-    is.hParent = mParent->mHTREEITEM;
+    is.hParent = m_parent->m_HTREEITEM;
     is.hInsertAfter = TVI_LAST;
     is.item.mask = TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_CHILDREN | TVIF_PARAM;
     is.item.pszText = LPSTR_TEXTCALLBACK;
@@ -281,12 +281,12 @@ void TreeNode::addToTreeView(TreeView *treeView)
     is.item.cChildren = I_CHILDRENCALLBACK;
     is.item.lParam = reinterpret_cast<LPARAM>(this);
 
-    mHTREEITEM = TreeView_InsertItem(treeView->getHWND(), &is);
+    m_HTREEITEM = TreeView_InsertItem(treeView->getHWND(), &is);
   }
 
-  for (Container::iterator it=mChildren.begin();
-       it!=mChildren.end(); ++it) {
-    if ((*it)->mOwner == NULL)
+  for (Container::iterator it=m_children.begin();
+       it!=m_children.end(); ++it) {
+    if ((*it)->m_owner == NULL)
       (*it)->addToTreeView(treeView);
   }
 }

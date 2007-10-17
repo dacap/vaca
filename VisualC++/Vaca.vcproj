@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="Vaca"
-	ProjectGUID="{626AD85E-341D-48D0-9D57-B5FA5A75C538}"
+	ProjectGUID="{4AC7E84C-F9DD-4EF1-B9BF-CB237E24026C}"
 	RootNamespace="Vaca"
 	Keyword="Win32Proj">
 	<Platforms>
@@ -36,7 +36,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ComCtl32.Lib Secur32.Lib MSImg32.Lib ShLwApi.Lib"
+				AdditionalDependencies="ComCtl32.Lib Secur32.Lib MSImg32.Lib ShLwApi.Lib winmm.Lib"
 				OutputFile="$(OutDir)/vaca.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;C:\boost_1_33_1\bin\boost\libs\signals\build\libboost_signals.lib\vc-7_1\debug\runtime-link-static\threading-multi&quot;;&quot;C:\boost_1_33_1\bin\boost\libs\signals\build\libboost_signals.lib\vc-7_1\debug\runtime-link-static&quot;"
@@ -224,6 +224,7 @@
 			<File RelativePath="..\src\BasicDockArea.cpp"></File>
 			<File RelativePath="..\src\BoxConstraint.cpp"></File>
 			<File RelativePath="..\src\BoxLayout.cpp"></File>
+			<File RelativePath="..\src\Brush.cpp"></File>
 			<File RelativePath="..\src\Button.cpp"></File>
 			<File RelativePath="..\src\ButtonBase.cpp"></File>
 			<File RelativePath="..\src\CancelableEvent.cpp"></File>
@@ -233,6 +234,7 @@
 			<File RelativePath="..\src\CloseEvent.cpp"></File>
 			<File RelativePath="..\src\Color.cpp"></File>
 			<File RelativePath="..\src\ColorDialog.cpp"></File>
+			<File RelativePath="..\src\ComboBox.cpp"></File>
 			<File RelativePath="..\src\Command.cpp"></File>
 			<File RelativePath="..\src\CommonDialog.cpp"></File>
 			<File RelativePath="..\src\Component.cpp"></File>
@@ -254,6 +256,7 @@
 			<File RelativePath="..\src\FontDialog.cpp"></File>
 			<File RelativePath="..\src\Frame.cpp"></File>
 			<File RelativePath="..\src\Graphics.cpp"></File>
+			<File RelativePath="..\src\GraphicsPath.cpp"></File>
 			<File RelativePath="..\src\GroupBox.cpp"></File>
 			<File RelativePath="..\src\Icon.cpp"></File>
 			<File RelativePath="..\src\Image.cpp"></File>
@@ -271,6 +274,7 @@
 			<File RelativePath="..\src\MouseEvent.cpp"></File>
 			<File RelativePath="..\src\Mutex.cpp"></File>
 			<File RelativePath="..\src\Panel.cpp"></File>
+			<File RelativePath="..\src\Pen.cpp"></File>
 			<File RelativePath="..\src\Point.cpp"></File>
 			<File RelativePath="..\src\ProgressBar.cpp"></File>
 			<File RelativePath="..\src\RadioButton.cpp"></File>
@@ -288,6 +292,7 @@
 			<File RelativePath="..\src\Tab.cpp"></File>
 			<File RelativePath="..\src\TableLayout.cpp"></File>
 			<File RelativePath="..\src\Thread.cpp"></File>
+			<File RelativePath="..\src\Timer.cpp"></File>
 			<File RelativePath="..\src\ToggleButton.cpp"></File>
 			<File RelativePath="..\src\ToolBar.cpp"></File>
 			<File RelativePath="..\src\TreeNode.cpp"></File>
@@ -308,8 +313,10 @@
 			<File RelativePath="..\include\Vaca\base.h"></File>
 			<File RelativePath="..\include\Vaca\BasicDockArea.h"></File>
 			<File RelativePath="..\include\Vaca\Bind.h"></File>
+			<File RelativePath="..\include\Vaca\Bix.h"></File>
 			<File RelativePath="..\include\Vaca\BoxConstraint.h"></File>
 			<File RelativePath="..\include\Vaca\BoxLayout.h"></File>
+			<File RelativePath="..\include\Vaca\Brush.h"></File>
 			<File RelativePath="..\include\Vaca\Button.h"></File>
 			<File RelativePath="..\include\Vaca\ButtonBase.h"></File>
 			<File RelativePath="..\include\Vaca\CancelableEvent.h"></File>
@@ -319,6 +326,7 @@
 			<File RelativePath="..\include\Vaca\CloseEvent.h"></File>
 			<File RelativePath="..\include\Vaca\Color.h"></File>
 			<File RelativePath="..\include\Vaca\ColorDialog.h"></File>
+			<File RelativePath="..\include\Vaca\ComboBox.h"></File>
 			<File RelativePath="..\include\Vaca\Command.h"></File>
 			<File RelativePath="..\include\Vaca\CommonDialog.h"></File>
 			<File RelativePath="..\include\Vaca\Component.h"></File>
@@ -334,6 +342,7 @@
 			<File RelativePath="..\include\Vaca\DockFrame.h"></File>
 			<File RelativePath="..\include\Vaca\DropFilesEvent.h"></File>
 			<File RelativePath="..\include\Vaca\Edit.h"></File>
+			<File RelativePath="..\include\Vaca\Enum.h"></File>
 			<File RelativePath="..\include\Vaca\Event.h"></File>
 			<File RelativePath="..\include\Vaca\Exception.h"></File>
 			<File RelativePath="..\include\Vaca\FileDialog.h"></File>
@@ -342,6 +351,7 @@
 			<File RelativePath="..\include\Vaca\FontDialog.h"></File>
 			<File RelativePath="..\include\Vaca\Frame.h"></File>
 			<File RelativePath="..\include\Vaca\Graphics.h"></File>
+			<File RelativePath="..\include\Vaca\GraphicsPath.h"></File>
 			<File RelativePath="..\include\Vaca\GroupBox.h"></File>
 			<File RelativePath="..\include\Vaca\Icon.h"></File>
 			<File RelativePath="..\include\Vaca\Image.h"></File>
@@ -361,6 +371,7 @@
 			<File RelativePath="..\include\Vaca\MouseEvent.h"></File>
 			<File RelativePath="..\include\Vaca\Mutex.h"></File>
 			<File RelativePath="..\include\Vaca\Panel.h"></File>
+			<File RelativePath="..\include\Vaca\Pen.h"></File>
 			<File RelativePath="..\include\Vaca\Point.h"></File>
 			<File RelativePath="..\include\Vaca\ProgressBar.h"></File>
 			<File RelativePath="..\include\Vaca\RadioButton.h"></File>
@@ -371,6 +382,7 @@
 			<File RelativePath="..\include\Vaca\ResourceException.h"></File>
 			<File RelativePath="..\include\Vaca\Scintilla.h"></File>
 			<File RelativePath="..\include\Vaca\ScopedLock.h"></File>
+			<File RelativePath="..\include\Vaca\SelfDestruction.h"></File>
 			<File RelativePath="..\include\Vaca\Size.h"></File>
 			<File RelativePath="..\include\Vaca\Slider.h"></File>
 			<File RelativePath="..\include\Vaca\SpinButton.h"></File>
@@ -381,6 +393,7 @@
 			<File RelativePath="..\include\Vaca\Tab.h"></File>
 			<File RelativePath="..\include\Vaca\TableLayout.h"></File>
 			<File RelativePath="..\include\Vaca\Thread.h"></File>
+			<File RelativePath="..\include\Vaca\Timer.h"></File>
 			<File RelativePath="..\include\Vaca\ToggleButton.h"></File>
 			<File RelativePath="..\include\Vaca\ToolBar.h"></File>
 			<File RelativePath="..\include\Vaca\TreeNode.h"></File>

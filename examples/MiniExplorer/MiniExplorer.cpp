@@ -29,7 +29,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/Vaca.h"
+#include <Vaca/Vaca.h>
 #include <boost/logic/tribool.hpp>
 
 #include <shlobj.h>
@@ -37,17 +37,18 @@
 
 using namespace Vaca;
 
-ImageList mImageList;
-
-LPMALLOC pMalloc = NULL;
-IShellFolder *pDesktop = NULL;
+namespace globals {
+  LPMALLOC pMalloc = NULL;
+  IShellFolder *pDesktop = NULL;
+}
 
 //////////////////////////////////////////////////////////////////////
 
 class FileTreeNode : public TreeNode
 {
-  LPITEMIDLIST mPidl, mRelativePidl;
-  boost::tribool mHasSubFolders;
+  LPITEMIDLIST m_pidl;
+  LPITEMIDLIST m_relativePidl;
+  boost::tribool m_hasSubFolders;
   
 public:
 
@@ -55,12 +56,12 @@ public:
   {
     // the PIDL
     if (pidlParent != NULL) {
-      mPidl = concatPidl(pidlParent, pidl);
-      mRelativePidl = pidl;
+      m_pidl = concatPidl(pidlParent, pidl);
+      m_relativePidl = pidl;
     }
     else {
-      mPidl = pidl;
-      mRelativePidl = pidl;
+      m_pidl = pidl;
+      m_relativePidl = pidl;
     }
 
     // setup text
@@ -69,7 +70,7 @@ public:
     // setup icon
     SHFILEINFO shfi;
     ZeroMemory(reinterpret_cast<PVOID>(&shfi), sizeof(shfi));
-    SHGetFileInfo(reinterpret_cast<LPTSTR>(mPidl), 0,
+    SHGetFileInfo(reinterpret_cast<LPTSTR>(m_pidl), 0,
 		  &shfi, sizeof(shfi),
 		  SHGFI_PIDL |
 		  SHGFI_SYSICONINDEX |
@@ -77,24 +78,24 @@ public:
     setImage(shfi.iIcon);
 
     // sub-folders
-    mHasSubFolders = boost::indeterminate;
+    m_hasSubFolders = boost::indeterminate;
   }
 
   virtual ~FileTreeNode()
   {
     // destroy PIDLs using IMalloc...
-    if (mRelativePidl != mPidl)
-      pMalloc->Free(mRelativePidl);
-    pMalloc->Free(mPidl);
+    if (m_relativePidl != m_pidl)
+      globals::pMalloc->Free(m_relativePidl);
+    globals::pMalloc->Free(m_pidl);
   }
 
   virtual bool hasChildren()
   {
     // calculate sub-folders?
-    if (boost::indeterminate(mHasSubFolders))
-      mHasSubFolders = findSubFolders();
+    if (boost::indeterminate(m_hasSubFolders))
+      m_hasSubFolders = findSubFolders();
 
-    return mHasSubFolders;
+    return m_hasSubFolders;
   }
 
 protected:
@@ -105,9 +106,9 @@ protected:
 
     // it's the desktop
     if (this->getParent() == NULL)
-      pFolder = pDesktop;
+      pFolder = globals::pDesktop;
     else
-      pDesktop->BindToObject(mPidl, NULL, IID_IShellFolder, (LPVOID *)&pFolder);
+      globals::pDesktop->BindToObject(m_pidl, NULL, IID_IShellFolder, (LPVOID *)&pFolder);
 
     if (pFolder != NULL) {
       if (getChildren().empty()) {
@@ -115,27 +116,27 @@ protected:
 	LPITEMIDLIST itemPidl = NULL;
 	ULONG fetched;
 
-	mHasSubFolders = false;	// right now, it hasn't sub-folders
+	m_hasSubFolders = false;	// right now, it hasn't sub-folders
 
 	pFolder->EnumObjects(NULL, SHCONTF_FOLDERS, &pEnum);
 
 	if (pEnum != NULL) {
 	  while (pEnum->Next(1, &itemPidl, &fetched) == S_OK && fetched == 1) {
-	    this->addNode(new FileTreeNode(itemPidl, mPidl));
+	    this->addNode(new FileTreeNode(itemPidl, m_pidl));
 
-	    if (mHasSubFolders != true)
-	      mHasSubFolders = true; // well, now it has sub-folders
+	    if (m_hasSubFolders != true)
+	      m_hasSubFolders = true; // well, now it has sub-folders
 	  }
 
 	  pEnum->Release();
 	}
       }
 
-      if (pFolder != pDesktop)
+      if (pFolder != globals::pDesktop)
 	pFolder->Release();
     }
     else
-      mHasSubFolders = false;
+      m_hasSubFolders = false;
   }
 
 private:
@@ -149,23 +150,23 @@ private:
     IShellFolder *pFolder = NULL;
 
     if (this->getParent() == NULL)
-      pFolder = pDesktop;
+      pFolder = globals::pDesktop;
     else
-      pDesktop->BindToObject(dynamic_cast<FileTreeNode *>(getParent())->mPidl,
-			     NULL, IID_IShellFolder, (LPVOID *)&pFolder);
+      globals::pDesktop->BindToObject(dynamic_cast<FileTreeNode *>(getParent())->m_pidl,
+				      NULL, IID_IShellFolder, (LPVOID *)&pFolder);
 
     if (pFolder != NULL) {
-      if (pFolder->GetDisplayNameOf(mRelativePidl, SHGDN_INFOLDER, &strDispName) != S_OK) {
-	if (pDesktop->GetDisplayNameOf(mPidl, SHGDN_INFOLDER, &strDispName) != S_OK) {
+      if (pFolder->GetDisplayNameOf(m_relativePidl, SHGDN_INFOLDER, &strDispName) != S_OK) {
+	if (globals::pDesktop->GetDisplayNameOf(m_pidl, SHGDN_INFOLDER, &strDispName) != S_OK) {
 	  assert(false);
 	}
       }
 
-      if (pFolder != pDesktop)
+      if (pFolder != globals::pDesktop)
 	pFolder->Release();
     }
     
-    StrRetToBuf(&strDispName, mPidl, pszDisplayName, MAX_PATH);
+    StrRetToBuf(&strDispName, m_pidl, pszDisplayName, MAX_PATH);
     return pszDisplayName;
   }
 
@@ -175,15 +176,15 @@ private:
     IShellFolder *pFolder = NULL;
 
     if (this->getParent() == NULL)
-      pFolder = pDesktop;
+      pFolder = globals::pDesktop;
     else
-      pDesktop->BindToObject(dynamic_cast<FileTreeNode *>(getParent())->mPidl,
-			     NULL, IID_IShellFolder, (LPVOID *)&pFolder);
+      globals::pDesktop->BindToObject(dynamic_cast<FileTreeNode *>(getParent())->m_pidl,
+				      NULL, IID_IShellFolder, (LPVOID *)&pFolder);
 
     if (pFolder != NULL) {
-      pFolder->GetAttributesOf(1, (LPCITEMIDLIST *)&mRelativePidl, &attr);
+      pFolder->GetAttributesOf(1, (LPCITEMIDLIST *)&m_relativePidl, &attr);
 
-      if (pFolder != pDesktop)
+      if (pFolder != globals::pDesktop)
 	pFolder->Release();
     }
 
@@ -198,7 +199,7 @@ private:
     UINT cb1 = getPidlSize(pidlHead) - sizeof(pidlHead->mkid.cb);
     UINT cb2 = getPidlSize(pidlTail);
 
-    LPITEMIDLIST pidlNew = (LPITEMIDLIST)pMalloc->Alloc(cb1 + cb2);
+    LPITEMIDLIST pidlNew = (LPITEMIDLIST)globals::pMalloc->Alloc(cb1 + cb2);
     if (pidlNew) {
       CopyMemory(pidlNew, pidlHead, cb1);
       CopyMemory(((LPSTR)pidlNew) + cb1, pidlTail, cb2);
@@ -235,28 +236,28 @@ private:
 
 class MainFrame : public Frame
 {
-  TreeView mTreeView;
+  TreeView m_treeView;
+  ImageList m_imageList;
 
 public:
 
   MainFrame()
     : Frame("MiniExplorer")
-    , mTreeView(this, TreeViewStyle - EditLabelTreeViewStyle)
+    , m_treeView(this, TreeViewStyle - EditLabelTreeViewStyle)
   {
-    // the mTreeView will use all the client area
+    // the m_treeView will use all the client area
     setLayout(new ClientLayout);
 
     // set the small system image list for the TreeView
-    System::getImageList(mImageList, true);
-    mTreeView.setNormalImageList(mImageList);
+    System::getImageList(m_imageList, true);
+    m_treeView.setNormalImageList(m_imageList);
 
     // get the desktop PIDL
     LPITEMIDLIST pidl = NULL;
     SHGetFolderLocation(NULL, CSIDL_DESKTOP, NULL, 0, &pidl);
 
     // add the root node (for the desktop)
-    mTreeView.addNode(new FileTreeNode(pidl, NULL// , pDesktop, NULL
-				       ));
+    m_treeView.addNode(new FileTreeNode(pidl, NULL));
   }
 
 };
@@ -265,7 +266,7 @@ public:
 
 class Example : public Application
 {
-  MainFrame *mMainWnd;
+  MainFrame *m_mainFrame;
 
 public:
 
@@ -274,33 +275,33 @@ public:
     // the Application constructor calls CoInitialize...
 
     // get IMalloc interface
-    SHGetMalloc(&pMalloc);
+    SHGetMalloc(&globals::pMalloc);
 
     // get desktop IShellFolder interface
-    SHGetDesktopFolder(&pDesktop);
+    SHGetDesktopFolder(&globals::pDesktop);
 
     // create MainFrame
-    mMainWnd = new MainFrame;
+    m_mainFrame = new MainFrame;
   }
 
   virtual ~Example()
   {
     // destroy MainFrame
-    delete mMainWnd;
+    delete m_mainFrame;
 
     // relase desktop IShellFolder interface
-    pDesktop->Release();
+    globals::pDesktop->Release();
     
     // release IMalloc interface
-    pMalloc->Release();
-    pMalloc = NULL;
+    globals::pMalloc->Release();
+    globals::pMalloc = NULL;
 
     // the Application destructor calls CoUninitialize...
   }
 
   virtual void main(std::vector<String> args)
   {
-    mMainWnd->setVisible(true);
+    m_mainFrame->setVisible(true);
   }
   
 };

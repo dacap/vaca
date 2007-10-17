@@ -46,8 +46,8 @@ namespace Vaca {
  * only way to register the class before and automatically, is using
  * multiple-inheritance.
  *
- * Here is an example that show you how you can register your own
- * widget class before to create it:
+ * Here is an example that show how you can register your own widget
+ * class before to create it:
  *
  * @code
  * class MyWidgetClass : public WidgetClass
@@ -85,6 +85,8 @@ public:
   static LPCTSTR getClassName() { return _T("Vaca.Widget"); }
 
   /**
+   * Returns the set of CS_ Win32 flags.
+   * 
    * All Widgets by default received double-clicks, so it returns
    * CS_DBLCLKS.
    * 

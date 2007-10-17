@@ -46,6 +46,11 @@ Label::~Label()
 {
 }
 
+/**
+ * Returns the current text alignment.
+ *
+ * @return #CenterAlign, #RightAlign, #LeftAlign
+ */
 TextAlign Label::getTextAlign()
 {
   int style = getStyle().regular;
@@ -59,6 +64,8 @@ TextAlign Label::getTextAlign()
 }
 
 /**
+ * Sets the text alignment.
+ * 
  * @warning You can't change the text-alignment of a label with the
  *          SS_SIMPLE style.
  */
@@ -84,29 +91,25 @@ void Label::setTextAlign(TextAlign align)
   }
 }
 
-Size Label::preferredSize()
-{
-  ScreenGraphics g;
-  g.setFont(getFont());
-  return g.measureString(getText());
-}
+// Size Label::preferredSize()
+// {
+//   ScreenGraphics g;
+//   g.setFont(getFont());
+//   return g.measureString(getText());
+// }
 
-/**
- * Uses Win32 GetTextExtentExPoint to returns the preferred size for
- * the "fitIn" size.
- */
-Size Label::preferredSize(const Size &fitIn)
-{
-  // TODO HTHEME stuff
+// Size Label::preferredSize(const Size &fitIn)
+// {
+//   // TODO HTHEME stuff
   
-  if ((fitIn.w > 0) && useWordWrap()) {
-    ScreenGraphics g;
-    g.setFont(getFont());
-    return g.measureString(getText(), fitIn.w);
-  }
+//   if ((fitIn.w > 0) && useWordWrap()) {
+//     ScreenGraphics g;
+//     g.setFont(getFont());
+//     return g.measureString(getText(), fitIn.w);
+//   }
 
-  return preferredSize();
-}
+//   return preferredSize();
+// }
 
 bool Label::useWordWrap()
 {
@@ -126,6 +129,23 @@ int Label::getFlagsForDrawString()
     return DT_WORDBREAK;
   else
     return DT_SINGLELINE;
+}
+
+/**
+ * Uses Win32 GetTextExtentExPoint to returns the preferred size when
+ * sz > Size(0,0).
+ */
+void Label::onPreferredSize(Size &sz)
+{
+  // TODO HTHEME stuff
+
+  ScreenGraphics g;
+  g.setFont(getFont());
+
+  if ((sz.w > 0) && useWordWrap())
+    sz = g.measureString(getText(), sz.w);
+  else
+    sz = g.measureString(getText());
 }
 
 /**

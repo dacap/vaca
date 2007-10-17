@@ -31,6 +31,8 @@
 
 #include "stdvaca.h"
 #include "Vaca/GroupBox.h"
+#include "Vaca/Point.h"
+#include "Vaca/Brush.h"
 
 using namespace Vaca;
 
@@ -42,4 +44,73 @@ GroupBox::GroupBox(const String &text, Widget *parent, Style style)
 
 GroupBox::~GroupBox()
 {
+}
+
+Rect GroupBox::getLayoutBounds()
+{
+  ScreenGraphics g;
+
+  g.setFont(getFont());
+  Size sz =
+    g.measureString(getText());
+
+  Rect rc(getClientBounds());
+
+  return Rect(rc.x+4, rc.y+sz.h, rc.w-8, rc.h-sz.h-4);
+}
+
+Size GroupBox::getNonClientSize()
+{
+  ScreenGraphics g;
+
+  g.setFont(getFont());
+  Size sz =
+    g.measureString(getText());
+  
+  return Size(4+4, sz.h+4);
+}
+
+// Size GroupBox::preferredSize()
+// {
+//   return getNonClientSize() + Widget::preferredSize();
+// }
+
+// Size GroupBox::preferredSize(const Size &fitIn)
+// {
+//   Size ncSize(getNonClientSize());
+
+//   return
+//     ncSize +
+//     Widget::preferredSize(Size(VACA_MAX(0, fitIn.w - ncSize.w),
+// 			       VACA_MAX(0, fitIn.h - ncSize.h)));
+// }
+
+void GroupBox::onPreferredSize(Size &sz)
+{
+  Size ncSize = getNonClientSize();
+  
+  if (sz.w > 0 || sz.h > 0) {
+    sz = Size(VACA_MAX(0, sz.w - ncSize.w),
+	      VACA_MAX(0, sz.h - ncSize.h));
+  }
+
+  Widget::onPreferredSize(sz);
+  sz += ncSize;
+}
+
+bool GroupBox::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult)
+{
+  // fix a bug with group-boxes: they don't clear the background
+  if (message == WM_ERASEBKGND) {
+    HDC hdc = reinterpret_cast<HDC>(wParam);
+    Graphics g(hdc);
+    Brush brush(getBgColor());
+    
+    g.fillRect(brush, g.getClipBounds());
+
+    lResult = TRUE;
+    return true;
+  }
+  
+  return Widget::wndProc(message, wParam, lParam, lResult);
 }

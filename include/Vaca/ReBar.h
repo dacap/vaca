@@ -40,7 +40,7 @@
 namespace Vaca {
 
 #define ReBarStyle		(ChildStyle +				\
-				 ClipChildrenStyle +			\
+				 ContainerStyle +			\
 				 Style(WS_CLIPSIBLINGS |		\
 				       RBS_BANDBORDERS |		\
 				       RBS_DBLCLKTOGGLE,		\
@@ -49,7 +49,6 @@ namespace Vaca {
 
 /**
  * TODO
- * 
  */
 class VACA_DLL ReBar : public Widget
 {

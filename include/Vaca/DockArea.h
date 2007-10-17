@@ -69,7 +69,7 @@ class VACA_DLL DockArea : public Register<DockAreaClass>, public Widget
 {
   friend class DockBar;
 
-  Side mSide;
+  Side m_side;
 
 public:
 
@@ -112,7 +112,7 @@ public:
    */
   virtual void drawXorDockInfoShape(Graphics &g, DockInfo *dockInfo) = 0;
 
-  virtual Size preferredSize() = 0;
+//   virtual Size preferredSize() = 0;
 
   /**
    * Lays out all dock bars inside the dock area using the DockInfo of
@@ -128,13 +128,14 @@ private:
   void removeDockBar(DockBar *dockBar);
 
 protected:
+  // events
+  virtual void onPreferredSize(Size &sz) = 0;
+//   virtual void onDestroy();
+
   // new events
   virtual void onAddDockBar(DockBar *dockBar);
   virtual void onRemoveDockBar(DockBar *dockBar);
   virtual void onRedock(DockBar *dockBar, DockInfo *newDockInfo);
-
-  // events
-  void onDestroy();
 
 };
 

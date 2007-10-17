@@ -38,11 +38,11 @@ using namespace Vaca;
 MouseEvent::MouseEvent(Widget *source, Point point, int clicks,
 		       int flags, MouseButtons::Type trigger, int delta)
   : Event(source)
-  , mPoint(point)
-  , mClicks(clicks)
-  , mFlags(flags)
-  , mTrigger(trigger)
-  , mDelta(delta)
+  , m_point(point)
+  , m_clicks(clicks)
+  , m_flags(flags)
+  , m_trigger(trigger)
+  , m_delta(delta)
 {
 }
 
@@ -55,7 +55,7 @@ MouseEvent::~MouseEvent()
  */
 int MouseEvent::getX() const
 {
-  return mPoint.x;
+  return m_point.x;
 }
 
 /**
@@ -63,7 +63,7 @@ int MouseEvent::getX() const
  */
 int MouseEvent::getY() const
 {
-  return mPoint.y;
+  return m_point.y;
 }
 
 /**
@@ -72,7 +72,7 @@ int MouseEvent::getY() const
  */
 Point MouseEvent::getPoint() const
 {
-  return mPoint;
+  return m_point;
 }
 
 /**
@@ -83,7 +83,7 @@ Point MouseEvent::getPoint() const
  */
 int MouseEvent::getClicks() const
 {
-  return mClicks;
+  return m_clicks;
 }
 
 /**
@@ -92,40 +92,40 @@ int MouseEvent::getClicks() const
  */
 MouseButtons::Type MouseEvent::getButton() const
 {
-  return mTrigger;
+  return m_trigger;
 }
 
 bool MouseEvent::isLeftButtonPressed() const
 {
-  return (mFlags & MK_LBUTTON) != 0;
+  return (m_flags & MK_LBUTTON) != 0;
 }
 
 bool MouseEvent::isRightButtonPressed() const
 {
-  return (mFlags & MK_RBUTTON) != 0;
+  return (m_flags & MK_RBUTTON) != 0;
 }
 
 bool MouseEvent::isMiddleButtonPressed() const
 {
-  return (mFlags & MK_MBUTTON) != 0;
+  return (m_flags & MK_MBUTTON) != 0;
 }
 
 bool MouseEvent::isShiftKeyPressed() const
 {
-  return (mFlags & MK_SHIFT) != 0;
+  return (m_flags & MK_SHIFT) != 0;
 }
 
 bool MouseEvent::isControlKeyPressed() const
 {
-  return (mFlags & MK_CONTROL) != 0;
+  return (m_flags & MK_CONTROL) != 0;
 }
 
 bool MouseEvent::isAltKeyPressed() const
 {
-  return (mFlags & MK_ALT) != 0;
+  return (m_flags & MK_ALT) != 0;
 }
 
 int MouseEvent::getDelta() const
 {
-  return mDelta;
+  return m_delta;
 }

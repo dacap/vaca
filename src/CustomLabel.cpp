@@ -37,8 +37,8 @@ using namespace Vaca;
 
 CustomLabel::CustomLabel(const String &text, Widget *parent, Style style)
   : Label(text, parent, style)
+  , m_textAlign(LeftAlign)
 {
-  mTextAlign = LeftAlign;
 }
 
 CustomLabel::~CustomLabel()
@@ -47,12 +47,12 @@ CustomLabel::~CustomLabel()
 
 TextAlign CustomLabel::getTextAlign()
 {
-  return mTextAlign;
+  return m_textAlign;
 }
 
 void CustomLabel::setTextAlign(TextAlign align)
 {
-  mTextAlign = align;
+  m_textAlign = align;
   invalidate(true);
 }
 

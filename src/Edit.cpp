@@ -134,23 +134,53 @@ void Edit::deselect()
   sendMessage(EM_SETSEL, static_cast<WPARAM>(-1), 0);
 }
 
-Size Edit::preferredSize()
-{
-  return preferredSize(Size(0, 0));
-}
+// Size Edit::preferredSize()
+// {
+//   return preferredSize(Size(0, 0));
+// }
 
-Size Edit::preferredSize(const Size &fitIn)
+// Size Edit::preferredSize(const Size &fitIn)
+// {
+//   Size textSize;
+//   Style style = getStyle();
+//   Size border(0, 0);
+
+//   // client-edge borders
+//   if ((style.extended & WS_EX_CLIENTEDGE) != 0)
+//     border +=
+//       Size(4, 4)+
+//       (Size(GetSystemMetrics(SM_CXEDGE),
+// 	    GetSystemMetrics(SM_CYEDGE))*2);
+
+//   // scroll bars
+//   if (style.regular & WS_HSCROLL) border.h += GetSystemMetrics(SM_CYHSCROLL);
+//   if (style.regular & WS_VSCROLL) border.w += GetSystemMetrics(SM_CXVSCROLL);
+
+//   {
+//     ScreenGraphics g;
+//     g.setFont(getFont());
+// //     textSize = g.measureString(getText(), fitIn.w == 0 ? 32767: fitIn.w-border.w,
+// // 			       ((style.regular & ES_AUTOHSCROLL) != 0) ? 0: DT_WORDBREAK);
+// //     textSize = g.measureString(getText(), 32767, 0);
+// //     textSize.h *= sendMessage(EM_GETLINECOUNT, 0, 0);
+
+// //     textSize = g.measureString(getText(), fitIn.w == 0 ? 32767: fitIn.w-border.w,
+// // 			       ((style.regular & ES_AUTOHSCROLL) != 0) ? 0: DT_WORDBREAK);
+
+//     Size realSize(g.measureString(getText(), 32767, 0));
+//     int lines = sendMessage(EM_GETLINECOUNT, 0, 0);
+
+//     textSize.w = realSize.w;
+//     textSize.h = lines * g.measureString("", 32767, 0).h;
+//   }
+
+//   return textSize+border;
+// }
+
+void Edit::onPreferredSize(Size &sz)
 {
   Size textSize;
   Style style = getStyle();
-    
-  {
-    ScreenGraphics g;
-    g.setFont(getFont());
-    textSize = g.measureString(getText(), fitIn.w == 0 ? 32767: fitIn.w,
-			       ((style.regular & ES_MULTILINE) != 0) ? DT_WORDBREAK: 0);
-  }
-
   Size border(0, 0);
 
   // client-edge borders
@@ -164,7 +194,25 @@ Size Edit::preferredSize(const Size &fitIn)
   if (style.regular & WS_HSCROLL) border.h += GetSystemMetrics(SM_CYHSCROLL);
   if (style.regular & WS_VSCROLL) border.w += GetSystemMetrics(SM_CXVSCROLL);
 
-  return textSize+border;
+  {
+    ScreenGraphics g;
+    g.setFont(getFont());
+//     textSize = g.measureString(getText(), fitIn.w == 0 ? 32767: fitIn.w-border.w,
+// 			       ((style.regular & ES_AUTOHSCROLL) != 0) ? 0: DT_WORDBREAK);
+//     textSize = g.measureString(getText(), 32767, 0);
+//     textSize.h *= sendMessage(EM_GETLINECOUNT, 0, 0);
+
+//     textSize = g.measureString(getText(), fitIn.w == 0 ? 32767: fitIn.w-border.w,
+// 			       ((style.regular & ES_AUTOHSCROLL) != 0) ? 0: DT_WORDBREAK);
+
+    Size realSize(g.measureString(getText(), 32767, 0));
+    int lines = sendMessage(EM_GETLINECOUNT, 0, 0);
+
+    textSize.w = realSize.w;
+    textSize.h = lines * g.measureString("", 32767, 0).h;
+  }
+
+  sz = textSize+border;
 }
 
 void Edit::onChange(Event &ev)
@@ -231,14 +279,14 @@ MultilineEdit::~MultilineEdit()
 bool MultilineEdit::getWantReturnMode()
 {
   HWND hwnd = getHWND();
-  assert(hwnd != NULL);
+  assert(::IsWindow(hwnd));
   return (GetWindowLong(hwnd, GWL_STYLE) & ES_WANTRETURN) != 0 ? true: false;
 }
 
 void MultilineEdit::setWantReturnMode(bool wantReturn)
 {
   HWND hwnd = getHWND();
-  assert(hwnd != NULL);
+  assert(::IsWindow(hwnd));
   int style = GetWindowLong(hwnd, GWL_STYLE) & ~ES_WANTRETURN;
   SetWindowLong(hwnd, GWL_STYLE, style | (wantReturn ? ES_WANTRETURN: 0));
 }

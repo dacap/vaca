@@ -44,10 +44,10 @@ class Graphics;
  */
 class VACA_DLL Image
 {
-  HDC mFromHDC;
-  Size mSize;
-  HBITMAP mHBITMAP;
-  Graphics *mGraphics;
+  HDC m_fromHDC;
+  Size m_size;
+  HBITMAP m_HBITMAP;
+  Graphics *m_graphics;
 
 public:
 
@@ -55,7 +55,7 @@ public:
   Image(int imageId);
   Image(const Size &sz);
   Image(const Size &sz, int bpp);
-  Image(Graphics &g, const Size &sz);
+  Image(const Size &sz, Graphics &g);
   Image(const Image &image);
   virtual ~Image();
 

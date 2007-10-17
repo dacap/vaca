@@ -42,11 +42,11 @@ namespace Vaca {
 /**
  * Thrown when Register can't registers the WidgetClass.
  */
-class RegisterFailedException : public Exception
+class RegisterException : public Exception
 {
 public:
 
-  RegisterFailedException()
+  RegisterException()
   {
   }
 
@@ -90,7 +90,7 @@ public:
       wcex.hIconSm       = NULL;//LoadIcon(wcex.hInstance, (LPCTSTR)IDI_SMALL);
 
       if (RegisterClassEx(&wcex) == 0)
-	throw RegisterFailedException();
+	throw RegisterException();
     }
   }
 

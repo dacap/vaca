@@ -39,7 +39,7 @@ using namespace Vaca;
 
 CommonDialog::CommonDialog(Widget *parent)
 {
-  mParent = parent;
+  m_parent = parent;
 }
 
 CommonDialog::~CommonDialog()
@@ -48,10 +48,10 @@ CommonDialog::~CommonDialog()
 
 Widget *CommonDialog::getParent()
 {
-  return mParent;
+  return m_parent;
 }
 
 HWND CommonDialog::getParentHWND()
 {
-  return mParent != NULL ? mParent->getHWND(): NULL;
+  return m_parent != NULL ? m_parent->getHWND(): NULL;
 }

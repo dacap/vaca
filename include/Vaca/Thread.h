@@ -38,6 +38,7 @@
 
 namespace Vaca {
 
+class Frame;
 class Widget;
 
 /**
@@ -76,12 +77,17 @@ class Widget;
  */
 class VACA_DLL Thread : private boost::noncopyable
 {
-  bool mJoinable;
-  HANDLE mHANDLE;
-  DWORD mId;
-  int mFrameCount;
+  friend class Frame;
+
+  bool   m_joinable;
+  HANDLE m_handle;
+  DWORD  m_id;
+  int    m_frameCount;
+  bool   m_breakLoop;
 
 public:
+
+  typedef MSG Message;
 
   Thread(bool useCurrent = false);
   virtual ~Thread();
@@ -107,23 +113,23 @@ public:
   //////////////////////////////////////////////////////////////////////
   // For threads with message queue
 
-  virtual void postQuitMessage();
-
   virtual void doMessageLoop();
   virtual void doMessageLoopFor(Widget *widget);
 
   virtual void pumpMessageQueue();
-
-  bool hasFrames();
-  void addFrame();
-  void removeFrame();
+  virtual void breakMessageLoop();
 
 protected:
 
-  virtual bool getMessage(MSG &msg);
-  virtual bool peekMessage(MSG &msg);
-  virtual void processMessage(MSG &msg);
-  virtual bool preTranslateMessage(MSG &msg);
+  virtual bool getMessage(Message &msg);
+  virtual bool peekMessage(Message &msg);
+  virtual void processMessage(Message &msg);
+  virtual bool preTranslateMessage(Message &msg);
+
+private:
+
+  void addFrame();
+  void removeFrame();
 
 };
 

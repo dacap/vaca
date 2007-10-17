@@ -31,48 +31,49 @@
 
 #include <time.h>
 
-#include "Vaca/Vaca.h"
+#include <Vaca/Vaca.h>
 #include "resource.h"
 
 using namespace Vaca;
 
 class MainFrame : public Frame
 {
-  Image mVacaImage;
-  Point mVacaOrigin;
-  Image mMouseImage;
-  Point mMousePoint;
+  Image m_vacaImage;
+  Point m_vacaOrigin;
+  Image m_mouseImage;
+  Point m_mousePoint;
 
 public:
 
   MainFrame()
     : Frame("Images")
-    , mVacaImage(IDB_VACA)
-    , mMouseImage(Size(64, 64))
+    , m_vacaImage(IDB_VACA)
+    , m_mouseImage(Size(64, 64))
   {
-    // set the Frame's size to the mVacaImage's size (plus the
+    setDoubleBuffered(true);
+    
+    // set the Frame's size to the m_vacaImage's size (plus the
     // non-client size needed by the Frame's borders)
-    setSize(getNonClientSize() + mVacaImage.getSize());
+    setSize(getNonClientSize() + m_vacaImage.getSize());
 
     // the background color is white
     setBgColor(Color::White);
 
     // draw the image controlled by the mouse
-    Graphics &g = mMouseImage.getGraphics();
-    Size sz = mMouseImage.getSize();
+    Graphics &g = m_mouseImage.getGraphics();
+    Size sz = m_mouseImage.getSize();
 
     // ...clear the background
-    g.setColor(Color::Black);
-    g.fillRect(Rect(sz));
+    Brush brush(Color::Black);
+    g.fillRect(brush, Rect(sz));
 
     // ...draw the scope
-    g.setColor(Color::Red);
-    g.setPenSize(3);
-    g.drawEllipse(Rect(sz).shrink(4));
+    Pen pen(Color::Red, 3);
+    g.drawEllipse(pen, Rect(sz).shrink(4));
 
-    g.setPenSize(1);
-    g.drawLine(0, sz.h/2, sz.w, sz.h/2);
-    g.drawLine(sz.w/2, 0, sz.w/2, sz.h);
+    pen.setWidth(1);
+    g.drawLine(pen, 0, sz.h/2, sz.w, sz.h/2);
+    g.drawLine(pen, sz.w/2, 0, sz.w/2, sz.h);
 
     // center the frame
     center();
@@ -82,42 +83,39 @@ protected:
 
   virtual void onMouseMove(MouseEvent &ev)
   {
-    // invalidate the current area under by the mMouseImage
-    invalidate(Rect(mMousePoint -
-		    Point(mMouseImage.getSize()/2),
-		    mMouseImage.getSize()), false);
+    // invalidate the current area under by the m_mouseImage
+    invalidate(Rect(m_mousePoint -
+		    Point(m_mouseImage.getSize()/2),
+		    m_mouseImage.getSize()), false);
 
     // new mouse position
-    mMousePoint = ev.getPoint();
+    m_mousePoint = ev.getPoint();
 
-    // invalidate the new area under by the mMouseImage
-    invalidate(Rect(mMousePoint -
-		    Point(mMouseImage.getSize()/2),
-		    mMouseImage.getSize()), false);
-  }
-
-  virtual void onDoubleClick(MouseEvent &ev)
-  {
-    onMouseDown(ev);
+    // invalidate the new area under by the m_mouseImage
+    invalidate(Rect(m_mousePoint -
+		    Point(m_mouseImage.getSize()/2),
+		    m_mouseImage.getSize()), false);
   }
 
   virtual void onMouseDown(MouseEvent &ev)
   {
-    Graphics &g = mVacaImage.getGraphics();
+    Graphics &g = m_vacaImage.getGraphics();
     int d = 8+(rand()%13);
     Size sz = Size(d, d);
-    Point pt = ev.getPoint() - mVacaOrigin;
+    Point pt = ev.getPoint() - m_vacaOrigin;
 
-    g.setColor(Color::Red);
-    g.fillEllipse(Rect(pt - Point(sz/2), sz));
+    Brush redBrush(Color::Red);
+    g.fillEllipse(redBrush, Rect(pt - Point(sz/2), sz));
+
+    Pen redPen(Color::Red);	// TODO remove this, use GraphicsPath
 
     for (int c=0; c<5; c++) {
       g.beginPath();
       g.moveTo(pt);
-      g.lineTo(pt + Point((rand()%5)-2, (rand()%5)-2));
-      g.lineTo(pt + Point((rand()%65)-32, (rand()%65)-32));
+      g.lineTo(redPen, pt + Point((rand()%5)-2, (rand()%5)-2));
+      g.lineTo(redPen, pt + Point((rand()%65)-32, (rand()%65)-32));
       g.endPath();
-      g.fillPath();
+      g.fillPath(redBrush);
     }
 
     invalidate(false);
@@ -141,33 +139,22 @@ protected:
       Frame::onSetCursor(hitTest);
   }
 
-  virtual void onPaint(Graphics &gDest)
+  virtual void onPaint(Graphics &g)
   {
-    Size size = getClientBounds().getSize();
-    Image image(gDest, size); // Create the image for double-buffering
-    Graphics &g(image.getGraphics()); // Get the Graphics to draw in the image
-    Rect bounds = Rect(size);	      // Area where we can draw
+    m_vacaOrigin =
+      Point(getClientBounds().getCenter()) -
+      Point(m_vacaImage.getSize()/2);
 
-    g.setColor(getBgColor());
-    g.fillRect(bounds);
-
-    mVacaOrigin =
-      Point(bounds.getCenter()) -
-      Point(mVacaImage.getSize()/2);
-
-    g.drawImage(mVacaImage, mVacaOrigin);
+    g.drawImage(m_vacaImage, m_vacaOrigin);
 
     // Widget::hasMouse is a method to known if the widget has the
     // mouse inside
     if (hasMouse())
-      g.drawImage(mMouseImage,
-		  mMousePoint -
-		  Point(mMouseImage.getSize()/2),
+      g.drawImage(m_mouseImage,
+		  m_mousePoint -
+		  Point(m_mouseImage.getSize()/2),
 		  // the "background color" or "mask color" is Black
 		  Color::Black);
-
-    // draw the image on "gDest"
-    gDest.drawImage(image, getClientBounds().getOrigin());
   }
 
   virtual void onResize(const Size &sz)
@@ -182,10 +169,10 @@ protected:
 
 class Example : public Application
 {
-  MainFrame mMainWnd;
+  MainFrame m_mainFrame;
 
   virtual void main(std::vector<String> args) {
-    mMainWnd.setVisible(true);
+    m_mainFrame.setVisible(true);
   }
 };
 

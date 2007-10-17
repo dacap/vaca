@@ -46,8 +46,8 @@ class TreeNode;
  */
 class VACA_DLL TreeViewEvent : public CancelableEvent
 {
-  TreeNode *mTreeNode;
-  String mLabel;
+  TreeNode *m_treeNode;
+  String    m_label;
 
 public:
 

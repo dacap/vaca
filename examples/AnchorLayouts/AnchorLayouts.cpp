@@ -29,134 +29,193 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/Vaca.h"
+#include <Vaca/Vaca.h>
 
 using namespace Vaca;
 
-//////////////////////////////////////////////////////////////////////
+static Side sides[4] = { LeftSide, TopSide, RightSide, BottomSide };
+static Borders borders[4] = { LeftBorder, TopBorder, RightBorder, BottomBorder };
 
-class MyMdiChild : public MdiChild
+class AnchoredWidget : public Panel
 {
+  Anchor m_anchor;
+  Borders m_hotBorders;
+  
 public:
 
-  MyMdiChild(String title, MdiFrame *parent)
-    : MdiChild(title, parent)
+  AnchoredWidget(const Anchor &anchor, Widget *parent)
+    : Panel(parent)
+    , m_anchor(anchor)
   {
-    // this child can't be maximized (we can't specify this style in
-    // the MdiChild() constructor, see TN005)
-    removeStyle(MaximizableFrameStyle);
+    setBgColor(Color::White);
+    setFgColor(Color::Black);
+
+    setConstraint(&m_anchor);
   }
 
-};
-
-//////////////////////////////////////////////////////////////////////
-
-class AnchorChild : public MyMdiChild
-{
-  Button mButton;
-
-public:
-
-  AnchorChild(String title, Borders borders, MdiFrame *parent)
-    : MyMdiChild(title, parent)
-    , mButton("", this)
+  virtual ~AnchoredWidget()
   {
-    setLayout(new AnchorLayout(Size(40, 40)));
-    mButton.setConstraint(new Anchor(Rect(10, 10, 20, 20), borders));
+    setConstraint(NULL);
   }
 
-};
+protected:
 
-//////////////////////////////////////////////////////////////////////
-
-class MixedChild : public MyMdiChild
-{
-  Button mButtonCenter;
-  Button mButtonLeft;
-  Button mButtonTop;
-  Button mButtonRight;
-  Button mButtonBottom;
-
-public:
-
-  MixedChild(String title, MdiFrame *parent)
-    : MyMdiChild(title, parent)
-    , mButtonCenter("", this)
-    , mButtonLeft("", this)
-    , mButtonTop("", this)
-    , mButtonRight("", this)
-    , mButtonBottom("", this)
+  virtual void onResize(const Size &sz)
   {
-    setLayout(new AnchorLayout(Size(90, 90)));
-    mButtonCenter.setConstraint(new Anchor(Rect(30, 30, 30, 30), AllBorders));
-    mButtonLeft.setConstraint(new Anchor(Rect(10, 30, 15, 30), LeftBorder | TopBorder | BottomBorder));
-    mButtonTop.setConstraint(new Anchor(Rect(30, 10, 30, 15), TopBorder | LeftBorder | RightBorder));
-    mButtonRight.setConstraint(new Anchor(Rect(70, 30, 15, 30), RightBorder | TopBorder | BottomBorder));
-    mButtonBottom.setConstraint(new Anchor(Rect(30, 70, 30, 15), BottomBorder | LeftBorder | RightBorder));
+    Panel::onResize(sz);
+    invalidate(true);
   }
 
-};
-
-//////////////////////////////////////////////////////////////////////
-
-class RefRectChild : public MyMdiChild
-{
-  GroupBox mGroupBox1;
-  GroupBox mGroupBox2;
-
-public:
-
-  RefRectChild(String title, MdiFrame *parent)
-    : MyMdiChild(title, parent)
-    , mGroupBox1("All borders", this)
-    , mGroupBox2("None", this)
+  virtual void onPaint(Graphics &g)
   {
-    setLayout(new AnchorLayout(Size(40, 40)));
-    mGroupBox1.setConstraint(new Anchor(Rect(0, 0, 40, 40), AllBorders));
-    mGroupBox2.setConstraint(new Anchor(Rect(0, 0, 40, 40), NoBorder));
+    Rect rc(getClientBounds());
+
+    Pen pen(getFgColor());
+    g.drawRect(pen, rc);
+
+    for (int c=0; c<4; ++c)
+      drawRect(g, getSideRect(sides[c]), borders[c]);
   }
 
+  virtual void onMouseDown(MouseEvent &ev)
+  {
+    for (int c=0; c<4; ++c)
+      if (getSideRect(sides[c]).contains(ev.getPoint())) {
+	m_anchor.setBorders(m_anchor.getBorders() ^ borders[c]);
+	getParent()->layout();
+	invalidate(true);
+      }
+  }
+
+  virtual void onMouseMove(MouseEvent &ev)
+  {
+    for (int c=0; c<4; ++c) {
+      if (getSideRect(sides[c]).contains(ev.getPoint())) {
+	if ((m_hotBorders & borders[c]) == 0) {
+	  m_hotBorders |= borders[c];
+	  invalidate(true);
+	}
+      }
+      else if ((m_hotBorders & borders[c]) == borders[c]) {
+	m_hotBorders &= ~borders[c];
+	invalidate(true);
+      }
+    }
+  }
+
+  virtual void onMouseLeave()
+  {
+    if (m_hotBorders != 0) {
+      m_hotBorders = 0;
+      invalidate(true);
+    }
+  }
+  
+private:
+
+  void drawRect(Graphics &g, const Rect &rc, Borders b)
+  {
+    Color color((m_hotBorders & b) == b ? Color::Yellow:
+					  getFgColor());
+    
+    if ((m_anchor.getBorders() & b) == b) {
+      Brush brush(color);
+      g.fillRect(brush, rc);
+    }
+    else {
+      Pen pen(color);
+      g.drawRect(pen, rc);
+    }
+  }
+
+  Rect getSideRect(Side side)
+  {
+    Rect rc(getClientBounds());
+    
+    switch (side) {
+      case LeftSide:   return Rect(rc.x,        rc.y,        8, rc.h);
+      case TopSide:    return Rect(rc.x,        rc.y,        rc.w, 8);
+      case RightSide:  return Rect(rc.x+rc.w-8, rc.y,        8, rc.h);
+      case BottomSide: return Rect(rc.x,        rc.y+rc.h-8, rc.w, 8);
+    }
+
+    throw;
+  }
+  
 };
 
-//////////////////////////////////////////////////////////////////////
-
-class MainFrame : public MdiFrame
+class MainFrame : public Frame
 {
-  AnchorChild child1;
-  AnchorChild child2;
-  AnchorChild child3;
-  AnchorChild child4;
-  AnchorChild child5;
-  AnchorChild child6;
-  MixedChild child7;
-  RefRectChild child8;
+  Size m_refSize;
+  Size m_minSize;
+  AnchoredWidget m_allWidget;
+  AnchoredWidget m_leftWidget;
+  AnchoredWidget m_topWidget;
+  AnchoredWidget m_rightWidget;
+  AnchoredWidget m_bottomWidget;
 
 public:
 
   MainFrame()
-    : MdiFrame("AnchorLayouts")
-    , child1("Without anchors", NoBorder, this)
-    , child2("With left, top, and bottom anchors", LeftBorder | TopBorder | BottomBorder, this)
-    , child3("With right, top, and bottom anchors", RightBorder | TopBorder | BottomBorder, this)
-    , child4("With top, left, and right anchors", TopBorder | LeftBorder | RightBorder, this)
-    , child5("With bottom, left, and right anchors", BottomBorder | LeftBorder | RightBorder, this)
-    , child6("With all anchors", AllBorders, this)
-    , child7("Mixed anchors", this)
-    , child8("References", this)
+    : Frame("AnchorLayouts")
+    , m_allWidget   (Anchor(Rect( 48,  48, 160, 160), AllBorders), this)
+    , m_leftWidget  (Anchor(Rect(  8,  48,  32, 160), LeftBorder |  TopBorder  | BottomBorder), this)
+    , m_topWidget   (Anchor(Rect( 48,   8, 160,  32), TopBorder |  LeftBorder | RightBorder), this)
+    , m_rightWidget (Anchor(Rect(216,  48,  32, 160), RightBorder | TopBorder  | BottomBorder), this)
+    , m_bottomWidget(Anchor(Rect( 48, 216, 160,  32), BottomBorder | LeftBorder | RightBorder), this)
   {
+    m_refSize = Size(256, 256);
+    setLayout(new AnchorLayout(m_refSize));
+    setSize(m_minSize = getPreferredSize() + m_refSize);
   }
 
+protected:
+
+  virtual void onResize(const Size &sz)
+  {
+    Frame::onResize(sz);
+    invalidate(true);
+  }
+
+  virtual void onResizing(int edge, Rect &rc)
+  {
+    if (rc.w < m_minSize.w) {
+      if (edge == WMSZ_LEFT ||
+	  edge == WMSZ_TOPLEFT ||
+	  edge == WMSZ_BOTTOMLEFT)
+	rc.x = rc.x+rc.w-m_minSize.w;
+      rc.w = m_minSize.w;
+    }
+
+    if (rc.h < m_minSize.h) {
+      if (edge == WMSZ_TOP ||
+	  edge == WMSZ_TOPLEFT ||
+	  edge == WMSZ_TOPRIGHT)
+	rc.y = rc.y+rc.h-m_minSize.h;
+      rc.h = m_minSize.h;
+    }
+  }
+
+  virtual void onPaint(Graphics &g)
+  {
+    Rect rc(getClientBounds());
+    Pen pen(getBgColor()*1.2);
+
+    g.drawRect(pen, Rect(rc.getCenter() - Point(m_refSize/2), m_refSize));
+  }
+
+private:
+  
 };
 
 //////////////////////////////////////////////////////////////////////
 
 class Example : public Application
 {
-  MainFrame mMainWnd;
+  MainFrame m_mainFrame;
 public:
   virtual void main(std::vector<String> args) {
-    mMainWnd.setVisible(true);
-    mMainWnd.getMdiClient().tileHorizontal();
+    m_mainFrame.setVisible(true);
   }
 };
 

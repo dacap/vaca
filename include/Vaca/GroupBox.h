@@ -36,11 +36,13 @@
 
 namespace Vaca {
 
-#define GroupBoxStyle		(ChildStyle +		\
+#define GroupBoxStyle		(ChildStyle +				\
+				 ContainerStyle +			\
 				 Style(BS_GROUPBOX, 0))
 
 /**
- * Handles a group box.
+ * An edge (with a label optionally) that can be used to group
+ * sub-widgets.
  */
 class VACA_DLL GroupBox : public Widget
 {
@@ -48,6 +50,20 @@ public:
 
   GroupBox(const String &text, Widget *parent, Style style = GroupBoxStyle);
   virtual ~GroupBox();
+
+  virtual Rect getLayoutBounds();
+
+  Size getNonClientSize();
+
+//   virtual Size preferredSize();
+//   virtual Size preferredSize(const Size &fitIn);
+
+protected:
+
+  // events
+  virtual void onPreferredSize(Size &sz);
+
+  virtual bool wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult);
 
 };
 

@@ -59,7 +59,7 @@ public:
 
 private:
 
-  COLORREF mColorRef;
+  COLORREF m_colorRef;
 
 public:
 
@@ -74,6 +74,11 @@ public:
 
   Color negative();
   Color toBlackAndWhite();
+
+  Color &operator=(const Color &color);
+
+  bool operator==(const Color &color) const;
+  bool operator!=(const Color &color) const;
 
   Color operator+(const Color &color) const;
   Color operator-(const Color &color) const;

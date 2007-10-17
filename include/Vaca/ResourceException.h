@@ -38,7 +38,6 @@ namespace Vaca {
 
 /**
  * A resource (from exe or from an external file) can't be loaded.
- * 
  */
 class ResourceException : public Exception
 {

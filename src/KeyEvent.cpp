@@ -37,8 +37,8 @@ using namespace Vaca;
 
 KeyEvent::KeyEvent(Widget *source, Keys::Type keys)
   : Event(source)
-  , mConsumed(false)
-  , mKeys(keys)
+  , m_consumed(false)
+  , m_keys(keys)
 {
 }
 
@@ -48,35 +48,35 @@ KeyEvent::~KeyEvent()
 
 void KeyEvent::consume()
 {
-  mConsumed = true;
+  m_consumed = true;
 }
 
 bool KeyEvent::isConsumed() const
 {
-  return mConsumed;
+  return m_consumed;
 }
 
 Keys::Type KeyEvent::getKeyCode() const
 {
-  return mKeys & Keys::KeyCode;
+  return m_keys & Keys::KeyCode;
 }
 
 Keys::Type KeyEvent::getModifiers() const
 {
-  return mKeys & Keys::Modifiers;
+  return m_keys & Keys::Modifiers;
 }
 
 bool KeyEvent::isShift() const
 {
-  return (mKeys & Keys::Shift  ) != 0;
+  return (m_keys & Keys::Shift  ) != 0;
 }
 
 bool KeyEvent::isControl() const
 {
-  return (mKeys & Keys::Control) != 0;
+  return (m_keys & Keys::Control) != 0;
 }
 
 bool KeyEvent::isAlt() const
 {
-  return (mKeys & Keys::Alt    ) != 0;
+  return (m_keys & Keys::Alt    ) != 0;
 }

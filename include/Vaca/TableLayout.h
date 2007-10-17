@@ -41,7 +41,7 @@ namespace Vaca {
 
 class VACA_DLL TableLayout : public Layout
 {
-  int mCols, mRows;
+  int m_cols, m_rows;
 
 public:
 

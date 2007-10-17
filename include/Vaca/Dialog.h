@@ -40,7 +40,7 @@ namespace Vaca {
 
 /**
  * This style hides the icon of the Dialog frame. You can remove this
- * style if you want to see a icon in the title bar of the Dialog.
+ * style if you want to see an icon in the title bar of the Dialog.
  */
 #define ModalDialogStyle	Style(0, WS_EX_DLGMODALFRAME)
 
@@ -64,8 +64,7 @@ public:
  *
  * There are some standard considerations for a dialog:
  *
- * - The close button in the title-bar just hide the dialog (Dialog::onClose).
- * - When the user press ESC, the onClose() is called.
+ * - When the user press ESC, the onClose() event is generated.
  * - If the dialog has a "Cancel" button is a good idea to bind its
  *   Button::Action to defaultCancelAction().
  * - If the dialog has an "OK" button is a good idea to bind its
@@ -79,7 +78,7 @@ public:
  */
 class VACA_DLL Dialog : public Register<DialogClass>, public Frame
 {
-  bool mState;
+  bool m_state;
 
 public:
 
@@ -97,28 +96,13 @@ public:
   void defaultCancelAction();
 
 protected:
-  // events
-  virtual void onClose(CloseEvent &ev);
-//   virtual void onKeyDown(KeyEvent &ev);
-
-  // reflection
-//   virtual bool onCommand(int id, int code, LRESULT &lResult);
-
   virtual bool wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult);
-  virtual LRESULT defWndProc(UINT message, WPARAM wParam, LPARAM lParam);
+//   virtual LRESULT defWndProc(UINT message, WPARAM wParam, LPARAM lParam);
 
 private:
   static LRESULT CALLBACK globalDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 
 };
-
-// class VACA_DLL MessageBox : public Dialog
-// {
-// public:
-//   MessageBox(const String &title, const String &text, Widget *parent, int buttons = MB_OK);
-// }:
-
-// TODO PageSetupDialog
 
 } // namespace Vaca
 

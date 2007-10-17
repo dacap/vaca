@@ -29,119 +29,120 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/Vaca.h"
+#include <Vaca/Vaca.h>
 
 using namespace Vaca;
 
 class MainFrame : public Frame
 {
-  Panel mTop;			// mTop's the panel to test
-  Panel mBottom;
-  Panel mBottomSub1;
-  Panel mBottomSub2;
-  Panel mBottomSub3;
-  Label mLabel;
-  MultilineEdit mEdit;
-  Button mButton;
-  RadioGroup mOrientation;
-  RadioGroup mDistribution;
-  RadioButton mHorizontal;
-  RadioButton mVertical;
-  RadioButton mHomogeneous;
-  RadioButton mHeterogeneous;
-  ToggleButton mExpandLabel;
-  ToggleButton mExpandEdit;
-  ToggleButton mExpandButton;
+  Panel m_top;			// m_top's the panel to test
+  Panel m_bottom;
+  Panel m_bottomSub1;
+  Panel m_bottomSub2;
+  Panel m_bottomSub3;
+  Label m_label;
+  MultilineEdit m_edit;
+  Button m_button;
+  RadioGroup m_orientation;
+  RadioGroup m_distribution;
+  RadioButton m_horizontal;
+  RadioButton m_vertical;
+  RadioButton m_homogeneous;
+  RadioButton m_heterogeneous;
+  ToggleButton m_expandLabel;
+  ToggleButton m_expandEdit;
+  ToggleButton m_expandButton;
   
 public:
 
   MainFrame()
     : Frame("BoxLayouts")
-    , mTop(this)
-    , mBottom(this)
-    , mBottomSub1(&mBottom)
-    , mBottomSub2(&mBottom)
-    , mBottomSub3(&mBottom)
-    , mLabel("Label", &mTop)
-    , mEdit("Edit", &mTop, MultilineEditStyle + ScrollStyle)
-    , mButton("Button", &mTop)
-    , mHorizontal("Horizontal", mOrientation, &mBottomSub1)
-    , mVertical("Vertical", mOrientation, &mBottomSub1)
-    , mHomogeneous("Homogeneous", mDistribution, &mBottomSub2)
-    , mHeterogeneous("Heterogeneous", mDistribution, &mBottomSub2)
-    , mExpandLabel("Expand Label", &mBottomSub3)
-    , mExpandEdit("Expand Edit", &mBottomSub3)
-    , mExpandButton("Expand Button", &mBottomSub3)
+    , m_top(this)
+    , m_bottom(this)
+    , m_bottomSub1(&m_bottom)
+    , m_bottomSub2(&m_bottom)
+    , m_bottomSub3(&m_bottom)
+    , m_label("Label", &m_top)
+    , m_edit("Edit", &m_top, MultilineEditStyle + ScrollStyle)
+    , m_button("Button", &m_top)
+    , m_horizontal("Horizontal", m_orientation, &m_bottomSub1)
+    , m_vertical("Vertical", m_orientation, &m_bottomSub1)
+    , m_homogeneous("Homogeneous", m_distribution, &m_bottomSub2)
+    , m_heterogeneous("Heterogeneous", m_distribution, &m_bottomSub2)
+    , m_expandLabel("Expand Label", &m_bottomSub3)
+    , m_expandEdit("Expand Edit", &m_bottomSub3)
+    , m_expandButton("Expand Button", &m_bottomSub3)
   {
     // MainFrame layout
     setLayout(new BoxLayout(Vertical, false)); // heterogeneous
-    mTop.setConstraint(new BoxConstraint(true)); // expansive
+    m_top.setConstraint(new BoxConstraint(true)); // expansive
 
     // other layouts
-    mTop.setLayout(new BoxLayout(Vertical, false)); // heterogeneous
-    mEdit.setConstraint(new BoxConstraint(true)); // expansive
+    m_top.setLayout(new BoxLayout(Vertical, false)); // heterogeneous
+    m_edit.setConstraint(new BoxConstraint(true)); // expansive
     
     // other layouts
-    mBottom.setLayout(new BoxLayout(Horizontal, false)); // heterogeneous
-    mBottomSub1.setLayout(new BoxLayout(Vertical, true)); // homogeneous
-    mBottomSub2.setLayout(new BoxLayout(Vertical, true)); // homogeneous
-    mBottomSub3.setLayout(new BoxLayout(Horizontal, true)); // homogeneous
+    m_bottom.setLayout(new BoxLayout(Horizontal, false)); // heterogeneous
+    m_bottomSub1.setLayout(new BoxLayout(Vertical, true)); // homogeneous
+    m_bottomSub2.setLayout(new BoxLayout(Vertical, true)); // homogeneous
+    m_bottomSub3.setLayout(new BoxLayout(Horizontal, true)); // homogeneous
 
-    // mTop begins vertical and heterogeneous, and mEdit begins expansive
-    mVertical.setSelected(true);
-    mHeterogeneous.setSelected(true);
-    mExpandEdit.setSelected(true);
+    // m_top begins vertical and heterogeneous, and m_edit begins expansive
+    m_vertical.setSelected(true);
+    m_heterogeneous.setSelected(true);
+    m_expandEdit.setSelected(true);
 
     // bindings...
-    mHorizontal.Action.connect(Bind(&MainFrame::onSetupLayout, this));
-    mVertical.Action.connect(Bind(&MainFrame::onSetupLayout, this));
-    mHomogeneous.Action.connect(Bind(&MainFrame::onSetupLayout, this));
-    mHeterogeneous.Action.connect(Bind(&MainFrame::onSetupLayout, this));
-    mExpandLabel.Action.connect(Bind(&MainFrame::onSetupConstraints, this));
-    mExpandEdit.Action.connect(Bind(&MainFrame::onSetupConstraints, this));
-    mExpandButton.Action.connect(Bind(&MainFrame::onSetupConstraints, this));
+    m_horizontal.Action.connect(Bind(&MainFrame::onSetupLayout, this));
+    m_vertical.Action.connect(Bind(&MainFrame::onSetupLayout, this));
+    m_homogeneous.Action.connect(Bind(&MainFrame::onSetupLayout, this));
+    m_heterogeneous.Action.connect(Bind(&MainFrame::onSetupLayout, this));
+    m_expandLabel.Action.connect(Bind(&MainFrame::onSetupConstraints, this));
+    m_expandEdit.Action.connect(Bind(&MainFrame::onSetupConstraints, this));
+    m_expandButton.Action.connect(Bind(&MainFrame::onSetupConstraints, this));
 
-    // relayout when edit the text (to see how Edit::preferredSize
+    // relayout when edit the text (to see how Edit::onPreferredSize
     // modifies the BoxLayout behavior)
-    mEdit.Change.connect(Bind(&MainFrame::layout, this));
+    m_edit.Change.connect(Bind(&MainFrame::layout, this));
   }
 
 protected:
 
   void onSetupLayout()
   {
-    Orientation newOrientation = mVertical.isSelected() ? Vertical:
-							  Horizontal;
-    bool isHomogeneous = mHomogeneous.isSelected();
+    Orientation newOrientation = m_vertical.isSelected() ? Vertical:
+							   Horizontal;
+
+    bool isHomogeneous = m_homogeneous.isSelected();
     
     // setup the new layout manager, and hold the old layout
     Layout *oldLayout =
-      mTop.setLayout(new BoxLayout(newOrientation,
-				   isHomogeneous));
+      m_top.setLayout(new BoxLayout(newOrientation,
+				    isHomogeneous));
 
     // delete the old layout manager
     delete oldLayout;
 
-    // relayout the mTop panel
-    mTop.layout();
+    // relayout the m_top panel
+    m_top.layout();
 
     // when the BoxLayout is homogeneous, the expansive constraint
     // doesn't have effect
-    mExpandLabel .setEnabled(!isHomogeneous);
-    mExpandEdit  .setEnabled(!isHomogeneous);
-    mExpandButton.setEnabled(!isHomogeneous);
+    m_expandLabel .setEnabled(!isHomogeneous);
+    m_expandEdit  .setEnabled(!isHomogeneous);
+    m_expandButton.setEnabled(!isHomogeneous);
   }
 
   void onSetupConstraints()
   {
-    // when we set the a constraint, we must to delete the old
-    // returned constraint...
-    delete mLabel.setConstraint (new BoxConstraint(mExpandLabel .isSelected()));
-    delete mEdit.setConstraint  (new BoxConstraint(mExpandEdit  .isSelected()));
-    delete mButton.setConstraint(new BoxConstraint(mExpandButton.isSelected()));
+    // when we set a constraint, we must to delete the old returned
+    // constraint...
+    delete m_label.setConstraint (new BoxConstraint(m_expandLabel .isSelected()));
+    delete m_edit.setConstraint  (new BoxConstraint(m_expandEdit  .isSelected()));
+    delete m_button.setConstraint(new BoxConstraint(m_expandButton.isSelected()));
 
-    // relayout the mTop panel
-    mTop.layout();
+    // relayout the m_top panel
+    m_top.layout();
   }
 
 };
@@ -150,10 +151,10 @@ protected:
 
 class Example : public Application
 {
-  MainFrame mMainWnd;
+  MainFrame m_mainFrame;
 public:
   virtual void main(std::vector<String> args) {
-    mMainWnd.setVisible(true);
+    m_mainFrame.setVisible(true);
   }
 };
 

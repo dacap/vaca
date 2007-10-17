@@ -50,14 +50,14 @@ class Widget;
  */
 class VACA_DLL FileDialog : public CommonDialog
 {
-  String mTitle;
-  String mDefaultExtension;
-  bool mShowReadOnly : 1;
-  bool mShowHelp : 1;
-  LPTSTR mFileName;
-  String mFiltersString;
-  std::vector<std::pair<String, String> > mFilters;
-  int mDefaultFilter;
+  String m_title;
+  String m_defaultExtension;
+  bool m_showReadOnly : 1;
+  bool m_showHelp : 1;
+  LPTSTR m_fileName;
+  String m_filtersString;
+  std::vector<std::pair<String, String> > m_filters;
+  int m_defaultFilter;
 
 public:
 
@@ -88,7 +88,7 @@ private:
  */
 class VACA_DLL OpenFileDialog : public FileDialog
 {
-  bool mMultiselect : 1;
+  bool m_multiselect : 1;
 
 public:
   OpenFileDialog(const String &title, Widget *parent);

@@ -64,6 +64,7 @@ public:
   vector<CppNode *> children;
 
   CppNode(XmlNode *xmlNode, CppNode *parent);
+  virtual ~CppNode() { }
 
   virtual CppNode *findByXmlNode(XmlNode *xmlNode);
   virtual bool resolveReferences();

@@ -56,23 +56,23 @@ Slider::~Slider()
 {
 }
 
-Size Slider::preferredSize()
-{
-  int style = getStyle().regular;
+// Size Slider::preferredSize()
+// {
+//   int style = getStyle().regular;
   
-  // without ticks
-  if (style & TBS_NOTICKS)
-    return Size(25, 25);
-  // with ticks in the top or the left side
-  else if ((style & (TBS_LEFT | TBS_TOP)) != 0)
-    return Size(33, 33);
-  // with ticks in both sides
-  else if ((style & TBS_BOTH) != 0)
-    return Size(40, 40);
-  // with ticks in the bottom or the right side
-  else
-    return Size(30, 30);
-}
+//   // without ticks
+//   if (style & TBS_NOTICKS)
+//     return Size(25, 25);
+//   // with ticks in the top or the left side
+//   else if ((style & (TBS_LEFT | TBS_TOP)) != 0)
+//     return Size(33, 33);
+//   // with ticks in both sides
+//   else if ((style & TBS_BOTH) != 0)
+//     return Size(40, 40);
+//   // with ticks in the bottom or the right side
+//   else
+//     return Size(30, 30);
+// }
 
 Orientation Slider::getOrientation()
 {
@@ -93,26 +93,26 @@ void Slider::setOrientation(Orientation orientation)
 //   addStyle(Style(TBS_NOTICKS, 0));
 // }
 
-// void Slider::setTickMarksSide(Side::Type side)
+// void Slider::setTickMarksSide(TypeSide side)
 // {
 //   removeStyle(Style(TBS_NOTICKS | TBS_BOTH, 0));
   
 //   // horizontal
 //   if (getOrientation() == Orientation::Horizontal) {
-//     assert(side == Side::Top || side == Side::Bottom);
+//     assert(side == TopSide || side == BottomSide);
     
-//     if (side == Side::Top)
+//     if (side == TopSide)
 //       addStyle(Style(TBS_TOP, 0));
-//     else if (side == Side::Bottom)
+//     else if (side == BottomSide)
 //       addStyle(Style(TBS_BOTTOM, 0));
 //   }
 //   // vertical
 //   else {
-//     assert(side == Side::Left || side == Side::Right);
+//     assert(side == LeftSide || side == RightSide);
 
-//     if (side == Side::Left)
+//     if (side == LeftSide)
 //       addStyle(Style(TBS_LEFT, 0));
-//     else if (side == Side::Right)
+//     else if (side == RightSide)
 //       addStyle(Style(TBS_RIGHT, 0));
 //   }
 // }
@@ -201,6 +201,24 @@ int Slider::getValue()
 void Slider::setValue(int value)
 {
   sendMessage(TBM_SETPOS, TRUE, value);
+}
+
+void Slider::onPreferredSize(Size &sz)
+{
+  int style = getStyle().regular;
+  
+  // without ticks
+  if (style & TBS_NOTICKS)
+    sz = Size(25, 25);
+  // with ticks in the top or the left side
+  else if ((style & (TBS_LEFT | TBS_TOP)) != 0)
+    sz = Size(33, 33);
+  // with ticks in both sides
+  else if ((style & TBS_BOTH) != 0)
+    sz = Size(40, 40);
+  // with ticks in the bottom or the right side
+  else
+    sz = Size(30, 30);
 }
 
 void Slider::onScroll(Orientation orientation, int code)

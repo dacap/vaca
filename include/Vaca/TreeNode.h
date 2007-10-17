@@ -46,8 +46,8 @@ class TreeViewEvent;
 
 /**
  * A TreeView node.  It has a text label, an image, a selected image
- * asociated, and a state (collapsed/expanded). A node could be a
- * parent of sub-TreeNodes.
+ * asociated, and a state (collapsed/expanded). A node can be parent
+ * of sub-TreeNodes.
  */
 class VACA_DLL TreeNode : private boost::noncopyable
 			, public Component
@@ -60,13 +60,13 @@ private:
 
   friend class TreeView;
   
-  String mText;
-  int mImage;
-  int mSelectedImage;
-  TreeNode *mParent;
-  Container mChildren;
-  HTREEITEM mHTREEITEM;
-  TreeView *mOwner;
+  String    m_text;
+  int       m_image;
+  int       m_selectedImage;
+  TreeNode *m_parent;
+  Container m_children;
+  HTREEITEM m_HTREEITEM;
+  TreeView *m_owner;
 
 public:
 

@@ -38,21 +38,22 @@
 using namespace Vaca;
 
 /**
- * Creates a dialog using the default DialogClass. Remember that
- * dialogs aren't automatically disposed when them are closed.
+ * Creates a dialog using the default DialogClass.
  *
  * @see doModal()
  */
 Dialog::Dialog(const String &title, Widget *parent, Style style)
   : Frame(NULL, title, parent, style)
 {
+  setDefWndProc(DefDlgProc);
+
   create(DialogClass::getClassName(), parent, style);
   setText(title);
 
   SetWindowLongPtr(getHWND(), DWL_DLGPROC,
 		   reinterpret_cast<LONG_PTR>(Dialog::globalDlgProc));
 
-  mState = false;
+  m_state = false;
 }
 
 /**
@@ -62,12 +63,14 @@ Dialog::Dialog(const String &title, Widget *parent, Style style)
 Dialog::Dialog(LPCTSTR className, const String &title, Widget *parent, Style style)
   : Frame(NULL, title, parent, style)
 {
+  setDefWndProc(DefDlgProc);
+  
   if (className != NULL) {
     create(className, parent, style);
     setText(title);
   }
 
-  mState = false;
+  m_state = false;
 }
 
 Dialog::~Dialog()
@@ -79,14 +82,12 @@ Dialog::~Dialog()
  */
 void Dialog::setReturnState(bool state)
 {
-  mState = state;
+  m_state = state;
 }
 
 /**
  * Executes the dialog in a local message loop, disabling the parent
- * widget. The Dialog isn't disposed when it's closed, because
- * generally you want the Dialog data (like a form) to known the user
- * input.
+ * widget.
  *
  * @return Should returns true if the user press the OK button, or
  *         false if the user press the Cancel/Close buttons.
@@ -96,16 +97,15 @@ bool Dialog::doModal()
   setVisible(true);
 
   Thread *thread = Thread::getCurrent();
-
   assert(thread != NULL);
   
   thread->doMessageLoopFor(this);
 
-  return mState;
+  return m_state;
 }
 
 /**
- * Calls IsDialogMessage.
+ * Calls Win32 IsDialogMessage.
  */
 bool Dialog::preTranslateMessage(MSG &msg)
 {
@@ -144,8 +144,8 @@ void Dialog::defaultOkAction()
 /**
  * Generates a onClose event (WM_CLOSE message) for the dialog, but
  * before changes the return state (setReturnState) to false, so
- * doModal() returns false too.  You can use this to bind the Cancel
- * button action (Button::Action).  Example:
+ * doModal() returns false too.  You can use this method to bind
+ * the Cancel button action (Button::Action).  Example:
  * 
  * @code
  *   ...
@@ -164,25 +164,6 @@ void Dialog::defaultCancelAction()
 
   // cancel is like if the user close the window
   sendMessage(WM_CLOSE, 0, 0);
-}
-
-/**
- * Consume the close event to avoid dispose the dialog. A dialog is
- * just hidden (not disposed) when it's closed. This is called when
- * the user press the close button of the title-bar or the ESC key.
- *
- * @see defaultCancelAction
- */
-void Dialog::onClose(CloseEvent &ev)
-{
-  // fire Close signal
-  Frame::onClose(ev);
-
-  // don't dispose the Dialog...
-  ev.cancel();
-
-  // ...just hide it
-  setVisible(false);
 }
 
 bool Dialog::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult)
@@ -211,10 +192,10 @@ bool Dialog::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResul
   return false;
 }
 
-LRESULT Dialog::defWndProc(UINT message, WPARAM wParam, LPARAM lParam)
-{
-  return DefDlgProc(getHWND(), message, wParam, lParam);
-}
+// LRESULT Dialog::defWndProc(UINT message, WPARAM wParam, LPARAM lParam)
+// {
+//   return DefDlgProc(getHWND(), message, wParam, lParam);
+// }
 
 LRESULT CALLBACK Dialog::globalDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {

@@ -44,7 +44,7 @@ namespace Vaca {
 #define MdiClientStyle		(ChildStyle +				\
 				 ScrollStyle +				\
 				 ClientEdgeStyle +			\
-				 ClipChildrenStyle)
+				 ContainerStyle)
 
 #define MdiFrameStyle		(FrameStyle)
 
@@ -84,10 +84,10 @@ protected:
   // virtual bool onCommand(int id, int code, LRESULT &lResult);
 
   virtual bool wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult);
-  virtual LRESULT defWndProc(UINT message, WPARAM wParam, LPARAM lParam);
+//   virtual LRESULT defWndProc(UINT message, WPARAM wParam, LPARAM lParam);
 
 private:
-  virtual void destroyHWND(HWND hwnd);
+//   virtual void destroyHWND(HWND hwnd);
 };
 
 /**
@@ -96,7 +96,7 @@ private:
 class VACA_DLL MdiClient : public Widget
 {
 public:
-  MdiClient(Widget *parent);
+  MdiClient(Widget *parent, Style style = MdiClientStyle);
   virtual ~MdiClient();
 
   void cascade();
@@ -131,7 +131,7 @@ class VACA_DLL MdiFrame : public Frame
 
 private:
 
-  MdiClient *mMdiClient;
+  MdiClient *m_mdiClient;
 
 public:
 
@@ -142,18 +142,15 @@ public:
 //   MdiFrame(Widget *parent, Style style = ChildStyle); // TODO ChildStyle???
   virtual ~MdiFrame();
 
-  MdiClient &getMdiClient();
-  void setMdiClient(MdiClient *mdiClient);
+  MdiClient *getMdiClient();
+  MdiClient *setMdiClient(MdiClient *mdiClient);
 
-  virtual void setMenuBar(MenuBar *menubar);
+  virtual MenuBar *setMenuBar(MenuBar *menubar);
   void refreshMenuBar();
 
 protected:
-  // new events
-  // virtual void onMoreWindows();
-
   virtual bool wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult);
-  virtual LRESULT defWndProc(UINT message, WPARAM wParam, LPARAM lParam);
+//   virtual LRESULT defWndProc(UINT message, WPARAM wParam, LPARAM lParam);
 };
 
 

@@ -72,32 +72,31 @@ class VACA_DLL DockBar : public Register<DockBarClass>, public Widget
 
   // In what DockArea is the DockBar docked? It's != NULL only if the
   // DockBar is docked.
-  DockArea *mDockArea;
+  DockArea *m_dockArea;
 
   // The DockFrame that contains the DockBar when it's floating. It's
   // != NULL only if the DockBar is floating.
-  DockFrame *mDockFrame;
+  DockFrame *m_dockFrame;
 
-  // Used to hold on the pointer of the destroyed mDockFrame. This
+  // Used to hold on the pointer of the destroyed m_dockFrame. This
   // pointer is != NULL only when the DockFrame is destroyed by its
   // parent (when the parent Frame or MdiFrame is closed).
-  DockFrame *mDockFrameGarbage;
+//   DockFrame *m_dockFrameGarbage;
 
-  // Pimpl idiom of the drag stuff. Not NULL means that the user is
-  // dragging the DockBar.
-  DragInfo *mDrag;
+  // Drag stuff. Not NULL means that the user is dragging the DockBar.
+  DragInfo *m_drag;
 
   // The Frame that own the DockBar. This owner generally should have
   // some DockArea to dock the DockBar, but isn't obligatory.
-  Frame *mOwner;
+  Frame *m_owner;
 
   // Information of the DockBar when it's docked (or the information
   // about the last docked position). This can be a derived class of
   // DockInfo, used by your own DockArea (like BandedDockArea does).
-  DockInfo *mDockInfo;
+  DockInfo *m_dockInfo;
 
-  bool mFullDrag;
-  bool mFloatingGripper;
+  bool m_fullDrag;
+  bool m_floatingGripper;
 
 public:
 
@@ -105,8 +104,8 @@ public:
   virtual ~DockBar();
 
   virtual void setVisible(bool visible);
-  virtual Size preferredSize();
-//   virtual Size preferredSize(const Size &fitIn);
+//   virtual Size preferredSize();
+// //   virtual Size preferredSize(const Size &fitIn);
   virtual Rect getLayoutBounds();
 
   void setFullDrag(bool state);
@@ -132,9 +131,10 @@ public:
 protected:
 
   // events
-  virtual void onDestroy();
+  virtual void onPreferredSize(Size &sz);
+//   virtual void onDestroy();
   virtual void onDockFrameClose(CloseEvent &ev);
-  virtual void onDockFrameDestroy();
+//   virtual void onDockFrameDestroy();
   virtual void onPaint(Graphics &g);
   virtual void onResize(const Size &sz);
   virtual void onMouseDown(MouseEvent &ev);
@@ -167,6 +167,7 @@ private:
   void drawFeedbackShape(Graphics &g);
   void cleanFeedbackShape(Graphics &g);
   DockArea *xorFeedbackShape(Graphics &g);
+  static Size getNonClientSizeForADockFrame();
 
 };
 

@@ -29,7 +29,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/Vaca.h"
+#include <Vaca/Vaca.h>
 #include "resource.h"
 
 using namespace Vaca;
@@ -38,15 +38,15 @@ using namespace Vaca;
 
 class Console : public MultilineEdit
 {
-  Font mFont;
+  Font m_font;
   
 public:
 
   Console(Widget *parent)
     : MultilineEdit("", parent, MultilineEditStyle + ScrollStyle)
-    , mFont("Courier New", 10)
+    , m_font("Courier New", 10)
   {
-    setFont(mFont);
+    setFont(&m_font);
     setBgColor(Color::Black);
     setFgColor(Color(0, 220, 0));
   }
@@ -63,25 +63,23 @@ public:
 
 class MainFrame : public Frame
 {
-  MenuBar mMenuBar;
-  Console mConsole;
-  bool mItem2Enabled;
+  Console m_console;
+  bool m_item2Enabled;
 
 public:
 
   MainFrame()
     : Frame("MenuResource")
-    , mMenuBar(IDM_MENUBAR)
-    , mConsole(this)
+    , m_console(this)
   {
-    setMenuBar(&mMenuBar);
+    setMenuBar(new MenuBar(IDM_MENUBAR));
     setLayout(new ClientLayout);
 
-    mItem2Enabled = true;
+    m_item2Enabled = true;
     initializeCommands();
 
     // disable Item4
-    mMenuBar.getMenuItemById(IDM_ITEM4)->setEnabled(false);
+    getMenuBar()->getMenuItemById(IDM_ITEM4)->setEnabled(false);
   }
 
 private:
@@ -91,17 +89,17 @@ private:
     Command *command;
 
     command = new Command(IDM_ITEM1);
-    command->Action.connect(Bind(&Console::println, &mConsole, "Item1 selected"));
+    command->Action.connect(Bind(&Console::println, &m_console, "Item1 selected"));
     command->Update.connect(Bind(&MainFrame::onUpdateItem1, this));
     addCommand(command);
 
     command = new Command(IDM_ITEM2);
-    command->Action.connect(Bind(&Console::println, &mConsole, "Item2 selected"));
+    command->Action.connect(Bind(&Console::println, &m_console, "Item2 selected"));
     command->Update.connect(Bind(&MainFrame::onUpdateItem2, this));
     addCommand(command);
 
     command = new Command(IDM_ITEM3);
-    command->Action.connect(Bind(&Console::println, &mConsole, "Item3 selected"));
+    command->Action.connect(Bind(&Console::println, &m_console, "Item3 selected"));
     command->Action.connect(Bind(&MainFrame::onActionItem3, this));
     command->Update.connect(Bind(&MainFrame::onUpdateItem3, this));
     addCommand(command);
@@ -109,25 +107,25 @@ private:
 
   void onUpdateItem1(CommandState &cmdState)
   {
-    mConsole.println("Item1 updated");
+    m_console.println("Item1 updated");
   }
 
   void onUpdateItem2(CommandState &cmdState)
   {
-    mConsole.println("Item2 updated");
-    cmdState.setEnabled(mItem2Enabled);
+    m_console.println("Item2 updated");
+    cmdState.setEnabled(m_item2Enabled);
   }
 
   void onUpdateItem3(CommandState &cmdState)
   {
-    mConsole.println("Item3 updated");
-    cmdState.setChecked(!mItem2Enabled);
+    m_console.println("Item3 updated");
+    cmdState.setChecked(!m_item2Enabled);
   }
 
   void onActionItem3()
   {
-    mItem2Enabled = !mItem2Enabled;
-    mConsole.println(mItem2Enabled ? "Item2 enabled": "Item2 disabled");
+    m_item2Enabled = !m_item2Enabled;
+    m_console.println(m_item2Enabled ? "Item2 enabled": "Item2 disabled");
   }
 
 };
@@ -136,12 +134,12 @@ private:
 
 class Example : public Application
 {
-  MainFrame mMainWnd;
+  MainFrame m_mainFrame;
 
 public:
   
   virtual void main(std::vector<String> args) {
-    mMainWnd.setVisible(true);
+    m_mainFrame.setVisible(true);
   }
 };
 

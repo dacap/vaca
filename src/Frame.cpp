@@ -70,8 +70,7 @@ using namespace Vaca;
 
 /**
  * Creates a frame using the FrameClass.  Also, remember that by
- * default a Frame hasn't a Layout manager. Frames are automatically
- * disposed when them are closed.
+ * default a Frame hasn't a Layout manager.
  *
  * @see onClose()
  */
@@ -93,38 +92,44 @@ Frame::Frame(LPCTSTR className, const String &title, Widget *parent, Style style
 
 void Frame::initialize(const String &title)
 {
-  mMenuBar = NULL;
-  mCounted = false;
+  m_menuBar = NULL;
+  m_counted = false;
 
-  if (getHWND() != NULL)
+  if (::IsWindow(getHWND()))
     setText(title);
 }
 
 Frame::~Frame()
 {
-  if (mMenuBar != NULL && mMenuBar->isAutoDelete()) {
-    delete mMenuBar;
-    mMenuBar = NULL;
+  if (m_menuBar != NULL//  && m_menuBar->isAutoDelete()
+      ) {
+    delete m_menuBar;
+    m_menuBar = NULL;
   }
 
-  for (std::vector<Command *>::iterator it = mCommands.begin();
-       it != mCommands.end();
+  for (std::vector<Command *>::iterator it = m_commands.begin();
+       it != m_commands.end();
        ++it) {
     Command *command = *it;
     delete command;
   }
 
-  // see TN002
-  dispose();
+  deleteDockAreas();
+
+  if (m_counted) {
+    m_counted = false;
+
+    REMOVE_FRAME(this);
+  }
 }
 
 bool Frame::preTranslateMessage(MSG &msg)
 {
-  if (mMenuBar != NULL) {
+  if (m_menuBar != NULL) {
     // TODO accelerators
     if (msg.message == WM_KEYDOWN) {
       Keys::Type keys = Keys::fromMessageParams(msg.wParam, msg.lParam);
-      MenuItem *menuItem = mMenuBar->checkShortcuts(keys);
+      MenuItem *menuItem = m_menuBar->checkShortcuts(keys);
 
       if (menuItem != NULL) {
 	// update the menuItem status before (onUpdate stuff)
@@ -144,18 +149,17 @@ bool Frame::preTranslateMessage(MSG &msg)
   return Widget::preTranslateMessage(msg);
 }
 
-void Frame::onDestroy()
+void Frame::onPreferredSize(Size &sz)
 {
-  clearDockAreas();
+  Size ncSize = getNonClientSize();
 
-  // Application::instance()->_closeFrame(this);
-  if (mCounted) {
-    mCounted = false;
-
-    REMOVE_FRAME(this);
+  if (sz.w > 0 || sz.h > 0) {
+    sz = Size(VACA_MAX(0, sz.w - ncSize.w),
+	      VACA_MAX(0, sz.h - ncSize.h));
   }
 
-  Widget::onDestroy();
+  Widget::onPreferredSize(sz);
+  sz += ncSize;
 }
 
 /**
@@ -176,8 +180,8 @@ bool Frame::onIdAction(int id)
     return true;
 
   // use menu bar
-  if (mMenuBar != NULL) {
-    MenuItem *menuItem = mMenuBar->getMenuItemById(id);
+  if (m_menuBar != NULL) {
+    MenuItem *menuItem = m_menuBar->getMenuItemById(id);
 
     VACA_TRACE("Frame::onIdAction(%d), menuItem=%p\n", id, menuItem);
 
@@ -192,8 +196,8 @@ bool Frame::onIdAction(int id)
   }
 
   // call commands with the given ID
-  for (std::vector<Command *>::iterator it = mCommands.begin();
-       it != mCommands.end();
+  for (std::vector<Command *>::iterator it = m_commands.begin();
+       it != m_commands.end();
        ++it) {
     if ((*it)->getId() == id)
       (*it)->onAction();
@@ -204,8 +208,8 @@ bool Frame::onIdAction(int id)
 
 // void Frame::onKeyDown(KeyEvent &ev)
 // {
-//   if (mMenuBar != NULL) {
-//     MenuItem *menuItem = mMenuBar->checkShortcuts(ev.getKeys());
+//   if (m_menuBar != NULL) {
+//     MenuItem *menuItem = m_menuBar->checkShortcuts(ev.getKeys());
 //     if (menuItem != NULL)
 //       menuItem->Action();
 //   }
@@ -225,12 +229,11 @@ void Frame::onDeactivate(Event &ev)
  * Event called when the Frame want to be closed (WM_CLOSE). The
  * default implementation fire the signal Frame::Close.
  *
- * By default when a Frame is closed, it's disposed. If onClose(), or
- * some slot in Close, cancels the event @a ev, the window is not
- * disposed.
+ * By default when a Frame is closed, it'll be hidden. If you cancel
+ * the @a ev event, the window'll not hidden.
  *
- * Example of how to hide the Frame (but not to destroy it) when the
- * user press the close button:
+ * Example of how to avoid to hide the Frame when the user press the
+ * close button:
  *
  * @code
  * class MyFrame : public Frame
@@ -239,23 +242,14 @@ void Frame::onDeactivate(Event &ev)
  *   ...
  *   virtual void onClose(WidgetEvent &ev) {
  *     Frame::onClose(ev); // it fires the Close signal
- *
- *     setVisible(false);  // hide the window
- *     ev.cancel();        // cancel the event (don't dispose the frame)
+ *     ev.cancel();        // cancel the event (don't hide the frame)
  *   }
  * }
  * @endcode
- *
- * The above method is used by Dialog class to avoid dispose the
- * dialog when it's closed.
- *
- * @warning After the onClose event, if you don't cancel the @a ev,
- * the Frame'll be disposed automatically through
- * @ref Widget::dispose "dispose()".
  */
 void Frame::onClose(CloseEvent &ev)
 {
-  // fire close signal
+  // fire Close signal
   Close(ev);
 }
 
@@ -272,6 +266,7 @@ void Frame::onClose(CloseEvent &ev)
  */
 void Frame::onResizing(int edge, Rect &rc)
 {
+  // do nothing
 }
 
 #if 0
@@ -292,11 +287,16 @@ bool Frame::isVisible()
 void Frame::setVisible(bool visible)
 {
   HWND hwnd = getHWND();
-  assert(hwnd != NULL);
+  assert(::IsWindow(hwnd));
 
 //   bool oldState = ::IsWindowVisible(hwnd) ? true: false;
-  bool oldState = isVisible();
+//   bool oldState = isVisible();
 
+  // synchronize all the group
+  Container group = getSynchronizedGroup();
+  for (Container::iterator it=group.begin(); it!=group.end(); ++it)
+    (*it)->setVisible(visible);
+  
   // Show the window
   if (visible) {
     int swCmd = SW_SHOWNORMAL;
@@ -308,15 +308,15 @@ void Frame::setVisible(bool visible)
     
     ::ShowWindow(hwnd, swCmd);
     ::UpdateWindow(hwnd);
-    if (mMenuBar != NULL)
+    if (m_menuBar != NULL)
       ::DrawMenuBar(hwnd);
 
     // layout children
     layout();
 
     // increment the frame's counter
-    if (!mCounted) {
-      mCounted = true;
+    if (!m_counted) {
+      m_counted = true;
 
       ADD_FRAME(this);
     }
@@ -334,8 +334,8 @@ void Frame::setVisible(bool visible)
     ::ShowWindow(hwnd, SW_HIDE);
 
     // decrement the frame's counter
-    if (mCounted) {
-      mCounted = false;
+    if (m_counted) {
+      m_counted = false;
 
       REMOVE_FRAME(this);
     }
@@ -343,49 +343,45 @@ void Frame::setVisible(bool visible)
 }
 
 /**
- * Hides the window, closes it, destroys it, but doesn't delete it. If
- * you use setVisible(false) you just are hidding the window. One time
- * you use the close method, you can't do a setVisible(true) because
- * the windows doesn't exist anymore.
- */
-// bool Frame::close()
-// {
-//   HWND hwnd = getHWND();
-
-//   WidgetEvent ev(this);
-//   sigClose(ev);
-//   if (!ev.isCanceled())
-//     dispose();
-
-//   return res;
-// }
-
-/**
  * Returns the window's menu bar. You can't delete it, the Frame
- * destructor does this for you.
+ * destructor does this for you. If you want to delete the current
+ * menu bar, you should do something like this:
+ *
+ * @code
+ *   ...
+ *   MenuBar *oldMenuBar = myFrame->setMenuBar(NULL);
+ *   if (oldMenuBar != NULL)
+ *     delete oldMenuBar;
+ *   ...
+ * @endcode
+ *
+ * Or, if you are sure that the Frame has a MenuBar, you can do:
+ *
+ * @code
+ *   ...
+ *   delete myFrame->setMenuBar(NULL);
+ *   ...
+ * @endcode
  *
  * @see setMenuBar
  */
 MenuBar *Frame::getMenuBar()
 {
-  return mMenuBar;
+  return m_menuBar;
 }
 
 /**
  * Changes the window's menu bar. The @a menuBar pointer is deleted
- * automatically only if it "menuBar->isAutoDelete()" is true.
+ * automatically only if you don't setMenuBar(NULL) in some place
+ * before the Frame's destructor.
  *
- * @see getMenuBar, MdiFrame::setMenuBar, MenuBar::isAutoDelete
+ * @return The old MenuBar (you should delete it). All Frames start
+ *         without a menu bar (=NULL).
+ *
+ * @see getMenuBar, MdiFrame::setMenuBar, MenuBar::isAutoDelete, @ref TN010
  */
-void Frame::setMenuBar(MenuBar *menuBar)
+MenuBar *Frame::setMenuBar(MenuBar *menuBar)
 {
-  // delete the old menu bar
-  if (mMenuBar != NULL && mMenuBar->isAutoDelete()) {
-    delete mMenuBar;
-    mMenuBar = NULL;
-  }
-
-  // change to the new menu bar
   HWND hwnd = getHWND();
   HMENU hmenu = menuBar->getHMENU();
   
@@ -393,12 +389,17 @@ void Frame::setMenuBar(MenuBar *menuBar)
 
   ::SetMenu(hwnd, hmenu); // TODO check errors
 
-  mMenuBar = menuBar;
+  MenuBar *oldMenuBar = m_menuBar;
+  m_menuBar = menuBar;
+  return oldMenuBar;
 }
 
 /**
- * Sets the Icon used in the title bar (if @a bigIcon is false) or in the
- * ALT+TAB dialog box (is @a bigIcon is true) (Win32 WM_SETICON message).
+ * Sets the Icon used in the title bar (if @a bigIcon is false) or in
+ * the ALT+TAB dialog box (is @a bigIcon is true) (it's like the Win32
+ * WM_SETICON message).
+ * 
+ * @see setIcon(int)
  */
 void Frame::setIcon(Icon *icon, bool bigIcon)
 {
@@ -409,6 +410,8 @@ void Frame::setIcon(Icon *icon, bool bigIcon)
 /**
  * Set the big icon (32x32) and the small icon (16x16) of the Frame
  * using the ICON resource speficied by @a iconId.
+ *
+ * @see setIcon(Icon *, bool)
  */
 void Frame::setIcon(int iconId)
 {
@@ -429,14 +432,14 @@ void Frame::setIcon(int iconId)
 Size Frame::getNonClientSize()
 {
   HWND hwnd = getHWND();
-  assert(hwnd != NULL);
+  assert(::IsWindow(hwnd));
 
   Rect clientRect(0, 0, 1, 1);
   RECT nonClientRect = clientRect;
 
   ::AdjustWindowRectEx(&nonClientRect,
 		       GetWindowLong(hwnd, GWL_STYLE),
-		       mMenuBar ? true: false,
+		       m_menuBar ? true: false,
 		       GetWindowLong(hwnd, GWL_EXSTYLE));
 
   return Rect(&nonClientRect).getSize() - clientRect.getSize();
@@ -452,9 +455,9 @@ Rect Frame::getLayoutBounds()
 {
   Rect rc = Widget::getLayoutBounds();
 
-  for (std::vector<DockArea *>::iterator it=mDockAreas.begin(); it!=mDockAreas.end(); ++it) {
+  for (std::vector<DockArea *>::iterator it=m_dockAreas.begin(); it!=m_dockAreas.end(); ++it) {
     DockArea *dockArea = *it;
-    Size dockSize = dockArea->preferredSize();
+    Size dockSize = dockArea->getPreferredSize();
 
     switch (dockArea->getSide()) {
       case LeftSide:
@@ -477,35 +480,50 @@ Rect Frame::getLayoutBounds()
   return rc;
 }
 
+/** 
+ * Adds a new command to the Frame. The command is deleted
+ * automatically in the Frame's destructor. If you want to avoid this,
+ * you should to call removeCommand before.
+ * 
+ * @param command 
+ *
+ * @see @ref TN010
+ */
 void Frame::addCommand(Command *command)
 {
-  mCommands.push_back(command);
+  m_commands.push_back(command);
 }
 
+/** 
+ * 
+ * 
+ * @param command 
+ */
 void Frame::removeCommand(Command *command)
 {
-  remove_element_from_container(mCommands, command);
+  remove_element_from_container(m_commands, command);
 }
 
 /**
  * 
- * @param dockArea It'll be automatically deleted in dispose(). (if you don't want
- *                 it, you should use removeDockArea)
+ * @param dockArea It'll be automatically deleted in Frame's
+ *                 destructor or deleteDockAreas. (if you don't
+ *                 want it, you should use removeDockArea).
  *
  * @see @ref TN010
  */
 void Frame::addDockArea(DockArea *dockArea)
 {
-  mDockAreas.push_back(dockArea);
+  m_dockAreas.push_back(dockArea);
 }
 
 /**
- * Remove the @a dockArea from the Frame. You should delete the @a
- * dockArea pointer.
+ * Remove the @a dockArea from the Frame. You should delete
+ * the @a dockArea pointer.
  */
 void Frame::removeDockArea(DockArea *dockArea)
 {
-  remove_element_from_container(mDockAreas, dockArea);
+  remove_element_from_container(m_dockAreas, dockArea);
 }
 
 /**
@@ -518,7 +536,7 @@ void Frame::removeDockArea(DockArea *dockArea)
  */
 void Frame::defaultDockAreas()
 {
-  clearDockAreas();
+  deleteDockAreas();
 
   addDockArea(new BandedDockArea(TopSide, this));
   addDockArea(new BandedDockArea(BottomSide, this));
@@ -527,19 +545,20 @@ void Frame::defaultDockAreas()
 }
 
 /**
- * Clears all the registered DockAreas.
+ * Deletes all the registered DockAreas.
  */
-void Frame::clearDockAreas()
+void Frame::deleteDockAreas()
 {
-  for (std::vector<DockArea *>::iterator it=mDockAreas.begin(); it!=mDockAreas.end(); ++it) {
+  for (std::vector<DockArea *>::iterator it=m_dockAreas.begin(); it!=m_dockAreas.end(); ++it) {
     DockArea *dockArea = *it;
 
     dockArea->setVisible(false);
-    removeChild(dockArea, false);
+    // removeChild(dockArea, false);
+    removeChild(dockArea, true);
     delete dockArea;
   }
 
-  mDockAreas.clear();
+  m_dockAreas.clear();
 }
 
 /**
@@ -547,7 +566,7 @@ void Frame::clearDockAreas()
  */
 std::vector<DockArea *> Frame::getDockAreas()
 {
-  return mDockAreas;
+  return m_dockAreas;
 }
 
 /**
@@ -556,7 +575,7 @@ std::vector<DockArea *> Frame::getDockAreas()
  */
 DockArea *Frame::getDockArea(Side side)
 {
-  for (std::vector<DockArea *>::iterator it=mDockAreas.begin(); it!=mDockAreas.end(); ++it) {
+  for (std::vector<DockArea *>::iterator it=m_dockAreas.begin(); it!=m_dockAreas.end(); ++it) {
     DockArea *dockArea = *it;
 
     if (dockArea->getSide() == side)
@@ -574,26 +593,26 @@ DockArea *Frame::getDockArea(Side side)
  */
 DockArea *Frame::getDefaultDockArea()
 {
-  if (!mDockAreas.empty())
-    return mDockAreas.front();
+  if (!m_dockAreas.empty())
+    return m_dockAreas.front();
   else
     return NULL;
 }
 
-Size Frame::preferredSize()
-{
-  return getNonClientSize() + Widget::preferredSize();
-}
+// Size Frame::preferredSize()
+// {
+//   return getNonClientSize() + Widget::preferredSize();
+// }
 
-Size Frame::preferredSize(const Size &fitIn)
-{
-  Size ncSize(getNonClientSize());
+// Size Frame::preferredSize(const Size &fitIn)
+// {
+//   Size ncSize(getNonClientSize());
 
-  return
-    ncSize +
-    Widget::preferredSize(Size(VACA_MAX(0, fitIn.w - ncSize.w),
-			       VACA_MAX(0, fitIn.h - ncSize.h)));
-}
+//   return
+//     ncSize +
+//     Widget::preferredSize(Size(VACA_MAX(0, fitIn.w - ncSize.w),
+// 			       VACA_MAX(0, fitIn.h - ncSize.h)));
+// }
 
 void Frame::layout()
 {
@@ -604,10 +623,10 @@ void Frame::layout()
   Rect layoutRect = getLayoutBounds();
 
   // put the dock areas arround the layout bounds
-  for (std::vector<DockArea *>::iterator it=mDockAreas.begin(); it!=mDockAreas.end(); ++it) {
+  for (std::vector<DockArea *>::iterator it=m_dockAreas.begin(); it!=m_dockAreas.end(); ++it) {
     DockArea *dockArea = *it;
     // Size dockSize = dockArea->getBounds().getSize();
-    Size dockSize = dockArea->preferredSize();
+    Size dockSize = dockArea->getPreferredSize();
 
     switch (dockArea->getSide()) {
 
@@ -642,9 +661,16 @@ bool Frame::isLayoutFree()
   return true;
 }
 
-bool Frame::wantArrowCursor()
+/**
+ * You can customize this method to return true, so the Frame's
+ * enabled-and-visible-state will keep synchronized to the
+ * enabled-and-visible-state of its parent.
+ *
+ * @see getSynchronizedGroup
+ */
+bool Frame::keepSynchronized()
 {
-  return true;
+  return false;
 }
 
 void Frame::updateMenuItem(MenuItem *menuItem)
@@ -656,8 +682,8 @@ void Frame::updateMenuItem(MenuItem *menuItem)
 
   CommandState cmdState;
 
-  for (std::vector<Command *>::iterator it = mCommands.begin();
-       it != mCommands.end();
+  for (std::vector<Command *>::iterator it = m_commands.begin();
+       it != m_commands.end();
        ++it) {
     Command *command = *it;
     if (command->getId() == menuItem->getId())
@@ -668,6 +694,29 @@ void Frame::updateMenuItem(MenuItem *menuItem)
   if (cmdState.isEnabled() != NULL) menuItem->setEnabled(*cmdState.isEnabled());
   if (cmdState.isChecked() != NULL) menuItem->setChecked(*cmdState.isChecked());
   if (cmdState.isRadio()   != NULL) menuItem->setRadio  (*cmdState.isRadio());
+}
+
+
+/**
+ * Returns the collection of frames that are synchronized to its
+ * parent (see keepSynchronized). If this routine returns true, the
+ * enabled-and-visible-state of the Frame will be synchronized with
+ * the state of its parent (for example DockFrame).
+ *
+ * @see keepSynchronized
+ */
+Widget::Container Frame::getSynchronizedGroup()
+{
+  Container children = getChildren();
+  Container container;
+
+  for (Container::iterator it=children.begin(); it!=children.end(); ++it) {
+    Frame *child = dynamic_cast<Frame *>(*it);
+    if (child != NULL && child->keepSynchronized())
+      container.push_back(child);
+  }
+
+  return container;
 }
 
 // int Frame::getFramesCount()
@@ -693,7 +742,7 @@ void Frame::updateMenuItem(MenuItem *menuItem)
 
 /**
  * Used when WM_INITMENU or WM_INITMENUPOPUP message is received to
- * find the Menu of the mMenuBar, known only its HMENU.
+ * find the Menu of the m_menuBar, known only its HMENU.
  */
 // Menu *Frame::getMenuByHMENU(HMENU hmenu)
 // {
@@ -735,7 +784,7 @@ void Frame::updateMenuItem(MenuItem *menuItem)
  * @li @c WM_SIZING -&gt; onResizing()
  *
  * When the event generated by WM_CLOSE message isn't cancelled, the
- * Frame is automatically disposed.
+ * Frame is automatically hidden.
  */
 bool Frame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult)
 {
@@ -745,16 +794,20 @@ bool Frame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult
   switch (message) {
 
     case WM_CLOSE: {
+      // fire onClose event
       CloseEvent ev(this);
       onClose(ev);
+
+      // default behaviour: when the event isn't cancelled, we must to
+      // hide the Frame
       if (!ev.isCanceled())
-	dispose();
+	setVisible(false);
 
       lResult = 0;
       return true;
       break;
     }
-
+      
     case WM_ACTIVATE:
       if (wParam == WA_ACTIVE || wParam == WA_CLICKACTIVE) {
 	Event ev(this);
@@ -766,114 +819,6 @@ bool Frame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult
       }
       break;
 
-#if 0
-    case WM_MENUCOMMAND: {
-//       HMENU hmenu = reinterpret_cast<HMENU>(lParam);
-//       if (hmenu == NULL)
-// 	break;
-      HMENU hmenu = (HMENU)lParam;
-      if (hmenu == NULL)
-	break;
-
-      // work arround for Win95, Win98, WinMe...
-      if (System::isWin95_98_Me()) {
-	// get the selected index (yes, in Win98 it's the
-	// HIWORD(wParam), in Win2K it's the whole wParam)
-	int index = HIWORD(wParam);
-
-	Menu *menu = getMenuByHMENU(hmenu);
-
-	VACA_TRACE("hmenu=%p menu=%p index=%d\n", hmenu, menu, index);
-
-	if (menu != NULL) {
-	  MenuItem *menuItem = menu->getMenuItem(index);
-
-	  assert(menuItem != NULL);
-
-	  MenuItemEvent ev(*menuItem);
-	  menuItem->onAction(ev);
-	}
-      }
-      // in Win2K, WinXP, we can use MENUITEMINFO
-      else if (System::isWinNT_2K_XP()) {
-	int index = wParam;
-
-	VACA_TRACE("hmenu=%p index=%d\n", hmenu, index);
-
-	MENUITEMINFO mii;
-	mii.cbSize = sizeof(MENUITEMINFO);
-	mii.fMask = MIIM_DATA | MIIM_ID;
-	if (GetMenuItemInfo(hmenu, index, TRUE, &mii)) {
-	  MenuItem *menuItem = reinterpret_cast<MenuItem *>(mii.dwItemData);
-
-	  if (menuItem != NULL) {
-	    MenuItemEvent ev(*menuItem);
-	    menuItem->onAction(ev);
-	  }
-	  else {
-	    // we must create the WM_COMMAND because we was notified
-	    // about a menu (or sysmenu) action through its
-	    // position, not by its ID
-
-	    MdiFrame *mdiFrame = dynamic_cast<MdiFrame *>(this);
-	    assert(mdiFrame != NULL);
-
-	    // this is from the MdiListMenu? we must to activate
-	    // other MdiChild...
-	    if (mii.wID >= VACA_IDM_FIRST_MDICHILD) {
-	      // count how many items has IDs (from end to begin)
-	      int i, lastIndex = GetMenuItemCount(hmenu)-1;
-	      for (i=lastIndex; i>=0 && GetMenuItemID(hmenu, i) != 0; i--);
-	      int itemsWithIds = lastIndex - i;
-
-	      // the last menu item was the selected item?
-	      if (itemsWithIds == 10 &&
-		  mii.wID == GetMenuItemID(hmenu, lastIndex)) {
-		// show the "More windows" dialog
-		mdiFrame->onMoreWindows();
-	      }
-	      // send the command message to the frame
-	      else {
-		// get the child with the ID of the menu
-		MdiChild *mdiChild = mdiFrame->getMdiClient().getChildById(mii.wID);
-		assert(mdiChild != NULL);
-
-		// select that child
-		sendMessage(WM_COMMAND,
-			    MAKEWPARAM(mii.wID, 0),
-			    reinterpret_cast<LPARAM>(mdiChild->getHWND()));
-	      }
-
-	      // 	      MENUINFO mi;
-	      // 	      mi.cbSize = sizeof(MENUINFO);
-	      // 	      mi.fMask = MIM_MENUDATA
-	      // 	      if (GetMenuInfo(hmenu, &mi)) {
-	      // 		Menu *menu = reinterpret_cast<Menu *>(mi.dwMenuData);
-	      // 		if (menu != NULL &&
-	      // 		    menu->isMdiList()) {
-		  
-	      // 		}
-	      // 	      }
-	    }
-	    // this is called when a MdiChild is maximized and some
-	    // syscommand is used, so we must to generate the
-	    // WM_SYSCOMMAND message because we are notified by
-	    // position, not by ID
-	    else {
-// 	      VACA_TRACE("SYSCOMMAND %d 0x%x\n", mii.wID, mii.wID);
-
-	      MdiChild *mdiChild = mdiFrame->getMdiClient().getActive();
-	      assert(mdiChild != NULL);
-
-	      mdiChild->sendMessage(WM_SYSCOMMAND, mii.wID, 0);
-	    }
-	  }
-	}
-      }
-      break;
-    }
-#endif
-
     case WM_INITMENU:
     case WM_INITMENUPOPUP: {
       HMENU hmenu = reinterpret_cast<HMENU>(wParam);
@@ -882,22 +827,22 @@ bool Frame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult
 
       Menu *menu = NULL;
 
-#if 0
-      // work arround for Win95, Win98, WinMe...
-      if (System::isWin95_98_Me()) {
-	menu = mMenuBar != NULL ? mMenuBar->getMenuByHMENU(hmenu): NULL;
-      }
-      // in Win2K, WinXP, we can use MENUITEMINFO
-      else if (System::isWinNT_2K_XP()) {
-#endif
+// #if 0
+//       // work arround for Win95, Win98, WinMe...
+//       if (System::isWin95_98_Me()) {
+// 	menu = m_menuBar != NULL ? m_menuBar->getMenuByHMENU(hmenu): NULL;
+//       }
+//       // in Win2K, WinXP, we can use MENUITEMINFO
+//       else if (System::isWinNT_2K_XP()) {
+// #endif
 	MENUINFO mi;
 	mi.cbSize = sizeof(MENUINFO);
 	mi.fMask = MIM_MENUDATA;
 	if (::GetMenuInfo(hmenu, &mi))
 	  menu = reinterpret_cast<Menu *>(mi.dwMenuData);
-#if 0
-      }
-#endif
+// #if 0
+//       }
+// #endif
 
       if (menu != NULL) {
 	Menu::Container children = menu->getMenuItems();
@@ -930,7 +875,7 @@ bool Frame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult
 
 	left = top = right = bottom = 0;
 
-	for (std::vector<DockArea *>::iterator it=mDockAreas.begin(); it!=mDockAreas.end(); ++it) {
+	for (std::vector<DockArea *>::iterator it=m_dockAreas.begin(); it!=m_dockAreas.end(); ++it) {
 	DockArea *dockArea = *it;
 	// 	    Widget::Container widgets = dockArea->getChildren();
 	Size sz = dockArea->preferredSize();
@@ -952,6 +897,70 @@ bool Frame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult
 	}
 	break;
       */
+
+    case WM_ENABLE: {
+      Container group = getSynchronizedGroup();
+      HWND hParam  = reinterpret_cast<HWND>(lParam);
+
+      // synchronize all the group
+      for (Container::iterator it=group.begin(); it!=group.end(); ++it) {
+	HWND hwndChild = (*it)->getHWND();
+
+	if (hwndChild != hParam)
+	  EnableWindow(hwndChild, static_cast<BOOL>(wParam));
+      }
+
+      lResult = defWndProc(WM_ENABLE, wParam, lParam);
+      return true;
+    }
+
+    case WM_NCACTIVATE:
+      if (lParam == static_cast<LPARAM>(-1)) {
+	lResult = defWndProc(WM_NCACTIVATE, wParam, lParam);
+	return true;
+      }
+      else {
+	Frame *owner = keepSynchronized() ? dynamic_cast<Frame *>(getParent()): this;
+
+	// this can happend in the last WM_NCACTIVATE message (when
+	// the widget is destroyed)
+// 	if (owner == reinterpret_cast<Frame *>(NULL))
+// 	  return false;
+	assert(owner != NULL);
+
+	bool keepActive = wParam != 0;
+	bool syncGroup = true;
+	HWND hParam = reinterpret_cast<HWND>(lParam);
+
+	Container group = owner->getSynchronizedGroup();
+	group.push_back(owner);
+
+	// if the other window to be activated/desactivated belong to
+	// the synchronized group, we don't need to
+	// synchronize/repaint all the group
+	for (Container::iterator it=group.begin(); it!=group.end(); ++it) {
+	  Widget *child = *it;
+	  if (child->getHWND() == hParam) {
+	    keepActive = true;
+	    syncGroup = false;
+	    break;
+	  }
+	}
+
+	// synchronize the group
+	if (syncGroup) {
+	  for (Container::iterator it=group.begin(); it!=group.end(); ++it) {
+	    Widget *child = *it;
+	    if ((child->getHWND() != getHWND()) &&
+		(child->getHWND() != hParam))
+	      child->sendMessage(WM_NCACTIVATE, keepActive, static_cast<LPARAM>(-1));
+	  }
+	}
+
+	lResult = defWndProc(WM_NCACTIVATE, keepActive, lParam);
+	return true;
+      }
+      break;
 
   }
 

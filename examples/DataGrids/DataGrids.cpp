@@ -29,30 +29,9 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/Vaca.h"
+#include <Vaca/Vaca.h>
 
 using namespace Vaca;
-
-// struct DataType {
-//   enum Type {
-//     Bool,
-//     Byte,
-//     Char,
-//     DateTime,
-//     Date,
-//     Time,
-//     Decimal,
-//     Int16,
-//     Int32,
-//     Int64,
-//     UInt16,
-//     UInt32,
-//     UInt64,
-//     Float,
-//     Double,
-//     String
-//   };
-// };
 
 class DataValue;
 class DataColumn;
@@ -60,92 +39,109 @@ class DataRow;
 class DataTable;
 class DataSet;
 
-// class DataValue
-// {
-//   DataType mType;
-//   int mSize;
-//   union {
-//     void *		ptr;
-
-//     bool		bool_value;
-//     byte		byte_value;
-//     char		char_value;
-//     short		int16_value;
-//     long		int32_value;
-//     LONGLONG		int64_value;
-//     unsigned short	uint16_value;
-//     unsigned long	uint32_value;
-//     DWORDLONG		uint64_value;
-//     float		float_value;
-//     double		double_value;
-//     TCHAR *		string_value;
-//   } mValue;
-
-// //   DataValue(DataType type, int size, const char *src)
-// //     : mType(type)
-// //     : mSize(type)
-// //   {
-// //     memcpy(&mValue.ptr, src, size);
-// //   }
-
-// public:
-
-// //   DataValue(DataType type, String value)
-// //   {
-// //     assert(DataType::String == type);
-// //     initialize(type, sizeof(TCHAR), &value);
-// //   }
-
-// };
-
 //////////////////////////////////////////////////////////////////////
+// DataValue
 
 class DataValue
 {
 public:
   virtual ~DataValue() { }
-  virtual String getString() = 0;
+  virtual String getString() const = 0;
   virtual void beginEdit(const Rect &cellBounds) = 0;
   virtual void endEdit() = 0;
   virtual DataValue *clone() = 0;
 };
 
+//////////////////////////////////////////////////////////////////////
+// DataIntValue
+
 class DataIntValue : public DataValue
 {
-  int mValue;
+  int m_value;
 public:
   DataIntValue(int value);
   virtual ~DataIntValue();
-  virtual String getString();
+  virtual String getString() const;
   virtual void beginEdit(const Rect &cellBounds);
   virtual void endEdit();
   virtual DataValue *clone();
 };
 
+//////////////////////////////////////////////////////////////////////
+// DataStringValue
+
+class DataStringValue : public DataValue
+{
+  String m_value;
+public:
+  DataStringValue(const String &value);
+  virtual ~DataStringValue();
+  virtual String getString() const;
+  virtual void beginEdit(const Rect &cellBounds);
+  virtual void endEdit();
+  virtual DataValue *clone();
+};
+
+//////////////////////////////////////////////////////////////////////
+// DataBoolValue
+
+class DataBoolValue : public DataValue
+{
+  bool m_value;
+public:
+  DataBoolValue(bool value);
+  virtual ~DataBoolValue();
+  virtual String getString() const;
+  virtual void beginEdit(const Rect &cellBounds);
+  virtual void endEdit();
+  virtual DataValue *clone();
+};
+
+//////////////////////////////////////////////////////////////////////
+// DataDoubleValue
+
+class DataDoubleValue : public DataValue
+{
+  double m_value;
+public:
+  DataDoubleValue(double value);
+  virtual ~DataDoubleValue();
+  virtual String getString() const;
+  virtual void beginEdit(const Rect &cellBounds);
+  virtual void endEdit();
+  virtual DataValue *clone();
+};
+
+//////////////////////////////////////////////////////////////////////
+// DataColumn
+
 class DataColumn
 {
   friend class DataTable;
   
-  String mName;
-  String mCaption;
-  DataTable *mTable;
-  DataValue *mDefaultValue;
-  int mHeaderHeight;
-  int mColumnWidth;
-  int mPreferredColumnWidth;
+  String m_name;
+  String m_caption;
+  DataTable *m_table;
+  DataValue *m_defaultValue;
+//   int m_headerHeight;
+//   int m_columnWidth;
+//   int m_preferredColumnWidth;
   
 public:
 
   DataColumn(const String &name, DataValue *defaultValue);
   virtual ~DataColumn();
 
-  String getName();
+  String getName() const;
   void setName(const String &name);
 
-  String getCaption();
+  String getCaption() const;
   void setCaption(const String &caption);
   
   DataTable *getTable();
+  DataValue *getDefaultValue();
+
+  DataRow *operator[](int index);
 
 private:
   
@@ -153,13 +149,16 @@ private:
 
 };
 
+//////////////////////////////////////////////////////////////////////
+// DataRow
+
 class DataRow
 {
   friend class DataTable;
 
-  DataTable *mTable;
-  std::vector<DataValue *> mValue;
-  int mRowHeight;
+  DataTable *m_table;
+  std::vector<DataValue *> m_values;
+//   int m_rowHeight;
   
 private:
 
@@ -171,16 +170,22 @@ public:
 
   DataTable *getTable();
 
-  DataColumn *operator[](int index);
-  DataColumn *operator[](const String &columnName);
+  DataValue *getValue(int columntIndex);
+  void setValue(int columntIndex, DataValue *value);
+
+//   DataColumn *operator[](int index);
+//   DataColumn *operator[](const String &columnName);
 
 };
 
+//////////////////////////////////////////////////////////////////////
+// DataTable
+
 class DataTable
 {
-  String mName;
-  std::vector<DataColumn *> mColumns;
-  std::vector<DataRow *> mRows;
+  String m_name;
+  std::vector<DataColumn *> m_columns;
+  std::vector<DataRow *> m_rows;
   
 public:
 
@@ -192,13 +197,13 @@ public:
   DataTable(const String &name)
   {
     VACA_TRACE("DataTable()\n");
-    mName = name;
+    m_name = name;
   }
 
   virtual ~DataTable()
   {
-    for (std::vector<DataColumn *>::iterator it = mColumns.begin();
-	 it != mColumns.end();
+    for (std::vector<DataColumn *>::iterator it = m_columns.begin();
+	 it != m_columns.end();
 	 ++it) {
       delete *it;
     }
@@ -216,7 +221,7 @@ public:
     assert(column->getTable() == NULL);
 
     column->setTable(this);
-    mColumns.push_back(column);
+    m_columns.push_back(column);
   }
 
   void addRow(DataRow *row)
@@ -224,39 +229,50 @@ public:
     // a row created by this table
     assert(row->getTable() == this);
 
-    mRows.push_back(row);
+    m_rows.push_back(row);
   }
 
-  String getName()
+  String getName() const
   {
-    return mName;
+    return m_name;
   }
 
   void setName(const String &name)
   {
-    mName = name;
+    m_name = name;
   }
 
-  int getColumnCount()
+  int getColumnCount() const
   {
-    return mColumns.size();
+    return m_columns.size();
   }
 
-  int getRowCount()
+  int getRowCount() const
   {
-    return mRows.size();
+    return m_rows.size();
+  }
+
+  DataColumn *getColumn(int index)
+  {
+    assert(index >= 0 && index < getColumnCount());
+    return m_columns[index];
+  }
+
+  DataRow *getRow(int index)
+  {
+    assert(index >= 0 && index < getRowCount());
+    return m_rows[index];
   }
 
   DataColumn *operator[](int index)
   {
-    assert(index >= 0 && index < getColumnCount());
-    return mColumns[index];
+    return getColumn(index);
   }
 
   DataColumn *operator[](const String &columnName)
   {
-    for (std::vector<DataColumn *>::iterator it = mColumns.begin();
-	 it != mColumns.end();
+    for (std::vector<DataColumn *>::iterator it = m_columns.begin();
+	 it != m_columns.end();
 	 ++it) {
       if ((*it)->getName() == columnName)
 	return *it;
@@ -266,9 +282,12 @@ public:
   
 };
 
+//////////////////////////////////////////////////////////////////////
+// DataSet
+
 class DataSet
 {
-  std::vector<DataTable *> mTables;
+  std::vector<DataTable *> m_tables;
 
 public:
 
@@ -279,8 +298,8 @@ public:
 
   virtual ~DataSet()
   {
-    for (std::vector<DataTable *>::iterator it = mTables.begin();
-	 it != mTables.end();
+    for (std::vector<DataTable *>::iterator it = m_tables.begin();
+	 it != m_tables.end();
 	 ++it) {
       delete *it;
     }
@@ -289,29 +308,29 @@ public:
 
   void addTable(DataTable *table)
   {
-    mTables.push_back(table);
+    m_tables.push_back(table);
   }
 
   std::vector<DataTable *> getTables()
   {
-    return mTables;
+    return m_tables;
   }
 
   int getTableCount()
   {
-    return mTables.size();
+    return m_tables.size();
   }
 
   DataTable *operator[](int index)
   {
     assert(index >= 0 && index < getTableCount());
-    return mTables[index];
+    return m_tables[index];
   }
 
   DataTable *operator[](const String &tableName)
   {
-    for (std::vector<DataTable *>::iterator it = mTables.begin();
-	 it != mTables.end();
+    for (std::vector<DataTable *>::iterator it = m_tables.begin();
+	 it != m_tables.end();
 	 ++it) {
       if ((*it)->getName() == tableName)
 	return *it;
@@ -322,33 +341,38 @@ public:
   
 };
 
+//////////////////////////////////////////////////////////////////////
+// DataGrid
+
 class DataGrid : public Panel
 {
   struct Column {
-//     DataGridType type;
-    String header;
-    TextAlign headerAlign;
+    DataColumn *columnData;
+    TextAlign captionAlign;
     TextAlign dataAlign;
-    int headerHeight;
+    int captionHeight;
     int columnWidth;
     int preferredColumnWidth;
   };
   struct Row {
+    DataRow *rowData;
     int rowHeight;
-//     std::vector<DataGridValue *> data;
   };
-  std::vector<Column *> mColumns;
-  std::vector<Row *> mRows;
-  int mHotCol;
-  int mHotRow;
+  std::vector<Column *> m_columns;
+  std::vector<Row *> m_rows;
+  int m_hotCol;
+  int m_hotRow;
   struct {
     int column;
     Rect startBounds;
     Point startPoint;
-  } mResizing;
+  } m_resizing;
   // customization
-  bool mHeaderResizingEnabled;
-  bool mWhiteFill;
+  bool m_headerResizingEnabled;
+  bool m_whiteFill;
+
+  DataSet *m_dataSet;
+  DataTable *m_dataTable;
 
 public:
 
@@ -356,167 +380,99 @@ public:
     : Panel(parent, PanelStyle +
 		    ScrollStyle +
 		    ClientEdgeStyle +
-		    TabStopStyle)
+		    FocusableStyle)
   {
     setBgColor(Color::White);
     setFgColor(Color::Black);
 
-    mHotCol = -1;
-    mHotRow = -1;
-    mResizing.column = -1;
+    m_hotCol = -1;
+    m_hotRow = -1;
+    m_resizing.column = -1;
 
     // default configuration
-    mHeaderResizingEnabled = true;
-    mWhiteFill = false;
+    m_headerResizingEnabled = true;
+    m_whiteFill = false;
 
     ::ShowScrollBar(getHWND(), SB_BOTH, FALSE);
   }
 
   virtual ~DataGrid()
   {
+    clearGrid();
+  }
+
+  void setDataSet(DataSet *set)
+  {
+    m_dataSet = set;
+    if (set->getTableCount() > 0)
+      setDataTable(set->getTables().front());
+  }
+
+private:
+
+  void clearGrid()
+  {
     int colCount = getColumnCount();
     int rowCount = getRowCount();
 
-    for (int i=0; i<rowCount; ++i) {
-//       for (int j=0; j<colCount; ++j)
-// 	delete mRows[i]->data[j];
-
-      delete mRows[i];
-    }
+    for (int i=0; i<rowCount; ++i)
+      delete m_rows[i];
 
     for (int i=0; i<colCount; ++i)
-      delete mColumns[i];
+      delete m_columns[i];
+
+    m_rows.clear();
+    m_columns.clear();
   }
 
-  //////////////////////////////////////////////////////////////////////
-  void getScrollInfo(Orientation orientation, int &minPos, int &maxPos, int &pageSize)
+  void setDataTable(DataTable *table)
   {
-    assert(getHWND() != NULL);
-    
-    int fnBar = orientation == Horizontal ? SB_HORZ:
-					    SB_VERT;
+    m_dataTable = table;
+    int cols = m_dataTable->getColumnCount();
+    int rows = m_dataTable->getRowCount();
 
-    SCROLLINFO si;
-    si.cbSize = sizeof(si);
-    si.fMask  = SIF_RANGE | SIF_PAGE;
+    for (int j=0; j<cols; ++j)
+      addColumn(m_dataTable->getColumn(j));
 
-    GetScrollInfo(getHWND(), fnBar, &si);
-
-    minPos = si.nMin;
-    maxPos = si.nMax;
-    pageSize = si.nPage;
-  }
-
-  void setScrollInfo(Orientation orientation, int minPos, int maxPos, int pageSize)
-  {
-    assert(getHWND() != NULL);
-    
-    int fnBar = orientation == Horizontal ? SB_HORZ:
-					    SB_VERT;
-
-    SCROLLINFO si;
-    si.cbSize = sizeof(si);
-    si.fMask  = SIF_RANGE | SIF_PAGE;
-    si.nMin = minPos;
-    si.nMax = maxPos;
-    si.nPage = pageSize;
-
-    SetScrollInfo(getHWND(), fnBar, &si, TRUE);
+    for (int i=0; i<rows; ++i)
+      addRow(m_dataTable->getRow(i));
   }
   
-  int getScrollPos(Orientation orientation)
+  void addColumn(DataColumn *column)
   {
-    assert(getHWND() != NULL);
-    
-    int fnBar = orientation == Horizontal ? SB_HORZ:
-					    SB_VERT;
+    Column *col = new Column;
 
-    SCROLLINFO si;
-    si.cbSize = sizeof (si);
-    si.fMask  = SIF_POS;
-    GetScrollInfo(getHWND(), fnBar, &si);
-    return si.nPos;
-  }
-
-  void setScrollPos(Orientation orientation, int pos)
-  {
-    assert(getHWND() != NULL);
-
-    int fnBar = orientation == Horizontal ? SB_HORZ:
-					    SB_VERT;
-    
-    SCROLLINFO si;
-    si.cbSize = sizeof(si);
-    si.fMask  = SIF_ALL;
-    GetScrollInfo(getHWND(), fnBar, &si);
-
-    si.fMask = SIF_POS;
-    si.nPos = VACA_MID(si.nMin,
-		       pos,
-		       si.nMax - VACA_MAX(static_cast<int>(si.nPage) - 1, 0));
-    SetScrollInfo(getHWND(), fnBar, &si, TRUE);
-  }
-  
-  Point getScrollPoint()
-  {
-    return Point(getScrollPos(Horizontal),
-		 getScrollPos(Vertical));
-  }
-
-  void setScrollPoint(const Point &pt)
-  {
-    setScrollPos(Horizontal, pt.x);
-    setScrollPos(Vertical, pt.y);
-  }
-  //////////////////////////////////////////////////////////////////////
-
-  void addColumn(const String &header,
-		 TextAlign headerAlign = LeftAlign,
-		 TextAlign dataAlign = LeftAlign)
-  {
-    Column *column = new Column;
-
-//     column->type = type;
-    column->header = header;
-    column->headerAlign = headerAlign;
-    column->dataAlign = dataAlign;
+    col->columnData = column;
+    col->captionAlign = LeftAlign;
+    col->dataAlign = LeftAlign;
 
     ScreenGraphics g;
     g.setFont(getFont());
-    Size headerSize = g.measureString(header) + Size(16, 2);
+    Size captionSize = g.measureString(column->getCaption()) + Size(16, 2);
 
-    column->headerHeight = headerSize.h;
-    column->columnWidth = headerSize.w;
-    column->preferredColumnWidth = headerSize.w;
+    col->captionHeight = captionSize.h;
+    col->columnWidth = captionSize.w;
+    col->preferredColumnWidth = captionSize.w;
 
-    mColumns.push_back(column);
+    m_columns.push_back(col);
   }
-#if 0
-  void addRow(std::vector<DataGridValue *> &rowData)
+
+  void addRow(DataRow *row)
   {
-#ifndef NDEBUG
-    int count = getColumnCount();
-    assert(count > 0);
-    assert(rowData.size() == count);
-//     for (int i=0; i<count; ++i)
-//       assert(mColumns[i]->type == rowData[i]->getType());
-#endif
-
-    Row *row = new Row;
-    row->rowHeight = mColumns[0]->headerHeight;
-    row->data = rowData;
-    mRows.push_back(row);
+    Row *r = new Row;
+    r->rowData = row;
+    r->rowHeight = m_columns[0]->captionHeight;
+    m_rows.push_back(r);
   }
-#endif
   
   int getColumnCount()
   {
-    return mColumns.size();
+    return m_columns.size();
   }
 
   int getRowCount()
   {
-    return mRows.size();
+    return m_rows.size();
   }
 
   int getColumnByPoint(const Point &pt, bool useRows)
@@ -538,6 +494,18 @@ public:
 
     return -1;
   }
+
+  int getRowByPoint(const Point &pt)
+  {
+    Rect bounds = getClientBounds();
+    int count = getRowCount();
+
+    for (int i=0; i<count; ++i)
+      if (getRowBounds(i).contains(pt))
+	return i;
+
+    return -1;
+  }
  
   Rect getColumnBounds(int columnIndex)
   {
@@ -546,50 +514,67 @@ public:
     int i;
 
     for (i=0; i<columnIndex; ++i)
-      pt.x += mColumns[i]->columnWidth;
+      pt.x += m_columns[i]->columnWidth;
 
-    return Rect(pt, Size(mColumns[i]->columnWidth,
-			 mColumns[i]->headerHeight));
+    return Rect(pt, Size(m_columns[i]->columnWidth,
+			 m_columns[i]->captionHeight));
+  }
+
+  Rect getRowBounds(int rowIndex)
+  {
+    assert(rowIndex >= 0 && rowIndex < getRowCount());
+    Point pt = getClientBounds().getOrigin() - getScrollPoint();
+    int i;
+
+    pt.y += m_columns[0]->captionHeight;
+
+    for (i=0; i<rowIndex; ++i)
+      pt.y += m_rows[i]->rowHeight;
+
+    Rect rc;
+    int colCount = getColumnCount();
+    if (colCount > 0)
+      rc = getColumnBounds(0).createUnion(getColumnBounds(colCount-1));
+
+    return Rect(rc.x, pt.y, rc.w, m_rows[rowIndex]->rowHeight);
   }
 
 protected:
 
   virtual void onScroll(Orientation orientation, int code)
   {
-    if (orientation == Horizontal) {
-      SCROLLINFO si;
-      si.cbSize = sizeof (si);
-      si.fMask  = SIF_ALL;
-      GetScrollInfo(getHWND(), SB_HORZ, &si);
-      int xPos = si.nPos;
-      switch (code) {
-	case SB_LINELEFT: 
-	  si.nPos -= 32;
-	  break;
-	case SB_LINERIGHT: 
-	  si.nPos += 32;
-	  break;
-	case SB_PAGELEFT:
-	  si.nPos -= si.nPage;
-	  break;
-	case SB_PAGERIGHT:
-	  si.nPos += si.nPage;
-	  break;
-	case SB_THUMBTRACK: 
-	  si.nPos = si.nTrackPos;
-	  break;
-	default:
-	  break;
-      }
-      si.fMask = SIF_POS;
-      ::SetScrollInfo(getHWND(), SB_HORZ, &si, TRUE);
-      ::GetScrollInfo(getHWND(), SB_HORZ, &si);
+    ScrollInfo si = getScrollInfo(orientation);
+    int oldPos = si.pos;
 
-      if (si.nPos != xPos) {
-	ScrollWindowEx(getHWND(), xPos - si.nPos, 0,
-		       NULL, NULL, NULL, NULL,
-		       SW_INVALIDATE);
-      }
+    switch (code) {
+      case SB_LINELEFT: 
+	si.pos -= 32;
+	break;
+      case SB_LINERIGHT: 
+	si.pos += 32;
+	break;
+      case SB_PAGELEFT:
+	si.pos -= si.pageSize;
+	break;
+      case SB_PAGERIGHT:
+	si.pos += si.pageSize;
+	break;
+      case SB_THUMBTRACK: 
+	si.pos = si.trackPos;
+	break;
+      default:
+	break;
+    }
+
+    setScrollPos(orientation, si.pos);
+    si.pos = getScrollPos(orientation);
+
+    if (si.pos != oldPos) {
+      ScrollWindowEx(getHWND(),
+		     (orientation == Horizontal) ? oldPos - si.pos: 0,
+		     (orientation == Vertical  ) ? oldPos - si.pos: 0,
+		     NULL, NULL, NULL, NULL,
+		     SW_ERASE | SW_INVALIDATE);
     }
   }
 
@@ -600,8 +585,8 @@ protected:
     if (column >= 0) {
       ScreenGraphics g;
       g.setFont(getFont());
-      mColumns[column]->columnWidth =
-	mColumns[column]->preferredColumnWidth;
+      m_columns[column]->columnWidth =
+	m_columns[column]->preferredColumnWidth;
 
       updateHorizontalScrollBarVisibility();
       invalidate(false);
@@ -612,14 +597,14 @@ protected:
   virtual void onMouseDown(MouseEvent &ev)
   {
     if (!hasCapture()) {
-      focus();
+      acquireFocus();
       
       // resize a header?
       int column = getHotResizingBorder(ev.getPoint());
       if (column >= 0) {
-	mResizing.column = column;
-	mResizing.startBounds = getColumnBounds(column);
-	mResizing.startPoint = ev.getPoint() + getScrollPoint();
+	m_resizing.column = column;
+	m_resizing.startBounds = getColumnBounds(column);
+	m_resizing.startPoint = ev.getPoint() + getScrollPoint();
 
 	acquireCapture();
       }
@@ -630,8 +615,8 @@ protected:
   virtual void onMouseUp(MouseEvent &ev)
   {
     if (hasCapture()) {
-      if (mResizing.column >= 0) {
-	mResizing.column = -1;
+      if (m_resizing.column >= 0) {
+	m_resizing.column = -1;
 
 // 	updateHorizontalScrollBarVisibility();
 // 	invalidate(false);
@@ -646,7 +631,7 @@ protected:
   {
     if (hasCapture()) {
       // resizing column's header
-      if (mResizing.column >= 0) {
+      if (m_resizing.column >= 0) {
 	Rect client = getAbsoluteClientBounds();
 	Point cursor = System::getCursorPos();
 	Point clientCursor = (cursor - client.getOrigin());
@@ -658,12 +643,12 @@ protected:
 	Point delta =
 	  clientCursor
 	  + getScrollPoint()
-	  - mResizing.startPoint;
+	  - m_resizing.startPoint;
 
 	// change column size
-	mColumns[mResizing.column]->columnWidth =
-	  VACA_MAX(mColumns[mResizing.column]->preferredColumnWidth,
-		   mResizing.startBounds.w + delta.x);
+	m_columns[m_resizing.column]->columnWidth =
+	  VACA_MAX(m_columns[m_resizing.column]->preferredColumnWidth,
+		   m_resizing.startBounds.w + delta.x);
 
 	// update scroll bars
 	updateHorizontalScrollBarVisibility();
@@ -675,8 +660,7 @@ protected:
 	  System::setCursorPos(Point(client.x+client.w-dx,
 				     cursor.y));
 
-	  setScrollPos(Horizontal,
-		       getScrollPos(Horizontal)+dx);
+	  setScrollPos(Horizontal, getScrollPos(Horizontal)+dx);
 	}
 
 	invalidate(false);
@@ -687,7 +671,6 @@ protected:
     }
   }
 
-  // TODO why DataGrid::onMouseWheel isn't called?
   virtual void onMouseWheel(MouseEvent &ev)
   {
 //     int columnIndex = getColumnByPoint(ev.getPoint());
@@ -707,24 +690,42 @@ protected:
 //     SetScrollInfo(getHWND(), SB_HORZ, &si, TRUE);
 //     GetScrollInfo(getHWND(), SB_HORZ, &si);
 
-    int oldPos = getScrollPos(Horizontal);
-    setScrollPos(Horizontal, oldPos - ev.getDelta() * 32);
-    int newPos = getScrollPos(Horizontal);
+    // Vertical
+//     if (getScrollInfo(Vertical).maxPos >= 0) {
+//       int oldPos = getScrollPos(Vertical);
+//       setScrollPos(Horizontal, oldPos - ev.getDelta() * 32);
+//       int newPos = getScrollPos(Vertical);
 
-    if (oldPos != newPos) {
-      ScrollWindowEx(getHWND(), oldPos - newPos, 0,
-		     NULL, NULL, NULL, NULL,
-		     SW_INVALIDATE);
+//       if (oldPos != newPos) {
+// 	ScrollWindowEx(getHWND(), 0, oldPos - newPos,
+// 		       NULL, NULL, NULL, NULL,
+// 		       SW_ERASE | SW_INVALIDATE);
 
-      updateHotTracking(ev.getPoint());
+// 	updateHotTracking(ev.getPoint());
+//       }
+//     }
+//     // Horizontal
+//     else 
+      {
+      int oldPos = getScrollPos(Horizontal);
+      setScrollPos(Horizontal, oldPos - ev.getDelta() * 32);
+      int newPos = getScrollPos(Horizontal);
+
+      if (oldPos != newPos) {
+	ScrollWindowEx(getHWND(), oldPos - newPos, 0,
+		       NULL, NULL, NULL, NULL,
+		       SW_ERASE | SW_INVALIDATE);
+
+	updateHotTracking(ev.getPoint());
+      }
     }
   }
 
   virtual void onMouseLeave()
   {
-    if (mHotCol >= 0) {
-      invalidate(getColumnBounds(mHotCol), false);
-      mHotCol = -1;
+    if (m_hotCol >= 0) {
+      invalidate(getColumnBounds(m_hotCol), false);
+      m_hotCol = -1;
     }
   }
 
@@ -746,6 +747,7 @@ protected:
       Panel::onResize(sz);
 //       invalidate(true);
       updateHorizontalScrollBarVisibility();
+//       updateVerticalScrollBarVisibility();
     }
 
   virtual void onPaint(Graphics &g)
@@ -754,36 +756,41 @@ protected:
     Color headerBorderColor = Color(128, 128, 128);
     Color hotHeaderFaceColor = Color(182, 189, 210);
     Color hotHeaderBorderColor = Color(10, 36, 106);
-    Point pt = getClientBounds().getOrigin();
+    Rect clientBounds = getClientBounds();
+    Point pt = clientBounds.getOrigin();
     int colCount = getColumnCount();
     int rowCount = getRowCount();
+    Brush whiteBrush(Color::White);
     
     if (colCount > 0) {
       // draw normal column headers
-      for (int i=0; i<colCount; ++i)
-	if (i != mHotCol)
-	  drawCell(g, mColumns[i]->header,
-		   getColumnBounds(i),
+      for (int j=0; j<colCount; ++j)
+	if (j != m_hotCol)
+	  drawCell(g,
+		   m_columns[j]->columnData->getCaption(),
+		   getColumnBounds(j),
 		   headerBorderColor,
 		   headerFaceColor);
 
       // draw hot column header
-      if (mHotCol >= 0)
-	drawCell(g, mColumns[mHotCol]->header,
-		 getColumnBounds(mHotCol),
+      if (m_hotCol >= 0)
+	drawCell(g,
+		 m_columns[m_hotCol]->columnData->getCaption(),
+		 getColumnBounds(m_hotCol),
 		 hotHeaderBorderColor,
-		 hotHeaderFaceColor);
+		 hotHeaderFaceColor,
+		 true);		// hot
 
       // fill right side of the header
       Rect rightSide = getColumnBounds(colCount-1);
 
-      int width = getClientBounds().getSize().w - rightSide.x;
+      int width = clientBounds.w - rightSide.x;
       rightSide.x += rightSide.w;
       rightSide.w = width;
 
-      if (mWhiteFill) {
-	g.setColor(getBgColor());
-	g.fillRect(rightSide);
+      if (m_whiteFill) {
+	Brush brush(getBgColor());
+	g.fillRect(brush, rightSide);
       }
       else {
 // 	rightSide.x -= 1;
@@ -793,51 +800,70 @@ protected:
       }
 
       // draw rows
-      for (int j=0; j<rowCount; ++j) {
-	for (int i=0; i<colCount; ++i) {
-	  Rect rc = getColumnBounds(i);
-	  rc.y += (j+1)*rc.h;
+      if (rowCount > 0) {
+	for (int i=0; i<rowCount; ++i) {
+	  for (int j=0; j<colCount; ++j) {
+	    Rect rc = getColumnBounds(j);
+	    rc.y += (i+1)*rc.h;
 
-	  String text = "Unknown";
+	    String text;
 
-// 	  switch (mRows[j]->data[i]->getType()) {
-// 	    case DataGrid_Bool:   text="Bool";   break;
-// 	    case DataGrid_Int:    text="Int";    break;
-// 	    case DataGrid_Float:  text="Float";  break;
-// 	    case DataGrid_String: text="String"; break;
-// 	  }
+	    DataValue *value = m_rows[i]->rowData->getValue(j);
+	    if (value != NULL)
+	      text = value->getString();
+	    else
+	      text = "NULL";	// TODO customize "NULL" string
+	    
+	    // 	  switch (m_rows[j]->data[i]->getType()) {
+	    // 	    case DataGrid_Bool:   text="Bool";   break;
+	    // 	    case DataGrid_Int:    text="Int";    break;
+	    // 	    case DataGrid_Float:  text="Float";  break;
+	    // 	    case DataGrid_String: text="String"; break;
+	    // 	  }
 
-	  drawCell(g, text,
-		   rc,
-		   Color(192, 192, 192),
-		   Color::White);
+	    drawCell(g, text,
+		     rc,
+		     Color(192, 192, 192),
+		     m_hotRow == i ? Color::Yellow:
+				    Color::White);
+	  }
 	}
+
+	// fill bottom side of the rows
+	Rect bottomSide = getRowBounds(rowCount-1);
+	bottomSide.y += m_rows[rowCount-1]->rowHeight;
+	bottomSide.h = clientBounds.h - bottomSide.y;
+	bottomSide.w++;
+
+	g.fillRect(whiteBrush, bottomSide);
       }
 
-      // fill right side of the rows
-      int height = getClientBounds().getSize().h - rightSide.h;
+      // fill the right side of the rows
+      int height = clientBounds.h - rightSide.h;
       rightSide.y += rightSide.h;
-      rightSide.h = height;
-      rightSide.x++;
-      rightSide.w--;
+      rightSide.h = clientBounds.h - rightSide.y;
 
-      g.setColor(getBgColor());
-      g.fillRect(rightSide);
+      g.fillRect(whiteBrush, rightSide);
     }
   }
 
 private:
 
-  void drawCell(Graphics &g, const String &text, const Rect &rc, Color border, Color face)
+  void drawCell(Graphics &g, const String &text, const Rect &rc, Color border, Color face, bool hot = false)
   {
-    g.setColor(border);
-//     g.drawRect(rc);
-    g.moveTo(rc.x, rc.y+rc.h-1);
-    g.lineTo(rc.x+rc.w-1, rc.y+rc.h-1);
-    g.lineTo(rc.x+rc.w-1, rc.y-1);
+    Pen borderPen(border);
+    Brush faceBrush(face);
 
-    g.setColor(face);
-    g.fillRect(Rect(rc).inflate(-1, -1));
+    if (hot) {
+      g.drawRect(borderPen, Rect(rc.x-1, rc.y-1, rc.w+1, rc.h+1));
+    }
+    else {
+      g.moveTo(rc.x, rc.y+rc.h-1);
+      g.lineTo(borderPen, rc.x+rc.w-1, rc.y+rc.h-1);
+      g.lineTo(borderPen, rc.x+rc.w-1, rc.y-1);
+    }
+
+    g.fillRect(faceBrush, Rect(rc).inflate(-1, -1));
 
     if (!text.empty()) {
       g.setColor(getFgColor());
@@ -847,7 +873,7 @@ private:
 
   int getHotResizingBorder(const Point &pt)
   {
-    if (mHeaderResizingEnabled) {
+    if (m_headerResizingEnabled) {
       int count = getColumnCount();
 
       for (int i=count-1; i>=0; --i) {
@@ -867,48 +893,94 @@ private:
       Rect clientBounds = getClientBounds().offset(-getScrollPoint());
       Rect lastColumnBounds = getColumnBounds(colCount-1);
 
-      SCROLLINFO si;
-      si.cbSize = sizeof(si);
-      si.fMask  = SIF_ALL;
-      GetScrollInfo(getHWND(), SB_HORZ, &si);
+      ScrollInfo si = getScrollInfo(Horizontal);
 
-      si.fMask = SIF_PAGE | SIF_RANGE | SIF_POS;
-      si.nPage = clientBounds.w;
+      si.pageSize = clientBounds.w;
 
       if ((lastColumnBounds.x-clientBounds.x)+lastColumnBounds.w > clientBounds.w) {
-	si.nMin = 0;
-	si.nMax = (lastColumnBounds.x-clientBounds.x) + lastColumnBounds.w - 1;
+	si.minPos = 0;
+	si.maxPos = (lastColumnBounds.x-clientBounds.x) + lastColumnBounds.w - 1;
       }
       else {
-	si.nMin = si.nMax = 0;
+	si.minPos = si.maxPos = 0;
       }
 
-      si.nPos = VACA_MID(si.nMin,
-			 si.nPos,
-			 si.nMax - VACA_MAX(static_cast<int>(si.nPage) - 1, 0));
+      si.pos = VACA_MID(si.minPos,
+			si.pos,
+			si.maxPos - VACA_MAX(si.pageSize - 1, 0));
 
-      ::SetScrollInfo(getHWND(), SB_HORZ, &si, TRUE);
+      setScrollInfo(Horizontal, si);
     }
     else {
-      SCROLLINFO si;
-      si.cbSize = sizeof(si);
-      si.fMask  = SIF_RANGE;
-      si.nMin = si.nMax = 0;
-      ::SetScrollInfo(getHWND(), SB_HORZ, &si, TRUE);
+      hideScrollBar(Horizontal);
     }
+
+//     updateVerticalScrollBarVisibility();
+  }
+
+  void updateVerticalScrollBarVisibility()
+  {
+    int rowCount = getRowCount();
+    if (rowCount > 0) {
+      Rect clientBounds = getClientBounds().offset(-getScrollPoint());
+      Rect lastRowBounds = getRowBounds(rowCount-1);
+
+      ScrollInfo si = getScrollInfo(Vertical);
+
+      si.pageSize = clientBounds.h;
+
+      if ((lastRowBounds.y-clientBounds.y)+lastRowBounds.h > clientBounds.h) {
+	si.minPos = 0;
+	si.maxPos = (lastRowBounds.y-clientBounds.y) + lastRowBounds.h - 1;
+      }
+      else {
+	si.minPos = si.maxPos = 0;
+      }
+
+      si.pos = VACA_MID(si.minPos,
+			si.pos,
+			si.maxPos - VACA_MAX(si.pageSize - 1, 0));
+
+      setScrollInfo(Vertical, si);
+    }
+    else {
+      hideScrollBar(Vertical);
+    }
+
+//     ScrollInfo si = getScrollInfo(Vertical);
+//     si.pageSize = clientBounds.h;
+//     si.minPos = 0;
+//     si.maxPos = clientBounds.h*2;
+
+//     si.pos = VACA_MID(si.minPos,
+// 		      si.pos,
+// 		      si.maxPos - VACA_MAX(si.pageSize - 1, 0));
+
+//     setScrollInfo(Vertical, si);
   }
 
   void updateHotTracking(const Point &pt)
   {
-    int columnIndex = getColumnByPoint(pt, true);
-    if (columnIndex != mHotCol) {
-      if (mHotCol >= 0)
-	invalidate(getColumnBounds(mHotCol), false);
+    int columnIndex = getColumnByPoint(pt, false);
+    if (columnIndex != m_hotCol) {
+      if (m_hotCol >= 0)
+	invalidate(getColumnBounds(m_hotCol).enlarge(1), false);
 
-      mHotCol = columnIndex;
+      m_hotCol = columnIndex;
 
-      if (mHotCol >= 0)
-	invalidate(getColumnBounds(mHotCol), false);
+      if (m_hotCol >= 0)
+	invalidate(getColumnBounds(m_hotCol).enlarge(1), false);
+    }
+
+    int rowIndex = getRowByPoint(pt);
+    if (rowIndex != m_hotRow) {
+      if (m_hotRow >= 0)
+	invalidate(getRowBounds(m_hotRow), false);
+
+      m_hotRow = rowIndex;
+
+      if (m_hotRow >= 0)
+	invalidate(getRowBounds(m_hotRow), false);
     }
   }
   
@@ -917,12 +989,42 @@ private:
 //////////////////////////////////////////////////////////////////////
 // DataIntValue
 
-DataIntValue::DataIntValue(int value) : mValue(value) { }
+DataIntValue::DataIntValue(int value) : m_value(value) { }
 DataIntValue::~DataIntValue() { }
-String DataIntValue::getString() { return String::fromInt(mValue); }
+String DataIntValue::getString() const { return String::fromInt(m_value); }
 void DataIntValue::beginEdit(const Rect &cellBounds) { }
 void DataIntValue::endEdit() { }
-DataValue *DataIntValue::clone() { return new DataIntValue(mValue); }
+DataValue *DataIntValue::clone() { return new DataIntValue(m_value); }
+
+//////////////////////////////////////////////////////////////////////
+// DataStringValue
+
+DataStringValue::DataStringValue(const String &value) : m_value(value) { }
+DataStringValue::~DataStringValue() { }
+String DataStringValue::getString() const { return m_value; }
+void DataStringValue::beginEdit(const Rect &cellBounds) { }
+void DataStringValue::endEdit() { }
+DataValue *DataStringValue::clone() { return new DataStringValue(m_value); }
+
+//////////////////////////////////////////////////////////////////////
+// DataBoolValue
+
+DataBoolValue::DataBoolValue(bool value) : m_value(value) { }
+DataBoolValue::~DataBoolValue() { }
+String DataBoolValue::getString() const { return m_value ? "1": "0"; }
+void DataBoolValue::beginEdit(const Rect &cellBounds) { }
+void DataBoolValue::endEdit() { }
+DataValue *DataBoolValue::clone() { return new DataBoolValue(m_value); }
+
+//////////////////////////////////////////////////////////////////////
+// DataDoubleValue
+
+DataDoubleValue::DataDoubleValue(double value) : m_value(value) { }
+DataDoubleValue::~DataDoubleValue() { }
+String DataDoubleValue::getString() const { return String::fromDouble(m_value, 16); }
+void DataDoubleValue::beginEdit(const Rect &cellBounds) { }
+void DataDoubleValue::endEdit() { }
+DataValue *DataDoubleValue::clone() { return new DataDoubleValue(m_value); }
 
 //////////////////////////////////////////////////////////////////////
 // DataColumn
@@ -930,48 +1032,59 @@ DataValue *DataIntValue::clone() { return new DataIntValue(mValue); }
 DataColumn::DataColumn(const String &name, DataValue *defaultValue)
 {
   VACA_TRACE("DataColumn()\n");
-  mName = name;
-  mCaption = name;
-  mTable = NULL;
-  mDefaultValue = defaultValue;
+  m_name = name;
+  m_caption = name;
+  m_table = NULL;
+  m_defaultValue = defaultValue;
 }
 
 DataColumn::~DataColumn()
 {
   VACA_TRACE("~DataColumn()\n");
 
-  if (mDefaultValue != NULL)
-    delete mDefaultValue;
+  if (m_defaultValue != NULL)
+    delete m_defaultValue;
 }
 
-String DataColumn::getName()
+String DataColumn::getName() const
 {
-  return mName;
+  return m_name;
 }
 
 void DataColumn::setName(const String &name)
 {
-  mName = name;
+  m_name = name;
 }
 
-String DataColumn::getCaption()
+String DataColumn::getCaption() const
 {
-  return mCaption;
+  return m_caption;
 }
 
 void DataColumn::setCaption(const String &caption)
 {
-  mCaption = caption;
+  m_caption = caption;
 }
   
 DataTable *DataColumn::getTable()
 {
-  return mTable;
+  return m_table;
 }
-  
+
+DataValue *DataColumn::getDefaultValue()
+{
+  return m_defaultValue;
+}
+
 void DataColumn::setTable(DataTable *table)
 {
-    mTable = table;
+  m_table = table;
+}
+
+DataRow *DataColumn::operator[](int index)
+{
+  assert(m_table != NULL);
+  return m_table->getRow(index);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -982,91 +1095,115 @@ DataRow::DataRow(DataTable *table)
   assert(table != NULL);
 
   VACA_TRACE("DataRow()\n");
-  mTable = table;
+  m_table = table;
+
+  // default values for each column
+  int j, cols = m_table->getColumnCount();
+
+  for (j=0; j<cols; ++j) {
+    DataValue *value = m_table->getColumn(j)->getDefaultValue();
+    m_values.push_back(value != NULL ? value->clone(): NULL);
+  }
 }
 
 DataRow::~DataRow()
 {
   VACA_TRACE("~DataRow()\n");
+
+  // remove values for each column
+  for (std::vector<DataValue *>::iterator
+	 it = m_values.begin(); it != m_values.end(); ++it)
+    delete *it;
 }
 
 DataTable *DataRow::getTable()
 {
-  return mTable;
+  return m_table;
 }
 
-DataColumn *DataRow::operator[](int index)
+DataValue *DataRow::getValue(int columntIndex)
 {
-  assert(mTable != NULL);
-  return (*mTable)[index];
+  return m_values[columntIndex];
 }
 
-DataColumn *DataRow::operator[](const String &columnName)
+void DataRow::setValue(int columntIndex, DataValue *value)
 {
-  assert(mTable != NULL);
-  return (*mTable)[columnName];
+  delete m_values[columntIndex];
+  m_values[columntIndex] = value;
 }
+
+// DataColumn *DataRow::operator[](int index)
+// {
+//   assert(m_table != NULL);
+//   return (*m_table)[index];
+// }
+
+// DataColumn *DataRow::operator[](const String &columnName)
+// {
+//   assert(m_table != NULL);
+//   return (*m_table)[columnName];
+// }
 
 //////////////////////////////////////////////////////////////////////
 
 class MainFrame : public Frame
 {
-  DataGrid mDataGrid;
-  
+  DataGrid m_dataGrid;
+
 public:
 
   MainFrame()
     : Frame("DataGrids (WIP)")
-    , mDataGrid(this)
+    , m_dataGrid(this)
   {
     setLayout(new ClientLayout);
 
+    m_dataGrid.setDataSet(createDataSet());
+  }
+
+private:
+
+  struct Student {
+    int id;
+    const char *name;
+    int age;
+    String clas;
+    bool subscribed;
+    double average;
+  };
+  
+  DataSet *createDataSet()
+  {
     DataSet *set(new DataSet());
     DataTable *table(new DataTable());
     set->addTable(table);
+
     table->addColumn(new DataColumn("ID", new DataIntValue(0)));
-    table->addColumn(new DataColumn("Name", new DataIntValue(0)));
+    table->addColumn(new DataColumn("Name", new DataStringValue("")));
     table->addColumn(new DataColumn("Age", new DataIntValue(0)));
     table->addColumn(new DataColumn("Class", new DataIntValue(0)));
     table->addColumn(new DataColumn("Subscribed", new DataIntValue(0)));
     table->addColumn(new DataColumn("Average", new DataIntValue(0)));
-//     delete set;
 
-    mDataGrid.addColumn("ID");
-    mDataGrid.addColumn("Name");
-    mDataGrid.addColumn("Age");
-    mDataGrid.addColumn("Class");
-    mDataGrid.addColumn("Subscribed");
-    mDataGrid.addColumn("Average");
+    Student students[4] = {
+      { 1, "David", 22, "Mathematics", true,  6.7 },
+      { 2, "John",  21, "Physics",     true,  7.5 },
+      { 3, "Peter", 23, "Chemistry",   true,  9.0 },
+      { 4, "Mark",  22, "Philosophy",  false, 3.5 },
+    };
 
-//     std::vector<DataGridValue *> data;
-//     data.push_back(new DataGridValue(1));
-//     data.push_back(new DataGridValue("Pedrito"));
-//     data.push_back(new DataGridValue("10"));
-//     data.push_back(new DataGridValue("A"));
-//     data.push_back(new DataGridValue(true));
-//     data.push_back(new DataGridValue(8.8));
-//     mDataGrid.addRow(data);
+    for (int i=0; i<4; ++i) {
+      DataRow *row = table->createRow();
+      row->setValue(0, new DataIntValue   (students[i].id));
+      row->setValue(1, new DataStringValue(students[i].name));
+      row->setValue(2, new DataIntValue   (students[i].age));
+      row->setValue(3, new DataStringValue(students[i].clas));
+      row->setValue(4, new DataBoolValue  (students[i].subscribed));
+      row->setValue(5, new DataDoubleValue(students[i].average));
+      table->addRow(row);
+    }
 
-//     data.clear();
-//     data.push_back(new DataGridValue(2));
-//     data.push_back(new DataGridValue("Juancito"));
-//     data.push_back(new DataGridValue("12"));
-//     data.push_back(new DataGridValue("B"));
-//     data.push_back(new DataGridValue(true));
-//     data.push_back(new DataGridValue(6.7));
-//     mDataGrid.addRow(data);
-
-//     data.clear();
-//     data.push_back(new DataGridValue(3));
-//     data.push_back(new DataGridValue("Josecito"));
-//     data.push_back(new DataGridValue("12"));
-//     data.push_back(new DataGridValue("C"));
-//     data.push_back(new DataGridValue(false));
-//     data.push_back(new DataGridValue(0.0));
-//     mDataGrid.addRow(data);
-
-//     mDataGrid.addField(DataGridValue(0), );
+    return set;
   }
 
 };
@@ -1075,10 +1212,10 @@ public:
 
 class Example : public Application
 {
-  MainFrame mMainWnd;
+  MainFrame m_mainFrame;
 public:
   virtual void main(std::vector<String> args) {
-    mMainWnd.setVisible(true);
+    m_mainFrame.setVisible(true);
   }
 };
 

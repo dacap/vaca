@@ -13,12 +13,16 @@ methods and classes:
 
 - <b>Why not @c getClientRect or @c getRect?</b> @c getClientBounds
   and @c getBounds are the Java convention, they are better because
-  indicates what return (the @em bounds of the widget), not the type
-  of return (a @em Rect).
+  they indicate what them return (@em bounds of the widget), not the
+  type of return (a @em Rect).
 
-- <b>Why @c getR, @c getG, and @c getB in @c Color class?</b> Because
-  they are shorter than @c getRed, @c getGreen, and @c getBlue. Also,
-  a method @c Color::green() is not good because they don't give us
-  a verb (like @a get or @a set).
+- <b>Why @c getR, @c getG, and @c getB in @c Color class?</b> Because:
+  - They are shorter than @c getRed, @c getGreen, and @c getBlue.
+  - RGB expression is very common.
+  - @c getRed sounds like we will obtain the red color, and not the red component
+    of the color (the real name for the method should be @c getRedComponent or
+    @c getRedChannelValue).
+  - Also, a method @c Color::green() is not good because they don't
+    give us a verb (like @a get or @a set).
 
 */

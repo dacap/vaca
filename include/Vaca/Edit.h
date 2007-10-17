@@ -38,24 +38,27 @@
 namespace Vaca {
 
 /**
- * ES_RIGHT
+ * Align the text to the right in Edit widgets (ES_RIGHT).
  */
 #define RightAlignedEditStyle		Style(ES_RIGHT, 0)
 
 /**
- * ES_READONLY 
+ * Makes the text read-only in Edit widgets (ES_READONLY).
  */
 #define ReadOnlyEditStyle		Style(ES_READONLY, 0)
 
+#define AutoHorizontalScrollEditStyle	Style(ES_AUTOHSCROLL, 0)
+#define AutoVerticalScrollEditStyle	Style(ES_AUTOVSCROLL, 0)
+
 /**
  * Default style for Edit: a visible child (ChildVisible), with tab
- * stop (TabStopStyle), edge in its client-are (ClientEdgeStyle), and
- * ES_AUTOHSCROLL.
+ * stop (FocusableStyle), edge in its client-area (ClientEdgeStyle),
+ * and ES_AUTOHSCROLL (AutoHorizontalScrollEditStyle).
  */
-#define EditStyle		(ChildStyle +			\
-				 TabStopStyle +				\
+#define EditStyle		(ChildStyle +				\
+				 FocusableStyle +			\
 				 ClientEdgeStyle +			\
-				 Style(ES_AUTOHSCROLL, 0))
+				 AutoHorizontalScrollEditStyle)
 /**
  * Default style for PasswordEdit: an EditStyle with ES_PASSWORD.
  */
@@ -64,10 +67,11 @@ namespace Vaca {
 /**
  * Default style for MultilineEdit: an EditStyle with ES_MULTILINE.
  */
-#define MultilineEditStyle	(EditStyle + Style(ES_MULTILINE, 0))
+#define MultilineEditStyle	(EditStyle +	\
+				 Style(ES_MULTILINE, 0))
 
 /**
- * Control to edit a line of text.
+ * Widget to edit a line of text.
  */
 class VACA_DLL Edit : public Widget
 {
@@ -91,13 +95,16 @@ public:
   void selectRange(int startIndex, int endIndex);
   void deselect();
 
-  virtual Size preferredSize();
-  virtual Size preferredSize(const Size &fitIn);
+//   virtual Size preferredSize();
+//   virtual Size preferredSize(const Size &fitIn);
 
   // signals
   boost::signal<void (Event &)> Change; ///< @see onChange
 
 protected:
+  // events
+  virtual void onPreferredSize(Size &sz);
+
   // new events
   virtual void onChange(Event &ev);
 
@@ -106,7 +113,7 @@ protected:
 };
 
 /**
- * Control to edit a line of text.
+ * Widget to input a password field.
  */
 class VACA_DLL PasswordEdit : public Edit
 {
@@ -120,7 +127,7 @@ public:
 };
 
 /**
- * Control to edit some lines of text.
+ * Widget to edit multiple lines of text.
  */
 class VACA_DLL MultilineEdit : public Edit
 {
@@ -139,11 +146,6 @@ public:
   void scrollLines(int lines);
 
 };
-
-// class VACA_DLL RichEdit : public Edit {
-//   bool canRedo();
-//   void redo();
-// }
 
 } // namespace Vaca
 

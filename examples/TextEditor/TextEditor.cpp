@@ -29,7 +29,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/Vaca.h"
+#include <Vaca/Vaca.h>
 #include "scintilla/include/Scintilla.h"
 #include "resource.h"
 
@@ -57,54 +57,54 @@ public:
 
 class Document
 {
-  String mFileName;		// current file name for the document
-  bool mHasFileName;		// this document has a file name?
-  std::vector<View *> mViews;	// Views attached to this Document
+  String m_fileName;		// current file name for the document
+  bool m_hasFileName;		// this document has a file name?
+  std::vector<View *> m_views;	// Views attached to this Document
 
   typedef std::vector<View *>::iterator iterator;
 
 public:
   
   Document(String fileName, bool hasFileName)
-    : mFileName(fileName)
-    , mHasFileName(hasFileName)
+    : m_fileName(fileName)
+    , m_hasFileName(hasFileName)
   {
   }
 
   void addView(View *view)
   {
-    mViews.push_back(view);
+    m_views.push_back(view);
     notify();
   }
 
   void removeView(View *view)
   {
-    remove_element_from_container(mViews, view);
+    remove_element_from_container(m_views, view);
     notify();
   }
 
   int getViewNumber(View *view)
   {
     int index = 1;
-    for (iterator it=mViews.begin(); it!=mViews.end(); ++it, ++index) {
+    for (iterator it=m_views.begin(); it!=m_views.end(); ++it, ++index) {
       if (*it == view)
 	return index;
     }
     return 0;
   }
 
-  int getViewCount() { return mViews.size(); }
-  bool hasFileName() { return mHasFileName; }
-  String getFileName() { return mFileName; }
+  int getViewCount() { return m_views.size(); }
+  bool hasFileName() { return m_hasFileName; }
+  String getFileName() { return m_fileName; }
 
   void setHasFileName(bool state)
   {
-    mHasFileName = state;
+    m_hasFileName = state;
   }
 
   void setFileName(const String &fileName)
   {
-    mFileName = fileName;
+    m_fileName = fileName;
     notify();
   }
 
@@ -112,7 +112,7 @@ public:
   // because Scintilla handles views internally)
   void notify()
   {
-    for (iterator it=mViews.begin(); it!=mViews.end(); ++it)
+    for (iterator it=m_views.begin(); it!=m_views.end(); ++it)
       (*it)->onNotifyDocument();
   }
 
@@ -123,7 +123,7 @@ public:
 
 class TextEditor : public MdiChild, public View
 {
-  SciEditor mEditor; // text editor inside this MdiChild frame
+  SciEditor m_editor; // text editor inside this MdiChild frame
 
 public:
 
@@ -131,7 +131,7 @@ public:
   TextEditor(const String &fileName, bool hasFileName, MdiFrame *parent)
     : MdiChild(fileName.getFileName(), parent,
 	       MdiChildStyle + ClientEdgeStyle)
-    , mEditor(this)
+    , m_editor(this)
   {
     // creates a new document
     mDocument = new Document(fileName, hasFileName);
@@ -146,20 +146,20 @@ public:
 	       dynamic_cast<MdiClient *>(textEditor.getParent()),
 	       MdiChildStyle + ClientEdgeStyle)
     , View()
-    , mEditor(this)
+    , m_editor(this)
   {
     // same document
     mDocument = textEditor.mDocument;
 
     // reference the same document pointer at Scintilla level (only
     // necessary for Scintilla)
-    mEditor.setDocPointer(textEditor.mEditor.getDocPointer());
+    m_editor.setDocPointer(textEditor.m_editor.getDocPointer());
 
     // common initialization
     initialize();
   }
 
-  ~TextEditor()
+  virtual ~TextEditor()
   {
     // remove this view from the document
     mDocument->removeView(this);
@@ -179,10 +179,10 @@ private:
     // the editor'll be arranged to client area bounds
     setLayout(new ClientLayout);
 
-    // on GotFocus or Activate signals, put the focus to the mEditor
+    // on GotFocus or Activate signals, put the focus to the m_editor
     // (so the user can start writting)
-    GotFocus.connect(Bind(&SciEditor::focus, &mEditor));
-    // Activate.connect(Bind(&SciEditor::focus, &mEditor));
+    GotFocus.connect(Bind(&SciEditor::acquireFocus, &m_editor));
+    // Activate.connect(Bind(&SciEditor::acquireFocus, &m_editor));
 
     // add this view to the document
     mDocument->addView(this);
@@ -190,7 +190,7 @@ private:
     // when the text or the selection of the editor is updated, we
     // call mDocument->notify() to put the "*" in the title-bar of the
     // TextEditor
-    mEditor.UpdateUI.connect(Bind(&Document::notify, mDocument));
+    m_editor.UpdateUI.connect(Bind(&Document::notify, mDocument));
   }
 
   // method from View class
@@ -198,7 +198,7 @@ private:
   {
     String newTitle =
       // the "*"
-      (mEditor.isModified() ? "* ": "") +
+      (m_editor.isModified() ? "* ": "") +
       // the name of the file
       getFileName().getFileName() +
       // the view number (only if it's necessary)
@@ -209,7 +209,7 @@ private:
     if (getText() != newTitle)
       setText(newTitle);
 
-    // here we don't need to invalidate the mEditor of each view,
+    // here we don't need to invalidate the m_editor of each view,
     // because it's done by Scintilla automatically
   }
 
@@ -224,14 +224,14 @@ public:
       int bytesReaded;
       while (!feof(file)) {
 	bytesReaded = fread(buf, 1, sizeof(buf), file);
-	mEditor.appendText(buf, bytesReaded);
+	m_editor.appendText(buf, bytesReaded);
       }
       fclose(file);
 
-      // because the mEditor.appendText, we must reset the save-point
+      // because the m_editor.appendText, we must reset the save-point
       // and undo information
-      mEditor.emptyUndoBuffer();
-      mEditor.setSavePoint();
+      m_editor.emptyUndoBuffer();
+      m_editor.setSavePoint();
       return true;
     }
     else
@@ -243,15 +243,15 @@ public:
   {
     FILE *file = _tfopen(getFileName().c_str(), _T("wb"));
     if (file != NULL) {
-      int c, lines = mEditor.getLineCount();
+      int c, lines = m_editor.getLineCount();
       for (c=0; c<lines; c++) {
-	String line = mEditor.getLine(c);
+	String line = m_editor.getLine(c);
 	fwrite(line.c_str(), 1, line.size(), file);
       }
       fclose(file);
 
       // set save-point (here we are in sync with the file in disk)
-      mEditor.setSavePoint();
+      m_editor.setSavePoint();
       // now the document has a file name
       mDocument->setHasFileName(true);
       // and finally notify all views to update the "*" mark in them title-bar
@@ -264,7 +264,7 @@ public:
   
   bool hasFileName() { return mDocument->hasFileName(); }
   String getFileName() { return mDocument->getFileName(); }
-  SciEditor &getEditor() { return mEditor; }
+  SciEditor &getEditor() { return m_editor; }
   bool isLastView() { return mDocument->getViewCount() == 1; }
 
   void setFileName(const String &fileName)
@@ -279,144 +279,152 @@ public:
 
 class MainFrame : public MdiFrame
 {
-  int mDocCounter; // counter for documents (only to make "Untitled1", "Untitled2", etc.)
-  MenuBar mMenuBar;
-  Menu mFileMenu;
-  Menu mEditMenu;
-  Menu mOptionsMenu;
-  MdiListMenu mWindowsMenu;
-  Font mFont;
-  bool mViewEol;
-  FindTextDialog *mFindDlg;
+  int m_docCounter; // counter for documents (only to make "Untitled1", "Untitled2", etc.)
+  Font m_font;
+  bool m_viewEol;
+  FindTextDialog *m_findDlg;
 
 public:
 
   MainFrame()
     : MdiFrame("TextEditor")
-    , mDocCounter(0)
-    , mFileMenu("&File")
-    , mEditMenu("&Edit")
-    , mOptionsMenu("&Options")
-    , mWindowsMenu("&Windows")
-    , mFont("Courier New", 10)
-    , mViewEol(false)
-    , mFindDlg(NULL)
+    , m_docCounter(0)
+    , m_font("Courier New", 10)
+    , m_viewEol(false)
+    , m_findDlg(NULL)
   {
-    initializeMenuBar();
-    setMenuBar(&mMenuBar);
+    setMenuBar(createMenuBar());
     setLayout(new ClientLayout);
     setIcon(IDI_VACA);
   }
 
+  virtual ~MainFrame()
+  {
+    // delete all TextEditors
+    Widget::Container editors = getMdiClient()->getChildren();
+
+    for (Widget::Container::iterator it=editors.begin(); it!=editors.end(); ++it) {
+      TextEditor *textEditor = dynamic_cast<TextEditor *>(*it);
+      delete_widget(textEditor);
+    }
+  }
+
 private:
 
-  void initializeMenuBar()
+  MenuBar *createMenuBar()
   {
+    MenuBar *menuBar = new MenuBar;
+    Menu *fileMenu = new Menu("&File");
+    Menu *editMenu = new Menu("&Edit");
+    Menu *optionsMenu = new Menu("&Options");
+    MdiListMenu *windowsMenu = new MdiListMenu("&Windows");
     MenuItem *menuItem;
 
     // File/New
-    menuItem = mFileMenu.add("&New\tCtrl+N", Keys::Control | Keys::N);
+    menuItem = fileMenu->add("&New\tCtrl+N", Keys::Control | Keys::N);
     menuItem->Action.connect(Bind(&MainFrame::onNew, this));
 
     // File/Open
-    menuItem = mFileMenu.add("&Open\tCtrl+O", Keys::Control | Keys::O);
+    menuItem = fileMenu->add("&Open\tCtrl+O", Keys::Control | Keys::O);
     menuItem->Action.connect(Bind(&MainFrame::onOpen, this));
 
     // ---
-    mFileMenu.addSeparator();
+    fileMenu->addSeparator();
 
     // File/Save
-    menuItem = mFileMenu.add("&Save\tCtrl+S", Keys::Control | Keys::S);
+    menuItem = fileMenu->add("&Save\tCtrl+S", Keys::Control | Keys::S);
     menuItem->Action.connect(Bind(&MainFrame::onSave, this));
     menuItem->Update.connect(Bind(&MainFrame::onUpdate_forSave, this));
 
     // File/Save As
-    menuItem = mFileMenu.add("Save &as...");
+    menuItem = fileMenu->add("Save &as...");
     menuItem->Action.connect(Bind(&MainFrame::onSaveAs, this));
     menuItem->Update.connect(Bind(&MainFrame::onUpdate_getTextEditor_Available, this));
 
     // ---
-    mFileMenu.addSeparator();
+    fileMenu->addSeparator();
 
     // File/Exit
-    menuItem = mFileMenu.add("E&xit");
+    menuItem = fileMenu->add("E&xit");
     menuItem->Action.connect(Bind(&MainFrame::onExit, this));
 
     // Edit/Undo
-    menuItem = mEditMenu.add("&Undo\tCtrl+Z", Keys::Control | Keys::Z);
+    menuItem = editMenu->add("&Undo\tCtrl+Z", Keys::Control | Keys::Z);
     menuItem->Action.connect(Bind(&MainFrame::onUndo, this));
     menuItem->Update.connect(Bind(&MainFrame::onUpdate_canUndo, this));
 
     // Edit/Redo
-    menuItem = mEditMenu.add("&Redo\tCtrl+Y", Keys::Control | Keys::Y);
+    menuItem = editMenu->add("&Redo\tCtrl+Y", Keys::Control | Keys::Y);
     menuItem->Action.connect(Bind(&MainFrame::onRedo, this));
     menuItem->Update.connect(Bind(&MainFrame::onUpdate_canRedo, this));
 
     // ---
-    mEditMenu.addSeparator();
+    editMenu->addSeparator();
 
     // Edit/Cut
-    menuItem = mEditMenu.add("Cu&t\tCtrl+X", Keys::Control | Keys::X);
+    menuItem = editMenu->add("Cu&t\tCtrl+X", Keys::Control | Keys::X);
     menuItem->Action.connect(Bind(&MainFrame::onCut, this));
     menuItem->Update.connect(Bind(&MainFrame::onUpdate_getTextEditor_Available, this));
 
     // Edit/Copy
-    menuItem = mEditMenu.add("&Copy\tCtrl+C", Keys::Control | Keys::C);
+    menuItem = editMenu->add("&Copy\tCtrl+C", Keys::Control | Keys::C);
     menuItem->Action.connect(Bind(&MainFrame::onCopy, this));
     menuItem->Update.connect(Bind(&MainFrame::onUpdate_getTextEditor_Available, this));
 
     // Edit/Paste
-    menuItem = mEditMenu.add("&Paste\tCtrl+V", Keys::Control | Keys::P);
+    menuItem = editMenu->add("&Paste\tCtrl+V", Keys::Control | Keys::P);
     menuItem->Action.connect(Bind(&MainFrame::onPaste, this));
     menuItem->Update.connect(Bind(&MainFrame::onUpdate_getTextEditor_Available, this));
 
     // Edit/Clear
-    menuItem = mEditMenu.add("Clea&r");
+    menuItem = editMenu->add("Clea&r");
     menuItem->Action.connect(Bind(&MainFrame::onClear, this));
     menuItem->Update.connect(Bind(&MainFrame::onUpdate_getTextEditor_Available, this));
 
     // ---
-    mEditMenu.addSeparator();
+    editMenu->addSeparator();
 
     // Edit/Find
-    menuItem = mEditMenu.add("&Find\tCtrl+F", Keys::Control | Keys::F);
+    menuItem = editMenu->add("&Find\tCtrl+F", Keys::Control | Keys::F);
     menuItem->Action.connect(Bind(&MainFrame::onFindReplace, this, false));
     menuItem->Update.connect(Bind(&MainFrame::onUpdate_getTextEditor_Available, this));
 
     // Edit/Replace
-    menuItem = mEditMenu.add("R&eplace\tCtrl+H", Keys::Control | Keys::H);
+    menuItem = editMenu->add("R&eplace\tCtrl+H", Keys::Control | Keys::H);
     menuItem->Action.connect(Bind(&MainFrame::onFindReplace, this, true));
     menuItem->Update.connect(Bind(&MainFrame::onUpdate_getTextEditor_Available, this));
 
     // Options/Change Font
-    menuItem = mOptionsMenu.add("Change &Font");
+    menuItem = optionsMenu->add("Change &Font");
     menuItem->Action.connect(Bind(&MainFrame::onChangeFont, this));
 
     // Options/View EOL
-    menuItem = mOptionsMenu.add("View &EOL");
+    menuItem = optionsMenu->add("View &EOL");
     menuItem->Action.connect(Bind(&MainFrame::onToggleViewEol, this));
     menuItem->Update.connect(Bind(&MainFrame::onUpdate_viewEol, this));
 
     // Windows/Close
-    menuItem = mWindowsMenu.add("&Close\tCtrl+W", Keys::Control | Keys::W);
+    menuItem = windowsMenu->add("&Close\tCtrl+W", Keys::Control | Keys::W);
     menuItem->Action.connect(Bind(&MainFrame::onCloseWindow, this));
     menuItem->Update.connect(Bind(&MainFrame::onUpdate_getTextEditor_Available, this));
 
     // Windows/Duplicate
-    menuItem = mWindowsMenu.add("&Duplicate\tCtrl+D", Keys::Control | Keys::D);
+    menuItem = windowsMenu->add("&Duplicate\tCtrl+D", Keys::Control | Keys::D);
     menuItem->Action.connect(Bind(&MainFrame::onDuplicateWindow, this));
     menuItem->Update.connect(Bind(&MainFrame::onUpdate_getTextEditor_Available, this));
 
     // Windows/Cascade
-    menuItem = mWindowsMenu.add("&Cascade");
-    menuItem->Action.connect(Bind(&MdiClient::cascade, &getMdiClient()));
+    menuItem = windowsMenu->add("&Cascade");
+    menuItem->Action.connect(Bind(&MdiClient::cascade, getMdiClient()));
     menuItem->Update.connect(Bind(&MainFrame::onUpdate_getTextEditor_Available, this));
 
     // Menu bar
-    mMenuBar.add(&mFileMenu);
-    mMenuBar.add(&mEditMenu);
-    mMenuBar.add(&mOptionsMenu);
-    mMenuBar.add(&mWindowsMenu);
+    menuBar->add(fileMenu);
+    menuBar->add(editMenu);
+    menuBar->add(optionsMenu);
+    menuBar->add(windowsMenu);
+
+    return menuBar;
   }
 
   //////////////////////////////////////////////////////////////////////
@@ -424,7 +432,7 @@ private:
 
   void onNew()
   {
-    String title = String("Untitled")+String::fromInt(++mDocCounter);
+    String title = String("Untitled")+String::fromInt(++m_docCounter);
     addTextEditor(new TextEditor(title, false, this));
   }
 
@@ -448,7 +456,7 @@ private:
 
 	// active that editor (if exist)
 	if (textEditor != NULL) {
-	  getMdiClient().activate(textEditor);
+	  getMdiClient()->activate(textEditor);
 	}
 	// create the new editor reading the file
 	else {
@@ -458,7 +466,7 @@ private:
 	  if (textEditor->openFile())
 	    addTextEditor(textEditor);
 	  else {
-	    delete textEditor;
+	    delete_widget(textEditor);
 	    msgBox("Error opening file '"+fileName+"'",
 		   "Error",
 		   MB_OK | MB_ICONERROR);
@@ -497,7 +505,8 @@ private:
     CloseEvent ev(this);
     onClose(ev);
     if (!ev.isCanceled())
-      dispose();
+      // DISPOSE();
+      setVisible(false);
   }
 
   void onUndo()
@@ -548,28 +557,28 @@ private:
   // Find stuff begin
   void onFindReplace(bool replace)
   {
-    if (mFindDlg == NULL) {
-      mFindDlg = new FindTextDialog(replace, this);
-      mFindDlg->FindNext.connect(Bind(&MainFrame::onFindNext, this));
-      mFindDlg->Replace.connect(Bind(&MainFrame::onReplace, this));
-      mFindDlg->ReplaceAll.connect(Bind(&MainFrame::onReplaceAll, this));
-      mFindDlg->Cancel.connect(Bind(&MainFrame::onCancelFind, this));
-      mFindDlg->setVisible(true);
+    if (m_findDlg == NULL) {
+      m_findDlg = new FindTextDialog(replace, this);
+      m_findDlg->FindNext.connect(Bind(&MainFrame::onFindNext, this));
+      m_findDlg->Replace.connect(Bind(&MainFrame::onReplace, this));
+      m_findDlg->ReplaceAll.connect(Bind(&MainFrame::onReplaceAll, this));
+      m_findDlg->Cancel.connect(Bind(&MainFrame::onCancelFind, this));
+      m_findDlg->setVisible(true);
     }
     else
-      mFindDlg->focus();
+      m_findDlg->acquireFocus();
   }
 
   void onFindNext()
   {
     SciEditor &sciEditor(getTextEditor()->getEditor());
-    String findWhat = mFindDlg->getFindWhat();
+    String findWhat = m_findDlg->getFindWhat();
     int flags =
-      (mFindDlg->isMatchCase() ? SCFIND_MATCHCASE: 0) |
-      (mFindDlg->isWholeWord() ? SCFIND_WHOLEWORD: 0);
+      (m_findDlg->isMatchCase() ? SCFIND_MATCHCASE: 0) |
+      (m_findDlg->isWholeWord() ? SCFIND_WHOLEWORD: 0);
 
     // forward search
-    if (mFindDlg->isForward()) {
+    if (m_findDlg->isForward()) {
       sciEditor.goToPos(sciEditor.getSelectionEnd());
       sciEditor.searchAnchor();
 
@@ -609,7 +618,7 @@ private:
     if (start != end &&
 	start == sciEditor.getSelectionStart() &&
 	end == sciEditor.getSelectionEnd()) {
-      sciEditor.replaceSel(mFindDlg->getReplaceWith());
+      sciEditor.replaceSel(m_findDlg->getReplaceWith());
       onFindNext();
     }
   }
@@ -624,44 +633,45 @@ private:
 
   void onCancelFind()
   {
-    mFindDlg->deleteAfterEvent();
-    mFindDlg = NULL;
+    delete_widget(m_findDlg);
+    m_findDlg = NULL;
   }
   // Find stuff end
   //////////////////////////////////////////////////////////////////////
 
   void onChangeFont()
   {
-    FontDialog dialog(mFont, this);
+    FontDialog dialog(&m_font, this);
     if (dialog.doModal()) {
-      Widget::Container editors = getMdiClient().getChildren();
+      Container editors = getMdiClient()->getChildren();
 
+      // set the font of all editors
       for (Widget::Container::iterator it=editors.begin(); it!=editors.end(); ++it)
-	dynamic_cast<TextEditor *>(*it)->getEditor().setFont(mFont);
+	dynamic_cast<TextEditor *>(*it)->getEditor().setFont(&m_font);
     }
   }
 
   void onToggleViewEol()
   {
-    mViewEol = !mViewEol;
+    m_viewEol = !m_viewEol;
 
     // set the new state of ViewEol to all editors
-    Widget::Container editors = getMdiClient().getChildren();
+    Widget::Container editors = getMdiClient()->getChildren();
 
     for (Widget::Container::iterator it=editors.begin(); it!=editors.end(); ++it)
-      dynamic_cast<TextEditor *>(*it)->getEditor().setViewEol(mViewEol);
+      dynamic_cast<TextEditor *>(*it)->getEditor().setViewEol(m_viewEol);
   }
 
   void onUpdate_viewEol(MenuItemEvent &ev)
   {
-    ev.getMenuItem()->setChecked(mViewEol);
+    ev.getMenuItem()->setChecked(m_viewEol);
   }
 
   void onCloseWindow()
   {
     TextEditor *textEditor = getTextEditor();
     if (closeTextEditor(textEditor, false))
-      delete textEditor;
+      delete_widget(textEditor);
   }
 
   void onDuplicateWindow()
@@ -681,7 +691,7 @@ private:
       // the widget must be deleted but we can't delete it because
       // we're inside an event that was generated by the same widget
       // (see TN006)
-      textEditor->deleteAfterEvent();
+      delete_widget(textEditor);
     }
     // the user cancels the close operation
     else {
@@ -697,8 +707,10 @@ private:
   // close all the editors
   virtual void onClose(CloseEvent &ev)
   {
+    MdiFrame::onClose(ev);
+
     std::vector<Document *> asked;
-    Widget::Container editors = getMdiClient().getChildren();
+    Widget::Container editors = getMdiClient()->getChildren();
 
     // for each children
     for (Widget::Container::iterator it=editors.begin(); it!=editors.end(); ++it) {
@@ -723,12 +735,6 @@ private:
 	return;
       }
     }
-
-    // delete all TextEditors
-    for (Widget::Container::iterator it=editors.begin(); it!=editors.end(); ++it) {
-      TextEditor *textEditor = dynamic_cast<TextEditor *>(*it);
-      delete textEditor;
-    }
   }
 
   //////////////////////////////////////////////////////////////////////
@@ -738,7 +744,7 @@ private:
   // returns the current text editor
   TextEditor *getTextEditor()
   {
-    return dynamic_cast<TextEditor *>(getMdiClient().getActive());
+    return dynamic_cast<TextEditor *>(getMdiClient()->getActive());
   }
 
   // adds file filters to the FileDialog
@@ -752,10 +758,10 @@ private:
   void addTextEditor(TextEditor *textEditor)
   {
     // set the font of the editor to the current selected font
-    textEditor->getEditor().setFont(mFont);
+    textEditor->getEditor().setFont(&m_font);
 
     // set the ViewEol state
-    textEditor->getEditor().setViewEol(mViewEol);
+    textEditor->getEditor().setViewEol(m_viewEol);
 
     // bind the close event
     textEditor->Close.connect(Bind(&MainFrame::onCloseTextEditor, this));
@@ -826,7 +832,7 @@ private:
   // returns the first found TextEditor that is editing the "fileName"
   TextEditor *getTextEditorByFileName(const String &fileName)
   {
-    Widget::Container listOfTextEditors = getMdiClient().getChildren();
+    Widget::Container listOfTextEditors = getMdiClient()->getChildren();
     Widget::Container::iterator it;
 
     for (it=listOfTextEditors.begin(); it!=listOfTextEditors.end(); ++it) {
@@ -846,10 +852,10 @@ private:
 
 class Example : public Application
 {
-  MainFrame mMainWnd;
+  MainFrame m_mainFrame;
 public:
   virtual void main(std::vector<String> args) {
-    mMainWnd.setVisible(true);
+    m_mainFrame.setVisible(true);
   }
 };
 

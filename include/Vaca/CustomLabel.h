@@ -47,12 +47,10 @@ namespace Vaca {
  */
 class VACA_DLL CustomLabel : public Label
 {
-  /**
-   * SS_OWNERDRAW has the bit 1, so we can't use the
-   * SS_CENTER/SS_RIGHT to known the text-alignment. We must to hold
-   * on in some place.
-   */
-  TextAlign mTextAlign;
+  // SS_OWNERDRAW has the bit 1, so we can't use the
+  // SS_CENTER/SS_RIGHT to known the text-alignment. We must to hold
+  // on in some place.
+  TextAlign m_textAlign;
 
 public:
 

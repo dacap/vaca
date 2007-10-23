@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -32,9 +32,9 @@
 #ifndef VACA_DEBUG_H
 #define VACA_DEBUG_H
 
-#include "Vaca/base.h"
-
 #include <assert.h>
+
+#include "Vaca/base.h"
 
 namespace Vaca {
 
@@ -54,9 +54,14 @@ namespace Vaca {
 #endif
 
 void VACA_DLL __vaca_trace(LPCSTR filename, UINT line, LPCSTR msg, ...);
+void VACA_DLL __vaca_close_log_file();
 
-// dirty trick for others compilers that doesn't support macros with ellipsis (...)
 #ifndef __GNUC__
+/**
+ * @internal
+ *    Dirty trick for non-GNU compilers that doesn't support
+ *    macros with ellipsis (...).
+ */
 struct __vaca_trace_s {
   LPCSTR filename;
   UINT line;

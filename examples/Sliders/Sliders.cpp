@@ -42,9 +42,10 @@ public:
   SlidersPanel(Orientation orientation, Widget *parent)
     : Panel(parent)
   {
-    bool isHorz = (orientation == Horizontal);
+    bool isHorz = (orientation == Orientation::Horizontal);
       
-    setLayout(new BoxLayout(isHorz ? Vertical: Horizontal, false));
+    setLayout(new BoxLayout(isHorz ? Orientation::Vertical:
+				     Orientation::Horizontal, false));
 
     for (int c=0; c<6; ++c) {
       // create the slider
@@ -69,10 +70,10 @@ public:
       }
     }
 
-    m_slider[0]->pointToSide(isHorz ? BottomSide: RightSide);
-    m_slider[1]->pointToSide(isHorz ? TopSide:    LeftSide);
-    m_slider[2]->pointToSide(isHorz ? BottomSide: RightSide);
-    m_slider[3]->pointToSide(isHorz ? TopSide:    LeftSide);
+    m_slider[0]->pointToSide(isHorz ? Side::Bottom: Side::Right);
+    m_slider[1]->pointToSide(isHorz ? Side::Top:    Side::Left);
+    m_slider[2]->pointToSide(isHorz ? Side::Bottom: Side::Right);
+    m_slider[3]->pointToSide(isHorz ? Side::Top:    Side::Left);
     m_slider[4]->pointNowhere();
     m_slider[5]->pointNowhere();
   }
@@ -117,14 +118,14 @@ public:
   MainFrame()
     : Frame("Sliders")
     , m_topPanel(this)
-    , m_leftPanel(Horizontal, &m_topPanel)
-    , m_rightPanel(Vertical, &m_topPanel)
+    , m_leftPanel(Orientation::Horizontal, &m_topPanel)
+    , m_rightPanel(Orientation::Vertical, &m_topPanel)
     , m_button("Connect Sliders", this)
   {
     // prepare layout
-    setLayout(new BoxLayout(Vertical, false)); // no-homogeneous
+    setLayout(new BoxLayout(Orientation::Vertical, false)); // no-homogeneous
     m_topPanel.setConstraint(new BoxConstraint(true)); // expansible
-    m_topPanel.setLayout(new BoxLayout(Horizontal, true, 0)); // homogeneous, no-border
+    m_topPanel.setLayout(new BoxLayout(Orientation::Horizontal, true, 0)); // homogeneous, no-border
 
     // when the "m_button" is pressed, this is the sequence of commands
     // to execute:

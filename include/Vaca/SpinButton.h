@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -83,8 +83,6 @@ public:
 	     Widget *parent, Style style = SpinButtonStyle);
   virtual ~SpinButton();
 
-//   virtual Size preferredSize();
-
   bool isHorizontal();
   bool isVertical();
 
@@ -118,7 +116,7 @@ protected:
   // events
 //   virtual void onScroll(Orientation orientation, int code);
   // reflection
-  virtual bool onNotify(LPNMHDR lpnmhdr, LRESULT &lResult);
+  virtual bool onReflectedNotify(LPNMHDR lpnmhdr, LRESULT &lResult);
 
 };
 

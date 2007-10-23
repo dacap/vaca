@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -35,10 +35,10 @@
 #include "Vaca/Point.h"
 #include "Vaca/Size.h"
 #include "Vaca/Color.h"
-#include "Vaca/Mutex.h"
-#include "Vaca/ScopedLock.h"
 #include "Vaca/Debug.h"
 #include "Vaca/ImageList.h"
+
+#include <boost/thread/mutex.hpp>
 
 using namespace Vaca;
 
@@ -237,7 +237,42 @@ Rect System::getWorkAreaBounds()
 /**
  * Returns color from the system. It's a wrapper for the Win32's GetSysColor.
  *
- * @param sysColor Can be a constant like COLOR_3DFACE
+ * @param index
+ *     Can be one of the following values:
+ *     @li COLOR_3DDKSHADOW
+ *     @li COLOR_3DFACE
+ *     @li COLOR_3DHILIGHT
+ *     @li COLOR_3DHIGHLIGHT
+ *     @li COLOR_3DLIGHT
+ *     @li COLOR_BTNHILIGHT
+ *     @li COLOR_3DSHADOW
+ *     @li COLOR_ACTIVEBORDER
+ *     @li COLOR_ACTIVECAPTION
+ *     @li COLOR_APPWORKSPACE
+ *     @li COLOR_BACKGROUND
+ *     @li COLOR_DESKTOP
+ *     @li COLOR_BTNFACE
+ *     @li COLOR_BTNHIGHLIGHT
+ *     @li COLOR_BTNSHADOW
+ *     @li COLOR_BTNTEXT
+ *     @li COLOR_CAPTIONTEXT
+ *     @li COLOR_GRAYTEXT
+ *     @li COLOR_HIGHLIGHT
+ *     @li COLOR_HIGHLIGHTTEXT
+ *     @li COLOR_INACTIVEBORDER
+ *     @li COLOR_INACTIVECAPTION
+ *     @li COLOR_INACTIVECAPTIONTEXT
+ *     @li COLOR_INFOBK
+ *     @li COLOR_INFOTEXT
+ *     @li COLOR_MENU
+ *     @li COLOR_MENUTEXT
+ *     @li COLOR_SCROLLBAR
+ *     @li COLOR_WINDOW
+ *     @li COLOR_WINDOWFRAME
+ *     @li COLOR_WINDOWTEXT
+ *     @li COLOR_HOTLIGHT
+ *     @li COLOR_GRADIENTACTIVECAPTION
+ *     @li COLOR_GRADIENTINACTIVECAPTION
  */
 Color System::getColor(int index)
 {
@@ -317,10 +352,10 @@ String System::getFriendlyUserName()
 
 int System::getOS()
 {
-  static Mutex mutex;
+  static boost::mutex mutex;
   static OS::Type cached = OS::Unknown;
 
-  ScopedLock lock(mutex);
+  boost::mutex::scoped_lock lock(mutex);
 
   if (cached != OS::Unknown)
     return cached;

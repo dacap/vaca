@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -41,7 +41,7 @@ namespace Vaca {
 //////////////////////////////////////////////////////////////////////
 // Pen Style
 
-struct _PenStyle
+struct PenStyleEnum
 {
   enum enumeration {
     Solid,
@@ -55,12 +55,12 @@ struct _PenStyle
   static const enumeration default_value = Solid;
 };
 
-typedef Enum<_PenStyle> PenStyle;
+typedef Enum<PenStyleEnum> PenStyle;
 
 //////////////////////////////////////////////////////////////////////
 // Pen End Cap
 
-struct _PenEndCap
+struct PenEndCapEnum
 {
   enum enumeration {
     Round,
@@ -70,12 +70,12 @@ struct _PenEndCap
   static const enumeration default_value = Round;
 };
 
-typedef Enum<_PenEndCap> PenEndCap;
+typedef Enum<PenEndCapEnum> PenEndCap;
 
 //////////////////////////////////////////////////////////////////////
 // Pen Join
 
-struct _PenJoin
+struct PenJoinEnum
 {
   enum enumeration {
     Round,
@@ -85,7 +85,7 @@ struct _PenJoin
   static const enumeration default_value = Round;
 };
 
-typedef Enum<_PenJoin> PenJoin;
+typedef Enum<PenJoinEnum> PenJoin;
 
 //////////////////////////////////////////////////////////////////////
 // Pen

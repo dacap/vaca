@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -38,6 +38,7 @@
 #include "Vaca/base.h"
 #include "Vaca/Image.h"
 #include "Vaca/Color.h"
+#include "Vaca/ResourceId.h"
 #include "Vaca/SelfDestruction.h"
 
 namespace Vaca {
@@ -54,7 +55,7 @@ public:
   ImageList();
   ImageList(HIMAGELIST hImageList, SelfDestruction selfDestruction);
 //   ImageList(Size sz);
-  ImageList(int bitmapId, int widthPerIcon, Color maskColor);
+  ImageList(ResourceId bitmapId, int widthPerIcon, Color maskColor);
   ImageList(const String &fileName, int widthPerIcon, Color maskColor);
   virtual ~ImageList();
 

@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -32,181 +32,104 @@
 #include "stdvaca.h"
 #include "Vaca/Thread.h"
 #include "Vaca/Debug.h"
-#include "Vaca/Mutex.h"
-#include "Vaca/ScopedLock.h"
 #include "Vaca/Frame.h"
 #include "Vaca/Timer.h"
 
+#include <vector>
 #include <algorithm>
 
 using namespace Vaca;
 
-static Mutex activeThreadsMutex; // used to access "activeThreads"
-static std::list<Thread *> activeThreads;
-
-static DWORD WINAPI ThreadProxy(LPVOID thread)
+struct ThreadData
 {
-  reinterpret_cast<Thread *>(thread)->run();
-  return 0;
+  int threadId;
+  int frameCount;
+  bool breakLoop;
+  Widget *outsideWidget; // widget used to call createHWND
+//   void *data;
+
+  ThreadData(int id) {
+    threadId = id;
+    frameCount = 0;
+    breakLoop = false;
+    outsideWidget = NULL;
+
+//     VACA_TRACE("thread begin (%d)\n", ::GetCurrentThreadId());
+  }
+
+//   ~ThreadData() {
+//     VACA_TRACE("thread end (%d)\n", ::GetCurrentThreadId());
+//   }
+
+};
+
+// static boost::thread_specific_ptr<ThreadData> threadData;
+
+static boost::mutex data_mutex;
+static std::vector<ThreadData *> dataOfEachThread;
+
+static ThreadData *getThreadData()
+{
+  boost::mutex::scoped_lock lock(data_mutex);
+  std::vector<ThreadData *>::iterator it;
+  int id = ::GetCurrentThreadId();
+
+  // first of all search the thread-data in the list "dataOfEachThread"...
+  for (it=dataOfEachThread.begin(); it!=dataOfEachThread.end(); ++it)
+    if ((*it)->threadId == id)	// it's already created...
+      return *it;		// return it
+
+  // create the data for the this thread
+  ThreadData *data = new ThreadData(id);
+  VACA_TRACE("new data-thread %d\n", id);
+
+  // add it to the list
+  dataOfEachThread.push_back(data);
+
+  // return the allocated data
+  return data;
+  
+//   if (threadData.get() == NULL)
+//     threadData.reset(new ThreadData);
+
+//   return threadData.get();
 }
 
-/**
- * @param useCurrent true means that you don't want to create a new
- * thread, just use the current thread information.
- */
-Thread::Thread(bool useCurrent)
+void Vaca::__vaca_remove_all_thread_data()
 {
-  m_frameCount = 0;
-  m_breakLoop = false;
+  boost::mutex::scoped_lock lock(data_mutex);
+  std::vector<ThreadData *>::iterator it;
 
-  // use current thread
-  if (useCurrent) {
-    m_joinable = false;
-    m_handle = GetCurrentThread();
-    m_id = GetCurrentThreadId();
-  }
-  // create a new suspended thread
-  else {
-    m_joinable = true;
-    m_handle = CreateThread(NULL, 0,
-			   ThreadProxy,
-			   reinterpret_cast<void *>(this),
-			   CREATE_SUSPENDED, &m_id);
-
-    VACA_TRACE("new Thread (%p, %d) {\n", this, m_id);
+  for (it=dataOfEachThread.begin(); it!=dataOfEachThread.end(); ++it) {
+    VACA_TRACE("delete data-thread %d\n", (*it)->threadId);
+    delete *it;
   }
 
-  activeThreadsMutex.lock();
-  activeThreads.push_back(this);
-  activeThreadsMutex.unlock();
+  dataOfEachThread.clear();
+}
+
+Widget *Vaca::__vaca_get_outside_widget()
+{
+  return getThreadData()->outsideWidget;
+}
+
+void Vaca::__vaca_set_outside_widget(Widget *widget)
+{
+  getThreadData()->outsideWidget = widget;
+}
+
+Thread::Thread()
+{
+}
+
+Thread::Thread(const boost::function0<void>& threadfunc)
+  : boost::thread(threadfunc)
+{
 }
 
 Thread::~Thread()
 {
-  if (m_joinable && m_handle != NULL) {
-    CloseHandle(reinterpret_cast<HANDLE>(m_handle));
-    m_handle = NULL;
-
-    VACA_TRACE("} delete Thread (%p, %d)\n", this, m_id);
-  }
-
-  activeThreadsMutex.lock();
-  remove_element_from_container(activeThreads, this);
-  activeThreadsMutex.unlock();
 }
-
-/**
- * Returns the thread ID.
- */
-int Thread::getId()
-{
-  return m_id;
-}
-
-/**
- * Starts the execution of the thread. You must to call this routine
- * one time to start the thread execution (the call to the run()
- * method).
- */
-void Thread::execute()
-{
-  assert(m_joinable != false);
-
-  resume();
-}
-
-/**
- * Suspends a thread in execution (Win32 SuspendThread).
- */
-void Thread::suspend()
-{
-  assert(m_handle != NULL);
-
-  SuspendThread(m_handle);
-}
-
-/**
- * Resumes the suspended thread (Win32 ResumeThread).
- */
-void Thread::resume()
-{
-  assert(m_handle != NULL);
-
-  ResumeThread(m_handle);
-}
-
-/**
- * Waits the thread to finish (returns from run() method), and them
- * closes it.
- */
-void Thread::join()
-{
-  assert(m_handle != NULL);
-  assert(m_joinable != false);
-
-  WaitForSingleObject(reinterpret_cast<HANDLE>(m_handle), INFINITE);
-  CloseHandle(reinterpret_cast<HANDLE>(m_handle));
-  m_handle = NULL;
-
-  VACA_TRACE("} join Thread (%p, %d)\n", this, m_id);
-}
-
-/**
- * @param priority Can be one of the following values:
- * @li THREAD_PRIORITY_ABOVE_NORMAL
- * @li THREAD_PRIORITY_BELOW_NORMAL
- * @li THREAD_PRIORITY_HIGHEST
- * @li THREAD_PRIORITY_IDLE
- * @li THREAD_PRIORITY_LOWEST
- * @li THREAD_PRIORITY_NORMAL
- * @li THREAD_PRIORITY_TIME_CRITICAL 
- */
-void Thread::setPriority(int priority)
-{
-  assert(m_handle != NULL);
-
-  SetThreadPriority(m_handle, priority);
-}
-
-/**
- * Returns a pointer of the current thread. It's used by
- * Dialog::doModal() to call the doMessageLoopFor().
- */
-Thread *Thread::getCurrent()
-{
-  ScopedLock lock(activeThreadsMutex);
-  int threadId = Thread::getCurrentId();
-
-  for (std::list<Thread *>::iterator it=activeThreads.begin();
-       it!=activeThreads.end();
-       ++it)
-    if ((*it)->getId() == threadId)
-      return *it;
-
-  // impossible!!!
-  assert(false);
-  return NULL;
-}
-
-/**
- * Returns the current thread's ID.
- *
- * @return ID of the thread where we are.
- */
-int Thread::getCurrentId()
-{
-  return GetCurrentThreadId();
-}
-
-/**
- * Sends a WM_QUIT message to the queue of this thread. In practice,
- * this method breaks doMessageLoop() or doMessageLoopFor().
- */
-// void Thread::postQuitMessage()
-// {
-//   ::PostMessage(NULL, WM_NULL, 0, 0);
-// //   PostThreadMessage(getId(), WM_QUIT, 0, 0);
-// }
 
 /**
  * Does the message loop while there are visible @ref Frame Frames.
@@ -215,8 +138,6 @@ int Thread::getCurrentId()
  */
 void Thread::doMessageLoop()
 {
-  assert(getId() == Thread::getCurrentId());
-
   // message loop
   Message msg;
   while (getMessage(msg))
@@ -228,8 +149,6 @@ void Thread::doMessageLoop()
  */
 void Thread::doMessageLoopFor(Widget *widget)
 {
-  assert(getId() == Thread::getCurrentId());
-
   // get widget HWND
   HWND hwnd = widget->getHWND();
   assert(::IsWindow(hwnd));
@@ -260,14 +179,20 @@ void Thread::pumpMessageQueue()
 
 void Thread::breakMessageLoop()
 {
-  m_breakLoop = true;
-  ::PostThreadMessage(getId(), WM_NULL, 0, 0);
+  getThreadData()->breakLoop = true;
+  ::PostThreadMessage(::GetCurrentThreadId(), WM_NULL, 0, 0);
 }
 
+/**
+ * Gets a message in a blocking way, returns true if the msg parameter
+ * was filled
+ */
 bool Thread::getMessage(Message &msg)
 {
-  // break this loop?
-  if (m_breakLoop)
+  ThreadData *threadData = getThreadData();
+
+  // break this loop? (explicit break or no-more visible frames)
+  if (threadData->breakLoop || threadData->frameCount == 0)
     return false;
 
   // get the message from the queue
@@ -290,6 +215,10 @@ bool Thread::getMessage(Message &msg)
   return true;
 }
 
+/**
+ * Gets a message in a non-blocking way, returns true if the msg
+ * parameter was filled
+ */
 bool Thread::peekMessage(Message &msg)
 {
   msg.hwnd = NULL;
@@ -344,17 +273,17 @@ bool Thread::preTranslateMessage(Message &msg)
   return false;
 }
 
-void Thread::addFrame()
+void Thread::addFrame(Frame *frame)
 {
-  ++m_frameCount;
+  ++getThreadData()->frameCount;
 }
 
-void Thread::removeFrame()
+void Thread::removeFrame(Frame *frame)
 {
-  --m_frameCount;
+  --getThreadData()->frameCount;
 
   // when this thread doesn't have more Frames to continue we must to
   // break the current message loop
-  if (m_frameCount == 0)
-    breakMessageLoop();
+  if (getThreadData()->frameCount == 0)
+    Thread::breakMessageLoop();
 }

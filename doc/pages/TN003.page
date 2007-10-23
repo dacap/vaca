@@ -1,6 +1,6 @@
 // -*- C++ -*-
 
-/*!
+/**
 
 @page TN003 TN003 - Technical Note 003: Using dynamic_cast
 

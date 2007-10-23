@@ -1,36 +1,35 @@
 // -*- C++ -*-
 
-/*!
+/**
 
 @page index
 
 @image html Vaca.gif
 
 @b Consideration: I speak Spanish and I don't know how to write in English.
-This documentation is only a draft that will never be official. This is not
-a literary novel, this is just a document to know what the library does.
-If you find a mistake, please, report it to me to
-<a href="mailto:dacap@users.sourceforge.net">dacap@users.sourceforge.net</a>.
+   	          This documentation is only a draft. This is not a literary
+		  novel, it's just a document to know what the library does.
+		  If you find a mistake, please, <a href="http://www.davidcapello.com.ar/?p=mail">report it to me</a>.
 
-@b Warning: This library is under development, there aren't a stable
-release. The API is mutating in this development stage. Please, if you
-want to use this library for real work be careful, or wait the first
+@b Warning: This library is under development, this is not a stable
+release. The API is mutating in the current development stage. Please,
+if you want to use this library for real work be careful, or wait the first
 stable release (from there we'll maintain backward compability).
 
 This library is licensed under the terms of the @ref license "BSD license".
 
 <h2>Introduction</h2>
 
-A library to wrap the Win32 API with C++ classes. Also, it's has some
-extra functionalities like dockable tool bars and layout
+Vaca is a library to wrap the Win32 API with C++ classes. Also, it's has
+some extra functionalities like dockable tool bars and layout
 managers. This library uses templates (but not generic programming),
-and Boost (the Boost.Signals library is just perfect).
+the STL and the Boost libraries (Boost.Signals mainly).
 
 <h2>Objetives</h2>
 
 @li Fit design to make programming more easy.
 @li Constructors must construct, if I do @c "new MyWindow()", then my
-    window must be created (see @ref TN001).
+    window must be created (see @ref TN002).
 @li Documentation for every tricky situation, its solution, and
     examples.
 @li Technical Notes about how more common (or uncommon) problems were solved.
@@ -39,8 +38,8 @@ and Boost (the Boost.Signals library is just perfect).
 
 Definitions:
 
-- A @em message is a message received from Windows (e.g. @c WM_KEYDOWN).
-- An @em event is a virtual method (e.g. @c #Vaca::Widget::onKeyDown method).
+- A @em message is a message received from Windows (e.g. @c WM_KEYUP).
+- An @em event is a virtual method (e.g. @c #Vaca::Widget::onKeyUp method).
 - A @em signal is a variable member which anybody can connect their callbacks
   (e.g. @c #Vaca::Widget::KeyDown signal).
 
@@ -65,6 +64,8 @@ Generally in Vaca we define virtual methods to handle events in the
 widget itself, and signals for events that should be intercepted by
 the parent window. Maybe in the future, signals will exist for every
 event (like events and delegates in .NET framework).
+
+@image html MES.png
 
 <h2>Alternatives</h2>
 
@@ -100,16 +101,20 @@ what we think.
 
 Sure that I forget a lot of libraries (like Fox, fltk, VCF,
 Windows++. etc.), but each one has something that I didn't like it.
-
 Generally, one thing that I don't like of some libraries is the fact
 that they have a (poor) visual editor that ("generally") is developed
 using other library (or other language like C#).
 
 <h2>Why other library?</h2>
 
-I want to make information systems using C++ on Windows plataforms
-without having license problems. There are situations where you must
-develop a relatively easy system but you can't because:
+Having so many options to choose, the question is obligatory, so why
+to create another library?
+
+A long time ago I was tried to find some library to program under
+Windows using C++ that is relatively small as much in source code as
+in the final size of the generated executable files (and all of this
+without having license problems). There are situations where you must
+develop a relatively small piece of software but you can't because:
 
 (a) The user has Windows. \n
 (b) You don't have the money to buy products like the Microsoft Visual Studio .NET. \n

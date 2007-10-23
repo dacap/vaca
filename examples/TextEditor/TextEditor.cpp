@@ -43,13 +43,13 @@ class Document;
 class View
 {
 protected:
-  Document *mDocument;
+  Document *m_document;
 
 public:
   virtual ~View() { }
   virtual void onNotifyDocument() = 0;
 
-  virtual Document *getDocument() { return mDocument; }
+  virtual Document *getDocument() { return m_document; }
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -134,7 +134,7 @@ public:
     , m_editor(this)
   {
     // creates a new document
-    mDocument = new Document(fileName, hasFileName);
+    m_document = new Document(fileName, hasFileName);
 
     // common initialization
     initialize();
@@ -149,7 +149,7 @@ public:
     , m_editor(this)
   {
     // same document
-    mDocument = textEditor.mDocument;
+    m_document = textEditor.m_document;
 
     // reference the same document pointer at Scintilla level (only
     // necessary for Scintilla)
@@ -162,11 +162,11 @@ public:
   virtual ~TextEditor()
   {
     // remove this view from the document
-    mDocument->removeView(this);
+    m_document->removeView(this);
 
     // last view closed?
-    if (mDocument->getViewCount() == 0)
-      delete mDocument;
+    if (m_document->getViewCount() == 0)
+      delete m_document;
   }
 
 private:
@@ -181,16 +181,16 @@ private:
 
     // on GotFocus or Activate signals, put the focus to the m_editor
     // (so the user can start writting)
-    GotFocus.connect(Bind(&SciEditor::acquireFocus, &m_editor));
-    // Activate.connect(Bind(&SciEditor::acquireFocus, &m_editor));
+    GotFocus.connect(Bind(&SciEditor::requestFocus, &m_editor));
+    // Activate.connect(Bind(&SciEditor::requestFocus, &m_editor));
 
     // add this view to the document
-    mDocument->addView(this);
+    m_document->addView(this);
 
     // when the text or the selection of the editor is updated, we
-    // call mDocument->notify() to put the "*" in the title-bar of the
+    // call m_document->notify() to put the "*" in the title-bar of the
     // TextEditor
-    m_editor.UpdateUI.connect(Bind(&Document::notify, mDocument));
+    m_editor.UpdateUI.connect(Bind(&Document::notify, m_document));
   }
 
   // method from View class
@@ -202,7 +202,7 @@ private:
       // the name of the file
       getFileName().getFileName() +
       // the view number (only if it's necessary)
-      (isLastView() ? "": " : "+String::fromInt(mDocument->getViewNumber(this)));
+      (isLastView() ? "": " : "+String::fromInt(m_document->getViewNumber(this)));
 
     // is the text different? (this avoid flicker of the title-bar
     // when we write text)
@@ -253,23 +253,23 @@ public:
       // set save-point (here we are in sync with the file in disk)
       m_editor.setSavePoint();
       // now the document has a file name
-      mDocument->setHasFileName(true);
+      m_document->setHasFileName(true);
       // and finally notify all views to update the "*" mark in them title-bar
-      mDocument->notify();
+      m_document->notify();
       return true;
     }
     else
       return false;
   }
   
-  bool hasFileName() { return mDocument->hasFileName(); }
-  String getFileName() { return mDocument->getFileName(); }
+  bool hasFileName() { return m_document->hasFileName(); }
+  String getFileName() { return m_document->getFileName(); }
   SciEditor &getEditor() { return m_editor; }
-  bool isLastView() { return mDocument->getViewCount() == 1; }
+  bool isLastView() { return m_document->getViewCount() == 1; }
 
   void setFileName(const String &fileName)
   {
-    mDocument->setFileName(fileName);
+    m_document->setFileName(fileName);
   }
 
 };
@@ -294,7 +294,6 @@ public:
     , m_findDlg(NULL)
   {
     setMenuBar(createMenuBar());
-    setLayout(new ClientLayout);
     setIcon(IDI_VACA);
   }
 
@@ -566,7 +565,7 @@ private:
       m_findDlg->setVisible(true);
     }
     else
-      m_findDlg->acquireFocus();
+      m_findDlg->requestFocus();
   }
 
   void onFindNext()
@@ -812,6 +811,9 @@ private:
   // returns false if the user don't want to close the text editor
   bool closeTextEditor(TextEditor *textEditor, bool forceAsk)
   {
+    if (m_findDlg != NULL)
+      onCancelFind();
+
     if ((textEditor->isLastView() || forceAsk) &&
 	textEditor->getEditor().isModified()) {
       int ret = msgBox("Save changes to '"+textEditor->getFileName()+"'?",

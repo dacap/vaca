@@ -53,7 +53,7 @@ public:
     , m_label4("ListComboBoxStyle", this)
     , m_combo4(this, ListComboBoxStyle)
   {
-    setLayout(new BoxLayout(Vertical, false));
+    setLayout(new BoxLayout(Orientation::Vertical, false));
 
     for (int c=0; c<8; ++c) {
       String text = String("Item ") + String::fromInt(c);

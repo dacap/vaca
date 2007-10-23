@@ -52,7 +52,7 @@ public:
     , m_edit4("A MultilineEdit widget\r\nwith multiple lines\r\nof text...", this,
 	      MultilineEditStyle + ScrollStyle)
   {
-    setLayout(new BoxLayout(Vertical, false));
+    setLayout(new BoxLayout(Orientation::Vertical, false));
     m_edit4.setConstraint(new BoxConstraint(true));
 
     m_edit3.setReadOnly(true);

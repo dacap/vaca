@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -74,10 +74,10 @@ bool BasicDockArea::hitTest(DockBar *bar, const Point &cursor, const Point &anch
     sz = bounds.getSize().createUnion(Size(32, 32));
 
   switch (getSide()) {
-    case LeftSide:   rc = Rect(bounds.x, bounds.y, sz.w, bounds.h); break;
-    case TopSide:    rc = Rect(bounds.x, bounds.y, bounds.w, sz.h); break;
-    case RightSide:  rc = Rect(bounds.x+bounds.w-sz.w, bounds.y, sz.w, bounds.h); break;
-    case BottomSide: rc = Rect(bounds.x, bounds.y+bounds.h-sz.h, bounds.w, sz.h); break;
+    case Side::Left:   rc = Rect(bounds.x, bounds.y, sz.w, bounds.h); break;
+    case Side::Top:    rc = Rect(bounds.x, bounds.y, bounds.w, sz.h); break;
+    case Side::Right:  rc = Rect(bounds.x+bounds.w-sz.w, bounds.y, sz.w, bounds.h); break;
+    case Side::Bottom: rc = Rect(bounds.x, bounds.y+bounds.h-sz.h, bounds.w, sz.h); break;
   }
 
   return rc.contains(cursor);
@@ -131,19 +131,19 @@ void BasicDockArea::drawXorDockInfoShape(Graphics &g, DockInfo *_dockInfo)
 
   switch (getSide()) {
 
-    case LeftSide:
+    case Side::Left:
       externRect = Rect(bounds.x, bounds.y, sz.w, bounds.h);
       break;
 
-    case TopSide:
+    case Side::Top:
       externRect = Rect(bounds.x, bounds.y, bounds.w, sz.h);
       break;
 
-    case RightSide:
+    case Side::Right:
       externRect = Rect(bounds.x+bounds.w-sz.w, bounds.y, sz.w, bounds.h);
       break;
 
-    case BottomSide:
+    case Side::Bottom:
       externRect = Rect(bounds.x, bounds.y+bounds.h-sz.h, bounds.w, sz.h);
       break;
 
@@ -159,27 +159,6 @@ void BasicDockArea::drawXorDockInfoShape(Graphics &g, DockInfo *_dockInfo)
   g.drawRect(pen, internRect);
   g.setRop2(R2_COPYPEN);
 }
-
-// Size BasicDockArea::preferredSize()
-// {
-//   Widget::Container children = getChildren();
-//   Widget::Container::iterator it;
-//   Size size(0, 0);
-
-//   for (it=children.begin(); it!=children.end(); ++it) {
-//     DockBar *dockBar = static_cast<DockBar *>(*it);
-//     DockInfo *dockInfo = dockBar->getDockInfo();
-
-//     assert(dockInfo != NULL);
-
-//     if (isHorizontal())
-//       size.h = size.h < dockInfo->getSize().h ? dockInfo->getSize().h: size.h;
-//     else
-//       size.w = size.w < dockInfo->getSize().w ? dockInfo->getSize().w: size.w;
-//   }
-
-//   return size;
-// }
 
 void BasicDockArea::layout()
 {

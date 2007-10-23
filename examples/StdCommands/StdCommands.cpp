@@ -120,14 +120,14 @@ public:
     defaultDockAreas();
 
     // put the tool bar in the top dock area
-    m_toolBar.dockIn(getDockArea(TopSide));
+    m_toolBar.dockIn(getDockArea(Side::Top));
   }
 
 protected:
 
-  virtual bool onIdAction(int id)
+  virtual bool onActionById(int actionId)
   {
-    switch (id) {
+    switch (actionId) {
       case CMD_FILENEW:
 	m_console.println("CMD_FILENEW");
 	msgBox("New file...", "New", MB_OK);

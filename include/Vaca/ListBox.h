@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -78,8 +78,6 @@ public:
 
   std::vector<int> getSelectedItems();
 
-//   virtual Size preferredSize();
-
   // signals
   boost::signal<void (Event &)> Action;	 ///< @see onAction
   boost::signal<void (Event &)> SelChange; ///< @see onSelChange
@@ -93,7 +91,7 @@ protected:
   virtual void onSelChange(Event &ev);
 
   // reflection
-  virtual bool onCommand(int id, int code, LRESULT &lResult);
+  virtual bool onReflectedCommand(int id, int code, LRESULT &lResult);
 
 };
 

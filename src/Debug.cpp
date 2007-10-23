@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -33,40 +33,42 @@
 #include "Vaca/Debug.h"
 #include "Vaca/System.h"
 #include "Vaca/Thread.h"
-#include "Vaca/Mutex.h"
-#include "Vaca/ScopedLock.h"
+
+#include <boost/thread/mutex.hpp>
 
 using namespace Vaca;
 
+static boost::mutex log_mutex;
+static FILE *log_file = NULL;
+
 void Vaca::__vaca_trace(LPCSTR filename, UINT line, LPCSTR fmt, ...)
 {
-  static Mutex mutex;
-  static FILE *log_file = NULL;
+  boost::mutex::scoped_lock lock(log_mutex);
+  char buf[1024];		// TODO: overflow
+  va_list ap;
 
-  ScopedLock lock(mutex);
+  va_start(ap, fmt);
+  vsprintf(buf, fmt, ap);
+  va_end(ap);
 
-  // Application::~Application() is the only one that calls
-  // __vaca_trace(NULL, ...) to close the log file.
-  if (!filename) {
-    if (log_file != NULL) {
-      fclose(log_file);
-      log_file = NULL;
-    }
+  if (log_file == NULL) {
+    log_file = fopen("vaca.log", "w");
+    fprintf(log_file, "Log file created\n");
   }
-  else {
-    char buf[1024];		// TODO: overflow
-    va_list ap;
 
-    va_start(ap, fmt);
-    vsprintf(buf, fmt, ap);
-    va_end(ap);
+  if (log_file != NULL) {
+    fprintf(log_file, "%s:%d: [%d] %s", filename, line, ::GetCurrentThreadId(), buf);
+    fflush(log_file);
+  }
+}
 
-    if (log_file == NULL)
-      log_file = fopen("vaca.log", "w");
+void Vaca::__vaca_close_log_file()
+{
+  boost::mutex::scoped_lock lock(log_mutex);
 
-    if (log_file != NULL) {
-      fprintf(log_file, "%s:%d: [%d] %s", filename, line, Thread::getCurrentId(), buf);
-      fflush(log_file);
-    }
+  if (log_file != NULL) {
+    fprintf(log_file, "Log file closed\n");
+    fclose(log_file);
+    log_file = NULL;
   }
 }

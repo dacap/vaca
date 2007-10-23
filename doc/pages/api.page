@@ -1,11 +1,11 @@
 // -*- C++ -*-
 
-/*!
+/**
 
 @page api API
 
-In this page I'll give some kind of explanation about the names of
-methods and classes:
+In this page I'll give you an explanation about the names of methods
+and classes:
 
 - <b>@c Rect or @c Rectangle?</b> Rect is shorter. Also, we can use
   @c drawRect and @c fillRect instead of drawRectangle. It's commondly

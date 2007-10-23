@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -41,9 +41,17 @@ namespace Vaca {
 /**
  * This style hides the icon of the Dialog frame. You can remove this
  * style if you want to see an icon in the title bar of the Dialog.
+ *
+ * @see DialogStyle
  */
 #define ModalDialogStyle	Style(0, WS_EX_DLGMODALFRAME)
 
+/**
+ * This is the default style for the dialogs. It includes
+ * ModalDialogStyle.
+ * 
+ * @see ModalDialogStyle
+ */
 #define DialogStyle		(WithCaptionFrameStyle +		\
 				 WithSystemMenuFrameStyle +		\
 				 ModalDialogStyle +			\
@@ -94,6 +102,9 @@ public:
 
   void defaultOkAction();
   void defaultCancelAction();
+
+  Widget *getNextFocusableWidget(Widget *widget);
+  Widget *getPreviousFocusableWidget(Widget *widget);
 
 protected:
   virtual bool wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult);

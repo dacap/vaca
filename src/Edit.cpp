@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -134,49 +134,6 @@ void Edit::deselect()
   sendMessage(EM_SETSEL, static_cast<WPARAM>(-1), 0);
 }
 
-// Size Edit::preferredSize()
-// {
-//   return preferredSize(Size(0, 0));
-// }
-
-// Size Edit::preferredSize(const Size &fitIn)
-// {
-//   Size textSize;
-//   Style style = getStyle();
-//   Size border(0, 0);
-
-//   // client-edge borders
-//   if ((style.extended & WS_EX_CLIENTEDGE) != 0)
-//     border +=
-//       Size(4, 4)+
-//       (Size(GetSystemMetrics(SM_CXEDGE),
-// 	    GetSystemMetrics(SM_CYEDGE))*2);
-
-//   // scroll bars
-//   if (style.regular & WS_HSCROLL) border.h += GetSystemMetrics(SM_CYHSCROLL);
-//   if (style.regular & WS_VSCROLL) border.w += GetSystemMetrics(SM_CXVSCROLL);
-
-//   {
-//     ScreenGraphics g;
-//     g.setFont(getFont());
-// //     textSize = g.measureString(getText(), fitIn.w == 0 ? 32767: fitIn.w-border.w,
-// // 			       ((style.regular & ES_AUTOHSCROLL) != 0) ? 0: DT_WORDBREAK);
-// //     textSize = g.measureString(getText(), 32767, 0);
-// //     textSize.h *= sendMessage(EM_GETLINECOUNT, 0, 0);
-
-// //     textSize = g.measureString(getText(), fitIn.w == 0 ? 32767: fitIn.w-border.w,
-// // 			       ((style.regular & ES_AUTOHSCROLL) != 0) ? 0: DT_WORDBREAK);
-
-//     Size realSize(g.measureString(getText(), 32767, 0));
-//     int lines = sendMessage(EM_GETLINECOUNT, 0, 0);
-
-//     textSize.w = realSize.w;
-//     textSize.h = lines * g.measureString("", 32767, 0).h;
-//   }
-
-//   return textSize+border;
-// }
-
 void Edit::onPreferredSize(Size &sz)
 {
   Size textSize;
@@ -222,11 +179,10 @@ void Edit::onChange(Event &ev)
 
 /**
  * Converts the EN_CHANGE in onChange.
- * 
  */
-bool Edit::onCommand(int id, int code, LRESULT &lResult)
+bool Edit::onReflectedCommand(int id, int code, LRESULT &lResult)
 {
-  if (Widget::onCommand(id, code, lResult))
+  if (Widget::onReflectedCommand(id, code, lResult))
     return true;
 
   switch (code) {
@@ -293,7 +249,7 @@ void MultilineEdit::setWantReturnMode(bool wantReturn)
 
 int MultilineEdit::getLineCount()
 {
-  return sendMessage(EM_GETLINECOUNT, 0, 0);
+  return static_cast<int>(sendMessage(EM_GETLINECOUNT, 0, 0));
 }
 
 String MultilineEdit::getLine(int lineNo)
@@ -319,7 +275,7 @@ String MultilineEdit::getLine(int lineNo)
 
 int MultilineEdit::getLineLength(int lineNo)
 {
-  return sendMessage(EM_LINELENGTH, lineNo, 0);
+  return static_cast<int>(sendMessage(EM_LINELENGTH, lineNo, 0));
 }
 
 void MultilineEdit::scrollLines(int lines)

@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -31,26 +31,27 @@
 
 #include "stdvaca.h"
 #include "Vaca/Component.h"
-#include "Vaca/Mutex.h"
 #include "Vaca/Debug.h"
 
 #ifndef NDEBUG
+#include <boost/thread/mutex.hpp>
 #include <typeinfo>
 #endif
 
 using namespace Vaca;
 
 #ifndef NDEBUG
-static Mutex instanceCounterMutex; // used to access instanceCounter
+static boost::mutex instanceCounterMutex; // used to access instanceCounter
 static int instanceCounter = 0;
 #endif
 
 Component::Component()
 {
 #ifndef NDEBUG
-  instanceCounterMutex.lock();
-  VACA_TRACE("new Component (%d, %p)\n", ++instanceCounter, this);
-  instanceCounterMutex.unlock();
+  {
+    boost::mutex::scoped_lock lock(instanceCounterMutex);
+    VACA_TRACE("new Component (%d, %p)\n", ++instanceCounter, this);
+  }
 #endif
 
   m_refCount = 0;
@@ -61,9 +62,10 @@ Component::~Component()
   assert(m_refCount == 0);
 
 #ifndef NDEBUG
-  instanceCounterMutex.lock();
-  VACA_TRACE("delete Component (%d, %p)\n", --instanceCounter, this);
-  instanceCounterMutex.unlock();
+  {
+    boost::mutex::scoped_lock lock(instanceCounterMutex);
+    VACA_TRACE("delete Component (%d, %p)\n", --instanceCounter, this);
+  }
 #endif
 }
 

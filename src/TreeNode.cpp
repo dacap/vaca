@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -45,16 +45,35 @@ TreeNode::TreeNode(const String &text, int imageIndex, int selectedImageIndex)
   m_parent = NULL;
   m_HTREEITEM = NULL;
   m_owner = NULL;
+
+  m_deleted = false;
 }
 
 TreeNode::~TreeNode()
 {
-  if (m_owner)
-    TreeView_DeleteItem(m_owner->getHWND(), m_HTREEITEM);
+  m_deleted = true;
 
-  for (Container::iterator it=m_children.begin();
-       it!=m_children.end(); ++it)
+  // remove this node from the "m_children" field of the parent
+  if (m_parent != NULL)
+    remove_element_from_container(m_parent->m_children, this);
+
+  // clone "m_children" collection, because when a TreeNode is
+  // deleted, it is removed by its self from the m_children of the
+  // parent node (see the live of above)
+  Container clone = m_children;
+
+  // delete all sub-nodes (children), using the cloned collection
+  for (Container::iterator it=clone.begin();
+       it!=clone.end(); ++it)
     delete *it;
+
+  // finally, we can remove the node from the Win32 TreeView control
+  // (because it shouldn't have any children)
+  if (m_owner != NULL) {
+    assert(TreeView_GetChild(m_owner->getHWND(), m_HTREEITEM) == NULL);
+
+    TreeView_DeleteItem(m_owner->getHWND(), m_HTREEITEM);
+  }
 }
 
 /**
@@ -63,12 +82,31 @@ TreeNode::~TreeNode()
  */
 void TreeNode::addNode(TreeNode *node)
 {
+  assert(node != NULL);
   assert(node->m_HTREEITEM == NULL && node->m_parent == NULL);
 
+  // add this node in the "m_children" container of the parent
   this->m_children.push_back(node);
 
   node->m_parent = this;
   node->addToTreeView(this->m_owner);
+}
+
+/**
+ * Removes a child node.
+ * 
+ * @warning The specified @param node must be a child of the object @a this.
+ */
+void TreeNode::removeNode(TreeNode *node)
+{
+  assert(node != NULL);
+  assert(node->m_parent == this);
+
+  // remove this node from the "m_children" container of the parent
+  remove_element_from_container(this->m_children, node);
+
+  node->m_parent = NULL;
+  node->removeFromTreeView();
 }
 
 TreeNode *TreeNode::getParent()
@@ -80,11 +118,6 @@ TreeNode *TreeNode::getParent()
     return m_parent;
 }
 
-TreeView *TreeNode::getTreeView()
-{
-  return m_owner;
-}
-
 /**
  * Returns the collection of children.
  * 
@@ -92,6 +125,11 @@ TreeView *TreeNode::getTreeView()
 TreeNode::Container TreeNode::getChildren()
 {
   return m_children;
+}
+
+TreeView *TreeNode::getTreeView()
+{
+  return m_owner;
 }
 
 /**
@@ -161,7 +199,7 @@ int TreeNode::getImage()
  * node from the ImageList. If you override this method isn't
  * necessary to call the base implementation.
  * 
- * @seealso getImage()
+ * @see getImage()
  */
 int TreeNode::getSelectedImage()
 {
@@ -196,6 +234,26 @@ void TreeNode::setImage(int imageIndex)
 void TreeNode::setSelectedImage(int selectedImageIndex)
 {
   m_selectedImage = selectedImageIndex;
+}
+
+bool TreeNode::isExpanded()
+{
+  // TODO
+  return false;
+}
+
+void TreeNode::setExpanded(bool state)
+{
+  assert(m_HTREEITEM != NULL && m_owner != NULL);
+
+  TreeView_Expand(m_owner->getHWND(), m_HTREEITEM, state ? TVE_EXPAND: TVE_COLLAPSE);
+}
+
+void TreeNode::ensureVisibility()
+{
+  assert(m_HTREEITEM != NULL && m_owner != NULL);
+
+  TreeView_EnsureVisible(m_owner->getHWND(), m_HTREEITEM);
 }
 
 HTREEITEM TreeNode::getHTREEITEM()
@@ -264,12 +322,15 @@ void TreeNode::onAfterLabelEdit(TreeViewEvent &ev)
     m_text = ev.getLabel();
 }
 
+/**
+ * Connects the node and its children to the Win32 TreeView.
+ */
 void TreeNode::addToTreeView(TreeView *treeView)
 {
   assert(m_owner == NULL);
 
   m_owner = treeView;
-  if (treeView) {
+  if (treeView != NULL) {
     TVINSERTSTRUCT is;
 
     is.hParent = m_parent->m_HTREEITEM;
@@ -288,5 +349,31 @@ void TreeNode::addToTreeView(TreeView *treeView)
        it!=m_children.end(); ++it) {
     if ((*it)->m_owner == NULL)
       (*it)->addToTreeView(treeView);
+  }
+}
+
+/**
+ * Disconnects the node (and its children) from the Win32 TreeView.
+ */
+void TreeNode::removeFromTreeView()
+{
+  // remove all children from the TreeView control
+  for (Container::iterator it=m_children.begin();
+       it!=m_children.end(); ++it) {
+    (*it)->removeFromTreeView();
+  }
+
+  // remove the node from the Win32 TreeView control (because it
+  // shouldn't have any children)
+  if (m_owner != NULL) {
+    assert(m_HTREEITEM != NULL);
+
+    TreeView_DeleteItem(m_owner->getHWND(), m_HTREEITEM);
+
+    m_HTREEITEM = NULL;
+    m_owner = NULL;
+  }
+  else {
+    assert(m_HTREEITEM == NULL);
   }
 }

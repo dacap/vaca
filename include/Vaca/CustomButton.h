@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -42,9 +42,29 @@ namespace Vaca {
 #define CustomButtonStyle	(ButtonStyle + Style(BS_OWNERDRAW, 0))
 
 /**
- * Customizable button to draw it with your own onPaint method. It's
- * like the BS_OWNERDRAW, but here the paint event is received by the
- * button itself, and not by the parent window (see @ref TN009).
+ * Customizable button to draw it with your own Widget#onPaint method.
+ * It's like the BS_OWNERDRAW, but here the paint event is received by
+ * the button itself, and not by the parent window (see @ref TN009).
+ *
+ * Example: 
+ * @code
+ * class MyFancyButton : public CustomButton
+ * {
+ * public:
+ *   MyFancyButton(const String &text, Widget *parent)
+ *     : CustomButton(text, parent)
+ *   {
+ *     // ...
+ *   }
+ *   
+ *   // paint event...
+ *   virtual void onPaint(Graphics &g)
+ *   {
+ *     // don't call parent implementation, use your own code to
+ *     // paint the your fancy-button
+ *   }
+ * }
+ * @endcode
  */
 class VACA_DLL CustomButton : public Button
 {
@@ -58,7 +78,8 @@ public:
 
 protected:
 
-  virtual bool onDrawItem(Graphics &g, LPDRAWITEMSTRUCT lpDrawItem);
+  // reflection
+  virtual bool onReflectedDrawItem(Graphics &g, LPDRAWITEMSTRUCT lpDrawItem);
 
 public:
 

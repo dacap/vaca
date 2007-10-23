@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -40,7 +40,7 @@ using namespace Vaca;
 /**
  * Creates a dialog using the default DialogClass.
  *
- * @see doModal()
+ * @see doModal(), DialogStyle
  */
 Dialog::Dialog(const String &title, Widget *parent, Style style)
   : Frame(NULL, title, parent, style)
@@ -96,10 +96,8 @@ bool Dialog::doModal()
 {
   setVisible(true);
 
-  Thread *thread = Thread::getCurrent();
-  assert(thread != NULL);
-  
-  thread->doMessageLoopFor(this);
+  Thread thread;
+  thread.doMessageLoopFor(this);
 
   return m_state;
 }
@@ -166,6 +164,28 @@ void Dialog::defaultCancelAction()
   sendMessage(WM_CLOSE, 0, 0);
 }
 
+Widget *Dialog::getNextFocusableWidget(Widget *widget)
+{
+  assert(::IsWindow(getHWND()));
+
+  HWND hwnd = GetNextDlgTabItem(getHWND(),
+				widget != NULL ? widget->getHWND(): NULL,
+				FALSE);
+
+  return hwnd != NULL ? Widget::fromHWND(hwnd): NULL;
+}
+
+Widget *Dialog::getPreviousFocusableWidget(Widget *widget)
+{
+  assert(::IsWindow(getHWND()));
+
+  HWND hwnd = GetNextDlgTabItem(getHWND(),
+				widget != NULL ? widget->getHWND(): NULL,
+				TRUE);
+
+  return hwnd != NULL ? Widget::fromHWND(hwnd): NULL;
+}
+
 bool Dialog::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult)
 {
   if (Frame::wndProc(message, wParam, lParam, lResult))
@@ -191,11 +211,6 @@ bool Dialog::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResul
 
   return false;
 }
-
-// LRESULT Dialog::defWndProc(UINT message, WPARAM wParam, LPARAM lParam)
-// {
-//   return DefDlgProc(getHWND(), message, wParam, lParam);
-// }
 
 LRESULT CALLBACK Dialog::globalDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {

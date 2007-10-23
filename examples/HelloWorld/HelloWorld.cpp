@@ -62,7 +62,7 @@ public:
     setLayout(new ClientLayout);
 
     // set the horizontal label text alignment to the center
-    m_label.setTextAlign(CenterAlign);
+    m_label.setTextAlign(TextAlign::Center);
 
     // set the link font to the loaded font
     m_label.setFont(&m_linkFont);
@@ -73,7 +73,7 @@ public:
 };
 
 // the example application, every Vaca application must to have one
-// instance of a class derived from Application
+// instance of Application (or a class derived from it)
 class Example : public Application
 {
   // the main frame

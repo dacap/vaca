@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="Vaca"
-	ProjectGUID="{4AC7E84C-F9DD-4EF1-B9BF-CB237E24026C}"
+	ProjectGUID="{1B1A6AC9-11C5-45D4-BC8E-186DBCF03A67}"
 	RootNamespace="Vaca"
 	Keyword="Win32Proj">
 	<Platforms>
@@ -24,7 +24,7 @@
 				PreprocessorDefinitions="VACA_SRC;WIN32;_DEBUG;_WINDOWS;_USRDLL;SECURITY_WIN32;WINVER=0x0500;_WIN32_IE=0x0500;_WIN32_WINNT=0x0500"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
+				RuntimeLibrary="3"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="3"
 				PrecompiledHeaderThrough="stdvaca.h"
@@ -39,7 +39,7 @@
 				AdditionalDependencies="ComCtl32.Lib Secur32.Lib MSImg32.Lib ShLwApi.Lib winmm.Lib"
 				OutputFile="$(OutDir)/vaca.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;C:\boost_1_33_1\bin\boost\libs\signals\build\libboost_signals.lib\vc-7_1\debug\runtime-link-static\threading-multi&quot;;&quot;C:\boost_1_33_1\bin\boost\libs\signals\build\libboost_signals.lib\vc-7_1\debug\runtime-link-static&quot;"
+				AdditionalLibraryDirectories="&quot;C:\boost_1_33_1\bin\boost\libs\signals\build\libboost_signals.lib\vc-7_1\debug\runtime-link-static\threading-multi&quot;;&quot;C:\boost_1_33_1\bin\boost\libs\signals\build\libboost_signals.lib\vc-7_1\debug\runtime-link-static&quot;;;&quot;C:\boost_1_33_1\bin\boost\libs\thread\build\libboost_thread.lib\vc-7_1\debug\runtime-link-static\threading-multi&quot;;&quot;C:\boost_1_33_1\bin\boost\libs\thread\build\libboost_thread.lib\vc-7_1\debug\runtime-link-static&quot;"
 				IgnoreDefaultLibraryNames="LIBCMTD.lib"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/Vaca.pdb"
@@ -77,7 +77,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="C:\boost_1_33_1;..;../include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;SECURITY_WIN32;WINVER=0x0500;_WIN32_IE=0x0500;_WIN32_WINNT=0x0500"
-				RuntimeLibrary="1"
+				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="3"
 				PrecompiledHeaderThrough="stdvaca.h"
@@ -175,7 +175,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="C:\boost_1_33_1;..;../include"
 				PreprocessorDefinitions="VACA_STATIC;WIN32;NDEBUG;_WINDOWS;SECURITY_WIN32;WINVER=0x0500;_WIN32_IE=0x0500;_WIN32_WINNT=0x0500"
-				RuntimeLibrary="1"
+				RuntimeLibrary="0"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="3"
 				PrecompiledHeaderThrough="stdvaca.h"
@@ -222,6 +222,7 @@
 			<File RelativePath="..\src\Application.cpp"></File>
 			<File RelativePath="..\src\BandedDockArea.cpp"></File>
 			<File RelativePath="..\src\BasicDockArea.cpp"></File>
+			<File RelativePath="..\src\Bix.cpp"></File>
 			<File RelativePath="..\src\BoxConstraint.cpp"></File>
 			<File RelativePath="..\src\BoxLayout.cpp"></File>
 			<File RelativePath="..\src\Brush.cpp"></File>
@@ -272,7 +273,6 @@
 			<File RelativePath="..\src\Menu.cpp"></File>
 			<File RelativePath="..\src\MenuItemEvent.cpp"></File>
 			<File RelativePath="..\src\MouseEvent.cpp"></File>
-			<File RelativePath="..\src\Mutex.cpp"></File>
 			<File RelativePath="..\src\Panel.cpp"></File>
 			<File RelativePath="..\src\Pen.cpp"></File>
 			<File RelativePath="..\src\Point.cpp"></File>
@@ -290,7 +290,6 @@
 			<File RelativePath="..\src\Style.cpp"></File>
 			<File RelativePath="..\src\System.cpp"></File>
 			<File RelativePath="..\src\Tab.cpp"></File>
-			<File RelativePath="..\src\TableLayout.cpp"></File>
 			<File RelativePath="..\src\Thread.cpp"></File>
 			<File RelativePath="..\src\Timer.cpp"></File>
 			<File RelativePath="..\src\ToggleButton.cpp"></File>
@@ -369,8 +368,8 @@
 			<File RelativePath="..\include\Vaca\Menu.h"></File>
 			<File RelativePath="..\include\Vaca\MenuItemEvent.h"></File>
 			<File RelativePath="..\include\Vaca\MouseEvent.h"></File>
-			<File RelativePath="..\include\Vaca\Mutex.h"></File>
 			<File RelativePath="..\include\Vaca\Panel.h"></File>
+			<File RelativePath="..\include\Vaca\ParseException.h"></File>
 			<File RelativePath="..\include\Vaca\Pen.h"></File>
 			<File RelativePath="..\include\Vaca\Point.h"></File>
 			<File RelativePath="..\include\Vaca\ProgressBar.h"></File>
@@ -381,7 +380,7 @@
 			<File RelativePath="..\include\Vaca\Register.h"></File>
 			<File RelativePath="..\include\Vaca\ResourceException.h"></File>
 			<File RelativePath="..\include\Vaca\Scintilla.h"></File>
-			<File RelativePath="..\include\Vaca\ScopedLock.h"></File>
+			<File RelativePath="..\include\Vaca\ScrollInfo.h"></File>
 			<File RelativePath="..\include\Vaca\SelfDestruction.h"></File>
 			<File RelativePath="..\include\Vaca\Size.h"></File>
 			<File RelativePath="..\include\Vaca\Slider.h"></File>
@@ -391,7 +390,6 @@
 			<File RelativePath="..\include\Vaca\Style.h"></File>
 			<File RelativePath="..\include\Vaca\System.h"></File>
 			<File RelativePath="..\include\Vaca\Tab.h"></File>
-			<File RelativePath="..\include\Vaca\TableLayout.h"></File>
 			<File RelativePath="..\include\Vaca\Thread.h"></File>
 			<File RelativePath="..\include\Vaca\Timer.h"></File>
 			<File RelativePath="..\include\Vaca\ToggleButton.h"></File>

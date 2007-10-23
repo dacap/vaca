@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -30,10 +30,7 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "stdvaca.h"
-// #include "Vaca/Application.h"
 #include "Vaca/Spinner.h"
-// #include "Vaca/Debug.h"
-// #include "Vaca/Event.h"
 
 using namespace Vaca;
 
@@ -57,14 +54,6 @@ Spinner::Spinner(int minValue, int maxValue, int posValue,
 Spinner::~Spinner()
 {
 }
-
-// Size Spinner::preferredSize()
-// {
-//   Size edit(m_edit.preferredSize());
-//   Size spin(m_spin.preferredSize());
-//   return Size(edit.w - 2 + spin.w,
-// 	      VACA_MAX(edit.h, spin.h));
-// }
 
 Edit &Spinner::getEdit()
 {
@@ -123,6 +112,10 @@ void Spinner::setBase(int base)
   m_spin.setBase(base);
 }
 
+/**
+ * Positions the children: the spin button at the right of the edit
+ * control to connect theirs edges and to see it like a whole control.
+ */
 void Spinner::layout()
 {
   Rect bounds = getLayoutBounds();
@@ -139,6 +132,10 @@ void Spinner::layout()
 		       bounds.h));
 }
 
+/**
+ * Fills @a sz with the size of both controls for the width and the
+ * maximun height of both controls.
+ */
 void Spinner::onPreferredSize(Size &sz)
 {
   Size edit(m_edit.getPreferredSize());

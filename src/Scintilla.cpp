@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -83,14 +83,14 @@ void SciEditor::setFont(Font *font)
 
   LOGFONT lf;
   if (font->getLogFont(&lf)) {
-    Font::Style::Type style = font->getStyle();
+    FontStyle style = font->getStyle();
 
     // set font for the default style
     sendMessage(SCI_STYLESETFONT, STYLE_DEFAULT, reinterpret_cast<LPARAM>(lf.lfFaceName));
     sendMessage(SCI_STYLESETSIZE, STYLE_DEFAULT, font->getPointSize());
-    sendMessage(SCI_STYLESETBOLD, STYLE_DEFAULT, style & Font::Style::Bold);
-    sendMessage(SCI_STYLESETITALIC, STYLE_DEFAULT, style & Font::Style::Italic);
-    sendMessage(SCI_STYLESETUNDERLINE, STYLE_DEFAULT, style & Font::Style::Underline);
+    sendMessage(SCI_STYLESETBOLD, STYLE_DEFAULT, style & FontStyle::Bold ? TRUE: FALSE);
+    sendMessage(SCI_STYLESETITALIC, STYLE_DEFAULT, style & FontStyle::Italic ? TRUE: FALSE);
+    sendMessage(SCI_STYLESETUNDERLINE, STYLE_DEFAULT, style & FontStyle::Underline ? TRUE: FALSE);
   }
 }
 
@@ -612,8 +612,11 @@ int SciEditor::getZoom()
 //////////////////////////////////////////////////////////////////////
 // Notifications
 
-bool SciEditor::onNotify(LPNMHDR lpnmhdr, LRESULT &lResult)
+bool SciEditor::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT &lResult)
 {
+  if (Widget::onReflectedNotify(lpnmhdr, lResult))
+    return true;
+
   switch (lpnmhdr->code) {
 
 //     case SCN_MODIFIED:

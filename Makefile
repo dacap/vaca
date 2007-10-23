@@ -2,13 +2,26 @@
 # Configuration
 
 # DEBUG = 1
-# STATIC = 1
+STATIC = 1
 # PROFILE = 1
 # UNICODE = 1
 
-ifndef BOOSTDIR
-  BOOSTDIR = c:/boost_1_33_1
+ifdef MEMORY_LEAK_DETECTOR
+ifdef STATIC
+MEMORY_LEAK_DETECTOR = 1
 endif
+endif
+
+# ----------------------------------------------------------------------
+# Extensions
+
+OBJ = .o
+LIB = .a
+
+# ----------------------------------------------------------------------
+# Boost directories (you should change this)
+
+include Makefile.boost
 
 # ----------------------------------------------------------------------
 # Programs
@@ -25,44 +38,37 @@ WINDRES = windres
 # Sources & Examples
 
 LIB_SOURCES = Anchor AnchorLayout Application BandedDockArea		\
-	      BasicDockArea BoxConstraint BoxLayout Brush Button	\
+	      BasicDockArea Bix BoxConstraint BoxLayout Brush Button	\
 	      ButtonBase CancelableEvent CheckBox ClientLayout		\
-	      Clipboard CloseEvent Color ColorDialog ComboBox Command	\
+	      Clipboard CloseEvent Color ColorDialog ComboBox		\
 	      CommonDialog Component Constraint Cursor CustomButton	\
 	      CustomLabel Debug Dialog DockArea DockBar DockFrame	\
 	      DropFilesEvent Edit Event FileDialog FindTextDialog Font	\
 	      FontDialog Frame Graphics GroupBox Icon Image ImageList	\
 	      KeyEvent Keys Label Layout LinkLabel ListBox ListView	\
-	      Mdi Menu MenuItemEvent MouseEvent Mutex Panel Pen Point	\
-	      ProgressBar RadioButton ReBar Rect Region Scintilla Size	\
-	      Slider SpinButton Spinner String Style System Tab Thread	\
-	      Timer ToggleButton ToolBar TreeNode TreeView		\
-	      TreeViewEvent Vaca Widget
+	      Mdi Menu MenuItemEvent MouseEvent Panel Pen Point		\
+	      ProgressBar RadioButton ReBar Rect Region ResourceId	\
+	      Scintilla Size Slider SpinButton Spinner String Style	\
+	      System Tab Thread Timer ToggleButton ToolBar TreeNode	\
+	      TreeView TreeViewEvent Vaca Widget
 
-EXAMPLES = AnchorLayouts AutoCompletion BouncingBalls BoxLayouts	\
-	   Buttons ColoredButton ComboBoxes CommandsAlt DataGrids	\
+EXAMPLES = AnchorLayouts AutoCompletion Bixes BouncingBalls BoxLayouts	\
+	   Buttons ColoredButton ComboBoxes Commands DataGrids		\
 	   EditableListBox Edits EyeDropper FontMetrics FreeOfLayout	\
-	   Hashing HelloWorld Images Labels Maths MenuResource		\
-	   MiniExplorer PensBrushes Primitives ProgressBars Regions	\
-	   Scribble Sliders Spinners StdCommands Sudoku			\
-	   SystemImageList Tabs TextEditor ThreadKiller Threads		\
+	   Hashing HelloWorld Images Labels LikeScript Maths		\
+	   MenuResource MiniExplorer PensBrushes Primitives		\
+	   ProgressBars Regions Scribble Sliders Spinners StdCommands	\
+	   Sudoku SystemImageList Tabs TextEditor Threads Timers 	\
 	   ToolBars Trees
 
-ADDRESSBOOK_SOURCES = AddressBook LightingPanel SectionHeader	\
-                      SectionContent
-
-SIZEOF_SOURCES = sizeof
-
-TORO_SOURCES = Document FormDocument FormView TextDocument TextView	\
-               ToroApp ToroFrame ToroTab View
-
-VACADOC_SOURCES = CppNode VacaDoc XmlNode XmlParser XmlRawParser	\
-		  XmlString
+# EXAMPLES = DataGrids
+# EXAMPLES = Bixes
+# EXAMPLES = Xuls
 
 # ----------------------------------------------------------------------
 # Flags
 
-CXXFLAGS = -I$(BOOSTDIR) -Iinclude -I. -Ithird_party -DBOOST_BIND_NO_PLACEHOLDERS \
+CXXFLAGS = -I$(BOOST_ROOT) -Iinclude -I. -Ithird_party -DBOOST_BIND_NO_PLACEHOLDERS \
 	   -DWINVER=0x0500 -D_WIN32_IE=0x0500 -D_WIN32_WINNT=0x0500 -W -Wall -Wno-unused
 
 ifdef UNICODE
@@ -79,7 +85,7 @@ EXE_LIBS = $(LIBS)
 
 ifdef STATIC
 
-  BOOSTLIBS = $(BOOSTDIR)/bin/boost/libs/signals/build/libboost_signals.lib/gcc/release/runtime-link-static/libboost_signals-gcc-s-1_33_1.lib
+  BOOSTLIBS = $(BOOST_SIGNALS_STATIC) $(BOOST_THREAD_STATIC)
 
   VACA_LIB_FLAGS = -DVACA_STATIC
   VACA_EXE_FLAGS = -DVACA_STATIC
@@ -92,7 +98,7 @@ ifdef STATIC
 
 else
 
-  BOOSTLIBS = $(BOOSTDIR)/bin/boost/libs/signals/build/boost_signals.dll/gcc/release/boost_signals-gcc-1_33_1.lib
+  BOOSTLIBS = $(BOOST_SIGNALS_SHARED) $(BOOST_THREAD_SHARED)
 
   VACA_LIB_FLAGS = -DVACA_SRC
   VACA_EXE_FLAGS = 
@@ -147,36 +153,33 @@ else
 endif
 
 # ----------------------------------------------------------------------
+# Memory leak detector
+
+ifdef MEMORY_LEAK_DETECTOR
+#   VACA_LIB_FLAGS += -D_DEBUG
+#   VACA_EXE_FLAGS += -D_DEBUG
+  CXXFLAGS += -Ithird_party/nvwa -DMEMORY_LEAK_DETECTOR
+#   LFLAGS += -g
+#   DLLFLAGS += -g
+  LIB_SOURCES += $(basename $(notdir $(wildcard third_party/nvwa/*.cpp)))
+endif
+
+# ----------------------------------------------------------------------
 # Files
 
-VACA_LIB = lib/libvaca$(SUFFIX).a
+VACA_LIB = lib/libvaca$(SUFFIX)$(LIB)
 ifdef UNICODE
   VACA_DLL = bin/VacaUnicode.dll
 else
   VACA_DLL = bin/Vaca.dll
 endif
 
-LIB_OBJS = $(addprefix obj/Library., $(addsuffix $(SUFFIX).o, $(LIB_SOURCES)))
+LIB_OBJS = $(addprefix obj/Library., $(addsuffix $(SUFFIX)$(OBJ), $(LIB_SOURCES)))
 EXAMPLES_EXE = $(addprefix bin/, $(addsuffix $(SUFFIX).exe, $(EXAMPLES)))
 
 EXAMPLES_DIRS_WITH_RC = $(dir $(wildcard examples/*/*.rc))
 
-UTILITIES_EXE = \
-	bin/AddressBook$(SUFFIX).exe \
-	bin/sizeof$(SUFFIX).exe \
-	bin/Toro$(SUFFIX).exe \
-	bin/VacaDoc$(SUFFIX).exe
-
-ADDRESSBOOK_OBJS = $(addprefix obj/AddressBook., $(addsuffix $(SUFFIX).o, $(ADDRESSBOOK_SOURCES)))
-SIZEOF_OBJS = $(addprefix obj/sizeof., $(addsuffix $(SUFFIX).o, $(SIZEOF_SOURCES)))
-TORO_OBJS = $(addprefix obj/Toro., $(addsuffix $(SUFFIX).o, $(TORO_SOURCES)))
-VACADOC_OBJS = $(addprefix obj/VacaDoc., $(addsuffix $(SUFFIX).o, $(VACADOC_SOURCES)))
-
-ALL_TARGETS = stdvaca.h.gch $(VACA_DLL) $(EXAMPLES_EXE) $(UTILITIES_EXE)
-# ALL_TARGETS = stdvaca.h.gch $(VACA_DLL) bin/Toro$(SUFFIX).exe
-# ALL_TARGETS = stdvaca.h.gch $(VACA_DLL) bin/AddressBook$(SUFFIX).exe bin/BoxLayouts$(SUFFIX).exe
-# ALL_TARGETS = stdvaca.h.gch $(VACA_DLL) bin/AddressBook$(SUFFIX).exe bin/BoxLayouts$(SUFFIX).exe bin/BouncingBalls$(SUFFIX).exe
-# ALL_TARGETS = stdvaca.h.gch $(VACA_DLL) bin/Bixes$(SUFFIX).exe
+ALL_TARGETS = stdvaca.h.gch $(VACA_DLL) $(EXAMPLES_EXE)
 
 # ----------------------------------------------------------------------
 # Rules
@@ -188,10 +191,13 @@ all: $(ALL_TARGETS)
 vpath %.cpp $(addprefix examples/, $(EXAMPLES))
 vpath %.rc $(EXAMPLES_DIRS_WITH_RC)
 
-obj/Library.%$(SUFFIX).o: src/%.cpp
+obj/Library.%$(SUFFIX)$(OBJ): src/%.cpp
 	$(GXX) $(CXXFLAGS) $(VACA_LIB_FLAGS) -o $@ -c $<
 
-obj/Example.%$(SUFFIX).o: %.cpp
+obj/Library.%$(SUFFIX)$(OBJ): third_party/nvwa/%.cpp
+	$(GXX) $(CXXFLAGS) $(VACA_LIB_FLAGS) -o $@ -c $<
+
+obj/Example.%$(SUFFIX)$(OBJ): %.cpp
 	$(GXX) $(CXXFLAGS) $(VACA_EXE_FLAGS) -o $@ -c $<
 
 obj/Example.res: examples/Example.rc
@@ -199,24 +205,6 @@ obj/Example.res: examples/Example.rc
 
 obj/Example.%.res: %.rc
 	$(WINDRES) $(addprefix -I, $(EXAMPLES_DIRS_WITH_RC)) -O coff -o $@ -i $<
-
-obj/AddressBook.%$(SUFFIX).o: utilities/AddressBook/%.cpp
-	$(GXX) $(CXXFLAGS) $(VACA_EXE_FLAGS) -o $@ -c $<
-
-obj/AddressBook.AddressBook.res: utilities/AddressBook/AddressBook.rc
-	$(WINDRES) -Iutilities/AddressBook -O coff -o $@ -i $<
-
-obj/sizeof.%$(SUFFIX).o: utilities/sizeof/%.cpp
-	$(GXX) $(CXXFLAGS) $(VACA_EXE_FLAGS) -o $@ -c $<
-
-obj/Toro.%$(SUFFIX).o: utilities/Toro/%.cpp
-	$(GXX) $(CXXFLAGS) $(VACA_EXE_FLAGS) -o $@ -c $<
-
-obj/Toro.%.res: utilities/Toro/%.rc
-	$(WINDRES) -Iutilities/Toro -O coff -o $@ -i $<
-
-obj/VacaDoc.%$(SUFFIX).o: utilities/VacaDoc/%.cpp
-	$(GXX) $(CXXFLAGS) $(VACA_EXE_FLAGS) -o $@ -c $<
 
 %.h.gch: %.h
 	$(GXX) $(CXXFLAGS) -o $@ -c $<
@@ -235,49 +223,35 @@ endif
 
 # general examples
 
-bin/%.exe: obj/Example.%.o obj/Example.res $(VACA_LIB)
+bin/%.exe: obj/Example.%$(OBJ) obj/Example.res $(VACA_LIB)
 	$(GXX) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
 
 # special examples
 
-bin/EyeDropper$(SUFFIX).exe: obj/Example.EyeDropper$(SUFFIX).o obj/Example.EyeDropper.res $(VACA_LIB)
+bin/EyeDropper$(SUFFIX).exe: obj/Example.EyeDropper$(SUFFIX)$(OBJ) obj/Example.EyeDropper.res $(VACA_LIB)
 	$(GXX) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
 
-bin/Hashing$(SUFFIX).exe: obj/Example.Hashing$(SUFFIX).o obj/Example.md5$(SUFFIX).o obj/Example.sha1$(SUFFIX).o obj/Example.res $(VACA_LIB)
+bin/Hashing$(SUFFIX).exe: obj/Example.Hashing$(SUFFIX)$(OBJ) obj/Example.md5$(SUFFIX)$(OBJ) obj/Example.sha1$(SUFFIX)$(OBJ) obj/Example.res $(VACA_LIB)
 	$(GXX) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
 
-bin/Images$(SUFFIX).exe: obj/Example.Images$(SUFFIX).o obj/Example.Images.res $(VACA_LIB)
+bin/Images$(SUFFIX).exe: obj/Example.Images$(SUFFIX)$(OBJ) obj/Example.Images.res $(VACA_LIB)
 	$(GXX) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
 
-bin/MenuResource$(SUFFIX).exe: obj/Example.MenuResource$(SUFFIX).o obj/Example.MenuResource.res $(VACA_LIB)
+bin/MenuResource$(SUFFIX).exe: obj/Example.MenuResource$(SUFFIX)$(OBJ) obj/Example.MenuResource.res $(VACA_LIB)
 	$(GXX) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
 
-bin/TextEditor$(SUFFIX).exe: obj/Example.TextEditor$(SUFFIX).o obj/Example.TextEditor.res $(VACA_LIB)
+bin/TextEditor$(SUFFIX).exe: obj/Example.TextEditor$(SUFFIX)$(OBJ) obj/Example.TextEditor.res $(VACA_LIB)
 	$(GXX) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
 
-bin/ToolBars$(SUFFIX).exe: obj/Example.ToolBars$(SUFFIX).o obj/Example.ToolBars.res $(VACA_LIB)
+bin/ToolBars$(SUFFIX).exe: obj/Example.ToolBars$(SUFFIX)$(OBJ) obj/Example.ToolBars.res $(VACA_LIB)
 	$(GXX) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
 
-# utilities
-
-bin/AddressBook$(SUFFIX).exe: $(ADDRESSBOOK_OBJS) obj/AddressBook.AddressBook.res $(VACA_LIB)
-	$(GXX) $(LFLAGS) -s -mwindows -Lobj -o $@ $^ $(EXE_LIBS)
-
-bin/sizeof$(SUFFIX).exe: $(SIZEOF_OBJS) $(VACA_LIB)
-	$(GXX) $(LFLAGS) -s -mconsole -Lobj -o $@ $^ $(EXE_LIBS)
-
-bin/Toro$(SUFFIX).exe: $(TORO_OBJS) obj/Toro.resource.res $(VACA_LIB)
-	$(GXX) $(LFLAGS) -s -mwindows -Lobj -o $@ $^ $(EXE_LIBS)
-
-bin/VacaDoc$(SUFFIX).exe: $(VACADOC_OBJS) $(VACA_LIB)
-	$(GXX) $(LFLAGS) -s -mwindows -Lobj -o $@ $^ $(EXE_LIBS)
+bin/Bixes$(SUFFIX).exe: obj/Example.Bixes$(SUFFIX)$(OBJ) obj/Example.Bixes.res $(VACA_LIB)
+	$(GXX) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
 
 deps:
 	$(GXX) -MM $(CXXFLAGS) src/*.cpp | sed -e 's|^\([A-Za-z_0-9]\+\)|obj/Library.\1\$$\(SUFFIX\)|' > .deps
 	$(GXX) -MM $(CXXFLAGS) examples/*/*.cpp | sed -e 's|^\([A-Za-z_0-9]\+\)|obj/Example.\1\$$\(SUFFIX\)|' >> .deps
-	$(GXX) -MM $(CXXFLAGS) utilities/AddressBook/*.cpp | sed -e 's|^\([A-Za-z_0-9]\+\)|obj/AddressBook.\1\$$\(SUFFIX\)|' >> .deps
-	$(GXX) -MM $(CXXFLAGS) utilities/Toro/*.cpp | sed -e 's|^\([A-Za-z_0-9]\+\)|obj/Toro.\1\$$\(SUFFIX\)|' >> .deps
-	$(GXX) -MM $(CXXFLAGS) utilities/VacaDoc/*.cpp | sed -e 's|^\([A-Za-z_0-9]\+\)|obj/VacaDoc.\1\$$\(SUFFIX\)|' >> .deps
 
 clean:
 	-$(RM) -f obj/*.o obj/*.res
@@ -285,22 +259,22 @@ clean:
 distclean: clean
 	-$(RM) -f lib/*.a bin/*.exe $(VACA_DLL)
 
-ifdef MINGWDIR
+ifdef MINGW_ROOT
 install: $(VACA_LIB) $(VACA_DLL)
-	-$(MKDIR) $(MINGWDIR)/include/Vaca
-	$(CP) $(wildcard include/Vaca/*.h) $(MINGWDIR)/include/Vaca
-	$(CP) $(VACA_LIB) $(MINGWDIR)/lib
+	-$(MKDIR) $(MINGW_ROOT)/include/Vaca
+	$(CP) $(wildcard include/Vaca/*.h) $(MINGW_ROOT)/include/Vaca
+	$(CP) $(VACA_LIB) $(MINGW_ROOT)/lib
 
 uninstall:
-	@echo $(RM) $(MINGWDIR)/$(VACA_LIB)
-	@echo $(RM) $(wildcard $(MINGWDIR)/include/Vaca/*.h)
-	@echo $(RMDIR) $(MINGWDIR)/include/Vaca
+	@echo $(RM) $(MINGW_ROOT)/$(VACA_LIB)
+	@echo $(RM) $(wildcard $(MINGW_ROOT)/include/Vaca/*.h)
+	@echo $(RMDIR) $(MINGW_ROOT)/include/Vaca
 else
 install:
-	@echo You must to setup your MINGWDIR enviroment variable
+	@echo You must to setup your MINGW_ROOT enviroment variable
 
 uninstall:
-	@echo You must to setup your MINGWDIR enviroment variable
+	@echo You must to setup your MINGW_ROOT enviroment variable
 endif
 
 # ----------------------------------------------------------------------

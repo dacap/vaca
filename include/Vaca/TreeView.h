@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -33,6 +33,7 @@
 #define VACA_TREEVIEW_H
 
 #include <commctrl.h>
+#include <boost/iterator/iterator_facade.hpp>
 
 #include "Vaca/base.h"
 #include "Vaca/Widget.h"
@@ -40,12 +41,16 @@
 
 namespace Vaca {
 
-#define TreeViewStyle		(ChildStyle +				\
-				 FocusableStyle +			\
-				 ClientEdgeStyle +			\
-				 Style(TVS_LINESATROOT | TVS_HASBUTTONS | \
-				       TVS_HASLINES | TVS_SHOWSELALWAYS | \
-				       TVS_EDITLABELS, 0))
+#define ShowSelectionAlwaysTreeViewStyle	\
+  (Style(TVS_SHOWSELALWAYS, 0))
+
+#define TreeViewStyle				\
+  (ChildStyle +					\
+   FocusableStyle +				\
+   ClientEdgeStyle +				\
+   Style(TVS_LINESATROOT | TVS_HASBUTTONS |	\
+	 TVS_HASLINES | TVS_SHOWSELALWAYS |	\
+	 TVS_EDITLABELS, 0))
 
 #define EditLabelTreeViewStyle	(Style(TVS_EDITLABELS, 0))
 
@@ -53,36 +58,70 @@ class TreeViewEvent;
 class ImageList;
 
 /**
+ * @internal You should use #TreeView::iterator.
+ */
+class VACA_DLL TreeViewIterator
+  : public boost::iterator_facade<TreeViewIterator,
+				  TreeNode *,
+				  boost::bidirectional_traversal_tag,
+				  TreeNode *>
+{
+  TreeNode *m_currentNode;
+
+public:
+  TreeViewIterator();
+  TreeViewIterator(const TreeViewIterator &other);
+  explicit TreeViewIterator(TreeNode *node);
+
+  TreeViewIterator &operator=(const TreeViewIterator &other);
+
+private:
+  friend class boost::iterator_core_access;
+
+  void increment();
+  void decrement();
+  bool equal(TreeViewIterator const& other) const;
+  TreeNode *dereference() const;
+    
+};
+
+/**
  * Handles a TreeView control.  A TreeView (internally) has a root
  * TreeNode that is the parent of the first-level's nodes.
  */
-class VACA_DLL TreeView : public Widget 
+class VACA_DLL TreeView : public Widget
 {
   friend class TreeNode;
-  
+
   TreeNode m_root;
+  bool     m_deleted;
   String   m_tmpBuffer; // to use LPSTR_TEXTCALLBACK we need some space
                         // to allocate text temporally
 
 public:
+  /**
+   * Iterator to go through all the nodes of the tree (it does a deep
+   * scan).
+   */
+  typedef TreeViewIterator iterator;
 
   TreeView(Widget *parent, Style style = TreeViewStyle);
   virtual ~TreeView();
+
+  iterator begin();
+  iterator end();
 
   void setImageList(ImageList &imageList, int type);
   void setNormalImageList(ImageList &imageList);
   void setStateImageList(ImageList &imageList);
 
+  TreeNode *getRootNode();
+
   void addNode(TreeNode *node);
-//   void insertNode(TreeNode *node);
-//   void removeNode(TreeNode *node);
+  void removeNode(TreeNode *node);
 
   TreeNode *getSelectedNode();
   void setSelectedNode(TreeNode *node);
-
-//   Container getContainer() {
-//     return mRoot.mContainer;
-//   }
 
   virtual void setBgColor(Color color);
 
@@ -112,7 +151,7 @@ protected:
 //   virtual void onEndDrag(TreeViewEvent &ev);
 
   // reflection
-  virtual bool onNotify(LPNMHDR lpnmhdr, LRESULT &lResult);
+  virtual bool onReflectedNotify(LPNMHDR lpnmhdr, LRESULT &lResult);
 
 };
 

@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -32,14 +32,14 @@
 #ifndef VACA_GRAPHICS_H
 #define VACA_GRAPHICS_H
 
+#include <list>
+#include <vector>
+#include <boost/noncopyable.hpp>
+
 #include "Vaca/base.h"
 #include "Vaca/Rect.h"
 #include "Vaca/Color.h"
 #include "Vaca/String.h"
-
-#include <list>
-#include <vector>
-#include <boost/noncopyable.hpp>
 
 namespace Vaca {
 
@@ -196,7 +196,8 @@ public:
   void drawPie(Pen &pen, int x, int y, int w, int h, double startAngle, double sweepAngle);
   void drawChord(Pen &pen, const Rect &rc, double startAngle, double sweepAngle);
   void drawChord(Pen &pen, int x, int y, int w, int h, double startAngle, double sweepAngle);
-
+  void drawPolyline(Pen &pen, const std::vector<Point> &points);
+  
   void fillRect(Brush &brush, const Rect &rc);
   void fillRect(Brush &brush, int x, int y, int w, int h);
   void fillRoundRect(Brush &brush, const Rect &rc, const Size &ellipse);
@@ -235,6 +236,7 @@ private:
   static void deleteHandles();
   void drawBezier(Pen &pen, CONST POINT *lppt, int numPoints);
   void drawBezierTo(CONST POINT *lppt, int numPoints);
+  void drawPolyline(Pen &pen, CONST POINT *lppt, int numPoints);
   
 };
 

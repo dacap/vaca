@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -154,6 +154,12 @@ bool Point::operator!=(const Point &pt) const
 }
 
 Point::Point(CONST LPPOINT pt)
+{
+  x = pt->x;
+  y = pt->y;
+}
+
+Point::Point(CONST LPPOINTS pt)
 {
   x = pt->x;
   y = pt->y;

@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -57,7 +57,7 @@ Icon::Icon(int iconId, const Size &sz)
 					      sz.w, sz.h, 0));
 
   if (m_HICON == NULL)
-    throw ResourceException();
+    throw ResourceException("Can't load the icon resource " + String::fromInt(iconId));
 }
 
 /**
@@ -71,7 +71,7 @@ Icon::Icon(const String &fileName, const Size &sz)
 					      sz.w, sz.h, LR_LOADFROMFILE));
 
   if (m_HICON == NULL)
-    throw ResourceException();
+    throw ResourceException("Can't load icon from file " + fileName);
 }
 
 Icon::~Icon()
@@ -102,7 +102,7 @@ SharedIcon::SharedIcon(int iconId, const Size &sz)
 						  sz.w, sz.h, LR_SHARED));
 
   if (hicon == NULL)
-    throw ResourceException();
+    throw ResourceException("Can't load the icon resource " + String::fromInt(iconId));
 
   setHICON(hicon);
 }
@@ -116,7 +116,7 @@ SharedIcon::SharedIcon(const String &fileName, const Size &sz)
 						  LR_LOADFROMFILE | LR_SHARED));
 
   if (hicon == NULL)
-    throw ResourceException();
+    throw ResourceException("Can't load icon from file " + fileName);
 
   setHICON(hicon);
 }

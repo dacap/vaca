@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -68,10 +68,10 @@ void AnchorLayout::layout(Widget *parent, Widget::Container &widgets, const Rect
     Borders borders = anchor->getBorders();
     Rect rc = anchor->getRefRect();
 
-    bool left   = (borders & LeftBorder  ) != NoBorder;
-    bool top    = (borders & TopBorder   ) != NoBorder;
-    bool right  = (borders & RightBorder ) != NoBorder;
-    bool bottom = (borders & BottomBorder) != NoBorder;
+    bool left   = (borders & Borders::Left  ) != Borders::None;
+    bool top    = (borders & Borders::Top   ) != Borders::None;
+    bool right  = (borders & Borders::Right ) != Borders::None;
+    bool bottom = (borders & Borders::Bottom) != Borders::None;
 
     if (left && right) {
       rc.w += delta.w;

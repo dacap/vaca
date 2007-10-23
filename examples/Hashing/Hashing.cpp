@@ -100,9 +100,6 @@ class MainFrame : public Frame
 {
   Label m_helpLabel;
   ListView m_filesList;
-  Panel m_bottomPanel;
-  Panel m_leftBottomPanel;
-  Panel m_rightBottomPanel;
   Edit m_md5Edit;
   Edit m_shaEdit;
   LinkLabel m_md5Label;
@@ -115,23 +112,19 @@ public:
     : Frame("Hashing")
     , m_helpLabel("Drop files to the list", this)
     , m_filesList(this, ListViewStyle + AcceptFilesStyle + SingleSelectionListViewStyle)
-    , m_bottomPanel(this) 
-    , m_leftBottomPanel(&m_bottomPanel)
-    , m_rightBottomPanel(&m_bottomPanel)
-    , m_md5Edit("", &m_leftBottomPanel, EditStyle + ReadOnlyEditStyle)
-    , m_shaEdit("", &m_leftBottomPanel, EditStyle + ReadOnlyEditStyle)
-    , m_md5Label("http://www.faqs.org/rfcs/rfc1321.html", "RFC 1321 - The MD5 Message-Digest Algorithm", &m_rightBottomPanel)
-    , m_shaLabel("http://www.faqs.org/rfcs/rfc3174.html", "RFC 3174 - US Secure Hash Algorithm 1 (SHA1)", &m_rightBottomPanel)
+    , m_md5Edit("", this, EditStyle + ReadOnlyEditStyle)
+    , m_shaEdit("", this, EditStyle + ReadOnlyEditStyle)
+    , m_md5Label("http://www.faqs.org/rfcs/rfc1321.html", "RFC 1321 - The MD5 Message-Digest Algorithm", this)
+    , m_shaLabel("http://www.faqs.org/rfcs/rfc3174.html", "RFC 3174 - US Secure Hash Algorithm 1 (SHA1)", this)
   {
-    setLayout(new BoxLayout(Vertical, false, 0));
-    m_filesList.setConstraint(new BoxConstraint(true));
-    m_bottomPanel.setLayout(new BoxLayout(Horizontal, false, 0));
-    m_leftBottomPanel.setConstraint(new BoxConstraint(true));
-    m_leftBottomPanel.setLayout(new BoxLayout(Vertical, true, 0));
-    m_rightBottomPanel.setLayout(new BoxLayout(Vertical, true, 0));
+    setLayout(Bix::parse("Y[%,f%,XY[%,fx%;%,fx%]]",
+			 &m_helpLabel,
+			 &m_filesList,
+			 &m_md5Label, &m_md5Edit,
+			 &m_shaLabel, &m_shaEdit));
 
     // setup report view
-    m_filesList.setViewType(ListView::Report);
+    m_filesList.setType(ListViewType::Report);
     m_filesList.addColumn("Filename");
     m_filesList.addColumn("MD5");
     m_filesList.addColumn("SHA1");

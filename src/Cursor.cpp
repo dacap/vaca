@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -37,57 +37,56 @@
 
 using namespace Vaca;
 
-Cursor::Cursor(int cursorId)
+Cursor::Cursor(ResourceId cursorId)
 {
-  m_HCURSOR = LoadCursor(Application::getHINSTANCE(),
-			 MAKEINTRESOURCE(cursorId));
+  m_HCURSOR = LoadCursor(Application::getHINSTANCE(), cursorId.toLPTSTR());
   m_autoDelete = true;
 
   if (m_HCURSOR == NULL)
-    throw ResourceException();
+    throw ResourceException("Can't load the cursor resource " + cursorId.toString());
 }
 
 Cursor::Cursor(SysCursor cursor)
 {
-  LPCTSTR sysCursor = IDC_ARROW;
+  LPCTSTR winCursor = IDC_ARROW;
 
   switch (cursor) {
 
     // special cursor that has HCURSOR = NULL
-    case NoCursor:
+    case SysCursor::None:
       m_HCURSOR = NULL;
       m_autoDelete = false;
       return;
 
-    case ArrowCursor:     sysCursor = IDC_ARROW; break;
-    case CrosshairCursor: sysCursor = IDC_CROSS; break;
+    case SysCursor::Arrow:     winCursor = IDC_ARROW; break;
+    case SysCursor::Crosshair: winCursor = IDC_CROSS; break;
 // #ifdef IDC_HAND
-    case HandCursor:      sysCursor = IDC_HAND; break;
+    case SysCursor::Hand:      winCursor = IDC_HAND; break;
 // #endif
-    case HelpCursor:      sysCursor = IDC_HELP; break;
-    case TextCursor:      sysCursor = IDC_IBEAM; break;
-    case ForbiddenCursor: sysCursor = IDC_NO; break;
-    case MoveCursor:      sysCursor = IDC_SIZEALL; break;
-    case SizeECursor:     sysCursor = IDC_SIZEWE; break;
-    case SizeNCursor:     sysCursor = IDC_SIZENS; break;
-    case SizeNECursor:    sysCursor = IDC_SIZENESW; break;
-    case SizeNWCursor:    sysCursor = IDC_SIZENWSE; break;
-    case SizeSCursor:     sysCursor = IDC_SIZENS; break;
-    case SizeSECursor:    sysCursor = IDC_SIZENWSE; break;
-    case SizeSWCursor:    sysCursor = IDC_SIZENESW; break;
-    case SizeWCursor:     sysCursor = IDC_SIZEWE; break;
-    case UpArrowCursor:   sysCursor = IDC_UPARROW; break;
-    case WaitCursor:      sysCursor = IDC_WAIT; break;
+    case SysCursor::Help:      winCursor = IDC_HELP; break;
+    case SysCursor::Text:      winCursor = IDC_IBEAM; break;
+    case SysCursor::Forbidden: winCursor = IDC_NO; break;
+    case SysCursor::Move:      winCursor = IDC_SIZEALL; break;
+    case SysCursor::SizeE:     winCursor = IDC_SIZEWE; break;
+    case SysCursor::SizeN:     winCursor = IDC_SIZENS; break;
+    case SysCursor::SizeNE:    winCursor = IDC_SIZENESW; break;
+    case SysCursor::SizeNW:    winCursor = IDC_SIZENWSE; break;
+    case SysCursor::SizeS:     winCursor = IDC_SIZENS; break;
+    case SysCursor::SizeSE:    winCursor = IDC_SIZENWSE; break;
+    case SysCursor::SizeSW:    winCursor = IDC_SIZENESW; break;
+    case SysCursor::SizeW:     winCursor = IDC_SIZEWE; break;
+    case SysCursor::UpArrow:   winCursor = IDC_UPARROW; break;
+    case SysCursor::Wait:      winCursor = IDC_WAIT; break;
 // #ifdef IDC_APPSTARTING
-    case WaitBgCursor:    sysCursor = IDC_APPSTARTING; break;
+    case SysCursor::WaitBg:    winCursor = IDC_APPSTARTING; break;
 // #endif
   }
   
-  m_HCURSOR = LoadCursor(NULL, sysCursor);
+  m_HCURSOR = LoadCursor(NULL, winCursor);
   m_autoDelete = false;
 
   if (m_HCURSOR == NULL)
-    throw ResourceException();
+    throw ResourceException("Can't load the SysCursor " + String::fromInt(cursor));
 }
 
 Cursor::Cursor(const String &fileName)
@@ -101,7 +100,7 @@ Cursor::Cursor(const String &fileName)
   m_autoDelete = true;
 
   if (m_HCURSOR == NULL)
-    throw ResourceException();
+    throw ResourceException("Can't load cursor from file " + fileName);
 }
 
 Cursor::Cursor(const Cursor &cursor)
@@ -116,7 +115,7 @@ Cursor::Cursor(const Cursor &cursor)
   }
 
   if (m_HCURSOR == NULL)
-    throw ResourceException();
+    throw ResourceException("Can't create a copy from the specified cursor");
 }
 
 Cursor::~Cursor()

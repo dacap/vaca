@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -39,6 +39,7 @@
 #include "Vaca/Brush.h"
 #include "Vaca/Pen.h"
 #include "Vaca/KeyEvent.h"
+#include "Vaca/Image.h"
 
 #include <boost/algorithm/string/find.hpp>
 
@@ -47,29 +48,44 @@ using namespace Vaca;
 /**
  * It creates a LinkLabel.
  *
- * @param urlOrText If it contains "www", "://", or "@@", the
- *                  LinkLabel'll open the browser when it's clicked.
- *                  If not, it's just like test, and you should hook
- *                  the LinkLabel::Action signal or
- *                  LinkLabel::onAction event.
+ * @param urlOrText
+ *     If it contains "www", "://", or "@@", the
+ *     LinkLabel'll open the browser when it's clicked.
+ *     If not, it's just like test, and you should hook
+ *     the LinkLabel::Action signal or
+ *     LinkLabel::onAction event.
+ *
+ * @param parent
+ *     It's a Widget (generally a Frame) that will act as the container
+ *     parent of the new LinkLabel.
+ * 
+ * @param style
+ *     Style to put to this widget.
  */
 LinkLabel::LinkLabel(const String &urlOrText, Widget *parent, Style style)
-  : CustomLabel(urlOrText, parent, style)
+  : CustomLabel("", parent, style)
 {
   // is a URL?
-  if (urlOrText.find_first_of("www") != String::npos ||
-      urlOrText.find_first_of("://") != String::npos ||
-      urlOrText.find_first_of("@") != String::npos)
+  if (urlOrText.find_first_of(_T("www")) != String::npos ||
+      urlOrText.find_first_of(_T("://")) != String::npos ||
+      urlOrText.find_first_of(_T("@")) != String::npos)
     m_url = urlOrText;
 
   init(urlOrText);
 }
 
 LinkLabel::LinkLabel(const String &url, const String &text, Widget *parent, Style style)
-  : CustomLabel(text, parent, style)
+  : CustomLabel("", parent, style)
   , m_url(url)
 {
   init(text);
+}
+
+LinkLabel::LinkLabel(const String &url, Image &image, Widget *parent, Style style)
+  : CustomLabel("", parent, style)
+  , m_url(url)
+{
+  init("", &image);
 }
 
 LinkLabel::~LinkLabel()
@@ -96,6 +112,15 @@ Color LinkLabel::getHoverColor()
   return Color(0, 0, 255);
 }
 
+void LinkLabel::onPreferredSize(Size &sz)
+{
+  // TODO add support for both: text and image
+  if (m_image != NULL)
+    sz = m_image->getSize();
+  else
+    CustomLabel::onPreferredSize(sz);
+}
+
 /**
  * Draws the background and the label. By default, the background
  * color is getBgColor() and the label color is getLinkColor(), if the
@@ -110,28 +135,37 @@ void LinkLabel::onPaint(Graphics &g)
   g.fillRect(brush, rc);
 
   Rect bounds = getLinkBounds(g);
-  int flags = getFlagsForDrawString();
 
-  switch (getTextAlign()) {
-    case LeftAlign:   flags |= DT_LEFT;   break;
-    case CenterAlign: flags |= DT_CENTER; break;
-    case RightAlign:  flags |= DT_RIGHT;  break;
-  }
-
-  if (m_state == Hover) {
-    g.setFont(m_underlineFont);
-    g.setColor(getHoverColor());
-  }
-  else {
-    g.setFont(getFont());
-    g.setColor(getLinkColor());
+  // draw image
+  if (m_image != NULL) {
+    g.drawImage(*m_image, bounds.x, bounds.y);
   }
 
   // draw text
-  if (isEnabled())
-    g.drawString(getText(), bounds, flags);
-  else
-    g.drawDisabledString(getText(), bounds, flags);
+  if (!getText().empty()) {
+    int flags = getFlagsForDrawString();
+  
+    switch (getTextAlign()) {
+      case TextAlign::Left:   flags |= DT_LEFT;   break;
+      case TextAlign::Center: flags |= DT_CENTER; break;
+      case TextAlign::Right:  flags |= DT_RIGHT;  break;
+    }
+
+    if (m_state == Hover) {
+      g.setFont(m_underlineFont);
+      g.setColor(getHoverColor());
+    }
+    else {
+      g.setFont(getFont());
+      g.setColor(getLinkColor());
+    }
+
+    // draw text
+    if (isEnabled())
+      g.drawString(getText(), bounds, flags);
+    else
+      g.drawDisabledString(getText(), bounds, flags);
+  }
 
   // draw focus
   if (hasFocus())
@@ -176,7 +210,7 @@ void LinkLabel::onMouseLeave()
 void LinkLabel::onMouseDown(MouseEvent &ev)
 {
   if (m_state == Hover) {
-    acquireFocus();
+    requestFocus();
     
     action();
   }
@@ -185,14 +219,14 @@ void LinkLabel::onMouseDown(MouseEvent &ev)
 /**
  * Uses the Cursor::Hand when the mouse is over the label.
  */
-void LinkLabel::onSetCursor(int hitTest)
+void LinkLabel::onSetCursor(WidgetHitTest hitTest)
 {
   switch (m_state) {
     case Hover:
-      setCursor(Cursor(HandCursor));
+      setCursor(Cursor(SysCursor::Hand));
       break;
     default:
-      setCursor(Cursor(ArrowCursor));
+      setCursor(Cursor(SysCursor::Arrow));
       break;
   }
 }
@@ -237,9 +271,10 @@ void LinkLabel::onAction(Event &ev)
   Action(ev);
 }
 
-void LinkLabel::init(String text)
+void LinkLabel::init(String text, Image *image)
 {
   m_underlineFont = NULL;
+  m_image = image;
 
   updateFont(getFont());
   m_state = Outside;
@@ -262,7 +297,7 @@ void LinkLabel::updateFont(Font *font)
 
   if (m_underlineFont != NULL)
     delete m_underlineFont;
-  m_underlineFont = new Font(*font, Font::Style::Underline);
+  m_underlineFont = new Font(*font, font->getStyle() | FontStyle::Underline);
 }
 
 Rect LinkLabel::getLinkBounds(Graphics &g)
@@ -270,15 +305,26 @@ Rect LinkLabel::getLinkBounds(Graphics &g)
   g.setFont(getFont());
 
   Rect rc = getClientBounds();
-  Size sz = g.measureString(getText(), rc.w, getFlagsForDrawString());
   Point pt = rc.getOrigin();
+  Size sz;
 
-  switch (getTextAlign()) {
-    case CenterAlign: pt.x += rc.w/2 - sz.w/2; break;
-    case RightAlign: pt.x += rc.w - sz.w; break;
-    default:
-      // do nothing
-      break;
+  // TODO add support for both: text and image
+
+  if (m_image != NULL) {
+    sz = m_image->getSize();
+    pt.x += rc.w/2 - sz.w/2;
+    pt.y += rc.h/2 - sz.h/2;
+  }
+  else {
+    sz = g.measureString(getText(), rc.w, getFlagsForDrawString());
+
+    switch (getTextAlign()) {
+      case TextAlign::Center: pt.x += rc.w/2 - sz.w/2; break;
+      case TextAlign::Right: pt.x += rc.w - sz.w; break;
+      default:
+	// do nothing
+	break;
+    }
   }
 
   return Rect(pt, sz);

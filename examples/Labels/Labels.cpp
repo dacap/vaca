@@ -58,7 +58,7 @@ public:
 		      this, LabelStyle + PathEllipsisLabelStyle)
     , m_alignButton("Set Alignment", this)
   {
-    setLayout(new BoxLayout(Vertical, false));
+    setLayout(new BoxLayout(Orientation::Vertical, false));
 
     m_alignButton.Action.connect(Bind(&MainFrame::onSetAlignment, this));
 
@@ -72,9 +72,9 @@ protected:
   {
     TextAlign align = m_longLabel.getTextAlign();
     switch (align) {
-      case LeftAlign:   align = CenterAlign; break;
-      case CenterAlign: align = RightAlign;  break;
-      case RightAlign:  align = LeftAlign;   break;
+      case TextAlign::Left:   align = TextAlign::Center; break;
+      case TextAlign::Center: align = TextAlign::Right;  break;
+      case TextAlign::Right:  align = TextAlign::Left;   break;
     }
     m_longLabel.setTextAlign(align);
     m_simpleLabel.setTextAlign(align);

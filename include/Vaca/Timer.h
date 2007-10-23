@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -32,26 +32,28 @@
 #ifndef VACA_TIMER_H
 #define VACA_TIMER_H
 
-#include "Vaca/base.h"
-
 #include <boost/signal.hpp>
+
+#include "Vaca/base.h"
 
 namespace Vaca {
 
 class Application;
-class _TimerThread;
+struct _Timer;
 
 class VACA_DLL Timer : private boost::noncopyable
 {
   friend class Application;
-  friend class _TimerThread;
-  
-  int  m_threadOwnerId;
-  bool m_running : 1;
-  bool m_firstTick : 1;
-  int  m_interval;
-  int  m_timeCounter;
-  int  m_tickCounter;
+  friend struct _Timer;
+
+// public:
+
+  int     m_threadOwnerId;
+  bool    m_running : 1;
+  bool    m_firstTick : 1;
+  int     m_interval;
+  int     m_timeCounter;
+  int     m_tickCounter;
 
 public:
 
@@ -78,8 +80,12 @@ protected:
 
 private:
 
-  static void finishTimerThread();
-
+  static void run_timer_thread();
+  static void start_timer_thread();
+  static void stop_timer_thread();
+  static void remove_timer(Timer *t);
+  static void fire_actions_for_thread();
+  
 };
 
 } // namespace Vaca

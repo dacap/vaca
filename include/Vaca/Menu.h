@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -58,7 +58,6 @@
 
 namespace Vaca {
 
-class Command;
 class MenuItemEvent;
 class MenuItem;
 class Menu;
@@ -73,7 +72,6 @@ class VACA_DLL MenuItem : private boost::noncopyable
 {
   friend class Menu;
 
-//   bool mAutoDelete;
   Menu  *m_parent;
   String m_text;
   int    m_id;
@@ -84,8 +82,6 @@ public:
   MenuItem();
   MenuItem(const String &text, Keys::Type defaultShortcut = Keys::None, int id = -1);
   virtual ~MenuItem();
-
-//   bool isAutoDelete();
 
   Menu *getParent();
   int getId();
@@ -177,24 +173,24 @@ public:
   MenuItem *insert(int index, const String &text);
   void insertSeparator(int index);
 
-  void remove(MenuItem *menuItem);
-  void remove(int index);
+  MenuItem *remove(MenuItem *menuItem);
+  MenuItem *remove(int index);
 
   MenuItem *getMenuItemByIndex(int index);
   MenuItem *getMenuItemById(int id);
   int getMenuItemIndex(MenuItem *menuItem);
-//   int getFirstMenuItemIndexByRadio(MenuItem *menuItem);
-//   int getLastMenuItemIndexByRadio(MenuItem *menuItem);
+  // int getFirstMenuItemIndexByRadio(MenuItem *menuItem);
+  // int getLastMenuItemIndexByRadio(MenuItem *menuItem);
   int getItemCount();
   Container getMenuItems();
 
   virtual MenuItem *checkShortcuts(Keys::Type pressedKey);
 
-//   PopupMenu *getPopupMenu();
+  // PopupMenu *getPopupMenu();
 
   virtual bool isMenu() const;
 
-  Menu *getMenuByHMENU(HMENU hmenu);
+//   Menu *getMenuByHMENU(HMENU hmenu);
 
   HMENU getHMENU();
 

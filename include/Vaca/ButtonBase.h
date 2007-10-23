@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -84,8 +84,6 @@ public:
   bool isSelected();
   void setSelected(bool state);
 
-//   virtual Size preferredSize();
-
   // signals
   boost::signal<void (Event &)> Action; ///< @see onAction
 
@@ -97,7 +95,7 @@ protected:
   virtual void onAction(Event &ev);
 
   // reflection
-  virtual bool onCommand(int id, int code, LRESULT &lResult);
+  virtual bool onReflectedCommand(int id, int code, LRESULT &lResult);
 };
 
 } // namespace Vaca

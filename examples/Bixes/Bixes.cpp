@@ -29,706 +29,703 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
+#include <map>
 #include <Vaca/Vaca.h>
+#include "resource.h"
 
 using namespace Vaca;
 
-#if 0
-
 //////////////////////////////////////////////////////////////////////
+// an element of the model
 
-class Bix : public Layout
+class Element
 {
-
-  struct Element;
-  struct SubBixElement;
-  struct WidgetElement;
-  struct Matrix;
-
-  typedef std::vector<Element *> Elements;
-
-  int mFlags;
-  int mCols;
-  int mBorder;
-  int mChildSpacing;
-  Elements elements;
-  
 public:
 
-  enum {
-    // flags: type
-    TypeMask = 3,
-    Row = 1,			// row vector (horizontal, x axis)
-    Col = 2,			// column vector (vertical, y axis)
-    Mat = 3,			// matrix (both axis)
-    // flags: modifiers
-    EvenX = 4,
-    EvenY = 8,
-    Even = EvenX | EvenY,
-    FillX = 16,
-    FillY = 32,
-    Fill = FillX | FillY,
+  enum Type {
+    Widget,
+    Row,
+    Column,
+    Matrix
   };
 
-  Bix(Widget *container, int flags, int matrixColumns = 0);
+private:
 
-  bool isRow();
-  bool isCol();
-  bool isMat();
-  bool isEvenX();
-  bool isEvenY();
-  bool isEven();
-  bool isFillX();
-  bool isFillY();
-  bool isFill();
+  String m_name;
+  Type m_type;
+  int m_columns;
+  Element *m_parent;
+  std::vector<Element *> m_children;
 
-  int getBorder();
-  void setBorder(int border);
+public:
 
-  int getChildSpacing();
-  void setChildSpacing(int childSpacing);
+  Element(const String &name, Type type, int columns = 0) {
+    m_name = name;
+    m_type = type;
+    m_parent = NULL;
+    m_columns = columns;
+  }
 
-  Bix *addBix(int flags, int matrixColumns = 0);
-  void add(Widget *child, int flags = 0);
-  
-  virtual Size getPreferredSize(Widget *parent, Widget::Container &widgets, const Size &fitIn);
+  virtual ~Element() {
+    std::vector<Element *>::iterator it;
+    for (it = m_children.begin(); it != m_children.end(); ++it)
+      delete *it;
+  }
+
+  String getName() {
+    return m_name;
+  }
+
+  void setName(const String &name) {
+    m_name = name;
+  }
+
+  Type getType() {
+    return m_type;
+  }
+
+  void setType(Type type) {
+    m_type = type;
+  }
+
+  int getColumns() {
+    return m_columns;
+  }
+
+  void setColumns(int columns) {
+    m_columns = columns;
+  }
+
+  bool acceptChildren() {
+    return m_type != Element::Widget;
+  }
+
+  Element *getParent() {
+    return m_parent;
+  }
+
+  bool isAncestor(Element *parent) {
+    Element *p = m_parent;
+    
+    while (p != NULL) {
+      if (p == parent)
+	return true;
+      p = p->m_parent;
+    }
+
+    return false;
+  }
+
+  std::vector<Element *> getChildren() {
+    return m_children;
+  }
+
+  void add(Element *e) {
+    m_children.push_back(e);
+    e->m_parent = this; 
+  }
+
+  void remove(Element *e) {
+    remove_element_from_container(m_children, e);
+    e->m_parent = NULL; 
+  }
+
+};
+
+//////////////////////////////////////////////////////////////////////
+// the model
+
+class Model
+{
+  Element *m_root;
+
+public:
+
+  boost::signal<void (Element *element, Element *parent)> BeforeAddElement;
+  boost::signal<void (Element *element)> AfterAddElement;
+  boost::signal<void (Element *element)> BeforeRemoveElement;
+  boost::signal<void (Element *element, Element *parent)> AfterRemoveElement;
+
+  Model() {
+    m_root = NULL;
+  }
+
+  virtual ~Model() {
+    if (m_root != NULL)
+      delete m_root;
+  }
+
+  Element *getRoot() {
+    return m_root;
+  }
+
+  void addElement(Element *element, Element *parent = NULL)
+  {
+    if (parent == NULL)
+      parent = m_root;
+
+    BeforeAddElement(element, parent);
+
+    if (parent != NULL)
+      parent->add(element);
+    else
+      m_root = element;
+
+    AfterAddElement(element);
+  }
+
+  void removeElement(Element *element)
+  {
+    BeforeRemoveElement(element);
+
+    Element *parent = element->getParent();
+    if (parent != NULL)
+      parent->remove(element);
+    else if (element == m_root)
+      m_root = NULL;
+
+    AfterRemoveElement(element, parent);
+  }
+
+};
+
+//////////////////////////////////////////////////////////////////////
+// a representation of an element of the model in a TreeNode
+
+class ElementViewAsTreeNode : public TreeNode
+{
+  Element *m_element;
+
+public:
+  ElementViewAsTreeNode(Element *element)
+    : TreeNode(element->getName())
+  {
+    m_element = element;
+  }
+
+  Element *getElement() {
+    return m_element;
+  }
+};
+
+//////////////////////////////////////////////////////////////////////
+// a representation of the model in a TreeView
+
+class ModelViewAsTreeView : public TreeView
+{
+  Model *m_model;
+    
+public:
+
+  boost::signal<void (Element *)> ElementSelected;
+
+  ModelViewAsTreeView(Model *model, Widget *parent)
+    : TreeView(parent)
+    , m_model(model)
+  {
+    m_model->BeforeAddElement.connect(Bind(&ModelViewAsTreeView::onBeforeAddElement, this));
+    m_model->AfterAddElement.connect(Bind(&ModelViewAsTreeView::onAfterAddElement, this));
+    m_model->BeforeRemoveElement.connect(Bind(&ModelViewAsTreeView::onBeforeRemoveElement, this));
+    m_model->AfterRemoveElement.connect(Bind(&ModelViewAsTreeView::onAfterRemoveElement, this));
+  }
+
+  void selectElement(Element *element)
+  {
+    TreeView::iterator it;
+
+    for (it = begin(); it != end(); ++it) {
+      ElementViewAsTreeNode *node = dynamic_cast<ElementViewAsTreeNode *>(*it);
+      if (node->getElement() == element) {
+	setSelectedNode(node);
+	break;
+      }
+    }
+  }
 
 protected:
 
-  virtual void layout(Widget *parent, Widget::Container &widgets, const Rect &rc);
+  virtual void onAfterSelect(TreeViewEvent &ev)
+  {
+    TreeView::onAfterSelect(ev);
+    if (!ev.isCanceled()) {
+      // generate the ElementSelected signal...
+
+      TreeNode *node = ev.getTreeNode();
+      if (node != NULL) {
+	ElementViewAsTreeNode *elemNode = dynamic_cast<ElementViewAsTreeNode *>(node);
+	ElementSelected(elemNode->getElement());
+      }
+      else
+	ElementSelected(NULL);
+    }
+  }
 
 private:
+
+  void onBeforeAddElement(Element *element, Element *parent)
+  {
+  }
+
+  void onAfterAddElement(Element *element)
+  {
+    ElementViewAsTreeNode *elementNode = new ElementViewAsTreeNode(element);
+    ElementViewAsTreeNode *parentNode = findNodeByElement(element->getParent());
+
+    if (parentNode != NULL) {
+      parentNode->addNode(elementNode);	// add the new node in the parent
+
+      // ...expand the parent
+      if (!parentNode->isExpanded())
+	parentNode->setExpanded(true);
+
+      setSelectedNode(parentNode);	// ...selected the parent node
+      elementNode->ensureVisibility();	// ...but ensure visibility of the new node
+    }
+    else
+      addNode(elementNode);
+
+    invalidate(false);
+  }
+
+  void onBeforeRemoveElement(Element *element)
+  {
+    ElementViewAsTreeNode *elementNode = findNodeByElement(element);
+    removeNode(elementNode);
+    delete elementNode;
+
+    invalidate(false);
+  }
+
+  void onAfterRemoveElement(Element *element, Element *parent)
+  {
+  }
+
+  ElementViewAsTreeNode *findNodeByElement(Element *element)
+  {
+    TreeView::iterator it;
+
+    for (it = begin(); it != end(); ++it) {
+      ElementViewAsTreeNode *node = dynamic_cast<ElementViewAsTreeNode *>(*it);
+      if (node->getElement() == element)
+	return node;
+    }
+
+    return NULL;
+  }
   
-  Size getPreferredSize(const Size &fitIn);
-  Size getPreferredSize(Matrix &mat);
-  void layout(const Rect &rc);
-  
-  Size getMatrixDimension();
-  void fillMatrix(Matrix &mat);
-  void calcCellsSize(Matrix &mat, const Size &fitIn);
-  int getColFillsCount(Matrix &mat);
-  int getRowFillsCount(Matrix &mat);
+};
+
+//////////////////////////////////////////////////////////////////////
+// a representation of an element as widgets
+
+class ElementViewAsWidgets : public MultilineEdit
+{
+  Element *m_element;
+  bool m_selected;
+
+public:
+
+  boost::signal<void (Element *)> ElementSelected;
+
+  ElementViewAsWidgets(Element *element, Widget *parent)
+    : MultilineEdit(element->getName(), parent, MultilineEditStyle + AutoVerticalScrollEditStyle)
+  {
+    m_element = element;
+    m_selected = false;
+
+    Change.connect(Bind(&Widget::layout, parent));
+  }
+
+  Element *getElement() {
+    return m_element;
+  }
+
+  bool isSelected() {
+    return m_selected;
+  }
+
+  void setSelected(bool state) {
+    m_selected = state;
+
+    setBgColor(state ? Color(255, 255, 220):
+		       Color::White);
+
+    invalidate(true);
+  }
+
+protected:
+
+  virtual void onGotFocus(Event &ev)
+  {
+    MultilineEdit::onGotFocus(ev);
+    ElementSelected(m_element);
+  }
+
+  virtual void onLostFocus(Event &ev)
+  {
+    MultilineEdit::onLostFocus(ev);
+  }
 
 };
 
 //////////////////////////////////////////////////////////////////////
 
-struct Bix::Element
+class ModelViewAsWidgets : public Panel
 {
-  virtual int getFlags() = 0;
-  virtual bool isLayoutFree() = 0;
-  virtual Size getPreferredSize(const Size &fitIn) = 0;
-  virtual void setBounds(const Rect &rc) = 0;
-};
+  Model *m_model;
+  Bix *m_bix;
+  std::map<Element *, Bix *> m_mapElemBix;
 
-struct Bix::SubBixElement : public Bix::Element
-{
-  Bix *bix;
-  SubBixElement(Bix *b) { bix=b; }
-  virtual int getFlags() { return bix->mFlags; };
-  virtual bool isLayoutFree() { return false; }
-  virtual Size getPreferredSize(const Size &fitIn) { return bix->getPreferredSize(fitIn); }
-  virtual void setBounds(const Rect &rc) { bix->layout(rc); }
-};
+public:
 
-struct Bix::WidgetElement : public Bix::Element
-{
-  Widget *widget;
-  int flags;
-  WidgetElement(Widget *w, int f) { widget=w; flags=f; }
-  virtual int getFlags() { return flags; };
-  virtual bool isLayoutFree() { return widget->isLayoutFree(); }
-  virtual Size getPreferredSize(const Size &fitIn) { return widget->getPreferredSize(fitIn); }
-  virtual void setBounds(const Rect &rc) { widget->setBounds(rc); }
-};
+  boost::signal<void (Element *)> ElementSelected;
 
-struct Bix::Matrix
-{
-  int cols, rows;
-  Element ***elem; // matrix of pointers "typeof(elem[y][x]) = Element *"
-  Size **size;
-  bool *col_fill;
-  bool *row_fill;
+  ModelViewAsWidgets(Model *model, Widget *parent)
+    : Panel(parent, PanelStyle + ClientEdgeStyle)
+    , m_model(model)
+    , m_bix(NULL)
+  {
+    m_model->BeforeAddElement.connect(Bind(&ModelViewAsWidgets::onBeforeAddElement, this));
+    m_model->AfterAddElement.connect(Bind(&ModelViewAsWidgets::onAfterAddElement, this));
+    m_model->BeforeRemoveElement.connect(Bind(&ModelViewAsWidgets::onBeforeRemoveElement, this));
+    m_model->AfterRemoveElement.connect(Bind(&ModelViewAsWidgets::onAfterRemoveElement, this));
+  }
 
-  Matrix(int c, int r) {
-    cols = c;
-    rows = r;
+  virtual ~ModelViewAsWidgets()
+  {
+    Container children = getChildren();
+    Container::iterator it;
+    for (it = children.begin(); it != children.end(); ++it)
+      delete *it;
+  }
 
-    elem = new Element**[rows];
-    size = new Size*[rows];
-    for (int y=0; y<rows; ++y) {
-      elem[y] = new Element*[cols];
-      size[y] = new Size[cols];
-      for (int x=0; x<cols; ++x)
-	elem[y][x] = NULL;
+  void selectElement(Element *element)
+  {
+    Container children = getChildren();
+    Container::iterator it;
+    for (it = children.begin(); it != children.end(); ++it) {
+      ElementViewAsWidgets *w = dynamic_cast<ElementViewAsWidgets *>(*it);
+
+      if (w->getElement() == element ||
+	  w->getElement()->isAncestor(element)) {
+	w->setSelected(true);
+      }
+      else if (w->isSelected()) {
+	w->setSelected(false);
+      }
     }
-
-    col_fill = new bool[cols];
-    for (int x=0; x<cols; ++x)
-      col_fill[x] = false;
-
-    row_fill = new bool[rows];
-    for (int y=0; y<rows; ++y)
-      row_fill[y] = false;
-
   }
 
-  virtual ~Matrix() {
-    for (int y=0; y<rows; ++y) {
-      delete[] elem[y];
-      delete[] size[y];
+private:
+
+  int convertElementTypeToBixFlags(Element *element)
+  {
+    switch (element->getType()) {
+      case Element::Row:    return BixRow; break;
+      case Element::Column: return BixCol; break;
+      case Element::Matrix: return BixMat; break;
+      default:
+	return 0;
     }
-    delete[] elem;
-    delete[] size;
-
-    delete[] col_fill;
-    delete[] row_fill;
   }
 
-  void setElementAt(int x, int y, Element *e) {
-    elem[y][x] = e;
-    if (e->getFlags() & Bix::FillX) col_fill[x] = true;
-    if (e->getFlags() & Bix::FillY) row_fill[y] = true;
-  }
-};
+  void onBeforeAddElement(Element *element, Element *parent)
+  {
+    int flags = convertElementTypeToBixFlags(element);
 
-//////////////////////////////////////////////////////////////////////
-// Bix
+    if (parent == NULL) {
+      assert(m_bix == NULL);
 
-Bix::Bix(Widget *container, int flags, int matrixColumns)
-{
-  if (container != NULL)
-    container->setLayout(this);
-  
-  mFlags = flags;
-  mCols = matrixColumns;
-  mBorder = container != NULL ? 4: 0;
-  mChildSpacing = 4;
-}
-
-bool Bix::isRow()
-{
-  return (mFlags & Bix::TypeMask) == Bix::Row;
-}
-
-bool Bix::isCol()
-{
-  return (mFlags & Bix::TypeMask) == Bix::Col;
-}
-
-bool Bix::isMat()
-{
-  return (mFlags & Bix::TypeMask) == Bix::Mat;
-}
-
-bool Bix::isEvenX()
-{
-  return (mFlags & Bix::EvenX) == Bix::EvenX;
-}
-
-bool Bix::isEvenY()
-{
-  return (mFlags & Bix::EvenY) == Bix::EvenY;
-}
-
-bool Bix::isEven()
-{
-  return (mFlags & Bix::Even) == Bix::Even;
-}
-
-bool Bix::isFillX()
-{
-  return (mFlags & Bix::FillX) == Bix::FillX;
-}
-
-bool Bix::isFillY()
-{
-  return (mFlags & Bix::FillY) == Bix::FillY;
-}
-
-bool Bix::isFill()
-{
-  return (mFlags & Bix::Fill) == Bix::Fill;
-}
-
-int Bix::getBorder()
-{
-  return mBorder;
-}
-
-void Bix::setBorder(int border)
-{
-  mBorder = border;
-}
-
-int Bix::getChildSpacing()
-{
-  return mChildSpacing;
-}
-
-void Bix::setChildSpacing(int childSpacing)
-{
-  mChildSpacing = childSpacing;
-}
-
-Bix *Bix::addBix(int flags, int matrixColumns)
-{
-  Bix *subbix = new Bix(NULL, flags, matrixColumns);
-  elements.push_back(new SubBixElement(subbix));
-  return subbix;
-}
-
-void Bix::add(Widget *child, int flags)
-{
-  elements.push_back(new WidgetElement(child, flags));
-}
-
-Size Bix::getPreferredSize(Widget *parent, Widget::Container &widgets, const Size &fitIn)
-{
-  return getPreferredSize(fitIn);
-}
-
-void Bix::layout(Widget *parent, Widget::Container &widgets, const Rect &rc)
-{
-  layout(rc);
-}
-
-Size Bix::getPreferredSize(const Size &fitIn)
-{
-  Size matDim = getMatrixDimension();
-  if (matDim.w > 0 && matDim.h > 0) {
-    Matrix mat(matDim.w, matDim.h);
-    
-    fillMatrix(mat);
-    calcCellsSize(mat, fitIn);
-
-    return getPreferredSize(mat);
-  }
-  else
-    return Size(0, 0);
-}
-
-Size Bix::getPreferredSize(Matrix &mat)
-{
-  Size sz;
-
-  for (int x=0; x<mat.cols; ++x) sz.w += mat.size[0][x].w;
-  for (int y=0; y<mat.rows; ++y) sz.h += mat.size[y][0].h;
-
-  sz.w += mBorder*2 + mChildSpacing*(mat.cols-1);
-  sz.h += mBorder*2 + mChildSpacing*(mat.rows-1);
-
-  return sz;
-}
-
-void Bix::layout(const Rect &rc)
-{
-  Size matDim = getMatrixDimension();
-  if (matDim.w > 0 && matDim.h > 0) {
-    Matrix mat(matDim.w, matDim.h);
-
-    fillMatrix(mat);
-    calcCellsSize(mat, Size(0, 0));
-
-    // distribute size
-    register int x, y;
-
-    // X axis
-    if (isEvenX()) {
-      int remainderWidth = rc.w - mBorder*2 - mChildSpacing*(mat.cols-1);
-      int elemWidth = remainderWidth / mat.cols;
-
-      for (x=0; x<mat.cols; ++x) {
-	if (x == mat.cols-1)
-	  mat.size[0][x].w = remainderWidth;
-	else {
-	  mat.size[0][x].w = elemWidth;
-	  remainderWidth -= elemWidth;
-	}
+      if (flags == 0) {
+	// avoid
+      }
+      else {
+	m_bix = new Bix(this, flags, element->getColumns());
+	m_mapElemBix[element] = m_bix;
+	setLayout(m_bix);
       }
     }
     else {
-      int colFills = getColFillsCount(mat);
-      if (colFills > 0) {
-	Size pref = getPreferredSize(mat);
-
-	int remainderWidth = rc.w - pref.w;
-	int extraElemWidth = remainderWidth / colFills;
-
-	for (x=0; x<mat.cols; ++x) {
-	  if (mat.col_fill[x]) {
-	    if (x == mat.cols-1)
-	      mat.size[0][x].w += remainderWidth;
-	    else {
-	      mat.size[0][x].w += extraElemWidth;
-	      remainderWidth -= extraElemWidth;
-	    }
-	  }
-	}
-      }
-    }
-
-    // Y axis
-    if (isEvenY()) {
-      int remainderHeight = rc.h - mBorder*2 - mChildSpacing*(mat.rows-1);
-      int elemHeight = remainderHeight / mat.rows;
-
-      for (y=0; y<mat.rows; ++y) {
-	if (y == mat.rows-1)
-	  mat.size[y][0].h = remainderHeight;
-	else {
-	  mat.size[y][0].h = elemHeight;
-	  remainderHeight -= elemHeight;
-	}
-      }
-    }
-    else {
-      int rowFills = getRowFillsCount(mat);
-      if (rowFills > 0) {
-	Size pref = getPreferredSize(mat);
-
-	int remainderHeight = rc.h - pref.h;
-	int extraElemHeight = remainderHeight / rowFills;
-
-	for (y=0; y<mat.rows; ++y) {
-	  if (mat.row_fill[y]) {
-	    if (y == mat.rows-1)
-	      mat.size[y][0].h += remainderHeight;
-	    else {
-	      mat.size[y][0].h += extraElemHeight;
-	      remainderHeight -= extraElemHeight;
-	    }
-	  }
-	}
-      }
-    }
-    
-    // setup child bounds
-    Point pt(0, rc.y+mBorder);
-
-    for (y=0; y<mat.rows; ++y) {
-      pt.x = rc.x+mBorder;
-      for (x=0; x<mat.cols; ++x) {
-	if (mat.elem[y][x] != NULL)
-	  mat.elem[y][x]->setBounds(Rect(pt, Size(mat.size[0][x].w,
-						  mat.size[y][0].h)));
-
-	pt.x += mat.size[0][x].w+mChildSpacing;
-      }
-      pt.y += mat.size[y][0].h+mChildSpacing;
-    }
-  }
-}
-
-Size Bix::getMatrixDimension()
-{
-  int cols = 0, rows = 0;
-
-  switch (mFlags & TypeMask) {
-
-    // a row
-    case Bix::Row: {
-      cols = 0;
-      rows = 1;
-
-      for (Elements::iterator it=elements.begin(); it!=elements.end(); ++it) {
-	if (!(*it)->isLayoutFree())
-	  cols++;
-      }
-      break;
-    }
-
-    // a column
-    case Bix::Col: {
-      cols = 1;
-      rows = 0;
-
-      for (Elements::iterator it=elements.begin(); it!=elements.end(); ++it) {
-	if (!(*it)->isLayoutFree())
-	  rows++;
-      }
-      break;
-    }
-
-    // a matrix
-    case Bix::Mat: {
-      cols = mCols;
-      rows = 0;
-
-      int x = 0;
-      bool freeRow = true;
-
-      for (Elements::iterator it=elements.begin(); it!=elements.end(); ++it) {
-	if (!(*it)->isLayoutFree())
-	  freeRow = false;
-
-	if (++x == cols) {
-	  x = 0;
-	  if (!freeRow) {
-	    ++rows;
-	    freeRow = true;
-	  }
-	}
-      }
-      break;
-    }
-  }
-
-  return Size(cols, rows);
-}
-
-void Bix::fillMatrix(Matrix &mat)
-{
-  switch (mFlags & TypeMask) {
-
-    // a row
-    case Bix::Row: {
-      int x = 0;
+      Bix *parentBix = m_mapElemBix[parent];
       
-      for (Elements::iterator it=elements.begin(); it!=elements.end(); ++it) {
-	if (!(*it)->isLayoutFree())
-	  mat.setElementAt(x++, 0, *it);
+      if (flags == 0) {
+	ElementViewAsWidgets *elementWidget = new ElementViewAsWidgets(element, this);
+	elementWidget->ElementSelected.connect(Bind(&ModelViewAsWidgets::onElementSelected, this));
+	parentBix->add(elementWidget);
+      }
+      else {
+	m_mapElemBix[element] = parentBix->add(flags, element->getColumns());
       }
 
-      mat.row_fill[0] = true;
-      break;
+      layout();
     }
 
-    // a column
-    case Bix::Col: {
-      int y = 0;
+//     if (parentNode != NULL) {
+//       parentNode->addNode(elementNode);	// add the new node in the parent
 
-      for (Elements::iterator it=elements.begin(); it!=elements.end(); ++it) {
-	if (!(*it)->isLayoutFree())
-	  mat.setElementAt(0, y++, *it);
-      }
+//       // ...expand the parent
+//       if (!parentNode->isExpanded())
+// 	parentNode->setExpanded(true);
 
-      mat.col_fill[0] = true;
-      break;
-    }
+//       setSelectedNode(parentNode);	// ...selected the parent node
+//       elementNode->ensureVisibility();	// ...but ensure visibility of the new node
+//     }
+//     else
+//       addNode(elementNode);
 
-    // a matrix
-    case Bix::Mat: {
-      int x = 0, y = 0;
-      bool freeRow = true;
-
-      for (Elements::iterator it=elements.begin(); it!=elements.end(); ++it) {
-	if (!(*it)->isLayoutFree()) {
-	  mat.setElementAt(x, y, *it);
-	  freeRow = false;
-	}
-
-	if (++x == mat.cols) {
-	  x = 0;
-	  if (!freeRow) {
-	    ++y;
-	    freeRow = true;
-	  }
-	}
-      }
-      break;
-    }
+//     invalidate(false);
   }
-}
 
-void Bix::calcCellsSize(Matrix &mat, const Size &fitIn)
-{
-  register int x, y;
+  void onAfterAddElement(Element *element)
+  {
+  }
+
+  void onBeforeRemoveElement(Element *element)
+  {
+    if (element->getType() == Element::Widget) {
+      Container children = getChildren();
+      Container::iterator it;
+      for (it = children.begin(); it != children.end(); ++it) {
+	ElementViewAsWidgets *w = dynamic_cast<ElementViewAsWidgets *>(*it);
+
+	if (w->getElement() == element) {
+	  Element *parentElement = element->getParent();
+	  Bix *parentBix = m_mapElemBix[parentElement];
+
+	  parentBix->remove(w);
+	  w->getParent()->removeChild(w, true);
+	  delete w;
+	  break;
+	}
+      }
+    }
+    else {
+      Container children = getChildren();
+      Container::iterator it;
+      for (it = children.begin(); it != children.end(); ++it) {
+	ElementViewAsWidgets *w = dynamic_cast<ElementViewAsWidgets *>(*it);
+
+	if (w->getElement()->isAncestor(element)) {
+	  w->getParent()->removeChild(w, true);
+	  delete w;
+	}
+      }
+
+      if (element->getParent() != NULL) {
+	Bix *parentBix = m_mapElemBix[element->getParent()];
+	if (parentBix != NULL)
+	  parentBix->remove(m_mapElemBix[element]);
+      }
+      else {
+	m_bix = NULL;
+	setLayout(NULL);
+      }
+    }
+
+    layout();
+  }
   
-  // get the preferred size of each element in the matrix
-  for (y=0; y<mat.rows; ++y)
-    for (x=0; x<mat.cols; ++x)
-      if (mat.elem[y][x] != NULL)
-	mat.size[y][x] = mat.elem[y][x]->getPreferredSize(fitIn);
+  void onAfterRemoveElement(Element *element, Element *parent)
+  {
+  }
 
-  // fill the first row with the maximum width of each column
-  for (x=0; x<mat.cols; ++x)
-    for (y=1; y<mat.rows; ++y)
-      if (mat.size[0][x].w < mat.size[y][x].w)
-	mat.size[0][x].w = mat.size[y][x].w;
+  void onElementSelected(Element *element)
+  {
+    selectElement(element);
+    ElementSelected(element);
+  }
 
-  // fill the first column with the maximum height of each row
-  for (y=0; y<mat.rows; ++y)
-    for (x=1; x<mat.cols; ++x)
-      if (mat.size[y][0].h < mat.size[y][x].h)
-	mat.size[y][0].h = mat.size[y][x].h;
-}
-
-int Bix::getColFillsCount(Matrix &mat)
-{
-  register int x, count = 0;
-
-  for (x=0; x<mat.cols; ++x)
-    if (mat.col_fill[x])
-      ++count;
-
-  return count;
-}
-
-int Bix::getRowFillsCount(Matrix &mat)
-{
-  register int y, count = 0;
-
-  for (y=0; y<mat.rows; ++y)
-    if (mat.row_fill[y])
-      ++count;
-
-  return count;
-}
-
-#endif
-
-namespace Bix {
-
-// enum Modifiers {
-//   None  = 0,
-//   FillX = 1,
-//   FillY = 2,
-//   EvenX = 4,
-//   EvenY = 8,
-//   Fill  = FillX | FillY,
-//   Even  = EvenX | EvenY,
-// };
-
-// struct BixElement;
-
-// BixElement &fillX(Widget &widget);
-
-// class BixLayout
-// {
-// private:
-//   Modifiers mModifiers;
-
-// public:
-//   BixLayout();
-//   virtual ~BixLayout();
-
-//   BixLayout &operator<<(BixElement &elem);
-//   BixLayout &operator<<(Widget &widget);
-//   BixLayout &operator<<(BixElement &elem);
-// };
-
-// class Column : public BixLayout
-// {
-// public:
-//   virtual ~Column();
-// };
-
-// class Matrix : public BixLayout
-// {
-// public:
-//   Matrix(int columns);
-//   virtual ~Matrix();
-// };
-
-// class Row : public BixLayout
-// {
-// public:
-//   Row();
-//   virtual ~Row();
-// };
-
-}
+};
 
 //////////////////////////////////////////////////////////////////////
 
 class MainFrame : public Frame
 {
-  Label mFirstNameLabel;
-  Edit mFirstNameEdit;
-  Label mLastNameLabel;
-  Edit mLastNameEdit;
-//   Separator mSeparator;
-  Button mOK;
-  Button mCancel;
-  
+  Model m_model;
+  Element *m_selectedElement;
+  ModelViewAsTreeView m_treeView;
+  ModelViewAsWidgets m_widgetsView;
+  ToolBar m_toolBar;
+  ImageList m_imageList;
+  int m_widgetCounter;
+  bool m_disableReselect;
+
 public:
 
   MainFrame()
     : Frame("Bixes")
-    , mFirstNameLabel("First Name:", this)
-    , mFirstNameEdit("", this)
-    , mLastNameLabel("Last Name:", this)
-    , mLastNameEdit("", this)
-//     , mSeparator(this)
-    , mOK("OK", this)
-    , mCancel("Cancel", this)
+    , m_model()
+    , m_selectedElement(NULL)
+    , m_treeView(&m_model, this)
+    , m_widgetsView(&m_model, this)
+    , m_toolBar("Standard", this, ToolSetStyle + FlatToolSetStyle)
+    , m_imageList(ResourceId(IDB_TOOLBAR), 16, Color(192, 192, 192))
+    , m_widgetCounter(0)
+    , m_disableReselect(false)
   {
-/*
-    // prepare layout
-    Bix *col = new Bix(this, Bix::Col);
-    Bix *mat = col->addBix(Bix::Mat, 2);
+    // layout
+    setLayout(Bix::parse("X[%,f%]", &m_treeView, &m_widgetsView));
+    m_treeView.setPreferredSize(Size(256, 256));
 
-    mat->add(&mFirstNameLabel);
-    mat->add(&mFirstNameEdit, Bix::FillX);
+    // signals
+    m_treeView.ElementSelected.connect(Bind(&MainFrame::onElementSelectedFromTreeView, this));
+    m_widgetsView.ElementSelected.connect(Bind(&MainFrame::onElementSelectedFromWidgets, this));
 
-    mat->add(&mLastNameLabel);
-    mat->add(&mLastNameEdit, Bix::FillX);
+    // setup the tool bar
+    m_toolBar.getSet().setImageList(m_imageList);
+    m_toolBar.getSet().addButton(0, IDM_ADD_COLUMN, TBSTATE_ENABLED);
+    m_toolBar.getSet().addButton(1, IDM_ADD_ROW, TBSTATE_ENABLED);
+    m_toolBar.getSet().addButton(2, IDM_ADD_MATRIX, TBSTATE_ENABLED);
+    m_toolBar.getSet().addButton(3, IDM_ADD_WIDGET, TBSTATE_ENABLED);
+    m_toolBar.getSet().addSeparator();
+    m_toolBar.getSet().addButton(4, IDM_REMOVE, TBSTATE_ENABLED);
+    m_toolBar.getSet().addSeparator();
+    m_toolBar.getSet().addButton(5, IDM_PROPERTIES, TBSTATE_ENABLED);
 
-//     bix->add(&mSeparator);
+    // setup the defaults dock areas
+    defaultDockAreas();
 
-    Bix *row = col->addBix(Bix::Row);
-    row->addBix(Bix::FillX);
-    row->add(&mOK);
-    row->add(&mCancel);
+    // put the tool bar in the top dock area
+    m_toolBar.dockIn(getDockArea(Side::Top));
+  }
 
-*/
-    // --------------------
+protected:
 
-        // prepare layout
-//     Bix col(Bix::Col);
-//     Bix mat(Bix::Mat, 2);
-//     Bix row(Bix::Row);
+  
+  virtual bool onActionById(int actionId)
+  {
+    switch (actionId) {
 
-//     col << mat << row;
-//     mat << &mFirstNameLabel << Bix::FillX << &mFirstNameEdit;
-//     mat << &mLastNameLabel << Bix::FillX << &mLastNameEdit;
-//     row << Bix(Bix::FillX) << &mOK << &mCancel;
+      case IDM_ADD_COLUMN:
+	onAddElement(Element::Column);
+	break;
 
-//     setLayout(col.createLayout());
+      case IDM_ADD_ROW:
+	onAddElement(Element::Row);
+	break;
 
-    // --------------------
+      case IDM_ADD_MATRIX: {
+	int columns;
+	if (askIntValue(columns))
+	  onAddElement(Element::Matrix, columns);
+	break;
+      }
 
-    
-    // prepare layout
+      case IDM_ADD_WIDGET:
+	onAddElement(Element::Widget);
+	break;
 
-    {
-      using namespace Bix;
+      case IDM_REMOVE:
+	onRemoveElement();
+	break;
 
-      Column column(Set
-		    << Matrix(2,
-			      Set
-			      << mFirstNameLabel << fillX(mFirstNameEdit)
-			      << mLastNameLabel << fillX(mLastNameEdit))
-		    << Row(Set
-			   << Filler << Row(Set << evenX(mOK) << evenX(mCancel))));
+      case IDM_PROPERTIES:
+	break;
 
-      setLayout(column.createLayout());
+      default:
+	return false;		// "id" not used
     }
+    return true;		// "id" was used
+  }
 
-    // --------------------
+private:
 
-    setSize(getPreferredSize());
+  // adds the specified type of element has a child of the selected element
+  void onAddElement(Element::Type elementType, int columns = 0)
+  {
+    if (m_selectedElement == NULL ||
+	m_selectedElement->acceptChildren()) {
+      String name = "Unknown";
+
+      switch (elementType) {
+	case Element::Widget: name = "Widget " + String::fromInt(++m_widgetCounter); break;
+	case Element::Row:    name = "BixRow (a row vector)"; break;
+	case Element::Column: name = "BixCol (a column vector)"; break;
+	case Element::Matrix: name = "BixMat (a matrix)"; break;
+      }
+
+      m_model.addElement(new Element(name, elementType, columns),
+			 m_selectedElement);
+    }
+  }
+
+  // remove the selected element
+  void onRemoveElement()
+  {
+    if (m_selectedElement != NULL) {
+      Element *e = m_selectedElement;
+      m_selectedElement = NULL;
+
+      m_model.removeElement(e);
+      delete e;
+    }
+  }
+
+  void onElementSelectedFromTreeView(Element *element)
+  {
+    if (!m_disableReselect) {
+      m_selectedElement = element;
+
+      m_disableReselect = true;
+      m_widgetsView.selectElement(element);
+      m_disableReselect = false;
+    }
+  }
+
+  void onElementSelectedFromWidgets(Element *element)
+  {
+    if (!m_disableReselect) {
+      m_selectedElement = element;
+
+      m_disableReselect = true;
+      m_treeView.selectElement(element);
+      m_disableReselect = false;
+    }
+  }
+
+  bool askIntValue(int &retValue)
+  {
+    Dialog dlg("Insert a value", this);
+    Label label("Number of columns of the matrix:", &dlg);
+    Edit value("3", &dlg);
+    Button ok("&OK", &dlg);
+    Button cancel("&Cancel", &dlg);
+
+    dlg.setLayout(Bix::parse("Y[X[%,f%],X[fX[],eX[%,%]]]",
+			     &label, &value, &ok, &cancel));
+
+    value.setPreferredSize(Size(32, value.getPreferredSize().h));
+    dlg.setSize(dlg.getPreferredSize());
+    dlg.center();
+
+    ok.setDefault(true);
+    ok.Action.connect(Bind(&Dialog::defaultOkAction, &dlg));
+    cancel.Action.connect(Bind(&Dialog::defaultCancelAction, &dlg));
+
+    while (true) {
+      value.requestFocus();
+      value.selectAll();
+      if (!dlg.doModal())
+	return false;
+
+      retValue = value.getText().parseInt();
+      if (retValue < 1)
+	msgBox("You must to insert a value greater than 1", "Error", MB_OK);
+      else
+	return true;
+    }
   }
 
 };
 
 //////////////////////////////////////////////////////////////////////
 
-class Example : public Application
-{
-  MainFrame m_mainFrame;
-public:
-  virtual void main(std::vector<String> args) {
-    m_mainFrame.setVisible(true);
-  }
-};
-
 int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		   LPSTR lpCmdLine, int nCmdShow)
 {
-  Example *app(new Example);
-  app->run();
-  delete app;
+  Application app;
+  MainFrame frame;
+  frame.setVisible(true);
+  app.run();
   return 0;
 }

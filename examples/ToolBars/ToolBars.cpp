@@ -86,16 +86,16 @@ public:
     , m_button1("Setup default dock areas (BandedDockArea)", &m_dockBar)
     , m_button2("Setup basic dock areas (BasicDockArea)", &m_dockBar)
     , m_button3("Clear all dock areas", &m_dockBar)
-    , m_imageList(IDB_TOOLBAR, 16, Color(192, 192, 192))
+    , m_imageList(ResourceId(IDB_TOOLBAR), 16, Color(192, 192, 192))
     , m_console(this)
     , m_bottomPanel(this)
     , m_button4("Show all dock bars", &m_bottomPanel)
     , m_button5("Full Drag mode", &m_bottomPanel)
     , m_button6("Floating Gripper mode", &m_bottomPanel)
   {
-    setLayout(new BoxLayout(Vertical, false));
+    setLayout(new BoxLayout(Orientation::Vertical, false));
     m_console.setConstraint(new BoxConstraint(true));
-    m_bottomPanel.setLayout(new BoxLayout(Horizontal, true, 0));
+    m_bottomPanel.setLayout(new BoxLayout(Orientation::Horizontal, true, 0));
 
     m_toolBar1.getSet().setImageList(m_imageList);
     m_toolBar1.getSet().addButton(0, 1000, TBSTATE_ENABLED);
@@ -121,7 +121,7 @@ public:
     m_toolBar3.getSet().addWholeDropDownButton(2, 1002, TBSTATE_ENABLED);
     m_toolBar3.getSet().addWholeDropDownButton(2, 1002, TBSTATE_ENABLED);
 
-    m_dockBar.setLayout(new BoxLayout(Vertical, true));
+    m_dockBar.setLayout(new BoxLayout(Orientation::Vertical, true));
 
     // make floating the three dock-bars
     m_toolBar1.floatOut();
@@ -177,7 +177,7 @@ protected:
   virtual void onGotFocus(Event &ev)
   {
     Frame::onGotFocus(ev);
-    m_console.acquireFocus();
+    m_console.requestFocus();
   }
 
 private:
@@ -193,10 +193,10 @@ private:
   void onBasicDockAreas()
   {
     deleteDockAreas();
-    addDockArea(new BasicDockArea(TopSide,    this));
-    addDockArea(new BasicDockArea(BottomSide, this));
-    addDockArea(new BasicDockArea(LeftSide,   this));
-    addDockArea(new BasicDockArea(RightSide,  this));
+    addDockArea(new BasicDockArea(Side::Top,    this));
+    addDockArea(new BasicDockArea(Side::Bottom, this));
+    addDockArea(new BasicDockArea(Side::Left,   this));
+    addDockArea(new BasicDockArea(Side::Right,  this));
     layout();
 
     m_console.println("Try to dock the tool bars in the new basic dock areas");

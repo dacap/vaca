@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -97,9 +97,6 @@ public:
 
   Size getNonClientSize();
 
-//   virtual Size preferredSize();
-//   virtual Size preferredSize(const Size &fitIn);
-
   // signals
 //   boost::signal<void (Event &ev)> PageChanging;
   boost::signal<void (Event &ev)> PageChange; ///< @see onPageChange
@@ -109,7 +106,7 @@ protected:
   virtual void onPreferredSize(Size &sz);
   
   // reflection
-  virtual bool onNotify(LPNMHDR lpnmhdr, LRESULT &lResult);
+  virtual bool onReflectedNotify(LPNMHDR lpnmhdr, LRESULT &lResult);
 
   // new events
 //   virtual void onPageChanging(Event &ev);

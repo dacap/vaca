@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -47,8 +47,6 @@ public:
   Slider(int minValue, int maxValue, int value,
 	 Widget *parent, Style style = SliderStyle);
   virtual ~Slider();
-
-//   virtual Size preferredSize();
 
   Orientation getOrientation();
   void setOrientation(Orientation orientation);

@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -315,7 +315,7 @@ void Graphics::setMiterLimit(double limit)
 {
   assert(m_HDC != NULL);
 
-  SetMiterLimit(m_HDC, limit, NULL);
+  SetMiterLimit(m_HDC, static_cast<FLOAT>(limit), NULL);
 }
 
 Color Graphics::getPixel(const Point &pt)
@@ -436,14 +436,14 @@ void Graphics::curveTo(const Point &pt1, const Point &pt2, const Point &pt3)
 
 void Graphics::curveTo(const std::vector<Point> &points)
 {
-  int numPoints = points.size();
+  int numPoints = static_cast<int>(points.size());
 
   assert(numPoints >= 3);
 
   POINT *pt = new POINT[numPoints];
   std::copy(points.begin(), points.end(), pt);
   drawBezierTo(pt, numPoints);
-  delete pt;
+  delete[] pt;
 }
 
 void Graphics::closeFigure()
@@ -477,11 +477,11 @@ void Graphics::drawString(const String &str, int x, int y)
 
   if (m_font != NULL) {
     HGDIOBJ oldFont = SelectObject(m_HDC, reinterpret_cast<HGDIOBJ>(m_font->getHFONT()));
-    TextOut(m_HDC, x, y, str.c_str(), str.size());
+    TextOut(m_HDC, x, y, str.c_str(), static_cast<int>(str.size()));
     SelectObject(m_HDC, oldFont);
   }
   else
-    TextOut(m_HDC, x, y, str.c_str(), str.size());
+    TextOut(m_HDC, x, y, str.c_str(), static_cast<int>(str.size()));
 
   SetBkMode(m_HDC, oldMode); 
   SetTextColor(m_HDC, oldColor);
@@ -498,11 +498,11 @@ void Graphics::drawString(const String &str, const Rect &_rc, int flags)
 
   if (m_font != NULL) {
     HGDIOBJ oldFont = SelectObject(m_HDC, reinterpret_cast<HGDIOBJ>(m_font->getHFONT()));
-    DrawText(m_HDC, str.c_str(), str.size(), &rc, flags);
+    DrawText(m_HDC, str.c_str(), static_cast<int>(str.size()), &rc, flags);
     SelectObject(m_HDC, oldFont);
   }
   else
-    DrawText(m_HDC, str.c_str(), str.size(), &rc, flags);
+    DrawText(m_HDC, str.c_str(), static_cast<int>(str.size()), &rc, flags);
 
   SetBkMode(m_HDC, oldMode); 
   SetTextColor(m_HDC, oldColor);
@@ -530,11 +530,11 @@ void Graphics::drawImage(Image &image, int dstX, int dstY, int srcX, int srcY, i
 {
   assert(m_HDC != NULL);
 
-  Graphics &source = image.getGraphics();
+  Graphics *source = image.getGraphics();
 
-  assert(source.getHDC() != NULL);
+  assert(source->getHDC() != NULL);
   
-  BitBlt(m_HDC, dstX, dstY, width, height, source.getHDC(), srcX, srcY, SRCCOPY);
+  BitBlt(m_HDC, dstX, dstY, width, height, source->getHDC(), srcX, srcY, SRCCOPY);
 }
 
 void Graphics::drawImage(Image &image, int x, int y, const Color &bgColor)
@@ -546,29 +546,29 @@ void Graphics::drawImage(Image &image, int dstX, int dstY, int srcX, int srcY, i
 {
   assert(m_HDC != NULL);
 
-  Graphics &source = image.getGraphics();
+  Graphics *source = image.getGraphics();
 
-  assert(source.getHDC() != NULL);
+  assert(source->getHDC() != NULL);
 
 #if 0				// WinCE
   TransparentImage(m_HDC, dstX, dstY, width, height,
-		   source.getHDC(), srcX, srcY, width, height,
+		   source->getHDC(), srcX, srcY, width, height,
 		   bgColor.getColorRef());
 #else
     
   HDC maskHDC = CreateCompatibleDC(m_HDC);
   HBITMAP theMask = CreateBitmap(width, height, 1, 1, NULL);
   HGDIOBJ oldMask = SelectObject(maskHDC, theMask);
-  COLORREF oldBkColor = SetBkColor(source.getHDC(), bgColor.getColorRef());
+  COLORREF oldBkColor = SetBkColor(source->getHDC(), bgColor.getColorRef());
   
   BitBlt(maskHDC, 0, 0, width, height,
-	 source.getHDC(), srcX, srcY, SRCCOPY);
+	 source->getHDC(), srcX, srcY, SRCCOPY);
   
   MaskBlt(m_HDC, dstX, dstY, width, height,
-	  source.getHDC(), srcX, srcY,
+	  source->getHDC(), srcX, srcY,
 	  theMask, 0, 0, MAKEROP4(0x00AA0029, SRCCOPY)); // 0x00AA0029 is NOP
 
-  SetBkColor(source.getHDC(), oldBkColor);
+  SetBkColor(source->getHDC(), oldBkColor);
   DeleteObject(SelectObject(maskHDC, oldMask));
   DeleteObject(maskHDC);
 
@@ -596,15 +596,32 @@ void Graphics::drawImage(Image &image, const Point &pt, const Rect &rc, const Co
 }
 
 /**
+ * Draws the specified image of the ImageList.
+ * 
+ * @param imageList
+ *     List of image to get the specified image.
+ *
+ * @param imageIndex
+ *     Specific image to draw. This must be a valid index of the image
+ *     list. You can check the size of the ImageList using ImageList#getImageCount(),
+ *     so the index must be between @c 0 and @c getImageCount-1.
+ * 
+ * @param x
+ *     TODO
+ * 
+ * @param y
+ *     TODO
+ * 
  * @param style
- *        @li ILD_BLEND25
- *        @li ILD_FOCUS
- *        @li ILD_BLEND50
- *        @li ILD_SELECTED
- *        @li ILD_BLEND
- *        @li ILD_MASK
- *        @li ILD_NORMAL
- *        @li ILD_TRANSPARENT
+ *     One of the following values:
+ *     @li ILD_BLEND25
+ *     @li ILD_FOCUS
+ *     @li ILD_BLEND50
+ *     @li ILD_SELECTED
+ *     @li ILD_BLEND
+ *     @li ILD_MASK
+ *     @li ILD_NORMAL
+ *     @li ILD_TRANSPARENT
  */
 void Graphics::drawImageList(ImageList &imageList, int imageIndex, int x, int y, int style)
 {
@@ -648,14 +665,14 @@ void Graphics::drawBezier(Pen &pen, const Point points[4])
 
 void Graphics::drawBezier(Pen &pen, const std::vector<Point> &points)
 {
-  int numPoints = points.size();
+  int numPoints = static_cast<int>(points.size());
 
   assert(numPoints >= 4);
 
   POINT *pt = new POINT[numPoints];
   std::copy(points.begin(), points.end(), pt);
   drawBezier(pen, pt, numPoints);
-  delete pt;
+  delete[] pt;
 }
 
 void Graphics::drawBezier(Pen &pen, const Point &pt1, const Point &pt2, const Point &pt3, const Point &pt4)
@@ -839,6 +856,18 @@ void Graphics::drawChord(Pen &pen, int x, int y, int w, int h, double startAngle
   SelectObject(m_HDC, oldBrush);
 }
 
+void Graphics::drawPolyline(Pen &pen, const std::vector<Point> &points)
+{
+  int numPoints = static_cast<int>(points.size());
+
+  assert(numPoints >= 2);
+
+  POINT *pt = new POINT[numPoints];
+  std::copy(points.begin(), points.end(), pt);
+  drawPolyline(pen, pt, numPoints);
+  delete[] pt;
+}
+
 void Graphics::fillRect(Brush &brush, const Rect &rc)
 {
   fillRect(brush, rc.x, rc.y, rc.w, rc.h);
@@ -987,7 +1016,7 @@ void Graphics::fillGradientRect(int x, int y, int w, int h,
 
 #if (WINVER >= 0x0500)
   GradientFill(m_HDC, vert, 2, &gRect, 1,
-	       orientation == Horizontal
+	       orientation == Orientation::Horizontal
 	       ? GRADIENT_FILL_RECT_H:
 		 GRADIENT_FILL_RECT_V);
 #else
@@ -1018,10 +1047,10 @@ void Graphics::drawGradientRect(int x, int y, int w, int h,
 				const Color &topLeft, const Color &topRight,
 				const Color &bottomLeft, const Color &bottomRight)
 {
-  fillGradientRect(x,     y,     w, 1, topLeft,    topRight,    Horizontal);
-  fillGradientRect(x,     y,     1, h, topLeft,    bottomLeft,  Vertical);
-  fillGradientRect(x,     y+h-1, w, 1, bottomLeft, bottomRight, Horizontal);
-  fillGradientRect(x+w-1, y,     1, h, topRight,   bottomRight, Vertical);
+  fillGradientRect(x,     y,     w, 1, topLeft,    topRight,    Orientation::Horizontal);
+  fillGradientRect(x,     y,     1, h, topLeft,    bottomLeft,  Orientation::Vertical);
+  fillGradientRect(x,     y+h-1, w, 1, bottomLeft, bottomRight, Orientation::Horizontal);
+  fillGradientRect(x+w-1, y,     1, h, topRight,   bottomRight, Orientation::Vertical);
 }
 
 void Graphics::drawXorFrame(const Rect &rc, int border)
@@ -1066,7 +1095,7 @@ Size Graphics::measureString(const String &str, int fitInWidth, int flags)
     oldFont = SelectObject(m_HDC, reinterpret_cast<HGDIOBJ>(m_font->getHFONT()));
 
   if (!str.empty()) {
-    DrawText(m_HDC, str.c_str(), str.size(), &rc, flags | DT_CALCRECT);
+    DrawText(m_HDC, str.c_str(), static_cast<int>(str.size()), &rc, flags | DT_CALCRECT);
   }
   else {
     SIZE sz;
@@ -1167,6 +1196,9 @@ void Graphics::deleteHandles()
        it != mBrushes.end();
        ++it)
     delete (*it);
+
+  mPens.clear();
+  mBrushes.clear();
 }
 
 void Graphics::drawBezier(Pen &pen, CONST POINT *lppt, int numPoints)
@@ -1188,6 +1220,17 @@ void Graphics::drawBezierTo(CONST POINT *lppt, int numPoints)
   HGDIOBJ oldPen = SelectObject(m_HDC, thePen);
 
   PolyBezierTo(m_HDC, lppt, numPoints);
+
+  SelectObject(m_HDC, oldPen);
+}
+
+void Graphics::drawPolyline(Pen &pen, CONST POINT *lppt, int numPoints)
+{
+  assert(m_HDC != NULL);
+
+  HGDIOBJ oldPen = SelectObject(m_HDC, pen.getHPEN());
+
+  Polyline(m_HDC, lppt, numPoints);
 
   SelectObject(m_HDC, oldPen);
 }

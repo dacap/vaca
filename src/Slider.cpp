@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -56,36 +56,19 @@ Slider::~Slider()
 {
 }
 
-// Size Slider::preferredSize()
-// {
-//   int style = getStyle().regular;
-  
-//   // without ticks
-//   if (style & TBS_NOTICKS)
-//     return Size(25, 25);
-//   // with ticks in the top or the left side
-//   else if ((style & (TBS_LEFT | TBS_TOP)) != 0)
-//     return Size(33, 33);
-//   // with ticks in both sides
-//   else if ((style & TBS_BOTH) != 0)
-//     return Size(40, 40);
-//   // with ticks in the bottom or the right side
-//   else
-//     return Size(30, 30);
-// }
-
 Orientation Slider::getOrientation()
 {
   if ((getStyle().regular & TBS_VERT) == TBS_VERT)
-    return Vertical;
+    return Orientation::Vertical;
   else
-    return Horizontal;
+    return Orientation::Horizontal;
 }
 
 void Slider::setOrientation(Orientation orientation)
 {
   removeStyle(Style(TBS_HORZ | TBS_VERT, 0));
-  addStyle(Style(orientation == Vertical ? TBS_VERT: TBS_HORZ, 0));
+  addStyle(Style(orientation == Orientation::Vertical ? TBS_VERT:
+							TBS_HORZ, 0));
 }
 
 // void Slider::hideTickMarks()
@@ -134,16 +117,16 @@ void Slider::pointToSide(Side side)
   removeStyle(Style(TBS_LEFT | TBS_TOP | TBS_RIGHT | TBS_BOTTOM, 0));
   
   switch (side) {
-    case LeftSide:
+    case Side::Left:
       addStyle(Style(TBS_LEFT, 0));
       break;
-    case TopSide:
+    case Side::Top:
       addStyle(Style(TBS_TOP, 0));
       break;
-    case RightSide:
+    case Side::Right:
       addStyle(Style(TBS_RIGHT, 0));
       break;
-    case BottomSide:
+    case Side::Bottom:
       addStyle(Style(TBS_BOTTOM, 0));
       break;
   }

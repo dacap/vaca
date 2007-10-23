@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -62,11 +62,6 @@ ToolSet::~ToolSet()
     m_loadedImageList = NULL;
   }
 }
-
-// Size ToolSet::preferredSize()
-// {
-//   return m_preferredSizes[getRows()];
-// }
 
 /**
  * (TB_BUTTONCOUNT).
@@ -149,13 +144,17 @@ void ToolSet::loadStandardImageList(int imageListId)
  * @param imageIndex The images to use for this button from the
  *                   ImageList that you specified to setImageList().
  *
+ * @param commandId
+ *      Identifier of the command. This is the identifier that will be
+ *      sent to Widget#onActionById(int).
+ *
  * @param buttonState
- * @li TBSTATE_CHECKED
- * @li TBSTATE_ENABLED
- * @li TBSTATE_HIDDEN
- * @li TBSTATE_INDETERMINATE
- * @li TBSTATE_ELLIPSES
- * @li TBSTATE_MARKED
+ *     @li TBSTATE_CHECKED
+ *     @li TBSTATE_ENABLED
+ *     @li TBSTATE_HIDDEN
+ *     @li TBSTATE_INDETERMINATE
+ *     @li TBSTATE_ELLIPSES
+ *     @li TBSTATE_MARKED
  */
 void ToolSet::addButton(int imageIndex, int commandId, int buttonState)
 {
@@ -278,9 +277,9 @@ void ToolSet::onPreferredSize(Size &sz)
   sz = m_preferredSizes[getRows()];
 }
 
-bool ToolSet::onCommand(int id, int code, LRESULT &lResult)
+bool ToolSet::onReflectedCommand(int id, int code, LRESULT &lResult)
 {
-  if (Widget::onCommand(id, code, lResult))
+  if (Widget::onReflectedCommand(id, code, lResult))
     return true;
 
   assert(getParent() != NULL);
@@ -384,7 +383,7 @@ Size ToolBar::getDockedSize(Side side)
   Size size(0, 0);
   std::vector<Size> preferredSizes = mSet.getPreferredSizes();
 
-  if (side == LeftSide || side == RightSide)
+  if (side == Side::Left || side == Side::Right)
     size = preferredSizes[mSet.getButtonCount()];
   else
     size = preferredSizes[1];
@@ -398,12 +397,13 @@ Size ToolBar::getFloatingSize()
 
   return
     preferredSizes[mRowsWhenFloating] +
-    measureGripper(false, LeftSide);
+    measureGripper(false, Side::Left);
 }
 
-bool ToolBar::onIdAction(int id)
+bool ToolBar::onActionById(int actionId)
 {
-  return getOwnerFrame()->sendMessage(WM_COMMAND, MAKEWPARAM(id, 0), 0) == 0;
+  return getOwnerFrame()->sendMessage(WM_COMMAND,
+				      MAKEWPARAM(actionId, 0), 0) == 0;
 }
 
 /**

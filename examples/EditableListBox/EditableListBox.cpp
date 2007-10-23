@@ -54,8 +54,10 @@ protected:
   virtual void onKeyDown(KeyEvent &ev)
   {
     ListBox::onKeyDown(ev);
-    if (ev.getKeyCode() == Keys::Enter)
+    if (ev.getKeyCode() == Keys::Enter) {
       beginEdit(getCurrentItem());
+      ev.consume();
+    }
   }
 
   virtual void onAction(Event &ev)
@@ -66,14 +68,14 @@ protected:
 
   virtual void onBeforePosChange()
   {
-    if (m_edit != NULL)
-      endEdit();
+    ListBox::onBeforePosChange();
+    endEdit();
   }
 
   virtual void onScroll(Orientation orientation, int code)
   {
-    if (m_edit != NULL)
-      endEdit();
+    ListBox::onScroll(orientation, code);
+    endEdit();
   }
 
 private:
@@ -86,8 +88,7 @@ private:
 
   void onEditLostFocus()
   {
-    if (m_edit != NULL)
-      endEdit();
+    endEdit();
   }
 
   void beginEdit(int index)
@@ -98,7 +99,7 @@ private:
       m_edit->KeyDown.connect(Bind(&EditableListBox::onEditKeyDown, this));
       m_edit->LostFocus.connect(Bind(&EditableListBox::onEditLostFocus, this));
       m_edit->selectAll();
-      m_edit->acquireFocus();
+      m_edit->requestFocus();
 
       m_editingItem = index;
 
@@ -108,16 +109,24 @@ private:
 
   void endEdit()
   {
-    setItemText(m_editingItem, m_edit->getText());
+    if (m_edit != NULL) {
+      // we need to reset the m_edit variable to avoid calling two
+      // times this destruction process
+      int editingItem = m_editingItem;
+      Edit *edit = m_edit;
+      m_edit = NULL;
 
-    delete_widget(m_edit);
-    m_edit = NULL;
+      // this could produce a "onBeforePosChange" event
+      setItemText(editingItem, edit->getText());
+
+      // delete the edit control
+      delete_widget(edit);
+    }
   }
 
   void layoutEdit()
   {
-    if (m_edit != NULL)
-      m_edit->setBounds(getItemBounds(m_editingItem));
+    m_edit->setBounds(getItemBounds(m_editingItem));
   }
 
 };
@@ -143,9 +152,9 @@ public:
     , m_removeButton("Remove", &m_bottomPanel)
     , m_counter(0)
   {
-    setLayout(new BoxLayout(Vertical, false)); // no-homogeneous
+    setLayout(new BoxLayout(Orientation::Vertical, false)); // no-homogeneous
     m_listBox.setConstraint(new BoxConstraint(true)); // expansive
-    m_bottomPanel.setLayout(new BoxLayout(Horizontal, true, 0)); // homogeneous, border=0
+    m_bottomPanel.setLayout(new BoxLayout(Orientation::Horizontal, true, 0)); // homogeneous, border=0
 
     for (int c=0; c<10; c++)
       onAdd();
@@ -154,6 +163,7 @@ public:
     m_removeButton.Action.connect(Bind(&MainFrame::onRemove, this));
 
     setSize(getPreferredSize());
+    center();
   }
 
 private:
@@ -162,20 +172,21 @@ private:
   {
     int index = m_listBox.addItem("Item number "+String::fromInt(++m_counter));
     m_listBox.setCurrentItem(index);
-    m_listBox.acquireFocus();
+    m_listBox.requestFocus();
   }
 
   void onRemove()
   {
     int index = m_listBox.getCurrentItem();
-    if (index >= 0)
+    if (index >= 0) {
       m_listBox.removeItem(m_listBox.getCurrentItem());
+    }
 
     m_listBox.setCurrentItem(index);
     if (m_listBox.getCurrentItem() < 0)
       m_listBox.setCurrentItem(m_listBox.getItemCount()-1);
 
-    m_listBox.acquireFocus();
+    m_listBox.requestFocus();
   }
 
 };

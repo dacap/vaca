@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -35,8 +35,11 @@
 
 using namespace Vaca;
 
+/**
+ * @param flags Flags used internally (see MK_* constants of Win32)
+ */
 MouseEvent::MouseEvent(Widget *source, Point point, int clicks,
-		       int flags, MouseButtons::Type trigger, int delta)
+		       int flags, MouseButtons trigger, int delta)
   : Event(source)
   , m_point(point)
   , m_clicks(clicks)
@@ -89,22 +92,45 @@ int MouseEvent::getClicks() const
 /**
  * Returns the button that trigger the event (if the event is
  * Widget::mouseUp or Widget::mouseDown).
+ *
+ * @param isLeftButtonPressed
+ * @param isRightButtonPressed
+ * @param isMiddleButtonPressed
  */
-MouseButtons::Type MouseEvent::getButton() const
+MouseButtons MouseEvent::getButton() const
 {
   return m_trigger;
 }
 
+/**
+ * Returns true if the left button was pressed when the event was
+ * generated.
+ *
+ * @see getButton
+ */
 bool MouseEvent::isLeftButtonPressed() const
 {
   return (m_flags & MK_LBUTTON) != 0;
 }
 
+/**
+ * Returns true if the left button was pressed when the event was
+ * generated.
+ *
+ * @see getButton
+ */
 bool MouseEvent::isRightButtonPressed() const
 {
   return (m_flags & MK_RBUTTON) != 0;
 }
 
+/**
+ * Returns true if the middle button was pressed when the event was
+ * generated. The middle button could be the wheel in modern mouses
+ * with wheel.
+ *
+ * @see getButton
+ */
 bool MouseEvent::isMiddleButtonPressed() const
 {
   return (m_flags & MK_MBUTTON) != 0;

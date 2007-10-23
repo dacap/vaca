@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -32,9 +32,9 @@
 #ifndef VACA_THREAD_H
 #define VACA_THREAD_H
 
-#include "Vaca/base.h"
+#include <boost/thread.hpp>
 
-#include <boost/noncopyable.hpp>
+#include "Vaca/base.h"
 
 namespace Vaca {
 
@@ -42,96 +42,47 @@ class Frame;
 class Widget;
 
 /**
- * A thread of execution. You should derivate this class to create
- * your own thread. Remember this: all threads begin suspended, so you
- * must to call the execute() method to initialize them.
- *
- * @warning If you derivate this class, you shouldn't create any
- * widget (Widgets, Frames, etc.) in the constructor (or as its
- * members), because the constructor is executed in the parent thread,
- * the new thread execution begin in the run() method:
- *
- * @code
- * class MyThread : public Thread
- * {
- *   Frame frameOwnedByTheThreadThatCreatesThisInstance;
- *
- * public:
- *
- *   MyThread()
- *     : frameOwnedByTheThreadThatCreatesThisInstance(...)
- *   {
- *     // here we are in the parent thread, not in the new one
- *     ...
- *   }
- *
- *   virtual void run()		// here we are in the new thread
- *   {
- *     Frame frameOwnedByTheNewThread(...);
- *     frameOwnedByTheNewThread.setVisible(true);
- *
- *     doMessageLoop();
- *   }
- * };
- * @endcode
+ * A thread of execution.
  */
-class VACA_DLL Thread : private boost::noncopyable
+class VACA_DLL Thread : public boost::thread
 {
   friend class Frame;
-
-  bool   m_joinable;
-  HANDLE m_handle;
-  DWORD  m_id;
-  int    m_frameCount;
-  bool   m_breakLoop;
 
 public:
 
   typedef MSG Message;
 
-  Thread(bool useCurrent = false);
+  Thread();
+  explicit Thread(const boost::function0<void>& threadfunc);
   virtual ~Thread();
 
-  int getId();
-
-  void execute();
-  void suspend();
-  void resume();
-  void join();
-
-  void setPriority(int priority);
-
-  /**
-   * Override this routine to do what you want in the new thread of
-   * execution.
-   */
-  virtual void run() = 0;
-
-  static Thread *getCurrent();
-  static int getCurrentId();
-
   //////////////////////////////////////////////////////////////////////
-  // For threads with message queue
+  // functions for the current thread
 
-  virtual void doMessageLoop();
-  virtual void doMessageLoopFor(Widget *widget);
+  static void doMessageLoop();
+  static void doMessageLoopFor(Widget *widget);
 
-  virtual void pumpMessageQueue();
-  virtual void breakMessageLoop();
+  static void pumpMessageQueue();
+  static void breakMessageLoop();
 
 protected:
 
-  virtual bool getMessage(Message &msg);
-  virtual bool peekMessage(Message &msg);
-  virtual void processMessage(Message &msg);
-  virtual bool preTranslateMessage(Message &msg);
+  static bool getMessage(Message &msg);
+  static bool peekMessage(Message &msg);
+  static void processMessage(Message &msg);
+  static bool preTranslateMessage(Message &msg);
 
 private:
 
-  void addFrame();
-  void removeFrame();
+  static void addFrame(Frame *frame);
+  static void removeFrame(Frame *frame);
 
 };
+
+void VACA_DLL __vaca_remove_all_thread_data();
+
+Widget * VACA_DLL __vaca_get_outside_widget();
+void VACA_DLL __vaca_set_outside_widget(Widget *widget);
 
 } // namespace Vaca
 

@@ -74,18 +74,18 @@ public:
     , m_expandButton("Expand Button", &m_bottomSub3)
   {
     // MainFrame layout
-    setLayout(new BoxLayout(Vertical, false)); // heterogeneous
+    setLayout(new BoxLayout(Orientation::Vertical, false)); // heterogeneous
     m_top.setConstraint(new BoxConstraint(true)); // expansive
 
     // other layouts
-    m_top.setLayout(new BoxLayout(Vertical, false)); // heterogeneous
+    m_top.setLayout(new BoxLayout(Orientation::Vertical, false)); // heterogeneous
     m_edit.setConstraint(new BoxConstraint(true)); // expansive
     
     // other layouts
-    m_bottom.setLayout(new BoxLayout(Horizontal, false)); // heterogeneous
-    m_bottomSub1.setLayout(new BoxLayout(Vertical, true)); // homogeneous
-    m_bottomSub2.setLayout(new BoxLayout(Vertical, true)); // homogeneous
-    m_bottomSub3.setLayout(new BoxLayout(Horizontal, true)); // homogeneous
+    m_bottom.setLayout(new BoxLayout(Orientation::Horizontal, false)); // heterogeneous
+    m_bottomSub1.setLayout(new BoxLayout(Orientation::Vertical, true)); // homogeneous
+    m_bottomSub2.setLayout(new BoxLayout(Orientation::Vertical, true)); // homogeneous
+    m_bottomSub3.setLayout(new BoxLayout(Orientation::Horizontal, true)); // homogeneous
 
     // m_top begins vertical and heterogeneous, and m_edit begins expansive
     m_vertical.setSelected(true);
@@ -110,8 +110,8 @@ protected:
 
   void onSetupLayout()
   {
-    Orientation newOrientation = m_vertical.isSelected() ? Vertical:
-							   Horizontal;
+    Orientation newOrientation = m_vertical.isSelected() ? Orientation::Vertical:
+							   Orientation::Horizontal;
 
     bool isHomogeneous = m_homogeneous.isSelected();
     

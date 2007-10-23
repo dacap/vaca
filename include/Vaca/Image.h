@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -33,6 +33,7 @@
 #define VACA_IMAGE_H
 
 #include "Vaca/base.h"
+#include "Vaca/ResourceId.h"
 #include "Vaca/Size.h"
 
 namespace Vaca {
@@ -52,7 +53,8 @@ class VACA_DLL Image
 public:
 
   Image();
-  Image(int imageId);
+  Image(ResourceId imageId);
+  Image(const String &fileName);
   Image(const Size &sz);
   Image(const Size &sz, int bpp);
   Image(const Size &sz, Graphics &g);
@@ -65,7 +67,7 @@ public:
   int getHeight() const;
   Size getSize() const;
 
-  Graphics &getGraphics();
+  Graphics *getGraphics();
 
   HBITMAP getHBITMAP();
 

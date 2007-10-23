@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -87,11 +87,16 @@ public:
    * Returns true if the point @a pt is inside a valid rectangle to dock
    * in this DockArea.
    *
-   * @param bar The DockBar to dock.
-   * @param cursor Absolute position.
-   * @param fromInside True means that we are already inside the
-   *                   DockArea, so try to use the more biggest are to
-   *                   return a true hit-test.
+   * @param bar
+   *     The DockBar to dock.
+   *	
+   * @param cursor
+   *     Absolute position.
+   *	
+   * @param fromInside
+   *     True means that we are already inside the
+   *	 DockArea, so try to use the more biggest are to
+   *     return a true hit-test.
    */
   virtual bool hitTest(DockBar *bar, const Point &cursor, const Point &anchor, bool fromInside) = 0;
 
@@ -111,8 +116,6 @@ public:
    * the specified @a dockInfo.
    */
   virtual void drawXorDockInfoShape(Graphics &g, DockInfo *dockInfo) = 0;
-
-//   virtual Size preferredSize() = 0;
 
   /**
    * Lays out all dock bars inside the dock area using the DockInfo of

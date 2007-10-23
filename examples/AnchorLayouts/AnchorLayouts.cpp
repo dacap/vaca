@@ -33,8 +33,14 @@
 
 using namespace Vaca;
 
-static Side sides[4] = { LeftSide, TopSide, RightSide, BottomSide };
-static Borders borders[4] = { LeftBorder, TopBorder, RightBorder, BottomBorder };
+static Side sides[4] = { Side::Left,
+			 Side::Top,
+			 Side::Right,
+			 Side::Bottom };
+static Borders borders[4] = { Borders::Left,
+			      Borders::Top,
+			      Borders::Right,
+			      Borders::Bottom };
 
 class AnchoredWidget : public Panel
 {
@@ -133,10 +139,10 @@ private:
     Rect rc(getClientBounds());
     
     switch (side) {
-      case LeftSide:   return Rect(rc.x,        rc.y,        8, rc.h);
-      case TopSide:    return Rect(rc.x,        rc.y,        rc.w, 8);
-      case RightSide:  return Rect(rc.x+rc.w-8, rc.y,        8, rc.h);
-      case BottomSide: return Rect(rc.x,        rc.y+rc.h-8, rc.w, 8);
+      case Side::Left:   return Rect(rc.x,        rc.y,        8, rc.h);
+      case Side::Top:    return Rect(rc.x,        rc.y,        rc.w, 8);
+      case Side::Right:  return Rect(rc.x+rc.w-8, rc.y,        8, rc.h);
+      case Side::Bottom: return Rect(rc.x,        rc.y+rc.h-8, rc.w, 8);
     }
 
     throw;
@@ -158,11 +164,11 @@ public:
 
   MainFrame()
     : Frame("AnchorLayouts")
-    , m_allWidget   (Anchor(Rect( 48,  48, 160, 160), AllBorders), this)
-    , m_leftWidget  (Anchor(Rect(  8,  48,  32, 160), LeftBorder |  TopBorder  | BottomBorder), this)
-    , m_topWidget   (Anchor(Rect( 48,   8, 160,  32), TopBorder |  LeftBorder | RightBorder), this)
-    , m_rightWidget (Anchor(Rect(216,  48,  32, 160), RightBorder | TopBorder  | BottomBorder), this)
-    , m_bottomWidget(Anchor(Rect( 48, 216, 160,  32), BottomBorder | LeftBorder | RightBorder), this)
+    , m_allWidget   (Anchor(Rect( 48,  48, 160, 160), Borders::All), this)
+    , m_leftWidget  (Anchor(Rect(  8,  48,  32, 160), Borders::Left |  Borders::Top  | Borders::Bottom), this)
+    , m_topWidget   (Anchor(Rect( 48,   8, 160,  32), Borders::Top |  Borders::Left | Borders::Right), this)
+    , m_rightWidget (Anchor(Rect(216,  48,  32, 160), Borders::Right | Borders::Top  | Borders::Bottom), this)
+    , m_bottomWidget(Anchor(Rect( 48, 216, 160,  32), Borders::Bottom | Borders::Left | Borders::Right), this)
   {
     m_refSize = Size(256, 256);
     setLayout(new AnchorLayout(m_refSize));

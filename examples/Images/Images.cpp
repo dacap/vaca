@@ -47,7 +47,7 @@ public:
 
   MainFrame()
     : Frame("Images")
-    , m_vacaImage(IDB_VACA)
+    , m_vacaImage(ResourceId(IDB_VACA))
     , m_mouseImage(Size(64, 64))
   {
     setDoubleBuffered(true);
@@ -60,7 +60,7 @@ public:
     setBgColor(Color::White);
 
     // draw the image controlled by the mouse
-    Graphics &g = m_mouseImage.getGraphics();
+    Graphics &g = *m_mouseImage.getGraphics();
     Size sz = m_mouseImage.getSize();
 
     // ...clear the background
@@ -99,7 +99,7 @@ protected:
 
   virtual void onMouseDown(MouseEvent &ev)
   {
-    Graphics &g = m_vacaImage.getGraphics();
+    Graphics &g = *m_vacaImage.getGraphics();
     int d = 8+(rand()%13);
     Size sz = Size(d, d);
     Point pt = ev.getPoint() - m_vacaOrigin;
@@ -131,10 +131,10 @@ protected:
     invalidate(false);
   }
 
-  virtual void onSetCursor(int hitTest)
+  virtual void onSetCursor(WidgetHitTest hitTest)
   {
-    if (hitTest == HTCLIENT)
-      setCursor(Cursor(NoCursor));
+    if (hitTest == WidgetHitTest::Client)
+      setCursor(Cursor(SysCursor::None));
     else
       Frame::onSetCursor(hitTest);
   }

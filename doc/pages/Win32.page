@@ -1,17 +1,17 @@
 // -*- C++ -*-
 
-/*!
+/**
 
 @page Win32 Win32's API
 
 Links to MSDN (http://msdn.microsoft.com/):
 
 Registration, creation and destruction:
-- <a href="http://msdn.microsoft.com/library/en-us/winui/winui/windowsuserinterface/windowing/windowclasses/windowclassreference/windowclassfunctions/registerclassex.asp">RegisterClassEx</a> (#Vaca::Register::Register())
-- <a href="http://msdn.microsoft.com/library/en-us/winui/winui/windowsuserinterface/windowing/windows/windowreference/windowfunctions/createwindowex.asp">CreateWindowEx</a> (#Vaca::Widget::Widget())
-- <a href="http://msdn.microsoft.com/library/en-us/winui/winui/windowsuserinterface/windowing/windows/windowreference/windowfunctions/destroywindow.asp">DestroyWindow</a> (#Vaca::Widget::~Widget())
+- <a href="http://msdn.microsoft.com/library/en-us/winui/winui/windowsuserinterface/windowing/windowclasses/windowclassreference/windowclassfunctions/registerclassex.asp">RegisterClassEx</a> (Vaca::Register#Register())
+- <a href="http://msdn.microsoft.com/library/en-us/winui/winui/windowsuserinterface/windowing/windows/windowreference/windowfunctions/createwindowex.asp">CreateWindowEx</a> (Vaca::Widget#Widget())
+- <a href="http://msdn.microsoft.com/library/en-us/winui/winui/windowsuserinterface/windowing/windows/windowreference/windowfunctions/destroywindow.asp">DestroyWindow</a> (Vaca::Widget#~Widget())
 
-Default Procedures (@ref Vaca::Widget::defWndProc()):
+Default Procedures (Vaca::Widget#defWndProc()):
 - <a href="http://msdn.microsoft.com/library/en-us/winui/winui/windowsuserinterface/windowing/dialogboxes/dialogboxreference/dialogboxfunctions/defdlgproc.asp">DefDlgProc</a>
 - <a href="http://msdn.microsoft.com/library/en-us/winui/winui/windowsuserinterface/windowing/multipledocumentinterface/multipledocumentinterfacereference/multipledocumentinterfacefunctions/defframeproc.asp">DefFrameProc</a>
 - <a href="http://msdn.microsoft.com/library/en-us/winui/winui/windowsuserinterface/windowing/multipledocumentinterface/multipledocumentinterfacereference/multipledocumentinterfacefunctions/defmdichildproc.asp">DefMDIChildProc</a>

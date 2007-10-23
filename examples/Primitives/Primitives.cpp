@@ -47,7 +47,7 @@ public:
     setLayout(new AnchorLayout(Size(100, 100)));
     setSize(getNonClientSize()+Size(256, 256));
 
-    m_fill.setConstraint(new Anchor(Rect(10, 75, 80, 20), BottomBorder));
+    m_fill.setConstraint(new Anchor(Rect(10, 75, 80, 20), Borders::Bottom));
 
     // when the "Fill" button is pressed, we must to call:
     // ((MainFrame *)this)->invalidate(true);

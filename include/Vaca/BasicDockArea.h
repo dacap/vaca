@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -53,8 +53,6 @@ public:
   virtual DockInfo *createDefaultDockInfo(DockBar *bar);
   virtual DockInfo *createDockInfo(DockBar *bar, const Point &cursor, const Point &anchor);
   virtual void drawXorDockInfoShape(Graphics &g, DockInfo *dockInfo);
-
-//   virtual Size preferredSize();
 
   virtual void layout();
 

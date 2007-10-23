@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -171,29 +171,6 @@ Rect ComboBox::getDropDownBounds()
   return Rect(&rc);
 }
 
-/*
-Size ComboBox::preferredSize()
-{
-//   Size sz(4, 4);		// TODO HTHEME stuff
-//   int i, n = getItemCount();
-//   Rect rc;
-
-//   for (i=0; i<n; ++i) {
-//     rc = getItemBounds(i);
-//     sz = Size(VACA_MAX(sz.w, rc.w), sz.h+rc.h);
-//   }
-//   return sz;
-
-  if ((getStyle().regular & 3) <= 1) { // CBS_SIMPLE = 1
-    // a simple combo-box
-    return Size(60, 23+getHeightForAllItems()); // TODO
-  }
-  else {
-    return Size(60, 23);		// TODO
-  }
-}
-*/
-
 void ComboBox::layout()
 {
   Widget::layout();
@@ -269,9 +246,9 @@ void ComboBox::onEditChange(Event &ev)
   EditChange(ev);
 }
 
-bool ComboBox::onCommand(int id, int code, LRESULT &lResult)
+bool ComboBox::onReflectedCommand(int id, int code, LRESULT &lResult)
 {
-  if (Widget::onCommand(id, code, lResult))
+  if (Widget::onReflectedCommand(id, code, lResult))
     return true;
 
   switch (code) {

@@ -15,5 +15,3 @@
 
 - Sudoku can be enter in a infinite loop in its level generator
   (mainly the swapCellToFixDigitCollision method).
-
-- Double buffering doesn't work with owner-drawn controls.

@@ -71,62 +71,87 @@ public:
   MainFrame()
     : Frame("MenuResource")
     , m_console(this)
+    , m_item2Enabled(true)
   {
     setMenuBar(new MenuBar(IDM_MENUBAR));
     setLayout(new ClientLayout);
-
-    m_item2Enabled = true;
-    initializeCommands();
 
     // disable Item4
     getMenuBar()->getMenuItemById(IDM_ITEM4)->setEnabled(false);
   }
 
 private:
-  
-  void initializeCommands()
+
+  virtual bool onActionById(int actionId)
   {
-    Command *command;
+    switch (actionId) {
 
-    command = new Command(IDM_ITEM1);
-    command->Action.connect(Bind(&Console::println, &m_console, "Item1 selected"));
-    command->Update.connect(Bind(&MainFrame::onUpdateItem1, this));
-    addCommand(command);
+      case IDM_ITEM1:
+	m_console.println("Item1 selected");
+	break;
 
-    command = new Command(IDM_ITEM2);
-    command->Action.connect(Bind(&Console::println, &m_console, "Item2 selected"));
-    command->Update.connect(Bind(&MainFrame::onUpdateItem2, this));
-    addCommand(command);
+      case IDM_ITEM2:
+	if (m_item2Enabled) {
+	  m_console.println("Item2 selected");
+	}
+	break;
 
-    command = new Command(IDM_ITEM3);
-    command->Action.connect(Bind(&Console::println, &m_console, "Item3 selected"));
-    command->Action.connect(Bind(&MainFrame::onActionItem3, this));
-    command->Update.connect(Bind(&MainFrame::onUpdateItem3, this));
-    addCommand(command);
+      case IDM_ITEM3:
+	m_console.println("Item3 selected (change Item2 state)");
+	//m_item2Enabled ) {
+	break;
+
+      default:
+	m_console.println("Unknown action");
+	break;
+    }
+
+    return true;
   }
 
-  void onUpdateItem1(CommandState &cmdState)
-  {
-    m_console.println("Item1 updated");
-  }
+//   void initializeCommands()
+//   {
+//     Command *command;
 
-  void onUpdateItem2(CommandState &cmdState)
-  {
-    m_console.println("Item2 updated");
-    cmdState.setEnabled(m_item2Enabled);
-  }
+//     command = new Command(IDM_ITEM1);
+//     command->Action.connect(Bind(&Console::println, &m_console, "Item1 selected"));
+//     command->Update.connect(Bind(&MainFrame::onUpdateItem1, this));
+//     addCommand(command);
 
-  void onUpdateItem3(CommandState &cmdState)
-  {
-    m_console.println("Item3 updated");
-    cmdState.setChecked(!m_item2Enabled);
-  }
+//     command = new Command(IDM_ITEM2);
+//     command->Action.connect(Bind(&Console::println, &m_console, "Item2 selected"));
+//     command->Update.connect(Bind(&MainFrame::onUpdateItem2, this));
+//     addCommand(command);
 
-  void onActionItem3()
-  {
-    m_item2Enabled = !m_item2Enabled;
-    m_console.println(m_item2Enabled ? "Item2 enabled": "Item2 disabled");
-  }
+//     command = new Command(IDM_ITEM3);
+//     command->Action.connect(Bind(&Console::println, &m_console, "Item3 selected"));
+//     command->Action.connect(Bind(&MainFrame::onActionItem3, this));
+//     command->Update.connect(Bind(&MainFrame::onUpdateItem3, this));
+//     addCommand(command);
+//   }
+
+//   void onUpdateItem1(CommandState &cmdState)
+//   {
+//     m_console.println("Item1 updated");
+//   }
+
+//   void onUpdateItem2(CommandState &cmdState)
+//   {
+//     m_console.println("Item2 updated");
+//     cmdState.setEnabled(m_item2Enabled);
+//   }
+
+//   void onUpdateItem3(CommandState &cmdState)
+//   {
+//     m_console.println("Item3 updated");
+//     cmdState.setChecked(!m_item2Enabled);
+//   }
+
+//   void onActionItem3()
+//   {
+//     m_item2Enabled = !m_item2Enabled;
+//     m_console.println(m_item2Enabled ? "Item2 enabled": "Item2 disabled");
+//   }
 
 };
 

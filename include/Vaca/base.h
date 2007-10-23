@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -36,6 +36,15 @@
 #include <stdarg.h>
 #include <tchar.h>
 #include <windows.h>
+#include <commctrl.h>
+
+#include "Enum.h"
+
+// memory leaks
+#ifdef MEMORY_LEAK_DETECTOR
+#  include "stdvaca.h"
+#  include "debug_new.h"
+#endif
 
 namespace Vaca {
 
@@ -70,61 +79,117 @@ namespace Vaca {
  */
 typedef TCHAR Character;
 
+//////////////////////////////////////////////////////////////////////
+
+/**
+ * @see Orientation
+ */
+struct OrientationEnum
+{
+  enum enumeration {
+    Horizontal,
+    Vertical
+  };
+  static const enumeration default_value = Horizontal;
+};
+
 /**
  * Horizontal or Vertical orientation.
  */
-enum Orientation {
-  Horizontal,
-  Vertical
+typedef Enum<OrientationEnum> Orientation;
+
+//////////////////////////////////////////////////////////////////////
+
+/**
+ * @see TextAlign
+ */
+struct TextAlignEnum
+{
+  enum enumeration {
+    Left,
+    Center,
+    Right
+  };
+  static const enumeration default_value = Left;
 };
 
 /**
  * Horizontal alignment.
  */
-enum TextAlign {
-  LeftAlign,
-  CenterAlign,
-  RightAlign
+typedef Enum<TextAlignEnum> TextAlign;
+
+//////////////////////////////////////////////////////////////////////
+
+/**
+ * @see VerticalAlign
+ */
+struct VerticalAlignEnum
+{
+  enum enumeration {
+    Top,
+    Middle,
+    Bottom
+  };
+  static const enumeration default_value = Top;
 };
 
 /**
  * Vertical alignment.
  */
-enum VerticalAlign {
-  TopAlign,
-  MiddleAlign,
-  BottomAlign
+typedef Enum<VerticalAlignEnum> VerticalAlign;
+
+//////////////////////////////////////////////////////////////////////
+
+/**
+ * @see Side
+ */
+struct SideEnum
+{
+  enum enumeration {
+    Left,
+    Top,
+    Right,
+    Bottom
+  };
+  static const enumeration default_value = Left;
 };
 
 /**
  * A side can be one of the following values:
- * - LeftSide
- * - TopSide
- * - RightSide
- * - BottomSide
+ * - Side::Left
+ * - Side::Top
+ * - Side::Right
+ * - Side::Bottom
  */
-enum Side {
-  LeftSide,
-  TopSide,
-  RightSide,
-  BottomSide
+typedef Enum<SideEnum> Side;
+
+//////////////////////////////////////////////////////////////////////
+
+/**
+ * @see Borders
+ */
+struct BordersEnumSet
+{
+  enum {
+    None   = 0,
+    Left   = 1,
+    Top    = 2,
+    Right  = 4,
+    Bottom = 8,
+    All    = Left | Top | Right | Bottom
+  };
 };
 
 /**
- * Borders can be a set of the following values:
- * - LeftBorder
- * - TopBorder
- * - RightBorder
- * - BottomBorder
+ * Borders can be a zero or more of the following values:
+ * - Borders::Left
+ * - Borders::Top
+ * - Borders::Right
+ * - Borders::Bottom
  */
-typedef int Borders;
+typedef EnumSet<BordersEnumSet> Borders;
 
-#define NoBorder      0
-#define LeftBorder    1
-#define TopBorder     2
-#define RightBorder   4
-#define BottomBorder  8
-#define AllBorders    15
+//////////////////////////////////////////////////////////////////////
 
 /**
  * Removes an element from the container.
@@ -136,11 +201,6 @@ template<typename _ContainerType,
 void remove_element_from_container(_ContainerType &container,
 				   const _ElementType &element)
 {
-//   container.erase(std::remove(container.begin(),
-// 			      container.end(),
-// 			      element),
-// 		  container.end());
-
   typename _ContainerType::iterator
     it = std::find(container.begin(),
 		   container.end(),

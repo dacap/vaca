@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -62,12 +62,12 @@ DockArea::~DockArea()
 
 bool DockArea::isHorizontal()
 {
-  return m_side == TopSide || m_side == BottomSide;
+  return m_side == Side::Top || m_side == Side::Bottom;
 }
 
 bool DockArea::isVertical()
 {
-  return m_side == LeftSide || m_side == RightSide;
+  return m_side == Side::Left || m_side == Side::Right;
 }
 
 Side DockArea::getSide()

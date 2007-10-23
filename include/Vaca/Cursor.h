@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -34,37 +34,47 @@
 
 #include "Vaca/base.h"
 #include "Vaca/Cursor.h"
+#include "Vaca/ResourceId.h"
 
 namespace Vaca {
+
+class String;
+
+/**
+ * @see SysCursor
+ */
+struct SysCursorEnum
+{
+  enum enumeration {
+    None,
+    Arrow,
+    Crosshair,
+    Hand,
+    Help,
+    Text,
+    Forbidden,
+    Move,
+    SizeE,
+    SizeN,
+    SizeNE,
+    SizeNW,
+    SizeS,
+    SizeSE,
+    SizeSW,
+    SizeW,
+    UpArrow,
+    Wait,
+    WaitBg
+  };
+  static const enumeration default_value = Arrow;
+};
 
 /**
  * System mouse cursors.
  *
  * @see #Vaca::Cursor::Cursor(SysCursor)
  */
-enum SysCursor {
-  NoCursor,
-  ArrowCursor,
-  CrosshairCursor,
-  HandCursor,
-  HelpCursor,
-  TextCursor,
-  ForbiddenCursor,
-  MoveCursor,
-  SizeECursor,
-  SizeNCursor,
-  SizeNECursor,
-  SizeNWCursor,
-  SizeSCursor,
-  SizeSECursor,
-  SizeSWCursor,
-  SizeWCursor,
-  UpArrowCursor,
-  WaitCursor,
-  WaitBgCursor
-};
-
-class String;
+typedef Enum<SysCursorEnum> SysCursor;
 
 /**
  * A cursor (HCURSOR wrapper).
@@ -76,7 +86,7 @@ class VACA_DLL Cursor
 
 public:
 
-  explicit Cursor(int cursorId);
+  explicit Cursor(ResourceId cursorId);
   explicit Cursor(SysCursor cursor);
   explicit Cursor(const String &fileName);
   Cursor(const Cursor &cursor);

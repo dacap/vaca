@@ -777,16 +777,16 @@ public:
 
   MainFrame()
     : Frame("ComboBoxes")
-    , m_label("Input some color's name (it'll be autocompleted)", this)
+    , m_label("Input the name of a color (it'll be autocompleted)", this)
     , m_bottomPanel(this)
     , m_comboBox(&m_bottomPanel)
     , m_colorViewer(&m_bottomPanel)
   {
-    setLayout(new BoxLayout(Vertical, false));
-    m_bottomPanel.setLayout(new BoxLayout(Horizontal, false));
+    setLayout(new BoxLayout(Orientation::Vertical, false));
+    m_bottomPanel.setLayout(new BoxLayout(Orientation::Horizontal, false));
     m_comboBox.setConstraint(new BoxConstraint(true));
 
-    m_comboBox.acquireFocus();
+    m_comboBox.requestFocus();
 
     m_comboBox.SelColor.connect(Bind(&ColorViewer::setColor, &m_colorViewer));
     m_comboBox.NoColor.connect(Bind(&ColorViewer::setNoColor, &m_colorViewer));

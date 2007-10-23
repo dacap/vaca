@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -45,12 +45,28 @@ class Widget;
  */
 class VACA_DLL KeyEvent : public Event
 {
-  bool m_consumed;		// the event was consumed?
+  /**
+   * It indicates if the event was consumed.
+   */
+  bool m_consumed;
+
+  /**
+   * Virtual-key code.
+   *
+   * @see #getKeyCode, Keys
+   */
   int m_keys;
+
+  /**
+   * Character-key code (ANSI, Unicode, etc.)
+   *
+   * @see #getCharCode
+   */
+  int m_charCode;
 
 public:
 
-  KeyEvent(Widget *source, Keys::Type keys);
+  KeyEvent(Widget *source, Keys::Type keys, int charCode = 0);
   virtual ~KeyEvent();
 
   void consume();
@@ -59,6 +75,7 @@ public:
   // Keys::Type getKeys() { return mKeys; }
   Keys::Type getKeyCode() const;
   Keys::Type getModifiers() const;
+  int getCharCode() const;
 
   bool isShift() const;
   bool isControl() const;

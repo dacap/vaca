@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -40,9 +40,18 @@
 
 namespace Vaca {
 
-#define ToolSetStyle	(ChildStyle + Style(CCS_NODIVIDER | CCS_NOPARENTALIGN | \
-					    CCS_NOMOVEX | CCS_NOMOVEY | \
-					    CCS_NORESIZE, 0))
+#if (_WIN32_IE >= 0x0300)
+
+  #define ToolSetStyle	(ChildStyle + Style(CCS_NODIVIDER | CCS_NOPARENTALIGN | \
+					    CCS_NOMOVEY | CCS_NORESIZE |	\
+					    CCS_NOMOVEX, 0))
+
+#else
+
+  #define ToolSetStyle	(ChildStyle + Style(CCS_NODIVIDER | CCS_NOPARENTALIGN | \
+					    CCS_NOMOVEY | CCS_NORESIZE, 0))
+
+#endif
 
 #define FlatToolSetStyle (Style(TBSTYLE_FLAT, 0))
 
@@ -67,9 +76,6 @@ public:
 
   ToolSet(Widget *parent, Style style = ToolSetStyle);
   virtual ~ToolSet();
-
-//   virtual Size preferredSize();
-//   virtual Size preferredSize(const Size &fitIn);
 
   int getButtonCount();
   int getRows();
@@ -96,7 +102,7 @@ protected:
   // events
   virtual void onPreferredSize(Size &sz);
   // reflection
-  virtual bool onCommand(int id, int code, LRESULT &lResult);
+  virtual bool onReflectedCommand(int id, int code, LRESULT &lResult);
 //   virtual void onMouseDown(MouseEvent &ev);
   virtual bool wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult);
 
@@ -125,7 +131,7 @@ public:
 
 protected:
   // events
-  virtual bool onIdAction(int id);
+  virtual bool onActionById(int actionId);
   virtual void onDocking();
   virtual void onFloating();
   virtual void onResizingFrame(DockFrame *frame, int edge, Rect &rc);

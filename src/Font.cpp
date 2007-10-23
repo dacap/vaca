@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -52,20 +52,20 @@ Font::Font(const Font &font)
   assign(font);
 }
 
-Font::Font(const Font &font, Font::Style::Type style)
+Font::Font(const Font &font, FontStyle style)
 {
   LOGFONT lf;
   if (font.getLogFont(&lf)) {
-    lf.lfWeight = style & Font::Style::Bold ? FW_BOLD: FW_REGULAR;
-    lf.lfItalic = style & Font::Style::Italic;
-    lf.lfUnderline = style & Font::Style::Underline;
-    lf.lfStrikeOut = style & Font::Style::Strikeout;
+    lf.lfWeight = style & FontStyle::Bold ? FW_BOLD: FW_REGULAR;
+    lf.lfItalic = style & FontStyle::Italic ? TRUE: FALSE;
+    lf.lfUnderline = style & FontStyle::Underline ? TRUE: FALSE;
+    lf.lfStrikeOut = style & FontStyle::Strikeout ? TRUE: FALSE;
 
     assign(&lf);
   }
 }
 
-Font::Font(String familyName, int size, Font::Style::Type style)
+Font::Font(String familyName, int size, FontStyle style)
   : m_HFONT(NULL)
 {
   ScreenGraphics g;
@@ -75,10 +75,10 @@ Font::Font(String familyName, int size, Font::Style::Type style)
   lf.lfWidth = 0;
   lf.lfEscapement = 0;
   lf.lfOrientation = 0;
-  lf.lfWeight = style & Font::Style::Bold ? FW_BOLD: FW_REGULAR;
-  lf.lfItalic = style & Font::Style::Italic;
-  lf.lfUnderline = style & Font::Style::Underline;
-  lf.lfStrikeOut = style & Font::Style::Strikeout;
+  lf.lfWeight = style & FontStyle::Bold ? FW_BOLD: FW_REGULAR;
+  lf.lfItalic = style & FontStyle::Italic ? TRUE: FALSE;
+  lf.lfUnderline = style & FontStyle::Underline ? TRUE: FALSE;
+  lf.lfStrikeOut = style & FontStyle::Strikeout ? TRUE: FALSE;
   lf.lfCharSet = DEFAULT_CHARSET;
   lf.lfOutPrecision = OUT_DEFAULT_PRECIS;
   lf.lfClipPrecision = CLIP_DEFAULT_PRECIS;
@@ -131,19 +131,18 @@ int Font::getPointSize()
     return -1;			// TODO error, document it
 }
 
-Font::Style::Type Font::getStyle()
+FontStyle Font::getStyle()
 {
   LOGFONT lf;
   if (getLogFont(&lf)) {
-    Font::Style::Type style = 0
-      | (lf.lfWeight == FW_BOLD ? Font::Style::Bold: 0)
-      | (lf.lfItalic ? Font::Style::Italic: 0)
-      | (lf.lfUnderline ? Font::Style::Underline: 0)
-      ; 
+    FontStyle style;
+    if (lf.lfWeight == FW_BOLD)  style |= FontStyle::Bold;
+    if (lf.lfItalic != FALSE)    style |= FontStyle::Italic;
+    if (lf.lfUnderline != FALSE) style |= FontStyle::Underline;
     return style;
   }
   else
-    return 0;			// TODO error, document it
+    return FontStyle::Regular;			// TODO error, document it
 
 //   lf.lfHeight = -MulDiv(size, GetDeviceCaps(g.getHDC(), LOGPIXELSY), 72);
 //   lf.lfWidth = 0;
@@ -207,7 +206,7 @@ void Font::assign(LPLOGFONT lplf)
 
 Font *Font::getDefault()
 {
-  if (!Font::defaultFont)
+  if (Font::defaultFont == NULL)
     Font::defaultFont = new Font(reinterpret_cast<HFONT>(GetStockObject(DEFAULT_GUI_FONT)));
 
   assert(Font::defaultFont != NULL);
@@ -228,3 +227,12 @@ bool Font::getLogFont(LPLOGFONT lplf) const
 		   sizeof(LOGFONT),
 		   reinterpret_cast<LPVOID>(lplf)) != 0;
 }
+
+void Font::deleteHandles()
+{
+  if (Font::defaultFont != NULL) {
+    delete Font::defaultFont;
+    Font::defaultFont = NULL;
+  }
+}
+

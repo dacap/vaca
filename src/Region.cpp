@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -252,6 +252,10 @@ Region Region::operator^(const Region &rgn) const
   return res;
 }
 
+/**
+ * Makes an union between both regions and leaves the result in
+ * @b this region.
+ */
 Region &Region::operator|=(const Region &rgn)
 {
   CombineRgn(this->m_HRGN,
@@ -260,11 +264,19 @@ Region &Region::operator|=(const Region &rgn)
   return *this;
 }
 
+/**
+ * Makes an union between both regions and leaves the result in
+ * @b this region.
+ */
 Region &Region::operator+=(const Region &rgn)
 {
   return operator|=(rgn);
 }
 
+/**
+ * Makes the intersection between both regions and leaves
+ * the result in @b this region.
+ */
 Region &Region::operator&=(const Region &rgn)
 {
   CombineRgn(this->m_HRGN,
@@ -273,6 +285,9 @@ Region &Region::operator&=(const Region &rgn)
   return *this;
 }
 
+/**
+ * Substracts the speficied region @a rgn from @b this region.
+ */
 Region &Region::operator-=(const Region &rgn)
 {
   CombineRgn(this->m_HRGN,
@@ -281,6 +296,10 @@ Region &Region::operator-=(const Region &rgn)
   return *this;
 }
 
+/**
+ * Makes a XOR operation between both regions and leaves the result in
+ * @b this region.
+ */
 Region &Region::operator^=(const Region &rgn)
 {
   CombineRgn(this->m_HRGN,
@@ -289,18 +308,29 @@ Region &Region::operator^=(const Region &rgn)
   return *this;
 }
 
+/**
+ * Creates a region from a rectangle.
+ */
 Region Region::fromRect(const Rect &_rc)
 {
   RECT rc = _rc;
   return Region(CreateRectRgnIndirect(&rc), SelfDestruction(true));
 }
 
+/**
+ * Creates a region from an ellipse.
+ */
 Region Region::fromEllipse(const Rect &_rc)
 {
   RECT rc = _rc;
   return Region(CreateEllipticRgnIndirect(&rc), SelfDestruction(true));
 }
 
+/**
+ * Creates a region from a rounded rectangle.
+ *
+ * It uses the CreateRoundRectRgn function of Win32.
+ */
 Region Region::fromRoundRect(const Rect &_rc, const Size &ellipseSize)
 {
   RECT rc = _rc;
@@ -310,11 +340,19 @@ Region Region::fromRoundRect(const Rect &_rc, const Size &ellipseSize)
 		SelfDestruction(true));
 }
 
+/**
+ * Returns the Win32 region handler.
+ */
 HRGN Region::getHRGN()
 {
   return m_HRGN;
 }
 
+/**
+ * Destroys the region, it's called by the destructor.
+ *
+ * In Win32 it uses the DeleteObject function.
+ */
 void Region::destroy()
 {
   if (m_HRGN != NULL && m_selfDestruction) {

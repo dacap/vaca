@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -43,6 +43,9 @@ namespace Vaca {
 
 /**
  * Loads the Scintilla DLL.
+ *
+ * First it tries to load @c SciLexer.dll and then if it fails, it
+ * will try to load @c Scintilla.dll
  */
 class VACA_DLL SciRegister
 {
@@ -609,7 +612,7 @@ public:
 
 protected:
   // reflection
-  virtual bool onNotify(LPNMHDR lpnmhdr, LRESULT &lResult);
+  virtual bool onReflectedNotify(LPNMHDR lpnmhdr, LRESULT &lResult);
 
   // new events
 // SCN_STYLENEEDED

@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -43,6 +43,7 @@ namespace Vaca {
 #define LinkLabelStyle		(CustomLabelStyle + FocusableStyle)
 
 class Font;
+class Image;
 
 /**
  * A link to Internet (or whatever you want).
@@ -50,20 +51,22 @@ class Font;
 class VACA_DLL LinkLabel : public CustomLabel
 // class VACA_DLL LinkLabel : public Panel
 {
-  enum {
+  enum State {
     Outside,
     Inside,
     Hover
   };
 
-  int m_state;
+  State m_state;
   String m_url;
   Font *m_underlineFont;
+  Image *m_image;
 
 public:
 
-  LinkLabel(const String &urlOrText, const String &text, Widget *parent, Style style = LinkLabelStyle);
-  LinkLabel(const String &url, Widget *parent, Style style = LinkLabelStyle);
+  LinkLabel(const String &urlOrText, Widget *parent, Style style = LinkLabelStyle);
+  LinkLabel(const String &url, const String &text, Widget *parent, Style style = LinkLabelStyle);
+  LinkLabel(const String &url, Image &image, Widget *parent, Style style = LinkLabelStyle);
   virtual ~LinkLabel();
 
   virtual void setFont(Font *font);
@@ -76,12 +79,13 @@ public:
 protected:
 
   // events
+  virtual void onPreferredSize(Size &sz);
   virtual void onPaint(Graphics &g);
   virtual void onMouseEnter(MouseEvent &ev);
   virtual void onMouseMove(MouseEvent &ev);
   virtual void onMouseLeave();
   virtual void onMouseDown(MouseEvent &ev);
-  virtual void onSetCursor(int hitTest);
+  virtual void onSetCursor(WidgetHitTest hitTest);
 //   virtual void onResize(const Size &sz);
   virtual void onGotFocus(Event &ev);
   virtual void onLostFocus(Event &ev);
@@ -92,7 +96,7 @@ protected:
 
 private:
 
-  void init(String text);
+  void init(String text, Image *image = NULL);
   void action();
   void updateFont(Font *font);
   Rect getLinkBounds(Graphics &g);

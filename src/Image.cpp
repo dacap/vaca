@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -51,16 +51,48 @@ Image::Image()
  * constructor uses Win32 LoadBitmap.
  * 
  */
-Image::Image(int imageId)
+Image::Image(ResourceId imageId)
 {
   m_fromHDC = GetDC(GetDesktopWindow());
 
   // HBITMAP
-  m_HBITMAP = LoadBitmap(Application::getHINSTANCE(),
-			 MAKEINTRESOURCE(imageId));
+  m_HBITMAP = LoadBitmap(Application::getHINSTANCE(), imageId.toLPTSTR());
 
   if (m_HBITMAP == NULL)
-    throw ResourceException();
+    throw ResourceException("Can't load the image resource " + imageId.toString());
+
+  // get the size from the m_HBITMAP
+  BITMAPCOREHEADER bc;
+  ZeroMemory(&bc, sizeof(bc));
+  bc.bcSize = sizeof(bc);
+  GetDIBits(m_fromHDC, m_HBITMAP, 0, 0, NULL,
+	    reinterpret_cast<BITMAPINFO *>(&bc), 0);
+  m_size = Size(bc.bcWidth, bc.bcHeight);
+
+  // graphics
+  m_graphics = NULL;
+}
+
+Image::Image(const String &fileName)
+{
+  m_fromHDC = GetDC(GetDesktopWindow());
+
+  // file name size
+  int size = fileName.size()+1;
+  LPTSTR lpstr = new TCHAR[size];
+  fileName.copyTo(lpstr, size);
+
+  // HBITMAP
+  m_HBITMAP = reinterpret_cast<HBITMAP>
+    (LoadImage(Application::getHINSTANCE(),
+	       lpstr,
+	       IMAGE_BITMAP,
+	       0, 0,
+	       LR_LOADFROMFILE));
+  delete[] lpstr;
+
+  if (m_HBITMAP == NULL)
+    throw ResourceException("Can't load the image from file " + fileName);
 
   // get the size from the m_HBITMAP
   BITMAPCOREHEADER bc;
@@ -161,15 +193,18 @@ Size Image::getSize() const
   return m_size;
 }
 
-Graphics &Image::getGraphics()
+/**
+ * Returns a Graphics context to draw inside the image.
+ *
+ * @warning You can't delete the returned pointer.
+ */
+Graphics *Image::getGraphics()
 {
   if (m_graphics == NULL) {
     assert(m_fromHDC != NULL);
-
     m_graphics = new Graphics(m_fromHDC, *this);
   }
-
-  return *m_graphics;
+  return m_graphics;
 }
 
 HBITMAP Image::getHBITMAP()
@@ -205,5 +240,5 @@ void Image::destroy()
 
 void Image::copyTo(Image &image) const
 {
-  image.getGraphics().drawImage(*const_cast<Image *>(this), 0, 0);
+  image.getGraphics()->drawImage(*const_cast<Image *>(this), 0, 0);
 }

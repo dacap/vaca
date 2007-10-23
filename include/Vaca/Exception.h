@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -44,33 +44,18 @@ namespace Vaca {
 class Exception : public std::exception
 {
   String m_message;
-  
+
 public:
 
-  Exception() throw()
-    : std::exception()
+  Exception() : std::exception() { }
+  Exception(const String &message) : std::exception(), m_message(message) { }
+  virtual ~Exception() throw() { }
+
+  virtual const char *what( ) const throw( )
   {
+    return m_message.c_str();
   }
 
-  Exception(const String &message) throw()
-    : std::exception()
-  {
-    try {
-      m_message = message.c_str();
-    }
-    catch (...) {
-      // do nothing
-    }
-  }
-
-  virtual ~Exception() throw()
-  {
-  }
-
-  String getMessage()
-  {
-    return m_message;
-  }
 
 };
 

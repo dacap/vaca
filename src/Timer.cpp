@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -32,176 +32,44 @@
 #include "stdvaca.h"
 #include "Vaca/Timer.h"
 #include "Vaca/Thread.h"
-#include "Vaca/Mutex.h"
-#include "Vaca/ScopedLock.h"
 #include "Vaca/Debug.h"
 
 using namespace Vaca;
 
-//////////////////////////////////////////////////////////////////////
+static boost::mutex        timer_mutex;		// monitor
+static boost::thread*      timer_thread = NULL; // the thread that process timers
+static std::vector<Timer*> timers;              // list of timers to be processed
+static bool                timer_break = false; // break the loop in timer_thread_proc()
+static boost::condition    wakeup_condition;    // wake-up the timer thread loop
 
-class Vaca::_TimerThread;
-
-static Vaca::_TimerThread *timerThread = NULL;
-static Mutex timerMutex;
-
-//////////////////////////////////////////////////////////////////////
-// Thread to control Timers. This thread is created when the first
-// Timer is started. Then it continues running until ~Application stop
-// it.
-
-class Vaca::_TimerThread : public Thread
+// returns current time plus "msecs" milliseconds, to be used in
+// Boost.Threads waiting routines
+static inline boost::xtime xt_delay(int msecs)
 {
-  std::vector<Timer *> mTimers;
-  HANDLE mStopEvent;
-  HANDLE mWakeUpEvent;
+  const int MILLISECONDS_PER_SECOND = 1000;
+  const int NANOSECONDS_PER_SECOND = 1000000000;
+  const int NANOSECONDS_PER_MILLISECOND = 1000000;
 
-public:
+  // convert millisecconds to seconds/nanoseconds
+  int d_secs = msecs / MILLISECONDS_PER_SECOND;
+  int d_nsecs = (msecs % MILLISECONDS_PER_SECOND) * NANOSECONDS_PER_MILLISECOND;
 
-  _TimerThread()
-  {
-    setPriority(THREAD_PRIORITY_TIME_CRITICAL);
-    mStopEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
-    mWakeUpEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
-  }
+  boost::xtime xt;
+  boost::xtime_get(&xt, boost::TIME_UTC);
 
-  virtual ~_TimerThread()
-  {
-    CloseHandle(mStopEvent);
-    CloseHandle(mWakeUpEvent);
-  }
+  // apply delta-seconds/nanoseconds
+  xt.nsec = (xt.nsec+d_nsecs) % NANOSECONDS_PER_SECOND;
+  xt.sec = xt.sec+d_secs + (d_nsecs / NANOSECONDS_PER_SECOND);
 
-  void stop()
-  {
-    SetEvent(mStopEvent);
-  }
-
-  void wakeUp()
-  {
-    SetEvent(mWakeUpEvent);
-  }
-
-  virtual void run()
-  {
-    DWORD res, start, end, period, delay;
-    std::vector<Timer *>::iterator it;
-    Timer *timer;
-    HANDLE events[2] = { mStopEvent,  mWakeUpEvent };
-
-    start = timeGetTime();
-
-    while (true) {
-      end = timeGetTime();
-      period = end-start;    // how much time pass from the last event
-      start = end;
-
-      // "delay" will contain the minimum account of time to reach the
-      // next Timer's event
-      delay = INFINITE;
-
-      // timers loop
-      {
-	ScopedLock lock(timerMutex);
-
-	for (it = mTimers.begin(); it != mTimers.end(); ++it) {
-	  timer = *it;
-
-	  // decrement "mTimeCounter" to known that we pass a "period"
-	  // amount of time
-	  if (!timer->m_firstTick)
-	    timer->m_timeCounter -= period;
-	  else
-	    timer->m_firstTick = false;
-
-	  // if we accomplish one (or more) interval(s) of this timer...
-	  if (timer->m_timeCounter <= 0) {
-	    // ...we must to generate ticks for each time that we
-	    // accomplish the time interval
-	    while (timer->m_timeCounter <= 0) {
-	      // generate one tick for each "m_interval" period of time
-	      timer->m_tickCounter++;
-	      timer->m_timeCounter += timer->m_interval;
-	    }
-
-	    // wake up message queue of the thread which creates this
-	    // timer (to process through fireAllTicksForThread() all
-	    // ticks of this timer from the its thread)
-	    ::PostThreadMessage(timer->m_threadOwnerId, WM_NULL, 0, 0);
-	  }
-
-	  // maybe the "delay" is too big to reach the next event
-	  if (delay == INFINITE ||
-	      delay > static_cast<DWORD>(timer->m_timeCounter))
-	    delay = timer->m_timeCounter;
-	}
-      }
-
-      // wait for: "delay" period of time, or stop event, or wake up event
-      res = WaitForMultipleObjects(2, events, FALSE, delay);
-
-      // stop event
-      if (res == WAIT_OBJECT_0)
-	break;
-      // no time-out and no wake-up?
-      else if (res != WAIT_TIMEOUT && res != WAIT_OBJECT_0+1)
-	break;
-    }
-
-    // done, delete the TimerThread (Timer::start() should create a
-    // new instance of TimerThread to continue processing new timers)
-    delete timerThread;
-    timerThread = NULL;
-  }
-
-  void addTimer(Timer *timer)
-  {
-    ScopedLock lock(timerMutex);
-    mTimers.push_back(timer);
-  }
-
-  void removeTimer(Timer *timer)
-  {
-    ScopedLock lock(timerMutex);
-    remove_element_from_container(mTimers, timer);
-  }
-
-  void fireAllTicksForThread(int threadId)
-  {
-    std::vector<Timer *>::iterator it;
-    std::vector<Timer *> timers;
-    Timer *timer;
-
-    // make a copy of mTimers
-    {
-      ScopedLock lock(timerMutex);
-      timers = mTimers;
-    }
-
-    for (it = timers.begin(); it != timers.end(); ) {
-      timer = *(it++);
-
-      {
-	ScopedLock lock(timerMutex);
-	if (timer->m_threadOwnerId == threadId) {
-	  while (timer->m_tickCounter > 0) {
-	    timer->m_tickCounter--;
-	    timer->onAction();
-	  }
-	}
-      }
-    }
-  }
-
-};
-
-//////////////////////////////////////////////////////////////////////
+  return xt;
+}
 
 /**
  * @param interval In milliseconds.
  * 
  */
 Timer::Timer(int interval)
-  : m_threadOwnerId(Thread::getCurrentId())
+  : m_threadOwnerId(::GetCurrentThreadId())
   , m_running(false)
   , m_interval(interval)
   , m_timeCounter(0)
@@ -251,24 +119,25 @@ bool Timer::isRunning()
  */
 void Timer::start()
 {
-  ScopedLock lock(timerMutex);
+  // start/create timer thread (if this is the first Timer started)
+  Timer::start_timer_thread();
 
-  // create the TimerThread?
-  if (timerThread == NULL) {
-    timerThread = new _TimerThread();
-    timerThread->execute();
+  {
+    boost::mutex::scoped_lock lock(timer_mutex);
+
+    if (!m_running) {
+      // add timer
+      timers.push_back(this);
+      m_running = true;
+    }
+
+    m_firstTick = true;
+    m_timeCounter = m_interval;
+    m_tickCounter = 0;
+
+    // wake up timer thread
+    wakeup_condition.notify_one();
   }
-
-  if (!m_running) {
-    timerThread->addTimer(this);
-    m_running = true;
-  }
-
-  m_firstTick = true;
-  m_timeCounter = m_interval;
-  m_tickCounter = 0;
-
-  timerThread->wakeUp();
 }
 
 /**
@@ -277,8 +146,8 @@ void Timer::start()
 void Timer::stop()
 {
   if (m_running) {
-    ScopedLock lock(timerMutex);
-    timerThread->removeTimer(this);
+    Timer::remove_timer(this);
+
     m_running = false;
     m_timeCounter = 0;
     m_tickCounter = 0;
@@ -286,7 +155,7 @@ void Timer::stop()
 }
 
 /**
- * Polls all timers for the current thread. Fires all ticks for each
+ * Polls all timers for the current thread. Fires all actions for each
  * Timer that belong to the current thread.  It's used from
  * Thread::getMessage when process the WM_NULL message, but it's safe
  * to call this routine from anywhere (for example, in a do-while
@@ -295,13 +164,11 @@ void Timer::stop()
  */
 void Timer::pollTimers()
 {
-  if (timerThread != NULL)
-    timerThread->fireAllTicksForThread(Thread::getCurrentId());
+  Timer::fire_actions_for_thread();
 }
 
 /**
  * When the timer is running, this event is generated for each tick.
- * 
  */
 void Timer::onAction()
 {
@@ -309,15 +176,175 @@ void Timer::onAction()
   Action();
 }
 
-/**
- * Stops the TimerThread (called from ~Application()).
- * 
- */
-void Timer::finishTimerThread()
-{
-  if (timerThread != NULL) {
-    timerThread->stop();
+//////////////////////////////////////////////////////////////////////
 
-    while (WaitForSingleObject(timerThread, 100) == WAIT_TIMEOUT);
+/**
+ * Thread to control Timers. This thread is created when the first
+ * Timer is started. Then it continues running until ~Application stop
+ * it.
+ *
+ * @internal 
+ */
+void Timer::run_timer_thread()
+{
+  boost::mutex::scoped_lock lock(timer_mutex);
+  unsigned int start, end, period, delay;
+  unsigned int inf = UINT_MAX;//std::numeric_limits<unsigned int>::max();
+  std::vector<Timer *>::iterator it;
+  Timer *timer;
+
+  // is it needed?
+  // ::SetThreadPriority(::GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
+
+  start = timeGetTime();
+
+  while (!timer_break) {
+    // yield
+    ::Sleep(0);
+
+    end = timeGetTime();
+    period = end-start;    // how much time pass from the last event
+    start = end;
+
+    // "delay" will contain the minimum account of time to reach
+    // the next Timer's event
+    delay = inf;
+
+    // threads to send a NULL message to wake up
+    std::vector<int> threads;
+
+    // timers loop
+    for (it = timers.begin(); it != timers.end(); ++it) {
+      timer = *it;
+
+      // decrement "mTimeCounter" to known that we pass a "period"
+      // amount of time
+      if (!timer->m_firstTick)
+	timer->m_timeCounter -= period;
+      else
+	timer->m_firstTick = false;
+
+      // if we accomplish one (or more) interval(s) of this timer...
+      if (timer->m_timeCounter <= 0) {
+	// ...we must to generate ticks for each time that we
+	// accomplish the time interval
+	while (timer->m_timeCounter <= 0) {
+	  // generate one tick for each "m_interval" period of time
+	  timer->m_tickCounter++;
+	  timer->m_timeCounter += timer->m_interval;
+	}
+
+	// thread owner ID
+	int id = timer->m_threadOwnerId;
+
+	// wake up message queue of the thread which creates this
+	// timer (to process through Timer::pollTimers() all
+	// ticks of this timer from its thread)
+	if (std::find(threads.begin(), threads.end(), id) == threads.end()) {
+	  threads.push_back(id);
+	  ::PostThreadMessage(id, WM_NULL, 0, 0);
+	}
+      }
+
+      // maybe the "delay" is too big to reach the next event
+      if (delay == inf ||
+	  delay > static_cast<unsigned int>(timer->m_timeCounter))
+	delay = static_cast<unsigned int>(timer->m_timeCounter);
+    }
+      
+    // wait wake-up condition or the "delay" to process the next timer-action
+    if (delay == inf)
+      wakeup_condition.wait(lock);
+    else
+      wakeup_condition.timed_wait(lock, xt_delay(delay));
   }
+}
+
+/**
+ * @internal
+ */
+void Timer::start_timer_thread()
+{
+  boost::mutex::scoped_lock lock(timer_mutex);
+
+  if (timer_thread == NULL)
+    timer_thread = new boost::thread(&run_timer_thread);
+}
+
+/**
+ * Stops the timer_thread (called from ~Application()).
+ * 
+ * @internal
+ */
+void Timer::stop_timer_thread()
+{
+  boost::thread *thrd;
+  
+  {
+    boost::mutex::scoped_lock lock(timer_mutex);
+
+    if (timer_thread == NULL)
+      return;
+
+    thrd = timer_thread;
+    timer_thread = NULL;
+
+    timer_break = true;
+    wakeup_condition.notify_one();
+  }
+
+  thrd->join();
+
+  delete thrd;
+  thrd = NULL;
+}
+
+/**
+ * @internal
+ */
+void Timer::remove_timer(Timer *t)
+{
+  boost::mutex::scoped_lock lock(timer_mutex);
+
+  remove_element_from_container(timers, t);
+}
+
+/**
+ * @internal
+ */
+void Timer::fire_actions_for_thread()
+{
+  int currentThreadId = ::GetCurrentThreadId();
+  std::vector<Timer *> timers_for_thread;
+  std::vector<Timer *>::iterator it;
+  Timer *timer;
+
+  // make a copy of timers for this thread only
+  {
+    boost::mutex::scoped_lock lock(timer_mutex);
+
+    for (it = timers.begin(); it != timers.end(); ) {
+      timer = *(it++);
+
+      // is it for this thread?
+      if (timer->m_threadOwnerId == currentThreadId)
+	timers_for_thread.push_back(timer);
+    }
+  }
+
+  // iterate timers for this thread
+  for (it = timers_for_thread.begin();
+       it != timers_for_thread.end(); ) {
+    timer = *(it++);
+
+    while (timer->m_tickCounter > 0) {
+      timer->m_tickCounter--;
+
+      // fire action
+      timer->onAction();
+    }
+  }
+
+  // yield
+  ::Sleep(0);
 }

@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -69,21 +69,6 @@ Size GroupBox::getNonClientSize()
   
   return Size(4+4, sz.h+4);
 }
-
-// Size GroupBox::preferredSize()
-// {
-//   return getNonClientSize() + Widget::preferredSize();
-// }
-
-// Size GroupBox::preferredSize(const Size &fitIn)
-// {
-//   Size ncSize(getNonClientSize());
-
-//   return
-//     ncSize +
-//     Widget::preferredSize(Size(VACA_MAX(0, fitIn.w - ncSize.w),
-// 			       VACA_MAX(0, fitIn.h - ncSize.h)));
-// }
 
 void GroupBox::onPreferredSize(Size &sz)
 {

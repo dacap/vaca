@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -35,10 +35,11 @@
 
 using namespace Vaca;
 
-KeyEvent::KeyEvent(Widget *source, Keys::Type keys)
+KeyEvent::KeyEvent(Widget *source, Keys::Type keys, int charCode)
   : Event(source)
   , m_consumed(false)
   , m_keys(keys)
+  , m_charCode(charCode)
 {
 }
 
@@ -64,6 +65,11 @@ Keys::Type KeyEvent::getKeyCode() const
 Keys::Type KeyEvent::getModifiers() const
 {
   return m_keys & Keys::Modifiers;
+}
+
+int KeyEvent::getCharCode() const
+{
+  return m_charCode;
 }
 
 bool KeyEvent::isShift() const

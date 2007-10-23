@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -37,7 +37,7 @@ using namespace Vaca;
 
 CustomLabel::CustomLabel(const String &text, Widget *parent, Style style)
   : Label(text, parent, style)
-  , m_textAlign(LeftAlign)
+  , m_textAlign(TextAlign::Left)
 {
 }
 
@@ -56,7 +56,7 @@ void CustomLabel::setTextAlign(TextAlign align)
   invalidate(true);
 }
 
-bool CustomLabel::onDrawItem(Graphics &g, LPDRAWITEMSTRUCT lpDrawItem)
+bool CustomLabel::onReflectedDrawItem(Graphics &g, LPDRAWITEMSTRUCT lpDrawItem)
 {
   assert(lpDrawItem->CtlType == ODT_STATIC);
 

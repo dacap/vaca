@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -32,10 +32,12 @@
 #ifndef VACA_COMMAND_H
 #define VACA_COMMAND_H
 
-#include "Vaca/base.h"
-#include "Vaca/String.h"
+#if 0
 
 #include <boost/signal.hpp>
+
+#include "Vaca/base.h"
+#include "Vaca/String.h"
 
 namespace Vaca {
 
@@ -96,5 +98,7 @@ public:
 };
 
 } // namespace Vaca
+
+#endif
 
 #endif

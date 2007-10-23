@@ -1,7 +1,17 @@
-David A. Capello <dacap@users.sourceforge.net>
+----------------------------------------------------------------------
+DEVELOPERS
+----------------------------------------------------------------------
+
+  David A. Capello <dacap@users.sourceforge.net>
+
 
 ----------------------------------------------------------------------
-Thanks to
+THANKS TO
+----------------------------------------------------------------------
+
+  Thanks for comments, feedback, bug reports to:
+    Emil Kirichev
+    Przemyslaw Szurmak
 
   J Brown <james@catch22.net>
   His site http://www.catch22.net has some good Windows tricks.
@@ -15,4 +25,4 @@ Thanks to
     Scintilla            http://www.scintilla.org/
     Wine                 http://www.winehq.com/
 
-  The Wine project is an excelent place to learn about the WinAPI.
+----------------------------------------------------------------------

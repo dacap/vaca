@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -50,20 +50,33 @@ class ImageList;
 class ListItem;
 class ListViewEvent;
 
-/**
- * A ListView control.
- */
-class VACA_DLL ListView : public Widget 
-{
-public:
+//////////////////////////////////////////////////////////////////////
 
-  enum Type {
+/**
+ * @see ListViewType
+ */
+struct ListViewTypeEnum
+{
+  enum enumeration {
     Icon,
     Report,
     SmallIcon,
     List
   };
+  static const enumeration default_value = List;
+};
 
+/**
+ */
+typedef Enum<ListViewTypeEnum> ListViewType;
+
+//////////////////////////////////////////////////////////////////////
+
+/**
+ * A ListView control.
+ */
+class VACA_DLL ListView : public Widget 
+{
 public:
 
   ListView(Widget *parent, Style style = ListViewStyle);
@@ -77,19 +90,16 @@ public:
   Color getTextBgColor();
   void setTextBgColor(Color color);
 
-//   virtual Size preferredSize();
-//   virtual Size preferredSize(const Size &fitIn);
-
-  Type getViewType();
-  void setViewType(Type type);
+  ListViewType getType();
+  void setType(ListViewType type);
 
   void setImageList(ImageList *imageList, int type);
   void setNormalImageList(ImageList *imageList);
   void setSmallImageList(ImageList *imageList);
   void setStateImageList(ImageList *imageList);
 
-  int addColumn(const String &header, TextAlign textAlign = LeftAlign);
-  int insertColumn(int columnIndex, const String &header, TextAlign textAlign = LeftAlign);
+  int addColumn(const String &header, TextAlign textAlign = TextAlign::Left);
+  int insertColumn(int columnIndex, const String &header, TextAlign textAlign = TextAlign::Left);
   void removeColumn(int columnIndex);
 
   int getColumnCount();
@@ -127,7 +137,7 @@ protected:
   virtual void onColumnClick(ListViewEvent &ev);
 
   // reflection
-  virtual bool onNotify(LPNMHDR lpnmhdr, LRESULT &lResult);
+  virtual bool onReflectedNotify(LPNMHDR lpnmhdr, LRESULT &lResult);
 
 private:
 

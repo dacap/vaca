@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -57,7 +57,7 @@ FileDialog::FileDialog(const String &title, Widget *parent)
 
 FileDialog::~FileDialog()
 {
-  delete m_fileName;
+  delete[] m_fileName;
 }
 
 /**

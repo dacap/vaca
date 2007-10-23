@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -35,13 +35,13 @@
 #include "Vaca/Debug.h"
 #include "Vaca/System.h"
 #include "Vaca/Mdi.h"
-#include "Vaca/Mutex.h"
-#include "Vaca/ScopedLock.h"
 #include "Vaca/ResourceException.h"
+
+#include <boost/thread/mutex.hpp>
 
 using namespace Vaca;
 
-static Mutex menuIdCounterMutex;
+static boost::mutex menuIdCounterMutex;
 static int menuIdCounter = VACA_FIRST_AUTOID;
 
 //////////////////////////////////////////////////////////////////////
@@ -49,7 +49,6 @@ static int menuIdCounter = VACA_FIRST_AUTOID;
 
 MenuItem::MenuItem()
 {
-//   mAutoDelete = false;
   m_parent = NULL;
   m_id = 0;
 }
@@ -69,7 +68,7 @@ MenuItem::MenuItem()
 MenuItem::MenuItem(const String &text, Keys::Type defaultShortcut, int id)
 {
   {
-    ScopedLock lock(menuIdCounterMutex);
+    boost::mutex::scoped_lock lock(menuIdCounterMutex);
     
     if (id < 0) {
       id = menuIdCounter++;
@@ -84,7 +83,6 @@ MenuItem::MenuItem(const String &text, Keys::Type defaultShortcut, int id)
     assert(menuIdCounter < VACA_FIRST_MDICHILD);
   }
 
-//   mAutoDelete = false;
   m_parent = NULL;
   m_text = text;
   m_id = id;
@@ -99,11 +97,6 @@ MenuItem::~MenuItem()
   if (parent != NULL)
     parent->remove(this);
 }
-
-// bool MenuItem::isAutoDelete()
-// {
-//   return mAutoDelete;
-// }
 
 Menu *MenuItem::getParent()
 {
@@ -228,10 +221,11 @@ void MenuItem::addShortcut(Keys::Type shortcut)
 
 MenuItem *MenuItem::checkShortcuts(Keys::Type pressedKey)
 {
-  for (std::vector<Keys::Type>::iterator it=m_shortcuts.begin(); it!=m_shortcuts.end(); ++it)
+  for (std::vector<Keys::Type>::iterator
+	 it=m_shortcuts.begin(); it!=m_shortcuts.end(); ++it) {
     if (pressedKey == (*it))
       return this;
-
+  }
   return NULL;
 }
 
@@ -308,7 +302,7 @@ Menu::Menu(int menuId)
 		       MAKEINTRESOURCE(menuId));
 
   if (m_HMENU == NULL)
-    throw ResourceException();
+    throw ResourceException("Can't load the menu resource " + String::fromInt(menuId));
 
   subClass();
 }
@@ -325,16 +319,9 @@ Menu::~Menu()
 {
   assert(m_HMENU != NULL);
 
-//   for (Container::iterator it=mContainer.begin(); it!=mContainer.end(); ) {
-//     MenuItem *menuItem = *(it++);
-// //     if (menuItem->isAutoDelete())
-//       delete menuItem;
-//   }
-
   while (!m_container.empty()) {
     MenuItem *menuItem = m_container.front();
-//     if (menuItem->isAutoDelete())
-      delete menuItem;
+    delete menuItem;
   }
 
   DestroyMenu(m_HMENU);
@@ -410,7 +397,8 @@ void Menu::subClass()
 /**
  * Adds a MenuItem at the end of the Menu.
  *
- * @warning You must delete the @a menuItem.
+ * @warning The @a menuItem is deleted automatically if you don't
+ *          remove it before to destroy the Menu.
  *
  * @see insert(int, MenuItem *), remove(MenuItem *)
  */
@@ -434,7 +422,6 @@ MenuItem *Menu::add(MenuItem *menuItem)
 MenuItem *Menu::add(const String &string, Keys::Type defaultShortcut)
 {
   MenuItem *menuItem = add(new MenuItem(string, defaultShortcut));
-//   menuItem->mAutoDelete = true;
   return menuItem;
 }
 
@@ -446,13 +433,13 @@ MenuItem *Menu::add(const String &string, Keys::Type defaultShortcut)
 void Menu::addSeparator()
 {
   MenuItem *menuItem = add(new MenuSeparator());
-//   menuItem->mAutoDelete = true;
 }
 
 /**
  * Inserts a MenuItem at the @a index position of the Menu.
- *
- * @warning You must delete the @a menuItem.
+ * 
+ * @warning The inserted @a menuItem is deleted automatically if you don't
+ *          remove it before to destroy the Menu.
  *
  * @see remove(MenuItem *), insert(int, const String &)
  */
@@ -507,7 +494,7 @@ MenuItem *Menu::insert(int index, MenuItem *menuItem)
   InsertMenuItem(m_HMENU, index, TRUE, &mii);
 
   if (buf != NULL)
-    delete buf;
+    delete[] buf;
 
   m_container.insert(it, menuItem);
   menuItem->m_parent = this;
@@ -528,7 +515,6 @@ MenuItem *Menu::insert(int index, MenuItem *menuItem)
 MenuItem *Menu::insert(int index, const String &text)
 {
   MenuItem *menuItem = insert(index, new MenuItem(text));
-//   menuItem->mAutoDelete = true;
   return menuItem;
 }
 
@@ -538,10 +524,17 @@ MenuItem *Menu::insert(int index, const String &text)
 void Menu::insertSeparator(int index)
 {
   MenuItem *menuItem = insert(index, new MenuSeparator());
-//   menuItem->mAutoDelete = true;
 }
 
-void Menu::remove(MenuItem *menuItem)
+/**
+ * Removes the @a menuItem from the menu.
+ *
+ * @warning You must to delete the specified @a menuItem after this
+ *          (because it'll not be under the control of the Menu any more).
+ *
+ * @return The same pointer to the specified parameter @a menuItem
+ */
+MenuItem *Menu::remove(MenuItem *menuItem)
 {
   assert(m_HMENU != NULL);
 
@@ -549,14 +542,39 @@ void Menu::remove(MenuItem *menuItem)
   RemoveMenu(m_HMENU, getMenuItemIndex(menuItem), MF_BYPOSITION);
 
   menuItem->m_parent = NULL;
-//   menuItem->mAutoDelete = false;
 
   remove_element_from_container(m_container, menuItem);
+
+  return menuItem;
 }
 
-void Menu::remove(int index)
+/**
+ * Removes the menu item that is the specified position by the @a
+ * index.
+ * 
+ * @warning You should delete the returned pointer or save it
+ *          to destroy it in the future.
+ *
+ * @code
+ * Menu *menu = ...
+ * MenuItem *menuItem = menu->getMenuItemByIndex(2);
+ * menu->remove(menuItem);
+ * delete menuItem;
+ * @endcode
+ *
+ * It's the same as:
+ * 
+ * @code
+ * delete menu->remove(2);
+ * @endcode
+ *
+ * @see remove(MenuItem *)
+ */
+MenuItem *Menu::remove(int index)
 {
-  remove(getMenuItemByIndex(index));
+  MenuItem *menuItem = getMenuItemByIndex(index);
+  remove(menuItem);
+  return menuItem;
 }
 
 MenuItem *Menu::getMenuItemByIndex(int index)
@@ -638,30 +656,30 @@ bool Menu::isMenu() const
   return true;
 }
 
-Menu *Menu::getMenuByHMENU(HMENU hmenu)
-{
-  Menu *lastMenu = NULL;
+// Menu *Menu::getMenuByHMENU(HMENU hmenu)
+// {
+//   Menu *lastMenu = NULL;
 
-  std::stack<Menu *> stack;
-  stack.push(this);
+//   std::stack<Menu *> stack;
+//   stack.push(this);
 
-  while (!stack.empty()) {
-    lastMenu = stack.top();
-    if (lastMenu->getHMENU() == hmenu)
-      return lastMenu;
+//   while (!stack.empty()) {
+//     lastMenu = stack.top();
+//     if (lastMenu->getHMENU() == hmenu)
+//       return lastMenu;
 
-    stack.pop();
+//     stack.pop();
 
-    Menu::Container &subMenus(lastMenu->m_container);
-    for (Menu::Container::iterator it=subMenus.begin();
-	 it!=subMenus.end(); ++it) {
-      if ((*it)->isMenu())
-	stack.push(static_cast<Menu *>(*it));
-    }
-  }
+//     Menu::Container &subMenus(lastMenu->m_container);
+//     for (Menu::Container::iterator it=subMenus.begin();
+// 	 it!=subMenus.end(); ++it) {
+//       if ((*it)->isMenu())
+// 	stack.push(static_cast<Menu *>(*it));
+//     }
+//   }
 
-  return NULL;
-}
+//   return NULL;
+// }
 
 HMENU Menu::getHMENU()
 {

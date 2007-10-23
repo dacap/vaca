@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -47,7 +47,7 @@ namespace Vaca {
 class VACA_DLL Anchor : public Constraint
 {
   Rect m_refRect;
-  int m_borders;
+  Borders m_borders;
 
 public:
 

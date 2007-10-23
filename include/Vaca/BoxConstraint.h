@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -40,8 +40,8 @@ namespace Vaca {
 /**
  * Defines a constraint for the BoxLayout. With BoxLayout a Widget can
  * be expansive or not. An expansive widget tries to ocuppy more space
- * that Widget::preferredSize() (generally widgets like ListBox or
- * Edit should be expansive).
+ * what Widget::getPreferredSize() returns (generally widgets like
+ * ListBox or Edit should be expansive).
  *
  * If you don't setup an BoxConstraint for a widget controlled by a
  * BoxLayout, the widget'll be known as non-expansive.

@@ -63,27 +63,28 @@ struct segment
     this->dir = dir;
   }
 
-  void draw(Graphics &g)
+  void draw(Graphics &g, double a, double b)
   {
     Pen pen(Color::White, 3);
     
     // segment
     g.drawLine(pen,
-	       static_cast<int>(pos.x),
-	       static_cast<int>(pos.y),
-	       static_cast<int>(pos.x+dir.x),
-	       static_cast<int>(pos.y+dir.y));
+	       static_cast<int>(pos.x*a),
+	       static_cast<int>(pos.y*b),
+	       static_cast<int>((pos.x+dir.x)*a),
+	       static_cast<int>((pos.y+dir.y)*b));
 
     // normal
     vector2d normal = 8*dir.get_normal().normalize();
     pen.setWidth(1);
     g.drawLine(pen,
-	       static_cast<int>(pos.x+dir.x/2),
-	       static_cast<int>(pos.y+dir.y/2),
-	       static_cast<int>(pos.x+dir.x/2+normal.x),
-	       static_cast<int>(pos.y+dir.y/2+normal.y));
+	       static_cast<int>((pos.x+dir.x/2)*a),
+	       static_cast<int>((pos.y+dir.y/2)*b),
+	       static_cast<int>((pos.x+dir.x/2+normal.x)*a),
+	       static_cast<int>((pos.y+dir.y/2+normal.y)*b));
   }
 
+  // TODO this is wrong
   bool collided_circumference(const vector2d &v, v2dfloat radius)
   {
     vector2d a = pos;
@@ -244,7 +245,7 @@ void move_balls()
   
 }
 
-void draw_balls(Graphics &g)
+void draw_balls(Graphics &g, double a, double b)
 {
   for (std::vector<ball *>::iterator
 	 it = balls.begin(); it != balls.end(); ++it) {
@@ -252,18 +253,18 @@ void draw_balls(Graphics &g)
     Brush brush(bal->color);
 
     g.fillEllipse(brush,
-		  bal->pos.x-bal->radius,
-		  bal->pos.y-bal->radius,
-		  bal->radius*2+1,
-		  bal->radius*2+1);
+		  static_cast<int>((bal->pos.x-bal->radius)*a),
+		  static_cast<int>((bal->pos.y-bal->radius)*b),
+		  static_cast<int>((bal->radius*2+1)*a),
+		  static_cast<int>((bal->radius*2+1)*b));
   }
 }
 
-void draw_segments(Graphics &g)
+void draw_segments(Graphics &g, double a, double b)
 {
   for (std::vector<segment>::iterator
 	 it = segments.begin(); it != segments.end(); ++it) {
-    it->draw(g);
+    it->draw(g, a, b);
   }
 }
 
@@ -331,8 +332,7 @@ class MainFrame : public Frame
 public:
 
   MainFrame()
-    : Frame("BouncingBall (WIP)", NULL,
-	    FrameStyle + ClientEdgeStyle + InitiallyMaximizedFrameStyle)
+    : Frame("BouncingBall (WIP)", NULL, FrameStyle + ClientEdgeStyle)
     , m_timer(1000/TPS)
   {
     setDoubleBuffered(true);
@@ -344,23 +344,69 @@ public:
 
     m_timer.Action.connect(Bind(&MainFrame::onTick, this));
     m_timer.start();
+
+    setSize(400, 300);
+    center();
   }
 
 protected:
 
-  void onResize(const Size &sz)
+//   void onResize(const Size &sz)
+//   {
+//     Frame::onResize(sz);
+//     Timer::pollTimers();
+//     update();
+//   }
+
+  virtual void onResizing(int edge, Rect &rc)
   {
-    Frame::onResize(sz);
-    Timer::pollTimers();
-    update();
+    Frame::onResizing(edge, rc);
+
+    if (edge == WMSZ_BOTTOM || edge == WMSZ_TOP) {
+      int w = rc.h*4/3;
+      rc = Rect(rc.x+rc.w/2-w/2, rc.y, w, rc.h);
+    }
+    else if (edge == WMSZ_LEFT || edge == WMSZ_RIGHT) {
+      int h = rc.w*3/4;
+      rc = Rect(rc.x, rc.y+rc.h/2-h/2, rc.w, h);
+    }
+    else if (edge == WMSZ_BOTTOMRIGHT) {
+      int w = rc.w > rc.h*4/3 ? rc.w: rc.h*4/3;
+      int h = rc.w > rc.h*4/3 ? rc.w*3/4: rc.h;
+      rc = Rect(rc.x, rc.y, w, h);
+    }
+    else if (edge == WMSZ_BOTTOMLEFT) {
+      int w = rc.w > rc.h*4/3 ? rc.w: rc.h*4/3;
+      int h = rc.w > rc.h*4/3 ? rc.w*3/4: rc.h;
+      rc = Rect(rc.x+rc.w-w, rc.y, w, h);
+    }
+    else if (edge == WMSZ_TOPRIGHT) {
+      int w = rc.w > rc.h*4/3 ? rc.w: rc.h*4/3;
+      int h = rc.w > rc.h*4/3 ? rc.w*3/4: rc.h;
+      rc = Rect(rc.x, rc.y+rc.h-h, w, h);
+    }
+    else if (edge == WMSZ_TOPLEFT) {
+      int w = rc.w > rc.h*4/3 ? rc.w: rc.h*4/3;
+      int h = rc.w > rc.h*4/3 ? rc.w*3/4: rc.h;
+      rc = Rect(rc.x+rc.w-w, rc.y+rc.h-h, w, h);
+    }
+    else
+      rc = getBounds();
+    
+//     Timer::pollTimers();
+//     update();
   }
 
   void onPaint(Graphics &g)
   {
+    Rect rc = getClientBounds();
+    double a = static_cast<double>(rc.w) / static_cast<double>(900);
+    double b = static_cast<double>(rc.h) / static_cast<double>(650);
+
     g.drawString("Press 'A' key to add balls", 0, 0);
 
-    simulation_model::draw_balls(g);
-    simulation_model::draw_segments(g);
+    simulation_model::draw_balls   (g, a, b);
+    simulation_model::draw_segments(g, a, b);
   }
 
   void onKeyDown(KeyEvent &ev)
@@ -393,22 +439,15 @@ private:
 
 //////////////////////////////////////////////////////////////////////
 
-class Example : public Application
-{
-  MainFrame m_mainFrame;
-public:
-  virtual void main(std::vector<String> args) {
-    m_mainFrame.setVisible(true);
-  }
-};
-
 int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		   LPSTR lpCmdLine, int nCmdShow)
 {
   std::srand(std::time(NULL));
 
-  Example *app(new Example);
-  app->run();
-  delete app;
+  Application app;
+  MainFrame mainFrame;
+  mainFrame.setVisible(true);
+  app.run();
+
   return 0;
 }

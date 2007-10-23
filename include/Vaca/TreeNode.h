@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -32,17 +32,19 @@
 #ifndef VACA_TREENODE_H
 #define VACA_TREENODE_H
 
-#include "Vaca/base.h"
-#include "Vaca/Component.h"
-#include "Vaca/String.h"
-
 #include <vector>
 #include <commctrl.h>
 #include <boost/noncopyable.hpp>
 
+#include "Vaca/base.h"
+#include "Vaca/Component.h"
+#include "Vaca/String.h"
+
 namespace Vaca {
 
+class TreeView;
 class TreeViewEvent;
+class TreeViewIterator;
 
 /**
  * A TreeView node.  It has a text label, an image, a selected image
@@ -59,6 +61,7 @@ public:
 private:
 
   friend class TreeView;
+  friend class TreeViewIterator;
   
   String    m_text;
   int       m_image;
@@ -67,6 +70,7 @@ private:
   Container m_children;
   HTREEITEM m_HTREEITEM;
   TreeView *m_owner;
+  bool      m_deleted;
 
 public:
 
@@ -74,10 +78,11 @@ public:
   virtual ~TreeNode();
 
   void addNode(TreeNode *node);
+  void removeNode(TreeNode *node);
 
   TreeNode *getParent();
-  TreeView *getTreeView();
   Container getChildren();
+  TreeView *getTreeView();
 
   virtual bool hasChildren();
   virtual String getText();
@@ -87,6 +92,11 @@ public:
   void setText(const String &text);
   void setImage(int imageIndex);
   void setSelectedImage(int selectedImageIndex);
+
+  bool isExpanded();
+  void setExpanded(bool state);
+
+  void ensureVisibility();
   
   HTREEITEM getHTREEITEM();
 
@@ -107,6 +117,7 @@ protected:
 private:
   
   void addToTreeView(TreeView *treeView);
+  void removeFromTreeView();
 
 };
 

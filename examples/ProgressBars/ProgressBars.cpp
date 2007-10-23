@@ -63,7 +63,7 @@ public:
     , m_close("Close", this)
   {
     // a box layout manager with vertical orientation and no-homogeneous
-    setLayout(new BoxLayout(Vertical, false));
+    setLayout(new BoxLayout(Orientation::Vertical, false));
 
     // set the ranges of the progress bars
     m_progressBar1.setRange(0, 100);
@@ -96,14 +96,14 @@ protected:
     switch (m_state) {
 
       case WaitingToWork:
-      case Paused:
+      case Paused: {
 	m_state = Working;
 	m_start.setText("Pause"); // convert the button to "Pause"...
 
 	// this is "The Loop", where the real work is done
 	do {
 	  // when we pump the message queue, we can get events like onClose()
-	  Thread::getCurrent()->pumpMessageQueue();
+	  Thread::pumpMessageQueue();
 
 	  // work done
 	  if (m_progressBar1.getValue() == m_progressBar1.getMaximum()) {
@@ -125,6 +125,7 @@ protected:
 	if (m_state == Aborting)
 	  setVisible(false);
 	break;
+      }
 
       case Working:
 	m_state = Paused;

@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -43,7 +43,11 @@ namespace Vaca {
 class Widget;
 
 /**
- * The base class for every application built with Vaca.
+ * This class is the main class of Vaca. You must to have one instance of
+ * this class, or an instance of a class derived from it, in the whole
+ * application.
+ * 
+ * This class calls CoInitialize and InitCommonControlsEx.
  */
 class VACA_DLL Application : public Thread
 {
@@ -61,7 +65,7 @@ public:
   static HINSTANCE getHINSTANCE();
 
   virtual void run();
-
+  
 private:
 
   virtual void main(std::vector<String> args);

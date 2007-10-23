@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -44,7 +44,6 @@
 namespace Vaca {
 
 class CloseEvent;
-class Command;
 class Icon;
 class Menu;
 class MenuBar;
@@ -88,7 +87,7 @@ public:
 class VACA_DLL Frame : public Register<FrameClass>, public Widget
 {
   MenuBar *m_menuBar;		       // The menu bar.
-  std::vector<Command *> m_commands;   // collection of Commands that can be executed in this Frame
+//   std::vector<Command *> m_commands;   // collection of Commands that can be executed in this Frame
   std::vector<DockArea *> m_dockAreas; // Areas where you can dock a tool-bar.
   bool m_counted;		       // true if this Frame is counted in the frames' list
 
@@ -109,9 +108,6 @@ public:
 
   Size getNonClientSize();
   virtual Rect getLayoutBounds();
-
-  void addCommand(Command *command);
-  void removeCommand(Command *command);
   
   void addDockArea(DockArea *dockArea);
   void removeDockArea(DockArea *dockArea);
@@ -121,16 +117,14 @@ public:
   DockArea *getDockArea(Side side);
   virtual DockArea *getDefaultDockArea();
 
-//   virtual Size preferredSize();
-//   virtual Size preferredSize(const Size &fitIn);
-
   virtual void layout();
   virtual bool isLayoutFree();
   virtual bool keepSynchronized();
 
-  boost::signal<void (Event &)> Activate;   ///< @see onActivate
-  boost::signal<void (Event &)> Deactivate; ///< @see onDeactivate
-  boost::signal<void (CloseEvent &)> Close; ///< @see onClose
+  boost::signal<void (Event &)> Activate;     ///< @see onActivate
+  boost::signal<void (Event &)> Deactivate;   ///< @see onDeactivate
+  boost::signal<void (CloseEvent &)> Close;   ///< @see onClose
+  boost::signal<void (int, Rect &)> Resizing; ///< @see onResizing
 
   // static int getFramesCount();
 //   static int getVisibleFramesByThread(int threadId);
@@ -143,7 +137,7 @@ protected:
 //   virtual void onDestroy();
   virtual void onResize(const Size &sz);
 //   virtual void onKeyDown(KeyEvent &ev);
-  virtual bool onIdAction(int id);
+  virtual bool onActionById(int actionId);
 
   // new events
   virtual void onActivate(Event &ev);

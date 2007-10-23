@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -36,6 +36,16 @@ using namespace Vaca;
 
 ClientLayout::ClientLayout()
 {
+  m_border = 0;
+}
+
+ClientLayout::ClientLayout(int border)
+{
+  m_border = border;
+}
+
+ClientLayout::~ClientLayout()
+{
 }
 
 // Size ClientLayout::minimumSize(Widget *parent, Widget::Container &widgets)
@@ -67,7 +77,7 @@ Size ClientLayout::getPreferredSize(Widget *parent, Widget::Container &widgets, 
     }
   }
 
-  return sz;
+  return sz + m_border;
 }
 
 // Size ClientLayout::maximumSize(Widget *parent, Widget::Container &widgets)
@@ -88,12 +98,15 @@ Size ClientLayout::getPreferredSize(Widget *parent, Widget::Container &widgets, 
 
 void ClientLayout::layout(Widget *parent, Widget::Container &widgets, const Rect &rc)
 {
+  Rect bounds = rc;
+  bounds.shrink(m_border);
+
   beginMovement(widgets);
 
   for (Widget::Container::iterator it=widgets.begin(); it!=widgets.end(); ++it) {
     Widget *widget = *it;
     if (!widget->isLayoutFree())
-      moveWidget(widget, rc);
+      moveWidget(widget, bounds);
   }
 
   endMovement();

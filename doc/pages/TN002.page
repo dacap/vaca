@@ -1,91 +1,84 @@
 // -*- C++ -*-
 
-/*!
+/**
 
 @page TN002 TN002 - Technical Note 002: CreateWindow and DestroyWindow
 
-@image html CreationProcess.png
+@image html CreateDestroyWindows.png
 
-The dispose() method exists because, generally, you should create
-instances of widgets using normal instantiation:
+<h2>Where are created HWNDs?</h2>
 
+All HWNDs are created inside
+@ref Vaca::Widget#createHWND "Widget::createHWND"
+method using the Win32 API routine @c CreateWindowEx. But this
+method is privated, you can't call it (although you can
+override it), the only one that calls this method is
+@ref Vaca::Widget#create "Widget::create". Its main task
+is to setup the @a m_HWND member of @ref Vaca::Widget "Widget"
+instances and to do the classic Win32 subclassing (setting the
+GWL_WNDPROC property):
 @code
+baseWndProc = (WNDPROC)
+  SetWindowLongPtr(m_HWND,
+		   GWLP_WNDPROC,
+		   (LONG_PTR) getGlobalWndProc());
+@endcode
+See @ref Vaca::Widget#subClass() "Widget::subClass()" for more information.
+
+<h2>HWND life time</h2>
+
+All windows/HWNDs have the same life time that its container
+Widget. That is if we create a button:
+@code
+  Frame frame(...)
   {
-    MyDialog dlg;
+    Button myButton("OK", frame); // the HWND is created
     ...
   }
+  // here myButton (and its HWND) doesn't exist
 @endcode
 
-If you want to destroy the window, you can't call the destructor,
-because it's called automatically by the code that generates the
-compiler. So if you want to destroy @c dlg (its HWND) before C++
-life-time ends, you must use dispose().
+<h2>You can override createHWND</h2>
 
+This shouldn't be your case, but if you want to make something like
+Vaca::MdiClient#createHWND, it is, to make your customized
+CreateWindowEx call, you can override @c createHWND, but remember that
+you must to call @ref Vaca::Widget#create "create" inside the constructor of
+your own class, and give @a className=NULL to @ref Vaca::Widget#Widget "Widget()".
+This is a little example:
 @code
-{
-  MyDialog dlg;
-  ...
-  dlg.dispose();
-  ...here I can't use the dlg anymore...
-}
-@endcode
-
-Anyway, generally is not necessary to use dispose(), and you can use
-@c delete directly. Here is another valid example:
-
-@code
-{
-  MyDialog *dlg = new MyDialog();
-  ...
-  delete dlg;
-  ...here I can't use the dlg anymore...
-}
-@endcode
-
-<h2>General rules</h2>
-
-As general rule, if you override @ref Vaca::Widget::createHwnd "createHwnd"
-or @ref Vaca::Widget::defWndProc "defWndProc" you must to use the Widget
-constructor with a NULL class name, and then call
-@ref Vaca::Widget::create create() in your own constructor. Example:
-
-@code
-class MyWidget : public Widget
+class MySuperDuperWidget : public Widget
 {
 public:
-  MyWidget(Widget *parent) 
-    : Widget(NULL, NULL, NoStyle)
+
+  MySuperDuperWidget(Widget *parent) 
+    : Widget(NULL, parent, NoStyle)
   {
-    create(_T("MyWidget"), parent, ChildStyle);
+    create(_T("MySuperDuperWidget"), parent, ChildStyle);
   }
+
 protected:
-  virtual HWND createHwnd(LPCTSTR className,
+
+  virtual HWND createHWND(LPCTSTR className,
                           Widget *parent,
-                          Style style) {
-    return ...;
+                          Style style)
+  {
+    return CreateWindowEx(style.extended,
+			  className,
+			  _T(""),
+			  style.regular,
+			  CW_USEDEFAULT,
+			  CW_USEDEFAULT,
+			  CW_USEDEFAULT,
+			  CW_USEDEFAULT,
+			  parent ? parent->getHWND(): (HWND)NULL,
+			  (HMENU)NULL,
+			  Application::getHINSTANCE(),
+			  reinterpret_cast<LPVOID>(this));
   }
 };
 @endcode
 
-Also, if you override the @ref Vaca::Widget::onDestroy "onDestroy"
-event or @ref Vaca::Widget::destroyHwnd "destroyHwnd" method, you @b MUST to call
-dispose in your destructor:
-
-@code
-class MyDialog : public Dialog
-{
-protected:
-  virtual void onDestroy() {
-     ...
-     Widget::onDestroy();
-  }
-public:
-  virtual ~MyDialog() {
-    dispose();
-  }
-};
-@endcode
-
-@see Vaca::Widget::Widget, Vaca::Widget::dispose, Vaca::Widget::~Widget().
+@see @ref TN001, Vaca::Widget#Widget, Vaca::Widget#~Widget.
 
 */

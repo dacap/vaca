@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -46,12 +46,28 @@ ButtonBase::~ButtonBase()
 {
 }
 
+/**
+ * Returns true if the button is selected or checked. It's useful to
+ * see if a CheckBox, RadioButton or ToggleButton is checked.
+ *
+ * @see setSelected
+ */
 bool ButtonBase::isSelected()
 {
 //   return (sendMessage(BM_GETSTATE, 0, 0) & (BST_CHECKED | BST_PUSHED)) != 0;
   return sendMessage(BM_GETCHECK, 0, 0) == BST_CHECKED;
 }
 
+/**
+ * Selects or deselects (checks or unchecks) the button depending of
+ * @a state parameter.
+ *
+ * @param state
+ *     true if you want to check the button, or false if you want
+ *     to uncheck.
+ * 
+ * @see isSelected
+ */
 void ButtonBase::setSelected(bool state)
 {
   sendMessage(BM_SETCHECK, state ? BST_CHECKED: BST_UNCHECKED, 0);
@@ -65,73 +81,6 @@ void ButtonBase::setSelected(bool state)
 /**
  * Returns the preferred size for the button.
  */
-/*
-Size ButtonBase::preferredSize()
-{
-  assert(::IsWindow(getHWND()));
-
-  int style = getStyle().regular;
-
-  bool pushLike =
-    ((style & 15) == BS_PUSHBUTTON) ||
-    ((style & 15) == BS_DEFPUSHBUTTON) ||
-    ((style & 15) == BS_USERBUTTON) ||
-    ((style & 15) == BS_OWNERDRAW) ||
-    ((style & BS_PUSHLIKE) != 0);
-
-  SIZE size;
-
-#if 0				// TODO
-  // Button_GetIdealSize only in WinXP
-  if (pushLike &&
-      (System::isWinXP()) &&
-      (sendMessage(BCM_GETIDEALSIZE, 0,
-		   reinterpret_cast<LPARAM>(&size)) != FALSE))
-    return Size(&size);
-  // ...well, we must to do this by hand...
-  else {
-#endif
-    // first of all, obtain the text's size
-    Size textSize;
-    {
-      ScreenGraphics g;
-      g.setFont(getFont());
-      textSize = g.measureString(getText());
-    }
-
-    // push-like
-    if (pushLike) {
-      Size border(6, 6);
-
-      // has 3d borders?
-      if ((style & BS_FLAT) == 0)
-	border += Size(GetSystemMetrics(SM_CXEDGE),
-		       GetSystemMetrics(SM_CYEDGE))*2;
-
-      return Size(66, 0).createUnion(textSize+border);
-    }
-    // check-box
-    else if ((style & 15) == BS_CHECKBOX ||
-	     (style & 15) == BS_AUTOCHECKBOX ||
-	     (style & 15) == BS_3STATE ||
-	     (style & 15) == BS_AUTO3STATE) {
-      return Size(textSize.h+6+textSize.w, textSize.h);
-    }
-    // radio
-    else if ((style & 15) == BS_RADIOBUTTON ||
-	     (style & 15) == BS_AUTORADIOBUTTON) {
-      return Size(textSize.h+6+textSize.w, textSize.h);
-    }
-
-    // maybe a BS_GROUPBOX...
-    // just returns the size of the text
-    return textSize;
-#if 0
-  }
-#endif
-}
-*/
-
 void ButtonBase::onPreferredSize(Size &sz)
 {
   assert(::IsWindow(getHWND()));
@@ -211,11 +160,11 @@ void ButtonBase::onAction(Event &ev)
 }
 
 /**
- * Catchs BN_CLICKED to fire onAction event.
+ * Catches BN_CLICKED to fire onAction event.
  */
-bool ButtonBase::onCommand(int id, int code, LRESULT &lResult)
+bool ButtonBase::onReflectedCommand(int id, int code, LRESULT &lResult)
 {
-  if (Widget::onCommand(id, code, lResult))
+  if (Widget::onReflectedCommand(id, code, lResult))
     return true;
 
   switch (code) {

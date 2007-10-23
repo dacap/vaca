@@ -57,7 +57,7 @@ protected:
     
     Image newImage(imageSize);
 
-    Graphics &g(newImage.getGraphics());
+    Graphics &g = *newImage.getGraphics();
 
     // clear the new image with a white background
     Brush whiteBrush(Color::White);
@@ -85,7 +85,7 @@ protected:
   virtual void onMouseDown(MouseEvent &ev)
   {
     if (!hasCapture()) {
-      acquireCapture();
+      captureMouse();
 
       for (int c=0; c<3; ++c)
 	m_point[c] = ev.getPoint();
@@ -99,20 +99,12 @@ protected:
   {
     if (hasCapture()) {
       // get the graphics from the to draw into the image
-      Graphics &g(m_image.getGraphics());
-
-      // we must to use "System::getCursorPos()" (absolute cursor
-      // position), because "ev.getPoint()" is useful only inside the
-      // client-bounds, but we adquire the mouse capture, so we need
-      // to know the position of the mouse outside the client bounds
-      Point newPoint =
-	System::getCursorPos()
-	- getAbsoluteClientBounds().getOrigin();
+      Graphics &g = *m_image.getGraphics();
 
       // rotate points
       m_point[0] = m_point[1];
       m_point[1] = m_point[2];
-      m_point[2] = newPoint;
+      m_point[2] = ev.getPoint();
 
       // pen
       Color color(m_erasing ? Color::White: Color::Black);
@@ -153,7 +145,7 @@ protected:
     if (hasCapture()) {
       // we can release the capture (remember to check hasCapture()
       // before to release the mouse capture)
-      releaseCapture();
+      releaseMouse();
     }
   }
 

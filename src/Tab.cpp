@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -122,15 +122,15 @@ Side TabBase::getSide()
 
   if ((style & TCS_VERTICAL) != 0) {
     if ((style & TCS_RIGHT) != 0)
-      return RightSide;
+      return Side::Right;
     else
-      return LeftSide;
+      return Side::Left;
   }
   else {
     if ((style & TCS_BOTTOM) != 0)
-      return BottomSide;
+      return Side::Bottom;
     else
-      return TopSide;
+      return Side::Top;
   }
 }
 
@@ -150,11 +150,11 @@ void TabBase::setSide(Side side)
   removeStyle(Style(TCS_VERTICAL | TCS_RIGHT | TCS_BOTTOM, 0));
 
   switch (side) {
-    case TopSide:    style = 0; break;
-    case BottomSide: style = TCS_BOTTOM; break;
+    case Side::Top:    style = 0; break;
+    case Side::Bottom: style = TCS_BOTTOM; break;
     // TCS_VERTICAL needs TCS_MULTILINE
-    case LeftSide:   style = TCS_VERTICAL | TCS_MULTILINE; break;
-    case RightSide:  style = TCS_VERTICAL | TCS_RIGHT | TCS_MULTILINE; break;
+    case Side::Left:   style = TCS_VERTICAL | TCS_MULTILINE; break;
+    case Side::Right:  style = TCS_VERTICAL | TCS_RIGHT | TCS_MULTILINE; break;
   }
 
   addStyle(Style(style, 0));
@@ -251,11 +251,13 @@ String TabBase::getPageText(int pageIndex)
 
   if (TabCtrl_GetItem(getHWND(), pageIndex, &tci) != FALSE) {
     String text(tci.pszText);
-    delete tci.pszText;
+    delete[] tci.pszText;
     return text;
   }
-  else
+  else {
+    delete[] tci.pszText;
     return String();
+  }
 }
 
 // void TabBase::setPadding(Size padding)
@@ -279,21 +281,6 @@ Size TabBase::getNonClientSize()
   return Rect(&nonClientRect).getSize() - clientRect.getSize();
 }
 
-// Size TabBase::preferredSize()
-// {
-//   return getNonClientSize() + Widget::preferredSize();
-// }
-
-// Size TabBase::preferredSize(const Size &fitIn)
-// {
-//   Size ncSize(getNonClientSize());
-
-//   return
-//     ncSize +
-//     Widget::preferredSize(Size(VACA_MAX(0, fitIn.w - ncSize.w),
-// 			       VACA_MAX(0, fitIn.h - ncSize.h)));
-// }
-
 // /**
 //  * TCN_SELCHANGING
 //  */
@@ -313,6 +300,11 @@ void TabBase::onPageChange(Event &ev)
   PageChange(ev);
 }
 
+/**
+ * Adds space for the non-client size.
+ *
+ * @see getNonClientSize
+ */
 void TabBase::onPreferredSize(Size &sz)
 {
   Size ncSize = getNonClientSize();
@@ -326,8 +318,11 @@ void TabBase::onPreferredSize(Size &sz)
   sz += ncSize;
 }
 
-bool TabBase::onNotify(LPNMHDR lpnmhdr, LRESULT &lResult)
+bool TabBase::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT &lResult)
 {
+  if (Widget::onReflectedNotify(lpnmhdr, lResult))
+    return true;
+
   switch (lpnmhdr->code) {
 
     case TCN_SELCHANGE: {

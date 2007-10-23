@@ -78,7 +78,7 @@ protected:
     if (m_region != NULL &&
 	!m_readOnly &&
 	!hasCapture()) {
-      acquireCapture();
+      captureMouse();
 
       m_startPoint =
 	m_oldPoint = System::getCursorPos();
@@ -113,7 +113,7 @@ protected:
     if (hasCapture()) {
       // we can release the capture (remember to check hasCapture()
       // before to release the mouse capture)
-      releaseCapture();
+      releaseMouse();
 
       // clean the feedback rectangle
       ScreenGraphics g;
@@ -182,8 +182,7 @@ public:
     , m_regions(&m_tab)
   {
     setLayout(new ClientLayout);
-    m_tab.setLayout(new BoxLayout(Vertical, true)); // as ClientLayout,
-						   // but with borders
+    m_tab.setLayout(new BoxLayout(Orientation::Vertical, true)); // as ClientLayout, but with borders
 
     m_tab.addPage("Region A");
     m_tab.addPage("Region B");

@@ -33,94 +33,22 @@
 
 using namespace Vaca;
 
-static Mutex beepMutex;	  // mutex used to access to the Beep function
-
-class MainFrame : public Frame
+void hello_world(const String &title)
 {
-  Label m_label;
-public:
-  MainFrame(int num)
-    : Frame(String("Thread"))
-    , m_label(String("Thread ID ")+String::fromInt(num), this)
-  {
-    setLayout(new ClientLayout);
-    setSize(getPreferredSize());
-  }
-};
+  Frame frm(title);                    // creates the main window
+  Label lbl("Hello World!", &frm);     // creates a label for that window
+  frm.setLayout(new ClientLayout);     // the label'll use the client area
+  frm.setSize(frm.getPreferredSize()); // set the preferred size
+  frm.setVisible(true);                // make the window visible
+  Thread::doMessageLoop();
+}
 
-class ThreadWithFrame : public Thread
+int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-public:
-
-  virtual void run()
-  {
-    MainFrame frame1(getId());
-    MainFrame frame2(getId());
-    frame1.setVisible(true);
-    frame2.setVisible(true);
-
-    doMessageLoop();
-
-    // this thread finish!
-    ScopedLock lock(beepMutex);
-    Beep(100, 50);
-  }
-
-};
-
-class Example : public Application
-{
-public:
-
-  virtual void main(std::vector<String> args)
-  {
-    ThreadWithFrame threads[4];
-
-    Frame supremeFrame("Threads");
-    Label label("Press the button to kill all threads. "
-		"Each thread has two windows, when you "
-		"close both windows, you should hear a noise "
-		"(which means that the thread was joined). ", &supremeFrame);
-    label.setConstraint(new BoxConstraint(true));
-
-    Button killAllButton("Kill All", &supremeFrame);
-    killAllButton.Action.connect(Bind(&Example::onKillAll, this,
-				      threads, 4));
-
-    supremeFrame.setLayout(new BoxLayout(Vertical, false));
-    supremeFrame.setSize(Size(256, 256));
-    supremeFrame.setVisible(true);
-
-    // execute all threads
-    for (int c=0; c<4; c++)
-      threads[c].execute();
-
-    // do the message loop for the "supremeFrame"
-    doMessageLoop();
-
-    // join with all threads
-    for (int c=0; c<4; c++)
-      threads[c].join();
-  }
-
-  void onKillAll(ThreadWithFrame *threads, int size)
-  {
-    for (int c=0; c<size; ++c)
-      threads[c].breakMessageLoop();
-  }
-
-};
-
-int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
-		   LPSTR lpCmdLine, int nCmdShow)
-{
-  Example *app(new Example);
-  app->run();
-  delete app;
-
-  // the application finish!
-  ScopedLock lock(beepMutex);
-  Beep(900, 100);
-
+  Application app;
+  boost::thread_group threads;
+  for (int c=1; c<=10; ++c)
+    threads.create_thread(boost::bind(&hello_world, String::fromInt(c)));
+  threads.join_all();
   return 0;
 }

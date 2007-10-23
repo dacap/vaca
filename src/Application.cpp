@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -34,6 +34,8 @@
 #include "Vaca/Application.h"
 #include "Vaca/Frame.h"
 #include "Vaca/Timer.h"
+#include "Vaca/Graphics.h"
+#include "Vaca/Font.h"
 
 using namespace Vaca;
 
@@ -41,11 +43,11 @@ HINSTANCE Application::m_HINSTANCE = NULL;
 Application *Application::m_instance = NULL;
 
 /**
- * Initializes the variables of the Application class. Also calls the
- * InitCommonControls.
+ * Initializes the variables of the Application class. It calls
+ * CoInitialize and InitCommonControls.
  */
 Application::Application()
-  : Thread(true)
+  : Thread()
 {
   assert(Application::m_HINSTANCE == NULL);
   assert(Application::m_instance == NULL);
@@ -66,23 +68,32 @@ Application::Application()
   InitCommonControlsEx(&icce);
 }
 
+/**
+ * Finishes the application. It calls CoUninitialize.
+ */
 Application::~Application()
 {
   assert(Application::m_HINSTANCE != NULL);
   assert(Application::m_instance == this);
 
-  Timer::finishTimerThread();
+  Timer::stop_timer_thread();
 
   Application::m_HINSTANCE = NULL;
   Application::m_instance = NULL;
 
-  // delete brushes and pens
+  // delete brushes, pens and fonts
   Graphics::deleteHandles();
+  Font::deleteHandles();
 
   // close the log file
-  __vaca_trace(NULL, 0, NULL);
+  __vaca_remove_all_thread_data();
+  __vaca_close_log_file();
 
   CoUninitialize();
+
+#ifdef MEMORY_LEAK_DETECTOR
+  atexit(check_leaks);
+#endif
 }
 
 Application *Application::getInstance()
@@ -152,15 +163,23 @@ void Application::run()
   main(args);
 
   VACA_TRACE("before default doMessageLoop()\n");
-  doMessageLoop();
+  try {
+    doMessageLoop();
+  }
+  catch (std::exception &e) {
+    VACA_TRACE("std::exception() = %s\n", e.what());
+  }
+  catch (...) {
+    VACA_TRACE("unknown exception\n");
+  }
   VACA_TRACE("after default doMessageLoop()\n");
 }
 
 /**
  * The application entry point <em>"a la"</em> Java.
  *
- * After calling run(), main() is executed, and when this finish,
- * the doMessageLoop() is automatically executed.
+ * After calling run(), main() is executed, and when it finishes, the
+ * doMessageLoop() is automatically executed.
  */
 void Application::main(std::vector<String> args)
 {

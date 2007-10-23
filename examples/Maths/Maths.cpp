@@ -135,7 +135,7 @@ protected:
     if (mHotPoint >= 0) {
       // drag the point with left button
       if (ev.getButton() == MouseButtons::Left)
-	acquireCapture();
+	captureMouse();
       // ...or remove the point with the right one
       else {
 	// remove point
@@ -165,7 +165,7 @@ protected:
   virtual void onMouseUp(MouseEvent &ev)
   {
     if (hasCapture())
-      releaseCapture();
+      releaseMouse();
   }
 
   // when the mouse is moved

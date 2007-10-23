@@ -99,12 +99,12 @@ public:
     , mOk("OK", &mBottom)
     , mCancel("Cancel", &mBottom)
   {
-    setLayout(new BoxLayout(Vertical, true));
-    mTop.setLayout(new BoxLayout(Horizontal, false, 0));
-    mBottom.setLayout(new BoxLayout(Horizontal, true, 0));
+    setLayout(new BoxLayout(Orientation::Vertical, true));
+    mTop.setLayout(new BoxLayout(Orientation::Horizontal, false, 0));
+    mBottom.setLayout(new BoxLayout(Orientation::Horizontal, true, 0));
     mSeedEdit.setConstraint(new BoxConstraint(true));
 
-    mSeedEdit.acquireFocus();
+    mSeedEdit.requestFocus();
     mSeedEdit.selectAll();
     mOk.Action.connect(Bind(&InsertSeedDialog::defaultOkAction, this));
     mCancel.Action.connect(Bind(&InsertSeedDialog::defaultCancelAction, this));
@@ -202,7 +202,7 @@ public:
 			    - ResizableFrameStyle)  // can't change the size
     , m_font("Verdana", 10)
     , m_fontSmall("Verdana", 7)
-    , m_fontBold("Verdana", 10, Font::Style::Bold)
+    , m_fontBold("Verdana", 10, FontStyle::Bold)
   {
     m_hotCell = m_puzzle.end();
 

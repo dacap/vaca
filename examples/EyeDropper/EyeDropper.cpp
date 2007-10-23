@@ -34,6 +34,7 @@
 
 using namespace Vaca;
 
+// the eye-dropper widget
 class EyeDropper : public Panel
 {
   Font m_font;
@@ -45,7 +46,7 @@ public:
   EyeDropper(Widget *parent)
     : Panel(parent)
     , m_font("Courier", 10)
-    , m_cursor(IDC_EYEDROPPER)
+    , m_cursor(ResourceId(IDC_EYEDROPPER))
     , m_isHexFormat(false)
   {
     setBgColor(Color::Black);
@@ -101,7 +102,7 @@ protected:
 
   virtual void onMouseDown(MouseEvent &ev)
   {
-    acquireCapture();
+    captureMouse();
     setCursor(m_cursor);
   }
 
@@ -117,11 +118,12 @@ protected:
   virtual void onMouseUp(MouseEvent &ev)
   {
     if (hasCapture())
-      releaseCapture();
+      releaseMouse();
   }
 
 };
 
+// the main window
 class MainFrame : public Frame
 {
   Label m_label;
@@ -139,7 +141,7 @@ public:
     , m_eyeDropper(this)
     , m_hexFormat("Hex", this)
   {
-    setLayout(new BoxLayout(Vertical, false));
+    setLayout(new BoxLayout(Orientation::Vertical, false));
     m_hexFormat.Action.connect(Bind(&MainFrame::onHexToggle, this));
     setSize(getPreferredSize());
   }
@@ -153,22 +155,13 @@ protected:
 
 };
 
-//////////////////////////////////////////////////////////////////////
-
-class Example : public Application
-{
-  MainFrame m_mainFrame;
-public:
-  virtual void main(std::vector<String> args) {
-    m_mainFrame.setVisible(true);
-  }
-};
-
+// entry point of the program
 int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		   LPSTR lpCmdLine, int nCmdShow)
 {
-  Example *app(new Example);
-  app->run();
-  delete app;
+  Application app;
+  MainFrame mainFrame;
+  mainFrame.setVisible(true);
+  app.run();
   return 0;
 }

@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -55,7 +55,7 @@ const RadioGroup &RadioButton::getRadioGroup() const
   return mRadioGroup;
 }
 
-bool RadioButton::onCommand(int id, int code, LRESULT &lResult)
+bool RadioButton::onReflectedCommand(int id, int code, LRESULT &lResult)
 {
   if (code == BN_CLICKED) {
     Widget::Container siblings = getParent()->getChildren();
@@ -75,7 +75,7 @@ bool RadioButton::onCommand(int id, int code, LRESULT &lResult)
     setSelected(true);
   }
 
-  return ButtonBase::onCommand(id, code, lResult);
+  return ButtonBase::onReflectedCommand(id, code, lResult);
 }
 
 //////////////////////////////////////////////////////////////////////

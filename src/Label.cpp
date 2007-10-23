@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -56,11 +56,11 @@ TextAlign Label::getTextAlign()
   int style = getStyle().regular;
 
   if ((style & 31) == SS_CENTER)
-    return CenterAlign;
+    return TextAlign::Center;
   else if ((style & 31) == SS_RIGHT)
-    return RightAlign;
+    return TextAlign::Right;
   else
-    return LeftAlign;
+    return TextAlign::Left;
 }
 
 /**
@@ -79,9 +79,9 @@ void Label::setTextAlign(TextAlign align)
     int style = SS_LEFT;
 
     switch (align) {
-      case LeftAlign:   style = SS_LEFT;   break;
-      case CenterAlign: style = SS_CENTER; break;
-      case RightAlign:  style = SS_RIGHT;  break;
+      case TextAlign::Left:   style = SS_LEFT;   break;
+      case TextAlign::Center: style = SS_CENTER; break;
+      case TextAlign::Right:  style = SS_RIGHT;  break;
     }
 
     removeStyle(Style(SS_LEFT | SS_CENTER | SS_RIGHT, 0));
@@ -90,26 +90,6 @@ void Label::setTextAlign(TextAlign align)
     invalidate(true);
   }
 }
-
-// Size Label::preferredSize()
-// {
-//   ScreenGraphics g;
-//   g.setFont(getFont());
-//   return g.measureString(getText());
-// }
-
-// Size Label::preferredSize(const Size &fitIn)
-// {
-//   // TODO HTHEME stuff
-  
-//   if ((fitIn.w > 0) && useWordWrap()) {
-//     ScreenGraphics g;
-//     g.setFont(getFont());
-//     return g.measureString(getText(), fitIn.w);
-//   }
-
-//   return preferredSize();
-// }
 
 bool Label::useWordWrap()
 {

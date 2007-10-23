@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -89,53 +89,31 @@ void ListView::setTextBgColor(Color color)
   ListView_SetTextBkColor(getHWND(), color.getColorRef());
 }
 
-// Size ListView::preferredSize()
-// {
-//   DWORD res =
-//     sendMessage(LVM_APPROXIMATEVIEWRECT,
-// 		static_cast<WPARAM>(-1),
-// 		MAKELPARAM(0, 0));
-
-//   return Size(LOWORD(res), HIWORD(res));
-// }
-
-// Size ListView::preferredSize(const Size &fitIn)
-// {
-//   assert(::IsWindow(getHWND()));
-
-//   DWORD res =
-//     sendMessage(LVM_APPROXIMATEVIEWRECT,
-// 		static_cast<WPARAM>(-1),
-// 		MAKELPARAM(fitIn.w, fitIn.h));
-
-//   return Size(LOWORD(res), HIWORD(res));
-// }
-
-ListView::Type ListView::getViewType()
+ListViewType ListView::getType()
 {
   int style = getStyle().regular & LVS_TYPEMASK;
 
   switch (style) {
-    case LVS_ICON:      return Icon;
-    case LVS_REPORT:    return Report;
-    case LVS_SMALLICON: return SmallIcon;
-    case LVS_LIST:      return List;
+    case LVS_ICON:      return ListViewType::Icon;
+    case LVS_REPORT:    return ListViewType::Report;
+    case LVS_SMALLICON: return ListViewType::SmallIcon;
+    case LVS_LIST:      return ListViewType::List;
   }
 
   // impossible
   assert(false);
-  return List;
+  return ListViewType::List;
 }
 
-void ListView::setViewType(ListView::Type type)
+void ListView::setType(ListViewType type)
 {
   int style = 0;
 
   switch (type) {
-    case Icon:      style = LVS_ICON;      break;
-    case Report:    style = LVS_REPORT;    break;
-    case SmallIcon: style = LVS_SMALLICON; break;
-    case List:      style = LVS_LIST;      break;
+    case ListViewType::Icon:      style = LVS_ICON;      break;
+    case ListViewType::Report:    style = LVS_REPORT;    break;
+    case ListViewType::SmallIcon: style = LVS_SMALLICON; break;
+    case ListViewType::List:      style = LVS_LIST;      break;
   }
 
   setStyle(getStyle()
@@ -177,7 +155,7 @@ int ListView::insertColumn(int columnIndex, const String &header, TextAlign text
 
   bool withDummyColumn = false;
   
-  if (columnIndex == 0 && textAlign != LeftAlign) {
+  if (columnIndex == 0 && textAlign != TextAlign::Left) {
     // the first column can't have a textAlign != LeftAlign (Win32
     // limitation), so we can use a dummy-column (MSDN solution)
     insertDummyColumn();
@@ -190,9 +168,9 @@ int ListView::insertColumn(int columnIndex, const String &header, TextAlign text
 
   lvc.mask = LVCF_FMT | LVCF_TEXT;
   lvc.fmt = 0
-    | (textAlign == LeftAlign   ? LVCFMT_LEFT   : 0)
-    | (textAlign == CenterAlign ? LVCFMT_CENTER : 0)
-    | (textAlign == RightAlign  ? LVCFMT_RIGHT  : 0)
+    | (textAlign == TextAlign::Left   ? LVCFMT_LEFT   : 0)
+    | (textAlign == TextAlign::Center ? LVCFMT_CENTER : 0)
+    | (textAlign == TextAlign::Right  ? LVCFMT_RIGHT  : 0)
     ;
   lvc.pszText = const_cast<LPTSTR>(header.c_str());
 
@@ -464,8 +442,11 @@ void ListView::onColumnClick(ListViewEvent &ev)
   ColumnClick(ev);
 }
 
-bool ListView::onNotify(LPNMHDR lpnmhdr, LRESULT &lResult)
+bool ListView::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT &lResult)
 {
+  if (Widget::onReflectedNotify(lpnmhdr, lResult))
+    return true;
+
   switch (lpnmhdr->code) {
 
     case LVN_ITEMCHANGING: {

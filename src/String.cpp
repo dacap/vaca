@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -63,17 +63,24 @@ String::String(const VACA_STRING_BASE &str)
 String::String(const char *str)
   : VACA_STRING_BASE()
 {
-  // TODO check if this really works
-  for (const char *p = str; *p != 0; ++p)
-    push_back(static_cast<wchar_t>(*p));
+  int len = strlen(str)+1;
+  LPWSTR wideBuf = new WCHAR[len];
+  int ret = MultiByteToWideChar(CP_ACP, 0, str, len, wideBuf, len);
+  if (ret == 0)
+    assign(L"");
+  else
+    assign(wideBuf);
 }
 
-String::String(const char *str, int length)
+String::String(const char *str, int len)
   : VACA_STRING_BASE()
 {
-  // TODO check if this really works
-  for (int c=0; c<length; ++c)
-    push_back(static_cast<wchar_t>(str[c]));
+  LPWSTR wideBuf = new WCHAR[len];
+  int ret = MultiByteToWideChar(CP_ACP, 0, str, len, wideBuf, len);
+  if (ret == 0)
+    assign(L"");
+  else
+    assign(wideBuf);
 }
 
 String::String(const wchar_t *str)
@@ -112,6 +119,53 @@ String::~String()
 {
 }
 
+/**
+ * TODO docme
+ */
+std::string String::to_string() const
+{
+#ifdef _UNICODE
+  int len = this->size()+1;
+  LPSTR ansiBuf = new CHAR[len];
+  int ret = WideCharToMultiByte(CP_ACP, 0, this->c_str(), len, ansiBuf, len, NULL, NULL);
+  if (ret == 0)
+    return "";
+
+  std::string res(ansiBuf);
+  delete ansiBuf;
+  return res;
+#else
+  return *this;
+#endif
+}
+
+/**
+ * Converts the Vaca::String to a new a string with wide-characters
+ * (std::wstring). If Vaca was compiled without the Unicode support
+ * (it is that Vaca::String is just ASCII), it converts the string to
+ * @c wstring using the Win32 routine @c MultiByteToWideChar.
+ */
+std::wstring String::to_wstring() const
+{
+#ifdef _UNICODE
+  return *this;
+#else
+  int len = this->size()+1;
+  LPWSTR wideBuf = new WCHAR[len];
+  int ret = MultiByteToWideChar(CP_ACP, 0, this->c_str(), len, wideBuf, len);
+  if (ret == 0)
+    return L"";
+
+  std::wstring res(wideBuf);
+  delete wideBuf;
+  return res;
+#endif
+}
+
+/**
+ * Commondly used to give strings to Win32 API or from Win32 API (in
+ * structures and messages).
+ */
 void String::copyTo(LPTSTR dest, int size) const
 {
   _tcsncpy(dest, c_str(), size);
@@ -124,7 +178,7 @@ String String::fromInt(int value, int base, int precision)
   assert(base > 0);
 
   div_t d;
-  d.quot = value;
+  d.quot = value < 0 ? -value: value;
   d.rem = 0;
 
   int i = 0;
@@ -155,7 +209,7 @@ String String::fromDouble(double value, int precision)
 {
   TCHAR buf[256];		// TODO buf overflow
 
-  _stprintf(buf, "%.*g", precision, value);
+  _stprintf(buf, _T("%.*g"), precision, value);
 
   return String(buf);
 }

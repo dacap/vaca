@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -38,8 +38,6 @@
 #include "Vaca/Constraint.h"
 #include "Vaca/System.h"
 #include "Vaca/Font.h"
-#include "Vaca/Mutex.h"
-#include "Vaca/ScopedLock.h"
 #include "Vaca/Cursor.h"
 #include "Vaca/MouseEvent.h"
 #include "Vaca/KeyEvent.h"
@@ -54,19 +52,40 @@
 #define USE_PROP
 
 // uncomment this if you want message reporting in the "vaca.log"
-// #define REPORT_MESSAGES
+#define REPORT_MESSAGES
 
 using namespace Vaca;
-
-static Mutex outsideWidgetMutex;     // used to access outsideWidget
-static Widget *outsideWidget = NULL; // widget used to call createHWND
 
 #ifdef USE_PROP
 #define VACAATOM (reinterpret_cast<LPCTSTR>(MAKELPARAM(vacaAtom, 0)))
 
-static Mutex vacaAtomMutex; // used to access vacaAtom
+static boost::mutex vacaAtomMutex; // used to access vacaAtom
 static ATOM vacaAtom = 0;
 #endif
+
+// struct ThreadDataForWidget
+// {
+//   Widget *outsideWidget; // widget used to call createHWND
+
+//   ThreadDataForWidget() {
+//     outsideWidget = NULL;
+//   }
+
+//   ~ThreadDataForWidget() {
+//     outsideWidget = NULL;
+//   }
+
+// };
+
+// static boost::thread_specific_ptr<ThreadDataForWidget> threadData;
+
+// static ThreadDataForWidget *getThreadData()
+// {
+//   if (threadData.get() == NULL)
+//     threadData.reset(new ThreadDataForWidget);
+
+//   return threadData.get();
+// }
 
 // default callback to destroy a HWND
 static void Widget_DestroyHWNDProc(HWND hwnd)
@@ -78,14 +97,17 @@ static void Widget_DestroyHWNDProc(HWND hwnd)
 // References stuff
 
 /**
- * Deletes the specified @a widget if it isn't referenced, or defer
- * its deletion for a secure point of deletion (for example, when it's
- * completelly dereferenced).
+ * Safe way to delete from memory the widget. It deletes the specified
+ * widget if it isn't referenced, or defer its deletion for a secure
+ * point of deletion (for example, when it's completelly
+ * unreferenced).
  */
 void Vaca::delete_widget(Widget *widget)
 {
+  // is unreferenced?
   if (widget->getRefCount() == 0)
     delete widget;
+  // is referenced, we must defer the "delete" for "__internal_checked_delete_widget"
   else {
     assert(widget->getRefCount() > 0);
 
@@ -97,10 +119,17 @@ void Vaca::delete_widget(Widget *widget)
   }
 }
 
-// checks if "widget" should be deleted right now
+/**
+ * @internal
+ *
+ * Checks if @a widget should be deleted right now, and if it is, deletes it.
+ * Don't use this function, it's an internal routine that uses Vaca.
+ */
 void Vaca::__internal_checked_delete_widget(Widget *widget)
 {
+  // is "delete-after-event" flag activated and is the widget unreferenced?
   if (widget->m_deleteAfterEvent && widget->getRefCount() == 0) {
+    // ok, so we can delete it...
     widget->m_deleteAfterEvent = false;
     delete widget;
   }
@@ -128,31 +157,47 @@ static void unref_widget(Widget::Container &container)
   }
 }
 
-//
-//////////////////////////////////////////////////////////////////////
-
+// ============================================================
+// CTOR & DTOR
+// ============================================================
+
 /**
- * Creates a new widget with the specified @a className.
- *
- * You can specify a NULL @a className, if you want to call create()
- * method by your self (@ref TN002).
+ * Creates a new widget with the specified class name. You can specify a
+ * NULL @a className if you want to call create() method by your self
+ * (see @ref TN002).
  *
  * You can't create widgets from a HWND, so you can't treat an
  * existent HWND like a Widget.
  *
- * @param className Must be a registered WNDCLASS for Windows.
- * @param parent It's a Widget (generally a Frame) that will contain this widget.
- * @param style A set of @c WS_ and @c WS_EX values.
+ * @param className
+ *     Must be a registered WNDCLASS for Windows.
+ *	
+ * @param parent
+ *     It's a Widget (generally a Frame) that will act as the container
+ *     parent of the new widget.
+ * 
+ * @param style
+ *     You can specify the style to be used to create the
+ *     widget. Generally Vaca handles the styles in this way: If the
+ *     class is called @c Button, the default style is @c ButtonStyle.
+ *     There exist another global styles that can be used for
+ *     <em>every widget</em> like @c FocusableStyle or @c VisibleStyle,
+ *     but the specific styles for a particular class,
+ *     e.g. Edit, end with @c ...EditStyle, like @c ReadOnlyEditStyle.
  */
 Widget::Widget(LPCTSTR className, Widget *parent, Style style)
 {
-  vacaAtomMutex.lock();
-  if (vacaAtom == 0) {
-    vacaAtom = GlobalAddAtom(_T("VacaAtom"));
-    assert(vacaAtom != 0);
+  // creates the "VacaAtom" (the property name to put the "Widget*"
+  // pointer in the HWNDs)
+  {
+    boost::mutex::scoped_lock lock(vacaAtomMutex);
+    if (vacaAtom == 0) {
+      vacaAtom = GlobalAddAtom(_T("VacaAtom"));
+      assert(vacaAtom != 0);
+    }
   }
-  vacaAtomMutex.unlock();
 
+  // initialize members
   m_HWND             = NULL;
   m_parent           = NULL;
   m_fgColor          = System::getColor(COLOR_WINDOWTEXT);
@@ -168,14 +213,39 @@ Widget::Widget(LPCTSTR className, Widget *parent, Style style)
   m_defWndProc       = ::DefWindowProc;
   m_destroyHWNDProc  = Widget_DestroyHWNDProc;
 
+  // create with the specified "className"?
   if (className != NULL)
     create(className, parent, style);
 }
 
 /**
- * Deletes the widget.
+ * Destroys the widget, literally calling Win32 DestroyWindow function.
+ * 
+ * At this point the widget shouldn't have any children, also there is
+ * an assert to valid this. So you should care about to remove all
+ * dynamic-allocated and added children to this Widget explicity
+ * before to reach the Widget destructor (a good place is your own
+ * customized widget destructor that is called before Widget
+ * destructor). E.g.:
  *
- * TODO explain about automatic children deletion
+ * @code
+ * class MyWidget : public Panel
+ * {
+ *   Widget *child;
+ * public:
+ *   MyWidget(Widget *parent)
+ *     : Panel(parent)
+ *   {
+ *     child = new Button("Test", this);
+ *   }
+ *   virtual ~MyWidget()
+ *   {
+ *     // delete/remove the widget from the parent before to
+ *     // reach the Widget dtor...
+ *     delete child;
+ *   }
+ * }
+ * @endcode
  *
  * @see @ref TN002
  */
@@ -250,6 +320,10 @@ Widget::~Widget()
   m_HWND = NULL;
 }
 
+// ============================================================
+// PARENT & CHILDREN RELATIONSHIP
+// ============================================================
+
 /**
  * Returns the parent of the widget. This method doesn't use the
  * GetParent routine of Win32.
@@ -260,7 +334,10 @@ Widget *Widget::getParent()
 }
 
 /**
- * Returns the collection of children.
+ * Returns the collection of children. The returned list is a
+ * copy of the original, so you can do with it what you want,
+ * in other words, doesn't matter if you add or remove elements
+ * from them, the original list of children will not be modified.
  */
 Widget::Container Widget::getChildren()
 {
@@ -285,10 +362,14 @@ Widget::Container Widget::getChildren()
 #endif
 }
 
+// ===============================================================
+// LAYOUT & CONSTRAINT
+// ===============================================================
+
 /**
- * Returns the current Layout (Widget::m_layout) that arranges the
- * widget's children. For most widgets, generally it'll NULL, but for
- * a Frame you should use setLayout to change the Layout manager.
+ * Returns the current Layout that arranges the widget's children. For
+ * most widgets, generally it'll NULL, but for a Frame you should use
+ * setLayout to change the Layout manager.
  *
  * @warning You can't delete the returned pointer (use "delete setLayout(NULL)" instead).
  *
@@ -331,7 +412,8 @@ Layout *Widget::getLayout()
  * }
  * @endcode
  *
- * @return The old Layout manager (you should delete it).
+ * @return
+ *     The old Layout manager (you should delete it).
  *
  * @see getLayout, setConstraint, @ref TN010
  */
@@ -365,7 +447,8 @@ Constraint *Widget::getConstraint()
  * you must to delete the old pointer returned (it's the same behavior
  * that #setLayout()).
  *
- * @return The old constraint (you should delete it).
+ * @return
+ *     The old constraint (you should delete it).
  * 
  * @see getConstraint, setLayout, @ref TN010
  */
@@ -376,6 +459,45 @@ Constraint *Widget::setConstraint(Constraint *constraint)
   return oldConstraint;
 }
 
+/**
+ * Must arranges the children bounds. The default implementation calls
+ * the Layout::layout method of the Widget's layout manager
+ * (Widget::m_layout), but you can override this to obtain your own
+ * behavior (you can avoid to use Layout manager if you want).
+ * <p>
+ * This method is called from Widget::onResize by default, so when the
+ * Widget is shown for first time or it's resized, this method is
+ * called.
+ *
+ * @see getLayout, setLayout, getLayoutBounds. The @ref
+ * exampleCalendar "Calendar example" to known how to override this
+ * method.
+ */
+void Widget::layout()
+{
+  Container children = getChildren();
+
+  if (m_layout != NULL && !children.empty())
+    m_layout->layout(this, children, getLayoutBounds());
+}
+
+/**
+ * Returns true if the widget is layout-free, that means the Layout
+ * shouldn't arrange this widget. The default implementation looks for
+ * the VisibleStyle (if it's hidden, it's free of layout).
+ *
+ * @see getLayout, setLayout
+ */
+bool Widget::isLayoutFree()
+{
+  // a widget is free of layout if it's hidden
+  return ((getStyle().regular & WS_VISIBLE) == WS_VISIBLE) ? false: true;
+}
+
+// ===============================================================
+// TEXT & FONT
+// ===============================================================
+
 /**
  * Returns the widget's text, label, or frame's title. It uses
  * GetWindowTextLength and GetWindowText functions of Win32.
@@ -390,10 +512,10 @@ String Widget::getText()
   if (!len)
     return String("");
   else {
-    LPTSTR buf = (LPTSTR)new _TCHAR[len+1];
+    LPTSTR buf = (LPTSTR)new TCHAR[len+1];
     ::GetWindowText(m_HWND, buf, len+1);
     String str = String(buf);
-    delete buf;
+    delete[] buf;
     return str;
   }
 }
@@ -434,6 +556,10 @@ void Widget::setFont(Font *font)
   sendMessage(WM_SETFONT, reinterpret_cast<WPARAM>(m_font->getHFONT()), TRUE);
 }
 
+// ===============================================================
+// WIDGET STYLE
+// ===============================================================
+
 /**
  * Returns the current Widget style.
  */
@@ -481,25 +607,10 @@ void Widget::removeStyle(Style style)
   setStyle(getStyle() - style);
 }
 
-/**
- * Returns true if the double-buffering technique is activated
- * in this widget.
- */
-bool Widget::isDoubleBuffered()
-{
-  return m_doubleBuffered;
-}
-
-/**
- * Sets if you want or not to use a double-buffering technique to
- * draw the entire widget content. With double-buffering technique
- * you can avoid flickering.
- */
-void Widget::setDoubleBuffered(bool doubleBuffered)
-{
-  m_doubleBuffered = doubleBuffered;
-}
-
+// ===============================================================
+// SIZE & POSITION
+// ===============================================================
+
 /**
  * Gets the dimensions of the entire bounding rectangle that enclose
  * the Widget. The bounds are relative to the upper-left corner of the
@@ -606,6 +717,9 @@ void Widget::setBounds(const Rect &rc)
   ::MoveWindow(m_HWND, rc.x, rc.y, rc.w, rc.h, TRUE);
 }
 
+/**
+ * TODO docme
+ */
 void Widget::setBounds(int x, int y, int w, int h)
 {
   setBounds(Rect(x, y, w, h));
@@ -648,6 +762,9 @@ void Widget::setOrigin(const Point &pt)
   setBounds(Rect(pt, sz));
 }
 
+/**
+ * TODO docme
+ */
 void Widget::setOrigin(int x, int y)
 {
   setOrigin(Point(x, y));
@@ -665,9 +782,100 @@ void Widget::setSize(const Size &sz)
   setBounds(Rect(pt, sz));
 }
 
+/**
+ * TODO docme
+ */
 void Widget::setSize(int w, int h)
 {
   setSize(Size(w, h));
+}
+
+/**
+ * Returns the preferred size of the Widget. It checks if the
+ * preferred size is static (it means when it was set through
+ * #setPreferredSize before) or if it's dynamic (this is the
+ * default and is when the #onPreferredSize is used to determined
+ * the preferred size).
+ *
+ * In another words, if you don't use #setPreferredSize to set a
+ * <em>static preferred size</em> for the widget then #onPreferredSize
+ * will be used to calculate it.
+ *
+ * @see setPreferredSize, onPreferredSize, #getPreferredSize(const Size &)
+ */
+Size Widget::getPreferredSize()
+{
+  if (m_preferredSize != NULL)
+    return *m_preferredSize;
+  else {
+    Size sz(0, 0);
+    onPreferredSize(sz);
+    return sz;
+  }
+}
+
+/**
+ * Returns the preferred size trying to fit in the specified size.
+ * Remember that if you use #setPreferredSize this routine will
+ * return the static size which you specified manually.
+ *
+ * @param fitIn
+ *     This can have both attributes (width and height) in
+ *     zero, which means that it'll behave same as #getPreferredSize().
+ *     If the width is great than zero the #onPreferredSize will try to
+ *     fit in that width (this is useful to fit #Label or #Edit controls
+ *     in a specified width and calculate the height it could occupy).
+ *
+ * @see #getPreferredSize()
+ */
+Size Widget::getPreferredSize(const Size &fitIn)
+{
+  if (m_preferredSize != NULL)
+    return *m_preferredSize;
+  else {
+    Size sz(fitIn);
+    onPreferredSize(sz);
+    return sz;
+  }
+}
+
+/**
+ * Sets a fixed preferred size specified by the user.
+ * Widget::getPreferredSize() will return this value if it's setted.
+ */
+void Widget::setPreferredSize(const Size &fixedSize)
+{
+  if (m_preferredSize != NULL)
+    delete m_preferredSize;
+
+  m_preferredSize = new Size(fixedSize);
+}
+
+// ===============================================================
+// REFRESH ISSUES
+// ===============================================================
+
+/**
+ * Returns true if the double-buffering technique is activated
+ * in this widget.
+ *
+ * @see setDoubleBuffered
+ */
+bool Widget::isDoubleBuffered()
+{
+  return m_doubleBuffered;
+}
+
+/**
+ * Sets if you want or not to use a double-buffering technique to
+ * draw the entire widget content. With double-buffering technique
+ * you can avoid flickering.
+ * 
+ * @see isDoubleBuffered
+ */
+void Widget::setDoubleBuffered(bool doubleBuffered)
+{
+  m_doubleBuffered = doubleBuffered;
 }
 
 /**
@@ -687,7 +895,7 @@ void Widget::validate()
  * Validates a part of the widget. This means that the specified rectangle
  * doesn't need to be repainted.
  *
- * @see validate()
+ * @see invalidate(bool)
  */
 void Widget::validate(const Rect &rc)
 {
@@ -701,10 +909,11 @@ void Widget::validate(const Rect &rc)
  * Invalidates the entire client area. All the widget will be repainted
  * through an onPaint() event.
  *
- * @param eraseBg true means that the background should be erased
- *        (with a WM_ERASEBKGND message).
+ * @param eraseBg
+ *     true means that the background should be erased
+ *     (with a WM_ERASEBKGND message).
  *
- * @see validate()
+ * @see validate(), invalidate(const Rect &, bool), update()
  */
 void Widget::invalidate(bool eraseBg)
 {
@@ -712,6 +921,24 @@ void Widget::invalidate(bool eraseBg)
   ::InvalidateRect(m_HWND, NULL, eraseBg);
 }
 
+/**
+ * Invalidates the specified rectangle.
+ *
+ * When the next round of <em>paint messages</em> is processed by the
+ * operating system the specified area will be redrawn. This means
+ * that the area will not be repainted immediately (you should call
+ * #update() method to do this).
+ *
+ * @param rc
+ *     Area to repaint.
+ *
+ * @param eraseBg
+ *     true means that the background should be erased with
+ *     the background color specified by #getBgColor (with a
+ *     WM_ERASEBKGND message for example).
+ *
+ * @see invalidate(bool), update()
+ */
 void Widget::invalidate(const Rect &rc, bool eraseBg)
 {
   RECT rc2 = rc;
@@ -733,6 +960,10 @@ void Widget::update()
   ::UpdateWindow(m_HWND);
 }
 
+// ===============================================================
+// COMMON PROPERTIES
+// ===============================================================
+
 /**
  * Returns true if this widget is visible. If this widget or some of
  * its parents has the visibility state, this routine returns
@@ -798,7 +1029,8 @@ void Widget::setEnabled(bool state)
  * Gets the foreground color. The foreground color generally is the
  * font color to be used.
  *
- * @return The current foreground color for the widget.
+ * @return
+ *     The current foreground color for the widget.
  *
  * @see setFgColor
  */
@@ -810,7 +1042,8 @@ Color Widget::getFgColor()
 /**
  * Gets the background color.
  *
- * @return The current background color for the widget.
+ * @return
+ *     The current background color for the widget.
  *
  * @see setBgColor
  */
@@ -895,8 +1128,9 @@ int Widget::getOpacity()
  * SetLayeredWindowAttributes, if it's available, if not, does
  * nothing.
  *
- * @param opacity A value from 0 (completelly transparent) to
- *                255 (completelly opaque)
+ * @param opacity
+ *     A value from 0 (completelly transparent) to 255 (completelly
+ *     opaque)
  */
 void Widget::setOpacity(int opacity)
 {
@@ -923,21 +1157,15 @@ void Widget::setOpacity(int opacity)
   }
 }
 
-//////////////////////////////////////////////////////////////////////
-
-/**
- * You should use this method only inside onSetCursor() event.
- */
-void Widget::setCursor(const Cursor &cursor)
-{
-  // getHCURSOR can be NULL, like the Cursor(NoCursor)
-  ::SetCursor(const_cast<Cursor *>(&cursor)->getHCURSOR());
-}
+// ===============================================================
+// FOCUS & MOUSE
+// ===============================================================
+
 
 /**
  * Sets the keyboard focus to this Widget.
  */
-void Widget::acquireFocus()
+void Widget::requestFocus()
 {
   assert(::IsWindow(m_HWND));
 #if 0
@@ -1002,7 +1230,7 @@ void Widget::releaseFocus()
  * widget (you must call Widget::releaseCapture when you are done with
  * the mouse).
  */
-void Widget::acquireCapture()
+void Widget::captureMouse()
 {
   assert(::IsWindow(m_HWND));
 
@@ -1012,7 +1240,7 @@ void Widget::acquireCapture()
 /**
  * Releases the previously captured mouse (Widget::acquireCapture).
  */
-void Widget::releaseCapture()
+void Widget::releaseMouse()
 {
   assert(::IsWindow(m_HWND));
   assert(m_HWND == ::GetCapture()); // you must to have the capture to use this method
@@ -1064,6 +1292,19 @@ bool Widget::hasCapture()
 }
 
 /**
+ * You should use this method only inside onSetCursor() event.
+ */
+void Widget::setCursor(const Cursor &cursor)
+{
+  // getHCURSOR can be NULL, like the Cursor(NoCursor)
+  ::SetCursor(const_cast<Cursor *>(&cursor)->getHCURSOR());
+}
+
+// ===============================================================
+// WIDGET LAYER
+// ===============================================================
+
+/**
  * Sends this window to the top.
  */
 void Widget::bringToTop()
@@ -1085,6 +1326,9 @@ void Widget::sendToBack()
 	       SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
 }
 
+/**
+ * TODO docme
+ */
 void Widget::moveAfter(Widget *brother)
 {
   assert(m_HWND != NULL && brother != NULL && brother->m_HWND != NULL);
@@ -1094,6 +1338,9 @@ void Widget::moveAfter(Widget *brother)
 	       SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
 }
 
+/**
+ * TODO docme
+ */
 void Widget::moveBefore(Widget *brother)
 {
   assert(m_HWND != NULL && brother != NULL && brother->m_HWND != NULL);
@@ -1109,11 +1356,14 @@ void Widget::moveBefore(Widget *brother)
 	       0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
 }
 
+/**
+ * TODO docme
+ */
 ScrollInfo Widget::getScrollInfo(Orientation orientation)
 {
   assert(::IsWindow(m_HWND));
     
-  int fnBar = orientation == Horizontal ? SB_HORZ: SB_VERT;
+  int fnBar = (orientation == Orientation::Horizontal) ? SB_HORZ: SB_VERT;
 
   SCROLLINFO si;
   si.cbSize = sizeof(si);
@@ -1133,14 +1383,17 @@ ScrollInfo Widget::getScrollInfo(Orientation orientation)
 /** 
  * Changes the scroll information about this Widget.
  * 
- * @param orientation What scroll bar use (Horizontal or Vertical)
- * @param scrollInfo New scroll information to be changed.
+ * @param orientation
+ *     What scroll bar use (Horizontal or Vertical)
+ *	
+ * @param scrollInfo
+ *     New scroll information to be changed.
  */
 void Widget::setScrollInfo(Orientation orientation, const ScrollInfo &scrollInfo)
 {
   assert(::IsWindow(m_HWND));
     
-  int fnBar = orientation == Horizontal ? SB_HORZ: SB_VERT;
+  int fnBar = (orientation == Orientation::Horizontal) ? SB_HORZ: SB_VERT;
 
   SCROLLINFO si;
   si.cbSize = sizeof(si);
@@ -1154,11 +1407,14 @@ void Widget::setScrollInfo(Orientation orientation, const ScrollInfo &scrollInfo
   ::SetScrollInfo(m_HWND, fnBar, &si, TRUE);
 }
   
+/**
+ * TODO docme
+ */
 int Widget::getScrollPos(Orientation orientation)
 {
   assert(::IsWindow(m_HWND));
     
-  int fnBar = orientation == Horizontal ? SB_HORZ: SB_VERT;
+  int fnBar = (orientation == Orientation::Horizontal) ? SB_HORZ: SB_VERT;
 
   SCROLLINFO si;
   si.cbSize = sizeof (si);
@@ -1167,11 +1423,14 @@ int Widget::getScrollPos(Orientation orientation)
   return si.nPos;
 }
 
+/**
+ * TODO docme
+ */
 void Widget::setScrollPos(Orientation orientation, int pos)
 {
   assert(::IsWindow(m_HWND));
 
-  int fnBar = orientation == Horizontal ? SB_HORZ: SB_VERT;
+  int fnBar = (orientation == Orientation::Horizontal) ? SB_HORZ: SB_VERT;
     
   SCROLLINFO si;
   si.cbSize = sizeof(si);
@@ -1185,23 +1444,32 @@ void Widget::setScrollPos(Orientation orientation, int pos)
   ::SetScrollInfo(m_HWND, fnBar, &si, TRUE);
 }
   
+/**
+ * TODO docme
+ */
 Point Widget::getScrollPoint()
 {
-  return Point(getScrollPos(Horizontal),
-	       getScrollPos(Vertical));
+  return Point(getScrollPos(Orientation::Horizontal),
+	       getScrollPos(Orientation::Vertical));
 }
 
+/**
+ * TODO docme
+ */
 void Widget::setScrollPoint(const Point &pt)
 {
-  setScrollPos(Horizontal, pt.x);
-  setScrollPos(Vertical, pt.y);
+  setScrollPos(Orientation::Horizontal, pt.x);
+  setScrollPos(Orientation::Vertical, pt.y);
 }
 
+/**
+ * TODO docme
+ */
 void Widget::hideScrollBar(Orientation orientation)
 {
   assert(::IsWindow(m_HWND));
 
-  int fnBar = orientation == Horizontal ? SB_HORZ: SB_VERT;
+  int fnBar = (orientation == Orientation::Horizontal) ? SB_HORZ: SB_VERT;
 
   SCROLLINFO si;
   si.cbSize = sizeof(si);
@@ -1209,18 +1477,6 @@ void Widget::hideScrollBar(Orientation orientation)
   si.nMin = si.nMax = 0;
   ::SetScrollInfo(getHWND(), fnBar, &si, TRUE);
 }
-
-// void Widget::setTimer(int timerId, int millisecondsForTimeOut)
-// {
-//   assert(::IsWindow(m_HWND));
-//   SetTimer(m_HWND, timerId, millisecondsForTimeOut, NULL);
-// }
-
-// void Widget::killTimer(int timerId)
-// {
-//   assert(::IsWindow(m_HWND));
-//   KillTimer(m_HWND, timerId);
-// }
 
 /**
  * Shows a message box, locking the widget. It's like call Win32's
@@ -1243,74 +1499,46 @@ void Widget::hideScrollBar(Orientation orientation)
  *   ...
  * @endcode
  *
- * @param text Text shown in the center of the dialog box. It can contains "\n" to break lines.
- * @param title Title for the dialog box.
- * @param flags What kind of message box to show.
- * <p>
- * @a flags should be one of these values:
- * - @c MB_OK
- * - @c MB_YESNO
- * - @c MB_YESNOCANCEL
- * - @c MB_RETRYCANCEL
- * - @c MB_ABORTRETRYIGNORE
- * - @c MB_CANCELTRYCONTINUE
- * <p>
- * Optionally combined with one of these ones:
- * - @c MB_ICONWARNING
- * - @c MB_ICONERROR
- * - @c MB_ICONQUESTION
- * - @c MB_ICONINFORMATION
- * <p>
- * More optionally combined with one of these other ones:
- * - @c MB_DEFBUTTON1
- * - @c MB_DEFBUTTON2
- * - @c MB_DEFBUTTON3
- * <p>
- * @return It can returns:
- * - @c IDOK for @c MB_OK
- * - @c IDYES or @c IDNO for @c MB_YESNO
- * - @c IDYES, @c IDNO or @c IDCANCEL for @c MB_YESNOCANCEL
- * - @c IDRETRY or @c IDCANCEL for @c MB_RETRYCANCEL
- * - @c IDABORT, @c IDRETRY or @c IDIGNORE for @c MB_ABORTRETRYIGNORE
- * - @c IDCANCEL, @c IDTRYAGAIN or @c IDCONTINUE for @c MB_CANCELTRYCONTINUE
+ * @param text
+ *     Text shown in the center of the dialog box. It can contains "\n" to break lines.
+ *	
+ * @param title
+ *     Title for the dialog box.
+ *	
+ * @param flags
+ *     What kind of message box to show.
+ *     <p>
+ *     @a flags should be one of these values:
+ *     - @c MB_OK
+ *     - @c MB_YESNO
+ *     - @c MB_YESNOCANCEL
+ *     - @c MB_RETRYCANCEL
+ *     - @c MB_ABORTRETRYIGNORE
+ *     - @c MB_CANCELTRYCONTINUE
+ *     <p>
+ *     Optionally combined with one of these ones:
+ *     - @c MB_ICONWARNING
+ *     - @c MB_ICONERROR
+ *     - @c MB_ICONQUESTION
+ *     - @c MB_ICONINFORMATION
+ *     <p>
+ *     More optionally combined with one of these other ones:
+ *     - @c MB_DEFBUTTON1
+ *     - @c MB_DEFBUTTON2
+ *     - @c MB_DEFBUTTON3
+ *
+ * @return
+ *     It can returns:
+ *     - @c IDOK for @c MB_OK
+ *     - @c IDYES or @c IDNO for @c MB_YESNO
+ *     - @c IDYES, @c IDNO or @c IDCANCEL for @c MB_YESNOCANCEL
+ *     - @c IDRETRY or @c IDCANCEL for @c MB_RETRYCANCEL
+ *     - @c IDABORT, @c IDRETRY or @c IDIGNORE for @c MB_ABORTRETRYIGNORE
+ *     - @c IDCANCEL, @c IDTRYAGAIN or @c IDCONTINUE for @c MB_CANCELTRYCONTINUE
  */
 int Widget::msgBox(const String &text, const String &title, int flags)
 {
   return ::MessageBox(m_HWND, text.c_str(), title.c_str(), flags);
-}
-
-/**
- * Indicates that this widget must be deleted (with C++ "delete"
- * operator) after current event ends. It's a safe way to delete
- * the Event::getSource().
- *
- * @see @ref TN006
- */
-// void Widget::deleteAfterEvent()
-// {
-//   // we can't call deleteAfterEvent if we are outside an event (you
-//   // should use "delete" directly in that case)
-// //   assert(mCriticalInner > 0);
-//   assert(getRefCount() > 0);
-
-//   // hide the window
-//   ShowWindow(m_HWND, SW_HIDE);
-//   m_deleteAfterEvent = true;
-// }
-
-// bool Widget::hasDeleteAfterEvent()
-// {
-//   return m_deleteAfterEvent;
-// }
-
-/**
- * Returns the ID of the Thread that creates this Widget.
- */
-int Widget::getThreadOwnerId()
-{
-  assert(::IsWindow(m_HWND));
-
-  return ::GetWindowThreadProcessId(m_HWND, NULL);
 }
 
 /**
@@ -1350,6 +1578,7 @@ Widget *Widget::fromHWND(HWND hwnd)
 {
   // unbox the pointer
 #ifdef USE_PROP
+  // boost::mutex::scoped_lock lock(vacaAtomMutex);
   return reinterpret_cast<Widget *>(::GetProp(hwnd, VACAATOM));
 #else
   return reinterpret_cast<Widget *>(::GetWindowLongPtr(hwnd, GWL_USERDATA));
@@ -1367,128 +1596,21 @@ WNDPROC Widget::getGlobalWndProc()
   return Widget::globalWndProc;
 }
 
-/**
- * Returns the user specified preferred size, or calculates it with
- * onPreferredSize() if the user doesn't manually set it.
- */
-Size Widget::getPreferredSize()
-{
-  if (m_preferredSize != NULL)
-    return *m_preferredSize;
-  else {
-    Size sz(0, 0);
-    onPreferredSize(sz);
-    return sz;
-  }
-}
-
-Size Widget::getPreferredSize(const Size &fitIn)
-{
-  if (m_preferredSize != NULL)
-    return *m_preferredSize;
-  else {
-    Size sz(fitIn);
-    onPreferredSize(sz);
-    return sz;
-  }
-}
-
-/**
- * Sets a fixed preferred size specified by the user.
- * Widget::getPreferredSize() will return this value if it's setted.
- */
-void Widget::setPreferredSize(const Size &fixedSize)
-{
-  if (m_preferredSize != NULL)
-    delete m_preferredSize;
-
-  m_preferredSize = new Size(fixedSize);
-}
-
-// /**
-//  * Calculates the preferred size that the Widget want. It should check
-//  * getPreferredSize() to see if the user doesn't want his preferred
-//  * size.
-//  */
-// Size Widget::preferredSize()
-// {
-//   Size *pref = getPreferredSize();
-//   if (pref != NULL)
-//     return *pref;
-//   else if (m_layout != NULL) {
-//     Container children = getChildren();
-//     return m_layout->preferredSize(this, children, Size(0, 0));
-//   }
-//   else
-//     return Size(0, 0);
-// }
-
-// /**
-//  * Calculates the preferred size that the Widget want. It should check
-//  * getPreferredSize() to see if the user doesn't want his preferred
-//  * size.
-//  *
-//  * @see preferredSize()
-//  */
-// Size Widget::preferredSize(const Size &fitIn)
-// {
-//   Size *pref = getPreferredSize();
-//   if (pref != NULL)
-//     return *pref;
-//   else if (m_layout != NULL) {
-//     Container children = getChildren();
-//     return m_layout->preferredSize(this, children, fitIn);
-//   }
-//   else
-//     // TODO intersect with fitIn
-//     return preferredSize();
-// }
-
-/**
- * Must arranges the children bounds. The default implementation calls
- * the Layout::layout method of the Widget's layout manager
- * (Widget::m_layout), but you can override this to obtain your own
- * behavior (you can avoid to use Layout manager if you want).
- * <p>
- * This method is called from Widget::onResize by default, so when the
- * Widget is shown for first time or it's resized, this method is
- * called.
- *
- * @see getLayout, setLayout, getLayoutBounds. The @ref
- * exampleCalendar "Calendar example" to known how to override this
- * method.
- */
-void Widget::layout()
-{
-  Container children = getChildren();
-
-  if (m_layout != NULL && !children.empty())
-    m_layout->layout(this, children, getLayoutBounds());
-}
-
-/**
- * Returns true if the widget is layout-free, that means the Layout
- * shouldn't arrange this widget. The default implementation looks for
- * the VisibleStyle (if it's hidden, it's free of layout).
- *
- * @see getLayout, setLayout
- */
-bool Widget::isLayoutFree()
-{
-  // a widget is free of layout if it's hidden
-  return ((getStyle().regular & WS_VISIBLE) == WS_VISIBLE) ? false: true;
-}
-
+// ===============================================================
+// EVENTS
+// ===============================================================
+
 /**
  * It should calculates the preferred size for this widget.
  *
- * @param sz It's for input and output. You should put the preferred
- * size in this value, but also you should read the input value to
- * know if you must to fit the widget in some size. The possible
- * values for @a sz are:
- * - sz = Size(0, 0) to calculate the preferred size without restrictions.
- * - sz = Size(width, 0) to calculate the preferred size with restricted &lt;= width.
- * - sz = Size(0, height) to calculate the preferred size with restricted &lt;= height.
+ * @param sz
+ *     It's for input and output. You should put the preferred
+ *     size in this value, but also you should read the input value to
+ *     know if you must to fit the widget in some size. The possible
+ *     values for @a sz are:
+ *     - sz = Size(0, 0) to calculate the preferred size without restrictions.
+ *     - sz = Size(width, 0) to calculate the preferred size with restricted &lt;= width.
+ *     - sz = Size(0, height) to calculate the preferred size with restricted &lt;= height.
  */
 void Widget::onPreferredSize(Size &sz)
 {
@@ -1527,7 +1649,7 @@ void Widget::onPreferredSize(Size &sz)
  * };
  * @endcode
  *
- * @see onDrawItem
+ * @see onReflectedDrawItem
  */
 void Widget::onPaint(Graphics &g)
 {
@@ -1535,26 +1657,24 @@ void Widget::onPaint(Graphics &g)
 }
 
 /**
- * Called when the WM_SIZE message is received.
+ * Called when the user changes the size of the widget/frame (a
+ * WM_SIZE message is received from Win32).
  */
 void Widget::onResize(const Size &sz)
 {
+  Resize(sz);
+
   // Don't call layout() here (the Layout::mRelayoutWidgets collection is
   // useful to layout recursively). The first trigger of the layout()
   // method is from Frame::onResize().
 }
-
-// void Widget::onTimer(int timerId)
-// {
-//   // do nothing
-// }
 
 /**
  * The mouse enters in the Widget.
  */
 void Widget::onMouseEnter(MouseEvent &ev)
 {
-  // do nothing
+  MouseEnter(ev);
 }
 
 /**
@@ -1562,7 +1682,7 @@ void Widget::onMouseEnter(MouseEvent &ev)
  */
 void Widget::onMouseLeave()
 {
-  // do nothing
+  MouseLeave();
 }
 
 /**
@@ -1570,7 +1690,7 @@ void Widget::onMouseLeave()
  */
 void Widget::onMouseDown(MouseEvent &ev)
 {
-  // do nothing
+  MouseDown(ev);
 }
 
 /**
@@ -1579,7 +1699,7 @@ void Widget::onMouseDown(MouseEvent &ev)
  */
 void Widget::onMouseUp(MouseEvent &ev)
 {
-  // do nothing
+  MouseUp(ev);
 }
 
 /**
@@ -1593,9 +1713,15 @@ void Widget::onMouseUp(MouseEvent &ev)
  */
 void Widget::onDoubleClick(MouseEvent &ev)
 {
-  // by default onDoubleClick to onMouseDown (double-click to
-  // single-click).
-  onMouseDown(ev);
+  // if there aren't slots in DoubleClick...
+  if (DoubleClick.empty()) {
+    // ...by default onDoubleClick to onMouseDown (double-click to
+    // single-click).
+    onMouseDown(ev);
+  }
+  // if not fire DoubleClick signal
+  else
+    DoubleClick(ev);
 }
 
 /**
@@ -1607,15 +1733,8 @@ void Widget::onDoubleClick(MouseEvent &ev)
  */
 void Widget::onMouseMove(MouseEvent &ev)
 {
-  // do nothing
+  MouseMove(ev);
 }
-
-// /**
-//  * The mouse was for a short period of time above the widget.
-//  */
-// void Widget::onMouseHover(MouseHoverEvent &ev)
-// {
-// }
 
 /**
  * The mouse is inside the Widget and the user spin the mouse's
@@ -1623,16 +1742,16 @@ void Widget::onMouseMove(MouseEvent &ev)
  */
 void Widget::onMouseWheel(MouseEvent &ev)
 {
-  // do nothing
+  MouseWheel(ev);
 }
 
 /**
- * WM_CANCELMODE.
- * 
+ * Event generated when the user press ESC in a drag-and-drop operation
+ * for example (equivalent to the WM_CANCELMODE message of Win32).
  */
 void Widget::onCancelMode()
 {
-  // do nothing
+  CancelMode();
 }
 
 /**
@@ -1640,38 +1759,9 @@ void Widget::onCancelMode()
  * this method, you shouldn't call Widget::onSetCursor if you don't
  * want the default behaviour.
  *
- * @param hitTest One of the following values:
- * - HTERROR
- * - HTTRANSPARENT
- * - HTNOWHERE
- * - HTCLIENT
- * - HTCAPTION
- * - HTSYSMENU
- * - HTGROWBOX
- * - HTSIZE
- * - HTMENU
- * - HTHSCROLL
- * - HTVSCROLL
- * - HTMINBUTTON
- * - HTMAXBUTTON
- * - HTREDUCE
- * - HTZOOM
- * - HTLEFT
- * - HTSIZEFIRST
- * - HTRIGHT
- * - HTTOP
- * - HTTOPLEFT
- * - HTTOPRIGHT
- * - HTBOTTOM
- * - HTBOTTOMLEFT
- * - HTBOTTOMRIGHT
- * - HTSIZELAST
- * - HTBORDER
- * - HTOBJECT
- * - HTCLOSE
- * - HTHELP
+ * @param hitTest Where the mouse is.
  */
-void Widget::onSetCursor(int hitTest)
+void Widget::onSetCursor(WidgetHitTest hitTest)
 {
   // if we have a m_baseWndProc, use it
   if (m_baseWndProc != NULL) {
@@ -1679,12 +1769,12 @@ void Widget::onSetCursor(int hitTest)
   }
   // if we aren't in the client area, maybe the defWndProc known more
   // about the cursor (like the cursors in Frame to resize the it)
-  else if (hitTest != HTCLIENT) {
+  else if (hitTest != WidgetHitTest::Client) {
     defWndProc(WM_SETCURSOR, m_wparam, m_lparam);
   }
   // finally, we are in the client area, we can use the normal arrow
   else {
-    setCursor(Cursor(ArrowCursor));
+    setCursor(Cursor(SysCursor::Arrow));
   }
 }
 
@@ -1697,62 +1787,85 @@ void Widget::onKeyUp(KeyEvent &ev)
   KeyUp(ev);
 }
 
-/**
- * The user releases a key. Event called when the WM_KEYDOWN message
- * is received.
- */
+// The user releases a key. Event called when the WM_KEYDOWN message
+// is received.
 void Widget::onKeyDown(KeyEvent &ev)
 {
   KeyDown(ev);
 }
 
+// The user releases a key. Event called when the WM_CHAR message is
+// received.
+void Widget::onKeyTyped(KeyEvent &ev)
+{
+  KeyTyped(ev);
+}
+
+/**
+ * TODO docme
+ */
 void Widget::onGotFocus(Event &ev)
 {
   GotFocus(ev);
 }
 
+/**
+ * TODO docme
+ */
 void Widget::onLostFocus(Event &ev)
 {
   LostFocus(ev);
 }
 
 /**
- * Called when a WM_COMMAND message is received by ID (like a menu or
- * accelerator command).
+ * Called when an action/command by ID is activated by the user, this
+ * can be a menu item or an accelerator.
  *
- * @return It should returns true if the @a id was used.
+ * Win32 details: When a WM_COMMAND message is received by ID (like a
+ * menu or accelerator command) this method is invoked.
  *
- * @warning Don't confuse with onCommand(): onIdAction is used to
- *          handle command notifications that come directly from
+ * @param actionId
+ *     Identifier of the action that was activated (by some
+ *     method like ).
+ *
+ * @return
+ *     It should returns true if the @a actionId was used.
+ *
+ * @warning Don't confuse with onReflectedCommand(): onActionById is used
+ *          to handle command notifications that come directly from
  *          accelarators or menus, not from controls. Notifications
- *          by controls are controled by them via onCommand, onNotify,
- *          or onDrawItem.
+ *          by controls are controled by them via onReflectedCommand,
+ *          onReflectedNotify, or onReflectedDrawItem.
  */
-bool Widget::onIdAction(int id)
+bool Widget::onActionById(int actionId)
 {
   return false;
 }
 
 /**
- * (WM_WINDOWPOSCHANGING)
- * 
+ * TODO docme (WM_WINDOWPOSCHANGING)
  */
 void Widget::onBeforePosChange()
 {
 }
 
 /**
- * (WM_WINDOWPOSCHANGED)
- * 
+ * TODO docme (WM_WINDOWPOSCHANGED)
  */
 void Widget::onAfterPosChange()
 {
 }
 
+/**
+ * TODO docme
+ */
 void Widget::onScroll(Orientation orient, int code)
 {
 }
 
+/**
+ * TODO docme
+ */
 void Widget::onDropFiles(DropFilesEvent &ev)
 {
   DropFiles(ev);
@@ -1762,11 +1875,21 @@ void Widget::onDropFiles(DropFilesEvent &ev)
  * This method can be used to handle command notifications
  * (WM_COMMAND) reflected from the parent.
  *
- * @warning Don't confuse with onIdAction(): onCommand is used to handle
+ * @param id
+ *     Identifier of the control or menu item.
+ * 
+ * @param code
+ *     Notification code.
+ * 
+ * @param lResult
+ *     Result to return by the wndProc() method.
+ *
+ * @warning Don't confuse with onActionById(): onReflectedCommand is used to handle
  *          commands that this widget by self generated, were sent to the
- *          parent, and finally were reflected to this widget again.
+ *          parent, and finally were reflected to this widget again by
+ *          the parent.
  */
-bool Widget::onCommand(int id, int code, LRESULT &lResult)
+bool Widget::onReflectedCommand(int id, int code, LRESULT &lResult)
 {
   return false;
 }
@@ -1774,8 +1897,17 @@ bool Widget::onCommand(int id, int code, LRESULT &lResult)
 /**
  * This method can be used to handle notifications (WM_NOTIFY)
  * reflected from the parent.
+ *
+ * @param lpnmhdr
+ *     Information about the notification message.
+ * 
+ * @param lResult
+ *     Result to return by the wndProc() method.
+ *
+ * @return
+ *     False if it doesn't use the notification.
  */
-bool Widget::onNotify(LPNMHDR lpnmhdr, LRESULT &lResult)
+bool Widget::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT &lResult)
 {
   return false;
 }
@@ -1784,9 +1916,17 @@ bool Widget::onNotify(LPNMHDR lpnmhdr, LRESULT &lResult)
  * Fired when the parent widget (m_parent) received the WM_DRAWITEM
  * message.
  *
+ * @param g
+ *     Graphics context to draw the item (you can obtain the HDC from
+ *     this argument).
+ * 
+ * @param lpDrawItem
+ *     Instance of the Win32 structure DRAWITEMSTRUCT to get information
+ *     about the item to draw.
+ *
  * @see onPaint
  */
-bool Widget::onDrawItem(Graphics &g, LPDRAWITEMSTRUCT lpDrawItem)
+bool Widget::onReflectedDrawItem(Graphics &g, LPDRAWITEMSTRUCT lpDrawItem)
 {
   return false;
 }
@@ -1794,7 +1934,11 @@ bool Widget::onDrawItem(Graphics &g, LPDRAWITEMSTRUCT lpDrawItem)
 /**
  * Adds a child to this widget.
  *
- * @param setParent if it's true the Win32 SetParent wil be used.
+ * @param child
+ *     The child to add inside the widget.
+ *
+ * @param setParent
+ *     If it's true the Win32 SetParent wil be used.
  */
 void Widget::addChild(Widget *child, bool setParent)
 {
@@ -1816,7 +1960,11 @@ void Widget::addChild(Widget *child, bool setParent)
 /**
  * Removes a child from this widget.
  *
- * @param setParent if it's true the Win32 SetParent will be used.
+ * @param child
+ *     The child that we want to remove from the parent.
+ *
+ * @param setParent
+ *     If it's true the Win32 SetParent will be used.
  */
 void Widget::removeChild(Widget *child, bool setParent)
 {
@@ -1861,17 +2009,31 @@ void Widget::create(LPCTSTR className, Widget *parent, Style style)
     parent->addStyle(Style(0, WS_EX_CONTROLPARENT));
 
   // create the HWND handler
-  {
-    ScopedLock lock(outsideWidgetMutex);
-    assert(outsideWidget == NULL);
+//   {
+//     ScopedLock lock(outsideWidgetMutex);
+//     assert(outsideWidget == NULL);
 
-    outsideWidget = this;
+//     outsideWidget = this;
+//     m_HWND = createHWND(className, parent, style);
+//     outsideWidget = NULL;
+//   }
+  {
+//     ThreadDataForWidget *data = getThreadData();
+//     assert(data->outsideWidget == NULL);
+
+//     data->outsideWidget = this;
+//     m_HWND = createHWND(className, parent, style);
+//     data->outsideWidget = NULL;
+    Widget *outsideWidget = __vaca_get_outside_widget();
+    assert(outsideWidget == NULL);
+    
+    __vaca_set_outside_widget(this);
     m_HWND = createHWND(className, parent, style);
-    outsideWidget = NULL;
+    __vaca_set_outside_widget(NULL);
   }
 
   if (m_HWND == NULL)
-    throw CreateHWNDException();
+    throw CreateWidgetException();
 
   subClass();
 
@@ -1880,6 +2042,15 @@ void Widget::create(LPCTSTR className, Widget *parent, Style style)
     parent->addChild(this, false);
 }
 
+/**
+ * @brief Does the classic Win32 subclassing replacing GWLP_WNDPROC.
+ * 
+ * In the GWLP_WNDPROC property of all HWND is the WNDPROC procedure
+ * that is called each time a message is arrived/processed by the Win32
+ * message-queue.
+ *
+ * @see getGlobalWndProc, wndProc, @ref TN002
+ */
 void Widget::subClass()
 {
   assert(::IsWindow(m_HWND));
@@ -1894,7 +2065,10 @@ void Widget::subClass()
 
   // box the pointer
 #ifdef USE_PROP
-  SetProp(m_HWND, VACAATOM, reinterpret_cast<HANDLE>(this));
+  {
+    // boost::mutex::scoped_lock lock(vacaAtomMutex);
+    SetProp(m_HWND, VACAATOM, reinterpret_cast<HANDLE>(this));
+  }
 #else
   LONG_PTR oldData = SetWindowLongPtr(m_HWND, GWL_USERDATA, reinterpret_cast<LONG_PTR>(this));
   assert(oldData == 0);
@@ -1907,11 +2081,22 @@ void Widget::subClass()
 }
 
 /**
- * Should create the HWND for the Widget. This routine is called from
- * Widget::create method. If you overloaded this, you should use the
- * Widget constructor with a NULL className, and then use the
- * Widget::create method in your own class's constructor (for example
- * MdiClient::MdiClient).
+ * Thid method should create the HWND handler for the Widget. This
+ * routine is called from Widget::create() method, so if you overloaded
+ * this, you should use the Widget constructor with a NULL className,
+ * and then use the Widget::create method in your own class's
+ * constructor. E.g:
+ * 
+ * @code
+ * MdiChild::MdiChild(const String &title,
+ *                    MdiClient *parent,
+ *                    Style style)
+ *   : Frame(NULL, "", NULL, NoStyle) // <- className = NULL, "create" isn't called
+ * {
+ *   ...
+ *   create("Vaca.MdiChild", parent, style); // we call "create" manually
+ * }
+ * @endcode
  *
  * @see create, @ref TN002
  */
@@ -1927,7 +2112,7 @@ HWND Widget::createHWND(LPCTSTR className, Widget *parent, Style style)
 			reinterpret_cast<LPVOID>(this));
 }
 
-/** 
+/**
  * The customized window procedure for this particular widget.  This
  * is called from Widget::globalWndProc().  Should return true when
  * the defWndProc() doesn't need to be called.
@@ -1951,19 +2136,20 @@ HWND Widget::createHWND(LPCTSTR className, Widget *parent, Style style)
  *   <li><tt>WM_CANCELMODE</tt> -&gt; onCancelMode()</li>
  *   <li><tt>WM_KEYDOWN</tt> -&gt; onKeyDown()</li>
  *   <li><tt>WM_KEYUP</tt> -&gt; onKeyUp()</li>
+ *   <li><tt>WM_CHAR</tt> -&gt; onKeyChar()</li>
  *   <li><tt>WM_SETFOCUS</tt> -&gt; onGotFocus()</li>
  *   <li><tt>WM_KILLFOCUS</tt> -&gt; onLostFocus()</li>
  * </ul>
  *
  * For reflection, it does:
  * <ul>
- * <li>When <tt>WM_COMMAND</tt> is received, the onCommand() event <b>of the
- *     child</b> is called when it's a WM_COMMAND from a control, or the
- *     onIdAction() event <b>of this widget</b> is called when the command
+ * <li>When <tt>WM_COMMAND</tt> is received, the onReflectedCommand() event
+ *     <b>of the child</b> is called when it's a WM_COMMAND from a control, or the
+ *     onActionById() event <b>of this widget</b> is called when the command
  *     come from a menu or an accelerator.</li>
- * <li>When <tt>WM_NOTIFY</tt> is received, the onNotify() event <b>of the
+ * <li>When <tt>WM_NOTIFY</tt> is received, the onReflectedNotify() event <b>of the
  *     child</b> is called.</li>
- * <li>When <tt>WM_DRAWITEM</tt> is received, the onDrawItem() event <b>of the
+ * <li>When <tt>WM_DRAWITEM</tt> is received, the onReflectedDrawItem() event <b>of the
  *     child</b> is called.</li>
  * </ul>
  *
@@ -2046,7 +2232,7 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResul
 
       if (!::IsRectEmpty(&lpDrawItem->rcItem)) {
 	Graphics g(hdc);
-	painted = child->onDrawItem(g, lpDrawItem);
+	painted = child->onReflectedDrawItem(g, lpDrawItem);
       }
       
       if (painted) {
@@ -2062,13 +2248,39 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResul
       break;
     }
 
-//     case WM_TIMER:
-//       onTimer(wParam);
-//       break;
-
     case WM_SETCURSOR:
       if (hasMouseAbove()) {
-	onSetCursor(LOWORD(lParam));
+	WidgetHitTest hitTest = WidgetHitTest::Error;
+	switch (LOWORD(lParam)) {
+	  case HTERROR: hitTest = WidgetHitTest::Error; break;
+	  case HTTRANSPARENT: hitTest = WidgetHitTest::Transparent; break;
+	  case HTNOWHERE: hitTest = WidgetHitTest::Nowhere; break;
+	  case HTCLIENT: hitTest = WidgetHitTest::Client; break;
+	  case HTCAPTION: hitTest = WidgetHitTest::Caption; break;
+	  case HTSYSMENU: hitTest = WidgetHitTest::SystemMenu; break;
+	    // case HTGROWBOX: hitTest = WidgetHitTest::Size; break;
+	  case HTSIZE: hitTest = WidgetHitTest::Size; break;
+	  case HTMENU: hitTest = WidgetHitTest::Menu; break;
+	  case HTHSCROLL: hitTest = WidgetHitTest::HorizontalScroll; break;
+	  case HTVSCROLL: hitTest = WidgetHitTest::VerticalScroll; break;
+	  case HTMINBUTTON: hitTest = WidgetHitTest::MinimizeButton; break;
+	  case HTMAXBUTTON: hitTest = WidgetHitTest::MaximizeButton; break;
+	    //case HTREDUCE: hitTest = WidgetHitTest::MinimizeButton; break;
+	    //case HTZOOM: hitTest = WidgetHitTest::MaximizeButton; break;
+	  case HTLEFT: hitTest = WidgetHitTest::Left; break;
+	  case HTRIGHT: hitTest = WidgetHitTest::Right; break;
+	  case HTTOP: hitTest = WidgetHitTest::Top; break;
+	  case HTTOPLEFT: hitTest = WidgetHitTest::TopLeft; break;
+	  case HTTOPRIGHT: hitTest = WidgetHitTest::TopRight; break;
+	  case HTBOTTOM: hitTest = WidgetHitTest::Bottom; break;
+	  case HTBOTTOMLEFT: hitTest = WidgetHitTest::BottomLeft; break;
+	  case HTBOTTOMRIGHT: hitTest = WidgetHitTest::BottomRight; break;
+	  case HTBORDER: hitTest = WidgetHitTest::Border; break;
+	  case HTOBJECT: hitTest = WidgetHitTest::Object; break;
+	  case HTCLOSE: hitTest = WidgetHitTest::Close; break;
+	  case HTHELP: hitTest = WidgetHitTest::Help; break;
+	}
+	onSetCursor(hitTest);
 	lResult = TRUE;
 	ret = true;
       }
@@ -2089,7 +2301,7 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResul
     case WM_MBUTTONDOWN: {
       MouseEvent
 	ev(this,				           // widget
-	   Point(LOWORD(lParam), HIWORD(lParam)),	   // pt
+	   Point(&MAKEPOINTS(lParam)),			   // pt
 	   1,						   // clicks
 	   wParam,					   // flags
 	   message == WM_LBUTTONDOWN ? MouseButtons::Left: // button
@@ -2106,7 +2318,7 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResul
     case WM_RBUTTONUP: {
       MouseEvent
 	ev(this,				         // widget
-	   Point(LOWORD(lParam), HIWORD(lParam)),	 // pt
+	   Point(&MAKEPOINTS(lParam)),			 // pt
 	   1,					         // clicks
 	   wParam,					 // flags
 	   message == WM_LBUTTONUP ? MouseButtons::Left: // button
@@ -2123,7 +2335,7 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResul
     case WM_RBUTTONDBLCLK: {
       MouseEvent
 	ev(this,				             // widget
-	   Point(LOWORD(lParam), HIWORD(lParam)),	     // pt
+	   Point(&MAKEPOINTS(lParam)),			     // pt
 	   2,					             // clicks
 	   wParam,				             // flags
 	   message == WM_LBUTTONDBLCLK ? MouseButtons::Left: // button
@@ -2137,7 +2349,7 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResul
     case WM_MOUSEMOVE: {
       MouseEvent
 	ev(this,				    // widget
-	   Point(LOWORD(lParam), HIWORD(lParam)),   // pt
+	   Point(&MAKEPOINTS(lParam)),		    // pt
 	   0,					    // clicks
 	   wParam,				    // flags
 	   MouseButtons::None);			    // button
@@ -2164,8 +2376,7 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResul
       Point clientOrigin = getAbsoluteClientBounds().getOrigin();
       MouseEvent
 	ev(this,				   // widget
-	   Point(LOWORD(lParam) - clientOrigin.x,
-		 HIWORD(lParam) - clientOrigin.y), // pt
+	   Point(&MAKEPOINTS(lParam)) - clientOrigin, // pt
 	   0,					   // clicks
 	   LOWORD(wParam),			   // flags
 	   MouseButtons::None,			   // button
@@ -2178,7 +2389,7 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResul
 
 //       // TODO think about this
 //     case WM_MOUSEHOVER: {
-//       MouseEvent ev(this, Point(LOWORD(lParam), HIWORD(lParam)), 0,
+//       MouseEvent ev(this, Point(&MAKEPOINTS(lParam)), 0,
 // 		    MouseButtons::None, wParam);
 //       onMouseHover(ev);
 //     }
@@ -2195,11 +2406,10 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResul
     case WM_CANCELMODE:
       onCancelMode();
       break;
-
+      
     case WM_KEYDOWN: {
       KeyEvent ev(this, Keys::fromMessageParams(wParam, lParam));
       onKeyDown(ev);
-      // sigKeyDown();
       if (ev.isConsumed()) {
 	lResult = false;
 	ret = true;
@@ -2210,7 +2420,17 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResul
     case WM_KEYUP: {
       KeyEvent ev(this, Keys::fromMessageParams(wParam, lParam));
       onKeyUp(ev);
-      // sigKeyUp();
+      if (ev.isConsumed()) {
+	lResult = false;
+	ret = true;
+      }
+      break;
+    }
+
+    case WM_CHAR: {
+      KeyEvent ev(this, Keys::None, wParam); // TODO complete Keys
+      // KeyEvent ev(this, Keys::fromMessageParams(wParam, lParam));
+      onKeyTyped(ev);
       if (ev.isConsumed()) {
 	lResult = false;
 	ret = true;
@@ -2226,9 +2446,9 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResul
 	  Container refContainer;
 	  ref_widget(child, refContainer);
 
-	  ret = child->onCommand(LOWORD(wParam), // id
-				 HIWORD(wParam), // code
-				 lResult);
+	  ret = child->onReflectedCommand(LOWORD(wParam), // id
+					  HIWORD(wParam), // code
+					  lResult);
 
 	  unref_widget(refContainer);
 	}
@@ -2236,8 +2456,8 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResul
       // accelerator or a menu
       else if (HIWORD(wParam) == 1 ||
 	       HIWORD(wParam) == 0) {
-	if (onIdAction(LOWORD(wParam))) {
-	  // ...onIdAction returns true when processed the command
+	if (onActionById(LOWORD(wParam))) {
+	  // ...onActionById returns true when processed the command
 	  lResult = 0;		// processed
 	  ret = true;
 	}
@@ -2251,7 +2471,7 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResul
 	Container refContainer;
 	ref_widget(child, refContainer);
 
-	ret = child->onNotify(lpnmhdr, lResult);
+	ret = child->onReflectedNotify(lpnmhdr, lResult);
 
 	unref_widget(refContainer);
       }
@@ -2330,8 +2550,8 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResul
     case WM_VSCROLL:
     case WM_HSCROLL:
       {
-	Orientation orient = (message == WM_VSCROLL) ? Vertical:
-						       Horizontal;
+	Orientation orient = (message == WM_VSCROLL) ? Orientation::Vertical:
+						       Orientation::Horizontal;
 	  
 	// Note: onScroll() doesn't receive the nPos=HIWORD(wParam)
 	// because it has a limit of 16-bits.  Instead you should use
@@ -2369,6 +2589,7 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResul
 	  LPTSTR lpstr = new TCHAR[length+1];
 	  DragQueryFile(hDrop, index, lpstr, length+1);
 	  files.push_back(lpstr);
+	  delete[] lpstr;
 	}
       }
 
@@ -2398,6 +2619,9 @@ LRESULT Widget::defWndProc(UINT message, WPARAM wParam, LPARAM lParam)
     return m_defWndProc(m_HWND, message, wParam, lParam);
 }
 
+/**
+ * TODO docme
+ */
 bool Widget::doPaint(Graphics &g)
 {
   bool painted = false;
@@ -2412,7 +2636,7 @@ bool Widget::doPaint(Graphics &g)
       // the clipping bounds)
       Image image(clipBounds.getSize(), g);
       // get the Graphics to draw in the image
-      Graphics &g2(image.getGraphics());
+      Graphics *imageG = image.getGraphics();
       // background brush
       Brush bgBrush(getBgColor());
 
@@ -2420,25 +2644,25 @@ bool Widget::doPaint(Graphics &g)
       Region clipRegion;
       g.getClipRegion(clipRegion);
       clipRegion.offset(-clipBounds.x, -clipBounds.y);
-      g2.setClipRegion(clipRegion);
+      imageG->setClipRegion(clipRegion);
 
       // special coordinates transformation (to make
-      // transparent the "g2" to onPaint)
-      SetViewportOrgEx(g2.getHDC(), -clipBounds.x, -clipBounds.y, NULL);
+      // transparent the "imageG" to onPaint)
+      SetViewportOrgEx(imageG->getHDC(), -clipBounds.x, -clipBounds.y, NULL);
       
       // clear the background of the image
-      g2.fillRect(bgBrush, clipBounds);
+      imageG->fillRect(bgBrush, clipBounds);
 
       // configure defaults
-      g2.setFont(getFont());
-      g2.setColor(getFgColor()); // TODO remove this
+      imageG->setFont(getFont());
+      imageG->setColor(getFgColor()); // TODO remove this
 
-      // paint on g2
-      onPaint(g2);
-      painted = g2.wasPainted();
+      // paint on imageG
+      onPaint(*imageG);
+      painted = imageG->wasPainted();
 
       // restore the viewport origin (so drawImage works fine)
-      SetViewportOrgEx(g2.getHDC(), 0, 0, NULL);
+      SetViewportOrgEx(imageG->getHDC(), 0, 0, NULL);
 
       // bit transfer from image to graphics device
       g.drawImage(image, clipBounds.getOrigin());
@@ -2458,16 +2682,31 @@ bool Widget::doPaint(Graphics &g)
   return painted;
 }
 
+/**
+ * TODO docme
+ */
 void Widget::setDefWndProc(WNDPROC proc)
 {
   m_defWndProc = proc;
 }
 
+/**
+ * TODO docme
+ */
 void Widget::setDestroyHWNDProc(void (*proc)(HWND))
 {
   m_destroyHWNDProc = proc;
 }
 
+/**
+ * This routine is called before to dispatch the message.
+ *
+ * In Win32, it's used by Dialog to call IsDialogMessage for example.
+ *
+ * @return
+ *    true if the message was translated and sent, so the GUI
+ *    thread doesn't need to dispatch it.
+ */
 bool Widget::preTranslateMessage(MSG &msg)
 {
   if (m_parent != NULL)
@@ -2497,7 +2736,10 @@ LRESULT CALLBACK Widget::globalWndProc(HWND hwnd, UINT message, WPARAM wParam, L
 #ifdef REPORT_MESSAGES
   String preString =
     "Message "+String::fromInt(message)+" for " +
-    String::fromInt(reinterpret_cast<int>(widget != NULL ? widget: outsideWidget), 16, 8);
+    String::fromInt(reinterpret_cast<int>(widget != NULL ? widget:
+							   // getThreadData()->outsideWidget
+							   __vaca_get_outside_widget()
+					  ), 16, 8);
   
   String msgString = "Unknown";
   switch (message) {
@@ -2716,10 +2958,8 @@ LRESULT CALLBACK Widget::globalWndProc(HWND hwnd, UINT message, WPARAM wParam, L
     return lResult;
   }
   else {
-    outsideWidgetMutex.lock();
-    widget = outsideWidget;
-    outsideWidgetMutex.unlock();
-
+//     widget = getThreadData()->outsideWidget;
+    widget = __vaca_get_outside_widget();
     if (widget != NULL) {
       widget->m_HWND = hwnd;
       return widget->defWndProc(message, wParam, lParam);

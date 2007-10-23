@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -33,6 +33,7 @@
 #define VACA_MOUSEEVENT_H
 
 #include "Vaca/base.h"
+#include "Vaca/Enum.h"
 #include "Vaca/Event.h"
 #include "Vaca/Point.h"
 
@@ -40,37 +41,53 @@ namespace Vaca {
 
 class Widget;
 
-struct MouseButtons {
+/**
+ * Namespace for MouseButtons enumeration.
+ */
+struct MouseButtonsEnum
+{
   /**
    * Enumeration to known which mouse's button triggers the MouseEvent.
    */
-  enum Type {
+  enum enumeration {
     None,
     Left,
     Right,
     Middle,
   };
+  /**
+   * Default value for a MouseButtons instance.
+   */
+  static const enumeration default_value = None;
 };
+
+/**
+ * A button of the mouse.
+ */
+typedef Enum<MouseButtonsEnum> MouseButtons;
 
 /**
  * An event from the mouse. It has a trigger mouse button (the button
  * of the mouse that was the trigger of the event), a point where the
  * event was happend (relative to the widget's client area).
  *
- * getButton returns MouseButton::None if the event is about mouse
- * movement (no button was pressed to trigger the event).
+ * This kind of event is generated when the mouse position is changed,
+ * the wheel is moved, or a button is pressed (click or double-click).
+ *
+ * getButton returns MouseButton::None if the event was produced by
+ * mouse movement (no button was pressed to trigger the event).
  */
 class VACA_DLL MouseEvent : public Event
 {
   Point m_point;
   int m_clicks;
   int m_flags;
-  MouseButtons::Type m_trigger;
+  MouseButtons m_trigger;
   int m_delta;
 
 public:
 
-  MouseEvent(Widget *source, Point point, int clicks, int flags, MouseButtons::Type trigger, int delta = 0);
+  MouseEvent(Widget *source, Point point, int clicks, int flags, MouseButtons trigger, int delta = 0);
   virtual ~MouseEvent();
 
   int getX() const;
@@ -78,7 +95,7 @@ public:
   Point getPoint() const;
 
   int getClicks() const;
-  MouseButtons::Type getButton() const;
+  MouseButtons getButton() const;
 
   bool isLeftButtonPressed() const;
   bool isRightButtonPressed() const;

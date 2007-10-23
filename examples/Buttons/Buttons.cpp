@@ -69,9 +69,9 @@ public:
     , m_disableButton("All Disabled", &m_rightPanel)
     , m_actions(-1)
   {
-    setLayout(new BoxLayout(Horizontal, true)); // homogeneous
-    m_leftPanel.setLayout(new BoxLayout(Vertical, true)); // homogeneous
-    m_rightPanel.setLayout(new BoxLayout(Vertical, false)); // no-homogeneous
+    setLayout(new BoxLayout(Orientation::Horizontal, true)); // homogeneous
+    m_leftPanel.setLayout(new BoxLayout(Orientation::Vertical, true)); // homogeneous
+    m_rightPanel.setLayout(new BoxLayout(Orientation::Vertical, false)); // no-homogeneous
 
     updateLabel();
 

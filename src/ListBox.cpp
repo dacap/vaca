@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -163,20 +163,6 @@ std::vector<int> ListBox::getSelectedItems()
   return items;
 }
 
-// Size ListBox::preferredSize()
-// {
-//   Size sz(4, 4);		// TODO HTHEME stuff
-//   int i, n = getItemCount();
-//   Rect rc;
-
-//   for (i=0; i<n; ++i) {
-//     rc = getItemBounds(i);
-//     sz = Size(VACA_MAX(sz.w, rc.w), sz.h+rc.h);
-//   }
-
-//   return sz;
-// }
-
 void ListBox::onPreferredSize(Size &sz)
 {
   // TODO HTHEME stuff
@@ -207,9 +193,9 @@ void ListBox::onSelChange(Event &ev)
   SelChange(ev);
 }
 
-bool ListBox::onCommand(int id, int code, LRESULT &lResult)
+bool ListBox::onReflectedCommand(int id, int code, LRESULT &lResult)
 {
-  if (Widget::onCommand(id, code, lResult))
+  if (Widget::onReflectedCommand(id, code, lResult))
     return true;
 
   switch (code) {

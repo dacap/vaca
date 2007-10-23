@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -59,8 +59,11 @@ class VACA_DLL String : public VACA_STRING_BASE
 {
 public:
 
+  //////////////////////////////////////////////////////////////////////
+  // Ctors & Dtor
+
   String();
-  String(int length);
+  explicit String(int length);
   String(const String &str);
   String(const VACA_STRING_BASE &str);
   String(const char *str);
@@ -68,15 +71,23 @@ public:
   String(const wchar_t *str);
   virtual ~String();
 
-//   String &format(LPCTSTR fmt, ...);
+  // String &format(LPCTSTR fmt, ...);
 
+  //////////////////////////////////////////////////////////////////////
+  // Conversion
+
+  // Method to convert the string to the standard
+  std::string to_string() const;
+  std::wstring to_wstring() const;
+
+  // Converts the string to a string for Win32 API
   void copyTo(LPTSTR dest, int size) const;
 
-  // String <-> int
+  // String <-> int conversion
   static String fromInt(int value, int base = 10, int precision = 0);
   int parseInt(int base = 10) const;
 
-  // String <-> double
+  // String <-> double conversion
   static String fromDouble(double value, int precision);
   double parseDouble() const;
 
@@ -95,6 +106,16 @@ public:
 
 };
 
+/**
+ * Concatenate a Vaca::String with a normal C string.
+ * 
+ * With this you can do:
+ * @code
+ * String res = String("...") + "...";
+ * @endcode
+ *
+ * @return A new string.
+ */
 inline String operator+(const String &_s1, const char *_s2)
 {
   String _res(_s1);
@@ -102,6 +123,16 @@ inline String operator+(const String &_s1, const char *_s2)
   return _res;
 }
 
+/**
+ * Concatenate a Vaca::String with a C string with wide-characters.
+ * 
+ * With this you can do:
+ * @code
+ * String res = String("...") + _T("...");
+ * @endcode
+ *
+ * @return A new string.
+ */
 inline String operator+(const String &_s1, const wchar_t *_s2)
 {
   String _res(_s1);
@@ -109,6 +140,16 @@ inline String operator+(const String &_s1, const wchar_t *_s2)
   return _res;
 }
 
+/**
+ * Concatenate a normal C string and a Vaca::String.
+ * 
+ * With this you can do:
+ * @code
+ * String res = "..." + String("...");
+ * @endcode
+ *
+ * @return A new string.
+ */
 inline String operator+(const char *_s1, const String &_s2)
 {
   String _res(_s1);
@@ -116,6 +157,16 @@ inline String operator+(const char *_s1, const String &_s2)
   return _res;
 }
 
+/**
+ * Concatenate a C string with wide-characters and a Vaca::String.
+ * 
+ * With this you can do:
+ * @code
+ * String res = _T("...") + String("...");
+ * @endcode
+ *
+ * @return A new string.
+ */
 inline String operator+(const wchar_t *_s1, const String &_s2)
 {
   String _res(_s1);

@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -37,23 +37,42 @@
 
 namespace Vaca {
 
+class Application;
+
+//////////////////////////////////////////////////////////////////////
+
+/**
+ * @see FontStyle
+ */
+struct FontStyleEnumSet
+{
+  enum enumeration {
+    Regular   = 0,
+    Bold      = 1,
+    Italic    = 2,
+    Underline = 4,
+    Strikeout = 8,
+  };
+};
+
+/**
+ * A FontStyle can be one of the following values:
+ * - Regular
+ * - Bold
+ * - Italic
+ * - Underline
+ * - Strikeout
+ */
+typedef EnumSet<FontStyleEnumSet> FontStyle;
+
+//////////////////////////////////////////////////////////////////////
+
 /**
  * A font to be used in Graphics context.
  */
 class VACA_DLL Font
 {
-public:
-
-  struct Style {
-    typedef int Type;
-    enum {
-      Regular   = 0,
-      Bold      = 1,
-      Italic    = 2,
-      Underline = 4,
-      Strikeout = 8,
-    };
-  };
+  friend class Application;
 
 private:
 
@@ -66,8 +85,8 @@ public:
 
   Font();
   Font(const Font &font);
-  Font(const Font &font, Font::Style::Type style);
-  Font(String familyName, int size, Font::Style::Type style = Font::Style::Regular);
+  Font(const Font &font, FontStyle style);
+  Font(String familyName, int size, FontStyle style = FontStyle::Regular);
   explicit Font(HFONT hfont);
   Font(LPLOGFONT lplf);
   virtual ~Font();
@@ -75,7 +94,7 @@ public:
   bool isValid();
 
   int getPointSize();
-  Font::Style::Type getStyle();
+  FontStyle getStyle();
 
   Font &operator=(const Font &font);
   void assign(const Font &font);
@@ -88,6 +107,10 @@ public:
 
   HFONT getHFONT();
   bool getLogFont(LPLOGFONT lplf) const;
+
+private:
+
+  static void deleteHandles();
 
 };
 

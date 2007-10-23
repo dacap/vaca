@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -85,10 +85,10 @@ bool BandedDockArea::hitTest(DockBar *bar, const Point &cursor, const Point &anc
     sz += bar->getDockedSize(getSide());
 
   switch (getSide()) {
-    case LeftSide:   rc = Rect(bounds.x, bounds.y, sz.w, bounds.h); break;
-    case TopSide:    rc = Rect(bounds.x, bounds.y, bounds.w, sz.h); break;
-    case RightSide:  rc = Rect(bounds.x+bounds.w-sz.w, bounds.y, sz.w, bounds.h); break;
-    case BottomSide: rc = Rect(bounds.x, bounds.y+bounds.h-sz.h, bounds.w, sz.h); break;
+    case Side::Left:   rc = Rect(bounds.x, bounds.y, sz.w, bounds.h); break;
+    case Side::Top:    rc = Rect(bounds.x, bounds.y, bounds.w, sz.h); break;
+    case Side::Right:  rc = Rect(bounds.x+bounds.w-sz.w, bounds.y, sz.w, bounds.h); break;
+    case Side::Bottom: rc = Rect(bounds.x, bounds.y+bounds.h-sz.h, bounds.w, sz.h); break;
   }
 
   return rc.contains(cursor);
@@ -155,7 +155,7 @@ void BandedDockArea::drawXorDockInfoShape(Graphics &g, DockInfo *_dockInfo)
 
   if (isHorizontal()) {
     // size of the last band
-    if (getSide() == BottomSide)
+    if (getSide() == Side::Bottom)
       externRect.y -= VACA_MAX(externRect.h, dockInfo->size.h) - externRect.h;
 
     externRect.h = VACA_MAX(externRect.h, dockInfo->size.h);
@@ -164,7 +164,7 @@ void BandedDockArea::drawXorDockInfoShape(Graphics &g, DockInfo *_dockInfo)
   }
   else {
     // size of the last band
-    if (getSide() == RightSide)
+    if (getSide() == Side::Right)
       externRect.x -= VACA_MAX(externRect.w, dockInfo->size.w) - externRect.w;
 
     externRect.w = VACA_MAX(externRect.w, dockInfo->size.w);
@@ -187,29 +187,6 @@ void BandedDockArea::drawXorDockInfoShape(Graphics &g, DockInfo *_dockInfo)
   g.drawRect(pen, internRect);
   g.setRop2(R2_COPYPEN);
 }
-
-/*
-Size BandedDockArea::preferredSize()
-{
-  std::vector<BandInfo>::iterator it;
-  Size sz(0, 0);
-//   int count = 0;
-
-  for (it =m_bandInfo.begin();
-       it!=m_bandInfo.end();
-       ++it) {
-    if (isHorizontal())
-      sz.h += it->size;
-    else
-      sz.w += it->size;
-
-//     count++;
-  }
-
-  return sz//  + (2*VACA_MAX(count-1, 0))
-    ;
-}
-*/
 
 void BandedDockArea::layout()
 {
@@ -467,24 +444,24 @@ Rect BandedDockArea::getBandBounds(int bandIndex)
 
   // displace the bounds to the correct band position
   switch (getSide()) {
-    case BottomSide: bounds.y += bounds.h; break;
-    case RightSide:  bounds.x += bounds.w; break;
+    case Side::Bottom: bounds.y += bounds.h; break;
+    case Side::Right:  bounds.x += bounds.w; break;
     default:
       // do nothing
       break;
   }
   for (int c=0; c<bandIndex; ++c) {
     switch (getSide()) {
-      case TopSide:    bounds.y += m_bandInfo[c].size; break;
-      case LeftSide:   bounds.x += m_bandInfo[c].size; break;
-      case BottomSide: bounds.y -= m_bandInfo[c].size; break;
-      case RightSide:  bounds.x -= m_bandInfo[c].size; break;
+      case Side::Top:    bounds.y += m_bandInfo[c].size; break;
+      case Side::Left:   bounds.x += m_bandInfo[c].size; break;
+      case Side::Bottom: bounds.y -= m_bandInfo[c].size; break;
+      case Side::Right:  bounds.x -= m_bandInfo[c].size; break;
     }
   }
   if (bandIndex < count)
     switch (getSide()) {
-      case BottomSide: bounds.y -= m_bandInfo[bandIndex].size; break;
-      case RightSide:  bounds.x -= m_bandInfo[bandIndex].size; break;
+      case Side::Bottom: bounds.y -= m_bandInfo[bandIndex].size; break;
+      case Side::Right:  bounds.x -= m_bandInfo[bandIndex].size; break;
       default:
 	// do nothing
 	break;

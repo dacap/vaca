@@ -50,15 +50,15 @@ public:
     , m_browseButton("Browse to get more icons...", &m_bottom)
     , m_refreshButton("Refresh list", &m_bottom)
   {
-    setLayout(new BoxLayout(Vertical, false));
+    setLayout(new BoxLayout(Orientation::Vertical, false));
     m_listView.setConstraint(new BoxConstraint(true));
-    m_bottom.setLayout(new BoxLayout(Horizontal, true));
+    m_bottom.setLayout(new BoxLayout(Orientation::Horizontal, true));
 
     // get the system image-list
     System::getImageList(m_imageList, false);
 
     // setup the ListView
-    m_listView.setViewType(ListView::Icon);
+    m_listView.setType(ListViewType::Icon);
     m_listView.setNormalImageList(&m_imageList);
 
     // bindings

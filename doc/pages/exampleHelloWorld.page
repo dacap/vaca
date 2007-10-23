@@ -1,6 +1,6 @@
 // -*- C++ -*-
 
-/*! @namespace Vaca
+/** @namespace Vaca
 
 @page exampleHelloWorld Example - Hello World
 
@@ -8,7 +8,7 @@ This example shown you how to:
 
 @li Create a derived class from a Frame.
 @li Use the simplest layout manager ClientLayout.
-@li Use the Frame::getNonClientSize.
+@li Use the Frame::getPreferredSize.
 @li Use a LinkLabel with an URL.
 @li Use the Label::setTextAlign.
 

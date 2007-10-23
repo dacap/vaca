@@ -49,7 +49,7 @@ class FileTreeNode : public TreeNode
   LPITEMIDLIST m_pidl;
   LPITEMIDLIST m_relativePidl;
   boost::tribool m_hasSubFolders;
-  
+
 public:
 
   FileTreeNode(LPITEMIDLIST pidl, LPITEMIDLIST pidlParent)
@@ -258,7 +258,23 @@ public:
 
     // add the root node (for the desktop)
     m_treeView.addNode(new FileTreeNode(pidl, NULL));
+
+    m_treeView.BeforeExpand.connect(Bind(&MainFrame::startLoading, this));
+    m_treeView.AfterExpand.connect(Bind(&MainFrame::endLoading, this));
   }
+
+private:
+
+  void startLoading()
+  {
+    setCursor(Cursor(SysCursor::Wait));
+  }
+
+  void endLoading()
+  {
+    setCursor(Cursor(SysCursor::Arrow));
+  }
+    
 
 };
 

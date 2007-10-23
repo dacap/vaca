@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -40,6 +40,7 @@
 #include "Vaca/BandedDockArea.h"
 #include "Vaca/BasicDockArea.h"
 #include "Vaca/Bind.h"
+#include "Vaca/Bix.h"
 #include "Vaca/BoxConstraint.h"
 #include "Vaca/BoxLayout.h"
 #include "Vaca/Brush.h"
@@ -93,8 +94,8 @@
 #include "Vaca/Menu.h"
 #include "Vaca/MenuItemEvent.h"
 #include "Vaca/MouseEvent.h"
-#include "Vaca/Mutex.h"
 #include "Vaca/Panel.h"
+#include "Vaca/ParseException.h"
 #include "Vaca/Pen.h"
 #include "Vaca/Point.h"
 #include "Vaca/ProgressBar.h"
@@ -104,7 +105,7 @@
 #include "Vaca/Region.h"
 #include "Vaca/Register.h"
 #include "Vaca/Scintilla.h"
-#include "Vaca/ScopedLock.h"
+#include "Vaca/ScrollInfo.h"
 #include "Vaca/SelfDestruction.h"
 #include "Vaca/Size.h"
 #include "Vaca/Slider.h"

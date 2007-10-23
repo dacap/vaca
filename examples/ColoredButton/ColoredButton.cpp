@@ -76,13 +76,13 @@ public:
     g.fillGradientRect(Rect(bounds.x, bounds.y, bounds.w, h),
 		       selected ? color*0.8: color,
 		       selected ? color*1.1: color*2,
-		       Vertical);
+		       Orientation::Vertical);
 
     // draw bottom gradient
     g.fillGradientRect(Rect(bounds.x, bounds.y+h, bounds.w, bounds.h-h),
 		       selected ? color*0.9: color/2,
 		       selected ? color*1.2: color,
-		       Vertical);
+		       Orientation::Vertical);
 
     // draw the label
     Point point = bounds.getCenter() - Point(g.measureString(getText())/2);
@@ -108,7 +108,7 @@ public:
     , m_button3("Blue Button", Color(150, 150, 255), this)
     , m_button4("Custom Button", Color(200, 200, 200), this)
   {
-    setLayout(new BoxLayout(Vertical, true));
+    setLayout(new BoxLayout(Orientation::Vertical, true));
 
     m_button4.Action.connect(Bind(&MainFrame::onSelectColor, this));
 

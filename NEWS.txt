@@ -1,3 +1,43 @@
+Vaca 0.0.6
+
+- Restructured all action-by-ID stuff:
+  - Renamed Widget::onIdAction() to Widget::onActionById().
+  - Removed Command and CommandState structures (they're just another
+    way to complicate the core API). See the "Commands" example to see a
+    complete example of how to implement commands for menus and
+    tool-bars.
+- Added WidgetHitTestEnum.
+- Changed all enumerations to Enum and EnumSet.
+- Renamed CreateHWNDException to CreateWidgetException.
+- Fixed a bug in EditableListBox (when remove a node in a ListBox with
+  vertical scroll).
+- Removed all utilities (they could be too big to include inside the
+  main Vaca distribution).
+- Finally Trees example works (Added removeNode to TreeNode and TreeView).
+- Renamed acquireFocus to requestFocus.
+- Renamed acquireCapture to captureMouse.
+- Renamed releaseCapture to releaseMouse.
+- Thanks to Emil Kirichev:
+  - Fixed String::fromInt to handle negative numbers.
+  - Fixed a problem with mouse coordinates in all mouse events. Now we
+    use MAKEPOINTS to get negative coordinates when we capture the
+    mouse.
+  - Added Graphics::drawPolyline(const vector<Point>& points).
+- Fixed some memory leaks in some examples.
+- Fixed bugs with memory allocation/deallocation (usage of delete[])
+- Fixed bugs with TreeNode/TreeView.
+- Fixed problem with infinite message-loop when all Frames are hidden.
+- Fixed problems with AddressBook and Unicode support.
+- Fixed String(const char *, ...) constructors with Unicode activated.
+- Added two methods for String: to_string and to_wstring.
+- Added more signals for Widget: See LikeScript example (idea of
+  Przemyslaw Szurmak).
+- Now Vaca uses Boost.Threads library:
+  - Vaca::Thread is a boost::thread wrapper.
+  - removed Mutex: use boost::mutex instead
+  - removed ScopedLock: use boost::mutex::scoped_lock instead
+- New Bix layout manager (finally).
+
 Vaca 0.0.5
 
 - about examples:
@@ -73,7 +113,6 @@ Vaca 0.0.4
 - removed VACA_ASSERT, use just "assert".
 - changed ProgressBar with a state-machine.
 - renamed getHwnd to getHWND (and all similar methods).
-- added TableLayout.
 - new Graphics::drawImageList
 - fixed TVN_GETDISPINFO for multi-threads.
 - fixed a lot of warnings (-Wall flag is activated now).

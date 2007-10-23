@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -152,22 +152,6 @@ void DockBar::setVisible(bool visible)
   }
 }
 
-// Size DockBar::preferredSize()
-// {
-//   Size gripperSize = measureGripper(isDocked(),
-// 				    isDocked() ? m_dockArea->getSide(): LeftSide);
-
-//   return Widget::preferredSize() + gripperSize;
-// }
-
-// Size DockBar::preferredSize(const Size &fitIn)
-// {
-//   Size gripperSize = measureGripper(isDocked(),
-// 				    isDocked() ? m_dockArea->getSide(): LeftSide);
-
-//   return Widget::preferredSize(fitIn - gripperSize);
-// }
-
 /**
  * Leaves some space for the gripper (using measureGripper()).
  */
@@ -176,25 +160,25 @@ Rect DockBar::getLayoutBounds()
   Rect rc = Widget::getLayoutBounds();
 
   if (isGripperVisible(isDocked(),
-		       isDocked() ? m_dockArea->getSide(): LeftSide)) {
+		       isDocked() ? m_dockArea->getSide(): Side())) {
     Side gripperSide = getGripperSide(isDocked(),
-				      isDocked() ? m_dockArea->getSide(): LeftSide);
+				      isDocked() ? m_dockArea->getSide(): Side());
     Size gripperSize = measureGripper(isDocked(),
-				      isDocked() ? m_dockArea->getSide(): LeftSide);
+				      isDocked() ? m_dockArea->getSide(): Side());
 
     switch (gripperSide) {
-      case LeftSide:
+      case Side::Left:
 	rc.x += gripperSize.w;
 	rc.w -= gripperSize.w;
 	break;
-      case RightSide:
+      case Side::Right:
 	rc.w -= gripperSize.w;
 	break;
-      case TopSide:
+      case Side::Top:
 	rc.y += gripperSize.h;
 	rc.h -= gripperSize.h;
 	break;
-      case BottomSide:
+      case Side::Bottom:
 	rc.h -= gripperSize.h;
 	break;
     }
@@ -395,7 +379,7 @@ void DockBar::onPreferredSize(Size &sz)
 {
   Widget::onPreferredSize(sz);
   sz += measureGripper(isDocked(),
-		       isDocked() ? m_dockArea->getSide(): LeftSide);
+		       isDocked() ? m_dockArea->getSide(): Side());
 }
 
 /**
@@ -476,7 +460,7 @@ void DockBar::onMouseDown(MouseEvent &ev)
 
   // start dragging?
   if (ev.getButton() == MouseButtons::Left) {
-    acquireCapture();
+    captureMouse();
 
     if (hasCapture()) {
       beginDrag();
@@ -607,31 +591,33 @@ void DockBar::onResizingFrame(DockFrame *frame, int edge, Rect &rc)
 void DockBar::paintGripper(Graphics &g)
 {
   if (isGripperVisible(isDocked(), 
-		       isDocked() ? m_dockArea->getSide(): LeftSide)) {
+		       isDocked() ? m_dockArea->getSide():
+				    Side())) {
     Color topLeft = System::getColor(COLOR_3DHIGHLIGHT);
     Color bottomRight = System::getColor(COLOR_3DSHADOW);
     Rect rc = getClientBounds();
     Side gripperSide = getGripperSide(isDocked(), 
-				      isDocked() ? m_dockArea->getSide(): LeftSide);
+				      isDocked() ? m_dockArea->getSide():
+						   Side());
 
     switch (gripperSide) {
 
-      case LeftSide:
+      case Side::Left:
 	g.draw3dRect(rc.x, rc.y, 3, rc.h, topLeft, bottomRight);
 	g.draw3dRect(rc.x+3, rc.y, 3, rc.h, topLeft, bottomRight);
 	break;
 
-      case TopSide:
+      case Side::Top:
 	g.draw3dRect(rc.x, rc.y, rc.w, 3, topLeft, bottomRight);
 	g.draw3dRect(rc.x, rc.y+3, rc.w, 3, topLeft, bottomRight);
 	break;
 
-      case RightSide:
+      case Side::Right:
 	g.draw3dRect(rc.x+rc.w-3, rc.y, 3, rc.h, topLeft, bottomRight);
 	g.draw3dRect(rc.x+rc.w-6, rc.y, 3, rc.h, topLeft, bottomRight);
 	break;
 
-      case BottomSide:
+      case Side::Bottom:
 	g.draw3dRect(rc.x, rc.y+rc.h-3, rc.w, 3, topLeft, bottomRight);
 	g.draw3dRect(rc.x, rc.y+rc.h-6, rc.w, 3, topLeft, bottomRight);
 	break;
@@ -650,8 +636,8 @@ Size DockBar::measureGripper(bool docked, Side dockSide)
   if (isGripperVisible(docked, dockSide)) {
     Side gripperSide = getGripperSide(docked, dockSide);
 
-    if (gripperSide == LeftSide ||
-	gripperSide == RightSide)
+    if (gripperSide == Side::Left ||
+	gripperSide == Side::Right)
       return Size(DEF_GRIPPER_SIZE, 0);
     else
       return Size(0, DEF_GRIPPER_SIZE);
@@ -662,15 +648,16 @@ Size DockBar::measureGripper(bool docked, Side dockSide)
 Side DockBar::getGripperSide(bool docked, Side dockSide)
 {
   if (docked) {
-    if (dockSide == LeftSide || dockSide == RightSide)
-      return TopSide;
+    if (dockSide == Side::Left ||
+	dockSide == Side::Right)
+      return Side::Top;
   }
   else {
     Size sz = getClientBounds().getSize();
     if (sz.h >= sz.w)
-      return TopSide;
+      return Side::Top;
   }
-  return LeftSide;
+  return Side::Left;
 }
 
 bool DockBar::isGripperVisible(bool docked, Side dockSide)
@@ -690,7 +677,7 @@ void DockBar::beginDrag()
   // the ESC key)
   assert(hwndDockWnd == NULL && dragHook == NULL);
   hwndDockWnd = getHWND();
-  dragHook = SetWindowsHookEx(WH_KEYBOARD, dragHookProc, NULL, Thread::getCurrentId()); 
+  dragHook = SetWindowsHookEx(WH_KEYBOARD, dragHookProc, NULL, ::GetCurrentThreadId()); 
 
 //   if (m_dockArea != NULL)
 //     m_dockArea->onBeginDockBarDrag(this);
@@ -770,7 +757,7 @@ void DockBar::endDrag()
 //     if (m_dockArea != NULL)
 //       m_dockArea->onEndDockBarDrag(this, m_drag->dockIn);
 
-  releaseCapture();
+  releaseMouse();
 }
 
 // used to hide the DockBar, mainly deletes the m_dockFrame and removes
@@ -812,7 +799,7 @@ void DockBar::cleanUp()
 void DockBar::focusOwner()
 {
   if (m_owner != NULL)
-    m_owner->acquireFocus();
+    m_owner->requestFocus();
 }
 
 DockInfo *DockBar::calcDestination(Rect &rc)

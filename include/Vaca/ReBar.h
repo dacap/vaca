@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -39,13 +39,23 @@
 
 namespace Vaca {
 
-#define ReBarStyle		(ChildStyle +				\
+#if (_WIN32_IE >= 0x0400)
+
+  #define ReBarStyle		(ChildStyle +				\
 				 ContainerStyle +			\
 				 Style(WS_CLIPSIBLINGS |		\
 				       RBS_BANDBORDERS |		\
 				       RBS_DBLCLKTOGGLE,		\
 				       0)) // TODO WS_EX_TOOLWINDOW???
 
+#else
+
+  #define ReBarStyle		(ChildStyle +				\
+				 ContainerStyle +			\
+				 Style(WS_CLIPSIBLINGS |		\
+				       RBS_BANDBORDERS, 0))
+
+#endif
 
 /**
  * TODO

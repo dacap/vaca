@@ -61,7 +61,7 @@ public:
     setLayout(new ClientLayout);
 
     // m_tab
-    m_tab.setLayout(new BoxLayout(Vertical, false));
+    m_tab.setLayout(new BoxLayout(Orientation::Vertical, false));
 
     m_tab.addPage("Page0");
     m_tab.addPage("Page1");
@@ -109,23 +109,23 @@ private:
 
     // Options/Side/Top
     menuItem = sideMenu->add("&Top");
-    menuItem->Action.connect(Bind(&Tab::setSide, &m_tab, TopSide));
-    menuItem->Update.connect(Bind(&MainFrame::onUpdateSide, this, TopSide, boost::arg<1>()));
+    menuItem->Action.connect(Bind(&Tab::setSide, &m_tab, Side::Top));
+    menuItem->Update.connect(Bind(&MainFrame::onUpdateSide, this, Side::Top, boost::arg<1>()));
 
     // Options/Side/Left
     menuItem = sideMenu->add("&Left");
-    menuItem->Action.connect(Bind(&Tab::setSide, &m_tab, LeftSide));
-    menuItem->Update.connect(Bind(&MainFrame::onUpdateSide, this, LeftSide, boost::arg<1>()));
+    menuItem->Action.connect(Bind(&Tab::setSide, &m_tab, Side::Left));
+    menuItem->Update.connect(Bind(&MainFrame::onUpdateSide, this, Side::Left, boost::arg<1>()));
 
     // Options/Side/Bottom
     menuItem = sideMenu->add("&Bottom");
-    menuItem->Action.connect(Bind(&Tab::setSide, &m_tab, BottomSide));
-    menuItem->Update.connect(Bind(&MainFrame::onUpdateSide, this, BottomSide, boost::arg<1>()));
+    menuItem->Action.connect(Bind(&Tab::setSide, &m_tab, Side::Bottom));
+    menuItem->Update.connect(Bind(&MainFrame::onUpdateSide, this, Side::Bottom, boost::arg<1>()));
 
     // Options/Side/Right
     menuItem = sideMenu->add("&Right");
-    menuItem->Action.connect(Bind(&Tab::setSide, &m_tab, RightSide));
-    menuItem->Update.connect(Bind(&MainFrame::onUpdateSide, this, RightSide, boost::arg<1>()));
+    menuItem->Action.connect(Bind(&Tab::setSide, &m_tab, Side::Right));
+    menuItem->Update.connect(Bind(&MainFrame::onUpdateSide, this, Side::Right, boost::arg<1>()));
 
     // Menu bar
     menuBar->add(appMenu);
@@ -157,8 +157,8 @@ private:
   void onUpdateMultiline(MenuItemEvent &ev)
   {
     ev.getMenuItem()->setChecked(m_tab.isMultiline());
-    ev.getMenuItem()->setEnabled(m_tab.getSide() != LeftSide &&
-				 m_tab.getSide() != RightSide);
+    ev.getMenuItem()->setEnabled(m_tab.getSide() != Side::Left &&
+				 m_tab.getSide() != Side::Right);
   }
 
   void onUpdateSide(Side side, MenuItemEvent &ev)
@@ -175,7 +175,7 @@ private:
   void onPageChange()
   {
     updatePage();
-    m_labelLast.setText("Last selected " + m_tab.getPageText(m_tab.getActivePage()));
+    m_labelLast.setText("Last clicked " + m_tab.getPageText(m_tab.getActivePage()));
   }
 
 private:

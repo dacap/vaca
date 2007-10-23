@@ -187,12 +187,12 @@ public:
     // Font sample width
     drawMeasure(g, String::fromInt(textSize.w),
 		origin.x, origin.y+textSize.h,
-		textSize.w, Horizontal);
+		textSize.w, Orientation::Horizontal);
 
     // Font sample height
     drawMeasure(g, String::fromInt(textSize.h),
 		origin.x+textSize.w, origin.y,
-		textSize.h, Vertical);
+		textSize.h, Orientation::Vertical);
   }
 
 private:
@@ -204,7 +204,7 @@ private:
   {
     switch (orientation) {
 
-      case Horizontal: {
+      case Orientation::Horizontal: {
 	Pen pen(Color::Black);
 	Size textSize = g.measureString(text);
 	g.drawString(text, x+size/2-textSize.w/2, y);
@@ -216,7 +216,7 @@ private:
 	break;
       }
 
-      case Vertical: {
+      case Orientation::Vertical: {
 	LOGFONT lf;
 	Font *currentFont = g.getFont();
 

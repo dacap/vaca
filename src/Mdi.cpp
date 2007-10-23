@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -109,9 +109,9 @@ void MdiChild::initialize()
  * Intercept commands from @c VACA_IDM_MDICHILD to activate this
  * MdiChild.
  */
-// bool MdiChild::onCommand(int it, int code, LRESULT &lResult)
+// bool MdiChild::onReflectedCommand(int it, int code, LRESULT &lResult)
 // {
-//   if (Frame::onCommand(id, code, lResult))
+//   if (Frame::onReflectedCommand(id, code, lResult))
 //     return true;
 
 //   // Note: why just don't call the DefFrameProc with WM_COMMAND? it
@@ -375,7 +375,7 @@ static LRESULT WINAPI MdiFrame_defWndProc(HWND hwnd, UINT message, WPARAM wParam
  * Creates a new MdiFrame that contains a MdiClient in its client
  * bounds.
  *
- * MdiFrame start with a ClientLayout to arrange the mMdiClient to the
+ * MdiFrame start with a ClientLayout to arrange the MdiClient to the
  * full client area, but you can change the layout manager.
  */
 MdiFrame::MdiFrame(const String &title, Widget *parent, Style style, bool customMdiClient)

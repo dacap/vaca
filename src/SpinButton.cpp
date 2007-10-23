@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -58,16 +58,6 @@ SpinButton::SpinButton(int minValue, int maxValue, int value,
 SpinButton::~SpinButton()
 {
 }
-
-// Size SpinButton::preferredSize()
-// {
-//   Widget *buddy = getBuddy();
-
-//   if (buddy != NULL)
-//     return Size(17, buddy->preferredSize().h);
-//   else
-//     return Size(17, 17);
-// }
 
 bool SpinButton::isHorizontal()
 {
@@ -191,8 +181,11 @@ void SpinButton::onChange(SpinButtonEvent &ev)
 //   }
 // }
 
-bool SpinButton::onNotify(LPNMHDR lpnmhdr, LRESULT &lResult)
+bool SpinButton::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT &lResult)
 {
+  if (Widget::onReflectedNotify(lpnmhdr, lResult))
+    return true;
+
   if (lpnmhdr->code == UDN_DELTAPOS) {
     LPNMUPDOWN lpnmud = reinterpret_cast<LPNMUPDOWN>(lpnmhdr);
     Side side;
@@ -201,16 +194,16 @@ bool SpinButton::onNotify(LPNMHDR lpnmhdr, LRESULT &lResult)
     if (isHorizontal()) {
       // strange? not, it's inverted
       if (lpnmud->iDelta < 0)
-	side = RightSide;
+	side = Side::Right;
       else
-	side = LeftSide;
+	side = Side::Left;
     }
     // vertical
     else {
       if (lpnmud->iDelta < 0)
-	side = TopSide;
+	side = Side::Top;
       else
-	side = BottomSide;
+	side = Side::Bottom;
     }
 
     SpinButtonEvent ev(this,

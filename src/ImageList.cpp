@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -52,11 +52,11 @@ ImageList::ImageList(HIMAGELIST hImageList, SelfDestruction selfDestruction)
 /**
  * Loads a ImageList from a BITMAP resource.
  */
-ImageList::ImageList(int bitmapId, int widthPerIcon, Color maskColor)
+ImageList::ImageList(ResourceId bitmapId, int widthPerIcon, Color maskColor)
 {
   m_HIMAGELIST =
     ImageList_LoadImage(Application::getHINSTANCE(),
-			MAKEINTRESOURCE(bitmapId),
+			bitmapId.toLPTSTR(),
 			widthPerIcon,
 			1,
 			maskColor.getColorRef(),
@@ -64,7 +64,7 @@ ImageList::ImageList(int bitmapId, int widthPerIcon, Color maskColor)
 			0);
 
   if (m_HIMAGELIST == NULL)
-    throw ResourceException();
+    throw ResourceException("Can't create the image-list resource " + bitmapId.toString());
 
   m_selfDestruction = true;
 }
@@ -84,7 +84,7 @@ ImageList::ImageList(const String &fileName, int widthPerIcon, Color maskColor)
 			LR_LOADFROMFILE);
 
   if (m_HIMAGELIST == NULL)
-    throw ResourceException();
+    throw ResourceException("Can't load the image-list from file " + fileName);
 
   m_selfDestruction = true;
 }
@@ -94,11 +94,21 @@ ImageList::~ImageList()
   destroy();
 }
 
+/**
+ * Returns true if the image list is valid and can be used in
+ * drawing routines like Graphics#drawImageList.
+ */
 bool ImageList::isValid()
 {
   return m_HIMAGELIST != NULL;
 }
 
+/**
+ * Returns how many images has this image list.
+ * 
+ * @return
+ *     A number from 0 to n that specified the size of the list.
+ */
 int ImageList::getImageCount()
 {
   assert(m_HIMAGELIST != NULL);

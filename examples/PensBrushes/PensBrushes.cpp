@@ -186,13 +186,13 @@ public:
     , m_miterJoin("Miter", m_joinGroup, &m_joinPanel)
     , m_brushColor("Color", &m_brushPanel)
   {
-    setLayout(new BoxLayout(Vertical, false));
+    setLayout(new BoxLayout(Orientation::Vertical, false));
     m_preview.setConstraint(new BoxConstraint(true));
-    m_penPanel.setLayout(new BoxLayout(Horizontal, true, 0));
-    m_penLeftPanel.setLayout(new BoxLayout(Vertical, false, 0));
-    m_endCapPanel.setLayout(new BoxLayout(Vertical, true, 0));
-    m_joinPanel.setLayout(new BoxLayout(Vertical, true, 0));
-    m_brushPanel.setLayout(new BoxLayout(Horizontal, true, 0));
+    m_penPanel.setLayout(new BoxLayout(Orientation::Horizontal, true, 0));
+    m_penLeftPanel.setLayout(new BoxLayout(Orientation::Vertical, false, 0));
+    m_endCapPanel.setLayout(new BoxLayout(Orientation::Vertical, true, 0));
+    m_joinPanel.setLayout(new BoxLayout(Orientation::Vertical, true, 0));
+    m_brushPanel.setLayout(new BoxLayout(Orientation::Horizontal, true, 0));
 
     m_roundEndCap.setSelected(true);
     m_roundJoin.setSelected(true);

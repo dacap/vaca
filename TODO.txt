@@ -1,4 +1,3 @@
-
 ----------------------------------------------------------------------
 General
 ----------------------------------------------------------------------
@@ -6,13 +5,16 @@ General
 - Look at 'TODO' in source code
 - Fix Timer class: tick events can break all the message processing
   (see BouncingBalls for an example of this bug).
+- Add a "WidgetClassName", because with a simple:
+    Panel("", parent, PanelStyle)
+  You can make a disaster. So this should fix it:
+    Panel(WidgetClassName(""), parent, PanelStyle)
 
 
 ----------------------------------------------------------------------
 Layout Managers
 ----------------------------------------------------------------------
 
-- complete TableLayout
 - Bix layout manager: a mix between columns, rows, and matrices.
 
 

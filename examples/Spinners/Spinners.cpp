@@ -51,7 +51,7 @@ public:
     , m_spinner1(0, 10, 0, this)
     , m_spinner2(-5, 5, 0, this)
   {
-    setLayout(new BoxLayout(Vertical, false));
+    setLayout(new BoxLayout(Orientation::Vertical, false));
     m_spinButton1.setConstraint(new BoxConstraint(true));
     m_spinButton2.setConstraint(new BoxConstraint(true));
     m_spinButton3.setConstraint(new BoxConstraint(true));

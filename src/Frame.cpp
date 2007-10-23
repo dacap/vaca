@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, David A. Capello
+// Copyright (c) 2005, 2006, 2007, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -43,30 +43,11 @@
 #include "Vaca/System.h"
 #include "Vaca/Mdi.h"
 #include "Vaca/Thread.h"
-#include "Vaca/Mutex.h"
-#include "Vaca/ScopedLock.h"
-#include "Vaca/BandedDockArea.h"
 #include "Vaca/Icon.h"
 #include "Vaca/Command.h"
+#include "Vaca/BandedDockArea.h"
 
 using namespace Vaca;
-
-// the "frm" isn't used (TODO check getCurrent != NULL)
-#define ADD_FRAME(frm)		Thread::getCurrent()->addFrame()
-#define REMOVE_FRAME(frm)	Thread::getCurrent()->removeFrame()
-
-// #define ADD_FRAME(frm)
-//       visibleFramesMutex.lock();
-//       visibleFrames.push_back(frm);
-//       visibleFramesMutex.unlock();
-
-// #define REMOVE_FRAME(frm)
-//     visibleFramesMutex.lock();
-//     remove_element_from_container(visibleFrames, frm);
-//     visibleFramesMutex.unlock();
-
-// static Mutex visibleFramesMutex; // used to access "visibleFrames"
-// static std::list<Frame *> visibleFrames; // visible frames of all threads
 
 /**
  * Creates a frame using the FrameClass.  Also, remember that by
@@ -95,6 +76,9 @@ void Frame::initialize(const String &title)
   m_menuBar = NULL;
   m_counted = false;
 
+  // we can set the title of the window now if we have the HWND (for
+  // example, HWND could be NULL here if we come from a Dialog's
+  // contructor)
   if (::IsWindow(getHWND()))
     setText(title);
 }
@@ -107,19 +91,19 @@ Frame::~Frame()
     m_menuBar = NULL;
   }
 
-  for (std::vector<Command *>::iterator it = m_commands.begin();
-       it != m_commands.end();
-       ++it) {
-    Command *command = *it;
-    delete command;
-  }
+//   for (std::vector<Command *>::iterator it = m_commands.begin();
+//        it != m_commands.end();
+//        ++it) {
+//     Command *command = *it;
+//     delete command;
+//   }
 
   deleteDockAreas();
 
   if (m_counted) {
     m_counted = false;
 
-    REMOVE_FRAME(this);
+    Thread::removeFrame(this);
   }
 }
 
@@ -138,7 +122,7 @@ bool Frame::preTranslateMessage(MSG &msg)
 	// is menuItem enabled?
 	if (menuItem->isEnabled()) {
 	  // ok, we can do the action
-	  onIdAction(menuItem->getId());
+	  onActionById(menuItem->getId());
 	}
 
 	return true;
@@ -149,6 +133,11 @@ bool Frame::preTranslateMessage(MSG &msg)
   return Widget::preTranslateMessage(msg);
 }
 
+/**
+ * Adds space for the non-client size.
+ *
+ * @see getNonClientSize
+ */
 void Frame::onPreferredSize(Size &sz)
 {
   Size ncSize = getNonClientSize();
@@ -167,6 +156,7 @@ void Frame::onPreferredSize(Size &sz)
  */
 void Frame::onResize(const Size &sz)
 {
+  Widget::onResize(sz);
   layout();
 }
 
@@ -174,34 +164,30 @@ void Frame::onResize(const Size &sz)
  * Convert a WM_COMMAND notification from a menus to a
  * MenuItem::onAction event.
  */
-bool Frame::onIdAction(int id)
+bool Frame::onActionById(int actionId)
 {
-  if (Widget::onIdAction(id))
+  if (Widget::onActionById(actionId))
     return true;
 
   // use menu bar
   if (m_menuBar != NULL) {
-    MenuItem *menuItem = m_menuBar->getMenuItemById(id);
+    MenuItem *menuItem = m_menuBar->getMenuItemById(actionId);
 
-    VACA_TRACE("Frame::onIdAction(%d), menuItem=%p\n", id, menuItem);
+    VACA_TRACE("Frame::onActionById(%d), menuItem=%p\n", actionId, menuItem);
 
     if (menuItem != NULL) {
       MenuItemEvent ev(menuItem);
       menuItem->onAction(ev);
     }
-    else {
-      // TODO ToolBars
-      // TODO Mdi stuff
-    }
   }
 
   // call commands with the given ID
-  for (std::vector<Command *>::iterator it = m_commands.begin();
-       it != m_commands.end();
-       ++it) {
-    if ((*it)->getId() == id)
-      (*it)->onAction();
-  }
+//   for (std::vector<Command *>::iterator it = m_commands.begin();
+//        it != m_commands.end();
+//        ++it) {
+//     if ((*it)->getId() == actionId)
+//       (*it)->onAction();
+//   }
 
   return false;
 }
@@ -266,7 +252,7 @@ void Frame::onClose(CloseEvent &ev)
  */
 void Frame::onResizing(int edge, Rect &rc)
 {
-  // do nothing
+  Resizing(edge, rc);
 }
 
 #if 0
@@ -318,7 +304,7 @@ void Frame::setVisible(bool visible)
     if (!m_counted) {
       m_counted = true;
 
-      ADD_FRAME(this);
+      Thread::addFrame(this);
     }
   }
   // Hide the window. It looks simple, but the order of the commands
@@ -337,7 +323,7 @@ void Frame::setVisible(bool visible)
     if (m_counted) {
       m_counted = false;
 
-      REMOVE_FRAME(this);
+      Thread::removeFrame(this);
     }
   }
 }
@@ -460,18 +446,18 @@ Rect Frame::getLayoutBounds()
     Size dockSize = dockArea->getPreferredSize();
 
     switch (dockArea->getSide()) {
-      case LeftSide:
+      case Side::Left:
 	rc.x += dockSize.w;
 	rc.w -= dockSize.w;
 	break;
-      case TopSide:
+      case Side::Top:
 	rc.y += dockSize.h;
 	rc.h -= dockSize.h;
 	break;
-      case RightSide:
+      case Side::Right:
 	rc.w -= dockSize.w;
 	break;
-      case BottomSide:
+      case Side::Bottom:
 	rc.h -= dockSize.h;
 	break;
     }
@@ -489,20 +475,20 @@ Rect Frame::getLayoutBounds()
  *
  * @see @ref TN010
  */
-void Frame::addCommand(Command *command)
-{
-  m_commands.push_back(command);
-}
+// void Frame::addCommand(Command *command)
+// {
+//   m_commands.push_back(command);
+// }
 
 /** 
  * 
  * 
  * @param command 
  */
-void Frame::removeCommand(Command *command)
-{
-  remove_element_from_container(m_commands, command);
-}
+// void Frame::removeCommand(Command *command)
+// {
+//   remove_element_from_container(m_commands, command);
+// }
 
 /**
  * 
@@ -538,10 +524,10 @@ void Frame::defaultDockAreas()
 {
   deleteDockAreas();
 
-  addDockArea(new BandedDockArea(TopSide, this));
-  addDockArea(new BandedDockArea(BottomSide, this));
-  addDockArea(new BandedDockArea(LeftSide, this));
-  addDockArea(new BandedDockArea(RightSide, this));
+  addDockArea(new BandedDockArea(Side::Top, this));
+  addDockArea(new BandedDockArea(Side::Bottom, this));
+  addDockArea(new BandedDockArea(Side::Left, this));
+  addDockArea(new BandedDockArea(Side::Right, this));
 }
 
 /**
@@ -599,21 +585,6 @@ DockArea *Frame::getDefaultDockArea()
     return NULL;
 }
 
-// Size Frame::preferredSize()
-// {
-//   return getNonClientSize() + Widget::preferredSize();
-// }
-
-// Size Frame::preferredSize(const Size &fitIn)
-// {
-//   Size ncSize(getNonClientSize());
-
-//   return
-//     ncSize +
-//     Widget::preferredSize(Size(VACA_MAX(0, fitIn.w - ncSize.w),
-// 			       VACA_MAX(0, fitIn.h - ncSize.h)));
-// }
-
 void Frame::layout()
 {
   Widget::layout();
@@ -630,22 +601,22 @@ void Frame::layout()
 
     switch (dockArea->getSide()) {
 
-      case LeftSide:
+      case Side::Left:
 	dockArea->setBounds(Rect(Point(clientRect.x, layoutRect.y),
 				 Size(dockSize.w, layoutRect.h)));
 	break;
 
-      case TopSide:
+      case Side::Top:
 	dockArea->setBounds(Rect(Point(clientRect.x, clientRect.y),
 				 Size(clientRect.w, dockSize.h)));
 	break;
 
-      case RightSide:
+      case Side::Right:
 	dockArea->setBounds(Rect(Point(layoutRect.x+layoutRect.w, layoutRect.y),
 				 Size(dockSize.w, layoutRect.h)));
 	break;
 
-      case BottomSide:
+      case Side::Bottom:
 	dockArea->setBounds(Rect(Point(clientRect.x, layoutRect.y+layoutRect.h),
 				 Size(clientRect.w, dockSize.h)));
 	break;
@@ -680,20 +651,20 @@ void Frame::updateMenuItem(MenuItem *menuItem)
   MenuItemEvent ev(menuItem);
   menuItem->onUpdate(ev);
 
-  CommandState cmdState;
+//   CommandState cmdState;
 
-  for (std::vector<Command *>::iterator it = m_commands.begin();
-       it != m_commands.end();
-       ++it) {
-    Command *command = *it;
-    if (command->getId() == menuItem->getId())
-      command->onUpdate(cmdState);
-  }
+//   for (std::vector<Command *>::iterator it = m_commands.begin();
+//        it != m_commands.end();
+//        ++it) {
+//     Command *command = *it;
+//     if (command->getId() == menuItem->getId())
+//       command->onUpdate(cmdState);
+//   }
 
-  if (cmdState.getText()   != NULL) menuItem->setText   (*cmdState.getText());
-  if (cmdState.isEnabled() != NULL) menuItem->setEnabled(*cmdState.isEnabled());
-  if (cmdState.isChecked() != NULL) menuItem->setChecked(*cmdState.isChecked());
-  if (cmdState.isRadio()   != NULL) menuItem->setRadio  (*cmdState.isRadio());
+//   if (cmdState.getText()   != NULL) menuItem->setText   (*cmdState.getText());
+//   if (cmdState.isEnabled() != NULL) menuItem->setEnabled(*cmdState.isEnabled());
+//   if (cmdState.isChecked() != NULL) menuItem->setChecked(*cmdState.isChecked());
+//   if (cmdState.isRadio()   != NULL) menuItem->setRadio  (*cmdState.isRadio());
 }
 
 
@@ -718,27 +689,6 @@ Widget::Container Frame::getSynchronizedGroup()
 
   return container;
 }
-
-// int Frame::getFramesCount()
-// {
-//   // return framesCount;
-//   ScopedLock lock(visibleFramesMutex);
-//   int count = visibleFrames.size();
-//   return count;
-// }
-
-// int Frame::getVisibleFramesByThread(int threadId)
-// {
-//   ScopedLock lock(visibleFramesMutex);
-//   int count = 0;
-
-//   for (std::list<Frame *>::iterator it=visibleFrames.begin();
-//        it!=visibleFrames.end(); ++it)
-//     if ((*it)->getThreadOwnerId() == threadId)
-//       count++;
-
-//   return count;
-// }
 
 /**
  * Used when WM_INITMENU or WM_INITMENUPOPUP message is received to

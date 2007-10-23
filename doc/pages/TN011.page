@@ -1,0 +1,49 @@
+// -*- C++ -*-
+
+/**
+
+@page TN011 TN011 - Technical Note 011: Layout Managers
+
+<h2>Memory Management</h2>
+
+When you use @c setLayout or @c setConstraint, you must to specify a
+pointer to a @c Layout or a @c Constraint respectively. These pointers are
+deleted automatically when the widget is destroyed, but they're not
+destroyed when you change the layout manager or the constraint. E.g.:
+
+@code
+  {
+    Layout *betterLayout = new MyBetterLayout();
+    ...
+    {
+      Frame frame(...);
+      frame.setLayout(new MyLayout(...));
+      MyLayout *oldLayout = frame.setLayout(betterLayout);
+
+      delete oldLayout; // <-- we must to destroy the layout: it isn't 
+                        //     deleted automatically because it isn't
+                        //     the 'frame' layout manager anymore
+    }
+    ...
+    // here betterLayout doesn't exist (was automatically deleted 
+    // in the Frame destructor)
+  }
+@endcode
+
+Remember to use a code like this if you make non-dynamic instances of
+Layout (or Constraint):
+
+@code
+  {
+    Frame frame(...);
+    ClientLayout layout;
+    frame.setLayout(&layout);
+    ...
+    frame.setLayout(NULL); // <-- you must to do this... if you don't
+                           //     the "layout" will be deleted two times
+  }
+@endcode
+
+@see Layout, Constraint, Widget#setLayout, Widget#setConstraint
+
+*/

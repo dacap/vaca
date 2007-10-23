@@ -1,0 +1,24 @@
+ifndef BOOST_ROOT
+  BOOST_ROOT = c:/boost_1_34_1
+endif
+
+ifndef BOOST_BIN
+  BOOST_BIN = bin.v2
+endif
+
+ifndef BOOST_VERSION
+  BOOST_VERSION = 1_34_1
+endif
+
+ifndef BOOST_TOOLSET
+  BOOST_TOOLSET = gcc-mingw-3.4.2
+endif
+
+ifndef BOOST_SHORTTOOLSET
+  BOOST_SHORTTOOLSET = mgw34
+endif
+
+BOOST_SIGNALS_STATIC = $(BOOST_ROOT)/$(BOOST_BIN)/libs/signals/build/$(BOOST_TOOLSET)/release/link-static/threading-multi/libboost_signals-$(BOOST_SHORTTOOLSET)-mt-$(BOOST_VERSION)$(LIB)
+BOOST_SIGNALS_SHARED = $(BOOST_ROOT)/$(BOOST_BIN)/libs/signals/build/$(BOOST_TOOLSET)/release/threading-multi/boost_signals-$(BOOST_SHORTTOOLSET)-mt-$(BOOST_VERSION)$(LIB)
+BOOST_THREAD_STATIC = $(BOOST_ROOT)/$(BOOST_BIN)/libs/thread/build/$(BOOST_TOOLSET)/release/link-static/threading-multi/libboost_thread-$(BOOST_SHORTTOOLSET)-mt-$(BOOST_VERSION)$(LIB)
+BOOST_THREAD_SHARED = $(BOOST_ROOT)/$(BOOST_BIN)/libs/thread/build/$(BOOST_TOOLSET)/release/threading-multi/boost_thread-$(BOOST_SHORTTOOLSET)-mt-$(BOOST_VERSION)$(LIB)

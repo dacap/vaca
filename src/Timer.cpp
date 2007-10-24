@@ -30,9 +30,9 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "stdvaca.h"
-#include "Vaca/Timer.h"
-#include "Vaca/Thread.h"
-#include "Vaca/Debug.h"
+#include "Vaca/Timer.hpp"
+#include "Vaca/Thread.hpp"
+#include "Vaca/Debug.hpp"
 
 using namespace Vaca;
 

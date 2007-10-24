@@ -30,10 +30,10 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "stdvaca.h"
-#include "Vaca/Cursor.h"
-#include "Vaca/Application.h"
-#include "Vaca/Debug.h"
-#include "Vaca/ResourceException.h"
+#include "Vaca/Cursor.hpp"
+#include "Vaca/Application.hpp"
+#include "Vaca/Debug.hpp"
+#include "Vaca/ResourceException.hpp"
 
 using namespace Vaca;
 

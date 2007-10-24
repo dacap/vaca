@@ -30,11 +30,11 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "stdvaca.h"
-#include "Vaca/Image.h"
-#include "Vaca/Debug.h"
-#include "Vaca/Graphics.h"
-#include "Vaca/Application.h"
-#include "Vaca/ResourceException.h"
+#include "Vaca/Image.hpp"
+#include "Vaca/Debug.hpp"
+#include "Vaca/Graphics.hpp"
+#include "Vaca/Application.hpp"
+#include "Vaca/ResourceException.hpp"
 
 using namespace Vaca;
 

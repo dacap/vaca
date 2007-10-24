@@ -30,14 +30,14 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "stdvaca.h"
-#include "Vaca/DockBar.h"
-#include "Vaca/DockFrame.h"
-#include "Vaca/Debug.h"
-#include "Vaca/Application.h"
-#include "Vaca/MouseEvent.h"
-#include "Vaca/Debug.h"
-#include "Vaca/System.h"
-#include "Vaca/Bind.h"
+#include "Vaca/DockBar.hpp"
+#include "Vaca/DockFrame.hpp"
+#include "Vaca/Debug.hpp"
+#include "Vaca/Application.hpp"
+#include "Vaca/MouseEvent.hpp"
+#include "Vaca/Debug.hpp"
+#include "Vaca/System.hpp"
+#include "Vaca/Bind.hpp"
 
 #define DEF_GRIPPER_SIZE 8
 

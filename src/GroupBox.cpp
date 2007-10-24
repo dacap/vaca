@@ -30,9 +30,9 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "stdvaca.h"
-#include "Vaca/GroupBox.h"
-#include "Vaca/Point.h"
-#include "Vaca/Brush.h"
+#include "Vaca/GroupBox.hpp"
+#include "Vaca/Point.hpp"
+#include "Vaca/Brush.hpp"
 
 using namespace Vaca;
 

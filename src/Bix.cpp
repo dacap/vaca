@@ -30,9 +30,9 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "stdvaca.h"
-#include "Vaca/Bix.h"
-#include "Vaca/Point.h"
-#include "Vaca/ParseException.h"
+#include "Vaca/Bix.hpp"
+#include "Vaca/Point.hpp"
+#include "Vaca/ParseException.hpp"
 
 using namespace Vaca;
 

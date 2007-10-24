@@ -30,16 +30,16 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "stdvaca.h"
-#include "Vaca/LinkLabel.h"
-#include "Vaca/Point.h"
-#include "Vaca/MouseEvent.h"
-#include "Vaca/Cursor.h"
-#include "Vaca/Debug.h"
-#include "Vaca/Font.h"
-#include "Vaca/Brush.h"
-#include "Vaca/Pen.h"
-#include "Vaca/KeyEvent.h"
-#include "Vaca/Image.h"
+#include "Vaca/LinkLabel.hpp"
+#include "Vaca/Point.hpp"
+#include "Vaca/MouseEvent.hpp"
+#include "Vaca/Cursor.hpp"
+#include "Vaca/Debug.hpp"
+#include "Vaca/Font.hpp"
+#include "Vaca/Brush.hpp"
+#include "Vaca/Pen.hpp"
+#include "Vaca/KeyEvent.hpp"
+#include "Vaca/Image.hpp"
 
 #include <boost/algorithm/string/find.hpp>
 

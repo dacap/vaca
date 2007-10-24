@@ -30,7 +30,7 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "stdvaca.h"
-#include "Vaca/Color.h"
+#include "Vaca/Color.hpp"
 
 using namespace Vaca;
 

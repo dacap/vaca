@@ -30,8 +30,8 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "stdvaca.h"
-#include "Vaca/Button.h"
-#include "Vaca/Debug.h"
+#include "Vaca/Button.hpp"
+#include "Vaca/Debug.hpp"
 
 using namespace Vaca;
 

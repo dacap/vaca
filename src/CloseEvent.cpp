@@ -30,8 +30,8 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "stdvaca.h"
-#include "Vaca/CloseEvent.h"
-#include "Vaca/Frame.h"
+#include "Vaca/CloseEvent.hpp"
+#include "Vaca/Frame.hpp"
 
 using namespace Vaca;
 

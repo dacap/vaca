@@ -30,13 +30,13 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "stdvaca.h"
-#include "Vaca/System.h"
-#include "Vaca/Rect.h"
-#include "Vaca/Point.h"
-#include "Vaca/Size.h"
-#include "Vaca/Color.h"
-#include "Vaca/Debug.h"
-#include "Vaca/ImageList.h"
+#include "Vaca/System.hpp"
+#include "Vaca/Rect.hpp"
+#include "Vaca/Point.hpp"
+#include "Vaca/Size.hpp"
+#include "Vaca/Color.hpp"
+#include "Vaca/Debug.hpp"
+#include "Vaca/ImageList.hpp"
 
 #include <boost/thread/mutex.hpp>
 

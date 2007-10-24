@@ -30,7 +30,7 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "stdvaca.h"
-#include "Vaca/BoxConstraint.h"
+#include "Vaca/BoxConstraint.hpp"
 
 using namespace Vaca;
 

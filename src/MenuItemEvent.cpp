@@ -30,8 +30,8 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "stdvaca.h"
-#include "Vaca/MenuItemEvent.h"
-#include "Vaca/Menu.h"
+#include "Vaca/MenuItemEvent.hpp"
+#include "Vaca/Menu.hpp"
 
 using namespace Vaca;
 

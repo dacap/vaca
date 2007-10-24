@@ -30,8 +30,8 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "stdvaca.h"
-#include "Vaca/Size.h"
-#include "Vaca/Point.h"
+#include "Vaca/Size.hpp"
+#include "Vaca/Point.hpp"
 
 using namespace Vaca;
 

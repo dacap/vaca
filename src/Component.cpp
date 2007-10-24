@@ -30,8 +30,8 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "stdvaca.h"
-#include "Vaca/Component.h"
-#include "Vaca/Debug.h"
+#include "Vaca/Component.hpp"
+#include "Vaca/Debug.hpp"
 
 #ifndef NDEBUG
 #include <boost/thread/mutex.hpp>

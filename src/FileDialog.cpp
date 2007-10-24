@@ -30,10 +30,10 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "stdvaca.h"
-#include "Vaca/FileDialog.h"
-#include "Vaca/Widget.h"
-#include "Vaca/Application.h"
-#include "Vaca/System.h"
+#include "Vaca/FileDialog.hpp"
+#include "Vaca/Widget.hpp"
+#include "Vaca/Application.hpp"
+#include "Vaca/System.hpp"
 
 // 32k is the limit for Win95/98/Me/NT4/2000/XP with ANSI version
 #define FILENAME_BUFSIZE (1024*32)

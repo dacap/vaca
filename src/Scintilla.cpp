@@ -30,8 +30,8 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "stdvaca.h"
-#include "Vaca/Scintilla.h"
-#include "Vaca/Font.h"
+#include "Vaca/Scintilla.hpp"
+#include "Vaca/Font.hpp"
 #include "scintilla/include/Scintilla.h"
 #include "scintilla/include/SciLexer.h"
 

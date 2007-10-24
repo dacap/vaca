@@ -30,7 +30,7 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "stdvaca.h"
-#include "Vaca/Spinner.h"
+#include "Vaca/Spinner.hpp"
 
 using namespace Vaca;
 

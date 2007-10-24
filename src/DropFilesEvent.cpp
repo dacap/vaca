@@ -30,8 +30,8 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "stdvaca.h"
-#include "Vaca/DropFilesEvent.h"
-#include "Vaca/Widget.h"
+#include "Vaca/DropFilesEvent.hpp"
+#include "Vaca/Widget.hpp"
 
 using namespace Vaca;
 

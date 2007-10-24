@@ -30,12 +30,12 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "stdvaca.h"
-#include "Vaca/Debug.h"
-#include "Vaca/Application.h"
-#include "Vaca/Frame.h"
-#include "Vaca/Timer.h"
-#include "Vaca/Graphics.h"
-#include "Vaca/Font.h"
+#include "Vaca/Debug.hpp"
+#include "Vaca/Application.hpp"
+#include "Vaca/Frame.hpp"
+#include "Vaca/Timer.hpp"
+#include "Vaca/Graphics.hpp"
+#include "Vaca/Font.hpp"
 
 using namespace Vaca;
 

@@ -30,8 +30,8 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "stdvaca.h"
-#include "Vaca/KeyEvent.h"
-#include "Vaca/Widget.h"
+#include "Vaca/KeyEvent.hpp"
+#include "Vaca/Widget.hpp"
 
 using namespace Vaca;
 

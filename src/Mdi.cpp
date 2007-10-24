@@ -30,12 +30,12 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "stdvaca.h"
-#include "Vaca/MDI.h"
-#include "Vaca/Application.h"
-#include "Vaca/Debug.h"
-#include "Vaca/Event.h"
-#include "Vaca/ClientLayout.h"
-#include "Vaca/Menu.h"
+#include "Vaca/MDI.hpp"
+#include "Vaca/Application.hpp"
+#include "Vaca/Debug.hpp"
+#include "Vaca/Event.hpp"
+#include "Vaca/ClientLayout.hpp"
+#include "Vaca/Menu.hpp"
 
 #include <boost/bind.hpp>
 

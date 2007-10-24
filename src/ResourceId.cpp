@@ -30,7 +30,7 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "stdvaca.h"
-#include "Vaca/ResourceId.h"
+#include "Vaca/ResourceId.hpp"
 
 using namespace Vaca;
 

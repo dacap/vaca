@@ -30,10 +30,10 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "stdvaca.h"
-#include "Vaca/TreeNode.h"
-#include "Vaca/TreeView.h"
-#include "Vaca/TreeViewEvent.h"
-#include "Vaca/Debug.h"
+#include "Vaca/TreeNode.hpp"
+#include "Vaca/TreeView.hpp"
+#include "Vaca/TreeViewEvent.hpp"
+#include "Vaca/Debug.hpp"
 
 using namespace Vaca;
 

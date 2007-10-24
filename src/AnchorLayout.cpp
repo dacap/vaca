@@ -30,11 +30,11 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "stdvaca.h"
-#include "Vaca/AnchorLayout.h"
-#include "Vaca/Anchor.h"
-#include "Vaca/Size.h"
-#include "Vaca/Point.h"
-#include "Vaca/Debug.h"
+#include "Vaca/AnchorLayout.hpp"
+#include "Vaca/Anchor.hpp"
+#include "Vaca/Size.hpp"
+#include "Vaca/Point.hpp"
+#include "Vaca/Debug.hpp"
 
 using namespace Vaca;
 

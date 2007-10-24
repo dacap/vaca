@@ -30,7 +30,7 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "stdvaca.h"
-#include "Vaca/GraphicsPath.h"
+#include "Vaca/GraphicsPath.hpp"
 
 #if 0
 

@@ -30,10 +30,10 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "stdvaca.h"
-#include "Vaca/ComboBox.h"
-#include "Vaca/Event.h"
-#include "Vaca/Debug.h"
-#include "Vaca/System.h"
+#include "Vaca/ComboBox.hpp"
+#include "Vaca/Event.hpp"
+#include "Vaca/Debug.hpp"
+#include "Vaca/System.hpp"
 
 using namespace Vaca;
 

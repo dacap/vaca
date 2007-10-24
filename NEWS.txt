@@ -6,6 +6,7 @@ Vaca 0.0.6
     way to complicate the core API). See the "Commands" example to see a
     complete example of how to implement commands for menus and
     tool-bars.
+- Renamed all headers files from .h to .hpp
 - Added WidgetHitTestEnum.
 - Changed all enumerations to Enum and EnumSet.
 - Renamed CreateHWNDException to CreateWidgetException.

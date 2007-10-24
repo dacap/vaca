@@ -30,10 +30,10 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "stdvaca.h"
-#include "Vaca/Thread.h"
-#include "Vaca/Debug.h"
-#include "Vaca/Frame.h"
-#include "Vaca/Timer.h"
+#include "Vaca/Thread.hpp"
+#include "Vaca/Debug.hpp"
+#include "Vaca/Frame.hpp"
+#include "Vaca/Timer.hpp"
 
 #include <vector>
 #include <algorithm>

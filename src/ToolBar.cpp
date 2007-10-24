@@ -30,14 +30,14 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "stdvaca.h"
-#include "Vaca/ToolBar.h"
-#include "Vaca/AnchorLayout.h"
-#include "Vaca/Anchor.h"
-#include "Vaca/ClientLayout.h"
-#include "Vaca/Event.h"
-#include "Vaca/Debug.h"
-#include "Vaca/ImageList.h"
-#include "Vaca/DockFrame.h"
+#include "Vaca/ToolBar.hpp"
+#include "Vaca/AnchorLayout.hpp"
+#include "Vaca/Anchor.hpp"
+#include "Vaca/ClientLayout.hpp"
+#include "Vaca/Event.hpp"
+#include "Vaca/Debug.hpp"
+#include "Vaca/ImageList.hpp"
+#include "Vaca/DockFrame.hpp"
 
 using namespace Vaca;
 

@@ -30,9 +30,9 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "stdvaca.h"
-#include "Vaca/FindTextDialog.h"
-#include "Vaca/Debug.h"
-#include "Vaca/Application.h"
+#include "Vaca/FindTextDialog.hpp"
+#include "Vaca/Debug.hpp"
+#include "Vaca/Application.hpp"
 
 using namespace Vaca;
 

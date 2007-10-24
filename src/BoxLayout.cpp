@@ -30,10 +30,10 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "stdvaca.h"
-#include "Vaca/BoxLayout.h"
-#include "Vaca/BoxConstraint.h"
-#include "Vaca/Size.h"
-#include "Vaca/Debug.h"
+#include "Vaca/BoxLayout.hpp"
+#include "Vaca/BoxConstraint.hpp"
+#include "Vaca/Size.hpp"
+#include "Vaca/Debug.hpp"
 
 using namespace Vaca;
 

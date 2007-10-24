@@ -30,9 +30,9 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "stdvaca.h"
-#include "Vaca/Debug.h"
-#include "Vaca/System.h"
-#include "Vaca/Thread.h"
+#include "Vaca/Debug.hpp"
+#include "Vaca/System.hpp"
+#include "Vaca/Thread.hpp"
 
 #include <boost/thread/mutex.hpp>
 

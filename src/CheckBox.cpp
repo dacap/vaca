@@ -30,7 +30,7 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "stdvaca.h"
-#include "Vaca/CheckBox.h"
+#include "Vaca/CheckBox.hpp"
 
 using namespace Vaca;
 

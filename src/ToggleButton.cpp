@@ -30,7 +30,7 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "stdvaca.h"
-#include "Vaca/ToggleButton.h"
+#include "Vaca/ToggleButton.hpp"
 
 using namespace Vaca;
 

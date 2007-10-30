@@ -33,11 +33,12 @@
 #include "Vaca/SpinButton.hpp"
 #include "Vaca/Application.hpp"
 #include "Vaca/Debug.hpp"
+#include "Vaca/WidgetClass.hpp"
 
 using namespace Vaca;
 
 SpinButton::SpinButton(Widget *parent, Style style)
-  : Widget(UPDOWN_CLASS, parent, style)
+  : Widget(WidgetClassName(UPDOWN_CLASS), parent, style)
 {
   // default values
   setRange(0, 100);
@@ -46,7 +47,7 @@ SpinButton::SpinButton(Widget *parent, Style style)
 
 SpinButton::SpinButton(int minValue, int maxValue, int value,
 		       Widget *parent, Style style)
-  : Widget(UPDOWN_CLASS, parent, style)
+  : Widget(WidgetClassName(UPDOWN_CLASS), parent, style)
 {
   assert(minValue <= value);
   assert(value <= maxValue);

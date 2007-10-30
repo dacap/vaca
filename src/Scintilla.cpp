@@ -32,6 +32,7 @@
 #include "stdvaca.h"
 #include "Vaca/Scintilla.hpp"
 #include "Vaca/Font.hpp"
+#include "Vaca/WidgetClass.hpp"
 #include "scintilla/include/Scintilla.h"
 #include "scintilla/include/SciLexer.h"
 
@@ -59,7 +60,7 @@ SciRegister::SciRegister()
 }
 
 SciEditor::SciEditor(Widget *parent, Style style)
-  : Widget(_T("Scintilla"), parent, style)
+  : Widget(WidgetClassName(_T("Scintilla")), parent, style)
 {
 //   sendMessage(SCI_SETLEXER, SCLEX_HTML, 0);
 //   sendMessage(SCI_SETSTYLEBITS, 7, 0);

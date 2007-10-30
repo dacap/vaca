@@ -35,6 +35,7 @@
 #include "Vaca/System.hpp"
 #include "Vaca/Debug.hpp"
 #include "Vaca/ImageList.hpp"
+#include "Vaca/WidgetClass.hpp"
 
 using namespace Vaca;
 
@@ -114,7 +115,7 @@ TreeNode *TreeViewIterator::dereference() const
 // TreeView
 
 TreeView::TreeView(Widget *parent, Style style)
-  : Widget(WC_TREEVIEW, parent, style)
+  : Widget(WidgetClassName(WC_TREEVIEW), parent, style)
 {
   m_root.m_owner = this;
   m_deleted = false;

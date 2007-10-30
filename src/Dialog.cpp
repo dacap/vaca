@@ -34,6 +34,7 @@
 #include "Vaca/Debug.hpp"
 #include "Vaca/Application.hpp"
 #include "Vaca/CloseEvent.hpp"
+#include "Vaca/WidgetClass.hpp"
 
 using namespace Vaca;
 
@@ -43,7 +44,7 @@ using namespace Vaca;
  * @see doModal(), DialogStyle
  */
 Dialog::Dialog(const String &title, Widget *parent, Style style)
-  : Frame(NULL, title, parent, style)
+  : Frame(WidgetClassName::None, title, parent, style)
 {
   setDefWndProc(DefDlgProc);
 
@@ -60,12 +61,12 @@ Dialog::Dialog(const String &title, Widget *parent, Style style)
  * Creates a dialog with a custom WNDCLASS. @a className can be NULL
  * if you want to call Widget::create() by your self.
  */
-Dialog::Dialog(LPCTSTR className, const String &title, Widget *parent, Style style)
-  : Frame(NULL, title, parent, style)
+Dialog::Dialog(const WidgetClassName &className, const String &title, Widget *parent, Style style)
+  : Frame(WidgetClassName::None, title, parent, style)
 {
   setDefWndProc(DefDlgProc);
   
-  if (className != NULL) {
+  if (className != WidgetClassName::None) {
     create(className, parent, style);
     setText(title);
   }

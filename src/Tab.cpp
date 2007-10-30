@@ -47,7 +47,7 @@ using namespace Vaca;
  * group of widgets, so you can navigate through the pages.
  */
 TabBase::TabBase(Widget *parent, Style style)
-  : Widget(WC_TABCONTROL, parent, style)
+  : Widget(WidgetClassName(WC_TABCONTROL), parent, style)
 {
   m_userFont = NULL;
   m_tabFont = NULL;

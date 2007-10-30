@@ -65,7 +65,7 @@ Frame::Frame(const String &title, Widget *parent, Style style)
  * Creates a frame with a custom WNDCLASS. @a className can be NULL if
  * you want to call Widget::create() by your self.
  */
-Frame::Frame(LPCTSTR className, const String &title, Widget *parent, Style style)
+Frame::Frame(const WidgetClassName &className, const String &title, Widget *parent, Style style)
   : Widget(className, parent, style)
 {
   initialize(title);

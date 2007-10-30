@@ -33,17 +33,18 @@
 #include "Vaca/Slider.hpp"
 #include "Vaca/Debug.hpp"
 #include "Vaca/Event.hpp"
+#include "Vaca/WidgetClass.hpp"
 
 using namespace Vaca;
 
 Slider::Slider(Widget *parent, Style style)
-  : Widget(TRACKBAR_CLASS, parent, style)
+  : Widget(WidgetClassName(TRACKBAR_CLASS), parent, style)
 {
 }
 
 Slider::Slider(int minValue, int maxValue, int value,
 	       Widget *parent, Style style)
-  : Widget(TRACKBAR_CLASS, parent, style)
+  : Widget(WidgetClassName(TRACKBAR_CLASS), parent, style)
 {
   assert(minValue <= value);
   assert(value <= maxValue);

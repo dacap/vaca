@@ -34,11 +34,12 @@
 #include "Vaca/Debug.hpp"
 #include "Vaca/Event.hpp"
 #include "Vaca/System.hpp"
+#include "Vaca/WidgetClass.hpp"
 
 using namespace Vaca;
 
 ButtonBase::ButtonBase(Widget *parent, Style style)
-  : Widget(WC_BUTTON, parent, style)
+  : Widget(WidgetClassName(WC_BUTTON), parent, style)
 {
 }
 

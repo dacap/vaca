@@ -33,11 +33,12 @@
 #include "Vaca/Label.hpp"
 #include "Vaca/Font.hpp"
 #include "Vaca/Debug.hpp"
+#include "Vaca/WidgetClass.hpp"
 
 using namespace Vaca;
 
 Label::Label(const String &text, Widget *parent, Style style)
-  : Widget(WC_STATIC, parent, style)
+  : Widget(WidgetClassName(WC_STATIC), parent, style)
 {
   setText(text);
 }

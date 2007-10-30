@@ -30,29 +30,30 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "stdvaca.h"
-#include "Vaca/Widget.hpp"
-#include "Vaca/Point.hpp"
-#include "Vaca/Debug.hpp"
-#include "Vaca/Frame.hpp"
-#include "Vaca/Layout.hpp"
-#include "Vaca/Constraint.hpp"
-#include "Vaca/System.hpp"
-#include "Vaca/Font.hpp"
-#include "Vaca/Cursor.hpp"
-#include "Vaca/MouseEvent.hpp"
-#include "Vaca/KeyEvent.hpp"
-#include "Vaca/DropFilesEvent.hpp"
-#include "Vaca/Image.hpp"
-#include "Vaca/Region.hpp"
-#include "Vaca/Dialog.hpp"
 #include "Vaca/Brush.hpp"
+#include "Vaca/Constraint.hpp"
+#include "Vaca/Cursor.hpp"
+#include "Vaca/Debug.hpp"
+#include "Vaca/Dialog.hpp"
+#include "Vaca/DropFilesEvent.hpp"
+#include "Vaca/Font.hpp"
+#include "Vaca/Frame.hpp"
+#include "Vaca/Image.hpp"
+#include "Vaca/KeyEvent.hpp"
+#include "Vaca/Layout.hpp"
+#include "Vaca/MouseEvent.hpp"
+#include "Vaca/Point.hpp"
+#include "Vaca/Region.hpp"
+#include "Vaca/System.hpp"
+#include "Vaca/Widget.hpp"
+#include "Vaca/WidgetClass.hpp"
 
 // comment this to use the old behaviour (using GWL_USERDATA to store
 // the "Widget" pointer)
 #define USE_PROP
 
 // uncomment this if you want message reporting in the "vaca.log"
-#define REPORT_MESSAGES
+// #define REPORT_MESSAGES
 
 using namespace Vaca;
 
@@ -185,7 +186,7 @@ static void unref_widget(Widget::Container &container)
  *     but the specific styles for a particular class,
  *     e.g. Edit, end with @c ...EditStyle, like @c ReadOnlyEditStyle.
  */
-Widget::Widget(LPCTSTR className, Widget *parent, Style style)
+Widget::Widget(const WidgetClassName &className, Widget *parent, Style style)
 {
   // creates the "VacaAtom" (the property name to put the "Widget*"
   // pointer in the HWNDs)
@@ -214,7 +215,7 @@ Widget::Widget(LPCTSTR className, Widget *parent, Style style)
   m_destroyHWNDProc  = Widget_DestroyHWNDProc;
 
   // create with the specified "className"?
-  if (className != NULL)
+  if (className != WidgetClassName::None)
     create(className, parent, style);
 }
 
@@ -1996,7 +1997,7 @@ void Widget::removeChild(Widget *child, bool setParent)
  *
  * @see createHWND, @ref TN002
  */
-void Widget::create(LPCTSTR className, Widget *parent, Style style)
+void Widget::create(const WidgetClassName &className, Widget *parent, Style style)
 {
   assert(m_HWND == NULL);
   assert(parent == NULL || parent->m_HWND != NULL);
@@ -2028,12 +2029,13 @@ void Widget::create(LPCTSTR className, Widget *parent, Style style)
     assert(outsideWidget == NULL);
     
     __vaca_set_outside_widget(this);
-    m_HWND = createHWND(className, parent, style);
+    m_HWND = createHWND(className.toLPCTSTR(), parent, style);
     __vaca_set_outside_widget(NULL);
   }
 
   if (m_HWND == NULL)
-    throw CreateWidgetException();
+    throw CreateWidgetException("Error creating widget of class \"" +
+				String(className.toLPCTSTR()) + "\"");
 
   subClass();
 

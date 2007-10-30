@@ -34,6 +34,7 @@
 #include "Vaca/Event.hpp"
 #include "Vaca/Debug.hpp"
 #include "Vaca/System.hpp"
+#include "Vaca/WidgetClass.hpp"
 
 using namespace Vaca;
 
@@ -41,7 +42,7 @@ using namespace Vaca;
 // Edit
 
 Edit::Edit(const String &text, Widget *parent, Style style)
-  : Widget(WC_EDIT, parent, style)
+  : Widget(WidgetClassName(WC_EDIT), parent, style)
 {
   setText(text);
   setBgColor(System::getColor(COLOR_WINDOW));

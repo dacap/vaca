@@ -33,6 +33,7 @@
 #include "Vaca/FindTextDialog.hpp"
 #include "Vaca/Debug.hpp"
 #include "Vaca/Application.hpp"
+#include "Vaca/WidgetClass.hpp"
 
 using namespace Vaca;
 
@@ -53,13 +54,13 @@ using namespace Vaca;
 // FindTextDialog
 
 FindTextDialog::FindTextDialog(bool replace, Widget *parent)
-  : Dialog(NULL, "", NULL, NoStyle)
+  : Dialog(WidgetClassName::None, "", NULL, NoStyle)
 {
   m_replace = replace;
   m_findMsgId = RegisterWindowMessage(FINDMSGSTRING);
 
   // now Widget::create calls FindTextDialog::createHWND because FindTextDialog is constructed
-  create(NULL, parent, NoStyle);
+  create(WidgetClassName::None, parent, NoStyle);
 }
 
 FindTextDialog::~FindTextDialog()

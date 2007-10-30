@@ -60,7 +60,7 @@ static void MdiChild_DestroyHWNDProc(HWND hwnd)
  *          can't be changed, see @ref TN005 for more information).
  */
 MdiChild::MdiChild(const String &title, MdiClient *parent, Style style)
-  : Frame(NULL, "", NULL, NoStyle)
+  : Frame(WidgetClassName::None, "", NULL, NoStyle)
 {
   setDefWndProc(DefMDIChildProc);
   setDestroyHWNDProc(MdiChild_DestroyHWNDProc);
@@ -77,7 +77,7 @@ MdiChild::MdiChild(const String &title, MdiClient *parent, Style style)
  *          can't be changed, see @ref TN005 for more information).
  */
 MdiChild::MdiChild(const String &title, MdiFrame *parent, Style style)
-  : Frame(NULL, "", NULL, NoStyle)
+  : Frame(WidgetClassName::None, "", NULL, NoStyle)
 {
   setDefWndProc(DefMDIChildProc);
   setDestroyHWNDProc(MdiChild_DestroyHWNDProc);
@@ -203,10 +203,10 @@ HWND MdiChild::createHWND(LPCTSTR className, Widget *parent, Style style)
  * Container for MdiChild windows.
  */
 MdiClient::MdiClient(Widget *parent, Style style)
-  : Widget(NULL, NULL, NoStyle) // className must be NULL to avoid calling the Widget::createHWND
+  : Widget(WidgetClassName::None, NULL, NoStyle) // className must be NULL to avoid calling the Widget::createHWND
 {
   // now Widget::create calls MdiClient::createHWND because MdiClient is constructed
-  create(_T("MDICLIENT"), parent, style);
+  create(WidgetClassName(_T("MDICLIENT")), parent, style);
 }
 
 MdiClient::~MdiClient()
@@ -379,7 +379,7 @@ static LRESULT WINAPI MdiFrame_defWndProc(HWND hwnd, UINT message, WPARAM wParam
  * full client area, but you can change the layout manager.
  */
 MdiFrame::MdiFrame(const String &title, Widget *parent, Style style, bool customMdiClient)
-  : Frame(NULL, title)
+  : Frame(WidgetClassName::None, title)
   , m_mdiClient(NULL)
 {
   setDefWndProc(MdiFrame_defWndProc);

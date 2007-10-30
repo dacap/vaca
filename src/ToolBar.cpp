@@ -50,7 +50,7 @@ using namespace Vaca;
 // messages.
 
 ToolSet::ToolSet(Widget *parent, Style style)
-  : Widget(TOOLBARCLASSNAME, parent, style)
+  : Widget(WidgetClassName(TOOLBARCLASSNAME), parent, style)
 {
   m_loadedImageList = NULL;
 }

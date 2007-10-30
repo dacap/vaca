@@ -33,11 +33,12 @@
 #include "Vaca/GroupBox.hpp"
 #include "Vaca/Point.hpp"
 #include "Vaca/Brush.hpp"
+#include "Vaca/WidgetClass.hpp"
 
 using namespace Vaca;
 
 GroupBox::GroupBox(const String &text, Widget *parent, Style style)
-  : Widget(WC_BUTTON, parent, style)
+  : Widget(WidgetClassName(WC_BUTTON), parent, style)
 {
   setText(text);
 }

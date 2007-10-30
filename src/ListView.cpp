@@ -34,6 +34,7 @@
 #include "Vaca/System.hpp"
 #include "Vaca/Debug.hpp"
 #include "Vaca/ImageList.hpp"
+#include "Vaca/WidgetClass.hpp"
 
 using namespace Vaca;
 
@@ -44,7 +45,7 @@ using namespace Vaca;
  * that you specified using setImageList().
  */
 ListView::ListView(Widget *parent, Style style)
-  : Widget(WC_LISTVIEW, parent, style + Style(LVS_SHAREIMAGELISTS, 0))
+  : Widget(WidgetClassName(WC_LISTVIEW), parent, style + Style(LVS_SHAREIMAGELISTS, 0))
 {
   setBgColor(System::getColor(COLOR_WINDOW));
 }

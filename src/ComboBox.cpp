@@ -34,6 +34,7 @@
 #include "Vaca/Event.hpp"
 #include "Vaca/Debug.hpp"
 #include "Vaca/System.hpp"
+#include "Vaca/WidgetClass.hpp"
 
 using namespace Vaca;
 
@@ -41,7 +42,7 @@ using namespace Vaca;
 // ComboBox
 
 ComboBox::ComboBox(Widget *parent, Style style)
-  : Widget(WC_COMBOBOX, parent, style)
+  : Widget(WidgetClassName(WC_COMBOBOX), parent, style)
 {
   setBgColor(System::getColor(COLOR_WINDOW));
 }

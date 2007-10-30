@@ -45,7 +45,7 @@ Panel::Panel(Widget *parent, Style style)
 {
 }
 
-Panel::Panel(LPCTSTR className, Widget *parent, Style style)
+Panel::Panel(const WidgetClassName &className, Widget *parent, Style style)
   : Widget(className, parent, style)
 {
 }

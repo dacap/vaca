@@ -31,11 +31,12 @@
 
 #include "stdvaca.h"
 #include "Vaca/ReBar.hpp"
+#include "Vaca/WidgetClass.hpp"
 
 using namespace Vaca;
 
 ReBar::ReBar(Widget *parent, Style style)
-  : Widget(REBARCLASSNAME, parent, style)
+  : Widget(WidgetClassName(REBARCLASSNAME), parent, style)
 {
 }
 

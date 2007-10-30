@@ -32,11 +32,12 @@
 #include "stdvaca.h"
 #include "Vaca/ProgressBar.hpp"
 #include "Vaca/Debug.hpp"
+#include "Vaca/WidgetClass.hpp"
 
 using namespace Vaca;
 
 ProgressBar::ProgressBar(Widget *parent, Style style)
-  : Widget(PROGRESS_CLASS, parent, style)
+  : Widget(WidgetClassName(PROGRESS_CLASS), parent, style)
 {
   // default values
   setRange(0, 100);
@@ -45,7 +46,7 @@ ProgressBar::ProgressBar(Widget *parent, Style style)
 
 ProgressBar::ProgressBar(int minValue, int maxValue,
 			 Widget *parent, Style style)
-  : Widget(PROGRESS_CLASS, parent, style)
+  : Widget(WidgetClassName(PROGRESS_CLASS), parent, style)
 {
   assert(minValue <= maxValue);
   

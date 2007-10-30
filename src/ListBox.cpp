@@ -34,6 +34,7 @@
 #include "Vaca/Event.hpp"
 #include "Vaca/Debug.hpp"
 #include "Vaca/System.hpp"
+#include "Vaca/WidgetClass.hpp"
 
 using namespace Vaca;
 
@@ -45,7 +46,7 @@ using namespace Vaca;
  * @param style Add the LBS_MULTIPLESEL if you want a multiselection ListBox.
  */
 ListBox::ListBox(Widget *parent, Style style)
-  : Widget(WC_LISTBOX, parent, style)
+  : Widget(WidgetClassName(WC_LISTBOX), parent, style)
 {
   setBgColor(System::getColor(COLOR_WINDOW));
 }

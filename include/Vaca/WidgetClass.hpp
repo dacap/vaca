@@ -33,8 +33,31 @@
 #define VACA_WIDGETCLASS_HPP
 
 #include "Vaca/base.hpp"
+#include "Vaca/String.hpp"
 
 namespace Vaca {
+
+class VACA_DLL WidgetClassName
+{
+public:
+  static const WidgetClassName None;
+
+private:
+  String m_className;
+
+  WidgetClassName();		// None constructor
+
+public:
+  explicit WidgetClassName(const String &className);
+  WidgetClassName(const WidgetClassName &className);
+  virtual ~WidgetClassName();
+
+  WidgetClassName &operator=(const WidgetClassName &className);
+  bool operator==(const WidgetClassName &className) const;
+  bool operator!=(const WidgetClassName &className) const;
+
+  LPCTSTR toLPCTSTR() const;
+};
 
 /**
  * Base class to retrieve information about a new Win32 class to be
@@ -53,7 +76,8 @@ namespace Vaca {
  * class MyWidgetClass : public WidgetClass
  * {
  * public:
- *   static LPCTSTR getClassName() { return _T("Vaca.MyWidget"); }
+ *   static WidgetClassName getClassName()
+ *   { return WidgetClassName("Vaca.MyWidget"); }
  * };
  * @endcode
  *
@@ -82,7 +106,8 @@ public:
    * Returns the class name to be used in the lpszClassName field of
    * the WNDCLASSEX structure in the @ref Register<T>#Register "Register constructor".
    */
-  static LPCTSTR getClassName() { return _T("Vaca.Widget"); }
+  static WidgetClassName getClassName()
+  { return WidgetClassName("Vaca.Widget"); }
 
   /**
    * Returns the set of CS_ Win32 flags.

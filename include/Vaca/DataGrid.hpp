@@ -103,7 +103,8 @@ public:
 class DataGridClass : public WidgetClass
 {
 public:
-  static LPCTSTR getClassName() { return _T("Vaca.DataGrid"); }
+  static WidgetClassName getClassName()
+  { return WidgetClassName("Vaca.DataGrid"); }
 };
 
 //////////////////////////////////////////////////////////////////////

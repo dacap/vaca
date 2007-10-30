@@ -63,7 +63,8 @@ class MdiFrame;
 class MdiChildClass : public WidgetClass
 {
 public:
-  static LPCTSTR getClassName() { return _T("Vaca.MdiChild"); }
+  static WidgetClassName getClassName()
+  { return WidgetClassName("Vaca.MdiChild"); }
 };
 
 /**

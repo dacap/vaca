@@ -46,9 +46,9 @@ class RegisterException : public Exception
 {
 public:
 
-  RegisterException()
-  {
-  }
+  RegisterException() { }
+  RegisterException(const String &message) : Exception(message) { }
+  virtual ~RegisterException() throw() { }
 
 };
 
@@ -74,8 +74,9 @@ public:
   Register()
   {
     WNDCLASSEX wcex;
+    LPCTSTR class_name = T::getClassName().toLPCTSTR();
 
-    if (!GetClassInfoEx(Application::getHINSTANCE(), T::getClassName(), &wcex)) {
+    if (!GetClassInfoEx(Application::getHINSTANCE(), class_name, &wcex)) {
       wcex.cbSize        = sizeof(WNDCLASSEX); 
       wcex.style         = T::getStyle();
       wcex.lpfnWndProc   = Widget::getGlobalWndProc();
@@ -86,11 +87,12 @@ public:
       wcex.hCursor       = (HCURSOR)NULL;//LoadCursor(NULL, IDC_ARROW);
       wcex.hbrBackground = reinterpret_cast<HBRUSH>(T::getColor()+1);
       wcex.lpszMenuName  = (LPCTSTR)NULL;
-      wcex.lpszClassName = T::getClassName();
+      wcex.lpszClassName = class_name;
       wcex.hIconSm       = NULL;//LoadIcon(wcex.hInstance, (LPCTSTR)IDI_SMALL);
 
       if (RegisterClassEx(&wcex) == 0)
-	throw RegisterException();
+	throw RegisterException(String("Error registering class \"") +
+				String(class_name) + "\"");
     }
   }
 

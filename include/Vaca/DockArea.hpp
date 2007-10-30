@@ -58,7 +58,8 @@ public:
 class DockAreaClass : public WidgetClass
 {
 public:
-  static LPCTSTR getClassName() { return _T("Vaca.DockArea"); }
+  static WidgetClassName getClassName()
+  { return WidgetClassName("Vaca.DockArea"); }
 };
 
 /**

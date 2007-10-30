@@ -57,6 +57,7 @@ class KeyEvent;
 class Layout;
 class MouseEvent;
 class Widget;
+class WidgetClassName;
 
 void VACA_DLL delete_widget(Widget *widget);
 void __internal_checked_delete_widget(Widget *widget);
@@ -331,7 +332,8 @@ class CreateWidgetException : public Exception
 {
 public:
 
-  CreateWidgetException() throw() : Exception() { }
+  CreateWidgetException() : Exception() { }
+  CreateWidgetException(const String &message) : Exception(message) { }
   virtual ~CreateWidgetException() throw() { }
 
 };
@@ -464,7 +466,7 @@ public:
   // CTOR & DTOR
   // ============================================================
 
-  Widget(LPCTSTR className, Widget *parent, Style style = NoStyle);
+  Widget(const WidgetClassName &className, Widget *parent, Style style = NoStyle);
   virtual ~Widget();
 
   // ============================================================
@@ -670,7 +672,7 @@ protected:
   // CREATION & MESSAGE PROCESSING
   // ===============================================================
 
-  void create(LPCTSTR className, Widget *parent, Style style);
+  void create(const WidgetClassName &className, Widget *parent, Style style);
   void subClass();
   LRESULT defWndProc(UINT message, WPARAM wParam, LPARAM lParam);
   virtual bool wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult);

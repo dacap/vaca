@@ -54,7 +54,8 @@ class CloseEvent;
 class DockBarClass : public WidgetClass
 {
 public:
-  static LPCTSTR getClassName() { return _T("Vaca.DockBar"); }
+  static WidgetClassName getClassName()
+  { return WidgetClassName("Vaca.DockBar"); }
 };
 
 /**

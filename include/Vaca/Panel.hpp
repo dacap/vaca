@@ -48,7 +48,8 @@ namespace Vaca {
 class PanelClass : public WidgetClass
 {
 public:
-  static LPCTSTR getClassName() { return _T("Vaca.Panel"); }
+  static WidgetClassName getClassName()
+  { return WidgetClassName("Vaca.Panel"); }
 };
 
 /**
@@ -61,7 +62,7 @@ class VACA_DLL Panel : public Register<PanelClass>, public Widget
 public:
 
   Panel(Widget *parent, Style style = PanelStyle);
-  Panel(LPCTSTR className, Widget *parent, Style style = PanelStyle);
+  Panel(const WidgetClassName &className, Widget *parent, Style style = PanelStyle);
   virtual ~Panel();
 
 };

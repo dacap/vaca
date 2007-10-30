@@ -76,7 +76,8 @@ class MenuItem;
 class FrameClass : public WidgetClass
 {
 public:
-  static LPCTSTR getClassName() { return _T("Vaca.Frame"); }
+  static WidgetClassName getClassName()
+  { return WidgetClassName("Vaca.Frame"); }
 };
 
 /**
@@ -94,7 +95,7 @@ class VACA_DLL Frame : public Register<FrameClass>, public Widget
 public:
 
   Frame(const String &title, Widget *parent = NULL, Style style = FrameStyle);
-  Frame(LPCTSTR className, const String &title, Widget *parent = NULL, Style style = FrameStyle);
+  Frame(const WidgetClassName &className, const String &title, Widget *parent = NULL, Style style = FrameStyle);
   virtual ~Frame();
 
   // bool isVisible();

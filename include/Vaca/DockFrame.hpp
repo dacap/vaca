@@ -57,7 +57,8 @@ class DockBar;
 class DockFrameClass : public WidgetClass
 {
 public:
-  static LPCTSTR getClassName() { return _T("Vaca.DockFrame"); }
+  static WidgetClassName getClassName()
+  { return WidgetClassName("Vaca.DockFrame"); }
 };
 
 /**

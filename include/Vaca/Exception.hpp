@@ -51,11 +51,14 @@ public:
   Exception(const String &message) : std::exception(), m_message(message) { }
   virtual ~Exception() throw() { }
 
-  virtual const char *what( ) const throw( )
-  {
+  virtual const char *what( ) const throw() {
     return m_message.c_str();
   }
 
+  void show() {
+    MessageBox(NULL, m_message.empty() ? "No message": m_message.c_str(),
+	       "Vaca::Exception", MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
+  }
 
 };
 

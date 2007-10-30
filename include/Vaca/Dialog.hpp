@@ -63,7 +63,8 @@ namespace Vaca {
 class DialogClass : public WidgetClass
 {
 public:
-  static LPCTSTR getClassName() { return _T("Vaca.Dialog"); }
+  static WidgetClassName getClassName()
+  { return WidgetClassName("Vaca.Dialog"); }
   static int getWndExtra() { return DLGWINDOWEXTRA; }
 };
 
@@ -91,7 +92,7 @@ class VACA_DLL Dialog : public Register<DialogClass>, public Frame
 public:
 
   Dialog(const String &title, Widget *parent = NULL, Style style = DialogStyle);
-  Dialog(LPCTSTR className, const String &title, Widget *parent = NULL, Style style = DialogStyle);
+  Dialog(const WidgetClassName &className, const String &title, Widget *parent = NULL, Style style = DialogStyle);
   virtual ~Dialog();
 
   void setReturnState(bool state);

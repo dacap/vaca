@@ -50,7 +50,8 @@ namespace Vaca {
 class SpinnerClass : public WidgetClass
 {
 public:
-  static LPCTSTR getClassName() { return _T("Vaca.Spinner"); }
+  static WidgetClassName getClassName()
+  { return WidgetClassName("Vaca.Spinner"); }
 };
 
 /**

@@ -148,7 +148,8 @@ protected:
 class TabPageClass : public WidgetClass
 {
 public:
-  static LPCTSTR getClassName() { return _T("Vaca.TabPage"); }
+  static WidgetClassName getClassName()
+  { return WidgetClassName("Vaca.TabPage"); }
 };
 
 /**

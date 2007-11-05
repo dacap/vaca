@@ -6,6 +6,9 @@
 # PROFILE = 1
 # UNICODE = 1
 
+WIN32_IMPL = 1
+# ALLEG_IMPL = 1
+
 ifdef MEMORY_LEAK_DETECTOR
 ifdef STATIC
 MEMORY_LEAK_DETECTOR = 1
@@ -17,6 +20,7 @@ endif
 
 OBJ = .o
 LIB = .a
+EXE = .exe
 
 # ----------------------------------------------------------------------
 # Boost directories (you should change this)
@@ -50,7 +54,7 @@ LIB_SOURCES = Anchor AnchorLayout Application BandedDockArea		\
 	      ProgressBar RadioButton ReBar Rect Region ResourceId	\
 	      Scintilla Size Slider SpinButton Spinner String Style	\
 	      System Tab Thread Timer ToggleButton ToolBar TreeNode	\
-	      TreeView TreeViewEvent Vaca Widget
+	      TreeView TreeViewEvent Vaca Widget WidgetClass
 
 EXAMPLES = AnchorLayouts AutoCompletion Bixes BouncingBalls BoxLayouts	\
 	   Buttons ColoredButton ComboBoxes Commands DataGrids		\
@@ -69,15 +73,31 @@ EXAMPLES = AnchorLayouts AutoCompletion Bixes BouncingBalls BoxLayouts	\
 # Flags
 
 CXXFLAGS = -I$(BOOST_ROOT) -Iinclude -I. -Ithird_party -DBOOST_BIND_NO_PLACEHOLDERS \
-	   -DWINVER=0x0500 -D_WIN32_IE=0x0500 -D_WIN32_WINNT=0x0500 -W -Wall -Wno-unused
-
-ifdef UNICODE
-  CXXFLAGS += -DUNICODE -D_UNICODE
-endif
-
+	   -W -Wall -Wno-unused
 DLLFLAGS =
 LFLAGS = -mwindows -Lobj
-LIBS = -lkernel32 -luser32 -lgdi32 -lcomdlg32 -lwinspool -lwinmm -lshell32 -lshlwapi -lcomctl32 -lole32 -loleaut32 -luuid -lrpcrt4 -ladvapi32 -lwsock32 -lodbc32 -lcomctl32 -lsecur32 -lmsimg32 $(BOOSTLIBS)
+LIBS =
+
+# Win32
+ifdef WIN32_IMPL
+  CXXFLAGS += -DVACA_WIN32_IMPL -DWINVER=0x0500 -D_WIN32_IE=0x0500 -D_WIN32_WINNT=0x0500
+  ifdef UNICODE
+    CXXFLAGS += -DUNICODE -D_UNICODE
+  endif
+
+  LIBS += -lkernel32 -luser32 -lgdi32 -lcomdlg32 -lwinspool \
+	  -lwinmm -lshell32 -lshlwapi -lcomctl32 -lole32 \
+	  -loleaut32 -luuid -lrpcrt4 -ladvapi32 -lwsock32 \
+	  -lodbc32 -lcomctl32 -lsecur32 -lmsimg32
+endif
+
+# Allegro
+ifdef ALLEG_IMPL
+  CXXFLAGS += -DVACA_ALLEG_IMPL
+  LIBS += -lalleg
+endif
+
+LIBS += $(BOOSTLIBS)
 EXE_LIBS = $(LIBS)
 
 # ----------------------------------------------------------------------
@@ -175,7 +195,7 @@ else
 endif
 
 LIB_OBJS = $(addprefix obj/Library., $(addsuffix $(SUFFIX)$(OBJ), $(LIB_SOURCES)))
-EXAMPLES_EXE = $(addprefix bin/, $(addsuffix $(SUFFIX).exe, $(EXAMPLES)))
+EXAMPLES_EXE = $(addprefix bin/, $(addsuffix $(SUFFIX)$(EXE), $(EXAMPLES)))
 
 EXAMPLES_DIRS_WITH_RC = $(dir $(wildcard examples/*/*.rc))
 
@@ -223,30 +243,30 @@ endif
 
 # general examples
 
-bin/%.exe: obj/Example.%$(OBJ) obj/Example.res $(VACA_LIB)
+bin/%$(EXE): obj/Example.%$(OBJ) obj/Example.res $(VACA_LIB)
 	$(GXX) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
 
 # special examples
 
-bin/EyeDropper$(SUFFIX).exe: obj/Example.EyeDropper$(SUFFIX)$(OBJ) obj/Example.EyeDropper.res $(VACA_LIB)
+bin/EyeDropper$(SUFFIX)$(EXE): obj/Example.EyeDropper$(SUFFIX)$(OBJ) obj/Example.EyeDropper.res $(VACA_LIB)
 	$(GXX) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
 
-bin/Hashing$(SUFFIX).exe: obj/Example.Hashing$(SUFFIX)$(OBJ) obj/Example.md5$(SUFFIX)$(OBJ) obj/Example.sha1$(SUFFIX)$(OBJ) obj/Example.res $(VACA_LIB)
+bin/Hashing$(SUFFIX)$(EXE): obj/Example.Hashing$(SUFFIX)$(OBJ) obj/Example.md5$(SUFFIX)$(OBJ) obj/Example.sha1$(SUFFIX)$(OBJ) obj/Example.res $(VACA_LIB)
 	$(GXX) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
 
-bin/Images$(SUFFIX).exe: obj/Example.Images$(SUFFIX)$(OBJ) obj/Example.Images.res $(VACA_LIB)
+bin/Images$(SUFFIX)$(EXE): obj/Example.Images$(SUFFIX)$(OBJ) obj/Example.Images.res $(VACA_LIB)
 	$(GXX) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
 
-bin/MenuResource$(SUFFIX).exe: obj/Example.MenuResource$(SUFFIX)$(OBJ) obj/Example.MenuResource.res $(VACA_LIB)
+bin/MenuResource$(SUFFIX)$(EXE): obj/Example.MenuResource$(SUFFIX)$(OBJ) obj/Example.MenuResource.res $(VACA_LIB)
 	$(GXX) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
 
-bin/TextEditor$(SUFFIX).exe: obj/Example.TextEditor$(SUFFIX)$(OBJ) obj/Example.TextEditor.res $(VACA_LIB)
+bin/TextEditor$(SUFFIX)$(EXE): obj/Example.TextEditor$(SUFFIX)$(OBJ) obj/Example.TextEditor.res $(VACA_LIB)
 	$(GXX) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
 
-bin/ToolBars$(SUFFIX).exe: obj/Example.ToolBars$(SUFFIX)$(OBJ) obj/Example.ToolBars.res $(VACA_LIB)
+bin/ToolBars$(SUFFIX)$(EXE): obj/Example.ToolBars$(SUFFIX)$(OBJ) obj/Example.ToolBars.res $(VACA_LIB)
 	$(GXX) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
 
-bin/Bixes$(SUFFIX).exe: obj/Example.Bixes$(SUFFIX)$(OBJ) obj/Example.Bixes.res $(VACA_LIB)
+bin/Bixes$(SUFFIX)$(EXE): obj/Example.Bixes$(SUFFIX)$(OBJ) obj/Example.Bixes.res $(VACA_LIB)
 	$(GXX) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
 
 deps:
@@ -254,10 +274,10 @@ deps:
 	$(GXX) -MM $(CXXFLAGS) examples/*/*.cpp | sed -e 's|^\([A-Za-z_0-9]\+\)|obj/Example.\1\$$\(SUFFIX\)|' >> .deps
 
 clean:
-	-$(RM) -f obj/*.o obj/*.res
+	-$(RM) -f obj/*$(OBJ) obj/*.res
 
 distclean: clean
-	-$(RM) -f lib/*.a bin/*.exe $(VACA_DLL)
+	-$(RM) -f lib/*$(LIB) $(VACA_DLL) $(EXAMPLES_EXE)
 
 ifdef MINGW_ROOT
 install: $(VACA_LIB) $(VACA_DLL)

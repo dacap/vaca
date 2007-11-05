@@ -47,6 +47,7 @@ struct ThreadData
   bool breakLoop;
   Widget *outsideWidget; // widget used to call createHWND
 //   void *data;
+  boost::signal<void ()> callInNextRound;
 
   ThreadData(int id) {
     threadId = id;
@@ -183,6 +184,12 @@ void Thread::breakMessageLoop()
   ::PostThreadMessage(::GetCurrentThreadId(), WM_NULL, 0, 0);
 }
 
+void Thread::callInNextRound(const boost::signal<void ()>::slot_type& functor)
+{
+  getThreadData()->callInNextRound.connect(functor);
+  ::PostThreadMessage(::GetCurrentThreadId(), WM_NULL, 0, 0);
+}
+
 /**
  * Gets a message in a blocking way, returns true if the msg parameter
  * was filled
@@ -208,9 +215,16 @@ bool Thread::getMessage(Message &msg)
     // TODO check the error
   }
 
-  // WM_NULL message... maybe Timers
-  if (msg.message == WM_NULL)
+  // WM_NULL message... maybe Timers or callInNextRound
+  if (msg.message == WM_NULL) {
     Timer::pollTimers();
+
+    // make the call and remove all the slots
+    if (!threadData->callInNextRound.empty()) {
+      threadData->callInNextRound();
+      threadData->callInNextRound.disconnect_all_slots();
+    }
+  }
 
   return true;
 }

@@ -22,3 +22,5 @@ BOOST_SIGNALS_STATIC = $(BOOST_ROOT)/$(BOOST_BIN)/libs/signals/build/$(BOOST_TOO
 BOOST_SIGNALS_SHARED = $(BOOST_ROOT)/$(BOOST_BIN)/libs/signals/build/$(BOOST_TOOLSET)/release/threading-multi/boost_signals-$(BOOST_SHORTTOOLSET)-mt-$(BOOST_VERSION)$(LIB)
 BOOST_THREAD_STATIC = $(BOOST_ROOT)/$(BOOST_BIN)/libs/thread/build/$(BOOST_TOOLSET)/release/link-static/threading-multi/libboost_thread-$(BOOST_SHORTTOOLSET)-mt-$(BOOST_VERSION)$(LIB)
 BOOST_THREAD_SHARED = $(BOOST_ROOT)/$(BOOST_BIN)/libs/thread/build/$(BOOST_TOOLSET)/release/threading-multi/boost_thread-$(BOOST_SHORTTOOLSET)-mt-$(BOOST_VERSION)$(LIB)
+BOOST_FILESYSTEM_STATIC = $(BOOST_ROOT)/$(BOOST_BIN)/libs/filesystem/build/$(BOOST_TOOLSET)/release/link-static/threading-multi/libboost_filesystem-$(BOOST_SHORTTOOLSET)-mt-$(BOOST_VERSION)$(LIB)
+BOOST_FILESYSTEM_SHARED = $(BOOST_ROOT)/$(BOOST_BIN)/libs/filesystem/build/$(BOOST_TOOLSET)/release/threading-multi/boost_filesystem-$(BOOST_SHORTTOOLSET)-mt-$(BOOST_VERSION)$(LIB)

@@ -275,11 +275,6 @@ SaveFileDialog::~SaveFileDialog()
 {
 }
 
-void SaveFileDialog::setFileName(const String &string)
-{
-  FileDialog::setFileName(string);
-}
-
 bool SaveFileDialog::showDialog(LPOPENFILENAME lpofn)
 {
   lpofn->Flags |= 0

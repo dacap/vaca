@@ -29,64 +29,53 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_THREAD_HPP
-#define VACA_THREAD_HPP
+#include "stdvaca.h"
+#include "Vaca/WidgetClass.hpp"
+#include "Vaca/Debug.hpp"
 
-#include <boost/thread.hpp>
-#include <boost/signal.hpp>
+using namespace Vaca;
 
-#include "Vaca/base.hpp"
+const WidgetClassName WidgetClassName::None;
 
-namespace Vaca {
+//////////////////////////////////////////////////////////////////////
+// WidgetClassName
 
-class Frame;
-class Widget;
-
-/**
- * A thread of execution.
- */
-class VACA_DLL Thread : public boost::thread
+WidgetClassName::WidgetClassName()
 {
-  friend class Frame;
+  m_className = "";
+}
 
-public:
+WidgetClassName::WidgetClassName(const String &className)
+{
+  m_className = className;
+}
 
-  typedef MSG Message;
+WidgetClassName::WidgetClassName(const WidgetClassName &className)
+{
+  m_className = className.m_className;
+}
 
-  Thread();
-  explicit Thread(const boost::function0<void>& threadfunc);
-  virtual ~Thread();
+WidgetClassName::~WidgetClassName()
+{
+}
 
-  //////////////////////////////////////////////////////////////////////
-  // functions for the current thread
+WidgetClassName &WidgetClassName::operator=(const WidgetClassName &className)
+{
+  m_className = className.m_className;
+  return *this;
+}
 
-  static void doMessageLoop();
-  static void doMessageLoopFor(Widget *widget);
+bool WidgetClassName::operator==(const WidgetClassName &className) const
+{
+  return m_className == className.m_className;
+}
 
-  static void pumpMessageQueue();
-  static void breakMessageLoop();
+bool WidgetClassName::operator!=(const WidgetClassName &className) const
+{
+  return m_className != className.m_className;
+}
 
-  static void callInNextRound(const boost::signal<void ()>::slot_type& functor);
-
-protected:
-
-  static bool getMessage(Message &msg);
-  static bool peekMessage(Message &msg);
-  static void processMessage(Message &msg);
-  static bool preTranslateMessage(Message &msg);
-
-private:
-
-  static void addFrame(Frame *frame);
-  static void removeFrame(Frame *frame);
-
-};
-
-void VACA_DLL __vaca_remove_all_thread_data();
-
-Widget * VACA_DLL __vaca_get_outside_widget();
-void VACA_DLL __vaca_set_outside_widget(Widget *widget);
-
-} // namespace Vaca
-
-#endif
+LPCTSTR WidgetClassName::toLPCTSTR() const
+{
+  return m_className.c_str();
+}

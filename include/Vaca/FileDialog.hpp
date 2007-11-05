@@ -72,11 +72,11 @@ public:
   void addFilter(const String &extensions, const String &description, bool defaultFilter = false);
 
   String getFileName();
+  void setFileName(const String &string);
 
   virtual bool doModal();
 
 protected:
-  void setFileName(const String &string);
   LPTSTR getOriginalFileName();
 
 private:
@@ -110,8 +110,6 @@ class VACA_DLL SaveFileDialog : public FileDialog
 public:
   SaveFileDialog(const String &title, Widget *parent);
   virtual ~SaveFileDialog();
-
-  void setFileName(const String &string);
 
 private:
   virtual bool showDialog(LPOPENFILENAME lpofn);

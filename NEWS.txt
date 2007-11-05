@@ -1,11 +1,13 @@
 Vaca 0.0.6
 
-- Restructured all action-by-ID stuff:
+- Restructured all action-by-ID stuff: TODO
   - Renamed Widget::onIdAction() to Widget::onActionById().
   - Removed Command and CommandState structures (they're just another
     way to complicate the core API). See the "Commands" example to see a
     complete example of how to implement commands for menus and
     tool-bars.
+- OpenFileDialog::setFileName now is public.
+- Added WidgetClassName.
 - Renamed all headers files from .h to .hpp
 - Added WidgetHitTestEnum.
 - Changed all enumerations to Enum and EnumSet.

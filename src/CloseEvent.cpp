@@ -35,7 +35,7 @@
 
 using namespace Vaca;
 
-CloseEvent::CloseEvent(Frame *source)
+CloseEvent::CloseEvent(Frame* source)
   : CancelableEvent(source)
 {
 }

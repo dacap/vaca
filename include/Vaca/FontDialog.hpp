@@ -50,12 +50,12 @@ class Font;
  */
 class VACA_DLL FontDialog : public CommonDialog
 {
-  Font *m_font;
+  Font* m_font;
   LOGFONT m_logFont;
 
 public:
 
-  FontDialog(Font *font, Widget *parent);
+  FontDialog(Font* font, Widget* parent);
   virtual ~FontDialog();
 
   virtual bool doModal();

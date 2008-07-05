@@ -51,7 +51,7 @@ using namespace Vaca;
 #  define ODS_NOFOCUSRECT 512
 #endif
 
-CustomButton::CustomButton(const String &text, Widget *parent, Style style)
+CustomButton::CustomButton(const String& text, Widget* parent, Style style)
   : Button(text, parent, style)
   , m_itemAction(0)
   , m_itemState(0)
@@ -62,7 +62,7 @@ CustomButton::~CustomButton()
 {
 }
 
-bool CustomButton::onReflectedDrawItem(Graphics &g, LPDRAWITEMSTRUCT lpDrawItem)
+bool CustomButton::onReflectedDrawItem(Graphics& g, LPDRAWITEMSTRUCT lpDrawItem)
 {
   assert(lpDrawItem->CtlType == ODT_BUTTON);
 

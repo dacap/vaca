@@ -40,38 +40,38 @@ Style::Style(int regular, int extended)
 {
 }
 
-Style Style::operator+(const Style &style) const
+Style Style::operator+(const Style& style) const
 {
   return Style(regular | style.regular,
 	       extended | style.extended);
 }
 
-Style Style::operator-(const Style &style) const
+Style Style::operator-(const Style& style) const
 {
   return Style(regular & ~style.regular,
 	       extended & ~style.extended);
 }
 
-// Style Style::operator|(const Style &style) const
+// Style Style::operator|(const Style& style) const
 // {
 //   return Style(regular & style.regular,
 // 	       extended & style.extended);
 // }
 
-Style Style::operator&(const Style &style) const
+Style Style::operator&(const Style& style) const
 {
   return Style(regular & style.regular,
 	       extended & style.extended);
 }
 
-bool Style::operator==(const Style &style) const
+bool Style::operator==(const Style& style) const
 {
   return
     regular == style.regular &&
     extended == style.extended;
 }
 
-bool Style::operator!=(const Style &style) const
+bool Style::operator!=(const Style& style) const
 {
   return
     regular != style.regular ||

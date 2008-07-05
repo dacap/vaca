@@ -88,8 +88,8 @@ public:
 
   explicit Cursor(ResourceId cursorId);
   explicit Cursor(SysCursor cursor);
-  explicit Cursor(const String &fileName);
-  Cursor(const Cursor &cursor);
+  explicit Cursor(const String& fileName);
+  Cursor(const Cursor& cursor);
   virtual ~Cursor();
 
   HCURSOR getHCURSOR();

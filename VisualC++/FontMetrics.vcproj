@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="FontMetrics"
-	ProjectGUID="{A9D36A8D-0552-4121-96E1-9A152CB81128}"
+	ProjectGUID="{1C3A566C-84EF-42A5-87F7-75FF76438150}"
 	RootNamespace="FontMetrics"
 	Keyword="Win32Proj">
 	<Platforms>

@@ -51,7 +51,7 @@ class VACA_DLL FindTextDialog : public Dialog
 
 public:
 
-  FindTextDialog(bool replace, Widget *parent);
+  FindTextDialog(bool replace, Widget* parent);
   virtual ~FindTextDialog();
 
   String getFindWhat();
@@ -75,9 +75,9 @@ protected:
   virtual void onReplaceAll();
   virtual void onCancel();
 
-  virtual bool wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult);
+  virtual bool wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult);
 private:
-  virtual HWND createHWND(LPCTSTR className, Widget *parent, Style style);
+  virtual HWND createHWND(LPCTSTR className, Widget* parent, Style style);
   static UINT_PTR CALLBACK hookProc(HWND hdlg, UINT uiMsg, WPARAM wParam, LPARAM lParam);
 
 };

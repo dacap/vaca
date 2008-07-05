@@ -35,7 +35,7 @@
 
 using namespace Vaca;
 
-CustomLabel::CustomLabel(const String &text, Widget *parent, Style style)
+CustomLabel::CustomLabel(const String& text, Widget* parent, Style style)
   : Label(text, parent, style)
   , m_textAlign(TextAlign::Left)
 {
@@ -56,7 +56,7 @@ void CustomLabel::setTextAlign(TextAlign align)
   invalidate(true);
 }
 
-bool CustomLabel::onReflectedDrawItem(Graphics &g, LPDRAWITEMSTRUCT lpDrawItem)
+bool CustomLabel::onReflectedDrawItem(Graphics& g, LPDRAWITEMSTRUCT lpDrawItem)
 {
   assert(lpDrawItem->CtlType == ODT_STATIC);
 

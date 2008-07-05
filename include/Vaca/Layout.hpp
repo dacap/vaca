@@ -40,19 +40,15 @@
 namespace Vaca {
 
 /**
- * A Layout must setup the position of a collection of widgets. It's
- * used to arrange the widgets quickly without worrying about the
- * exact position of them.
+ * A Layout setups the position of a collection of widgets. It's used
+ * to arrange the widgets quickly without worrying about the exact
+ * position of them.
  *
- * Each widget can have a layout manager. It's only useful when the
- * widget has children.
+ * Each widget can have a layout manager, but it's only useful when
+ * the widget has children.
  * 
- * A layout manager is an object which moves/arranges widgets. These
- * widgets are children of another widget (their parent). This parent
- * widget is the object that *has* the layout manager.
- * 
- * @warning If the parent widget doesn't have a layout manager set,
- *          the children bounds aren't modified (see the
+ * @warning If the parent widget doesn't have a layout manager
+ *          specified, the children bounds aren't modified (see the
  *          <code>FreeOfLayout</code> example).
  *
  * @see @ref TN011
@@ -67,15 +63,12 @@ public:
   Layout();
   virtual ~Layout();
 
-  void beginMovement(const Widget::Container &widgets);
-  void moveWidget(Widget *widget, const Rect &rc);
+  void beginMovement(const Widget::Container& widgets);
+  void moveWidget(Widget* widget, const Rect& rc);
   void endMovement();
 
-//   virtual Size minimumSize(Widget *parent, Widget::Container &widgets);
-  virtual Size getPreferredSize(Widget *parent, Widget::Container &widgets, const Size &fitIn);
-//   virtual Size maximumSize(Widget *parent, Widget::Container &widgets);
-
-  virtual void layout(Widget *parent, Widget::Container &widgets, const Rect &rc) = 0;
+  virtual Size getPreferredSize(Widget* parent, Widget::Container& widgets, const Size& fitIn);
+  virtual void layout(Widget* parent, Widget::Container& widgets, const Rect& rc) = 0;
 
 };
 

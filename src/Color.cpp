@@ -107,7 +107,7 @@ Color::Color()
   m_colorRef = 0;
 }
 
-Color::Color(const Color &color)
+Color::Color(const Color& color)
 {
   m_colorRef = color.m_colorRef;
 }
@@ -163,18 +163,18 @@ Color Color::toBlackAndWhite()
 						     Color::White;
 }
 
-Color &Color::operator=(const Color &color)
+Color& Color::operator=(const Color& color)
 {
   m_colorRef = color.m_colorRef;
   return *this;
 }
 
-bool Color::operator==(const Color &color) const
+bool Color::operator==(const Color& color) const
 {
   return m_colorRef == color.m_colorRef;
 }
 
-bool Color::operator!=(const Color &color) const
+bool Color::operator!=(const Color& color) const
 {
   return m_colorRef != color.m_colorRef;
 }
@@ -182,7 +182,7 @@ bool Color::operator!=(const Color &color) const
 /**
  * Adds to each RGB components of this color the RGB components of @c color.
  */
-Color Color::operator+(const Color &color) const
+Color Color::operator+(const Color& color) const
 {
   int r = getR()+color.getR();
   int g = getG()+color.getG();
@@ -196,7 +196,7 @@ Color Color::operator+(const Color &color) const
 /**
  * Substract to each RGB components of this color the RGB components of @c color.
  */
-Color Color::operator-(const Color &color) const
+Color Color::operator-(const Color& color) const
 {
   int r = getR()-color.getR();
   int g = getG()-color.getG();

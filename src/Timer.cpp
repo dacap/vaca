@@ -34,6 +34,8 @@
 #include "Vaca/Thread.hpp"
 #include "Vaca/Debug.hpp"
 
+#include <boost/timer.hpp>
+
 using namespace Vaca;
 
 static boost::mutex        timer_mutex;		// monitor
@@ -190,8 +192,8 @@ void Timer::run_timer_thread()
   boost::mutex::scoped_lock lock(timer_mutex);
   unsigned int start, end, period, delay;
   unsigned int inf = UINT_MAX;//std::numeric_limits<unsigned int>::max();
-  std::vector<Timer *>::iterator it;
-  Timer *timer;
+  std::vector<Timer*>::iterator it;
+  Timer* timer;
 
   // is it needed?
   // ::SetThreadPriority(::GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
@@ -278,7 +280,7 @@ void Timer::start_timer_thread()
  */
 void Timer::stop_timer_thread()
 {
-  boost::thread *thrd;
+  boost::thread* thrd;
   
   {
     boost::mutex::scoped_lock lock(timer_mutex);
@@ -302,7 +304,7 @@ void Timer::stop_timer_thread()
 /**
  * @internal
  */
-void Timer::remove_timer(Timer *t)
+void Timer::remove_timer(Timer* t)
 {
   boost::mutex::scoped_lock lock(timer_mutex);
 
@@ -315,9 +317,9 @@ void Timer::remove_timer(Timer *t)
 void Timer::fire_actions_for_thread()
 {
   int currentThreadId = ::GetCurrentThreadId();
-  std::vector<Timer *> timers_for_thread;
-  std::vector<Timer *>::iterator it;
-  Timer *timer;
+  std::vector<Timer*> timers_for_thread;
+  std::vector<Timer*>::iterator it;
+  Timer* timer;
 
   // make a copy of timers for this thread only
   {
@@ -337,11 +339,17 @@ void Timer::fire_actions_for_thread()
        it != timers_for_thread.end(); ) {
     timer = *(it++);
 
+    boost::timer warning_time;
+    double timeout = timer->m_interval / 1000.0;
+
     while (timer->m_tickCounter > 0) {
       timer->m_tickCounter--;
 
       // fire action
       timer->onAction();
+
+      if (warning_time.elapsed() > timeout)
+	timer->m_tickCounter = 0;
     }
   }
 

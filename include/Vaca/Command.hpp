@@ -45,25 +45,25 @@ class Event;
 
 class VACA_DLL CommandState
 {
-  String *m_text;
-  bool *m_enabled;
-  bool *m_checked;
-  bool *m_radio;
+  String* m_text;
+  bool* m_enabled;
+  bool* m_checked;
+  bool* m_radio;
 
 public:
 
   CommandState();
   virtual ~CommandState();
 
-  void setText(const String &text);
+  void setText(const String& text);
   void setEnabled(bool state);
   void setChecked(bool state);
   void setRadio(bool state);
 
-  const String *getText() const;
-  const bool *isEnabled() const;
-  const bool *isChecked() const;
-  const bool *isRadio() const;
+  const String* getText() const;
+  const bool* isEnabled() const;
+  const bool* isChecked() const;
+  const bool* isRadio() const;
   
 };
 
@@ -84,16 +84,16 @@ public:
 
   int getId() const;
 
-//   virtual const String &getText() const { return mText; }
-//   virtual const String &getToolTip() const { return mToolTip; }
-//   virtual const String &getDescription() const { return mDescription; }
+//   virtual const String& getText() const { return mText; }
+//   virtual const String& getToolTip() const { return mToolTip; }
+//   virtual const String& getDescription() const { return mDescription; }
 
   boost::signal<void ()> Action;
-  boost::signal<void (CommandState &)> Update;
+  boost::signal<void (CommandState&)> Update;
 
   // events
   virtual void onAction();
-  virtual void onUpdate(CommandState &cmdState);
+  virtual void onUpdate(CommandState& cmdState);
 
 };
 

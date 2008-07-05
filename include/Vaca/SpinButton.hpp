@@ -57,7 +57,7 @@ class SpinButtonEvent : public CancelableEvent
 
 public:
 
-  SpinButtonEvent(Widget *widget, int value, int delta, Side side)
+  SpinButtonEvent(Widget* widget, int value, int delta, Side side)
     : CancelableEvent(widget)
     , m_value(value)
     , m_delta(delta)
@@ -78,9 +78,9 @@ class VACA_DLL SpinButton : public Widget
 {
 public:
 
-  SpinButton(Widget *parent, Style style = SpinButtonStyle);
+  SpinButton(Widget* parent, Style style = SpinButtonStyle);
   SpinButton(int minValue, int maxValue, int value,
-	     Widget *parent, Style style = SpinButtonStyle);
+	     Widget* parent, Style style = SpinButtonStyle);
   virtual ~SpinButton();
 
   bool isHorizontal();
@@ -88,7 +88,7 @@ public:
 
   int getMinimum();
   int getMaximum();
-  void getRange(int &minValue, int &maxValue);
+  void getRange(int& minValue, int& maxValue);
   void setRange(int minValue, int maxValue);
 
   int getValue();
@@ -97,26 +97,26 @@ public:
   int getBase();
   void setBase(int base);
 
-  Widget *getBuddy();
-  void setBuddy(Widget *buddy);
+  Widget* getBuddy();
+  void setBuddy(Widget* buddy);
 
   // signals
-  boost::signal<void (SpinButtonEvent &)> Change;
-//   boost::signal<void (SpinButtonEvent &)> BeforeChange;
-//   boost::signal<void (SpinButtonEvent &)> AfterChange;
+  boost::signal<void (SpinButtonEvent&)> Change;
+//   boost::signal<void (SpinButtonEvent&)> BeforeChange;
+//   boost::signal<void (SpinButtonEvent&)> AfterChange;
   
 protected:
   // events
-  virtual void onPreferredSize(Size &sz);
+  virtual void onPreferredSize(Size& sz);
 
   // new events
-  virtual void onChange(SpinButtonEvent &ev);
-//   virtual void onBeforeChange(SpinButtonEvent &ev);
-//   virtual void onAfterChange(SpinButtonEvent &ev);
+  virtual void onChange(SpinButtonEvent& ev);
+//   virtual void onBeforeChange(SpinButtonEvent& ev);
+//   virtual void onAfterChange(SpinButtonEvent& ev);
   // events
 //   virtual void onScroll(Orientation orientation, int code);
   // reflection
-  virtual bool onReflectedNotify(LPNMHDR lpnmhdr, LRESULT &lResult);
+  virtual bool onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult);
 
 };
 

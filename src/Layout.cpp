@@ -45,14 +45,14 @@ Layout::~Layout()
   assert(m_HDWP == NULL);
 }
 
-void Layout::beginMovement(const Widget::Container &widgets)
+void Layout::beginMovement(const Widget::Container& widgets)
 {
   m_HDWP = BeginDeferWindowPos(widgets.size());
 
   m_relayoutWidgets.clear();
 }
 
-void Layout::moveWidget(Widget *widget, const Rect &rc)
+void Layout::moveWidget(Widget* widget, const Rect& rc)
 {
   if (m_HDWP != NULL) {
     m_HDWP = DeferWindowPos(m_HDWP, widget->getHWND(), NULL,
@@ -79,17 +79,17 @@ void Layout::endMovement()
   m_relayoutWidgets.clear();
 }
 
-// Size Layout::minimumSize(Widget *parent, Widget::Container &widgets)
+// Size Layout::minimumSize(Widget* parent, Widget::Container& widgets)
 // {
 //   return Size(0, 0);
 // }
 
-Size Layout::getPreferredSize(Widget *parent, Widget::Container &widgets, const Size &fitIn)
+Size Layout::getPreferredSize(Widget* parent, Widget::Container& widgets, const Size& fitIn)
 {
   return Size(0, 0);
 }
 
-// Size Layout::maximumSize(Widget *parent, Widget::Container &widgets)
+// Size Layout::maximumSize(Widget* parent, Widget::Container& widgets)
 // {
 //   // TODO use std::numeric_limits<int>::max()
 //   return Size(INT_MAX, INT_MAX);

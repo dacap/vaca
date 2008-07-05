@@ -44,15 +44,15 @@ class Widget;
  */
 class VACA_DLL Clipboard
 {
-  Widget *m_owner;
+  Widget* m_owner;
 
 public:
 
-  Clipboard(Widget *owner);
+  Clipboard(Widget* owner);
   virtual ~Clipboard();
 
   String getString() const;
-  void setString(const String &str);
+  void setString(const String& str);
 
 };
 

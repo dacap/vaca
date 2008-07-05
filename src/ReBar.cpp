@@ -35,7 +35,7 @@
 
 using namespace Vaca;
 
-ReBar::ReBar(Widget *parent, Style style)
+ReBar::ReBar(Widget* parent, Style style)
   : Widget(WidgetClassName(REBARCLASSNAME), parent, style)
 {
 }

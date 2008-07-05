@@ -49,29 +49,29 @@ public:
 
   Size();
   Size(int w, int h);
-  Size(const Size &size);
-  explicit Size(const Point &point);
+  Size(const Size& size);
+  explicit Size(const Point& point);
 
-  Size createUnion(const Size &sz) const;
-  Size createIntersect(const Size &sz) const;
+  Size createUnion(const Size& sz) const;
+  Size createIntersect(const Size& sz) const;
 
-  const Size &operator=(const Size &sz);
-  const Size &operator+=(const Size &sz);
-  const Size &operator-=(const Size &sz);
-  const Size &operator+=(int value);
-  const Size &operator-=(int value);
-  const Size &operator*=(int value);
-  const Size &operator/=(int value);
-  Size operator+(const Size &sz) const;
-  Size operator-(const Size &sz) const;
+  const Size& operator=(const Size& sz);
+  const Size& operator+=(const Size& sz);
+  const Size& operator-=(const Size& sz);
+  const Size& operator+=(int value);
+  const Size& operator-=(int value);
+  const Size& operator*=(int value);
+  const Size& operator/=(int value);
+  Size operator+(const Size& sz) const;
+  Size operator-(const Size& sz) const;
   Size operator+(int value) const;
   Size operator-(int value) const;
   Size operator*(int value) const;
   Size operator/(int value) const;
   Size operator-() const;
 
-  bool operator==(const Size &sz) const;
-  bool operator!=(const Size &sz) const;
+  bool operator==(const Size& sz) const;
+  bool operator!=(const Size& sz) const;
 
   explicit Size(CONST LPSIZE sz);
   operator SIZE() const;

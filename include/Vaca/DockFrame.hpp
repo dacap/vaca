@@ -70,11 +70,11 @@ public:
  */
 class VACA_DLL DockFrame : public Register<DockFrameClass>, public Frame
 {
-  DockBar *m_dockBar;	 // the DockBar that is inside the client area
+  DockBar* m_dockBar;	 // the DockBar that is inside the client area
 
 public:
 
-  DockFrame(DockBar *dockBar, Widget *parent = NULL, Style style = DockFrameStyle);
+  DockFrame(DockBar* dockBar, Widget* parent = NULL, Style style = DockFrameStyle);
   virtual ~DockFrame();
 
 //   boost::signal<void ()> Destroy;
@@ -85,9 +85,9 @@ protected:
 
   // events
 //   virtual void onDestroy();
-  virtual void onResizing(int edge, Rect &rc);
+  virtual void onResizing(int edge, Rect& rc);
 
-  virtual bool wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult);
+  virtual bool wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult);
 };
 
 } // namespace Vaca

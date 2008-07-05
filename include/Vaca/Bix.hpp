@@ -67,7 +67,7 @@ class VACA_DLL Bix : public Layout
   struct WidgetElement;
   struct Matrix;
 
-  typedef std::vector<Element *> Elements;
+  typedef std::vector<Element*> Elements;
 
   int m_flags;
   int m_cols;
@@ -77,7 +77,7 @@ class VACA_DLL Bix : public Layout
   
 public:
 
-  Bix(Widget *container, int flags, int matrixColumns = 0);
+  Bix(Widget* container, int flags, int matrixColumns = 0);
   virtual ~Bix();
 
   bool isRow();
@@ -99,28 +99,28 @@ public:
   int getMatrixColumns();
   void setMatrixColumns(int matrixColumns);
 
-  Bix *add(int flags, int matrixColumns = 0);
-  void add(Widget *child, int flags = 0);
+  Bix* add(int flags, int matrixColumns = 0);
+  void add(Widget* child, int flags = 0);
 
-  void remove(Bix *subbix);
-  void remove(Widget *child);
+  void remove(Bix* subbix);
+  void remove(Widget* child);
   
-  virtual Size getPreferredSize(Widget *parent, Widget::Container &widgets, const Size &fitIn);
+  virtual Size getPreferredSize(Widget* parent, Widget::Container& widgets, const Size& fitIn);
 
-  static Bix *parse(const char *fmt, ...);
+  static Bix* parse(const char* fmt, ...);
 
 protected:
 
-  virtual void layout(Widget *parent, Widget::Container &widgets, const Rect &rc);
+  virtual void layout(Widget* parent, Widget::Container& widgets, const Rect& rc);
 
 private:
   
-  Size getPreferredSize(const Size &fitIn);
-  Size getPreferredSize(Matrix &mat);
-  void layout(Bix *parentBix, const Rect &rc);
+  Size getPreferredSize(const Size& fitIn);
+  Size getPreferredSize(Matrix& mat);
+  void layout(Bix* parentBix, const Rect& rc);
   
   Size getMatrixDimension();
-  void fillMatrix(Matrix &mat);
+  void fillMatrix(Matrix& mat);
 
 };
 

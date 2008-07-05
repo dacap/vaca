@@ -38,14 +38,14 @@
 using namespace Vaca;
 
 // auxiliar function to known if a widget is expansive
-static bool WidgetIsExpansive(Widget *widget) 
+static bool WidgetIsExpansive(Widget* widget) 
 {
-  Constraint *constraint = widget->getConstraint();
+  Constraint* constraint = widget->getConstraint();
   if (constraint == NULL)
     return false;
 
-  BoxConstraint *boxConstraint =
-    dynamic_cast<BoxConstraint *>(constraint);
+  BoxConstraint* boxConstraint =
+    dynamic_cast<BoxConstraint*>(constraint);
   assert(boxConstraint != NULL);
   return boxConstraint->isExpansive();
 }
@@ -99,7 +99,7 @@ void BoxLayout::setChildSpacing(int childSpacing)
   m_childSpacing = childSpacing;
 }
 
-Size BoxLayout::getPreferredSize(Widget *parent, Widget::Container &widgets, const Size &fitIn)
+Size BoxLayout::getPreferredSize(Widget* parent, Widget::Container& widgets, const Size& fitIn)
 {
 #define GET_CHILD_SIZE(w, h)			\
   {						\
@@ -119,7 +119,7 @@ Size BoxLayout::getPreferredSize(Widget *parent, Widget::Container &widgets, con
 
   int childCount = 0;
   for (Widget::Container::iterator it=widgets.begin(); it!=widgets.end(); ++it) {
-    Widget *widget = *it;
+    Widget* widget = *it;
     if (!widget->isLayoutFree())
       childCount++;
   }
@@ -129,7 +129,7 @@ Size BoxLayout::getPreferredSize(Widget *parent, Widget::Container &widgets, con
 	      VACA_MAX(0, fitIn.h-m_border*2));
 
   for (Widget::Container::iterator it=widgets.begin(); it!=widgets.end(); ++it) {
-    Widget *widget = *it;
+    Widget* widget = *it;
 
     if (widget->isLayoutFree())
       continue;
@@ -161,7 +161,7 @@ Size BoxLayout::getPreferredSize(Widget *parent, Widget::Container &widgets, con
   return sz;
 }
 
-void BoxLayout::layout(Widget *parent, Widget::Container &widgets, const Rect &rc)
+void BoxLayout::layout(Widget* parent, Widget::Container& widgets, const Rect& rc)
 {
 #define FIXUP(x, y, w, h)						\
   {									\
@@ -180,7 +180,7 @@ void BoxLayout::layout(Widget *parent, Widget::Container &widgets, const Rect &r
 	width = rc.w - pref.w;						\
 									\
 	for (Widget::Container::iterator it=widgets.begin(); it!=widgets.end(); ++it) { \
-	  Widget *widget = *it;						\
+	  Widget* widget = *it;						\
 	  if (widget->isLayoutFree())					\
 	    continue;							\
 									\
@@ -202,7 +202,7 @@ void BoxLayout::layout(Widget *parent, Widget::Container &widgets, const Rect &r
       }									\
 									\
       for (Widget::Container::iterator it=widgets.begin(); it!=widgets.end(); ++it) { \
-	Widget *widget = *it;						\
+	Widget* widget = *it;						\
 									\
 	if (widget->isLayoutFree())					\
 	  continue;							\
@@ -255,7 +255,7 @@ void BoxLayout::layout(Widget *parent, Widget::Container &widgets, const Rect &r
   int expandCount = 0;
 
   for (Widget::Container::iterator it=widgets.begin(); it!=widgets.end(); ++it) {
-    Widget *widget = *it;
+    Widget* widget = *it;
     if (!widget->isLayoutFree()) {
       childCount++;
       if (WidgetIsExpansive(widget))

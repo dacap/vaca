@@ -53,7 +53,7 @@ using namespace Vaca;
 //////////////////////////////////////////////////////////////////////
 // FindTextDialog
 
-FindTextDialog::FindTextDialog(bool replace, Widget *parent)
+FindTextDialog::FindTextDialog(bool replace, Widget* parent)
   : Dialog(WidgetClassName::None, "", NULL, NoStyle)
 {
   m_replace = replace;
@@ -71,7 +71,7 @@ FindTextDialog::~FindTextDialog()
   delete m_findReplace.lpstrFindWhat;
 }
 
-HWND FindTextDialog::createHWND(LPCTSTR className, Widget *parent, Style style)
+HWND FindTextDialog::createHWND(LPCTSTR className, Widget* parent, Style style)
 {
   ZeroMemory(&m_findReplace, sizeof(m_findReplace));
 
@@ -104,7 +104,7 @@ HWND FindTextDialog::createHWND(LPCTSTR className, Widget *parent, Style style)
 		     ::ReplaceText(&m_findReplace);
 }
 
-bool FindTextDialog::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult)
+bool FindTextDialog::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult)
 {
   // don't call Widget::wndProc
 
@@ -197,7 +197,7 @@ void FindTextDialog::onCancel()
 
 UINT_PTR CALLBACK FindTextDialog::hookProc(HWND hdlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
-  FindTextDialog *dlg = dynamic_cast<FindTextDialog *>(Widget::fromHWND(hdlg));
+  FindTextDialog* dlg = dynamic_cast<FindTextDialog*>(Widget::fromHWND(hdlg));
 
   switch (message) {
 

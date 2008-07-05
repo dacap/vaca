@@ -108,8 +108,8 @@ public:
   // Cosmetic Brush
   explicit Brush(Color color// , int width = 1
 		 );
-//   Brush(Brush &brush, int width = 1);
-//   Brush(const Brush &brush);
+//   Brush(Brush& brush, int width = 1);
+//   Brush(const Brush& brush);
   virtual ~Brush();
 
   Color getColor() const;

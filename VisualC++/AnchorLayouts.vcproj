@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="AnchorLayouts"
-	ProjectGUID="{140F0108-2C9B-42BF-8785-AF842C70CA15}"
+	ProjectGUID="{9F022A4C-847E-40B7-A2CA-C5A4D4565671}"
 	RootNamespace="AnchorLayouts"
 	Keyword="Win32Proj">
 	<Platforms>

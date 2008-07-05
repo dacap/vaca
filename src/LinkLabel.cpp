@@ -62,7 +62,7 @@ using namespace Vaca;
  * @param style
  *     Style to put to this widget.
  */
-LinkLabel::LinkLabel(const String &urlOrText, Widget *parent, Style style)
+LinkLabel::LinkLabel(const String& urlOrText, Widget* parent, Style style)
   : CustomLabel("", parent, style)
 {
   // is a URL?
@@ -74,14 +74,14 @@ LinkLabel::LinkLabel(const String &urlOrText, Widget *parent, Style style)
   init(urlOrText);
 }
 
-LinkLabel::LinkLabel(const String &url, const String &text, Widget *parent, Style style)
+LinkLabel::LinkLabel(const String& url, const String& text, Widget* parent, Style style)
   : CustomLabel("", parent, style)
   , m_url(url)
 {
   init(text);
 }
 
-LinkLabel::LinkLabel(const String &url, Image &image, Widget *parent, Style style)
+LinkLabel::LinkLabel(const String& url, Image& image, Widget* parent, Style style)
   : CustomLabel("", parent, style)
   , m_url(url)
 {
@@ -94,7 +94,7 @@ LinkLabel::~LinkLabel()
     delete m_underlineFont;
 }
 
-void LinkLabel::setFont(Font *font)
+void LinkLabel::setFont(Font* font)
 {
   Widget::setFont(font);
 
@@ -112,7 +112,7 @@ Color LinkLabel::getHoverColor()
   return Color(0, 0, 255);
 }
 
-void LinkLabel::onPreferredSize(Size &sz)
+void LinkLabel::onPreferredSize(Size& sz)
 {
   // TODO add support for both: text and image
   if (m_image != NULL)
@@ -127,7 +127,7 @@ void LinkLabel::onPreferredSize(Size &sz)
  * mouse is over the label, it's drawn using the m_underlineFont font and
  * the getHoverColor() color.
  */
-void LinkLabel::onPaint(Graphics &g)
+void LinkLabel::onPaint(Graphics& g)
 {
   Rect rc = getClientBounds();
   Brush brush(getBgColor());
@@ -172,12 +172,12 @@ void LinkLabel::onPaint(Graphics &g)
     g.drawFocus(bounds);
 }
 
-void LinkLabel::onMouseEnter(MouseEvent &ev)
+void LinkLabel::onMouseEnter(MouseEvent& ev)
 {
   m_state = Inside;
 }
 
-void LinkLabel::onMouseMove(MouseEvent &ev)
+void LinkLabel::onMouseMove(MouseEvent& ev)
 {
   ScreenGraphics g;
   Rect rc = getLinkBounds(g);
@@ -207,7 +207,7 @@ void LinkLabel::onMouseLeave()
 /**
  * Opens the URL (if it's not empty), and calls the onAction event.
  */
-void LinkLabel::onMouseDown(MouseEvent &ev)
+void LinkLabel::onMouseDown(MouseEvent& ev)
 {
   if (m_state == Hover) {
     requestFocus();
@@ -231,19 +231,19 @@ void LinkLabel::onSetCursor(WidgetHitTest hitTest)
   }
 }
 
-void LinkLabel::onGotFocus(Event &ev)
+void LinkLabel::onGotFocus(Event& ev)
 {
   CustomLabel::onGotFocus(ev);
   invalidate(true);
 }
 
-void LinkLabel::onLostFocus(Event &ev)
+void LinkLabel::onLostFocus(Event& ev)
 {
   CustomLabel::onGotFocus(ev);
   invalidate(true);
 }
 
-void LinkLabel::onKeyDown(KeyEvent &ev)
+void LinkLabel::onKeyDown(KeyEvent& ev)
 {
   CustomLabel::onKeyDown(ev);
 
@@ -258,7 +258,7 @@ void LinkLabel::onKeyDown(KeyEvent &ev)
  * If the label is resized, we must to redraw it. This is necessary
  * mainly if the LinkLabel isn't TextAlign::Left.
  */
-// void LinkLabel::onResize(const Size &sz)
+// void LinkLabel::onResize(const Size& sz)
 // {
 //   invalidate(true);
 // }
@@ -266,12 +266,12 @@ void LinkLabel::onKeyDown(KeyEvent &ev)
 /**
  * Called when the user press the mouse button down over the label.
  */
-void LinkLabel::onAction(Event &ev)
+void LinkLabel::onAction(Event& ev)
 {
   Action(ev);
 }
 
-void LinkLabel::init(String text, Image *image)
+void LinkLabel::init(String text, Image* image)
 {
   m_underlineFont = NULL;
   m_image = image;
@@ -291,7 +291,7 @@ void LinkLabel::action()
   onAction(ev);
 }
 
-void LinkLabel::updateFont(Font *font)
+void LinkLabel::updateFont(Font* font)
 {
   assert(font != NULL);
 
@@ -300,7 +300,7 @@ void LinkLabel::updateFont(Font *font)
   m_underlineFont = new Font(*font, font->getStyle() | FontStyle::Underline);
 }
 
-Rect LinkLabel::getLinkBounds(Graphics &g)
+Rect LinkLabel::getLinkBounds(Graphics& g)
 {
   g.setFont(getFont());
 

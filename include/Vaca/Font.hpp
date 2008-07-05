@@ -76,7 +76,7 @@ class VACA_DLL Font
 
 private:
 
-  static Font *defaultFont;
+  static Font* defaultFont;
 
   HFONT m_HFONT;
   bool m_autoDelete;
@@ -84,8 +84,8 @@ private:
 public:
 
   Font();
-  Font(const Font &font);
-  Font(const Font &font, FontStyle style);
+  Font(const Font& font);
+  Font(const Font& font, FontStyle style);
   Font(String familyName, int size, FontStyle style = FontStyle::Regular);
   explicit Font(HFONT hfont);
   Font(LPLOGFONT lplf);
@@ -96,12 +96,12 @@ public:
   int getPointSize();
   FontStyle getStyle();
 
-  Font &operator=(const Font &font);
-  void assign(const Font &font);
+  Font& operator=(const Font& font);
+  void assign(const Font& font);
   void assign(HFONT hfont);
   void assign(LPLOGFONT lplf);
 
-  static Font *getDefault();
+  static Font* getDefault();
 
 //   FontMetrics getMetrics();
 

@@ -43,7 +43,7 @@ using namespace Vaca;
 //////////////////////////////////////////////////////////////////////
 // FileDialog
 
-FileDialog::FileDialog(const String &title, Widget *parent)
+FileDialog::FileDialog(const String& title, Widget* parent)
   : CommonDialog(parent)
   , m_title(title)
   , m_defaultExtension("")
@@ -63,7 +63,7 @@ FileDialog::~FileDialog()
 /**
  * Sets the title text.
  */
-void FileDialog::setTitle(const String &str)
+void FileDialog::setTitle(const String& str)
 {
   m_title = str;
 }
@@ -73,7 +73,7 @@ void FileDialog::setTitle(const String &str)
  * extension isn't specified by the user. By default it's an empty
  * string.
  */
-void FileDialog::setDefaultExtension(const String &str)
+void FileDialog::setDefaultExtension(const String& str)
 {
   m_defaultExtension = str;
 }
@@ -96,7 +96,7 @@ void FileDialog::setShowHelp(bool state)
   m_showHelp = state;
 }
 
-void FileDialog::addFilter(const String &extensions, const String &description, bool defaultFilter)
+void FileDialog::addFilter(const String& extensions, const String& description, bool defaultFilter)
 {
   m_filters.push_back(std::make_pair(extensions, description));
 
@@ -109,7 +109,7 @@ String FileDialog::getFileName()
   return String(m_fileName);
 }
 
-void FileDialog::setFileName(const String &fileName)
+void FileDialog::setFileName(const String& fileName)
 {
   fileName.copyTo(m_fileName, FILENAME_BUFSIZE);
 }
@@ -138,7 +138,7 @@ bool FileDialog::doModal()
 #if (_WIN32_WINNT >= 0x0500)
   if (System::isWin95_98_Me())
     ofn.lStructSize = sizeof(OPENFILENAME)
-      - sizeof(void *)
+      - sizeof(void*)
       - sizeof(DWORD)
       - sizeof(DWORD);
   else
@@ -205,7 +205,7 @@ bool FileDialog::doModal()
 //////////////////////////////////////////////////////////////////////
 // OpenFileDialog
 
-OpenFileDialog::OpenFileDialog(const String &title, Widget *parent)
+OpenFileDialog::OpenFileDialog(const String& title, Widget* parent)
   : FileDialog(title, parent)
   , m_multiselect(false)
 {
@@ -266,7 +266,7 @@ bool OpenFileDialog::showDialog(LPOPENFILENAME lpofn)
 //////////////////////////////////////////////////////////////////////
 // SaveFileDialog
 
-SaveFileDialog::SaveFileDialog(const String &title, Widget *parent)
+SaveFileDialog::SaveFileDialog(const String& title, Widget* parent)
   : FileDialog(title, parent)
 {
 }

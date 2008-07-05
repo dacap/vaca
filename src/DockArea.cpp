@@ -38,7 +38,7 @@
 
 using namespace Vaca;
 
-DockArea::DockArea(Side side, Widget *parent, Style style)
+DockArea::DockArea(Side side, Widget* parent, Style style)
   : Widget(DockAreaClass::getClassName(), parent, style)
   , m_side(side)
 {
@@ -52,7 +52,7 @@ DockArea::~DockArea()
   Widget::Container::iterator it;
 
   for (it=children.begin(); it!=children.end(); ++it) {
-    DockBar *dockBar = static_cast<DockBar *>(*it);
+    DockBar* dockBar = static_cast<DockBar*>(*it);
 
     removeDockBar(dockBar);
     dockBar->m_dockArea = NULL;
@@ -91,7 +91,7 @@ bool DockArea::isLayoutFree()
  *
  * @see onAddDockBar
  */
-void DockArea::addDockBar(DockBar *dockBar)
+void DockArea::addDockBar(DockBar* dockBar)
 {
   addChild(dockBar, true);
 
@@ -103,7 +103,7 @@ void DockArea::addDockBar(DockBar *dockBar)
  *
  * @see onRemoveDockBar
  */
-void DockArea::removeDockBar(DockBar *dockBar)
+void DockArea::removeDockBar(DockBar* dockBar)
 {
   removeChild(dockBar, true);
 
@@ -114,14 +114,14 @@ void DockArea::removeDockBar(DockBar *dockBar)
  * You can use onAddDockBar to hook the addDockBar action.
  *
  * @code
- * void MyDockArea::onAddDockBar(DockBar *dockBar)
+ * void MyDockArea::onAddDockBar(DockBar* dockBar)
  * {
  *   // do something, like add the dockBar in
  *   // some internal structure...
  * }
  * @endcode
  */
-void DockArea::onAddDockBar(DockBar *dockBar)
+void DockArea::onAddDockBar(DockBar* dockBar)
 {
   // do nothing
 }
@@ -130,14 +130,14 @@ void DockArea::onAddDockBar(DockBar *dockBar)
  * You can use onRemoveDockBar to hook the removeDockBar action.
  *
  * @code
- * void MyDockArea::onRemoveDockBar(DockBar *dockBar)
+ * void MyDockArea::onRemoveDockBar(DockBar* dockBar)
  * {
  *   // do something, like remove the dockBar from 
  *   // some internal structure...
  * }
  * @endcode
  */
-void DockArea::onRemoveDockBar(DockBar *dockBar)
+void DockArea::onRemoveDockBar(DockBar* dockBar)
 {
   // do nothing
 }
@@ -146,7 +146,7 @@ void DockArea::onRemoveDockBar(DockBar *dockBar)
  * Event generated when the user start dragging the @a dockBar from
  * this DockArea.
  */
-// void DockArea::onBeginDockBarDrag(DockBar *dockBar)
+// void DockArea::onBeginDockBarDrag(DockBar* dockBar)
 // {
 // }
 
@@ -158,11 +158,11 @@ void DockArea::onRemoveDockBar(DockBar *dockBar)
  *                    docked. NULL means that dockBar will be
  *                    floating, or the drag operation was canceled.
  */
-// void DockArea::onEndDockBarDrag(DockBar *dockBar, DockInfo *newDockInfo)
+// void DockArea::onEndDockBarDrag(DockBar* dockBar, DockInfo* newDockInfo)
 // {
 // }
 
-void DockArea::onRedock(DockBar *dockBar, DockInfo *newDockInfo)
+void DockArea::onRedock(DockBar* dockBar, DockInfo* newDockInfo)
 {
 }
 
@@ -176,7 +176,7 @@ void DockArea::onRedock(DockBar *dockBar, DockInfo *newDockInfo)
 //   Widget::Container::iterator it;
 
 //   for (it=children.begin(); it!=children.end(); ++it) {
-//     DockBar *dockBar = static_cast<DockBar *>(*it);
+//     DockBar* dockBar = static_cast<DockBar*>(*it);
 
 //     removeDockBar(dockBar);
 //     dockBar->m_dockArea = NULL;

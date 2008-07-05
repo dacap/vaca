@@ -60,13 +60,13 @@ public:
 
   Style(int regular, int extended);
 
-  Style operator+(const Style &style) const;
-  Style operator-(const Style &style) const;
-//   Style operator|(const Style &style) const;
-  Style operator&(const Style &style) const;
+  Style operator+(const Style& style) const;
+  Style operator-(const Style& style) const;
+//   Style operator|(const Style& style) const;
+  Style operator&(const Style& style) const;
 
-  bool operator==(const Style &style) const;
-  bool operator!=(const Style &style) const;
+  bool operator==(const Style& style) const;
+  bool operator!=(const Style& style) const;
 
 };
 

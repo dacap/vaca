@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="AutoCompletion"
-	ProjectGUID="{2FB0821A-E4FD-4FBD-A2DB-76E6D00F740D}"
+	ProjectGUID="{DBC2542B-5670-4354-9BF5-622540965436}"
 	RootNamespace="AutoCompletion"
 	Keyword="Win32Proj">
 	<Platforms>

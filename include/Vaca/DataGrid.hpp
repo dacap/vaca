@@ -58,7 +58,7 @@ enum DataGridType
 class DataGridColumn
 {
   DataGridType mType;
-  void *mValue;
+  void* mValue;
 
 public:
 
@@ -87,13 +87,13 @@ class DataGridSource
 public:
 
   virtual int getColumnCount() = 0;
-  virtual DataGridColumn *getColumn(int columnIndex) = 0;
+  virtual DataGridColumn* getColumn(int columnIndex) = 0;
 
   virtual int getRowCount() = 0;
   virtual String getRowText(int rowIndex) = 0;
 
-  virtual DataGridValue *getCellValue(int col, int row) = 0;
-  virtual void setCellValue(int col, int row, DataGridValue *value) = 0;
+  virtual DataGridValue* getCellValue(int col, int row) = 0;
+  virtual void setCellValue(int col, int row, DataGridValue* value) = 0;
 
 };
 
@@ -116,7 +116,7 @@ class VACA_DLL DataGrid : public Register<DataGridClass>, public Widget
 {
 public:
 
-  DataGrid(DataGridSource *dataSource, Widget *parent, Style style = DataGridStyle);
+  DataGrid(DataGridSource* dataSource, Widget* parent, Style style = DataGridStyle);
   virtual ~DataGrid();
 
 };

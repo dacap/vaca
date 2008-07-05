@@ -55,7 +55,7 @@ using namespace Vaca;
  *
  * @see onClose()
  */
-Frame::Frame(const String &title, Widget *parent, Style style)
+Frame::Frame(const String& title, Widget* parent, Style style)
   : Widget(FrameClass::getClassName(), parent, style)
 {
   initialize(title);
@@ -65,13 +65,13 @@ Frame::Frame(const String &title, Widget *parent, Style style)
  * Creates a frame with a custom WNDCLASS. @a className can be NULL if
  * you want to call Widget::create() by your self.
  */
-Frame::Frame(const WidgetClassName &className, const String &title, Widget *parent, Style style)
+Frame::Frame(const WidgetClassName& className, const String& title, Widget* parent, Style style)
   : Widget(className, parent, style)
 {
   initialize(title);
 }
 
-void Frame::initialize(const String &title)
+void Frame::initialize(const String& title)
 {
   m_menuBar = NULL;
   m_counted = false;
@@ -91,10 +91,10 @@ Frame::~Frame()
     m_menuBar = NULL;
   }
 
-//   for (std::vector<Command *>::iterator it = m_commands.begin();
+//   for (std::vector<Command*>::iterator it = m_commands.begin();
 //        it != m_commands.end();
 //        ++it) {
-//     Command *command = *it;
+//     Command* command = *it;
 //     delete command;
 //   }
 
@@ -107,13 +107,13 @@ Frame::~Frame()
   }
 }
 
-bool Frame::preTranslateMessage(MSG &msg)
+bool Frame::preTranslateMessage(MSG& msg)
 {
   if (m_menuBar != NULL) {
     // TODO accelerators
     if (msg.message == WM_KEYDOWN) {
       Keys::Type keys = Keys::fromMessageParams(msg.wParam, msg.lParam);
-      MenuItem *menuItem = m_menuBar->checkShortcuts(keys);
+      MenuItem* menuItem = m_menuBar->checkShortcuts(keys);
 
       if (menuItem != NULL) {
 	// update the menuItem status before (onUpdate stuff)
@@ -138,7 +138,7 @@ bool Frame::preTranslateMessage(MSG &msg)
  *
  * @see getNonClientSize
  */
-void Frame::onPreferredSize(Size &sz)
+void Frame::onPreferredSize(Size& sz)
 {
   Size ncSize = getNonClientSize();
 
@@ -154,7 +154,7 @@ void Frame::onPreferredSize(Size &sz)
 /**
  * Calls the layout() method.
  */
-void Frame::onResize(const Size &sz)
+void Frame::onResize(const Size& sz)
 {
   Widget::onResize(sz);
   layout();
@@ -171,7 +171,7 @@ bool Frame::onActionById(int actionId)
 
   // use menu bar
   if (m_menuBar != NULL) {
-    MenuItem *menuItem = m_menuBar->getMenuItemById(actionId);
+    MenuItem* menuItem = m_menuBar->getMenuItemById(actionId);
 
     VACA_TRACE("Frame::onActionById(%d), menuItem=%p\n", actionId, menuItem);
 
@@ -182,7 +182,7 @@ bool Frame::onActionById(int actionId)
   }
 
   // call commands with the given ID
-//   for (std::vector<Command *>::iterator it = m_commands.begin();
+//   for (std::vector<Command*>::iterator it = m_commands.begin();
 //        it != m_commands.end();
 //        ++it) {
 //     if ((*it)->getId() == actionId)
@@ -192,21 +192,21 @@ bool Frame::onActionById(int actionId)
   return false;
 }
 
-// void Frame::onKeyDown(KeyEvent &ev)
+// void Frame::onKeyDown(KeyEvent& ev)
 // {
 //   if (m_menuBar != NULL) {
-//     MenuItem *menuItem = m_menuBar->checkShortcuts(ev.getKeys());
+//     MenuItem* menuItem = m_menuBar->checkShortcuts(ev.getKeys());
 //     if (menuItem != NULL)
 //       menuItem->Action();
 //   }
 // }
 
-void Frame::onActivate(Event &ev)
+void Frame::onActivate(Event& ev)
 {
   Activate(ev);
 }
 
-void Frame::onDeactivate(Event &ev)
+void Frame::onDeactivate(Event& ev)
 {
   Deactivate(ev);
 }
@@ -226,14 +226,14 @@ void Frame::onDeactivate(Event &ev)
  * {
  * public:
  *   ...
- *   virtual void onClose(WidgetEvent &ev) {
+ *   virtual void onClose(WidgetEvent& ev) {
  *     Frame::onClose(ev); // it fires the Close signal
  *     ev.cancel();        // cancel the event (don't hide the frame)
  *   }
  * }
  * @endcode
  */
-void Frame::onClose(CloseEvent &ev)
+void Frame::onClose(CloseEvent& ev)
 {
   // fire Close signal
   Close(ev);
@@ -250,7 +250,7 @@ void Frame::onClose(CloseEvent &ev)
  * @li WMSZ_BOTTOMLEFT
  * @li WMSZ_BOTTOMRIGHT
  */
-void Frame::onResizing(int edge, Rect &rc)
+void Frame::onResizing(int edge, Rect& rc)
 {
   Resizing(edge, rc);
 }
@@ -335,7 +335,7 @@ void Frame::setVisible(bool visible)
  *
  * @code
  *   ...
- *   MenuBar *oldMenuBar = myFrame->setMenuBar(NULL);
+ *   MenuBar* oldMenuBar = myFrame->setMenuBar(NULL);
  *   if (oldMenuBar != NULL)
  *     delete oldMenuBar;
  *   ...
@@ -351,7 +351,7 @@ void Frame::setVisible(bool visible)
  *
  * @see setMenuBar
  */
-MenuBar *Frame::getMenuBar()
+MenuBar* Frame::getMenuBar()
 {
   return m_menuBar;
 }
@@ -366,7 +366,7 @@ MenuBar *Frame::getMenuBar()
  *
  * @see getMenuBar, MdiFrame::setMenuBar, MenuBar::isAutoDelete, @ref TN010
  */
-MenuBar *Frame::setMenuBar(MenuBar *menuBar)
+MenuBar* Frame::setMenuBar(MenuBar* menuBar)
 {
   HWND hwnd = getHWND();
   HMENU hmenu = menuBar->getHMENU();
@@ -375,7 +375,7 @@ MenuBar *Frame::setMenuBar(MenuBar *menuBar)
 
   ::SetMenu(hwnd, hmenu); // TODO check errors
 
-  MenuBar *oldMenuBar = m_menuBar;
+  MenuBar* oldMenuBar = m_menuBar;
   m_menuBar = menuBar;
   return oldMenuBar;
 }
@@ -387,7 +387,7 @@ MenuBar *Frame::setMenuBar(MenuBar *menuBar)
  * 
  * @see setIcon(int)
  */
-void Frame::setIcon(Icon *icon, bool bigIcon)
+void Frame::setIcon(Icon* icon, bool bigIcon)
 {
   sendMessage(WM_SETICON, bigIcon ? ICON_BIG: ICON_SMALL,
 	      reinterpret_cast<LPARAM>(icon->getHICON()));
@@ -397,7 +397,7 @@ void Frame::setIcon(Icon *icon, bool bigIcon)
  * Set the big icon (32x32) and the small icon (16x16) of the Frame
  * using the ICON resource speficied by @a iconId.
  *
- * @see setIcon(Icon *, bool)
+ * @see setIcon(Icon*, bool)
  */
 void Frame::setIcon(int iconId)
 {
@@ -441,8 +441,8 @@ Rect Frame::getLayoutBounds()
 {
   Rect rc = Widget::getLayoutBounds();
 
-  for (std::vector<DockArea *>::iterator it=m_dockAreas.begin(); it!=m_dockAreas.end(); ++it) {
-    DockArea *dockArea = *it;
+  for (std::vector<DockArea*>::iterator it=m_dockAreas.begin(); it!=m_dockAreas.end(); ++it) {
+    DockArea* dockArea = *it;
     Size dockSize = dockArea->getPreferredSize();
 
     switch (dockArea->getSide()) {
@@ -475,7 +475,7 @@ Rect Frame::getLayoutBounds()
  *
  * @see @ref TN010
  */
-// void Frame::addCommand(Command *command)
+// void Frame::addCommand(Command* command)
 // {
 //   m_commands.push_back(command);
 // }
@@ -485,7 +485,7 @@ Rect Frame::getLayoutBounds()
  * 
  * @param command 
  */
-// void Frame::removeCommand(Command *command)
+// void Frame::removeCommand(Command* command)
 // {
 //   remove_element_from_container(m_commands, command);
 // }
@@ -498,7 +498,7 @@ Rect Frame::getLayoutBounds()
  *
  * @see @ref TN010
  */
-void Frame::addDockArea(DockArea *dockArea)
+void Frame::addDockArea(DockArea* dockArea)
 {
   m_dockAreas.push_back(dockArea);
 }
@@ -507,7 +507,7 @@ void Frame::addDockArea(DockArea *dockArea)
  * Remove the @a dockArea from the Frame. You should delete
  * the @a dockArea pointer.
  */
-void Frame::removeDockArea(DockArea *dockArea)
+void Frame::removeDockArea(DockArea* dockArea)
 {
   remove_element_from_container(m_dockAreas, dockArea);
 }
@@ -535,8 +535,8 @@ void Frame::defaultDockAreas()
  */
 void Frame::deleteDockAreas()
 {
-  for (std::vector<DockArea *>::iterator it=m_dockAreas.begin(); it!=m_dockAreas.end(); ++it) {
-    DockArea *dockArea = *it;
+  for (std::vector<DockArea*>::iterator it=m_dockAreas.begin(); it!=m_dockAreas.end(); ++it) {
+    DockArea* dockArea = *it;
 
     dockArea->setVisible(false);
     // removeChild(dockArea, false);
@@ -550,7 +550,7 @@ void Frame::deleteDockAreas()
 /**
  * Returns the collection of registered DockAreas in the Frame.
  */
-std::vector<DockArea *> Frame::getDockAreas()
+std::vector<DockArea*> Frame::getDockAreas()
 {
   return m_dockAreas;
 }
@@ -559,10 +559,10 @@ std::vector<DockArea *> Frame::getDockAreas()
  * Returns the first DockArea in the specified @a side. Returns NULL
  * if there aren't registered a DockArea for the specified @a side.
  */
-DockArea *Frame::getDockArea(Side side)
+DockArea* Frame::getDockArea(Side side)
 {
-  for (std::vector<DockArea *>::iterator it=m_dockAreas.begin(); it!=m_dockAreas.end(); ++it) {
-    DockArea *dockArea = *it;
+  for (std::vector<DockArea*>::iterator it=m_dockAreas.begin(); it!=m_dockAreas.end(); ++it) {
+    DockArea* dockArea = *it;
 
     if (dockArea->getSide() == side)
       return dockArea;
@@ -577,7 +577,7 @@ DockArea *Frame::getDockArea(Side side)
  * returns the first DockArea that you added using addDockArea(); if
  * you use defaultDockAreas(), it will be the bar from the top side.
  */
-DockArea *Frame::getDefaultDockArea()
+DockArea* Frame::getDefaultDockArea()
 {
   if (!m_dockAreas.empty())
     return m_dockAreas.front();
@@ -594,8 +594,8 @@ void Frame::layout()
   Rect layoutRect = getLayoutBounds();
 
   // put the dock areas arround the layout bounds
-  for (std::vector<DockArea *>::iterator it=m_dockAreas.begin(); it!=m_dockAreas.end(); ++it) {
-    DockArea *dockArea = *it;
+  for (std::vector<DockArea*>::iterator it=m_dockAreas.begin(); it!=m_dockAreas.end(); ++it) {
+    DockArea* dockArea = *it;
     // Size dockSize = dockArea->getBounds().getSize();
     Size dockSize = dockArea->getPreferredSize();
 
@@ -644,7 +644,7 @@ bool Frame::keepSynchronized()
   return false;
 }
 
-void Frame::updateMenuItem(MenuItem *menuItem)
+void Frame::updateMenuItem(MenuItem* menuItem)
 {
   assert(menuItem != NULL);
   
@@ -653,10 +653,10 @@ void Frame::updateMenuItem(MenuItem *menuItem)
 
 //   CommandState cmdState;
 
-//   for (std::vector<Command *>::iterator it = m_commands.begin();
+//   for (std::vector<Command*>::iterator it = m_commands.begin();
 //        it != m_commands.end();
 //        ++it) {
-//     Command *command = *it;
+//     Command* command = *it;
 //     if (command->getId() == menuItem->getId())
 //       command->onUpdate(cmdState);
 //   }
@@ -682,7 +682,7 @@ Widget::Container Frame::getSynchronizedGroup()
   Container container;
 
   for (Container::iterator it=children.begin(); it!=children.end(); ++it) {
-    Frame *child = dynamic_cast<Frame *>(*it);
+    Frame* child = dynamic_cast<Frame*>(*it);
     if (child != NULL && child->keepSynchronized())
       container.push_back(child);
   }
@@ -694,12 +694,12 @@ Widget::Container Frame::getSynchronizedGroup()
  * Used when WM_INITMENU or WM_INITMENUPOPUP message is received to
  * find the Menu of the m_menuBar, known only its HMENU.
  */
-// Menu *Frame::getMenuByHMENU(HMENU hmenu)
+// Menu* Frame::getMenuByHMENU(HMENU hmenu)
 // {
-//   MenuBar *menuBar = getMenuBar();
-//   Menu *lastMenu = NULL;
+//   MenuBar* menuBar = getMenuBar();
+//   Menu* lastMenu = NULL;
 
-//   std::stack<Menu *> stack;
+//   std::stack<Menu*> stack;
 //   stack.push(menuBar);
 
 //   while (!stack.empty()) {
@@ -712,7 +712,7 @@ Widget::Container Frame::getSynchronizedGroup()
 //     Menu::Container subMenus = lastMenu->getMenuItems();
 //     for (Menu::Container::iterator it=subMenus.begin(); it!=subMenus.end(); ++it) {
 //       if ((*it)->isMenu())
-// 	stack.push(static_cast<Menu *>(*it));
+// 	stack.push(static_cast<Menu*>(*it));
 //     }
 //   }
 
@@ -736,7 +736,7 @@ Widget::Container Frame::getSynchronizedGroup()
  * When the event generated by WM_CLOSE message isn't cancelled, the
  * Frame is automatically hidden.
  */
-bool Frame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult)
+bool Frame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult)
 {
   if (Widget::wndProc(message, wParam, lParam, lResult))
     return true;
@@ -775,7 +775,7 @@ bool Frame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult
       if (hmenu == NULL)
 	break;
 
-      Menu *menu = NULL;
+      Menu* menu = NULL;
 
 // #if 0
 //       // work arround for Win95, Win98, WinMe...
@@ -789,7 +789,7 @@ bool Frame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult
 	mi.cbSize = sizeof(MENUINFO);
 	mi.fMask = MIM_MENUDATA;
 	if (::GetMenuInfo(hmenu, &mi))
-	  menu = reinterpret_cast<Menu *>(mi.dwMenuData);
+	  menu = reinterpret_cast<Menu* >(mi.dwMenuData);
 // #if 0
 //       }
 // #endif
@@ -799,7 +799,7 @@ bool Frame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult
 
 	// update menus
 	for (Menu::Container::iterator it=children.begin(); it!=children.end(); ++it) {
-	  MenuItem *menuItem = *it;
+	  MenuItem* menuItem = *it;
 	  updateMenuItem(menuItem);
 	}
       }
@@ -825,8 +825,8 @@ bool Frame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult
 
 	left = top = right = bottom = 0;
 
-	for (std::vector<DockArea *>::iterator it=m_dockAreas.begin(); it!=m_dockAreas.end(); ++it) {
-	DockArea *dockArea = *it;
+	for (std::vector<DockArea*>::iterator it=m_dockAreas.begin(); it!=m_dockAreas.end(); ++it) {
+	DockArea* dockArea = *it;
 	// 	    Widget::Container widgets = dockArea->getChildren();
 	Size sz = dockArea->preferredSize();
 	    
@@ -870,11 +870,11 @@ bool Frame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult
 	return true;
       }
       else {
-	Frame *owner = keepSynchronized() ? dynamic_cast<Frame *>(getParent()): this;
+	Frame* owner = keepSynchronized() ? dynamic_cast<Frame*>(getParent()): this;
 
 	// this can happend in the last WM_NCACTIVATE message (when
 	// the widget is destroyed)
-// 	if (owner == reinterpret_cast<Frame *>(NULL))
+// 	if (owner == reinterpret_cast<Frame*>(NULL))
 // 	  return false;
 	assert(owner != NULL);
 
@@ -889,7 +889,7 @@ bool Frame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult
 	// the synchronized group, we don't need to
 	// synchronize/repaint all the group
 	for (Container::iterator it=group.begin(); it!=group.end(); ++it) {
-	  Widget *child = *it;
+	  Widget* child = *it;
 	  if (child->getHWND() == hParam) {
 	    keepActive = true;
 	    syncGroup = false;
@@ -900,7 +900,7 @@ bool Frame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult
 	// synchronize the group
 	if (syncGroup) {
 	  for (Container::iterator it=group.begin(); it!=group.end(); ++it) {
-	    Widget *child = *it;
+	    Widget* child = *it;
 	    if ((child->getHWND() != getHWND()) &&
 		(child->getHWND() != hParam))
 	      child->sendMessage(WM_NCACTIVATE, keepActive, static_cast<LPARAM>(-1));

@@ -42,7 +42,7 @@ class VACA_DLL CancelableEvent : public Event
 
 public:
 
-  CancelableEvent(Component *source);
+  CancelableEvent(Component* source);
   virtual ~CancelableEvent();
   
   void cancel();

@@ -64,7 +64,7 @@ private:
 public:
 
   Color();
-  Color(const Color &color);
+  Color(const Color& color);
   Color(int r, int g, int b);
   virtual ~Color();
 
@@ -75,13 +75,13 @@ public:
   Color negative();
   Color toBlackAndWhite();
 
-  Color &operator=(const Color &color);
+  Color& operator=(const Color& color);
 
-  bool operator==(const Color &color) const;
-  bool operator!=(const Color &color) const;
+  bool operator==(const Color& color) const;
+  bool operator!=(const Color& color) const;
 
-  Color operator+(const Color &color) const;
-  Color operator-(const Color &color) const;
+  Color operator+(const Color& color) const;
+  Color operator-(const Color& color) const;
   Color operator*(int value) const;
   Color operator/(int value) const;
   Color operator*(double value) const;

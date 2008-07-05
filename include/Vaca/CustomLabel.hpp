@@ -54,7 +54,7 @@ class VACA_DLL CustomLabel : public Label
 
 public:
 
-  CustomLabel(const String &text, Widget *parent, Style style = CustomLabelStyle);
+  CustomLabel(const String& text, Widget* parent, Style style = CustomLabelStyle);
   virtual ~CustomLabel();
 
   virtual TextAlign getTextAlign();
@@ -63,7 +63,7 @@ public:
 protected:
 
   // reflection
-  virtual bool onReflectedDrawItem(Graphics &g, LPDRAWITEMSTRUCT lpDrawItem);
+  virtual bool onReflectedDrawItem(Graphics& g, LPDRAWITEMSTRUCT lpDrawItem);
 
 };
 

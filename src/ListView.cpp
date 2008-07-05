@@ -44,7 +44,7 @@ using namespace Vaca;
  * It uses the LVS_SHAREIMAGELISTS to avoid destroying the image-list
  * that you specified using setImageList().
  */
-ListView::ListView(Widget *parent, Style style)
+ListView::ListView(Widget* parent, Style style)
   : Widget(WidgetClassName(WC_LISTVIEW), parent, style + Style(LVS_SHAREIMAGELISTS, 0))
 {
   setBgColor(System::getColor(COLOR_WINDOW));
@@ -122,7 +122,7 @@ void ListView::setType(ListViewType type)
 	   + Style(style, 0));
 }
 
-void ListView::setImageList(ImageList *imageList, int type)
+void ListView::setImageList(ImageList* imageList, int type)
 {
   assert(::IsWindow(getHWND()));
   assert(imageList != NULL && imageList->isValid());
@@ -130,27 +130,27 @@ void ListView::setImageList(ImageList *imageList, int type)
   ListView_SetImageList(getHWND(), imageList->getHIMAGELIST(), type);
 }
 
-void ListView::setNormalImageList(ImageList *imageList)
+void ListView::setNormalImageList(ImageList* imageList)
 {
   setImageList(imageList, LVSIL_NORMAL);
 }
 
-void ListView::setSmallImageList(ImageList *imageList)
+void ListView::setSmallImageList(ImageList* imageList)
 {
   setImageList(imageList, LVSIL_SMALL);
 }
 
-void ListView::setStateImageList(ImageList *imageList)
+void ListView::setStateImageList(ImageList* imageList)
 {
   setImageList(imageList, LVSIL_STATE);
 }
 
-int ListView::addColumn(const String &header, TextAlign textAlign)
+int ListView::addColumn(const String& header, TextAlign textAlign)
 {
   return insertColumn(getColumnCount(), header, textAlign);
 }
 
-int ListView::insertColumn(int columnIndex, const String &header, TextAlign textAlign)
+int ListView::insertColumn(int columnIndex, const String& header, TextAlign textAlign)
 {
   assert(::IsWindow(getHWND()));
 
@@ -275,7 +275,7 @@ void ListView::setPreferredColumnWidth(int columnIndex, bool useHeader)
  * Inserts a new item in the last position.
  * 
  */
-int ListView::addItem(const String &text, int imageIndex)
+int ListView::addItem(const String& text, int imageIndex)
 {
   return insertItem(getItemCount(), text, imageIndex);
 }
@@ -286,7 +286,7 @@ int ListView::addItem(const String &text, int imageIndex)
  * @return The index (generally @a itemIndex).
  * 
  */
-int ListView::insertItem(int itemIndex, const String &text, int imageIndex)
+int ListView::insertItem(int itemIndex, const String& text, int imageIndex)
 {
   assert(::IsWindow(getHWND()));
 
@@ -374,7 +374,7 @@ String ListView::getItemText(int itemIndex, int columnIndex)
  * used to change the text of the different columns in a Report view.
  * 
  */
-void ListView::setItemText(int itemIndex, const String &text, int columnIndex)
+void ListView::setItemText(int itemIndex, const String& text, int columnIndex)
 {
   assert(::IsWindow(getHWND()));
 
@@ -414,8 +414,8 @@ void ListView::editItemText(int itemIndex)
 //   std::less<ListItem> *functor =
 //     reinterpret_cast<std::less<ListItem> *>(lParamSort);
 //   bool res;
-//   res = (*functor)(*reinterpret_cast<ListItem *>(lParam1),
-// 		   *reinterpret_cast<ListItem *>(lParam2));
+//   res = (*functor)(*reinterpret_cast<ListItem*>(lParam1),
+// 		   *reinterpret_cast<ListItem*>(lParam2));
 //   return res ? -1: 1;
 // }
 
@@ -428,22 +428,22 @@ void ListView::editItemText(int itemIndex)
 // 		     reinterpret_cast<LPARAM>(&functor));
 // }
 
-void ListView::onBeforeSelect(ListViewEvent &ev)
+void ListView::onBeforeSelect(ListViewEvent& ev)
 {
   BeforeSelect(ev);
 }
 
-void ListView::onAfterSelect(ListViewEvent &ev)
+void ListView::onAfterSelect(ListViewEvent& ev)
 {
   AfterSelect(ev);
 }
 
-void ListView::onColumnClick(ListViewEvent &ev)
+void ListView::onColumnClick(ListViewEvent& ev)
 {
   ColumnClick(ev);
 }
 
-bool ListView::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT &lResult)
+bool ListView::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult)
 {
   if (Widget::onReflectedNotify(lpnmhdr, lResult))
     return true;

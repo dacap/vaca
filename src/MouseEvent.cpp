@@ -38,7 +38,7 @@ using namespace Vaca;
 /**
  * @param flags Flags used internally (see MK_* constants of Win32)
  */
-MouseEvent::MouseEvent(Widget *source, Point point, int clicks,
+MouseEvent::MouseEvent(Widget* source, Point point, int clicks,
 		       int flags, MouseButtons trigger, int delta)
   : Event(source)
   , m_point(point)

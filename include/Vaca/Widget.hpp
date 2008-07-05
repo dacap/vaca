@@ -59,8 +59,8 @@ class MouseEvent;
 class Widget;
 class WidgetClassName;
 
-void VACA_DLL delete_widget(Widget *widget);
-void __internal_checked_delete_widget(Widget *widget);
+void VACA_DLL delete_widget(Widget* widget);
+void __internal_checked_delete_widget(Widget* widget);
 
 //////////////////////////////////////////////////////////////////////
 // Win32 Regular Window Styles
@@ -333,7 +333,7 @@ class CreateWidgetException : public Exception
 public:
 
   CreateWidgetException() : Exception() { }
-  CreateWidgetException(const String &message) : Exception(message) { }
+  CreateWidgetException(const String& message) : Exception(message) { }
   virtual ~CreateWidgetException() throw() { }
 
 };
@@ -347,8 +347,8 @@ public:
 class VACA_DLL Widget : private boost::noncopyable
 		      , public Component
 {
-  friend void delete_widget(Widget *widget);
-  friend void Vaca::__internal_checked_delete_widget(Widget *widget);
+  friend void delete_widget(Widget* widget);
+  friend void Vaca::__internal_checked_delete_widget(Widget* widget);
   
 public:
 
@@ -356,7 +356,7 @@ public:
    * Collection of widgets. Used to handle the list of children of
    * each widget.
    */
-  typedef std::vector<Widget *> Container;
+  typedef std::vector<Widget*> Container;
 
   // ============================================================
   // Members
@@ -378,7 +378,7 @@ private:
    * The parent widget. This could be NULL if the Widget is a Frame or
    * something like that.
    */
-  Widget *m_parent;
+  Widget* m_parent;
 
   /**
    * Foreground color, generally borders and text color.
@@ -393,12 +393,12 @@ private:
   /**
    * Constraint used by the layout manager that own the parent widget.
    */
-  Constraint *m_constraint;
+  Constraint* m_constraint;
 
   /**
    * Layout manager of this widget used to arrange its children.
    */
-  Layout *m_layout;
+  Layout* m_layout;
 
   /**
    * Flag to indicate if this widget has the mouse.
@@ -423,7 +423,7 @@ private:
    *
    * @see #setText, #setFont
    */
-  Font *m_font;
+  Font* m_font;
 
   /**
    * Manually set preferred size. If it's equal to NULL (by default it
@@ -432,7 +432,7 @@ private:
    *
    * @see #setPreferredSize
    */
-  Size *m_preferredSize;
+  Size* m_preferredSize;
 
   // ============================================================
   // TODO Remove this (it's only needed for onSetCursor)
@@ -466,25 +466,25 @@ public:
   // CTOR & DTOR
   // ============================================================
 
-  Widget(const WidgetClassName &className, Widget *parent, Style style = NoStyle);
+  Widget(const WidgetClassName& className, Widget* parent, Style style = NoStyle);
   virtual ~Widget();
 
   // ============================================================
   // PARENT & CHILDREN RELATIONSHIP
   // ============================================================
 
-  Widget *getParent();
+  Widget* getParent();
   Container getChildren();
 
   // ===============================================================
   // LAYOUT & CONSTRAINT
   // ===============================================================
 
-  Layout *getLayout();
-  Layout *setLayout(Layout *layout);
+  Layout* getLayout();
+  Layout* setLayout(Layout* layout);
 
-  Constraint *getConstraint();
-  Constraint *setConstraint(Constraint *constraint);
+  Constraint* getConstraint();
+  Constraint* setConstraint(Constraint* constraint);
 
   virtual void layout();
   virtual bool isLayoutFree();
@@ -494,10 +494,10 @@ public:
   // ===============================================================
 
   virtual String getText();
-  virtual void setText(const String &str);
+  virtual void setText(const String& str);
 
-  virtual Font *getFont();
-  virtual void setFont(Font *font);
+  virtual Font* getFont();
+  virtual void setFont(Font* font);
 
   // ===============================================================
   // WIDGET STYLE
@@ -520,18 +520,18 @@ public:
   // TODO public virtual
   virtual Rect getLayoutBounds();
 
-  void setBounds(const Rect &rc);
+  void setBounds(const Rect& rc);
   void setBounds(int x, int y, int w, int h);
 
   void center();
-  void setOrigin(const Point &pt);
+  void setOrigin(const Point& pt);
   void setOrigin(int x, int y);
-  void setSize(const Size &sz);
+  void setSize(const Size& sz);
   void setSize(int w, int h);
 
   Size getPreferredSize();
-  Size getPreferredSize(const Size &fitIn);
-  void setPreferredSize(const Size &fixedSize);
+  Size getPreferredSize(const Size& fitIn);
+  void setPreferredSize(const Size& fixedSize);
   
   // ===============================================================
   // REFRESH ISSUES
@@ -541,9 +541,9 @@ public:
   void setDoubleBuffered(bool doubleBuffered);
 
   void validate();
-  void validate(const Rect &rc);
+  void validate(const Rect& rc);
   void invalidate(bool eraseBg);
-  void invalidate(const Rect &rc, bool eraseBg);
+  void invalidate(const Rect& rc, bool eraseBg);
   void update();
 
   // ===============================================================
@@ -577,7 +577,7 @@ public:
   bool hasMouseAbove();
   bool hasCapture();
 
-  void setCursor(const Cursor &cursor);
+  void setCursor(const Cursor& cursor);
 
   // ===============================================================
   // WIDGET LAYER
@@ -585,51 +585,51 @@ public:
 
   void bringToTop();
   void sendToBack();
-  void moveAfter(Widget *brother);
-  void moveBefore(Widget *brother);
+  void moveAfter(Widget* brother);
+  void moveBefore(Widget* brother);
 
   ScrollInfo getScrollInfo(Orientation orientation);
-  void setScrollInfo(Orientation orientation, const ScrollInfo &scrollInfo);
+  void setScrollInfo(Orientation orientation, const ScrollInfo& scrollInfo);
   int getScrollPos(Orientation orientation);
   void setScrollPos(Orientation orientation, int pos);
   Point getScrollPoint();
-  void setScrollPoint(const Point &pt);
+  void setScrollPoint(const Point& pt);
   void hideScrollBar(Orientation orientation);
 
-  int msgBox(const String &text, const String &title, int flags);
+  int msgBox(const String& text, const String& title, int flags);
 
   HWND getHWND();
   HWND getParentHWND();
 
-  static Widget *fromHWND(HWND hwnd);
+  static Widget* fromHWND(HWND hwnd);
   static WNDPROC getGlobalWndProc();
   
-  virtual bool preTranslateMessage(MSG &msg);
+  virtual bool preTranslateMessage(MSG& msg);
   LRESULT sendMessage(UINT message, WPARAM wParam, LPARAM lParam);
 
   // TODO public? I don't think so
-  void addChild(Widget *child, bool setParent);
-  void removeChild(Widget *child, bool setParent);
+  void addChild(Widget* child, bool setParent);
+  void removeChild(Widget* child, bool setParent);
 
   // ===============================================================
   // SIGNALS (signals are public, see TN004)
   // ===============================================================
 
-  boost::signal<void (const Size &)> Resize;		///< @see onResize
-  boost::signal<void (MouseEvent &)> MouseEnter;	///< @see onMouseEnter
+  boost::signal<void (const Size&)> Resize;		///< @see onResize
+  boost::signal<void (MouseEvent&)> MouseEnter;		///< @see onMouseEnter
   boost::signal<void ()> MouseLeave;			///< @see onMouseLeave
-  boost::signal<void (MouseEvent &)> MouseDown;		///< @see onMouseDown
-  boost::signal<void (MouseEvent &)> MouseUp;		///< @see onMouseUp
-  boost::signal<void (MouseEvent &)> DoubleClick;	///< @see onDoubleClick
-  boost::signal<void (MouseEvent &)> MouseMove;		///< @see onMouseMove
-  boost::signal<void (MouseEvent &)> MouseWheel;	///< @see onMouseWheel
+  boost::signal<void (MouseEvent&)> MouseDown;		///< @see onMouseDown
+  boost::signal<void (MouseEvent&)> MouseUp;		///< @see onMouseUp
+  boost::signal<void (MouseEvent&)> DoubleClick;	///< @see onDoubleClick
+  boost::signal<void (MouseEvent&)> MouseMove;		///< @see onMouseMove
+  boost::signal<void (MouseEvent&)> MouseWheel;		///< @see onMouseWheel
   boost::signal<void ()> CancelMode;			///< @see CancelMode
-  boost::signal<void (KeyEvent &)> KeyUp;		///< @see onKeyUp
-  boost::signal<void (KeyEvent &)> KeyDown;		///< @see onKeyDown
-  boost::signal<void (KeyEvent &)> KeyTyped;		///< @see onKeyTyped
-  boost::signal<void (Event &ev)> GotFocus;		///< @see onGotFocus
-  boost::signal<void (Event &ev)> LostFocus;		///< @see onLostFocus
-  boost::signal<void (DropFilesEvent &ev)> DropFiles;	///< @see onDropFiles
+  boost::signal<void (KeyEvent&)> KeyUp;		///< @see onKeyUp
+  boost::signal<void (KeyEvent&)> KeyDown;		///< @see onKeyDown
+  boost::signal<void (KeyEvent&)> KeyTyped;		///< @see onKeyTyped
+  boost::signal<void (Event&)> GotFocus;		///< @see onGotFocus
+  boost::signal<void (Event&)> LostFocus;		///< @see onLostFocus
+  boost::signal<void (DropFilesEvent&)> DropFiles;	///< @see onDropFiles
 
 protected:
 
@@ -637,54 +637,54 @@ protected:
   // EVENTS
   // ===============================================================
 
-  virtual void onPreferredSize(Size &sz);
-  virtual void onPaint(Graphics &g);
-  virtual void onResize(const Size &sz);
-  virtual void onMouseEnter(MouseEvent &ev);
+  virtual void onPreferredSize(Size& sz);
+  virtual void onPaint(Graphics& g);
+  virtual void onResize(const Size& sz);
+  virtual void onMouseEnter(MouseEvent& ev);
   virtual void onMouseLeave();
-  virtual void onMouseDown(MouseEvent &ev);
-  virtual void onMouseUp(MouseEvent &ev);
-  virtual void onDoubleClick(MouseEvent &ev);
-  virtual void onMouseMove(MouseEvent &ev);
-  virtual void onMouseWheel(MouseEvent &ev);
+  virtual void onMouseDown(MouseEvent& ev);
+  virtual void onMouseUp(MouseEvent& ev);
+  virtual void onDoubleClick(MouseEvent& ev);
+  virtual void onMouseMove(MouseEvent& ev);
+  virtual void onMouseWheel(MouseEvent& ev);
   virtual void onCancelMode();
   virtual void onSetCursor(WidgetHitTest hitTest);
-  virtual void onKeyUp(KeyEvent &ev);
-  virtual void onKeyDown(KeyEvent &ev);
-  virtual void onKeyTyped(KeyEvent &ev);
-  virtual void onGotFocus(Event &ev);
-  virtual void onLostFocus(Event &ev);
+  virtual void onKeyUp(KeyEvent& ev);
+  virtual void onKeyDown(KeyEvent& ev);
+  virtual void onKeyTyped(KeyEvent& ev);
+  virtual void onGotFocus(Event& ev);
+  virtual void onLostFocus(Event& ev);
   virtual bool onActionById(int actionId);
   virtual void onBeforePosChange();
   virtual void onAfterPosChange();
   virtual void onScroll(Orientation orientation, int code);
-  virtual void onDropFiles(DropFilesEvent &ev);
+  virtual void onDropFiles(DropFilesEvent& ev);
 
   // ===============================================================
   // REFLECTION
   // ===============================================================
 
-  virtual bool onReflectedCommand(int id, int code, LRESULT &lResult);
-  virtual bool onReflectedNotify(LPNMHDR lpnmhdr, LRESULT &lResult);
-  virtual bool onReflectedDrawItem(Graphics &g, LPDRAWITEMSTRUCT lpDrawItem);
+  virtual bool onReflectedCommand(int id, int code, LRESULT& lResult);
+  virtual bool onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult);
+  virtual bool onReflectedDrawItem(Graphics& g, LPDRAWITEMSTRUCT lpDrawItem);
 
   // ===============================================================
   // CREATION & MESSAGE PROCESSING
   // ===============================================================
 
-  void create(const WidgetClassName &className, Widget *parent, Style style);
+  void create(const WidgetClassName& className, Widget* parent, Style style);
   void subClass();
   LRESULT defWndProc(UINT message, WPARAM wParam, LPARAM lParam);
-  virtual bool wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult);
+  virtual bool wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult);
 
-  bool doPaint(Graphics &g);
+  bool doPaint(Graphics& g);
 
   void setDefWndProc(WNDPROC proc);
   void setDestroyHWNDProc(void (*proc)(HWND));
 
 private:
 
-  virtual HWND createHWND(LPCTSTR className, Widget *parent, Style style);
+  virtual HWND createHWND(LPCTSTR className, Widget* parent, Style style);
 
   static LRESULT CALLBACK globalWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 

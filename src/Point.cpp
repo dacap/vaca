@@ -47,73 +47,73 @@ Point::Point(int x, int y)
   this->y = y;
 }
 
-Point::Point(const Point &point)
+Point::Point(const Point& point)
 {
   x = point.x;
   y = point.y;
 }
 
-Point::Point(const Size &size)
+Point::Point(const Size& size)
 {
   x = size.w;
   y = size.h;
 }
 
-const Point &Point::operator=(const Point &pt)
+const Point& Point::operator=(const Point& pt)
 {
   x = pt.x;
   y = pt.y;
   return *this;
 }
 
-const Point &Point::operator+=(const Point &pt)
+const Point& Point::operator+=(const Point& pt)
 {
   x += pt.x;
   y += pt.y;
   return *this;
 }
 
-const Point &Point::operator-=(const Point &pt)
+const Point& Point::operator-=(const Point& pt)
 {
   x -= pt.x;
   y -= pt.y;
   return *this;
 }
 
-const Point &Point::operator+=(int value)
+const Point& Point::operator+=(int value)
 {
   x += value;
   y += value;
   return *this;
 }
 
-const Point &Point::operator-=(int value)
+const Point& Point::operator-=(int value)
 {
   x -= value;
   y -= value;
   return *this;
 }
 
-const Point &Point::operator*=(int value)
+const Point& Point::operator*=(int value)
 {
   x *= value;
   y *= value;
   return *this;
 }
 
-const Point &Point::operator/=(int value)
+const Point& Point::operator/=(int value)
 {
   x /= value;
   y /= value;
   return *this;
 }
 
-Point Point::operator+(const Point &pt) const
+Point Point::operator+(const Point& pt) const
 {
   return Point(x+pt.x, y+pt.y);
 }
 
-Point Point::operator-(const Point &pt) const
+Point Point::operator-(const Point& pt) const
 {
   return Point(x-pt.x, y-pt.y);
 }
@@ -143,12 +143,12 @@ Point Point::operator-() const
   return Point(-x, -y);
 }
 
-bool Point::operator==(const Point &pt) const
+bool Point::operator==(const Point& pt) const
 {
   return x == pt.x && y == pt.y;
 }
 
-bool Point::operator!=(const Point &pt) const
+bool Point::operator!=(const Point& pt) const
 {
   return x != pt.x || y != pt.y;
 }

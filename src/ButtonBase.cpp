@@ -38,7 +38,7 @@
 
 using namespace Vaca;
 
-ButtonBase::ButtonBase(Widget *parent, Style style)
+ButtonBase::ButtonBase(Widget* parent, Style style)
   : Widget(WidgetClassName(WC_BUTTON), parent, style)
 {
 }
@@ -82,7 +82,7 @@ void ButtonBase::setSelected(bool state)
 /**
  * Returns the preferred size for the button.
  */
-void ButtonBase::onPreferredSize(Size &sz)
+void ButtonBase::onPreferredSize(Size& sz)
 {
   assert(::IsWindow(getHWND()));
 
@@ -155,7 +155,7 @@ void ButtonBase::onPreferredSize(Size &sz)
  * ToggleButton when the button-state is changed, and for RadioButton
  * when one option is selected.
  */
-void ButtonBase::onAction(Event &ev)
+void ButtonBase::onAction(Event& ev)
 {
   Action(ev);
 }
@@ -163,7 +163,7 @@ void ButtonBase::onAction(Event &ev)
 /**
  * Catches BN_CLICKED to fire onAction event.
  */
-bool ButtonBase::onReflectedCommand(int id, int code, LRESULT &lResult)
+bool ButtonBase::onReflectedCommand(int id, int code, LRESULT& lResult)
 {
   if (Widget::onReflectedCommand(id, code, lResult))
     return true;

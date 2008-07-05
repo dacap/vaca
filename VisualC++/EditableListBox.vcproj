@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="EditableListBox"
-	ProjectGUID="{D7AE362D-CE2D-4221-B22E-2C17595E8FD3}"
+	ProjectGUID="{9B470FA5-65FB-40AB-8FE3-767DB3A7943C}"
 	RootNamespace="EditableListBox"
 	Keyword="Win32Proj">
 	<Platforms>

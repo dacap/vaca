@@ -73,35 +73,35 @@ class VACA_DLL DockBar : public Register<DockBarClass>, public Widget
 
   // In what DockArea is the DockBar docked? It's != NULL only if the
   // DockBar is docked.
-  DockArea *m_dockArea;
+  DockArea* m_dockArea;
 
   // The DockFrame that contains the DockBar when it's floating. It's
   // != NULL only if the DockBar is floating.
-  DockFrame *m_dockFrame;
+  DockFrame* m_dockFrame;
 
   // Used to hold on the pointer of the destroyed m_dockFrame. This
   // pointer is != NULL only when the DockFrame is destroyed by its
   // parent (when the parent Frame or MdiFrame is closed).
-//   DockFrame *m_dockFrameGarbage;
+//   DockFrame* m_dockFrameGarbage;
 
   // Drag stuff. Not NULL means that the user is dragging the DockBar.
-  DragInfo *m_drag;
+  DragInfo* m_drag;
 
   // The Frame that own the DockBar. This owner generally should have
   // some DockArea to dock the DockBar, but isn't obligatory.
-  Frame *m_owner;
+  Frame* m_owner;
 
   // Information of the DockBar when it's docked (or the information
   // about the last docked position). This can be a derived class of
   // DockInfo, used by your own DockArea (like BandedDockArea does).
-  DockInfo *m_dockInfo;
+  DockInfo* m_dockInfo;
 
   bool m_fullDrag;
   bool m_floatingGripper;
 
 public:
 
-  DockBar(const String &title, Frame *parent, Style style = DockBarStyle);
+  DockBar(const String& title, Frame* parent, Style style = DockBarStyle);
   virtual ~DockBar();
 
   virtual void setVisible(bool visible);
@@ -116,13 +116,13 @@ public:
   bool isDocked();
   bool isFloating();
 
-  void dockIn(DockArea *dockArea);
+  void dockIn(DockArea* dockArea);
   void floatOut();
 
-  Frame *getOwnerFrame();
-  DockArea *getDockArea();
-  DockFrame *getDockFrame();
-  DockInfo *getDockInfo();
+  Frame* getOwnerFrame();
+  DockArea* getDockArea();
+  DockFrame* getDockFrame();
+  DockInfo* getDockInfo();
 
   virtual Size getDockedSize(Side side);
   virtual Size getFloatingSize();
@@ -130,31 +130,31 @@ public:
 protected:
 
   // events
-  virtual void onPreferredSize(Size &sz);
+  virtual void onPreferredSize(Size& sz);
 //   virtual void onDestroy();
-  virtual void onDockFrameClose(CloseEvent &ev);
+  virtual void onDockFrameClose(CloseEvent& ev);
 //   virtual void onDockFrameDestroy();
-  virtual void onPaint(Graphics &g);
-  virtual void onResize(const Size &sz);
-  virtual void onMouseDown(MouseEvent &ev);
-  virtual void onMouseMove(MouseEvent &ev);
-  virtual void onMouseUp(MouseEvent &ev);
-  virtual void onDoubleClick(MouseEvent &ev);
+  virtual void onPaint(Graphics& g);
+  virtual void onResize(const Size& sz);
+  virtual void onMouseDown(MouseEvent& ev);
+  virtual void onMouseMove(MouseEvent& ev);
+  virtual void onMouseUp(MouseEvent& ev);
+  virtual void onDoubleClick(MouseEvent& ev);
   virtual void onCancelMode();
   // new events
   virtual void onDocking();
   virtual void onFloating();
-  virtual void onResizingFrame(DockFrame *frame, int edge, Rect &rc);
+  virtual void onResizingFrame(DockFrame* frame, int edge, Rect& rc);
 
-  virtual void paintGripper(Graphics &g);
+  virtual void paintGripper(Graphics& g);
   virtual Size measureGripper(bool docked, Side dockSide);
   virtual Side getGripperSide(bool docked, Side dockSide);
   virtual bool isGripperVisible(bool docked, Side dockSide);
 
 private:
 
-  void makeDock(DockArea *dockArea, DockInfo *dockInfo);
-  void makeFloat(const Rect *rect = NULL);
+  void makeDock(DockArea* dockArea, DockInfo* dockInfo);
+  void makeFloat(const Rect* rect = NULL);
 
   void beginDrag();
   void dragBar();
@@ -162,10 +162,10 @@ private:
   
   void cleanUp();
   void focusOwner();
-  DockInfo *calcDestination(Rect &rc);
-  void drawFeedbackShape(Graphics &g);
-  void cleanFeedbackShape(Graphics &g);
-  DockArea *xorFeedbackShape(Graphics &g);
+  DockInfo* calcDestination(Rect& rc);
+  void drawFeedbackShape(Graphics& g);
+  void cleanFeedbackShape(Graphics& g);
+  DockArea* xorFeedbackShape(Graphics& g);
   static Size getNonClientSizeForADockFrame();
 
 };

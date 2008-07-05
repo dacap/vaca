@@ -64,7 +64,7 @@ class VACA_DLL ReBar : public Widget
 {
 public:
 
-  ReBar(Widget *parent, Style style = ReBarStyle);
+  ReBar(Widget* parent, Style style = ReBarStyle);
 
 };
 

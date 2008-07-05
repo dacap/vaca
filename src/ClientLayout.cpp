@@ -48,12 +48,12 @@ ClientLayout::~ClientLayout()
 {
 }
 
-// Size ClientLayout::minimumSize(Widget *parent, Widget::Container &widgets)
+// Size ClientLayout::minimumSize(Widget* parent, Widget::Container& widgets)
 // {
 //   Size sz(0, 0);
 
 //   for (Widget::Container::iterator it=widgets.begin(); it!=widgets.end(); ++it) {
-//     Widget *widget = *it;
+//     Widget* widget = *it;
 //     if (!widget->isLayoutFree()) {
 //       Size pref = widget->minimumSize();
 //       if (sz.w < pref.w) sz.w = pref.w;
@@ -64,12 +64,12 @@ ClientLayout::~ClientLayout()
 //   return sz;
 // }
 
-Size ClientLayout::getPreferredSize(Widget *parent, Widget::Container &widgets, const Size &fitIn)
+Size ClientLayout::getPreferredSize(Widget* parent, Widget::Container& widgets, const Size& fitIn)
 {
   Size sz(0, 0);
 
   for (Widget::Container::iterator it=widgets.begin(); it!=widgets.end(); ++it) {
-    Widget *widget = *it;
+    Widget* widget = *it;
     if (!widget->isLayoutFree()) {
       Size pref = widget->getPreferredSize(fitIn);
       if (sz.w < pref.w) sz.w = pref.w;
@@ -80,12 +80,12 @@ Size ClientLayout::getPreferredSize(Widget *parent, Widget::Container &widgets, 
   return sz + m_border;
 }
 
-// Size ClientLayout::maximumSize(Widget *parent, Widget::Container &widgets)
+// Size ClientLayout::maximumSize(Widget* parent, Widget::Container& widgets)
 // {
 //   Size sz(0, 0);
 
 //   for (Widget::Container::iterator it=widgets.begin(); it!=widgets.end(); ++it) {
-//     Widget *widget = *it;
+//     Widget* widget = *it;
 //     if (!widget->isLayoutFree()) {
 //       Size pref = widget->maximumSize();
 //       if (sz.w < pref.w) sz.w = pref.w;
@@ -96,7 +96,7 @@ Size ClientLayout::getPreferredSize(Widget *parent, Widget::Container &widgets, 
 //   return sz;
 // }
 
-void ClientLayout::layout(Widget *parent, Widget::Container &widgets, const Rect &rc)
+void ClientLayout::layout(Widget* parent, Widget::Container& widgets, const Rect& rc)
 {
   Rect bounds = rc;
   bounds.shrink(m_border);
@@ -104,7 +104,7 @@ void ClientLayout::layout(Widget *parent, Widget::Container &widgets, const Rect
   beginMovement(widgets);
 
   for (Widget::Container::iterator it=widgets.begin(); it!=widgets.end(); ++it) {
-    Widget *widget = *it;
+    Widget* widget = *it;
     if (!widget->isLayoutFree())
       moveWidget(widget, bounds);
   }

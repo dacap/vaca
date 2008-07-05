@@ -49,7 +49,7 @@ using namespace Vaca;
 // the TB_BUTTONSTRUCTSIZE message, anyway, I'll try don't use those
 // messages.
 
-ToolSet::ToolSet(Widget *parent, Style style)
+ToolSet::ToolSet(Widget* parent, Style style)
   : Widget(WidgetClassName(TOOLBARCLASSNAME), parent, style)
 {
   m_loadedImageList = NULL;
@@ -99,7 +99,7 @@ Rect ToolSet::setRows(int rows, bool expand)
  * (TB_SETIMAGELIST)
  * 
  */
-void ToolSet::setImageList(ImageList &imageList)
+void ToolSet::setImageList(ImageList& imageList)
 {
   assert(imageList.isValid());
   
@@ -260,7 +260,7 @@ void ToolSet::setButtonCommandId(int buttonIndex, int newCommandId)
  *
  * (TB_HITTEST)
  */
-int ToolSet::hitTest(const Point &pt)
+int ToolSet::hitTest(const Point& pt)
 {
   POINT point = pt;
   return sendMessage(TB_HITTEST, 0,
@@ -272,12 +272,12 @@ std::vector<Size> ToolSet::getPreferredSizes()
   return m_preferredSizes;
 }
 
-void ToolSet::onPreferredSize(Size &sz)
+void ToolSet::onPreferredSize(Size& sz)
 {
   sz = m_preferredSizes[getRows()];
 }
 
-bool ToolSet::onReflectedCommand(int id, int code, LRESULT &lResult)
+bool ToolSet::onReflectedCommand(int id, int code, LRESULT& lResult)
 {
   if (Widget::onReflectedCommand(id, code, lResult))
     return true;
@@ -286,7 +286,7 @@ bool ToolSet::onReflectedCommand(int id, int code, LRESULT &lResult)
   return getParent()->sendMessage(WM_COMMAND, MAKEWPARAM(id, 0), 0) == 0;
 }
 
-bool ToolSet::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult)
+bool ToolSet::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult)
 {
   if (Widget::wndProc(message, wParam, lParam, lResult))
     return true;
@@ -351,7 +351,7 @@ void ToolSet::updatePreferredSizes()
 // ToolBar
 
 
-ToolBar::ToolBar(const String &title, Frame *parent, Style toolSetStyle, Style style)
+ToolBar::ToolBar(const String& title, Frame* parent, Style toolSetStyle, Style style)
   : DockBar(title, parent, style)
   , mSet(this, toolSetStyle)
   , mRowsWhenFloating(1)
@@ -368,7 +368,7 @@ ToolBar::~ToolBar()
 {
 }
 
-ToolSet &ToolBar::getSet()
+ToolSet& ToolBar::getSet()
 {
   return mSet;
 }
@@ -430,7 +430,7 @@ void ToolBar::onFloating()
   mSet.setRows(mRowsWhenFloating, false);
 }
 
-void ToolBar::onResizingFrame(DockFrame *frame, int edge, Rect &rc)
+void ToolBar::onResizingFrame(DockFrame* frame, int edge, Rect& rc)
 {
   DockBar::onResizingFrame(frame, edge, rc);
 

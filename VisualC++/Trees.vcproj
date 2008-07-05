@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="Trees"
-	ProjectGUID="{196F6E20-49A1-4CB3-B702-E3AB0D1877B3}"
+	ProjectGUID="{B912F26B-9B0D-484D-BA3E-AB02B854ECF9}"
 	RootNamespace="Trees"
 	Keyword="Win32Proj">
 	<Platforms>

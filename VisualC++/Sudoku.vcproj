@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="Sudoku"
-	ProjectGUID="{91AC2C0E-FB7A-42E7-9F1E-C3815C5E934F}"
+	ProjectGUID="{4D07FF67-A62B-4B9A-A26E-CD033A3120C5}"
 	RootNamespace="Sudoku"
 	Keyword="Win32Proj">
 	<Platforms>
@@ -235,6 +235,7 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File RelativePath="..\examples\Sudoku\grid.h"></File>
+			<File RelativePath="..\examples\Sudoku\table.h"></File>
 		</Filter>
 		<Filter
 			Name="Resource Files"

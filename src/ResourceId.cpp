@@ -39,7 +39,7 @@ ResourceId::ResourceId(int id)
   m_id = id;
 }
 
-ResourceId::ResourceId(const ResourceId &rc)
+ResourceId::ResourceId(const ResourceId& rc)
 {
   m_id = rc.m_id;
 }

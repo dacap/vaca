@@ -54,8 +54,8 @@ protected:
 
 public:
 
-  Icon(int iconId, const Size &sz = Size(0, 0));
-  Icon(const String &fileName, const Size &sz = Size(0, 0));
+  Icon(int iconId, const Size& sz = Size(0, 0));
+  Icon(const String& fileName, const Size& sz = Size(0, 0));
   virtual ~Icon();
 
   HICON getHICON();
@@ -73,8 +73,8 @@ class VACA_DLL SharedIcon : public Icon
 {
 public:
 
-  SharedIcon(int iconId, const Size &sz = Size(0, 0));
-  SharedIcon(const String &fileName, const Size &sz = Size(0, 0));
+  SharedIcon(int iconId, const Size& sz = Size(0, 0));
+  SharedIcon(const String& fileName, const Size& sz = Size(0, 0));
   virtual ~SharedIcon();
 
 };

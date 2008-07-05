@@ -49,18 +49,18 @@ String::String(int length)
 {
 }
 
-String::String(const String &str)
+String::String(const String& str)
   : VACA_STRING_BASE(str)
 {
 }
 
-String::String(const VACA_STRING_BASE &str)
+String::String(const VACA_STRING_BASE& str)
   : VACA_STRING_BASE(str)
 {
 }
 
 #ifdef _UNICODE
-String::String(const char *str)
+String::String(const char* str)
   : VACA_STRING_BASE()
 {
   int len = strlen(str)+1;
@@ -72,7 +72,7 @@ String::String(const char *str)
     assign(wideBuf);
 }
 
-String::String(const char *str, int len)
+String::String(const char* str, int len)
   : VACA_STRING_BASE()
 {
   LPWSTR wideBuf = new WCHAR[len];
@@ -83,26 +83,26 @@ String::String(const char *str, int len)
     assign(wideBuf);
 }
 
-String::String(const wchar_t *str)
+String::String(const wchar_t* str)
   : VACA_STRING_BASE(str)
 {
 }
 #else
-String::String(const char *str)
+String::String(const char* str)
   : VACA_STRING_BASE(str)
 {
 }
 
-String::String(const char *str, int length)
+String::String(const char* str, int length)
   : VACA_STRING_BASE(str, length)
 {
 }
 
-String::String(const wchar_t *str)
+String::String(const wchar_t* str)
   : VACA_STRING_BASE()
 {
   int len = wcslen(str)+1;
-  char *buf = new char[len];
+  char* buf = new char[len];
   int ret = WideCharToMultiByte(CP_ACP, 0, str, len, buf, len, NULL, NULL);
 
   if (ret != 0)
@@ -310,7 +310,7 @@ String String::getFileTitle() const
   return res;
 }
 
-String String::addPathComponent(const String &component) const
+String String::addPathComponent(const String& component) const
 {
 #if 0
   TCHAR buf[MAX_PATH];
@@ -323,7 +323,7 @@ String String::addPathComponent(const String &component) const
 #else  
   String res(*this);
   
-  if (!empty() && (*end() != '/' || *end() != '\\'))
+  if (!empty() && *(end()-1) != '/' && *(end()-1) != '\\')
     res.push_back('\\');
 
   res += component;
@@ -341,7 +341,7 @@ String String::removeExtension() const
   return String(buf);
 }
 
-String String::replaceExtension(const String &newExtension) const
+String String::replaceExtension(const String& newExtension) const
 {
   return removeExtension() + "." + newExtension;
 //   TCHAR buf[MAX_PATH];

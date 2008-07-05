@@ -15,7 +15,7 @@ General
 Layout Managers
 ----------------------------------------------------------------------
 
-- Bix layout manager: a mix between columns, rows, and matrices.
+- Xul (like Bix but more general).
 
 
 ----------------------------------------------------------------------

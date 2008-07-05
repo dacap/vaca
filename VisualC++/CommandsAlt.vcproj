@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="CommandsAlt"
-	ProjectGUID="{D2F79813-970A-4080-B761-6B11F37E3FD8}"
+	ProjectGUID="{34B727BE-4B6B-4BD7-977E-20B863E63C3F}"
 	RootNamespace="CommandsAlt"
 	Keyword="Win32Proj">
 	<Platforms>

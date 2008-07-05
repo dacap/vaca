@@ -37,13 +37,13 @@
 
 using namespace Vaca;
 
-Slider::Slider(Widget *parent, Style style)
+Slider::Slider(Widget* parent, Style style)
   : Widget(WidgetClassName(TRACKBAR_CLASS), parent, style)
 {
 }
 
 Slider::Slider(int minValue, int maxValue, int value,
-	       Widget *parent, Style style)
+	       Widget* parent, Style style)
   : Widget(WidgetClassName(TRACKBAR_CLASS), parent, style)
 {
   assert(minValue <= value);
@@ -166,7 +166,7 @@ int Slider::getMaximum()
   return sendMessage(TBM_GETRANGEMAX, 0, 0);
 }
 
-void Slider::getRange(int &minValue, int &maxValue)
+void Slider::getRange(int& minValue, int& maxValue)
 {
   minValue = getMinimum();
   maxValue = getMaximum();
@@ -187,7 +187,7 @@ void Slider::setValue(int value)
   sendMessage(TBM_SETPOS, TRUE, value);
 }
 
-void Slider::onPreferredSize(Size &sz)
+void Slider::onPreferredSize(Size& sz)
 {
   int style = getStyle().regular;
   
@@ -231,7 +231,7 @@ void Slider::onScroll(Orientation orientation, int code)
   assert(false);
 }
 
-void Slider::onChange(Event &ev)
+void Slider::onChange(Event& ev)
 {
   Change(ev);
 }

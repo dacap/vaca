@@ -45,12 +45,12 @@ WidgetClassName::WidgetClassName()
   m_className = "";
 }
 
-WidgetClassName::WidgetClassName(const String &className)
+WidgetClassName::WidgetClassName(const String& className)
 {
   m_className = className;
 }
 
-WidgetClassName::WidgetClassName(const WidgetClassName &className)
+WidgetClassName::WidgetClassName(const WidgetClassName& className)
 {
   m_className = className.m_className;
 }
@@ -59,18 +59,18 @@ WidgetClassName::~WidgetClassName()
 {
 }
 
-WidgetClassName &WidgetClassName::operator=(const WidgetClassName &className)
+WidgetClassName& WidgetClassName::operator=(const WidgetClassName& className)
 {
   m_className = className.m_className;
   return *this;
 }
 
-bool WidgetClassName::operator==(const WidgetClassName &className) const
+bool WidgetClassName::operator==(const WidgetClassName& className) const
 {
   return m_className == className.m_className;
 }
 
-bool WidgetClassName::operator!=(const WidgetClassName &className) const
+bool WidgetClassName::operator!=(const WidgetClassName& className) const
 {
   return m_className != className.m_className;
 }

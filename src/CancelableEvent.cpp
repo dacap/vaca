@@ -34,7 +34,7 @@
 
 using namespace Vaca;
 
-CancelableEvent::CancelableEvent(Component *source)
+CancelableEvent::CancelableEvent(Component* source)
   : Event(source)
   , m_canceled(false)
 {

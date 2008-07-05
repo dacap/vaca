@@ -34,7 +34,7 @@
 
 using namespace Vaca;
 
-Spinner::Spinner(Widget *parent, Style spinStyle, Style style)
+Spinner::Spinner(Widget* parent, Style spinStyle, Style style)
   : Widget(SpinnerClass::getClassName(), parent, style)
   , m_edit("", this)
   , m_spin(this, spinStyle)
@@ -43,7 +43,7 @@ Spinner::Spinner(Widget *parent, Style spinStyle, Style style)
 }
 
 Spinner::Spinner(int minValue, int maxValue, int posValue,
-		 Widget *parent, Style spinStyle, Style style)
+		 Widget* parent, Style spinStyle, Style style)
   : Widget(SpinnerClass::getClassName(), parent, style)
   , m_edit("", this)
   , m_spin(minValue, maxValue, posValue, this, spinStyle)
@@ -55,12 +55,12 @@ Spinner::~Spinner()
 {
 }
 
-Edit &Spinner::getEdit()
+Edit& Spinner::getEdit()
 {
   return m_edit;
 }
 
-SpinButton &Spinner::getSpinButton()
+SpinButton& Spinner::getSpinButton()
 {
   return m_spin;
 }
@@ -75,7 +75,7 @@ int Spinner::getMaximum()
   return m_spin.getMaximum();
 }
 
-void Spinner::getRange(int &minValue, int &maxValue)
+void Spinner::getRange(int& minValue, int& maxValue)
 {
   m_spin.getRange(minValue, maxValue);
 }
@@ -136,7 +136,7 @@ void Spinner::layout()
  * Fills @a sz with the size of both controls for the width and the
  * maximun height of both controls.
  */
-void Spinner::onPreferredSize(Size &sz)
+void Spinner::onPreferredSize(Size& sz)
 {
   Size edit(m_edit.getPreferredSize());
   Size spin(m_spin.getPreferredSize());

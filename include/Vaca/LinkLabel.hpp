@@ -59,47 +59,47 @@ class VACA_DLL LinkLabel : public CustomLabel
 
   State m_state;
   String m_url;
-  Font *m_underlineFont;
-  Image *m_image;
+  Font* m_underlineFont;
+  Image* m_image;
 
 public:
 
-  LinkLabel(const String &urlOrText, Widget *parent, Style style = LinkLabelStyle);
-  LinkLabel(const String &url, const String &text, Widget *parent, Style style = LinkLabelStyle);
-  LinkLabel(const String &url, Image &image, Widget *parent, Style style = LinkLabelStyle);
+  LinkLabel(const String& urlOrText, Widget* parent, Style style = LinkLabelStyle);
+  LinkLabel(const String& url, const String& text, Widget* parent, Style style = LinkLabelStyle);
+  LinkLabel(const String& url, Image& image, Widget* parent, Style style = LinkLabelStyle);
   virtual ~LinkLabel();
 
-  virtual void setFont(Font *font);
+  virtual void setFont(Font* font);
 
   virtual Color getLinkColor();
   virtual Color getHoverColor();
 
-  boost::signal<void (Event &)> Action; ///< @see onAction
+  boost::signal<void (Event&)> Action; ///< @see onAction
 
 protected:
 
   // events
-  virtual void onPreferredSize(Size &sz);
-  virtual void onPaint(Graphics &g);
-  virtual void onMouseEnter(MouseEvent &ev);
-  virtual void onMouseMove(MouseEvent &ev);
+  virtual void onPreferredSize(Size& sz);
+  virtual void onPaint(Graphics& g);
+  virtual void onMouseEnter(MouseEvent& ev);
+  virtual void onMouseMove(MouseEvent& ev);
   virtual void onMouseLeave();
-  virtual void onMouseDown(MouseEvent &ev);
+  virtual void onMouseDown(MouseEvent& ev);
   virtual void onSetCursor(WidgetHitTest hitTest);
-//   virtual void onResize(const Size &sz);
-  virtual void onGotFocus(Event &ev);
-  virtual void onLostFocus(Event &ev);
-  virtual void onKeyDown(KeyEvent &ev);
+//   virtual void onResize(const Size& sz);
+  virtual void onGotFocus(Event& ev);
+  virtual void onLostFocus(Event& ev);
+  virtual void onKeyDown(KeyEvent& ev);
 
   // new events
-  virtual void onAction(Event &ev);
+  virtual void onAction(Event& ev);
 
 private:
 
-  void init(String text, Image *image = NULL);
+  void init(String text, Image* image = NULL);
   void action();
-  void updateFont(Font *font);
-  Rect getLinkBounds(Graphics &g);
+  void updateFont(Font* font);
+  Rect getLinkBounds(Graphics& g);
 
 };
 

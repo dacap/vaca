@@ -64,7 +64,7 @@ Region::Region(const Rect &_rc)
   assert(m_HRGN != NULL); // TODO exception
 }
 
-Region::Region(const Region &rgn)
+Region::Region(const Region& rgn)
 {
   m_HRGN = NULL;
   assign(rgn);
@@ -111,13 +111,13 @@ bool Region::isComplex() const
   return GetRgnBox(m_HRGN, &rc) == COMPLEXREGION;
 }
 
-Region &Region::operator=(const Region &rgn)
+Region& Region::operator=(const Region& rgn)
 {
   assign(rgn);
   return *this;
 }
 
-void Region::assign(const Region &rgn)
+void Region::assign(const Region& rgn)
 {
   assert(rgn.m_HRGN != NULL);
 
@@ -170,25 +170,25 @@ Rect Region::getBounds() const
     return Rect(&rc);
 }
 
-Region &Region::offset(int dx, int dy)
+Region& Region::offset(int dx, int dy)
 {
   OffsetRgn(getHRGN(), dx, dy);
   return *this;
 }
 
-Region &Region::offset(const Point &point)
+Region& Region::offset(const Point& point)
 {
   return offset(point.x, point.y);
 }
 
-bool Region::contains(const Point &pt) const
+bool Region::contains(const Point& pt) const
 {
   assert(m_HRGN != NULL);
 	  
   return PtInRegion(const_cast<HRGN>(m_HRGN), pt.x, pt.y) != FALSE;
 }
 
-bool Region::contains(const Rect &rc) const
+bool Region::contains(const Rect& rc) const
 {
   assert(m_HRGN != NULL);
 
@@ -196,7 +196,7 @@ bool Region::contains(const Rect &rc) const
   return RectInRegion(const_cast<HRGN>(m_HRGN), &rc2) != FALSE;
 }
 
-bool Region::operator==(const Region &rgn) const
+bool Region::operator==(const Region& rgn) const
 {
   BOOL res = EqualRgn(m_HRGN, rgn.m_HRGN) != FALSE;
 
@@ -206,12 +206,12 @@ bool Region::operator==(const Region &rgn) const
     return res != FALSE;
 }
 
-bool Region::operator!=(const Region &rgn) const
+bool Region::operator!=(const Region& rgn) const
 {
   return !operator==(rgn);
 }
 
-Region Region::operator|(const Region &rgn) const
+Region Region::operator|(const Region& rgn) const
 {
   Region res;
   CombineRgn(res.m_HRGN,
@@ -220,12 +220,12 @@ Region Region::operator|(const Region &rgn) const
   return res;
 }
 
-Region Region::operator+(const Region &rgn) const
+Region Region::operator+(const Region& rgn) const
 {
   return operator|(rgn);
 }
 
-Region Region::operator&(const Region &rgn) const
+Region Region::operator&(const Region& rgn) const
 {
   Region res;
   CombineRgn(res.m_HRGN,
@@ -234,7 +234,7 @@ Region Region::operator&(const Region &rgn) const
   return res;
 }
 
-Region Region::operator-(const Region &rgn) const
+Region Region::operator-(const Region& rgn) const
 {
   Region res;
   CombineRgn(res.m_HRGN,
@@ -243,7 +243,7 @@ Region Region::operator-(const Region &rgn) const
   return res;
 }
 
-Region Region::operator^(const Region &rgn) const
+Region Region::operator^(const Region& rgn) const
 {
   Region res;
   CombineRgn(res.m_HRGN,
@@ -256,7 +256,7 @@ Region Region::operator^(const Region &rgn) const
  * Makes an union between both regions and leaves the result in
  * @b this region.
  */
-Region &Region::operator|=(const Region &rgn)
+Region& Region::operator|=(const Region& rgn)
 {
   CombineRgn(this->m_HRGN,
 	     this->m_HRGN,
@@ -268,7 +268,7 @@ Region &Region::operator|=(const Region &rgn)
  * Makes an union between both regions and leaves the result in
  * @b this region.
  */
-Region &Region::operator+=(const Region &rgn)
+Region& Region::operator+=(const Region& rgn)
 {
   return operator|=(rgn);
 }
@@ -277,7 +277,7 @@ Region &Region::operator+=(const Region &rgn)
  * Makes the intersection between both regions and leaves
  * the result in @b this region.
  */
-Region &Region::operator&=(const Region &rgn)
+Region& Region::operator&=(const Region& rgn)
 {
   CombineRgn(this->m_HRGN,
 	     this->m_HRGN,
@@ -288,7 +288,7 @@ Region &Region::operator&=(const Region &rgn)
 /**
  * Substracts the speficied region @a rgn from @b this region.
  */
-Region &Region::operator-=(const Region &rgn)
+Region& Region::operator-=(const Region& rgn)
 {
   CombineRgn(this->m_HRGN,
 	     this->m_HRGN,
@@ -300,7 +300,7 @@ Region &Region::operator-=(const Region &rgn)
  * Makes a XOR operation between both regions and leaves the result in
  * @b this region.
  */
-Region &Region::operator^=(const Region &rgn)
+Region& Region::operator^=(const Region& rgn)
 {
   CombineRgn(this->m_HRGN,
 	     this->m_HRGN,
@@ -331,7 +331,7 @@ Region Region::fromEllipse(const Rect &_rc)
  *
  * It uses the CreateRoundRectRgn function of Win32.
  */
-Region Region::fromRoundRect(const Rect &_rc, const Size &ellipseSize)
+Region Region::fromRoundRect(const Rect& _rc, const Size& ellipseSize)
 {
   RECT rc = _rc;
   return Region(CreateRoundRectRgn(rc.left, rc.top,

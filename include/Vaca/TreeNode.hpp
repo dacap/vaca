@@ -56,7 +56,7 @@ class VACA_DLL TreeNode : private boost::noncopyable
 {
 public:
 
-  typedef std::vector<TreeNode *> Container;
+  typedef std::vector<TreeNode*> Container;
 
 private:
 
@@ -66,30 +66,30 @@ private:
   String    m_text;
   int       m_image;
   int       m_selectedImage;
-  TreeNode *m_parent;
+  TreeNode* m_parent;
   Container m_children;
   HTREEITEM m_HTREEITEM;
-  TreeView *m_owner;
+  TreeView* m_owner;
   bool      m_deleted;
 
 public:
 
-  TreeNode(const String &text = "", int imageIndex = -1, int selectedImageIndex = -1);
+  TreeNode(const String& text = "", int imageIndex = -1, int selectedImageIndex = -1);
   virtual ~TreeNode();
 
-  void addNode(TreeNode *node);
-  void removeNode(TreeNode *node);
+  void addNode(TreeNode* node);
+  void removeNode(TreeNode* node);
 
-  TreeNode *getParent();
+  TreeNode* getParent();
   Container getChildren();
-  TreeView *getTreeView();
+  TreeView* getTreeView();
 
   virtual bool hasChildren();
   virtual String getText();
   virtual int getImage();
   virtual int getSelectedImage();
 
-  void setText(const String &text);
+  void setText(const String& text);
   void setImage(int imageIndex);
   void setSelectedImage(int selectedImageIndex);
 
@@ -100,23 +100,23 @@ public:
   
   HTREEITEM getHTREEITEM();
 
-  static TreeNode *fromHTREEITEM(HWND hwnd, HTREEITEM htreeitem);
+  static TreeNode* fromHTREEITEM(HWND hwnd, HTREEITEM htreeitem);
 
 protected:
   
   // new events
-  virtual void onBeforeExpand(TreeViewEvent &ev);
-  virtual void onBeforeCollapse(TreeViewEvent &ev);
-  virtual void onBeforeSelect(TreeViewEvent &ev);
-  virtual void onBeforeLabelEdit(TreeViewEvent &ev);
-  virtual void onAfterExpand(TreeViewEvent &ev);
-  virtual void onAfterCollapse(TreeViewEvent &ev);
-  virtual void onAfterSelect(TreeViewEvent &ev);
-  virtual void onAfterLabelEdit(TreeViewEvent &ev);
+  virtual void onBeforeExpand(TreeViewEvent& ev);
+  virtual void onBeforeCollapse(TreeViewEvent& ev);
+  virtual void onBeforeSelect(TreeViewEvent& ev);
+  virtual void onBeforeLabelEdit(TreeViewEvent& ev);
+  virtual void onAfterExpand(TreeViewEvent& ev);
+  virtual void onAfterCollapse(TreeViewEvent& ev);
+  virtual void onAfterSelect(TreeViewEvent& ev);
+  virtual void onAfterLabelEdit(TreeViewEvent& ev);
 
 private:
   
-  void addToTreeView(TreeView *treeView);
+  void addToTreeView(TreeView* treeView);
   void removeFromTreeView();
 
 };

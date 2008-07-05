@@ -43,7 +43,7 @@ using namespace Vaca;
  *
  * @see doModal(), DialogStyle
  */
-Dialog::Dialog(const String &title, Widget *parent, Style style)
+Dialog::Dialog(const String& title, Widget* parent, Style style)
   : Frame(WidgetClassName::None, title, parent, style)
 {
   setDefWndProc(DefDlgProc);
@@ -61,7 +61,7 @@ Dialog::Dialog(const String &title, Widget *parent, Style style)
  * Creates a dialog with a custom WNDCLASS. @a className can be NULL
  * if you want to call Widget::create() by your self.
  */
-Dialog::Dialog(const WidgetClassName &className, const String &title, Widget *parent, Style style)
+Dialog::Dialog(const WidgetClassName& className, const String& title, Widget* parent, Style style)
   : Frame(WidgetClassName::None, title, parent, style)
 {
   setDefWndProc(DefDlgProc);
@@ -106,7 +106,7 @@ bool Dialog::doModal()
 /**
  * Calls Win32 IsDialogMessage.
  */
-bool Dialog::preTranslateMessage(MSG &msg)
+bool Dialog::preTranslateMessage(MSG& msg)
 {
   if (Frame::preTranslateMessage(msg))
     return true;
@@ -165,7 +165,7 @@ void Dialog::defaultCancelAction()
   sendMessage(WM_CLOSE, 0, 0);
 }
 
-Widget *Dialog::getNextFocusableWidget(Widget *widget)
+Widget* Dialog::getNextFocusableWidget(Widget* widget)
 {
   assert(::IsWindow(getHWND()));
 
@@ -176,7 +176,7 @@ Widget *Dialog::getNextFocusableWidget(Widget *widget)
   return hwnd != NULL ? Widget::fromHWND(hwnd): NULL;
 }
 
-Widget *Dialog::getPreviousFocusableWidget(Widget *widget)
+Widget* Dialog::getPreviousFocusableWidget(Widget* widget)
 {
   assert(::IsWindow(getHWND()));
 
@@ -187,7 +187,7 @@ Widget *Dialog::getPreviousFocusableWidget(Widget *widget)
   return hwnd != NULL ? Widget::fromHWND(hwnd): NULL;
 }
 
-bool Dialog::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult)
+bool Dialog::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult)
 {
   if (Frame::wndProc(message, wParam, lParam, lResult))
     return true;

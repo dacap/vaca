@@ -40,7 +40,7 @@
 using namespace Vaca;
 
 HINSTANCE Application::m_HINSTANCE = NULL;
-Application *Application::m_instance = NULL;
+Application* Application::m_instance = NULL;
 
 /**
  * Initializes the variables of the Application class. It calls
@@ -96,7 +96,7 @@ Application::~Application()
 #endif
 }
 
-Application *Application::getInstance()
+Application* Application::getInstance()
 {
   return m_instance;
 }
@@ -166,7 +166,7 @@ void Application::run()
   try {
     doMessageLoop();
   }
-  catch (std::exception &e) {
+  catch (const std::exception& e) {
     VACA_TRACE("std::exception() = %s\n", e.what());
   }
   catch (...) {

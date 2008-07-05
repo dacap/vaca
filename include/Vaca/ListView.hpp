@@ -79,7 +79,7 @@ class VACA_DLL ListView : public Widget
 {
 public:
 
-  ListView(Widget *parent, Style style = ListViewStyle);
+  ListView(Widget* parent, Style style = ListViewStyle);
   virtual ~ListView();
 
   virtual void setBgColor(Color color);
@@ -93,13 +93,13 @@ public:
   ListViewType getType();
   void setType(ListViewType type);
 
-  void setImageList(ImageList *imageList, int type);
-  void setNormalImageList(ImageList *imageList);
-  void setSmallImageList(ImageList *imageList);
-  void setStateImageList(ImageList *imageList);
+  void setImageList(ImageList* imageList, int type);
+  void setNormalImageList(ImageList* imageList);
+  void setSmallImageList(ImageList* imageList);
+  void setStateImageList(ImageList* imageList);
 
-  int addColumn(const String &header, TextAlign textAlign = TextAlign::Left);
-  int insertColumn(int columnIndex, const String &header, TextAlign textAlign = TextAlign::Left);
+  int addColumn(const String& header, TextAlign textAlign = TextAlign::Left);
+  int insertColumn(int columnIndex, const String& header, TextAlign textAlign = TextAlign::Left);
   void removeColumn(int columnIndex);
 
   int getColumnCount();
@@ -109,8 +109,8 @@ public:
   void setColumnWidth(int columnIndex, int width);
   void setPreferredColumnWidth(int columnIndex, bool useHeader = true);
 
-  int addItem(const String &text, int imageIndex = -1);
-  int insertItem(int itemIndex, const String &text, int imageIndex = -1);
+  int addItem(const String& text, int imageIndex = -1);
+  int insertItem(int itemIndex, const String& text, int imageIndex = -1);
   void removeItem(int itemIndex);
   void removeAllItems();
 
@@ -118,7 +118,7 @@ public:
   Rect getItemBounds(int itemIndex, int code = LVIR_BOUNDS);
 
   String getItemText(int itemIndex, int columnIndex = 0);
-  void setItemText(int itemIndex, const String &text, int columnIndex = 0);
+  void setItemText(int itemIndex, const String& text, int columnIndex = 0);
   void editItemText(int itemIndex);
 
 //   void sortItems(std::less<ListItem> functor);
@@ -126,18 +126,18 @@ public:
 //   int getCurrentItem();
 
   // signals
-  boost::signal<void (ListViewEvent &)> BeforeSelect;
-  boost::signal<void (ListViewEvent &)> AfterSelect;
-  boost::signal<void (ListViewEvent &)> ColumnClick;
+  boost::signal<void (ListViewEvent&)> BeforeSelect;
+  boost::signal<void (ListViewEvent&)> AfterSelect;
+  boost::signal<void (ListViewEvent&)> ColumnClick;
 
 protected:
   // new events
-  virtual void onBeforeSelect(ListViewEvent &ev);
-  virtual void onAfterSelect(ListViewEvent &ev);
-  virtual void onColumnClick(ListViewEvent &ev);
+  virtual void onBeforeSelect(ListViewEvent& ev);
+  virtual void onAfterSelect(ListViewEvent& ev);
+  virtual void onColumnClick(ListViewEvent& ev);
 
   // reflection
-  virtual bool onReflectedNotify(LPNMHDR lpnmhdr, LRESULT &lResult);
+  virtual bool onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult);
 
 private:
 
@@ -156,7 +156,7 @@ class ListViewEvent : public CancelableEvent
 
 public:
 
-  ListViewEvent(ListView *listView, int itemIndex, int columnIndex)
+  ListViewEvent(ListView* listView, int itemIndex, int columnIndex)
     : CancelableEvent(listView)
     , mItemIndex(itemIndex)
     , mColumnIndex(columnIndex)

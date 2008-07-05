@@ -60,44 +60,44 @@ public:
 
   Region();
   Region(HRGN hrgn, SelfDestruction selfDestruction);
-  Region(const Rect &rc);
-  Region(const Region &rgn);
+  Region(const Rect& rc);
+  Region(const Region& rgn);
   virtual ~Region();
 
   bool isEmpty() const;
   bool isSimple() const;
   bool isComplex() const;
 
-  Region &operator=(const Region &rgn);
-  void assign(const Region &rgn);
+  Region& operator=(const Region& rgn);
+  void assign(const Region& rgn);
   void assign(HRGN hrgn, SelfDestruction selfDestruction);
 
   Rect getBounds() const;
 
-  Region &offset(int dx, int dy);
-  Region &offset(const Point &point);
+  Region& offset(int dx, int dy);
+  Region& offset(const Point& point);
 
-  bool contains(const Point &pt) const;
-  bool contains(const Rect &rc) const;
+  bool contains(const Point& pt) const;
+  bool contains(const Rect& rc) const;
 
-  bool operator==(const Region &rgn) const;
-  bool operator!=(const Region &rgn) const;
+  bool operator==(const Region& rgn) const;
+  bool operator!=(const Region& rgn) const;
 
-  Region operator|(const Region &rgn) const;
-  Region operator+(const Region &rgn) const;
-  Region operator&(const Region &rgn) const;
-  Region operator-(const Region &rgn) const;
-  Region operator^(const Region &rgn) const;
+  Region operator|(const Region& rgn) const;
+  Region operator+(const Region& rgn) const;
+  Region operator&(const Region& rgn) const;
+  Region operator-(const Region& rgn) const;
+  Region operator^(const Region& rgn) const;
 
-  Region &operator|=(const Region &rgn);
-  Region &operator+=(const Region &rgn);
-  Region &operator&=(const Region &rgn);
-  Region &operator-=(const Region &rgn);
-  Region &operator^=(const Region &rgn);
+  Region& operator|=(const Region& rgn);
+  Region& operator+=(const Region& rgn);
+  Region& operator&=(const Region& rgn);
+  Region& operator-=(const Region& rgn);
+  Region& operator^=(const Region& rgn);
 
-  static Region fromRect(const Rect &rc);
-  static Region fromEllipse(const Rect &rc);
-  static Region fromRoundRect(const Rect &rc, const Size &ellipseSize);
+  static Region fromRect(const Rect& rc);
+  static Region fromEllipse(const Rect& rc);
+  static Region fromRoundRect(const Rect& rc, const Size& ellipseSize);
 
   HRGN getHRGN();
 

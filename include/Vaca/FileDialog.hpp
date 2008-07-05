@@ -61,18 +61,18 @@ class VACA_DLL FileDialog : public CommonDialog
 
 public:
 
-  FileDialog(const String &title, Widget *parent);
+  FileDialog(const String& title, Widget* parent);
   virtual ~FileDialog();
 
-  void setTitle(const String &str);
-  void setDefaultExtension(const String &str);
+  void setTitle(const String& str);
+  void setDefaultExtension(const String& str);
   void setShowReadOnly(bool state);
   void setShowHelp(bool state);
 
-  void addFilter(const String &extensions, const String &description, bool defaultFilter = false);
+  void addFilter(const String& extensions, const String& description, bool defaultFilter = false);
 
   String getFileName();
-  void setFileName(const String &string);
+  void setFileName(const String& string);
 
   virtual bool doModal();
 
@@ -91,7 +91,7 @@ class VACA_DLL OpenFileDialog : public FileDialog
   bool m_multiselect : 1;
 
 public:
-  OpenFileDialog(const String &title, Widget *parent);
+  OpenFileDialog(const String& title, Widget* parent);
   virtual ~OpenFileDialog();
 
   void setMultiselect(bool state);
@@ -108,7 +108,7 @@ private:
 class VACA_DLL SaveFileDialog : public FileDialog
 {
 public:
-  SaveFileDialog(const String &title, Widget *parent);
+  SaveFileDialog(const String& title, Widget* parent);
   virtual ~SaveFileDialog();
 
 private:

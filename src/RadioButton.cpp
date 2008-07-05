@@ -39,7 +39,7 @@ using namespace Vaca;
 //////////////////////////////////////////////////////////////////////
 // RadioButton
 
-RadioButton::RadioButton(const String &text, const RadioGroup &group, Widget *parent, Style style)
+RadioButton::RadioButton(const String& text, const RadioGroup& group, Widget* parent, Style style)
   : ButtonBase(parent, style)
   , mRadioGroup(group)
 {
@@ -50,19 +50,19 @@ RadioButton::~RadioButton()
 {
 }
 
-const RadioGroup &RadioButton::getRadioGroup() const
+const RadioGroup& RadioButton::getRadioGroup() const
 {
   return mRadioGroup;
 }
 
-bool RadioButton::onReflectedCommand(int id, int code, LRESULT &lResult)
+bool RadioButton::onReflectedCommand(int id, int code, LRESULT& lResult)
 {
   if (code == BN_CLICKED) {
     Widget::Container siblings = getParent()->getChildren();
     RadioGroup radioGroup(getRadioGroup());
 
     for (Widget::Container::iterator it=siblings.begin(); it!=siblings.end(); ++it) {
-      RadioButton *sibling = dynamic_cast<RadioButton *>(*it);
+      RadioButton* sibling = dynamic_cast<RadioButton*>(*it);
 
       if (sibling != NULL && sibling != this) {
 	if (sibling->getRadioGroup() == radioGroup &&
@@ -88,12 +88,12 @@ RadioGroup::RadioGroup()
   m_groupId = ++RadioGroup::radioGroupCounter;
 }
 
-RadioGroup::RadioGroup(const RadioGroup &group)
+RadioGroup::RadioGroup(const RadioGroup& group)
 {
   m_groupId = group.m_groupId;
 }
 
-bool RadioGroup::operator==(const RadioGroup &other) const
+bool RadioGroup::operator==(const RadioGroup& other) const
 {
   return m_groupId == other.m_groupId;
 }

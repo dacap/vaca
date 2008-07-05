@@ -45,16 +45,16 @@ class VACA_DLL ProgressBar : public Widget
 {
 public:
 
-  ProgressBar(Widget *parent, Style style = ProgressBarStyle);
+  ProgressBar(Widget* parent, Style style = ProgressBarStyle);
   ProgressBar(int minValue, int maxValue,
-	      Widget *parent, Style style = ProgressBarStyle);
+	      Widget* parent, Style style = ProgressBarStyle);
   virtual ~ProgressBar();
 
   virtual void setBgColor(Color color);
 
   int getMinimum();
   int getMaximum();
-  void getRange(int &minValue, int &maxValue);
+  void getRange(int& minValue, int& maxValue);
   void setRange(int minValue, int maxValue);
 
   int getValue();
@@ -63,7 +63,7 @@ public:
 
 protected:
   // events
-  virtual void onPreferredSize(Size &sz);
+  virtual void onPreferredSize(Size& sz);
   
 };
 

@@ -110,8 +110,8 @@ public:
 
   // Cosmetic Pen
   explicit Pen(Color color, int width = 1);
-//   Pen(Brush &brush, int width = 1);
-//   Pen(const Pen &pen);
+//   Pen(Brush& brush, int width = 1);
+//   Pen(const Pen& pen);
   virtual ~Pen();
 
   Color getColor() const;

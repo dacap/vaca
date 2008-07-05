@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="Scribble"
-	ProjectGUID="{82C8A668-ECCB-4BA5-9CCD-AA1667D004C0}"
+	ProjectGUID="{EFFA5755-65FA-4DD9-B037-4B5E35C2742E}"
 	RootNamespace="Scribble"
 	Keyword="Win32Proj">
 	<Platforms>

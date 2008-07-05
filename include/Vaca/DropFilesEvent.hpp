@@ -44,11 +44,11 @@ class Widget;
 
 class VACA_DLL DropFilesEvent : public Event
 {
-  std::vector<String> &m_files;
+  std::vector<String>& m_files;
 
 public:
 
-  DropFilesEvent(Widget *source, std::vector<String> &files);
+  DropFilesEvent(Widget* source, std::vector<String>& files);
   virtual ~DropFilesEvent();
 
   std::vector<String> getFiles();

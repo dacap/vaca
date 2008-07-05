@@ -45,7 +45,7 @@ using namespace Vaca;
  * 
  * @param style Add the LBS_MULTIPLESEL if you want a multiselection ListBox.
  */
-ListBox::ListBox(Widget *parent, Style style)
+ListBox::ListBox(Widget* parent, Style style)
   : Widget(WidgetClassName(WC_LISTBOX), parent, style)
 {
   setBgColor(System::getColor(COLOR_WINDOW));
@@ -58,7 +58,7 @@ ListBox::~ListBox()
 /**
  * (LB_ADDSTRING)
  */
-int ListBox::addItem(const String &text)
+int ListBox::addItem(const String& text)
 {
   int index = sendMessage(LB_ADDSTRING, 0, reinterpret_cast<LPARAM>(text.c_str()));
   if (index == LB_ERR)
@@ -71,7 +71,7 @@ int ListBox::addItem(const String &text)
  * (LB_INSERTSTRING)
  * 
  */
-void ListBox::insertItem(int itemIndex, const String &text)
+void ListBox::insertItem(int itemIndex, const String& text)
 {
   sendMessage(LB_INSERTSTRING, itemIndex, reinterpret_cast<LPARAM>(text.c_str()));
 }
@@ -118,7 +118,7 @@ String ListBox::getItemText(int itemIndex)
   }
 }
 
-void ListBox::setItemText(int itemIndex, const String &text)
+void ListBox::setItemText(int itemIndex, const String& text)
 {
   bool reselect = getCurrentItem() == itemIndex;
 
@@ -164,7 +164,7 @@ std::vector<int> ListBox::getSelectedItems()
   return items;
 }
 
-void ListBox::onPreferredSize(Size &sz)
+void ListBox::onPreferredSize(Size& sz)
 {
   // TODO HTHEME stuff
   sz = Size(4, 4);
@@ -181,7 +181,7 @@ void ListBox::onPreferredSize(Size &sz)
 /**
  * When the user press double-click in some item (LBN_DBLCLK).
  */
-void ListBox::onAction(Event &ev)
+void ListBox::onAction(Event& ev)
 {
   Action(ev);
 }
@@ -189,12 +189,12 @@ void ListBox::onAction(Event &ev)
 /**
  * When the user changes the current selected item (LBN_SELCHANGE).
  */
-void ListBox::onSelChange(Event &ev)
+void ListBox::onSelChange(Event& ev)
 {
   SelChange(ev);
 }
 
-bool ListBox::onReflectedCommand(int id, int code, LRESULT &lResult)
+bool ListBox::onReflectedCommand(int id, int code, LRESULT& lResult)
 {
   if (Widget::onReflectedCommand(id, code, lResult))
     return true;
@@ -221,7 +221,7 @@ bool ListBox::onReflectedCommand(int id, int code, LRESULT &lResult)
 //////////////////////////////////////////////////////////////////////
 // DragListBox
 
-DragListBox::DragListBox(Widget *parent, Style style)
+DragListBox::DragListBox(Widget* parent, Style style)
   : ListBox(parent, style)
 {
   BOOL res;

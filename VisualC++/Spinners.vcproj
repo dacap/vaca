@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="Spinners"
-	ProjectGUID="{CAD88E9A-BFAB-40F3-BD95-32528C4D4B44}"
+	ProjectGUID="{681EB18C-98E0-46B2-A007-C859795353EC}"
 	RootNamespace="Spinners"
 	Keyword="Win32Proj">
 	<Platforms>

@@ -41,7 +41,7 @@ using namespace Vaca;
 //////////////////////////////////////////////////////////////////////
 // ComboBox
 
-ComboBox::ComboBox(Widget *parent, Style style)
+ComboBox::ComboBox(Widget* parent, Style style)
   : Widget(WidgetClassName(WC_COMBOBOX), parent, style)
 {
   setBgColor(System::getColor(COLOR_WINDOW));
@@ -54,7 +54,7 @@ ComboBox::~ComboBox()
 /**
  * (CB_ADDSTRING)
  */
-int ComboBox::addItem(const String &text)
+int ComboBox::addItem(const String& text)
 {
   int index = sendMessage(CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(text.c_str()));
   if (index == LB_ERR)
@@ -67,7 +67,7 @@ int ComboBox::addItem(const String &text)
  * (CB_INSERTSTRING)
  * 
  */
-void ComboBox::insertItem(int itemIndex, const String &text)
+void ComboBox::insertItem(int itemIndex, const String& text)
 {
   sendMessage(CB_INSERTSTRING, itemIndex, reinterpret_cast<LPARAM>(text.c_str()));
 }
@@ -113,7 +113,7 @@ String ComboBox::getItemText(int itemIndex)
   }
 }
 
-void ComboBox::setItemText(int itemIndex, const String &text)
+void ComboBox::setItemText(int itemIndex, const String& text)
 {
   bool reselect = getCurrentItem() == itemIndex;
 
@@ -148,7 +148,7 @@ void ComboBox::setCurrentItem(int itemIndex)
 /**
  * Selects the item which its text begins with @a firstText.
  */
-void ComboBox::setCurrentItem(const String &firstText)
+void ComboBox::setCurrentItem(const String& firstText)
 {
   sendMessage(CB_SELECTSTRING,
 	      static_cast<WPARAM>(-1),
@@ -200,7 +200,7 @@ int ComboBox::getHeightForAllItems()
   return height*getItemCount()+2;
 }
 
-void ComboBox::onPreferredSize(Size &sz)
+void ComboBox::onPreferredSize(Size& sz)
 {
 //   sz = Size(4, 4);		// TODO HTHEME stuff
 //   int i, n = getItemCount();
@@ -224,7 +224,7 @@ void ComboBox::onPreferredSize(Size &sz)
  * When the user press double-click in some item of a Simple combo-box
  * (with the SimpleComboBoxStyle) (Win32 CBN_DBLCLK notification).
  */
-void ComboBox::onAction(Event &ev)
+void ComboBox::onAction(Event& ev)
 {
   Action(ev);
 }
@@ -232,7 +232,7 @@ void ComboBox::onAction(Event &ev)
 /**
  * When the user changes the current selected item (CBN_SELCHANGE).
  */
-void ComboBox::onSelChange(Event &ev)
+void ComboBox::onSelChange(Event& ev)
 {
   SelChange(ev);
 }
@@ -242,12 +242,12 @@ void ComboBox::onSelChange(Event &ev)
  * combo-boxes with SimpleComboBoxStyle or EditComboBoxStyle (Win32
  * CBN_EDITCHANGE notification).
  */
-void ComboBox::onEditChange(Event &ev)
+void ComboBox::onEditChange(Event& ev)
 {
   EditChange(ev);
 }
 
-bool ComboBox::onReflectedCommand(int id, int code, LRESULT &lResult)
+bool ComboBox::onReflectedCommand(int id, int code, LRESULT& lResult)
 {
   if (Widget::onReflectedCommand(id, code, lResult))
     return true;

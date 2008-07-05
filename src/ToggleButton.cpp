@@ -34,7 +34,7 @@
 
 using namespace Vaca;
 
-ToggleButton::ToggleButton(const String &text, Widget *parent, Style style)
+ToggleButton::ToggleButton(const String& text, Widget* parent, Style style)
   : ButtonBase(parent, style)
 {
   setText(text);

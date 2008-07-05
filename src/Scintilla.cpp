@@ -59,7 +59,7 @@ SciRegister::SciRegister()
   }
 }
 
-SciEditor::SciEditor(Widget *parent, Style style)
+SciEditor::SciEditor(Widget* parent, Style style)
   : Widget(WidgetClassName(_T("Scintilla")), parent, style)
 {
 //   sendMessage(SCI_SETLEXER, SCLEX_HTML, 0);
@@ -78,7 +78,7 @@ SciEditor::~SciEditor()
  * sets the default style of the Scintilla editor (see for
  * STYLE_DEFAULT in the Scintilla documentation).
  */
-void SciEditor::setFont(Font *font)
+void SciEditor::setFont(Font* font)
 {
   Widget::setFont(font);
 
@@ -102,7 +102,7 @@ String SciEditor::getText()
 {
   int length = sendMessage(SCI_GETLENGTH, 0, 0);
   if (length > 0) {
-    char *text = new char[length+1];
+    char* text = new char[length+1];
     sendMessage(SCI_GETTEXT, length+1, reinterpret_cast<LPARAM>(text));
     String str(text);
     delete text;
@@ -112,7 +112,7 @@ String SciEditor::getText()
     return String("");
 }
 
-void SciEditor::setText(const String &str)
+void SciEditor::setText(const String& str)
 {
   sendMessage(SCI_SETTEXT, 0, reinterpret_cast<LPARAM>(str.c_str()));
 }
@@ -130,7 +130,7 @@ String SciEditor::getLine(int line)
 {
   int length = getLineLength(line);
   if (length > 0) {
-    char *text = new char[length+1];
+    char* text = new char[length+1];
     ZeroMemory(text, length+1);
     sendMessage(SCI_GETLINE, line, reinterpret_cast<LPARAM>(text));
     String str(text, length);
@@ -141,7 +141,7 @@ String SciEditor::getLine(int line)
     return String();
 }
 
-void SciEditor::replaceSel(const String &str)
+void SciEditor::replaceSel(const String& str)
 {
   sendMessage(SCI_REPLACESEL, 0, reinterpret_cast<LPARAM>(str.c_str()));
 }
@@ -160,7 +160,7 @@ bool SciEditor::getReadOnly()
  * Adds the first @c length characters of @c str string at the current
  * position of the document.
  */
-void SciEditor::addText(const char *str, int length)
+void SciEditor::addText(const char* str, int length)
 {
   sendMessage(SCI_ADDTEXT, length, reinterpret_cast<LPARAM>(str));
 }
@@ -168,7 +168,7 @@ void SciEditor::addText(const char *str, int length)
 /**
  * Adds the string @c str at the current position of the document.
  */
-void SciEditor::addText(const String &str)
+void SciEditor::addText(const String& str)
 {
   sendMessage(SCI_ADDTEXT, str.size(), reinterpret_cast<LPARAM>(str.c_str()));
 }
@@ -177,7 +177,7 @@ void SciEditor::addText(const String &str)
  * Adds the first @c length characters of @c str string to the end of
  * the document.
  */
-void SciEditor::appendText(const char *str, int length)
+void SciEditor::appendText(const char* str, int length)
 {
   sendMessage(SCI_APPENDTEXT, length, reinterpret_cast<LPARAM>(str));
 }
@@ -185,12 +185,12 @@ void SciEditor::appendText(const char *str, int length)
 /**
  * Adds the string @c str to the end of the document.
  */
-void SciEditor::appendText(const String &str)
+void SciEditor::appendText(const String& str)
 {
   sendMessage(SCI_APPENDTEXT, str.size(), reinterpret_cast<LPARAM>(str.c_str()));
 }
 
-void SciEditor::insertText(int pos, const String &str)
+void SciEditor::insertText(int pos, const String& str)
 {
   sendMessage(SCI_INSERTTEXT, pos, reinterpret_cast<LPARAM>(str.c_str()));
 }
@@ -214,14 +214,14 @@ void SciEditor::searchAnchor()
   sendMessage(SCI_SEARCHANCHOR, 0, 0);
 }
 
-bool SciEditor::searchNext(int flags, String &str)
+bool SciEditor::searchNext(int flags, String& str)
 {
   return sendMessage(SCI_SEARCHNEXT,
 		     flags,
 		     reinterpret_cast<LPARAM>(str.c_str())) >= 0;
 }
 
-bool SciEditor::searchPrev(int flags, String &str)
+bool SciEditor::searchPrev(int flags, String& str)
 {
   return sendMessage(SCI_SEARCHPREV, flags,
 		     reinterpret_cast<LPARAM>(str.c_str())) >= 0;
@@ -230,7 +230,7 @@ bool SciEditor::searchPrev(int flags, String &str)
 //////////////////////////////////////////////////////////////////////
 // Searching and replace using target
 
-// bool SciEditor::findText(const String &str, bool matchCase, bool wholeWord)
+// bool SciEditor::findText(const String& str, bool matchCase, bool wholeWord)
 // {
 //   int pos = sendMessage(SCI_SEARCHNEXT,
 // 			(matchCase ? SCFIND_MATCHCASE: 0) |
@@ -247,7 +247,7 @@ bool SciEditor::searchPrev(int flags, String &str)
 
 // //   ttf.chrg.cpMin = 0;
 // //   ttf.chrg.cpMax = -1;
-// //   ttf.lpstrText = const_cast<Char *>(str.c_str());
+// //   ttf.lpstrText = const_cast<Char*>(str.c_str());
 
 // //   int pos = sendMessage(SCI_FINDTEXT,
 // // 			(matchCase ? SCFIND_MATCHCASE: 0) |
@@ -427,7 +427,7 @@ int SciEditor::getLineLength(int line)
 String SciEditor::getSelText()
 {
   int length = getSelectionEnd() - getSelectionStart() + 1;
-  char *text = new char[length+1];
+  char* text = new char[length+1];
   sendMessage(SCI_GETSELTEXT, 0, reinterpret_cast<LPARAM>(text));
   String str(text);
   delete text;
@@ -560,12 +560,12 @@ bool SciEditor::getViewEol()
 //////////////////////////////////////////////////////////////////////
 // Multiple views
 
-void *SciEditor::getDocPointer()
+void* SciEditor::getDocPointer()
 {
-  return reinterpret_cast<void *>(sendMessage(SCI_GETDOCPOINTER, 0, 0));
+  return reinterpret_cast<void*>(sendMessage(SCI_GETDOCPOINTER, 0, 0));
 }
 
-void SciEditor::setDocPointer(void *doc)
+void SciEditor::setDocPointer(void* doc)
 {
   sendMessage(SCI_SETDOCPOINTER, 0, reinterpret_cast<LPARAM>(doc));
 }
@@ -613,7 +613,7 @@ int SciEditor::getZoom()
 //////////////////////////////////////////////////////////////////////
 // Notifications
 
-bool SciEditor::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT &lResult)
+bool SciEditor::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult)
 {
   if (Widget::onReflectedNotify(lpnmhdr, lResult))
     return true;
@@ -621,7 +621,7 @@ bool SciEditor::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT &lResult)
   switch (lpnmhdr->code) {
 
 //     case SCN_MODIFIED:
-//       SCNotification *scn = static_cast<SCNotification *>(lpnmhdr);
+//       SCNotification* scn = static_cast<SCNotification *>(lpnmhdr);
 //       break;
 
     case SCN_UPDATEUI:

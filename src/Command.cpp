@@ -53,7 +53,7 @@ CommandState::~CommandState()
   if (m_radio != NULL) delete m_radio;
 }
 
-void CommandState::setText(const String &text)
+void CommandState::setText(const String& text)
 {
   if (m_text != NULL) delete m_text;
   m_text = new String(text);
@@ -71,22 +71,22 @@ void CommandState::setChecked(bool state)
   m_checked = new bool(state);
 }
 
-const String *CommandState::getText() const
+const String* CommandState::getText() const
 {
   return m_text;
 }
 
-const bool *CommandState::isEnabled() const
+const bool* CommandState::isEnabled() const
 {
   return m_enabled;
 }
 
-const bool *CommandState::isChecked() const
+const bool* CommandState::isChecked() const
 {
   return m_checked;
 }
 
-const bool *CommandState::isRadio() const
+const bool* CommandState::isRadio() const
 {
   return m_radio;
 }
@@ -113,7 +113,7 @@ void Command::onAction()
   Action();
 }
 
-void Command::onUpdate(CommandState &cs)
+void Command::onUpdate(CommandState& cs)
 {
   Update(cs);
 }

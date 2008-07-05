@@ -47,7 +47,7 @@ class RegisterException : public Exception
 public:
 
   RegisterException() { }
-  RegisterException(const String &message) : Exception(message) { }
+  RegisterException(const String& message) : Exception(message) { }
   virtual ~RegisterException() throw() { }
 
 };

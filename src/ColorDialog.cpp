@@ -35,7 +35,7 @@
 
 using namespace Vaca;
 
-ColorDialog::ColorDialog(Color color, Widget *parent)
+ColorDialog::ColorDialog(Color color, Widget* parent)
   : CommonDialog(parent)
   , m_color(color)
 {

@@ -43,9 +43,9 @@ class VACA_DLL Slider : public Widget
 {
 public:
 
-  Slider(Widget *parent, Style style = SliderStyle);
+  Slider(Widget* parent, Style style = SliderStyle);
   Slider(int minValue, int maxValue, int value,
-	 Widget *parent, Style style = SliderStyle);
+	 Widget* parent, Style style = SliderStyle);
   virtual ~Slider();
 
   Orientation getOrientation();
@@ -61,22 +61,22 @@ public:
 
   int getMinimum();
   int getMaximum();
-  void getRange(int &minValue, int &maxValue);
+  void getRange(int& minValue, int& maxValue);
   void setRange(int minValue, int maxValue);
 
   int getValue();
   void setValue(int posValue);
 
   // signals
-  boost::signal<void (Event &)> Change; ///< @see onChange
+  boost::signal<void (Event&)> Change; ///< @see onChange
 
 protected:
   // events
-  virtual void onPreferredSize(Size &sz);
+  virtual void onPreferredSize(Size& sz);
   virtual void onScroll(Orientation orientation, int code);
   
   // new events
-  virtual void onChange(Event &ev);
+  virtual void onChange(Event& ev);
   
 };
 

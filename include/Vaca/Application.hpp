@@ -54,18 +54,18 @@ class VACA_DLL Application : public Thread
 private:
 
   static HINSTANCE m_HINSTANCE;
-  static Application *m_instance;
+  static Application* m_instance;
 
 public:
 
   Application();
   virtual ~Application();
 
-  static Application *getInstance();
+  static Application* getInstance();
   static HINSTANCE getHINSTANCE();
 
   virtual void run();
-  
+
 private:
 
   virtual void main(std::vector<String> args);

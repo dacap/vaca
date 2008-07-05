@@ -35,7 +35,7 @@
 
 using namespace Vaca;
 
-KeyEvent::KeyEvent(Widget *source, Keys::Type keys, int charCode)
+KeyEvent::KeyEvent(Widget* source, Keys::Type keys, int charCode)
   : Event(source)
   , m_consumed(false)
   , m_keys(keys)

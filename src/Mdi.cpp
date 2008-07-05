@@ -59,7 +59,7 @@ static void MdiChild_DestroyHWNDProc(HWND hwnd)
  * @warning All MdiChilds are created visible and activated (and this
  *          can't be changed, see @ref TN005 for more information).
  */
-MdiChild::MdiChild(const String &title, MdiClient *parent, Style style)
+MdiChild::MdiChild(const String& title, MdiClient* parent, Style style)
   : Frame(WidgetClassName::None, "", NULL, NoStyle)
 {
   setDefWndProc(DefMDIChildProc);
@@ -76,7 +76,7 @@ MdiChild::MdiChild(const String &title, MdiClient *parent, Style style)
  * @warning All MdiChilds are created visible and activated (and this
  *          can't be changed, see @ref TN005 for more information).
  */
-MdiChild::MdiChild(const String &title, MdiFrame *parent, Style style)
+MdiChild::MdiChild(const String& title, MdiFrame* parent, Style style)
   : Frame(WidgetClassName::None, "", NULL, NoStyle)
 {
   setDefWndProc(DefMDIChildProc);
@@ -109,7 +109,7 @@ void MdiChild::initialize()
  * Intercept commands from @c VACA_IDM_MDICHILD to activate this
  * MdiChild.
  */
-// bool MdiChild::onReflectedCommand(int it, int code, LRESULT &lResult)
+// bool MdiChild::onReflectedCommand(int it, int code, LRESULT& lResult)
 // {
 //   if (Frame::onReflectedCommand(id, code, lResult))
 //     return true;
@@ -120,7 +120,7 @@ void MdiChild::initialize()
 
 //   // the user selects a MdiChild from the MdiListMenu?
 //   if (commandCode == 0) {
-//     MdiClient *parent = static_cast<MdiClient *>(getParent());
+//     MdiClient* parent = static_cast<MdiClient*>(getParent());
 //     assert(parent != NULL);
 
 //     parent->activate(this);
@@ -134,7 +134,7 @@ void MdiChild::initialize()
  * Intercepts the WM_MDIACTIVATE message to generate the
  * Frame::onActivate and Frame::onDeactivate events.
  */
-bool MdiChild::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult)
+bool MdiChild::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult)
 {
   if (Frame::wndProc(message, wParam, lParam, lResult))
     return true;
@@ -172,7 +172,7 @@ bool MdiChild::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lRes
 // fix the TN005 problem (also it doesn't support the extended styles WS_EX)
 #if 0				// don't remove this code, must be for
 				// historical purposes
-HWND MdiChild::createHWND(LPCTSTR className, Widget *parent, Style style)
+HWND MdiChild::createHWND(LPCTSTR className, Widget* parent, Style style)
 {
   HWND hClient = parent->getHWND();
   assert(hClient != NULL);
@@ -202,7 +202,7 @@ HWND MdiChild::createHWND(LPCTSTR className, Widget *parent, Style style)
 /**
  * Container for MdiChild windows.
  */
-MdiClient::MdiClient(Widget *parent, Style style)
+MdiClient::MdiClient(Widget* parent, Style style)
   : Widget(WidgetClassName::None, NULL, NoStyle) // className must be NULL to avoid calling the Widget::createHWND
 {
   // now Widget::create calls MdiClient::createHWND because MdiClient is constructed
@@ -216,7 +216,7 @@ MdiClient::~MdiClient()
 /**
  * Calls @c CreateWindowEx using a @c CLIENTCREATESTRUCT.
  */
-HWND MdiClient::createHWND(LPCTSTR className, Widget *parent, Style style)
+HWND MdiClient::createHWND(LPCTSTR className, Widget* parent, Style style)
 {
   CLIENTCREATESTRUCT ccs;
 
@@ -270,13 +270,13 @@ void MdiClient::arrangeIcons()
  * 
  * @see activate, activateNext, activatePrevious
  */
-MdiChild *MdiClient::getActive()
+MdiChild* MdiClient::getActive()
 {
   HWND hwnd = getHWND();
   assert(::IsWindow(hwnd));
   HWND hwndChild = reinterpret_cast<HWND>(sendMessage(WM_MDIGETACTIVE, 0, 0));
   if (hwndChild != NULL)
-    return dynamic_cast<MdiChild *>(Widget::fromHWND(hwndChild));
+    return dynamic_cast<MdiChild*>(Widget::fromHWND(hwndChild));
   else
     return NULL;
 }
@@ -285,7 +285,7 @@ MdiChild *MdiClient::getActive()
  * 
  * @see activateNext, activatePrevious
  */
-void MdiClient::activate(MdiChild *mdiChild)
+void MdiClient::activate(MdiChild* mdiChild)
 {
   HWND hChildWnd = mdiChild->getHWND();
   assert(hChildWnd != NULL);
@@ -300,7 +300,7 @@ void MdiClient::activate(MdiChild *mdiChild)
  * 
  * @see activatePrevious, activate
  */
-void MdiClient::activateNext(MdiChild *mdiChild)
+void MdiClient::activateNext(MdiChild* mdiChild)
 {
   HWND hChildWnd = mdiChild != NULL ? mdiChild->getHWND(): NULL;
   HWND hwnd = getHWND();
@@ -313,7 +313,7 @@ void MdiClient::activateNext(MdiChild *mdiChild)
  * 
  * @see activateNext, activate
  */
-void MdiClient::activatePrevious(MdiChild *mdiChild)
+void MdiClient::activatePrevious(MdiChild* mdiChild)
 {
   HWND hChildWnd = mdiChild != NULL ? mdiChild->getHWND(): NULL;
   HWND hwnd = getHWND();
@@ -325,7 +325,7 @@ void MdiClient::activatePrevious(MdiChild *mdiChild)
 /**
  * Returns a MdiChild by its ID.
  */
-MdiChild *MdiClient::getChildById(int wID)
+MdiChild* MdiClient::getChildById(int wID)
 {
   Container children = getChildren();
 
@@ -335,13 +335,13 @@ MdiChild *MdiClient::getChildById(int wID)
     assert(hChild != NULL);
 
     if (GetWindowLong(hChild, GWL_ID) == wID)
-      return static_cast<MdiChild *>(*it);
+      return static_cast<MdiChild*>(*it);
   }
 
   return NULL;
 }
 
-bool MdiClient::preTranslateMessage(MSG &msg)
+bool MdiClient::preTranslateMessage(MSG& msg)
 {
   if (Widget::preTranslateMessage(msg))
     return true;
@@ -358,10 +358,10 @@ bool MdiClient::preTranslateMessage(MSG &msg)
 
 static LRESULT WINAPI MdiFrame_defWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-  Widget *widget = Widget::fromHWND(hwnd);
+  Widget* widget = Widget::fromHWND(hwnd);
   if (widget != NULL) {
-    MdiFrame *frame = dynamic_cast<MdiFrame *>(widget);
-    MdiClient *client = frame != NULL ? frame->getMdiClient(): NULL;
+    MdiFrame* frame = dynamic_cast<MdiFrame*>(widget);
+    MdiClient* client = frame != NULL ? frame->getMdiClient(): NULL;
     HWND hclient = client != NULL ? client->getHWND(): NULL;
 
     return ::DefFrameProc(hwnd, hclient, message, wParam, lParam);
@@ -378,7 +378,7 @@ static LRESULT WINAPI MdiFrame_defWndProc(HWND hwnd, UINT message, WPARAM wParam
  * MdiFrame start with a ClientLayout to arrange the MdiClient to the
  * full client area, but you can change the layout manager.
  */
-MdiFrame::MdiFrame(const String &title, Widget *parent, Style style, bool customMdiClient)
+MdiFrame::MdiFrame(const String& title, Widget* parent, Style style, bool customMdiClient)
   : Frame(WidgetClassName::None, title)
   , m_mdiClient(NULL)
 {
@@ -392,7 +392,7 @@ MdiFrame::MdiFrame(const String &title, Widget *parent, Style style, bool custom
     m_mdiClient = new MdiClient(this);
 }
 
-// MdiFrame::MdiFrame(Widget *parent, Style style)
+// MdiFrame::MdiFrame(Widget* parent, Style style)
 //   : Frame(NULL, String(), parent, style)
 //   , m_mdiClient(NULL)
 // {
@@ -410,7 +410,7 @@ MdiFrame::~MdiFrame()
     delete m_mdiClient;
 }
 
-MdiClient *MdiFrame::getMdiClient()
+MdiClient* MdiFrame::getMdiClient()
 {
 //   assert(m_mdiClient != NULL);
 
@@ -426,11 +426,11 @@ MdiClient *MdiFrame::getMdiClient()
  *
  * @see @ref TN010
  */
-MdiClient *MdiFrame::setMdiClient(MdiClient *mdiClient)
+MdiClient* MdiFrame::setMdiClient(MdiClient *mdiClient)
 {
 //   assert(m_mdiClient == NULL);
 
-  MdiClient *oldMdiClient = m_mdiClient;
+  MdiClient* oldMdiClient = m_mdiClient;
   m_mdiClient = mdiClient;
   return oldMdiClient;
 }
@@ -442,12 +442,12 @@ MdiClient *MdiFrame::setMdiClient(MdiClient *mdiClient)
  *
  * @see Frame::setMenuBar
  */
-MenuBar *MdiFrame::setMenuBar(MenuBar *menubar)
+MenuBar* MdiFrame::setMenuBar(MenuBar* menubar)
 {
   assert(m_mdiClient != NULL);
   
   // call super class implementation
-  MenuBar *oldMenuBar = Frame::setMenuBar(menubar);
+  MenuBar* oldMenuBar = Frame::setMenuBar(menubar);
 
   // we must send the WM_MDISETMENU message to change the frame menu
   // and the window menu...
@@ -457,7 +457,7 @@ MenuBar *MdiFrame::setMenuBar(MenuBar *menubar)
   hFrameMenu = menubar->getHMENU();
   assert(hFrameMenu != NULL);
 
-  MdiListMenu *mdiListMenu = menubar->getMdiListMenu();
+  MdiListMenu* mdiListMenu = menubar->getMdiListMenu();
   if (mdiListMenu != NULL) {
     hWindowMenu = mdiListMenu->getHMENU();
     assert(hWindowMenu != NULL);
@@ -491,7 +491,7 @@ void MdiFrame::refreshMenuBar()
  * (see MdiFrame::defWndProc) makes changes in the m_mdiClient, and we
  * don't want to modify the behaviour of the current layout manager.
  */
-bool MdiFrame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult)
+bool MdiFrame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult)
 {
   if (Frame::wndProc(message, wParam, lParam, lResult))
     return true;

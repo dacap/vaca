@@ -74,14 +74,14 @@ class VACA_DLL ToolSet : public Widget
 
 public:
 
-  ToolSet(Widget *parent, Style style = ToolSetStyle);
+  ToolSet(Widget* parent, Style style = ToolSetStyle);
   virtual ~ToolSet();
 
   int getButtonCount();
   int getRows();
   Rect setRows(int rows, bool expand);
 
-  void setImageList(ImageList &imageList);
+  void setImageList(ImageList& imageList);
   void loadStandardImageList(int imageListId = IDB_STD_SMALL_COLOR);
 
   void addButton(int imageIndex, int commandId, int buttonState);
@@ -93,18 +93,18 @@ public:
 
   void setButtonCommandId(int buttonIndex, int newCommandId);
 
-  int hitTest(const Point &pt);
+  int hitTest(const Point& pt);
 
   std::vector<Size> getPreferredSizes();
   void updatePreferredSizes();
 
 protected:
   // events
-  virtual void onPreferredSize(Size &sz);
+  virtual void onPreferredSize(Size& sz);
   // reflection
-  virtual bool onReflectedCommand(int id, int code, LRESULT &lResult);
-//   virtual void onMouseDown(MouseEvent &ev);
-  virtual bool wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult);
+  virtual bool onReflectedCommand(int id, int code, LRESULT& lResult);
+//   virtual void onMouseDown(MouseEvent& ev);
+  virtual bool wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult);
 
 };
 
@@ -119,12 +119,12 @@ class VACA_DLL ToolBar : public DockBar
 
 public:
 
-  ToolBar(const String &title, Frame *parent,
+  ToolBar(const String& title, Frame* parent,
 	  Style toolSetStyle = ToolSetStyle,
 	  Style style = ToolBarStyle);
   virtual ~ToolBar();
 
-  ToolSet &getSet();
+  ToolSet& getSet();
 
   virtual Size getDockedSize(Side side);
   virtual Size getFloatingSize();
@@ -134,7 +134,7 @@ protected:
   virtual bool onActionById(int actionId);
   virtual void onDocking();
   virtual void onFloating();
-  virtual void onResizingFrame(DockFrame *frame, int edge, Rect &rc);
+  virtual void onResizingFrame(DockFrame* frame, int edge, Rect& rc);
 
 };
 

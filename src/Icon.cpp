@@ -49,7 +49,7 @@ Icon::Icon()
 /**
  * Loads an Icon from a ICON resource.
  */
-Icon::Icon(int iconId, const Size &sz)
+Icon::Icon(int iconId, const Size& sz)
 {
   m_HICON = reinterpret_cast<HICON>(LoadImage(Application::getHINSTANCE(),
 					      MAKEINTRESOURCE(iconId),
@@ -63,7 +63,7 @@ Icon::Icon(int iconId, const Size &sz)
 /**
  * Loads an Icon from a file.
  */
-Icon::Icon(const String &fileName, const Size &sz)
+Icon::Icon(const String& fileName, const Size& sz)
 {
   m_HICON = reinterpret_cast<HICON>(LoadImage(Application::getHINSTANCE(),
 					      fileName.c_str(),
@@ -94,7 +94,7 @@ void Icon::setHICON(HICON hicon)
 // SharedIcon
 
 
-SharedIcon::SharedIcon(int iconId, const Size &sz)
+SharedIcon::SharedIcon(int iconId, const Size& sz)
 {
   HICON hicon = reinterpret_cast<HICON>(LoadImage(Application::getHINSTANCE(),
 						  MAKEINTRESOURCE(iconId),
@@ -107,7 +107,7 @@ SharedIcon::SharedIcon(int iconId, const Size &sz)
   setHICON(hicon);
 }
 
-SharedIcon::SharedIcon(const String &fileName, const Size &sz)
+SharedIcon::SharedIcon(const String& fileName, const Size& sz)
 {
   HICON hicon = reinterpret_cast<HICON>(LoadImage(Application::getHINSTANCE(),
 						  fileName.c_str(),

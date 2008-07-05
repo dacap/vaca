@@ -39,7 +39,7 @@ BoxConstraint::BoxConstraint(bool expansive)
 {
 }
 
-BoxConstraint::BoxConstraint(const BoxConstraint &boxConstraint)
+BoxConstraint::BoxConstraint(const BoxConstraint& boxConstraint)
   : Constraint(boxConstraint)
   , m_expansive(boxConstraint.m_expansive)
 {

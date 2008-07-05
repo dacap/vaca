@@ -49,19 +49,19 @@ class VACA_DLL ListItem : private boost::noncopyable
   friend class ListView;
 
   std::vector<String> m_text;
-  // ListItem *m_parent;
-  ListView *m_owner;
+  // ListItem* m_parent;
+  ListView* m_owner;
 
 public:
 
   ListItem();
-//   ListItem(const String &text);
+//   ListItem(const String& text);
   virtual ~ListItem();
 
-//   void addNode(ListItem *node);
+//   void addNode(ListItem* node);
 
-//   ListItem *getParent();
-//   TreeView *getTreeView();
+//   ListItem* getParent();
+//   TreeView* getTreeView();
 //   Container getChildren();
 
   virtual String getText(int columnIndex);
@@ -69,7 +69,7 @@ public:
 //   virtual int getSelectedImage();
 
 // private:
-//   void addToListView(ListView *listView);
+//   void addToListView(ListView* listView);
 
 };
 

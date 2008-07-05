@@ -63,29 +63,29 @@ class VACA_DLL SciEditor : public SciRegister, public Widget
 {
 public:
 
-  SciEditor(Widget *parent, Style style = SciEditorStyle);
+  SciEditor(Widget* parent, Style style = SciEditorStyle);
   virtual ~SciEditor();
 
-  virtual void setFont(Font *font);
+  virtual void setFont(Font* font);
 
   //////////////////////////////////////////////////////////////////////
   // Text retrieval and modification
   virtual String getText();
-  virtual void setText(const String &str);
+  virtual void setText(const String& str);
   void setSavePoint();
   String getLine(int line);
-  void replaceSel(const String &str);
+  void replaceSel(const String& str);
   void setReadOnly(bool readOnly);
   bool getReadOnly();
-// SCI_GETTEXTRANGE(<unused>, TextRange *tr)
-// SCI_GETSTYLEDTEXT(<unused>, TextRange *tr)
+// SCI_GETTEXTRANGE(<unused>, TextRange* tr)
+// SCI_GETSTYLEDTEXT(<unused>, TextRange* tr)
 // SCI_ALLOCATE(int bytes, <unused>)
-  void addText(const char *str, int length);
-  void addText(const String &str);
-// SCI_ADDSTYLEDTEXT(int length, cell *s)
-  void appendText(const char *str, int length);
-  void appendText(const String &str);
-  void insertText(int pos, const String &str);
+  void addText(const char* str, int length);
+  void addText(const String& str);
+// SCI_ADDSTYLEDTEXT(int length, cell* s)
+  void appendText(const char* str, int length);
+  void appendText(const String& str);
+  void insertText(int pos, const String& str);
   void clearAll();
 // SCI_CLEARDOCUMENTSTYLE
   Character getCharAt(int pos);
@@ -95,10 +95,10 @@ public:
   
   //////////////////////////////////////////////////////////////////////
   // Searching
-// SCI_FINDTEXT(int flags, TextToFind *ttf)
+// SCI_FINDTEXT(int flags, TextToFind* ttf)
   void searchAnchor();
-  bool searchNext(int flags, String &str);
-  bool searchPrev(int flags, String &str);
+  bool searchNext(int flags, String& str);
+  bool searchPrev(int flags, String& str);
 
   //////////////////////////////////////////////////////////////////////
   // Searching and replace using target
@@ -109,9 +109,9 @@ public:
 // SCI_TARGETFROMSELECTION
 // SCI_SETSEARCHFLAGS(int searchFlags)
 // SCI_GETSEARCHFLAGS
-// SCI_SEARCHINTARGET(int length, const char *text)
-// SCI_REPLACETARGET(int length, const char *text)
-// SCI_REPLACETARGETRE(int length, const char *text)
+// SCI_SEARCHINTARGET(int length, const char* text)
+// SCI_REPLACETARGET(int length, const char* text)
+// SCI_REPLACETARGETRE(int length, const char* text)
 
   //////////////////////////////////////////////////////////////////////
   // Overtype (overwrite-mode)
@@ -126,7 +126,7 @@ public:
   void clearText();
 // SCI_CANPASTE
 // SCI_COPYRANGE(int start, int end)
-// SCI_COPYTEXT(int length, const char *text)
+// SCI_COPYTEXT(int length, const char* text)
 // SCI_SETPASTECONVERTENDINGS(bool convert)
 // SCI_GETPASTECONVERTENDINGS
 
@@ -171,7 +171,7 @@ public:
 // SCI_GETLINEENDPOSITION(int line)
   int getLineLength(int line);
   String getSelText();
-// SCI_GETCURLINE(int textLen, char *text)
+// SCI_GETCURLINE(int textLen, char* text)
 // SCI_SELECTIONISRECTANGLE
 // SCI_SETSELECTIONMODE(int mode)
 // SCI_GETSELECTIONMODE
@@ -182,7 +182,7 @@ public:
 // SCI_WORDSTARTPOSITION(int position, bool onlyWordCharacters)
 // SCI_POSITIONBEFORE(int position)
 // SCI_POSITIONAFTER(int position)
-// SCI_TEXTWIDTH(int styleNumber, const char *text)
+// SCI_TEXTWIDTH(int styleNumber, const char* text)
 // SCI_TEXTHEIGHT(int line)
 // SCI_GETCOLUMN(int position)
 // SCI_FINDCOLUMN(int line, int column)
@@ -241,7 +241,7 @@ public:
 // SCI_GETENDSTYLED
 // SCI_STARTSTYLING(int position, int mask)
 // SCI_SETSTYLING(int length, int style)
-// SCI_SETSTYLINGEX(int length, const char *styles)
+// SCI_SETSTYLINGEX(int length, const char* styles)
 // SCI_SETLINESTATE(int line, int value)
 // SCI_GETLINESTATE(int line)
 // SCI_GETMAXLINESTATE
@@ -250,7 +250,7 @@ public:
   // Style definition
 // SCI_STYLERESETDEFAULT
 // SCI_STYLECLEARALL
-// SCI_STYLESETFONT(int styleNumber, char *fontName)
+// SCI_STYLESETFONT(int styleNumber, char* fontName)
 // SCI_STYLESETSIZE(int styleNumber, int sizeInPoints)
 // SCI_STYLESETBOLD(int styleNumber, bool bold)
 // SCI_STYLESETITALIC(int styleNumber, bool italic)
@@ -315,8 +315,8 @@ public:
 // SCI_GETTWOPHASEDRAW
 // SCI_SETCODEPAGE(int codePage)
 // SCI_GETCODEPAGE
-// SCI_SETWORDCHARS(<unused>, const char *chars)
-// SCI_SETWHITESPACECHARS(<unused>, const char *chars)
+// SCI_SETWORDCHARS(<unused>, const char* chars)
+// SCI_SETWHITESPACECHARS(<unused>, const char* chars)
 // SCI_SETCHARSDEFAULT
 // SCI_GRABFOCUS
 // SCI_SETFOCUS(bool focus)
@@ -351,7 +351,7 @@ public:
   //////////////////////////////////////////////////////////////////////
   // Markers
 // SCI_MARKERDEFINE(int markerNumber, int markerSymbols)
-// SCI_MARKERDEFINEPIXMAP(int markerNumber, const char *xpm)
+// SCI_MARKERDEFINEPIXMAP(int markerNumber, const char* xpm)
 // SCI_MARKERSETFORE(int markerNumber, int colour)
 // SCI_MARKERSETBACK(int markerNumber, int colour)
 // SCI_MARKERADD(int line, int markerNumber)
@@ -373,19 +373,19 @@ public:
 
   //////////////////////////////////////////////////////////////////////
   // Autocompletion
-// SCI_AUTOCSHOW(int lenEntered, const char *list)
+// SCI_AUTOCSHOW(int lenEntered, const char* list)
 // SCI_AUTOCCANCEL
 // SCI_AUTOCACTIVE
 // SCI_AUTOCPOSSTART
 // SCI_AUTOCCOMPLETE
-// SCI_AUTOCSTOPS(<unused>, const char *chars)
+// SCI_AUTOCSTOPS(<unused>, const char* chars)
 // SCI_AUTOCSETSEPARATOR(char separator)
 // SCI_AUTOCGETSEPARATOR
-// SCI_AUTOCSELECT(<unused>, const char *select)
+// SCI_AUTOCSELECT(<unused>, const char* select)
 // SCI_AUTOCGETCURRENT
 // SCI_AUTOCSETCANCELATSTART(bool cancel)
 // SCI_AUTOCGETCANCELATSTART
-// SCI_AUTOCSETFILLUPS(<unused>, const char *chars)
+// SCI_AUTOCSETFILLUPS(<unused>, const char* chars)
 // SCI_AUTOCSETCHOOSESINGLE(bool chooseSingle)
 // SCI_AUTOCGETCHOOSESINGLE
 // SCI_AUTOCSETIGNORECASE(bool ignoreCase)
@@ -405,11 +405,11 @@ public:
 
   //////////////////////////////////////////////////////////////////////
   // User lists
-// SCI_USERLISTSHOW(int listType, const char *list)
+// SCI_USERLISTSHOW(int listType, const char* list)
 
   //////////////////////////////////////////////////////////////////////
   // Call tips
-// SCI_CALLTIPSHOW(int posStart, const char *definition)
+// SCI_CALLTIPSHOW(int posStart, const char* definition)
 // SCI_CALLTIPCANCEL
 // SCI_CALLTIPACTIVE
 // SCI_CALLTIPPOSSTART
@@ -521,7 +521,7 @@ public:
 
   //////////////////////////////////////////////////////////////////////
   // Printing
-// SCI_FORMATRANGE(bool bDraw, RangeToFormat *pfr)
+// SCI_FORMATRANGE(bool bDraw, RangeToFormat* pfr)
 // SCI_SETPRINTMAGNIFICATION(int magnification)
 // SCI_GETPRINTMAGNIFICATION
 // SCI_SETPRINTCOLOURMODE(int mode)
@@ -536,11 +536,11 @@ public:
 
   //////////////////////////////////////////////////////////////////////
   // Multiple views
-  void *getDocPointer();
-  void setDocPointer(void *doc);
+  void* getDocPointer();
+  void setDocPointer(void* doc);
 // SCI_CREATEDOCUMENT
-// SCI_ADDREFDOCUMENT(<unused>, document *pDoc)
-// SCI_RELEASEDOCUMENT(<unused>, document *pDoc)
+// SCI_ADDREFDOCUMENT(<unused>, document* pDoc)
+// SCI_RELEASEDOCUMENT(<unused>, document* pDoc)
 
   //////////////////////////////////////////////////////////////////////
   // Folding
@@ -594,14 +594,14 @@ public:
   // Lexer
 // SCI_SETLEXER(int lexer)
 // SCI_GETLEXER
-// SCI_SETLEXERLANGUAGE(<unused>, char *name)
-// SCI_LOADLEXERLIBRARY(<unused>, char *path)
+// SCI_SETLEXERLANGUAGE(<unused>, char* name)
+// SCI_LOADLEXERLIBRARY(<unused>, char* path)
 // SCI_COLOURISE(int start, int end)
-// SCI_SETPROPERTY(const char *key, const char *value)
-// SCI_GETPROPERTY(const char *key, char *value)
-// SCI_GETPROPERTYEXPANDED(const char *key, char *value)
-// SCI_GETPROPERTYINT(const char *key, int default)
-// SCI_SETKEYWORDS(int keyWordSet, const char *keyWordList)
+// SCI_SETPROPERTY(const char* key, const char* value)
+// SCI_GETPROPERTY(const char* key, char* value)
+// SCI_GETPROPERTYEXPANDED(const char* key, char* value)
+// SCI_GETPROPERTYINT(const char* key, int default)
+// SCI_SETKEYWORDS(int keyWordSet, const char* keyWordList)
 // SCI_GETSTYLEBITSNEEDED
 
   //////////////////////////////////////////////////////////////////////
@@ -612,7 +612,7 @@ public:
 
 protected:
   // reflection
-  virtual bool onReflectedNotify(LPNMHDR lpnmhdr, LRESULT &lResult);
+  virtual bool onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult);
 
   // new events
 // SCN_STYLENEEDED

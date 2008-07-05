@@ -48,17 +48,17 @@ TreeViewIterator::TreeViewIterator()
   m_currentNode = NULL;
 }
 
-TreeViewIterator::TreeViewIterator(TreeNode *node)
+TreeViewIterator::TreeViewIterator(TreeNode* node)
 {
   m_currentNode = node;
 }
 
-TreeViewIterator::TreeViewIterator(const TreeViewIterator &other)
+TreeViewIterator::TreeViewIterator(const TreeViewIterator& other)
 {
   m_currentNode = other.m_currentNode;
 }
 
-TreeViewIterator &TreeViewIterator::operator=(const TreeViewIterator &other)
+TreeViewIterator& TreeViewIterator::operator=(const TreeViewIterator& other)
 {
   m_currentNode = other.m_currentNode;
   return *this;
@@ -74,7 +74,7 @@ void TreeViewIterator::increment()
   // if the node doesn't have children, we must go to the next brother
   else {
     while (m_currentNode->m_parent != NULL) {
-      std::vector<TreeNode *>::iterator it, begin, end;
+      std::vector<TreeNode*>::iterator it, begin, end;
 
       begin = m_currentNode->m_parent->m_children.begin();
       end = m_currentNode->m_parent->m_children.end();
@@ -106,7 +106,7 @@ bool TreeViewIterator::equal(TreeViewIterator const& other) const
   return (this->m_currentNode == other.m_currentNode);
 }
 
-TreeNode *TreeViewIterator::dereference() const
+TreeNode* TreeViewIterator::dereference() const
 {
   return m_currentNode;
 }
@@ -114,7 +114,7 @@ TreeNode *TreeViewIterator::dereference() const
 //////////////////////////////////////////////////////////////////////
 // TreeView
 
-TreeView::TreeView(Widget *parent, Style style)
+TreeView::TreeView(Widget* parent, Style style)
   : Widget(WidgetClassName(WC_TREEVIEW), parent, style)
 {
   m_root.m_owner = this;
@@ -142,7 +142,7 @@ TreeView::iterator TreeView::end()
   return iterator(&m_root);
 }
 
-void TreeView::setImageList(ImageList &imageList, int type)
+void TreeView::setImageList(ImageList& imageList, int type)
 {
   assert(::IsWindow(getHWND()));
   assert(imageList.isValid());
@@ -150,12 +150,12 @@ void TreeView::setImageList(ImageList &imageList, int type)
   TreeView_SetImageList(getHWND(), imageList.getHIMAGELIST(), type);
 }
 
-void TreeView::setNormalImageList(ImageList &imageList)
+void TreeView::setNormalImageList(ImageList& imageList)
 {
   setImageList(imageList, LVSIL_NORMAL);
 }
 
-void TreeView::setStateImageList(ImageList &imageList)
+void TreeView::setStateImageList(ImageList& imageList)
 {
   setImageList(imageList, LVSIL_STATE);
 }
@@ -165,7 +165,7 @@ void TreeView::setStateImageList(ImageList &imageList)
  *
  * The root node is never displayed.
  */
-TreeNode *TreeView::getRootNode()
+TreeNode* TreeView::getRootNode()
 {
   return &m_root;
 }
@@ -173,7 +173,7 @@ TreeNode *TreeView::getRootNode()
 /**
  * Adds a node in the root of the tree.
  */
-void TreeView::addNode(TreeNode *node)
+void TreeView::addNode(TreeNode* node)
 {
   // the node must be alone (not inside another TreeView)
   assert(node != NULL);
@@ -187,17 +187,17 @@ void TreeView::addNode(TreeNode *node)
  * 
  * @warning The node must be inside the tree.
  */
-void TreeView::removeNode(TreeNode *node)
+void TreeView::removeNode(TreeNode* node)
 {
   assert(node != NULL);
 
   // we must to scan all the nodes to find the direct parent of "node"
-  std::vector<TreeNode *> parents;
+  std::vector<TreeNode*> parents;
   parents.push_back(&m_root);
 
   while (!parents.empty()) {
     // get the last element and remove it from the tail
-    TreeNode *parent = *(parents.end()-1);
+    TreeNode* parent = *(parents.end()-1);
     parents.erase(parents.end()-1);
 
     // the parent of the node is the current parent
@@ -229,7 +229,7 @@ void TreeView::removeNode(TreeNode *node)
  * 
  * @return The selected node. NULL if there is no selected item in the tree.
  */
-TreeNode *TreeView::getSelectedNode()
+TreeNode* TreeView::getSelectedNode()
 {
   assert(::IsWindow(getHWND()));
 
@@ -244,7 +244,7 @@ TreeNode *TreeView::getSelectedNode()
  * Selects the node in the tree. The @a node must be a children of the
  * tree.
  */
-void TreeView::setSelectedNode(TreeNode *node)
+void TreeView::setSelectedNode(TreeNode* node)
 {
   assert(::IsWindow(getHWND()));
   assert(node->m_owner == this);
@@ -263,7 +263,7 @@ void TreeView::setBgColor(Color color)
 /**
  * You can cancel this event (Event::cancel).
  */
-void TreeView::onBeforeExpand(TreeViewEvent &ev)
+void TreeView::onBeforeExpand(TreeViewEvent& ev)
 {
   BeforeExpand(ev);
   ev.getTreeNode()->onBeforeExpand(ev);
@@ -272,13 +272,13 @@ void TreeView::onBeforeExpand(TreeViewEvent &ev)
 /**
  * You can cancel this event (Event::cancel).
  */
-void TreeView::onBeforeCollapse(TreeViewEvent &ev)
+void TreeView::onBeforeCollapse(TreeViewEvent& ev)
 {
   BeforeCollapse(ev);
   ev.getTreeNode()->onBeforeCollapse(ev);
 }
 
-void TreeView::onBeforeSelect(TreeViewEvent &ev)
+void TreeView::onBeforeSelect(TreeViewEvent& ev)
 {
   if (!m_deleted) {
     BeforeSelect(ev);
@@ -290,25 +290,25 @@ void TreeView::onBeforeSelect(TreeViewEvent &ev)
  * You can cancel this event to cancel the label editing.
  * 
  */
-void TreeView::onBeforeLabelEdit(TreeViewEvent &ev)
+void TreeView::onBeforeLabelEdit(TreeViewEvent& ev)
 {
   BeforeLabelEdit(ev);
   ev.getTreeNode()->onBeforeLabelEdit(ev);
 }
 
-void TreeView::onAfterExpand(TreeViewEvent &ev)
+void TreeView::onAfterExpand(TreeViewEvent& ev)
 {
   AfterExpand(ev);
   ev.getTreeNode()->onAfterExpand(ev);
 }
 
-void TreeView::onAfterCollapse(TreeViewEvent &ev)
+void TreeView::onAfterCollapse(TreeViewEvent& ev)
 {
   AfterCollapse(ev);
   ev.getTreeNode()->onAfterCollapse(ev);
 }
 
-void TreeView::onAfterSelect(TreeViewEvent &ev)
+void TreeView::onAfterSelect(TreeViewEvent& ev)
 {
   if (!m_deleted) {
     AfterSelect(ev);
@@ -320,13 +320,13 @@ void TreeView::onAfterSelect(TreeViewEvent &ev)
  * You can cancel this event to avoid to change the item text.
  * 
  */
-void TreeView::onAfterLabelEdit(TreeViewEvent &ev)
+void TreeView::onAfterLabelEdit(TreeViewEvent& ev)
 {
   ev.getTreeNode()->onAfterLabelEdit(ev);
   AfterLabelEdit(ev);
 }
 
-bool TreeView::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT &lResult)
+bool TreeView::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult)
 {
   if (Widget::onReflectedNotify(lpnmhdr, lResult))
     return true;
@@ -335,7 +335,7 @@ bool TreeView::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT &lResult)
 
     case TVN_GETDISPINFO: {
       LPNMTVDISPINFO lptvdi = reinterpret_cast<LPNMTVDISPINFO>(lpnmhdr);
-      TreeNode *node = reinterpret_cast<TreeNode *>(lptvdi->item.lParam);
+      TreeNode* node = reinterpret_cast<TreeNode*>(lptvdi->item.lParam);
 
       assert(node != NULL);
       // why why WHY?  When I delete a TreeNode (calling TreeView_DeleteItem)
@@ -365,7 +365,7 @@ bool TreeView::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT &lResult)
 
     case TVN_ITEMEXPANDING: {
       LPNMTREEVIEW lppnmtv = reinterpret_cast<LPNMTREEVIEW>(lpnmhdr);
-      TreeNode *node = reinterpret_cast<TreeNode *>(lppnmtv->itemNew.lParam);
+      TreeNode* node = reinterpret_cast<TreeNode*>(lppnmtv->itemNew.lParam);
 
       assert(node != NULL);
       if (node->m_deleted)
@@ -398,7 +398,7 @@ bool TreeView::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT &lResult)
 
     case TVN_SELCHANGING: {
       LPNMTREEVIEW lppnmtv = reinterpret_cast<LPNMTREEVIEW>(lpnmhdr);
-      TreeNode *node = reinterpret_cast<TreeNode *>(lppnmtv->itemNew.lParam);
+      TreeNode* node = reinterpret_cast<TreeNode*>(lppnmtv->itemNew.lParam);
 
       assert(node != NULL);
       if (node->m_deleted)
@@ -420,7 +420,7 @@ bool TreeView::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT &lResult)
 
     case TVN_ITEMEXPANDED: {
       LPNMTREEVIEW lppnmtv = reinterpret_cast<LPNMTREEVIEW>(lpnmhdr);
-      TreeNode *node = reinterpret_cast<TreeNode *>(lppnmtv->itemNew.lParam);
+      TreeNode* node = reinterpret_cast<TreeNode*>(lppnmtv->itemNew.lParam);
 
       assert(node != NULL);
       if (node->m_deleted)
@@ -444,7 +444,7 @@ bool TreeView::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT &lResult)
 
     case TVN_SELCHANGED: {
       LPNMTREEVIEW lppnmtv = reinterpret_cast<LPNMTREEVIEW>(lpnmhdr);
-      TreeNode *node = reinterpret_cast<TreeNode *>(lppnmtv->itemNew.lParam);
+      TreeNode* node = reinterpret_cast<TreeNode*>(lppnmtv->itemNew.lParam);
 
       assert(node != NULL);
       if (node->m_deleted)
@@ -459,7 +459,7 @@ bool TreeView::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT &lResult)
 
     case TVN_BEGINLABELEDIT: {
       LPNMTVDISPINFO lptvdi = reinterpret_cast<LPNMTVDISPINFO>(lpnmhdr);
-      TreeNode *node = reinterpret_cast<TreeNode *>(lptvdi->item.lParam);
+      TreeNode* node = reinterpret_cast<TreeNode*>(lptvdi->item.lParam);
 
       assert(node != NULL);
       if (node->m_deleted)
@@ -475,7 +475,7 @@ bool TreeView::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT &lResult)
 
     case TVN_ENDLABELEDIT: {
       LPNMTVDISPINFO lptvdi = reinterpret_cast<LPNMTVDISPINFO>(lpnmhdr);
-      TreeNode *node = reinterpret_cast<TreeNode *>(lptvdi->item.lParam);
+      TreeNode* node = reinterpret_cast<TreeNode*>(lptvdi->item.lParam);
 
       assert(node != NULL);
       if (node->m_deleted)
@@ -503,7 +503,7 @@ bool TreeView::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT &lResult)
 
 //     case TVN_BEGINDRAG: {
 //       LPNMTVDISPINFO lptvdi = reinterpret_cast<LPNMTVDISPINFO>(lpnmhdr);
-//       TreeNode *node = reinterpret_cast<TreeNode *>(lptvdi->item.lParam);
+//       TreeNode* node = reinterpret_cast<TreeNode*>(lptvdi->item.lParam);
 
 // //       ItemEvent(tree->evBeginDrag, *ctrl, *node).fire();
 //       return true;

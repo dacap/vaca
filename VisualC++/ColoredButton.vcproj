@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="ColoredButton"
-	ProjectGUID="{824D53E6-5C99-42B5-9C86-9A0AA64D7BE7}"
+	ProjectGUID="{C19EB34A-E322-4568-B8C6-9CB90D9C6444}"
 	RootNamespace="ColoredButton"
 	Keyword="Win32Proj">
 	<Platforms>

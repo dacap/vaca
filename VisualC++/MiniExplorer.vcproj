@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="MiniExplorer"
-	ProjectGUID="{0E40A462-0D88-46F7-BD24-E661BEC30062}"
+	ProjectGUID="{4859DA7A-971E-4346-AA06-8C9208E523DC}"
 	RootNamespace="MiniExplorer"
 	Keyword="Win32Proj">
 	<Platforms>

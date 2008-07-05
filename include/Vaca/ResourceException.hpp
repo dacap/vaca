@@ -44,7 +44,7 @@ class ResourceException : public Exception
 public:
 
   ResourceException() : Exception() { }
-  ResourceException(const String &message) : Exception(message) { }
+  ResourceException(const String& message) : Exception(message) { }
   virtual ~ResourceException() throw() { }
 
 };

@@ -35,7 +35,7 @@
 
 using namespace Vaca;
 
-Button::Button(const String &text, Widget *parent, Style style)
+Button::Button(const String& text, Widget* parent, Style style)
   : ButtonBase(parent, style)
 {
   setText(text);

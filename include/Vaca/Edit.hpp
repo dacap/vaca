@@ -77,7 +77,7 @@ class VACA_DLL Edit : public Widget
 {
 public:
 
-  Edit(const String &text, Widget *parent, Style style = EditStyle);
+  Edit(const String& text, Widget* parent, Style style = EditStyle);
   virtual ~Edit();
 
   int getTextLength();
@@ -96,17 +96,17 @@ public:
   void deselect();
 
   // signals
-  boost::signal<void (Event &)> Change; ///< @see onChange
+  boost::signal<void (Event&)> Change; ///< @see onChange
 
 protected:
   // events
-  virtual void onPreferredSize(Size &sz);
+  virtual void onPreferredSize(Size& sz);
 
   // new events
-  virtual void onChange(Event &ev);
+  virtual void onChange(Event& ev);
 
   // reflection
-  virtual bool onReflectedCommand(int id, int code, LRESULT &lResult);
+  virtual bool onReflectedCommand(int id, int code, LRESULT& lResult);
 
 };
 
@@ -117,7 +117,7 @@ class VACA_DLL PasswordEdit : public Edit
 {
 public:
 
-  PasswordEdit(const String &text, Widget *parent, Style style = PasswordEditStyle);
+  PasswordEdit(const String& text, Widget* parent, Style style = PasswordEditStyle);
   virtual ~PasswordEdit();
 
   Character getPasswordCharacter();
@@ -131,7 +131,7 @@ class VACA_DLL MultilineEdit : public Edit
 {
 public:
 
-  MultilineEdit(const String &text, Widget *parent, Style style = MultilineEditStyle);
+  MultilineEdit(const String& text, Widget* parent, Style style = MultilineEditStyle);
   virtual ~MultilineEdit();
 
   bool getWantReturnMode();

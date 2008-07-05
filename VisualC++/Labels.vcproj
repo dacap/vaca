@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="Labels"
-	ProjectGUID="{FB6AE990-2DF6-4909-A205-91110E0CC3F0}"
+	ProjectGUID="{C32D7C03-164A-42E5-878A-99D9165DD26D}"
 	RootNamespace="Labels"
 	Keyword="Win32Proj">
 	<Platforms>

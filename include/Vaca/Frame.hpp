@@ -87,72 +87,72 @@ public:
  */
 class VACA_DLL Frame : public Register<FrameClass>, public Widget
 {
-  MenuBar *m_menuBar;		       // The menu bar.
-//   std::vector<Command *> m_commands;   // collection of Commands that can be executed in this Frame
-  std::vector<DockArea *> m_dockAreas; // Areas where you can dock a tool-bar.
+  MenuBar* m_menuBar;		       // The menu bar.
+//   std::vector<Command*> m_commands;   // collection of Commands that can be executed in this Frame
+  std::vector<DockArea*> m_dockAreas;  // Areas where you can dock a tool-bar.
   bool m_counted;		       // true if this Frame is counted in the frames' list
 
 public:
 
-  Frame(const String &title, Widget *parent = NULL, Style style = FrameStyle);
-  Frame(const WidgetClassName &className, const String &title, Widget *parent = NULL, Style style = FrameStyle);
+  Frame(const String& title, Widget* parent = NULL, Style style = FrameStyle);
+  Frame(const WidgetClassName& className, const String& title, Widget* parent = NULL, Style style = FrameStyle);
   virtual ~Frame();
 
   // bool isVisible();
   virtual void setVisible(bool visible);
 
-  MenuBar *getMenuBar();
-  virtual MenuBar *setMenuBar(MenuBar *menuBar);
+  MenuBar* getMenuBar();
+  virtual MenuBar* setMenuBar(MenuBar* menuBar);
 
-  void setIcon(Icon *icon, bool bigIcon);
+  void setIcon(Icon* icon, bool bigIcon);
   void setIcon(int iconId);
 
   Size getNonClientSize();
   virtual Rect getLayoutBounds();
   
-  void addDockArea(DockArea *dockArea);
-  void removeDockArea(DockArea *dockArea);
+  void addDockArea(DockArea* dockArea);
+  void removeDockArea(DockArea* dockArea);
   void defaultDockAreas();
   void deleteDockAreas();
-  std::vector<DockArea *> getDockAreas();
-  DockArea *getDockArea(Side side);
-  virtual DockArea *getDefaultDockArea();
+  std::vector<DockArea*> getDockAreas();
+  DockArea* getDockArea(Side side);
+  virtual DockArea* getDefaultDockArea();
 
   virtual void layout();
   virtual bool isLayoutFree();
   virtual bool keepSynchronized();
 
-  boost::signal<void (Event &)> Activate;     ///< @see onActivate
-  boost::signal<void (Event &)> Deactivate;   ///< @see onDeactivate
-  boost::signal<void (CloseEvent &)> Close;   ///< @see onClose
-  boost::signal<void (int, Rect &)> Resizing; ///< @see onResizing
+  boost::signal<void (Event&)> Activate;     ///< @see onActivate
+  boost::signal<void (Event&)> Deactivate;   ///< @see onDeactivate
+  boost::signal<void (CloseEvent&)> Close;   ///< @see onClose
+  boost::signal<void (int, Rect&)> Resizing; ///< @see onResizing
 
   // static int getFramesCount();
 //   static int getVisibleFramesByThread(int threadId);
 
-  virtual bool preTranslateMessage(MSG &msg);
+  virtual bool preTranslateMessage(MSG& msg);
 
 protected:
   // events
-  virtual void onPreferredSize(Size &sz);
+  virtual void onPreferredSize(Size& sz);
 //   virtual void onDestroy();
-  virtual void onResize(const Size &sz);
-//   virtual void onKeyDown(KeyEvent &ev);
+  virtual void onResize(const Size& sz);
+//   virtual void onKeyDown(KeyEvent& ev);
   virtual bool onActionById(int actionId);
 
   // new events
-  virtual void onActivate(Event &ev);
-  virtual void onDeactivate(Event &ev);
-  virtual void onClose(CloseEvent &ev);
-  virtual void onResizing(int edge, Rect &rc);
+  virtual void onActivate(Event& ev);
+  virtual void onDeactivate(Event& ev);
+  virtual void onClose(CloseEvent& ev);
+  virtual void onResizing(int edge, Rect& rc);
 
-  virtual bool wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult);
+  virtual bool wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult);
 
 private:
 
-  void initialize(const String &title);
-//   Menu *getMenuByHMENU(HMENU hmenu);
-  void updateMenuItem(MenuItem *menuItem);
+  void initialize(const String& title);
+//   Menu* getMenuByHMENU(HMENU hmenu);
+  void updateMenuItem(MenuItem* menuItem);
   Container getSynchronizedGroup();
   
 };

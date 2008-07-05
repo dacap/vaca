@@ -65,22 +65,22 @@ class VACA_DLL ComboBox : public Widget
 {
 public:
 
-  ComboBox(Widget *parent, Style style = ComboBoxStyle);
+  ComboBox(Widget* parent, Style style = ComboBoxStyle);
   virtual ~ComboBox();
 
-  int addItem(const String &text);
-  void insertItem(int itemIndex, const String &text);
+  int addItem(const String& text);
+  void insertItem(int itemIndex, const String& text);
   void removeItem(int itemIndex);
   void removeAllItems();
 
   int getItemCount();
 
   String getItemText(int itemIndex);
-  void setItemText(int itemIndex, const String &text);
+  void setItemText(int itemIndex, const String& text);
 
   int getCurrentItem();
   void setCurrentItem(int itemIndex);
-  void setCurrentItem(const String &firstText);
+  void setCurrentItem(const String& firstText);
 
   void setDropDownVisibile(bool visible);
   bool isDropDownVisible();
@@ -89,21 +89,21 @@ public:
   virtual void layout();
 
   // signals
-  boost::signal<void (Event &)> Action;	 ///< @see onAction
-  boost::signal<void (Event &)> SelChange; ///< @see onSelChange
-  boost::signal<void (Event &)> EditChange; ///< @see onEditChange
+  boost::signal<void (Event&)> Action;	 ///< @see onAction
+  boost::signal<void (Event&)> SelChange; ///< @see onSelChange
+  boost::signal<void (Event&)> EditChange; ///< @see onEditChange
 
 protected:
   // events
-  virtual void onPreferredSize(Size &sz);
+  virtual void onPreferredSize(Size& sz);
   
   // new events
-  virtual void onAction(Event &ev);
-  virtual void onSelChange(Event &ev);
-  virtual void onEditChange(Event &ev);
+  virtual void onAction(Event& ev);
+  virtual void onSelChange(Event& ev);
+  virtual void onEditChange(Event& ev);
 
   // reflection
-  virtual bool onReflectedCommand(int id, int code, LRESULT &lResult);
+  virtual bool onReflectedCommand(int id, int code, LRESULT& lResult);
 
 private:
   int getHeightForAllItems();

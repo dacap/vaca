@@ -45,9 +45,9 @@ GraphicsPath::GraphicsPath()
 
 GraphicsPath::~GraphicsPath()
 {
-  for (std::list<Figure *>::iterator
+  for (std::list<Figure*>::iterator
 	 fig = mFigures.begin(); fig != mFigures.end() ++fig) {
-    for (std::list<Segment *>::iterator
+    for (std::list<Segment*>::iterator
 	   seg = (*fig)->segments.begin(); seg != (*fig)->segments.end() ++seg)
       delete *seg;
 
@@ -57,7 +57,7 @@ GraphicsPath::~GraphicsPath()
 
 void GraphicsPath::startFigure()
 {
-  Figure *figure = new Figure;
+  Figure* figure = new Figure;
 
   figure->start_x = mCurrentX;
   figure->start_y = mCurrentY;
@@ -71,7 +71,7 @@ void GraphicsPath::closeFigure()
 {
 }
 
-void GraphicsPath::moveTo(const Point &pt)
+void GraphicsPath::moveTo(const Point& pt)
 {
   moveTo(static_cast<float>(pt.x),
 	 static_cast<float>(pt.y));
@@ -89,7 +89,7 @@ void GraphicsPath::moveTo(float x, float y)
   mCurrentY = y;
 }
 
-void GraphicsPath::lineTo(const Point &pt)
+void GraphicsPath::lineTo(const Point& pt)
 {
   lineTo(static_cast<float>(pt.x),
 	 static_cast<float>(pt.y));
@@ -115,7 +115,7 @@ void GraphicsPath::curveTo(float x1, float y1, float x2, float y2, float x3, flo
 {
 }
 
-void GraphicsPath::curveTo(const Point &pt1, const Point &pt2, const Point &pt3)
+void GraphicsPath::curveTo(const Point& pt1, const Point& pt2, const Point& pt3)
 {
 }
 

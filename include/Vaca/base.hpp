@@ -198,8 +198,8 @@ typedef EnumSet<BordersEnumSet> Borders;
  */
 template<typename _ContainerType,
 	 typename _ElementType>
-void remove_element_from_container(_ContainerType &container,
-				   const _ElementType &element)
+void remove_element_from_container(_ContainerType& container,
+				   const _ElementType& element)
 {
   typename _ContainerType::iterator
     it = std::find(container.begin(),

@@ -51,7 +51,7 @@ class VACA_DLL CheckBox : public ButtonBase
 {
 public:
 
-  CheckBox(const String &text, Widget *parent, Style style = CheckBoxStyle);
+  CheckBox(const String& text, Widget* parent, Style style = CheckBoxStyle);
   virtual ~CheckBox();
 
 };

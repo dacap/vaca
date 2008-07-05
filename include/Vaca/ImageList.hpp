@@ -56,7 +56,7 @@ public:
   ImageList(HIMAGELIST hImageList, SelfDestruction selfDestruction);
 //   ImageList(Size sz);
   ImageList(ResourceId bitmapId, int widthPerIcon, Color maskColor);
-  ImageList(const String &fileName, int widthPerIcon, Color maskColor);
+  ImageList(const String& fileName, int widthPerIcon, Color maskColor);
   virtual ~ImageList();
 
   bool isValid();

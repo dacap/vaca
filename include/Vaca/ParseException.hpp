@@ -44,7 +44,7 @@ class ParseException : public Exception
 public:
 
   ParseException() throw() : Exception() { }
-  ParseException(const String &message) throw() : Exception(message) { }
+  ParseException(const String& message) throw() : Exception(message) { }
   virtual ~ParseException() throw() { }
 
 };

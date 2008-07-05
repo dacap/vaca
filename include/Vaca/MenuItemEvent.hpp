@@ -44,10 +44,10 @@ class VACA_DLL MenuItemEvent : public Event
 
 public:
 
-  MenuItemEvent(MenuItem *source);
+  MenuItemEvent(MenuItem* source);
   virtual ~MenuItemEvent();
 
-  MenuItem *getMenuItem();
+  MenuItem* getMenuItem();
 
 };
 

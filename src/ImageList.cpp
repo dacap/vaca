@@ -72,7 +72,7 @@ ImageList::ImageList(ResourceId bitmapId, int widthPerIcon, Color maskColor)
 /**
  * Loads a ImageList from a file.
  */
-ImageList::ImageList(const String &fileName, int widthPerIcon, Color maskColor)
+ImageList::ImageList(const String& fileName, int widthPerIcon, Color maskColor)
 {
   m_HIMAGELIST =
     ImageList_LoadImage(Application::getHINSTANCE(),

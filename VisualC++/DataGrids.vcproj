@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="DataGrids"
-	ProjectGUID="{624169BD-4889-4599-8B5B-6854866C45FF}"
+	ProjectGUID="{48EF4A46-4A4F-4574-B1B8-D86ADC986FC4}"
 	RootNamespace="DataGrids"
 	Keyword="Win32Proj">
 	<Platforms>

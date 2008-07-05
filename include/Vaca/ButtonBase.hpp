@@ -78,24 +78,24 @@ class VACA_DLL ButtonBase : public Widget
 {
 public:
 
-  ButtonBase(Widget *parent, Style style);
+  ButtonBase(Widget* parent, Style style);
   virtual ~ButtonBase();
 
   bool isSelected();
   void setSelected(bool state);
 
   // signals
-  boost::signal<void (Event &)> Action; ///< @see onAction
+  boost::signal<void (Event&)> Action; ///< @see onAction
 
 protected:
   // events
-  virtual void onPreferredSize(Size &sz);
+  virtual void onPreferredSize(Size& sz);
 
   // new events
-  virtual void onAction(Event &ev);
+  virtual void onAction(Event& ev);
 
   // reflection
-  virtual bool onReflectedCommand(int id, int code, LRESULT &lResult);
+  virtual bool onReflectedCommand(int id, int code, LRESULT& lResult);
 };
 
 } // namespace Vaca

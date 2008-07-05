@@ -51,14 +51,14 @@ namespace Vaca {
  * class MyFancyButton : public CustomButton
  * {
  * public:
- *   MyFancyButton(const String &text, Widget *parent)
+ *   MyFancyButton(const String& text, Widget* parent)
  *     : CustomButton(text, parent)
  *   {
  *     // ...
  *   }
  *   
  *   // paint event...
- *   virtual void onPaint(Graphics &g)
+ *   virtual void onPaint(Graphics& g)
  *   {
  *     // don't call parent implementation, use your own code to
  *     // paint the your fancy-button
@@ -73,13 +73,13 @@ class VACA_DLL CustomButton : public Button
 
 public:
 
-  CustomButton(const String &text, Widget *parent, Style style = CustomButtonStyle);
+  CustomButton(const String& text, Widget* parent, Style style = CustomButtonStyle);
   virtual ~CustomButton();
 
 protected:
 
   // reflection
-  virtual bool onReflectedDrawItem(Graphics &g, LPDRAWITEMSTRUCT lpDrawItem);
+  virtual bool onReflectedDrawItem(Graphics& g, LPDRAWITEMSTRUCT lpDrawItem);
 
 public:
 

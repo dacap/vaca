@@ -60,18 +60,18 @@ class VACA_DLL ListBox : public Widget
 {
 public:
 
-  ListBox(Widget *parent, Style style = ListBoxStyle);
+  ListBox(Widget* parent, Style style = ListBoxStyle);
   virtual ~ListBox();
 
-  int addItem(const String &text);
-  void insertItem(int itemIndex, const String &text);
+  int addItem(const String& text);
+  void insertItem(int itemIndex, const String& text);
   void removeItem(int itemIndex);
 
   int getItemCount();
   Rect getItemBounds(int itemIndex);
 
   String getItemText(int itemIndex);
-  void setItemText(int itemIndex, const String &text);
+  void setItemText(int itemIndex, const String& text);
 
   int getCurrentItem();
   void setCurrentItem(int itemIndex);
@@ -79,19 +79,19 @@ public:
   std::vector<int> getSelectedItems();
 
   // signals
-  boost::signal<void (Event &)> Action;	 ///< @see onAction
-  boost::signal<void (Event &)> SelChange; ///< @see onSelChange
+  boost::signal<void (Event&)> Action;	 ///< @see onAction
+  boost::signal<void (Event&)> SelChange; ///< @see onSelChange
 
 protected:
   // events
-  virtual void onPreferredSize(Size &sz);
+  virtual void onPreferredSize(Size& sz);
 
   // new events
-  virtual void onAction(Event &ev);
-  virtual void onSelChange(Event &ev);
+  virtual void onAction(Event& ev);
+  virtual void onSelChange(Event& ev);
 
   // reflection
-  virtual bool onReflectedCommand(int id, int code, LRESULT &lResult);
+  virtual bool onReflectedCommand(int id, int code, LRESULT& lResult);
 
 };
 
@@ -99,7 +99,7 @@ class VACA_DLL DragListBox : public ListBox
 {
 public:
 
-  DragListBox(Widget *parent, Style style = DragListBoxStyle);
+  DragListBox(Widget* parent, Style style = DragListBoxStyle);
   
 };
 

@@ -39,7 +39,7 @@ using namespace Vaca;
  *
  * @param source The component which generates the event.
  */
-Event::Event(Component *source)
+Event::Event(Component* source)
   : m_source(source)
 {
 }
@@ -56,7 +56,7 @@ Event::~Event()
  *
  * @return The component which generates the event.
  */
-Component *Event::getSource()
+Component* Event::getSource()
 {
   return m_source;
 }

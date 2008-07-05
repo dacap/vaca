@@ -80,14 +80,14 @@ class VACA_DLL MenuItem : private boost::noncopyable
 public:
 
   MenuItem();
-  MenuItem(const String &text, Keys::Type defaultShortcut = Keys::None, int id = -1);
+  MenuItem(const String& text, Keys::Type defaultShortcut = Keys::None, int id = -1);
   virtual ~MenuItem();
 
   Menu *getParent();
   int getId();
 
-  const String &getText();
-  void setText(const String &text);
+  const String& getText();
+  void setText(const String& text);
 
   bool isEnabled();
   void setEnabled(bool state);
@@ -106,12 +106,12 @@ public:
   virtual bool isMdiList() const;
 
   // events
-  virtual void onAction(MenuItemEvent &ev);
-  virtual void onUpdate(MenuItemEvent &ev);
+  virtual void onAction(MenuItemEvent& ev);
+  virtual void onUpdate(MenuItemEvent& ev);
 
   // signals
-  boost::signal<void (MenuItemEvent &)> Action; ///< @see onAction
-  boost::signal<void (MenuItemEvent &)> Update; ///< @see onUpdate
+  boost::signal<void (MenuItemEvent&)> Action; ///< @see onAction
+  boost::signal<void (MenuItemEvent&)> Update; ///< @see onUpdate
 };
 
 /**
@@ -130,7 +130,7 @@ public:
 
 //   class CheckBoxMenuItem : public MenuItem {
 //   public:
-//     CheckBoxMenuItem(const String &text, bool state = false);
+//     CheckBoxMenuItem(const String& text, bool state = false);
 //     virtual ~CheckBoxMenuItem();
 
 //     bool getState();
@@ -139,7 +139,7 @@ public:
 
 //   class RadioButtonMenuItem : public MenuItem {
 //   public:
-//     RadioButtonMenuItem(const String &text, bool selected = false);
+//     RadioButtonMenuItem(const String& text, bool selected = false);
 //     virtual ~RadioButtonMenuItem();
 //   };
 
@@ -150,7 +150,7 @@ class VACA_DLL Menu : public MenuItem
 {
 public:
 
-  typedef std::vector<MenuItem *> Container;
+  typedef std::vector<MenuItem*> Container;
 
 private:
 
@@ -160,37 +160,37 @@ private:
 public:
 
   Menu();
-  explicit Menu(const String &text);
+  explicit Menu(const String& text);
   explicit Menu(int menuId);
   explicit Menu(HMENU hmenu);
   virtual ~Menu();
 
-  MenuItem *add(MenuItem *menuItem);
-  MenuItem *add(const String &text, Keys::Type defaultShortcut = Keys::None);
+  MenuItem* add(MenuItem* menuItem);
+  MenuItem* add(const String& text, Keys::Type defaultShortcut = Keys::None);
   void addSeparator();
 
-  MenuItem *insert(int index, MenuItem *menuItem);
-  MenuItem *insert(int index, const String &text);
+  MenuItem* insert(int index, MenuItem* menuItem);
+  MenuItem* insert(int index, const String& text);
   void insertSeparator(int index);
 
-  MenuItem *remove(MenuItem *menuItem);
-  MenuItem *remove(int index);
+  MenuItem* remove(MenuItem* menuItem);
+  MenuItem* remove(int index);
 
-  MenuItem *getMenuItemByIndex(int index);
-  MenuItem *getMenuItemById(int id);
-  int getMenuItemIndex(MenuItem *menuItem);
-  // int getFirstMenuItemIndexByRadio(MenuItem *menuItem);
-  // int getLastMenuItemIndexByRadio(MenuItem *menuItem);
+  MenuItem* getMenuItemByIndex(int index);
+  MenuItem* getMenuItemById(int id);
+  int getMenuItemIndex(MenuItem* menuItem);
+  // int getFirstMenuItemIndexByRadio(MenuItem* menuItem);
+  // int getLastMenuItemIndexByRadio(MenuItem* menuItem);
   int getItemCount();
   Container getMenuItems();
 
-  virtual MenuItem *checkShortcuts(Keys::Type pressedKey);
+  virtual MenuItem* checkShortcuts(Keys::Type pressedKey);
 
-  // PopupMenu *getPopupMenu();
+  // PopupMenu* getPopupMenu();
 
   virtual bool isMenu() const;
 
-//   Menu *getMenuByHMENU(HMENU hmenu);
+//   Menu* getMenuByHMENU(HMENU hmenu);
 
   HMENU getHMENU();
 
@@ -211,7 +211,7 @@ public:
   explicit MenuBar(int menuId);
   virtual ~MenuBar();
 
-  MdiListMenu *getMdiListMenu();
+  MdiListMenu* getMdiListMenu();
 
 };
 
@@ -222,7 +222,7 @@ class VACA_DLL MdiListMenu : public Menu
 {
 public:
 
-  MdiListMenu(const String &text);
+  MdiListMenu(const String& text);
   virtual ~MdiListMenu();
 
   virtual bool isMdiList() const;
@@ -238,11 +238,11 @@ public:
   PopupMenu();
   virtual ~PopupMenu();
 
-  MenuItem *add(MenuItem *menuitem);
-  MenuItem *add(const String &text);
-  MenuItem *insert(MenuItem *menuitem, int index);
-  MenuItem *insert(const String &text, int index);
-  void remove(MenuItem *menuitem);
+  MenuItem* add(MenuItem* menuitem);
+  MenuItem* add(const String& text);
+  MenuItem* insert(MenuItem* menuitem, int index);
+  MenuItem* insert(const String& text, int index);
+  void remove(MenuItem* menuitem);
   void remove(int index);
 
 };

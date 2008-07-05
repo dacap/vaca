@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="Hashing"
-	ProjectGUID="{36830CF4-5F24-4D7B-BDA7-11373D34F61B}"
+	ProjectGUID="{102F9EB4-9AD5-4030-929C-CAC762D8D5E7}"
 	RootNamespace="Hashing"
 	Keyword="Win32Proj">
 	<Platforms>

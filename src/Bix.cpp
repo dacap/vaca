@@ -48,8 +48,8 @@ struct Bix::Element
   virtual ~Element() { }
   virtual int getFlags() = 0;
   virtual bool isLayoutFree() = 0;
-  virtual Size getPreferredSize(const Size &fitIn) = 0;
-  virtual void setBounds(Bix *bix, const Rect &rc) = 0;
+  virtual Size getPreferredSize(const Size& fitIn) = 0;
+  virtual void setBounds(Bix* bix, const Rect& rc) = 0;
 };
 
 /**
@@ -57,13 +57,13 @@ struct Bix::Element
  */
 struct Bix::SubBixElement : public Bix::Element
 {
-  Bix *bix;
-  SubBixElement(Bix *b) { bix=b; }
+  Bix* bix;
+  SubBixElement(Bix* b) { bix=b; }
   virtual ~SubBixElement() { delete bix; }
   virtual int getFlags() { return bix->m_flags; };
   virtual bool isLayoutFree() { return false; }
-  virtual Size getPreferredSize(const Size &fitIn) { return bix->getPreferredSize(fitIn); }
-  virtual void setBounds(Bix *parentBix, const Rect &rc) { bix->layout(parentBix, rc); }
+  virtual Size getPreferredSize(const Size& fitIn) { return bix->getPreferredSize(fitIn); }
+  virtual void setBounds(Bix* parentBix, const Rect& rc) { bix->layout(parentBix, rc); }
 };
 
 /**
@@ -71,14 +71,14 @@ struct Bix::SubBixElement : public Bix::Element
  */
 struct Bix::WidgetElement : public Bix::Element
 {
-  Widget *widget;
+  Widget* widget;
   int flags;
-  WidgetElement(Widget *w, int f) { widget=w; flags=f; }
+  WidgetElement(Widget* w, int f) { widget=w; flags=f; }
   virtual ~WidgetElement() { }
   virtual int getFlags() { return flags; };
   virtual bool isLayoutFree() { return widget->isLayoutFree(); }
-  virtual Size getPreferredSize(const Size &fitIn) { return widget->getPreferredSize(fitIn); }
-  virtual void setBounds(Bix *parentBix, const Rect &rc) { parentBix->moveWidget(widget, rc); }
+  virtual Size getPreferredSize(const Size& fitIn) { return widget->getPreferredSize(fitIn); }
+  virtual void setBounds(Bix* parentBix, const Rect& rc) { parentBix->moveWidget(widget, rc); }
 };
 
 /**
@@ -87,10 +87,10 @@ struct Bix::WidgetElement : public Bix::Element
 struct Bix::Matrix
 {
   int cols, rows;
-  Element ***elem; // matrix of pointers "typeof(elem[y][x]) = Element *"
-  Size **size;
-  bool *col_fill;
-  bool *row_fill;
+  Element*** elem; // matrix of pointers "typeof(elem[y][x]) = Element *"
+  Size** size;
+  bool* col_fill;
+  bool* row_fill;
 
   Matrix(int c, int r) {
     cols = c;
@@ -127,7 +127,7 @@ struct Bix::Matrix
     delete[] row_fill;
   }
 
-  void setElementAt(int x, int y, Element *e) {
+  void setElementAt(int x, int y, Element* e) {
     elem[y][x] = e;
     if (e->getFlags() & BixFillX) col_fill[x] = true;
     if (e->getFlags() & BixFillY) row_fill[y] = true;
@@ -156,7 +156,7 @@ struct Bix::Matrix
     return count;
   }
 
-  void calcCellsSize(const Size &fitIn)
+  void calcCellsSize(const Size& fitIn)
   {
     register int x, y;
   
@@ -184,7 +184,7 @@ struct Bix::Matrix
 //////////////////////////////////////////////////////////////////////
 // Bix
 
-Bix::Bix(Widget *container, int flags, int matrixColumns)
+Bix::Bix(Widget* container, int flags, int matrixColumns)
 {
   if (container != NULL)
     container->setLayout(this);
@@ -310,24 +310,24 @@ void Bix::setMatrixColumns(int matrixColumns)
  * @warning The returned Bix can't be deleted (it's automatically
  *          deleted by the parent bix).
  */
-Bix *Bix::add(int flags, int matrixColumns)
+Bix* Bix::add(int flags, int matrixColumns)
 {
-  Bix *subbix = new Bix(NULL, flags, matrixColumns);
+  Bix* subbix = new Bix(NULL, flags, matrixColumns);
   m_elements.push_back(new SubBixElement(subbix));
   return subbix;
 }
 
-void Bix::add(Widget *child, int flags)
+void Bix::add(Widget* child, int flags)
 {
   m_elements.push_back(new WidgetElement(child, flags));
 }
 
-void Bix::remove(Bix *subbix)
+void Bix::remove(Bix* subbix)
 {
   Elements::iterator it;
 
   for (it = m_elements.begin(); it != m_elements.end(); ++it) {
-    SubBixElement *element = dynamic_cast<SubBixElement *>(*it);
+    SubBixElement* element = dynamic_cast<SubBixElement*>(*it);
     if (element != NULL &&
 	element->bix == subbix) {
       remove_element_from_container(m_elements, element);
@@ -339,12 +339,12 @@ void Bix::remove(Bix *subbix)
   assert(false);
 }
 
-void Bix::remove(Widget *child)
+void Bix::remove(Widget* child)
 {
   Elements::iterator it;
 
   for (it = m_elements.begin(); it != m_elements.end(); ++it) {
-    WidgetElement *element = dynamic_cast<WidgetElement *>(*it);
+    WidgetElement* element = dynamic_cast<WidgetElement*>(*it);
     if (element != NULL &&
 	element->widget == child) {
       remove_element_from_container(m_elements, element);
@@ -356,19 +356,19 @@ void Bix::remove(Widget *child)
   assert(false);
 }
 
-Size Bix::getPreferredSize(Widget *parent, Widget::Container &widgets, const Size &fitIn)
+Size Bix::getPreferredSize(Widget* parent, Widget::Container& widgets, const Size& fitIn)
 {
   return getPreferredSize(fitIn);
 }
 
-void Bix::layout(Widget *parent, Widget::Container &widgets, const Rect &rc)
+void Bix::layout(Widget* parent, Widget::Container& widgets, const Rect& rc)
 {
   beginMovement(widgets);
   layout(this, rc);
   endMovement();
 }
 
-Size Bix::getPreferredSize(const Size &fitIn)
+Size Bix::getPreferredSize(const Size& fitIn)
 {
   Size matDim = getMatrixDimension();
   if (matDim.w > 0 && matDim.h > 0) {
@@ -383,7 +383,7 @@ Size Bix::getPreferredSize(const Size &fitIn)
     return Size(0, 0);
 }
 
-Size Bix::getPreferredSize(Matrix &mat)
+Size Bix::getPreferredSize(Matrix& mat)
 {
   Size sz;
 
@@ -396,7 +396,7 @@ Size Bix::getPreferredSize(Matrix &mat)
   return sz;
 }
 
-void Bix::layout(Bix *parentBix, const Rect &rc)
+void Bix::layout(Bix* parentBix, const Rect& rc)
 {
   Size matDim = getMatrixDimension();
   if (matDim.w > 0 && matDim.h > 0) {
@@ -553,7 +553,7 @@ Size Bix::getMatrixDimension()
   return Size(cols, rows);
 }
 
-void Bix::fillMatrix(Matrix &mat)
+void Bix::fillMatrix(Matrix& mat)
 {
   switch (m_flags & BixTypeMask) {
 
@@ -619,7 +619,7 @@ void Bix::fillMatrix(Matrix &mat)
  * @throw ParseException
  *     Throw when the syntax of the string @a fmt is bad-formed.
  */
-Bix *Bix::parse(const char *fmt, ...)
+Bix* Bix::parse(const char* fmt, ...)
 {
 #define PARSE_ASSERT(condition, error)			\
       if (!(condition)) throw ParseException(error);
@@ -632,17 +632,17 @@ Bix *Bix::parse(const char *fmt, ...)
       bixes.push(newBix);						\
       columns.push(new int(0));
     
-  Bix *mainBix = NULL;		// first Bix created
-  Bix *newBix = NULL;		// current new Bix
-  std::stack<Bix *> bixes;	// current stack of bixes
-  std::stack<int *> columns;	// columns for bixes
+  Bix* mainBix = NULL;		// first Bix created
+  Bix* newBix = NULL;		// current new Bix
+  std::stack<Bix*> bixes;	// current stack of bixes
+  std::stack<int*> columns;	// columns for bixes
   int fill = 0;			// want to fill next widget/bix
   bool expectClose = false;	// true is the next token must be a comma or a closing-parenthesis
   va_list ap;
 
   va_start(ap, fmt);
   try {
-    for (const char *p=fmt; *p; ++p) {
+    for (const char* p=fmt; *p; ++p) {
       // is not a space character...
       if (!isspace(*p)) {
 	// expect a close?
@@ -659,7 +659,7 @@ Bix *Bix::parse(const char *fmt, ...)
 
 	    (*columns.top())++;
 
-	    bixes.top()->add(va_arg(ap, Widget *), fill);
+	    bixes.top()->add(va_arg(ap, Widget*), fill);
 
 	    expectClose = true;
 	    fill = 0;

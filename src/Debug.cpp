@@ -39,7 +39,7 @@
 using namespace Vaca;
 
 static boost::mutex log_mutex;
-static FILE *log_file = NULL;
+static FILE* log_file = NULL;
 
 void Vaca::__vaca_trace(LPCSTR filename, UINT line, LPCSTR fmt, ...)
 {

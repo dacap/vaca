@@ -66,7 +66,7 @@ class VACA_DLL KeyEvent : public Event
 
 public:
 
-  KeyEvent(Widget *source, Keys::Type keys, int charCode = 0);
+  KeyEvent(Widget* source, Keys::Type keys, int charCode = 0);
   virtual ~KeyEvent();
 
   void consume();

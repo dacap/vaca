@@ -41,11 +41,11 @@ namespace Vaca {
 
 class ScopedLock : private boost::noncopyable
 {
-  Mutex &m_mutex;
+  Mutex& m_mutex;
 
 public:
 
-  ScopedLock(Mutex &mutex)
+  ScopedLock(Mutex& mutex)
     : m_mutex(mutex)
   {
     m_mutex.lock();

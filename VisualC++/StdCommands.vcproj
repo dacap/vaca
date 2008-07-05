@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="StdCommands"
-	ProjectGUID="{915E4B75-0FE6-49FE-869B-A61B452C1F1B}"
+	ProjectGUID="{0A88A4D3-C1C3-425B-A90F-1F3B0442D5C1}"
 	RootNamespace="StdCommands"
 	Keyword="Win32Proj">
 	<Platforms>

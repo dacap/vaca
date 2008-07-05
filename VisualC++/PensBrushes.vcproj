@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="PensBrushes"
-	ProjectGUID="{3CFBDC6E-0942-4F7F-836D-D299CEF1AAEA}"
+	ProjectGUID="{0B6F1B96-0F42-4A17-BD3C-5641EF2FCA12}"
 	RootNamespace="PensBrushes"
 	Keyword="Win32Proj">
 	<Platforms>

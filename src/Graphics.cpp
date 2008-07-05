@@ -51,8 +51,8 @@
 
 using namespace Vaca;
 
-std::list<Graphics::_Pen *> Graphics::mPens;
-std::list<Graphics::_Brush *> Graphics::mBrushes;
+std::list<Graphics::_Pen*> Graphics::m_pens;
+std::list<Graphics::_Brush*> Graphics::m_brushes;
 
 //////////////////////////////////////////////////////////////////////
 // Graphics::_Pen
@@ -125,7 +125,7 @@ Graphics::Graphics(HDC hdc)
   m_penWidth    = 1;
 }
 
-Graphics::Graphics(HDC hdc, Image &image)
+Graphics::Graphics(HDC hdc, Image& image)
 {
   assert(hdc != NULL);
 
@@ -140,7 +140,7 @@ Graphics::Graphics(HDC hdc, Image &image)
   SelectObject(m_HDC, image.getHBITMAP());
 }
 
-Graphics::Graphics(Widget *widget)
+Graphics::Graphics(Widget* widget)
 {
   HWND hwnd = widget->getHWND();
 
@@ -192,63 +192,63 @@ Rect Graphics::getClipBounds()
     return Rect(&rc);
 }
 
-void Graphics::getClipRegion(Region &rgn)
+void Graphics::getClipRegion(Region& rgn)
 {
   assert(m_HDC != NULL);
-  // TODO Region::assign(const Rect &rc)
+  // TODO Region::assign(const Rect& rc)
   rgn = Region::fromRect(getClipBounds());
   GetClipRgn(m_HDC, rgn.getHRGN());
 }
 
-void Graphics::setClipRegion(Region &rgn)
+void Graphics::setClipRegion(Region& rgn)
 {
   assert(m_HDC != NULL);
   ExtSelectClipRgn(m_HDC, rgn.getHRGN(), RGN_COPY);
 }
 
-void Graphics::excludeClipRect(const Rect &rc)
+void Graphics::excludeClipRect(const Rect& rc)
 {
   assert(m_HDC != NULL);
   ExcludeClipRect(m_HDC, rc.x, rc.y, rc.x+rc.w, rc.y+rc.h);
 }
 
-void Graphics::excludeClipRegion(Region &rgn)
+void Graphics::excludeClipRegion(Region& rgn)
 {
   assert(m_HDC != NULL);
   ExtSelectClipRgn(m_HDC, rgn.getHRGN(), RGN_DIFF);
 }
 
-void Graphics::intersectClipRect(const Rect &rc)
+void Graphics::intersectClipRect(const Rect& rc)
 {
   assert(m_HDC != NULL);
   IntersectClipRect(m_HDC, rc.x, rc.y, rc.x+rc.w, rc.y+rc.h);
 }
 
-void Graphics::intersectClipRegion(Region &rgn)
+void Graphics::intersectClipRegion(Region& rgn)
 {
   assert(m_HDC != NULL);
   ExtSelectClipRgn(m_HDC, rgn.getHRGN(), RGN_AND);
 }
 
-void Graphics::addClipRegion(Region &rgn)
+void Graphics::addClipRegion(Region& rgn)
 {
   assert(m_HDC != NULL);
   ExtSelectClipRgn(m_HDC, rgn.getHRGN(), RGN_OR);
 }
 
-void Graphics::xorClipRegion(Region &rgn)
+void Graphics::xorClipRegion(Region& rgn)
 {
   assert(m_HDC != NULL);
   ExtSelectClipRgn(m_HDC, rgn.getHRGN(), RGN_XOR);
 }
 
-bool Graphics::isVisible(const Point &pt)
+bool Graphics::isVisible(const Point& pt)
 {
   assert(m_HDC != NULL);
   return PtVisible(m_HDC, pt.x, pt.y) != FALSE;
 }
 
-bool Graphics::isVisible(const Rect &rc)
+bool Graphics::isVisible(const Rect& rc)
 {
   assert(m_HDC != NULL);
   RECT rc2 = rc;
@@ -272,18 +272,18 @@ Color Graphics::getColor()
   return m_color;
 }
 
-void Graphics::setColor(const Color &color)
+void Graphics::setColor(const Color& color)
 {
   m_color = color;
 }
 
-Font *Graphics::getFont()
+Font* Graphics::getFont()
 {
   assert(m_font != NULL);
   return m_font;
 }
 
-void Graphics::setFont(Font *font)
+void Graphics::setFont(Font* font)
 {
   assert(font != NULL);
   m_font = font;
@@ -318,7 +318,7 @@ void Graphics::setMiterLimit(double limit)
   SetMiterLimit(m_HDC, static_cast<FLOAT>(limit), NULL);
 }
 
-Color Graphics::getPixel(const Point &pt)
+Color Graphics::getPixel(const Point& pt)
 {
   assert(m_HDC != NULL);
 
@@ -332,14 +332,14 @@ Color Graphics::getPixel(int x, int y)
   return Color(GetPixel(m_HDC, x, y));
 }
 
-void Graphics::setPixel(const Point &pt, const Color &color)
+void Graphics::setPixel(const Point& pt, const Color& color)
 {
   assert(m_HDC != NULL);
 
   SetPixel(m_HDC, pt.x, pt.y, color.getColorRef());
 }
 
-void Graphics::setPixel(int x, int y, const Color &color)
+void Graphics::setPixel(int x, int y, const Color& color)
 {
   assert(m_HDC != NULL);
 
@@ -358,7 +358,7 @@ void Graphics::endPath()
   EndPath(m_HDC);
 }
 
-void Graphics::strokePath(Pen &pen)
+void Graphics::strokePath(Pen& pen)
 {
   assert(m_HDC != NULL);
 
@@ -369,7 +369,7 @@ void Graphics::strokePath(Pen &pen)
   SelectObject(m_HDC, oldPen);
 }
 
-void Graphics::fillPath(Brush &brush)
+void Graphics::fillPath(Brush& brush)
 {
   assert(m_HDC != NULL);
 
@@ -386,7 +386,7 @@ void Graphics::fillPath(Brush &brush)
   SelectObject(m_HDC, oldBrush);
 }
 
-void Graphics::moveTo(const Point &pt)
+void Graphics::moveTo(const Point& pt)
 {
   moveTo(pt.x, pt.y);
 }
@@ -397,12 +397,12 @@ void Graphics::moveTo(int x, int y)
   MoveToEx(m_HDC, x, y, NULL);
 }
 
-void Graphics::lineTo(Pen &pen, const Point &pt)
+void Graphics::lineTo(Pen& pen, const Point& pt)
 {
   lineTo(pen, pt.x, pt.y);
 }
 
-void Graphics::lineTo(Pen &pen, int x, int y)
+void Graphics::lineTo(Pen& pen, int x, int y)
 {
   assert(m_HDC != NULL);
 
@@ -425,7 +425,7 @@ void Graphics::curveTo(int x1, int y1, int x2, int y2, int x3, int y3)
   drawBezierTo(pt, 3);
 }
 
-void Graphics::curveTo(const Point &pt1, const Point &pt2, const Point &pt3)
+void Graphics::curveTo(const Point& pt1, const Point& pt2, const Point& pt3)
 {
   POINT pt[3];
   pt[0] = pt1;
@@ -434,13 +434,13 @@ void Graphics::curveTo(const Point &pt1, const Point &pt2, const Point &pt3)
   drawBezierTo(pt, 3);
 }
 
-void Graphics::curveTo(const std::vector<Point> &points)
+void Graphics::curveTo(const std::vector<Point>& points)
 {
   int numPoints = static_cast<int>(points.size());
 
   assert(numPoints >= 3);
 
-  POINT *pt = new POINT[numPoints];
+  POINT* pt = new POINT[numPoints];
   std::copy(points.begin(), points.end(), pt);
   drawBezierTo(pt, numPoints);
   delete[] pt;
@@ -452,7 +452,7 @@ void Graphics::closeFigure()
   CloseFigure(m_HDC);
 }
 
-void Graphics::getRegionFromPath(Region &region)
+void Graphics::getRegionFromPath(Region& region)
 {
   assert(m_HDC != NULL);
 
@@ -463,12 +463,12 @@ void Graphics::getRegionFromPath(Region &region)
 		  SelfDestruction(true));
 }
 
-void Graphics::drawString(const String &str, const Point &pt)
+void Graphics::drawString(const String& str, const Point& pt)
 {
   drawString(str, pt.x, pt.y);
 }
 
-void Graphics::drawString(const String &str, int x, int y)
+void Graphics::drawString(const String& str, int x, int y)
 {
   assert(m_HDC != NULL);
 
@@ -487,7 +487,7 @@ void Graphics::drawString(const String &str, int x, int y)
   SetTextColor(m_HDC, oldColor);
 }
 
-void Graphics::drawString(const String &str, const Rect &_rc, int flags)
+void Graphics::drawString(const String& str, const Rect& _rc, int flags)
 {
   assert(m_HDC != NULL);
 
@@ -508,7 +508,7 @@ void Graphics::drawString(const String &str, const Rect &_rc, int flags)
   SetTextColor(m_HDC, oldColor);
 }
 
-void Graphics::drawDisabledString(const String &str, const Rect &rc, int flags)
+void Graphics::drawDisabledString(const String& str, const Rect& rc, int flags)
 {
   Color oldColor = m_color;
 
@@ -521,32 +521,32 @@ void Graphics::drawDisabledString(const String &str, const Rect &rc, int flags)
   m_color = oldColor;
 }
 
-void Graphics::drawImage(Image &image, int x, int y)
+void Graphics::drawImage(Image& image, int x, int y)
 {
   drawImage(image, x, y, 0, 0, image.getWidth(), image.getHeight());
 }
 
-void Graphics::drawImage(Image &image, int dstX, int dstY, int srcX, int srcY, int width, int height)
+void Graphics::drawImage(Image& image, int dstX, int dstY, int srcX, int srcY, int width, int height)
 {
   assert(m_HDC != NULL);
 
-  Graphics *source = image.getGraphics();
+  Graphics* source = image.getGraphics();
 
   assert(source->getHDC() != NULL);
   
   BitBlt(m_HDC, dstX, dstY, width, height, source->getHDC(), srcX, srcY, SRCCOPY);
 }
 
-void Graphics::drawImage(Image &image, int x, int y, const Color &bgColor)
+void Graphics::drawImage(Image& image, int x, int y, const Color& bgColor)
 {
   drawImage(image, x, y, 0, 0, image.getWidth(), image.getHeight(), bgColor);
 }
 
-void Graphics::drawImage(Image &image, int dstX, int dstY, int srcX, int srcY, int width, int height, const Color &bgColor)
+void Graphics::drawImage(Image& image, int dstX, int dstY, int srcX, int srcY, int width, int height, const Color& bgColor)
 {
   assert(m_HDC != NULL);
 
-  Graphics *source = image.getGraphics();
+  Graphics* source = image.getGraphics();
 
   assert(source->getHDC() != NULL);
 
@@ -575,22 +575,22 @@ void Graphics::drawImage(Image &image, int dstX, int dstY, int srcX, int srcY, i
 #endif
 }
 
-void Graphics::drawImage(Image &image, const Point &pt)
+void Graphics::drawImage(Image& image, const Point& pt)
 {
   drawImage(image, pt.x, pt.y);
 }
 
-void Graphics::drawImage(Image &image, const Point &pt, const Rect &rc)
+void Graphics::drawImage(Image& image, const Point& pt, const Rect& rc)
 {
   drawImage(image, pt.x, pt.y, rc.x, rc.y, rc.w, rc.h);
 }
 
-void Graphics::drawImage(Image &image, const Point &pt, const Color &bgColor)
+void Graphics::drawImage(Image& image, const Point& pt, const Color& bgColor)
 {
   drawImage(image, pt.x, pt.y, bgColor);
 }
 
-void Graphics::drawImage(Image &image, const Point &pt, const Rect &rc, const Color &bgColor)
+void Graphics::drawImage(Image& image, const Point& pt, const Rect& rc, const Color& bgColor)
 {
   drawImage(image, pt.x, pt.y, rc.x, rc.y, rc.w, rc.h, bgColor);
 }
@@ -623,7 +623,7 @@ void Graphics::drawImage(Image &image, const Point &pt, const Rect &rc, const Co
  *     @li ILD_NORMAL
  *     @li ILD_TRANSPARENT
  */
-void Graphics::drawImageList(ImageList &imageList, int imageIndex, int x, int y, int style)
+void Graphics::drawImageList(ImageList& imageList, int imageIndex, int x, int y, int style)
 {
   assert(m_HDC != NULL);
   assert(imageList.isValid());
@@ -632,17 +632,17 @@ void Graphics::drawImageList(ImageList &imageList, int imageIndex, int x, int y,
 		 imageIndex, m_HDC, x, y, style);
 }
 
-void Graphics::drawImageList(ImageList &imageList, int imageIndex, const Point &pt, int style)
+void Graphics::drawImageList(ImageList& imageList, int imageIndex, const Point& pt, int style)
 {
   drawImageList(imageList, imageIndex, pt.x, pt.y, style);
 }
 
-void Graphics::drawLine(Pen &pen, const Point &pt1, const Point &pt2)
+void Graphics::drawLine(Pen& pen, const Point& pt1, const Point& pt2)
 {
   drawLine(pen, pt1.x, pt1.y, pt2.x, pt2.y);
 }
 
-void Graphics::drawLine(Pen &pen, int x1, int y1, int x2, int y2)
+void Graphics::drawLine(Pen& pen, int x1, int y1, int x2, int y2)
 {
   assert(m_HDC != NULL);
 
@@ -656,14 +656,14 @@ void Graphics::drawLine(Pen &pen, int x1, int y1, int x2, int y2)
   SelectObject(m_HDC, oldPen);
 }
 
-void Graphics::drawBezier(Pen &pen, const Point points[4])
+void Graphics::drawBezier(Pen& pen, const Point points[4])
 {
   POINT pt[4];
   std::copy(points, points+4, pt);
   drawBezier(pen, pt, 4);
 }
 
-void Graphics::drawBezier(Pen &pen, const std::vector<Point> &points)
+void Graphics::drawBezier(Pen& pen, const std::vector<Point>& points)
 {
   int numPoints = static_cast<int>(points.size());
 
@@ -675,7 +675,7 @@ void Graphics::drawBezier(Pen &pen, const std::vector<Point> &points)
   delete[] pt;
 }
 
-void Graphics::drawBezier(Pen &pen, const Point &pt1, const Point &pt2, const Point &pt3, const Point &pt4)
+void Graphics::drawBezier(Pen& pen, const Point& pt1, const Point& pt2, const Point& pt3, const Point& pt4)
 {
   POINT pt[4];
   pt[0] = pt1;
@@ -685,7 +685,7 @@ void Graphics::drawBezier(Pen &pen, const Point &pt1, const Point &pt2, const Po
   drawBezier(pen, pt, 4);
 }
 
-void Graphics::drawBezier(Pen &pen, int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4)
+void Graphics::drawBezier(Pen& pen, int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4)
 {
   POINT pt[4];
   pt[0].x = x1;
@@ -699,12 +699,12 @@ void Graphics::drawBezier(Pen &pen, int x1, int y1, int x2, int y2, int x3, int 
   drawBezier(pen, pt, 4);
 }
 
-void Graphics::drawRect(Pen &pen, const Rect &rc)
+void Graphics::drawRect(Pen& pen, const Rect& rc)
 {
   drawRect(pen, rc.x, rc.y, rc.w, rc.h);
 }
 
-void Graphics::drawRect(Pen &pen, int x, int y, int w, int h)
+void Graphics::drawRect(Pen& pen, int x, int y, int w, int h)
 {
   assert(m_HDC != NULL);
 
@@ -717,12 +717,12 @@ void Graphics::drawRect(Pen &pen, int x, int y, int w, int h)
   SelectObject(m_HDC, oldBrush);
 }
 
-void Graphics::drawRoundRect(Pen &pen, const Rect &rc, const Size &ellipse)
+void Graphics::drawRoundRect(Pen& pen, const Rect& rc, const Size& ellipse)
 {
   drawRoundRect(pen, rc.x, rc.y, rc.w, rc.h, ellipse.w, ellipse.h);
 }
 
-void Graphics::drawRoundRect(Pen &pen, int x, int y, int w, int h, int ellipseWidth, int ellipseHeight)
+void Graphics::drawRoundRect(Pen& pen, int x, int y, int w, int h, int ellipseWidth, int ellipseHeight)
 {
   assert(m_HDC != NULL);
 
@@ -735,12 +735,12 @@ void Graphics::drawRoundRect(Pen &pen, int x, int y, int w, int h, int ellipseWi
   SelectObject(m_HDC, oldBrush);
 }
 
-void Graphics::draw3dRect(const Rect &rc, const Color &topLeft, const Color &bottomRight)
+void Graphics::draw3dRect(const Rect& rc, const Color& topLeft, const Color& bottomRight)
 {
   draw3dRect(rc.x, rc.y, rc.w, rc.h, topLeft, bottomRight);
 }
 
-void Graphics::draw3dRect(int x, int y, int w, int h, const Color &topLeft, const Color &bottomRight)
+void Graphics::draw3dRect(int x, int y, int w, int h, const Color& topLeft, const Color& bottomRight)
 {
   assert(m_HDC != NULL);
 
@@ -762,12 +762,12 @@ void Graphics::draw3dRect(int x, int y, int w, int h, const Color &topLeft, cons
  * Draws the outline of an ellipse. It uses the current selected color
  * (see setColor), and doesn't paint the background.
  */
-void Graphics::drawEllipse(Pen &pen, const Rect &rc)
+void Graphics::drawEllipse(Pen& pen, const Rect& rc)
 {
   drawEllipse(pen, rc.x, rc.y, rc.w, rc.h);
 }
 
-void Graphics::drawEllipse(Pen &pen, int x, int y, int w, int h)
+void Graphics::drawEllipse(Pen& pen, int x, int y, int w, int h)
 {
   assert(m_HDC != NULL);
 
@@ -786,12 +786,12 @@ void Graphics::drawEllipse(Pen &pen, int x, int y, int w, int h)
  * -360 and 360), and as a arc length of sweepAngle (in
  * counter-clockwise).
  */
-void Graphics::drawArc(Pen &pen, const Rect &rc, double startAngle, double sweepAngle)
+void Graphics::drawArc(Pen& pen, const Rect& rc, double startAngle, double sweepAngle)
 {
   drawArc(pen, rc.x, rc.y, rc.w, rc.h, startAngle, sweepAngle);
 }
 
-void Graphics::drawArc(Pen &pen, int x, int y, int w, int h, double startAngle, double sweepAngle)
+void Graphics::drawArc(Pen& pen, int x, int y, int w, int h, double startAngle, double sweepAngle)
 {
   assert(m_HDC != NULL);
 
@@ -808,12 +808,12 @@ void Graphics::drawArc(Pen &pen, int x, int y, int w, int h, double startAngle, 
   SelectObject(m_HDC, oldPen);
 }
 
-void Graphics::drawPie(Pen &pen, const Rect &rc, double startAngle, double sweepAngle)
+void Graphics::drawPie(Pen& pen, const Rect& rc, double startAngle, double sweepAngle)
 {
   drawPie(pen, rc.x, rc.y, rc.w, rc.h, startAngle, sweepAngle);
 }
 
-void Graphics::drawPie(Pen &pen, int x, int y, int w, int h, double startAngle, double sweepAngle)
+void Graphics::drawPie(Pen& pen, int x, int y, int w, int h, double startAngle, double sweepAngle)
 {
   assert(m_HDC != NULL);
 
@@ -832,12 +832,12 @@ void Graphics::drawPie(Pen &pen, int x, int y, int w, int h, double startAngle, 
   SelectObject(m_HDC, oldBrush);
 }
 
-void Graphics::drawChord(Pen &pen, const Rect &rc, double startAngle, double sweepAngle)
+void Graphics::drawChord(Pen& pen, const Rect& rc, double startAngle, double sweepAngle)
 {
   drawChord(pen, rc.x, rc.y, rc.w, rc.h, startAngle, sweepAngle);
 }
 
-void Graphics::drawChord(Pen &pen, int x, int y, int w, int h, double startAngle, double sweepAngle)
+void Graphics::drawChord(Pen& pen, int x, int y, int w, int h, double startAngle, double sweepAngle)
 {
   assert(m_HDC != NULL);
 
@@ -856,7 +856,7 @@ void Graphics::drawChord(Pen &pen, int x, int y, int w, int h, double startAngle
   SelectObject(m_HDC, oldBrush);
 }
 
-void Graphics::drawPolyline(Pen &pen, const std::vector<Point> &points)
+void Graphics::drawPolyline(Pen& pen, const std::vector<Point>& points)
 {
   int numPoints = static_cast<int>(points.size());
 
@@ -868,12 +868,12 @@ void Graphics::drawPolyline(Pen &pen, const std::vector<Point> &points)
   delete[] pt;
 }
 
-void Graphics::fillRect(Brush &brush, const Rect &rc)
+void Graphics::fillRect(Brush& brush, const Rect& rc)
 {
   fillRect(brush, rc.x, rc.y, rc.w, rc.h);
 }
 
-void Graphics::fillRect(Brush &brush, int x, int y, int w, int h)
+void Graphics::fillRect(Brush& brush, int x, int y, int w, int h)
 {
   assert(m_HDC != NULL);
 
@@ -886,12 +886,12 @@ void Graphics::fillRect(Brush &brush, int x, int y, int w, int h)
   SelectObject(m_HDC, oldBrush);
 }
 
-void Graphics::fillRoundRect(Brush &brush, const Rect &rc, const Size &ellipse)
+void Graphics::fillRoundRect(Brush& brush, const Rect& rc, const Size& ellipse)
 {
   fillRoundRect(brush, rc.x, rc.y, rc.w, rc.h, ellipse.w, ellipse.h);
 }
 
-void Graphics::fillRoundRect(Brush &brush, int x, int y, int w, int h, int ellipseWidth, int ellipseHeight)
+void Graphics::fillRoundRect(Brush& brush, int x, int y, int w, int h, int ellipseWidth, int ellipseHeight)
 {
   assert(m_HDC != NULL);
 
@@ -904,12 +904,12 @@ void Graphics::fillRoundRect(Brush &brush, int x, int y, int w, int h, int ellip
   SelectObject(m_HDC, oldBrush);
 }
 
-void Graphics::fillEllipse(Brush &brush, const Rect &rc)
+void Graphics::fillEllipse(Brush& brush, const Rect& rc)
 {
   fillEllipse(brush, rc.x, rc.y, rc.w, rc.h);
 }
 
-void Graphics::fillEllipse(Brush &brush, int x, int y, int w, int h)
+void Graphics::fillEllipse(Brush& brush, int x, int y, int w, int h)
 {
   assert(m_HDC != NULL);
 
@@ -922,12 +922,12 @@ void Graphics::fillEllipse(Brush &brush, int x, int y, int w, int h)
   SelectObject(m_HDC, oldBrush);
 }
 
-void Graphics::fillPie(Brush &brush, const Rect &rc, double startAngle, double sweepAngle)
+void Graphics::fillPie(Brush& brush, const Rect& rc, double startAngle, double sweepAngle)
 {
   fillPie(brush, rc.x, rc.y, rc.w, rc.h, startAngle, sweepAngle);
 }
 
-void Graphics::fillPie(Brush &brush, int x, int y, int w, int h, double startAngle, double sweepAngle)
+void Graphics::fillPie(Brush& brush, int x, int y, int w, int h, double startAngle, double sweepAngle)
 {
   assert(m_HDC != NULL);
 
@@ -946,12 +946,12 @@ void Graphics::fillPie(Brush &brush, int x, int y, int w, int h, double startAng
   SelectObject(m_HDC, oldBrush);
 }
 
-void Graphics::fillChord(Brush &brush, const Rect &rc, double startAngle, double sweepAngle)
+void Graphics::fillChord(Brush& brush, const Rect& rc, double startAngle, double sweepAngle)
 {
   fillChord(brush, rc.x, rc.y, rc.w, rc.h, startAngle, sweepAngle);
 }
 
-void Graphics::fillChord(Brush &brush, int x, int y, int w, int h, double startAngle, double sweepAngle)
+void Graphics::fillChord(Brush& brush, int x, int y, int w, int h, double startAngle, double sweepAngle)
 {
   assert(m_HDC != NULL);
 
@@ -970,16 +970,16 @@ void Graphics::fillChord(Brush &brush, int x, int y, int w, int h, double startA
   SelectObject(m_HDC, oldBrush);
 }
 
-void Graphics::fillRegion(Brush &brush, const Region &rgn)
+void Graphics::fillRegion(Brush& brush, const Region& rgn)
 {
   assert(m_HDC != NULL);
 
   FillRgn(m_HDC,
-	  const_cast<Region *>(&rgn)->getHRGN(),
+	  const_cast<Region*>(&rgn)->getHRGN(),
 	  brush.getHBRUSH());
 }
 
-void Graphics::fillGradientRect(const Rect &rc, const Color &startColor, const Color &endColor,
+void Graphics::fillGradientRect(const Rect& rc, const Color& startColor, const Color& endColor,
 				Orientation orientation)
 {
   fillGradientRect(rc.x, rc.y, rc.w, rc.h, startColor, endColor, orientation);
@@ -988,8 +988,8 @@ void Graphics::fillGradientRect(const Rect &rc, const Color &startColor, const C
 typedef BOOL (WINAPI * GFProc)(HDC, PTRIVERTEX, ULONG, PVOID, ULONG, ULONG);
 
 void Graphics::fillGradientRect(int x, int y, int w, int h,
-				const Color &startColor,
-				const Color &endColor,
+				const Color& startColor,
+				const Color& endColor,
 				Orientation orientation)
 {
   assert(m_HDC != NULL);
@@ -1036,16 +1036,16 @@ void Graphics::fillGradientRect(int x, int y, int w, int h,
 #endif
 }
 
-void Graphics::drawGradientRect(const Rect &rc,
-				const Color &topLeft, const Color &topRight,
-				const Color &bottomLeft, const Color &bottomRight)
+void Graphics::drawGradientRect(const Rect& rc,
+				const Color& topLeft, const Color& topRight,
+				const Color& bottomLeft, const Color& bottomRight)
 {
   drawGradientRect(rc.x, rc.y, rc.w, rc.h, topLeft, topRight, bottomLeft, bottomRight);
 }
 
 void Graphics::drawGradientRect(int x, int y, int w, int h,
-				const Color &topLeft, const Color &topRight,
-				const Color &bottomLeft, const Color &bottomRight)
+				const Color& topLeft, const Color& topRight,
+				const Color& bottomLeft, const Color& bottomRight)
 {
   fillGradientRect(x,     y,     w, 1, topLeft,    topRight,    Orientation::Horizontal);
   fillGradientRect(x,     y,     1, h, topLeft,    bottomLeft,  Orientation::Vertical);
@@ -1053,7 +1053,7 @@ void Graphics::drawGradientRect(int x, int y, int w, int h,
   fillGradientRect(x+w-1, y,     1, h, topRight,   bottomRight, Orientation::Vertical);
 }
 
-void Graphics::drawXorFrame(const Rect &rc, int border)
+void Graphics::drawXorFrame(const Rect& rc, int border)
 {
   drawXorFrame(rc.x, rc.y, rc.w, rc.h, border);
 }
@@ -1076,7 +1076,7 @@ void Graphics::drawXorFrame(int x, int y, int w, int h, int border)
   DeleteObject(hbitmap);
 }
 
-void Graphics::drawFocus(const Rect &rc)
+void Graphics::drawFocus(const Rect& rc)
 {
   assert(m_HDC != NULL);
 
@@ -1084,7 +1084,7 @@ void Graphics::drawFocus(const Rect &rc)
   ::DrawFocusRect(m_HDC, &_rc);
 }
 
-Size Graphics::measureString(const String &str, int fitInWidth, int flags)
+Size Graphics::measureString(const String& str, int fitInWidth, int flags)
 {
   assert(m_HDC != NULL);
 
@@ -1151,10 +1151,10 @@ HDC Graphics::getHDC()
  */
 HPEN Graphics::findHPEN(int style, int width, COLORREF color)
 {
-  for (std::list<_Pen *>::iterator it = mPens.begin();
-       it != mPens.end();
+  for (std::list<_Pen*>::iterator it = m_pens.begin();
+       it != m_pens.end();
        ++it) {
-    _Pen *pen = *it;
+    _Pen* pen = *it;
 
     if (pen->style == style &&
 	pen->width == width &&
@@ -1162,17 +1162,17 @@ HPEN Graphics::findHPEN(int style, int width, COLORREF color)
       return pen->handle;
   }
 
-  _Pen *pen = new _Pen(style, width, color);
-  mPens.push_back(pen);
+  _Pen* pen = new _Pen(style, width, color);
+  m_pens.push_back(pen);
   return pen->handle;
 }
 
 HBRUSH Graphics::findHBRUSH(int style, int hatch, COLORREF color)
 {
-  for (std::list<_Brush *>::iterator it = mBrushes.begin();
-       it != mBrushes.end();
+  for (std::list<_Brush*>::iterator it = m_brushes.begin();
+       it != m_brushes.end();
        ++it) {
-    _Brush *brush = *it;
+    _Brush* brush = *it;
 
     if (brush->style == style &&
 	brush->hatch == hatch &&
@@ -1180,28 +1180,28 @@ HBRUSH Graphics::findHBRUSH(int style, int hatch, COLORREF color)
       return brush->handle;
   }
 
-  _Brush *brush = new _Brush(style, hatch, color);
-  mBrushes.push_back(brush);
+  _Brush* brush = new _Brush(style, hatch, color);
+  m_brushes.push_back(brush);
   return brush->handle;
 }
 
 void Graphics::deleteHandles()
 {
-  for (std::list<_Pen *>::iterator it = mPens.begin();
-       it != mPens.end();
+  for (std::list<_Pen*>::iterator it = m_pens.begin();
+       it != m_pens.end();
        ++it)
     delete (*it);
 
-  for (std::list<_Brush *>::iterator it = mBrushes.begin();
-       it != mBrushes.end();
+  for (std::list<_Brush*>::iterator it = m_brushes.begin();
+       it != m_brushes.end();
        ++it)
     delete (*it);
 
-  mPens.clear();
-  mBrushes.clear();
+  m_pens.clear();
+  m_brushes.clear();
 }
 
-void Graphics::drawBezier(Pen &pen, CONST POINT *lppt, int numPoints)
+void Graphics::drawBezier(Pen& pen, CONST POINT* lppt, int numPoints)
 {
   assert(m_HDC != NULL);
 
@@ -1212,7 +1212,7 @@ void Graphics::drawBezier(Pen &pen, CONST POINT *lppt, int numPoints)
   SelectObject(m_HDC, oldPen);
 }
 
-void Graphics::drawBezierTo(CONST POINT *lppt, int numPoints)
+void Graphics::drawBezierTo(CONST POINT* lppt, int numPoints)
 {
   assert(m_HDC != NULL);
 
@@ -1224,7 +1224,7 @@ void Graphics::drawBezierTo(CONST POINT *lppt, int numPoints)
   SelectObject(m_HDC, oldPen);
 }
 
-void Graphics::drawPolyline(Pen &pen, CONST POINT *lppt, int numPoints)
+void Graphics::drawPolyline(Pen& pen, CONST POINT* lppt, int numPoints)
 {
   assert(m_HDC != NULL);
 

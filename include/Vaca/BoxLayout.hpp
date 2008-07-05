@@ -65,11 +65,11 @@ public:
   int getChildSpacing();
   void setChildSpacing(int childSpacing);
 
-  virtual Size getPreferredSize(Widget *parent, Widget::Container &widgets, const Size &fitIn);
+  virtual Size getPreferredSize(Widget* parent, Widget::Container& widgets, const Size& fitIn);
 
 protected:
 
-  virtual void layout(Widget *parent, Widget::Container &widgets, const Rect &rc);
+  virtual void layout(Widget* parent, Widget::Container& widgets, const Rect& rc);
 
 };
 

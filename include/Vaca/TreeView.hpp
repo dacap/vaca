@@ -62,18 +62,18 @@ class ImageList;
  */
 class VACA_DLL TreeViewIterator
   : public boost::iterator_facade<TreeViewIterator,
-				  TreeNode *,
+				  TreeNode*,
 				  boost::bidirectional_traversal_tag,
-				  TreeNode *>
+				  TreeNode*>
 {
-  TreeNode *m_currentNode;
+  TreeNode* m_currentNode;
 
 public:
   TreeViewIterator();
-  TreeViewIterator(const TreeViewIterator &other);
-  explicit TreeViewIterator(TreeNode *node);
+  TreeViewIterator(const TreeViewIterator& other);
+  explicit TreeViewIterator(TreeNode* node);
 
-  TreeViewIterator &operator=(const TreeViewIterator &other);
+  TreeViewIterator& operator=(const TreeViewIterator& other);
 
 private:
   friend class boost::iterator_core_access;
@@ -81,7 +81,7 @@ private:
   void increment();
   void decrement();
   bool equal(TreeViewIterator const& other) const;
-  TreeNode *dereference() const;
+  TreeNode* dereference() const;
     
 };
 
@@ -105,53 +105,53 @@ public:
    */
   typedef TreeViewIterator iterator;
 
-  TreeView(Widget *parent, Style style = TreeViewStyle);
+  TreeView(Widget* parent, Style style = TreeViewStyle);
   virtual ~TreeView();
 
   iterator begin();
   iterator end();
 
-  void setImageList(ImageList &imageList, int type);
-  void setNormalImageList(ImageList &imageList);
-  void setStateImageList(ImageList &imageList);
+  void setImageList(ImageList& imageList, int type);
+  void setNormalImageList(ImageList& imageList);
+  void setStateImageList(ImageList& imageList);
 
-  TreeNode *getRootNode();
+  TreeNode* getRootNode();
 
-  void addNode(TreeNode *node);
-  void removeNode(TreeNode *node);
+  void addNode(TreeNode* node);
+  void removeNode(TreeNode* node);
 
-  TreeNode *getSelectedNode();
-  void setSelectedNode(TreeNode *node);
+  TreeNode* getSelectedNode();
+  void setSelectedNode(TreeNode* node);
 
   virtual void setBgColor(Color color);
 
   // signals
-  boost::signal<void (TreeViewEvent &)> BeforeExpand;
-  boost::signal<void (TreeViewEvent &)> BeforeCollapse;
-  boost::signal<void (TreeViewEvent &)> BeforeSelect;
-  boost::signal<void (TreeViewEvent &)> BeforeLabelEdit;
-  boost::signal<void (TreeViewEvent &)> AfterExpand;
-  boost::signal<void (TreeViewEvent &)> AfterCollapse;
-  boost::signal<void (TreeViewEvent &)> AfterSelect;
-  boost::signal<void (TreeViewEvent &)> AfterLabelEdit;
-//   boost::signal<void (TreeViewEvent &)> BeginDrag;
-//   boost::signal<void (TreeViewEvent &)> EndDrag;
+  boost::signal<void (TreeViewEvent&)> BeforeExpand;
+  boost::signal<void (TreeViewEvent&)> BeforeCollapse;
+  boost::signal<void (TreeViewEvent&)> BeforeSelect;
+  boost::signal<void (TreeViewEvent&)> BeforeLabelEdit;
+  boost::signal<void (TreeViewEvent&)> AfterExpand;
+  boost::signal<void (TreeViewEvent&)> AfterCollapse;
+  boost::signal<void (TreeViewEvent&)> AfterSelect;
+  boost::signal<void (TreeViewEvent&)> AfterLabelEdit;
+//   boost::signal<void (TreeViewEvent&)> BeginDrag;
+//   boost::signal<void (TreeViewEvent&)> EndDrag;
 
 protected:
   // new events
-  virtual void onBeforeExpand(TreeViewEvent &ev);
-  virtual void onBeforeCollapse(TreeViewEvent &ev);
-  virtual void onBeforeSelect(TreeViewEvent &ev);
-  virtual void onBeforeLabelEdit(TreeViewEvent &ev);
-  virtual void onAfterExpand(TreeViewEvent &ev);
-  virtual void onAfterCollapse(TreeViewEvent &ev);
-  virtual void onAfterSelect(TreeViewEvent &ev);
-  virtual void onAfterLabelEdit(TreeViewEvent &ev);
-//   virtual void onBeginDrag(TreeViewEvent &ev);
-//   virtual void onEndDrag(TreeViewEvent &ev);
+  virtual void onBeforeExpand(TreeViewEvent& ev);
+  virtual void onBeforeCollapse(TreeViewEvent& ev);
+  virtual void onBeforeSelect(TreeViewEvent& ev);
+  virtual void onBeforeLabelEdit(TreeViewEvent& ev);
+  virtual void onAfterExpand(TreeViewEvent& ev);
+  virtual void onAfterCollapse(TreeViewEvent& ev);
+  virtual void onAfterSelect(TreeViewEvent& ev);
+  virtual void onAfterLabelEdit(TreeViewEvent& ev);
+//   virtual void onBeginDrag(TreeViewEvent& ev);
+//   virtual void onEndDrag(TreeViewEvent& ev);
 
   // reflection
-  virtual bool onReflectedNotify(LPNMHDR lpnmhdr, LRESULT &lResult);
+  virtual bool onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult);
 
 };
 

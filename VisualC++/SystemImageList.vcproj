@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="SystemImageList"
-	ProjectGUID="{DBB85C27-C2F4-4ECD-A765-8C2B02B07FC7}"
+	ProjectGUID="{17FCAD1B-8697-43A7-8DA9-3B96AF79EA5A}"
 	RootNamespace="SystemImageList"
 	Keyword="Win32Proj">
 	<Platforms>

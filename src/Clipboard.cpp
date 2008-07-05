@@ -36,7 +36,7 @@
 
 using namespace Vaca;
 
-Clipboard::Clipboard(Widget *owner)
+Clipboard::Clipboard(Widget* owner)
 {
   m_owner = owner;
 }
@@ -70,7 +70,7 @@ String Clipboard::getString() const
   return str;
 }
 
-void Clipboard::setString(const String &str)
+void Clipboard::setString(const String& str)
 {
   HWND hwndOwner = m_owner ? m_owner->getHWND(): NULL;
 

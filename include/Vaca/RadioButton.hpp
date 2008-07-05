@@ -53,9 +53,9 @@ class VACA_DLL RadioGroup
 
 public:
   RadioGroup();
-  RadioGroup(const RadioGroup &group);
+  RadioGroup(const RadioGroup& group);
 
-  bool operator==(const RadioGroup &other) const;
+  bool operator==(const RadioGroup& other) const;
 };
 
 /**
@@ -70,17 +70,17 @@ class VACA_DLL RadioButton : public ButtonBase
 
 public:
 
-  RadioButton(const String &text,
-	      const RadioGroup &group,
-	      Widget *parent,
+  RadioButton(const String& text,
+	      const RadioGroup& group,
+	      Widget* parent,
 	      Style style = RadioButtonStyle);
   virtual ~RadioButton();
 
-  const RadioGroup &getRadioGroup() const;
+  const RadioGroup& getRadioGroup() const;
 
 protected:
   // reflection
-  virtual bool onReflectedCommand(int id, int code, LRESULT &lResult);
+  virtual bool onReflectedCommand(int id, int code, LRESULT& lResult);
 };
 
 } // namespace Vaca

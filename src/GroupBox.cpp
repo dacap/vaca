@@ -37,7 +37,7 @@
 
 using namespace Vaca;
 
-GroupBox::GroupBox(const String &text, Widget *parent, Style style)
+GroupBox::GroupBox(const String& text, Widget* parent, Style style)
   : Widget(WidgetClassName(WC_BUTTON), parent, style)
 {
   setText(text);
@@ -71,7 +71,7 @@ Size GroupBox::getNonClientSize()
   return Size(4+4, sz.h+4);
 }
 
-void GroupBox::onPreferredSize(Size &sz)
+void GroupBox::onPreferredSize(Size& sz)
 {
   Size ncSize = getNonClientSize();
   
@@ -84,7 +84,7 @@ void GroupBox::onPreferredSize(Size &sz)
   sz += ncSize;
 }
 
-bool GroupBox::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult)
+bool GroupBox::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult)
 {
   // fix a bug with group-boxes: they don't clear the background
   if (message == WM_ERASEBKGND) {

@@ -89,7 +89,7 @@ Cursor::Cursor(SysCursor cursor)
     throw ResourceException("Can't load the SysCursor " + String::fromInt(cursor));
 }
 
-Cursor::Cursor(const String &fileName)
+Cursor::Cursor(const String& fileName)
 {
   m_HCURSOR = reinterpret_cast<HCURSOR>
     (LoadImage(Application::getHINSTANCE(),
@@ -103,7 +103,7 @@ Cursor::Cursor(const String &fileName)
     throw ResourceException("Can't load cursor from file " + fileName);
 }
 
-Cursor::Cursor(const Cursor &cursor)
+Cursor::Cursor(const Cursor& cursor)
 {
   if (cursor.m_autoDelete) {
     m_HCURSOR = CopyCursor(cursor.m_HCURSOR);

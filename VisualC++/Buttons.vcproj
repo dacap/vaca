@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="Buttons"
-	ProjectGUID="{9EA05FB3-73DB-481D-9AD5-596CE3E25066}"
+	ProjectGUID="{34A2BDB8-99D2-4371-890C-D60AFA252EA8}"
 	RootNamespace="Buttons"
 	Keyword="Win32Proj">
 	<Platforms>

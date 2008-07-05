@@ -53,7 +53,7 @@ public:
   virtual Side getSide() { return side; }
 };
 
-BasicDockArea::BasicDockArea(Side side, Widget *parent, Style style)
+BasicDockArea::BasicDockArea(Side side, Widget* parent, Style style)
   : DockArea(side, parent, style)
 {
 }
@@ -62,7 +62,7 @@ BasicDockArea::~BasicDockArea()
 {
 }
 
-bool BasicDockArea::hitTest(DockBar *bar, const Point &cursor, const Point &anchor, bool fromInside)
+bool BasicDockArea::hitTest(DockBar* bar, const Point& cursor, const Point& anchor, bool fromInside)
 {
   Rect bounds = getAbsoluteClientBounds();
   Size sz;
@@ -83,15 +83,15 @@ bool BasicDockArea::hitTest(DockBar *bar, const Point &cursor, const Point &anch
   return rc.contains(cursor);
 }
 
-DockInfo *BasicDockArea::createDefaultDockInfo(DockBar *bar)
+DockInfo* BasicDockArea::createDefaultDockInfo(DockBar* bar)
 {
-  BasicDockInfo *dockInfo = new BasicDockInfo();
+  BasicDockInfo* dockInfo = new BasicDockInfo();
   dockInfo->side = getSide();
   dockInfo->bounds = Rect(Point(0, 0), bar->getDockedSize(getSide()));
   return dockInfo;
 }
 
-DockInfo *BasicDockArea::createDockInfo(DockBar *bar, const Point &cursor, const Point &anchor)
+DockInfo* BasicDockArea::createDockInfo(DockBar* bar, const Point& cursor, const Point& anchor)
 {
   Rect bounds = getAbsoluteClientBounds();
   Size size = bar->getDockedSize(getSide());
@@ -114,15 +114,15 @@ DockInfo *BasicDockArea::createDockInfo(DockBar *bar, const Point &cursor, const
       origin.y = bounds.h-size.h;
   }
 
-  BasicDockInfo *dockInfo = new BasicDockInfo();
+  BasicDockInfo* dockInfo = new BasicDockInfo();
   dockInfo->side = getSide();
   dockInfo->bounds = Rect(origin, size);
   return dockInfo;
 }
 
-void BasicDockArea::drawXorDockInfoShape(Graphics &g, DockInfo *_dockInfo)
+void BasicDockArea::drawXorDockInfoShape(Graphics& g, DockInfo* _dockInfo)
 {
-  BasicDockInfo *dockInfo = static_cast<BasicDockInfo *>(_dockInfo);
+  BasicDockInfo* dockInfo = static_cast<BasicDockInfo*>(_dockInfo);
   Rect bounds = getAbsoluteClientBounds();
   Rect dockBarBounds = dockInfo->bounds;
   Rect externRect;
@@ -166,8 +166,8 @@ void BasicDockArea::layout()
   Widget::Container::iterator it;
 
   for (it=children.begin(); it!=children.end(); ++it) {
-    DockBar *dockBar = static_cast<DockBar *>(*it);
-    BasicDockInfo *dockInfo = static_cast<BasicDockInfo *>(dockBar->getDockInfo());
+    DockBar* dockBar = static_cast<DockBar*>(*it);
+    BasicDockInfo* dockInfo = static_cast<BasicDockInfo*>(dockBar->getDockInfo());
 
     assert(dockInfo != NULL);
 
@@ -176,7 +176,7 @@ void BasicDockArea::layout()
   }
 }
 
-void BasicDockArea::onPreferredSize(Size &sz)
+void BasicDockArea::onPreferredSize(Size& sz)
 {
   Widget::Container children = getChildren();
   Widget::Container::iterator it;
@@ -184,8 +184,8 @@ void BasicDockArea::onPreferredSize(Size &sz)
   sz = Size(0, 0);
 
   for (it=children.begin(); it!=children.end(); ++it) {
-    DockBar *dockBar = static_cast<DockBar *>(*it);
-    DockInfo *dockInfo = dockBar->getDockInfo();
+    DockBar* dockBar = static_cast<DockBar*>(*it);
+    DockInfo* dockInfo = dockBar->getDockInfo();
 
     assert(dockInfo != NULL);
 

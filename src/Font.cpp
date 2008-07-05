@@ -36,7 +36,7 @@
 
 using namespace Vaca;
 
-Font *Font::defaultFont = NULL;
+Font* Font::defaultFont = NULL;
 
 /**
  * Constructs an invalid font.
@@ -47,12 +47,12 @@ Font::Font()
   m_autoDelete = false;
 }
 
-Font::Font(const Font &font)
+Font::Font(const Font& font)
 {
   assign(font);
 }
 
-Font::Font(const Font &font, FontStyle style)
+Font::Font(const Font& font, FontStyle style)
 {
   LOGFONT lf;
   if (font.getLogFont(&lf)) {
@@ -164,13 +164,13 @@ FontStyle Font::getStyle()
  * Makes a copy of @a font. You can safely delete the @a font after
  * this method.
  */
-Font &Font::operator=(const Font &font)
+Font& Font::operator=(const Font& font)
 {
   assign(font);
   return *this;
 }
 
-void Font::assign(const Font &font)
+void Font::assign(const Font& font)
 {
   LOGFONT lf;
   if (font.getLogFont(&lf))
@@ -204,7 +204,7 @@ void Font::assign(LPLOGFONT lplf)
 //   return FontMetrics(this);
 // }
 
-Font *Font::getDefault()
+Font* Font::getDefault()
 {
   if (Font::defaultFont == NULL)
     Font::defaultFont = new Font(reinterpret_cast<HFONT>(GetStockObject(DEFAULT_GUI_FONT)));

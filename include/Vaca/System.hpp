@@ -62,8 +62,8 @@ public:
   static String getWindowsDirectory();
   static String getShellFolderPath(int folderCsidl, bool create);
 
-  static void getImageList(ImageList &imageList, bool smallImage);
-  static int getFileImageIndex(const String &fileName, bool smallImage);
+  static void getImageList(ImageList& imageList, bool smallImage);
+  static int getFileImageIndex(const String& fileName, bool smallImage);
 
   static Size getScreenSize();
   static Rect getWorkAreaBounds();
@@ -72,7 +72,7 @@ public:
   
   static bool getKeyState(Keys::Type);
   static Point getCursorPos();
-  static void setCursorPos(const Point &pt);
+  static void setCursorPos(const Point& pt);
 
   static String getUserName();
   static String getFriendlyUserName();

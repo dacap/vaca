@@ -180,7 +180,7 @@ String System::getShellFolderPath(int folderCsidl, bool create)
     return "";
 }
 
-void System::getImageList(ImageList &imageList, bool smallImage)
+void System::getImageList(ImageList& imageList, bool smallImage)
 {
   HIMAGELIST himl;
   SHFILEINFO shfi;
@@ -196,7 +196,7 @@ void System::getImageList(ImageList &imageList, bool smallImage)
     imageList.assign(himl, SelfDestruction(false));
 }
 
-int System::getFileImageIndex(const String &fileName, bool smallImage)
+int System::getFileImageIndex(const String& fileName, bool smallImage)
 {
   SHFILEINFO shfi;
 
@@ -297,7 +297,7 @@ Point System::getCursorPos()
   return Point(pt.x, pt.y);
 }
 
-void System::setCursorPos(const Point &pt)
+void System::setCursorPos(const Point& pt)
 {
   SetCursorPos(pt.x, pt.y);
 }
@@ -366,9 +366,9 @@ int System::getOS()
   ZeroMemory(&osvi, sizeof(OSVERSIONINFOEX));
   osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
 
-  if (!(bOsVersionInfoEx = GetVersionEx((OSVERSIONINFO *)&osvi))) {
+  if (!(bOsVersionInfoEx = GetVersionEx((OSVERSIONINFO*)&osvi))) {
     osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-    if (!GetVersionEx((OSVERSIONINFO *)&osvi))
+    if (!GetVersionEx((OSVERSIONINFO*)&osvi))
       return OS::Unknown;
   }
 

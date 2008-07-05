@@ -83,7 +83,7 @@ private:
   static void run_timer_thread();
   static void start_timer_thread();
   static void stop_timer_thread();
-  static void remove_timer(Timer *t);
+  static void remove_timer(Timer* t);
   static void fire_actions_for_thread();
   
 };

@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="BouncingBalls"
-	ProjectGUID="{257D27C5-CA22-4617-ABA7-7FE649368742}"
+	ProjectGUID="{BA4FC071-C70F-4803-AB87-48424862ABBA}"
 	RootNamespace="BouncingBalls"
 	Keyword="Win32Proj">
 	<Platforms>

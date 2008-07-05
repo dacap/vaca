@@ -67,21 +67,21 @@ class VACA_DLL Spinner : public Register<SpinnerClass>, public Widget
   
 public:
 
-  Spinner(Widget *parent,
+  Spinner(Widget* parent,
 	  Style spinStyle = SpinButtonStyle,
 	  Style style = SpinnerStyle);
   Spinner(int minValue, int maxValue, int value,
-	  Widget *parent,
+	  Widget* parent,
 	  Style spinStyle = SpinButtonStyle,
 	  Style style = SpinnerStyle);
   virtual ~Spinner();
 
-  Edit &getEdit();
-  SpinButton &getSpinButton();
+  Edit& getEdit();
+  SpinButton& getSpinButton();
 
   int getMinimum();
   int getMaximum();
-  void getRange(int &minValue, int &maxValue);
+  void getRange(int& minValue, int& maxValue);
   void setRange(int minValue, int maxValue);
 
   int getValue();
@@ -95,7 +95,7 @@ public:
 protected:
 
   // events
-  virtual void onPreferredSize(Size &sz);
+  virtual void onPreferredSize(Size& sz);
   
 };
 

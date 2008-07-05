@@ -48,8 +48,8 @@ class VACA_DLL BandedDockArea : public DockArea
 {
   struct BandInfo
   {
-    std::vector<DockBar *> bars; // bars in the band
-    int size;		// band's height (or width for vertical bands)
+    std::vector<DockBar*> bars; // bars in the band
+    int size;			// band's height (or width for vertical bands)
     BandInfo() : bars()
 	       , size(0) { }
   };
@@ -58,28 +58,28 @@ class VACA_DLL BandedDockArea : public DockArea
 
 public:
 
-  BandedDockArea(Side side, Widget *parent, Style style = BandedDockAreaStyle);
+  BandedDockArea(Side side, Widget* parent, Style style = BandedDockAreaStyle);
   virtual ~BandedDockArea();
 
-  virtual bool hitTest(DockBar *bar, const Point &cursor, const Point &anchor, bool fromInside);
-  virtual DockInfo *createDefaultDockInfo(DockBar *bar);
-  virtual DockInfo *createDockInfo(DockBar *bar, const Point &cursor, const Point &anchor);
-  virtual void drawXorDockInfoShape(Graphics &g, DockInfo *dockInfo);
+  virtual bool hitTest(DockBar* bar, const Point& cursor, const Point& anchor, bool fromInside);
+  virtual DockInfo* createDefaultDockInfo(DockBar* bar);
+  virtual DockInfo* createDockInfo(DockBar* bar, const Point& cursor, const Point& anchor);
+  virtual void drawXorDockInfoShape(Graphics& g, DockInfo* dockInfo);
 
   virtual void layout();
 
 protected:
   // events
-  virtual void onPreferredSize(Size &sz);
-  virtual void onPaint(Graphics &g);
-  virtual void onAddDockBar(DockBar *dockBar);
-  virtual void onRemoveDockBar(DockBar *dockBar);
-  virtual void onRedock(DockBar *dockBar, DockInfo *newDockInfo);
+  virtual void onPreferredSize(Size& sz);
+  virtual void onPaint(Graphics& g);
+  virtual void onAddDockBar(DockBar* dockBar);
+  virtual void onRemoveDockBar(DockBar* dockBar);
+  virtual void onRedock(DockBar* dockBar, DockInfo* newDockInfo);
 
 private:
   void updateBandSize(int bandIndex);
   Rect getBandBounds(int bandIndex);
-  void fitBounds(int bandIndex, int barIndex1, std::vector<Rect> &bounds);
+  void fitBounds(int bandIndex, int barIndex1, std::vector<Rect>& bounds);
 
 };
 

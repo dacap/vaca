@@ -40,14 +40,14 @@ class Component;
 
 class VACA_DLL Event
 {
-  Component *m_source;
+  Component* m_source;
 
 public:
 
-  Event(Component *source);
+  Event(Component* source);
   virtual ~Event();
 
-  Component *getSource();
+  Component* getSource();
 
 };
 

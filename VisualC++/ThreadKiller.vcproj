@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="ThreadKiller"
-	ProjectGUID="{D5702BF2-5DFF-4C4D-BF2B-51C62E38CF07}"
+	ProjectGUID="{FC28465C-1140-4F74-84F5-62D904C688D5}"
 	RootNamespace="ThreadKiller"
 	Keyword="Win32Proj">
 	<Platforms>

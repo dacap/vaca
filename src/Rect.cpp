@@ -55,7 +55,7 @@ Rect::Rect(int w, int h)
   this->h = h;
 }
 
-Rect::Rect(const Size &size)
+Rect::Rect(const Size& size)
 {
   x = 0;
   y = 0;
@@ -63,7 +63,7 @@ Rect::Rect(const Size &size)
   h = size.h;
 }
 
-Rect::Rect(const Rect &rect)
+Rect::Rect(const Rect& rect)
 {
   x = rect.x;
   y = rect.y;
@@ -71,7 +71,7 @@ Rect::Rect(const Rect &rect)
   h = rect.h;
 }
 
-Rect::Rect(const Point &point, const Size &size)
+Rect::Rect(const Point& point, const Size& size)
 {
   this->x = point.x;
   this->y = point.y;
@@ -79,7 +79,7 @@ Rect::Rect(const Point &point, const Size &size)
   this->h = size.h;
 }
 
-Rect::Rect(const Point &point1, const Point &point2)
+Rect::Rect(const Point& point1, const Point& point2)
 {
   Point leftTop = point1;
   Point rightBottom = point2;
@@ -126,54 +126,59 @@ Point Rect::getOrigin() const
   return Point(x, y);
 }
 
+Point Rect::getPoint2() const
+{
+  return Point(x+w, y+h);
+}
+
 Size Rect::getSize() const
 {
   return Size(w, h);
 }
 
-Rect &Rect::setOrigin(const Point &pt)
+Rect& Rect::setOrigin(const Point& pt)
 {
   x = pt.x;
   y = pt.y;
   return *this;
 }
 
-Rect &Rect::setSize(const Size &sz)
+Rect& Rect::setSize(const Size& sz)
 {
   w = sz.w;
   h = sz.h;
   return *this;
 }
 
-Rect &Rect::offset(int dx, int dy)
+Rect& Rect::offset(int dx, int dy)
 {
   x += dx;
   y += dy;
   return *this;
 }
 
-Rect &Rect::offset(const Point &point)
+Rect& Rect::offset(const Point& point)
 {
   x += point.x;
   y += point.y;
   return *this;
 }
 
-Rect &Rect::inflate(int dw, int dh)
+Rect& Rect::inflate(int dw, int dh)
 {
   w += dw;
   h += dh;
   return *this;
 }
 
-Rect &Rect::inflate(const Size &size)
+Rect& Rect::inflate(const Size& size)
 {
   w += size.w;
   h += size.h;
   return *this;
 }
 
-Rect &Rect::enlarge(int unit)
+Rect& Rect::enlarge(int unit)
 {
   x -= unit;
   y -= unit;
@@ -182,7 +187,7 @@ Rect &Rect::enlarge(int unit)
   return *this;
 }
 
-Rect &Rect::shrink(int unit)
+Rect& Rect::shrink(int unit)
 {
   x += unit;
   y += unit;
@@ -191,9 +196,8 @@ Rect &Rect::shrink(int unit)
   return *this;
 }
 
-bool Rect::contains(const Point &pt) const
+bool Rect::contains(const Point& pt) const
 {
-  // TODO empty stuff
   return
     pt.x >= x && pt.x < x+w && 
     pt.y >= y && pt.y < y+h;
@@ -202,10 +206,11 @@ bool Rect::contains(const Point &pt) const
 /**
  * This rectangle entirely contains the @c rc rectangle.
  */
-bool Rect::contains(const Rect &rc) const
+bool Rect::contains(const Rect& rc) const
 {
-  // TODO empty stuff
-  // TODO test it
+  if (isEmpty() || rc.isEmpty())
+    return false;
+
   return
     rc.x >= x && rc.x+rc.w <= x+w && 
     rc.y >= y && rc.y+rc.h <= y+h;
@@ -215,12 +220,11 @@ bool Rect::contains(const Rect &rc) const
  * Returns true if the intersection between this rectangle with @c rc
  * rectangle is not empty.
  */
-bool Rect::intersects(const Rect &rc) const
+bool Rect::intersects(const Rect& rc) const
 {
   if (isEmpty() || rc.isEmpty())
     return false;
 
-  // TODO test it
   return
     rc.x <= x+w && rc.x+rc.w > x && 
     rc.y <= y+h && rc.y+rc.h > y;
@@ -229,7 +233,7 @@ bool Rect::intersects(const Rect &rc) const
 /**
  * Returns the union rectangle between this and @c rc rectangles.
  */
-Rect Rect::createUnion(const Rect &rc) const
+Rect Rect::createUnion(const Rect& rc) const
 {
   if (isEmpty())
     return rc;
@@ -238,35 +242,33 @@ Rect Rect::createUnion(const Rect &rc) const
   else
     return Rect(Point(x < rc.x ? x: rc.x,
 		      y < rc.y ? y: rc.y),
-		Point(x+w > rc.x+rc.w ? x+w-1: rc.x+rc.w-1,
-		      y+h > rc.y+rc.h ? y+h-1: rc.y+rc.h-1));
+		Point(x+w > rc.x+rc.w ? x+w: rc.x+rc.w,
+		      y+h > rc.y+rc.h ? y+h: rc.y+rc.h));
 }
 
 /**
  * Returns the intersection rectangle between this and @c rc rectangles.
  */
-Rect Rect::createIntersect(const Rect &rc) const
+Rect Rect::createIntersect(const Rect& rc) const
 {
   if (intersects(rc))
     return Rect(Point(x > rc.x ? x: rc.x,
 		      y > rc.y ? y: rc.y),
-		Point(x+w < rc.x+rc.w ? x+w-1: rc.x+rc.w-1,
-		      y+h < rc.y+rc.h ? y+h-1: rc.y+rc.h-1));
+		Point(x+w < rc.x+rc.w ? x+w: rc.x+rc.w,
+		      y+h < rc.y+rc.h ? y+h: rc.y+rc.h));
   else
     return Rect();
 }
 
-bool Rect::operator==(const Rect &rc) const
+bool Rect::operator==(const Rect& rc) const
 {
-  // TODO empty stuff
   return
     x == rc.x && w == rc.w &&
     y == rc.y && h == rc.h;
 }
 
-bool Rect::operator!=(const Rect &rc) const
+bool Rect::operator!=(const Rect& rc) const
 {
-  // TODO empty stuff
   return
     x != rc.x || w != rc.w ||
     y != rc.y || h != rc.h;

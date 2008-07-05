@@ -46,16 +46,16 @@ class TreeNode;
  */
 class VACA_DLL TreeViewEvent : public CancelableEvent
 {
-  TreeNode *m_treeNode;
+  TreeNode* m_treeNode;
   String    m_label;
 
 public:
 
-  TreeViewEvent(TreeView *treeView, TreeNode *treeNode, String label = "");
+  TreeViewEvent(TreeView* treeView, TreeNode* treeNode, String label = "");
   virtual ~TreeViewEvent();
 
-  TreeView *getTreeView();
-  TreeNode *getTreeNode();
+  TreeView* getTreeView();
+  TreeNode* getTreeNode();
 
   String getLabel();
 

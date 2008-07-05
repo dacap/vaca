@@ -50,38 +50,39 @@ public:
 
   Rect();
   Rect(int w, int h);
-  explicit Rect(const Size &size);
-  Rect(const Rect &rect);
-  Rect(const Point &point, const Size &size);
-  Rect(const Point &point1, const Point &point2);
+  explicit Rect(const Size& size);
+  Rect(const Rect& rect);
+  Rect(const Point& point, const Size& size);
+  Rect(const Point& point1, const Point& point2);
   Rect(int x, int y, int w, int h);
 
   bool isEmpty() const;
 
   Point getCenter() const;
   Point getOrigin() const;
+  Point getPoint2() const;
   Size getSize() const;
 
-  Rect &setOrigin(const Point &pt);
-  Rect &setSize(const Size &sz);
+  Rect& setOrigin(const Point& pt);
+  Rect& setSize(const Size& sz);
 
-  Rect &offset(int dx, int dy);
-  Rect &offset(const Point &point);
-  Rect &inflate(int dw, int dh);
-  Rect &inflate(const Size &size);
+  Rect& offset(int dx, int dy);
+  Rect& offset(const Point& point);
+  Rect& inflate(int dw, int dh);
+  Rect& inflate(const Size& size);
 
-  Rect &enlarge(int unit);
-  Rect &shrink(int unit);
+  Rect& enlarge(int unit);
+  Rect& shrink(int unit);
 
-  bool contains(const Point &pt) const;
-  bool contains(const Rect &rc) const;
-  bool intersects(const Rect &rc) const;
+  bool contains(const Point& pt) const;
+  bool contains(const Rect& rc) const;
+  bool intersects(const Rect& rc) const;
 
-  Rect createUnion(const Rect &rc) const;
-  Rect createIntersect(const Rect &rc) const;
+  Rect createUnion(const Rect& rc) const;
+  Rect createIntersect(const Rect& rc) const;
 
-  bool operator==(const Rect &rc) const;
-  bool operator!=(const Rect &rc) const;
+  bool operator==(const Rect& rc) const;
+  bool operator!=(const Rect& rc) const;
 
   explicit Rect(LPCRECT rc);
   operator RECT() const;

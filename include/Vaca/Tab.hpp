@@ -62,16 +62,16 @@ class TabPage;
  */
 class VACA_DLL TabBase : public Widget
 {
-  Font *m_userFont;
-  Font *m_tabFont;
+  Font* m_userFont;
+  Font* m_tabFont;
 
 public:
 
-  TabBase(Widget *parent, Style style = TabBaseStyle);
+  TabBase(Widget* parent, Style style = TabBaseStyle);
   virtual ~TabBase();
 
-  virtual Font *getFont();
-  virtual void setFont(Font *font);
+  virtual Font* getFont();
+  virtual void setFont(Font* font);
 
   virtual Rect getLayoutBounds();
 
@@ -81,8 +81,8 @@ public:
   bool isMultiline();
   void setMultiline(bool state);
 
-  int addPage(const String &text);
-  int insertPage(int pageIndex, const String &text);
+  int addPage(const String& text);
+  int insertPage(int pageIndex, const String& text);
   void removePage(int pageIndex);
 
   int getPageCount();
@@ -98,19 +98,19 @@ public:
   Size getNonClientSize();
 
   // signals
-//   boost::signal<void (Event &ev)> PageChanging;
-  boost::signal<void (Event &ev)> PageChange; ///< @see onPageChange
+//   boost::signal<void (Event&)> PageChanging;
+  boost::signal<void (Event&)> PageChange; ///< @see onPageChange
 
 protected:
   // events
-  virtual void onPreferredSize(Size &sz);
+  virtual void onPreferredSize(Size& sz);
   
   // reflection
-  virtual bool onReflectedNotify(LPNMHDR lpnmhdr, LRESULT &lResult);
+  virtual bool onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult);
 
   // new events
-//   virtual void onPageChanging(Event &ev);
-  virtual void onPageChange(Event &ev);
+//   virtual void onPageChanging(Event& ev);
+  virtual void onPageChange(Event& ev);
 
 private:
 
@@ -131,14 +131,14 @@ class VACA_DLL Tab : public TabBase
 {
 public:
 
-  Tab(Widget *parent, Style style = TabStyle);
+  Tab(Widget* parent, Style style = TabStyle);
   virtual ~Tab();
 
-  TabPage *getPage(int pageIndex);
+  TabPage* getPage(int pageIndex);
 
 protected:
 
-  virtual void onPageChange(Event &ev);
+  virtual void onPageChange(Event& ev);
 
 };
 
@@ -159,7 +159,7 @@ class VACA_DLL TabPage : public Register<TabPageClass>, public Panel
 {
 public:
 
-  TabPage(const String &text, Tab *parent, Style style = TabPageStyle);
+  TabPage(const String& text, Tab* parent, Style style = TabPageStyle);
   virtual ~TabPage();
   
 };

@@ -37,7 +37,7 @@
 
 using namespace Vaca;
 
-Label::Label(const String &text, Widget *parent, Style style)
+Label::Label(const String& text, Widget* parent, Style style)
   : Widget(WidgetClassName(WC_STATIC), parent, style)
 {
   setText(text);
@@ -116,7 +116,7 @@ int Label::getFlagsForDrawString()
  * Uses Win32 GetTextExtentExPoint to returns the preferred size when
  * sz > Size(0,0).
  */
-void Label::onPreferredSize(Size &sz)
+void Label::onPreferredSize(Size& sz)
 {
   // TODO HTHEME stuff
 
@@ -133,7 +133,7 @@ void Label::onPreferredSize(Size &sz)
  * If the label is resized, we must to redraw it. This is necessary
  * mainly if the Label isn't TextAlign::Left.
  */
-void Label::onResize(const Size &sz)
+void Label::onResize(const Size& sz)
 {
   invalidate(true);
 }

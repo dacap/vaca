@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="ComboBoxes"
-	ProjectGUID="{1A525FCB-9047-496B-B8CB-295372D76AE1}"
+	ProjectGUID="{665F66D8-6170-44D1-83D5-0F7CA2991514}"
 	RootNamespace="ComboBoxes"
 	Keyword="Win32Proj">
 	<Platforms>

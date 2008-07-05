@@ -37,7 +37,7 @@
 
 using namespace Vaca;
 
-TreeNode::TreeNode(const String &text, int imageIndex, int selectedImageIndex)
+TreeNode::TreeNode(const String& text, int imageIndex, int selectedImageIndex)
   : m_text(text)
   , m_image(imageIndex)
   , m_selectedImage(selectedImageIndex)
@@ -80,7 +80,7 @@ TreeNode::~TreeNode()
  * Adds a new sub-node (child) to this one. After calling this method
  * @a node'll have this node as parent.
  */
-void TreeNode::addNode(TreeNode *node)
+void TreeNode::addNode(TreeNode* node)
 {
   assert(node != NULL);
   assert(node->m_HTREEITEM == NULL && node->m_parent == NULL);
@@ -97,7 +97,7 @@ void TreeNode::addNode(TreeNode *node)
  * 
  * @warning The specified @param node must be a child of the object @a this.
  */
-void TreeNode::removeNode(TreeNode *node)
+void TreeNode::removeNode(TreeNode* node)
 {
   assert(node != NULL);
   assert(node->m_parent == this);
@@ -109,7 +109,7 @@ void TreeNode::removeNode(TreeNode *node)
   node->removeFromTreeView();
 }
 
-TreeNode *TreeNode::getParent()
+TreeNode* TreeNode::getParent()
 {
   if (m_owner != NULL &&
       &m_owner->m_root == m_parent)
@@ -127,7 +127,7 @@ TreeNode::Container TreeNode::getChildren()
   return m_children;
 }
 
-TreeView *TreeNode::getTreeView()
+TreeView* TreeNode::getTreeView()
 {
   return m_owner;
 }
@@ -211,7 +211,7 @@ int TreeNode::getSelectedImage()
  * implementation of getText().
  * 
  */
-void TreeNode::setText(const String &text)
+void TreeNode::setText(const String& text)
 {
   m_text = text;
 }
@@ -261,7 +261,7 @@ HTREEITEM TreeNode::getHTREEITEM()
   return m_HTREEITEM;
 }
 
-TreeNode *TreeNode::fromHTREEITEM(HWND hwnd, HTREEITEM htreeitem)
+TreeNode* TreeNode::fromHTREEITEM(HWND hwnd, HTREEITEM htreeitem)
 {
   TVITEMEX tvie;
 
@@ -272,40 +272,40 @@ TreeNode *TreeNode::fromHTREEITEM(HWND hwnd, HTREEITEM htreeitem)
 
   TreeView_GetItem(hwnd, &tvie);
 
-  return reinterpret_cast<TreeNode *>(tvie.lParam);
+  return reinterpret_cast<TreeNode*>(tvie.lParam);
 }
 
-void TreeNode::onBeforeExpand(TreeViewEvent &ev)
+void TreeNode::onBeforeExpand(TreeViewEvent& ev)
 {
   // do nothing
 }
 
-void TreeNode::onBeforeCollapse(TreeViewEvent &ev)
+void TreeNode::onBeforeCollapse(TreeViewEvent& ev)
 {
   // do nothing
 }
 
-void TreeNode::onBeforeSelect(TreeViewEvent &ev)
+void TreeNode::onBeforeSelect(TreeViewEvent& ev)
 {
   // do nothing
 }
 
-void TreeNode::onBeforeLabelEdit(TreeViewEvent &ev)
+void TreeNode::onBeforeLabelEdit(TreeViewEvent& ev)
 {
   // do nothing
 }
 
-void TreeNode::onAfterExpand(TreeViewEvent &ev)
+void TreeNode::onAfterExpand(TreeViewEvent& ev)
 {
   // do nothing
 }
 
-void TreeNode::onAfterCollapse(TreeViewEvent &ev)
+void TreeNode::onAfterCollapse(TreeViewEvent& ev)
 {
   // do nothing
 }
 
-void TreeNode::onAfterSelect(TreeViewEvent &ev)
+void TreeNode::onAfterSelect(TreeViewEvent& ev)
 {
   // do nothing
 }
@@ -315,7 +315,7 @@ void TreeNode::onAfterSelect(TreeViewEvent &ev)
  * in getText() only if @a ev wasn't canceled.
  * 
  */
-void TreeNode::onAfterLabelEdit(TreeViewEvent &ev)
+void TreeNode::onAfterLabelEdit(TreeViewEvent& ev)
 {
   // if the event isn't cancelled, change the label
   if (!ev.isCanceled())
@@ -325,7 +325,7 @@ void TreeNode::onAfterLabelEdit(TreeViewEvent &ev)
 /**
  * Connects the node and its children to the Win32 TreeView.
  */
-void TreeNode::addToTreeView(TreeView *treeView)
+void TreeNode::addToTreeView(TreeView* treeView)
 {
   assert(m_owner == NULL);
 

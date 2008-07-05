@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="Bixes"
-	ProjectGUID="{D26BF9B5-9D86-4F61-9B1F-2230C995C9E1}"
+	ProjectGUID="{75515F02-A2F0-4C04-A9BB-20BE3FFD6DC4}"
 	RootNamespace="Bixes"
 	Keyword="Win32Proj">
 	<Platforms>
@@ -239,7 +239,8 @@
 			Name="Resource Files"
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}">
-			<File RelativePath="..\examples\Example.rc"></File>
+			<File RelativePath="..\examples\Bixes\Bixes.bmp"></File>
+			<File RelativePath="..\examples\Bixes\Bixes.rc"></File>
 			<File RelativePath="..\examples\Vaca.ico"></File>
 		</Filter>
 	</Files>

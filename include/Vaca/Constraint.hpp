@@ -54,7 +54,7 @@ class VACA_DLL Constraint
 public:
 
   Constraint();
-  Constraint(const Constraint &constraint);
+  Constraint(const Constraint& constraint);
   virtual ~Constraint();
 
 };

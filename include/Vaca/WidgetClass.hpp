@@ -48,13 +48,13 @@ private:
   WidgetClassName();		// None constructor
 
 public:
-  explicit WidgetClassName(const String &className);
-  WidgetClassName(const WidgetClassName &className);
+  explicit WidgetClassName(const String& className);
+  WidgetClassName(const WidgetClassName& className);
   virtual ~WidgetClassName();
 
-  WidgetClassName &operator=(const WidgetClassName &className);
-  bool operator==(const WidgetClassName &className) const;
-  bool operator!=(const WidgetClassName &className) const;
+  WidgetClassName& operator=(const WidgetClassName& className);
+  bool operator==(const WidgetClassName& className) const;
+  bool operator!=(const WidgetClassName& className) const;
 
   LPCTSTR toLPCTSTR() const;
 };
@@ -87,7 +87,7 @@ public:
  * class MyWidget : public Register<MyWidgetClass>, public Widget
  * {
  * public:
- *   MyWidget::MyWidget(..., Widget *parent, Style style = ...)
+ *   MyWidget::MyWidget(..., Widget* parent, Style style = ...)
  *     : Widget(MyWidgetClass::getClassName(), parent, style)
  *   {
  *     // ...Your code here...

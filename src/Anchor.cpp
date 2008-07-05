@@ -34,13 +34,13 @@
 
 using namespace Vaca;
 
-Anchor::Anchor(const Rect &refRect, Borders borders)
+Anchor::Anchor(const Rect& refRect, Borders borders)
   : m_refRect(refRect)
   , m_borders(borders)
 {
 }
 
-Anchor::Anchor(const Anchor &anchor)
+Anchor::Anchor(const Anchor& anchor)
   : Constraint(anchor)
   , m_refRect(anchor.m_refRect)
   , m_borders(anchor.m_borders)
@@ -56,7 +56,7 @@ Rect Anchor::getRefRect() const
   return m_refRect;
 }
 
-void Anchor::setRefRect(const Rect &refRect)
+void Anchor::setRefRect(const Rect& refRect)
 {
   m_refRect = refRect;
 }

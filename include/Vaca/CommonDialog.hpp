@@ -48,14 +48,14 @@ class Widget;
 class VACA_DLL CommonDialog : private boost::noncopyable
 			    , public Component
 {
-  Widget *m_parent;
+  Widget* m_parent;
 
 public:
 
-  CommonDialog(Widget *parent);
+  CommonDialog(Widget* parent);
   virtual ~CommonDialog();
 
-  Widget *getParent();
+  Widget* getParent();
   HWND getParentHWND();
 
   virtual bool doModal() = 0;

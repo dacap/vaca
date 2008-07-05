@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="MenuResource"
-	ProjectGUID="{B8D2FA18-8116-42B3-9B17-E0C0662E048F}"
+	ProjectGUID="{A5D2D045-50C1-4A9A-B2DF-B19ADB6F88A6}"
 	RootNamespace="MenuResource"
 	Keyword="Win32Proj">
 	<Platforms>

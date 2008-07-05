@@ -87,7 +87,7 @@ class VACA_DLL MouseEvent : public Event
 
 public:
 
-  MouseEvent(Widget *source, Point point, int clicks, int flags, MouseButtons trigger, int delta = 0);
+  MouseEvent(Widget* source, Point point, int clicks, int flags, MouseButtons trigger, int delta = 0);
   virtual ~MouseEvent();
 
   int getX() const;

@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="ToolBars"
-	ProjectGUID="{4FF3A07C-1850-4374-A875-1F9EF930A311}"
+	ProjectGUID="{7FFA61C3-470F-4A7A-A3D0-6F47ECF6EE81}"
 	RootNamespace="ToolBars"
 	Keyword="Win32Proj">
 	<Platforms>

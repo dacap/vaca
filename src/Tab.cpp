@@ -46,7 +46,7 @@ using namespace Vaca;
  * Creates a new tab control. A tab is a set of pages, each page has a
  * group of widgets, so you can navigate through the pages.
  */
-TabBase::TabBase(Widget *parent, Style style)
+TabBase::TabBase(Widget* parent, Style style)
   : Widget(WidgetClassName(WC_TABCONTROL), parent, style)
 {
   m_userFont = NULL;
@@ -59,12 +59,12 @@ TabBase::~TabBase()
     delete m_tabFont;
 }
 
-Font *TabBase::getFont()
+Font* TabBase::getFont()
 {
   return m_userFont != NULL ? m_userFont: Widget::getFont();
 }
 
-void TabBase::setFont(Font *font)
+void TabBase::setFont(Font* font)
 {
   m_userFont = font;
   updateFont();
@@ -188,19 +188,19 @@ void TabBase::setMultiline(bool state)
   layout();
 }
 
-int TabBase::addPage(const String &text)
+int TabBase::addPage(const String& text)
 {
   return insertPage(-1, text);
 }
 
-int TabBase::insertPage(int pageIndex, const String &text)
+int TabBase::insertPage(int pageIndex, const String& text)
 {
   assert(::IsWindow(getHWND()));
 
   TCITEM tci;
 
   tci.mask = TCIF_TEXT;
-  tci.pszText = const_cast<TCHAR *>(text.c_str());
+  tci.pszText = const_cast<TCHAR*>(text.c_str());
   tci.cchTextMax = text.size();
 
   if (pageIndex < 0)
@@ -284,7 +284,7 @@ Size TabBase::getNonClientSize()
 // /**
 //  * TCN_SELCHANGING
 //  */
-// void TabBase::onPageChanging(Event &ev)
+// void TabBase::onPageChanging(Event& ev)
 // {
 //   PageChanging(ev);
 // }
@@ -295,7 +295,7 @@ Size TabBase::getNonClientSize()
  *
  * TCN_SELCHANGE
  */
-void TabBase::onPageChange(Event &ev)
+void TabBase::onPageChange(Event& ev)
 {
   PageChange(ev);
 }
@@ -305,7 +305,7 @@ void TabBase::onPageChange(Event &ev)
  *
  * @see getNonClientSize
  */
-void TabBase::onPreferredSize(Size &sz)
+void TabBase::onPreferredSize(Size& sz)
 {
   Size ncSize = getNonClientSize();
 
@@ -318,7 +318,7 @@ void TabBase::onPreferredSize(Size &sz)
   sz += ncSize;
 }
 
-bool TabBase::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT &lResult)
+bool TabBase::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult)
 {
   if (Widget::onReflectedNotify(lpnmhdr, lResult))
     return true;
@@ -339,7 +339,7 @@ bool TabBase::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT &lResult)
 //////////////////////////////////////////////////////////////////////
 // Tab
 
-Tab::Tab(Widget *parent, Style style)
+Tab::Tab(Widget* parent, Style style)
   : TabBase(parent, style)
 {
   setLayout(new ClientLayout);
@@ -349,14 +349,14 @@ Tab::~Tab()
 {
 }
 
-TabPage *Tab::getPage(int pageIndex)
+TabPage* Tab::getPage(int pageIndex)
 {
   assert(pageIndex >= 0 && pageIndex < getPageCount());
   
-  return dynamic_cast<TabPage *>(getChildren().at(pageIndex));
+  return dynamic_cast<TabPage*>(getChildren().at(pageIndex));
 }
 
-void Tab::onPageChange(Event &ev)
+void Tab::onPageChange(Event& ev)
 {
   TabBase::onPageChange(ev);
 
@@ -367,7 +367,7 @@ void Tab::onPageChange(Event &ev)
   for (Container::iterator it = pages.begin();
        it != pages.end();
        ++it, ++pageIndex) {
-    TabPage *page = dynamic_cast<TabPage *>(*it);
+    TabPage* page = dynamic_cast<TabPage*>(*it);
 
     assert(page != NULL);
 
@@ -380,7 +380,7 @@ void Tab::onPageChange(Event &ev)
 //////////////////////////////////////////////////////////////////////
 // TabPage
 
-TabPage::TabPage(const String &text, Tab *parent, Style style)
+TabPage::TabPage(const String& text, Tab* parent, Style style)
   : Panel(TabPageClass::getClassName(), parent, style)
 {
   setText(text);

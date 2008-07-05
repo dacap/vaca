@@ -91,24 +91,24 @@ class VACA_DLL Dialog : public Register<DialogClass>, public Frame
 
 public:
 
-  Dialog(const String &title, Widget *parent = NULL, Style style = DialogStyle);
-  Dialog(const WidgetClassName &className, const String &title, Widget *parent = NULL, Style style = DialogStyle);
+  Dialog(const String& title, Widget* parent = NULL, Style style = DialogStyle);
+  Dialog(const WidgetClassName& className, const String& title, Widget* parent = NULL, Style style = DialogStyle);
   virtual ~Dialog();
 
   void setReturnState(bool state);
 
   virtual bool doModal();
 
-  virtual bool preTranslateMessage(MSG &msg);
+  virtual bool preTranslateMessage(MSG& msg);
 
   void defaultOkAction();
   void defaultCancelAction();
 
-  Widget *getNextFocusableWidget(Widget *widget);
-  Widget *getPreviousFocusableWidget(Widget *widget);
+  Widget* getNextFocusableWidget(Widget* widget);
+  Widget* getPreviousFocusableWidget(Widget* widget);
 
 protected:
-  virtual bool wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult);
+  virtual bool wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult);
 //   virtual LRESULT defWndProc(UINT message, WPARAM wParam, LPARAM lParam);
 
 private:

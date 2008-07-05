@@ -41,7 +41,7 @@ using namespace Vaca;
  * @param widget Source of the event.
  * @param files The list of dropped files.
  */
-DropFilesEvent::DropFilesEvent(Widget *widget, std::vector<String> &files)
+DropFilesEvent::DropFilesEvent(Widget* widget, std::vector<String> &files)
   : Event(widget)
   , m_files(files)
 {

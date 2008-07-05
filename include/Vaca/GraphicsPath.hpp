@@ -57,12 +57,12 @@ class VACA_DLL GraphicsPath
   {
     float start_x, start_y;
     bool closed;
-    std::list<Segment *> segments;
+    std::list<Segment*> segments;
   };
 
-  std::list<Figure *> m_figures;
+  std::list<Figure*> m_figures;
   float m_currentX, m_currentY;
-  Figure *m_currentFigure;
+  Figure* m_currentFigure;
 
 public:
 
@@ -72,13 +72,13 @@ public:
   void startFigure();
   void closeFigure();
 
-  void moveTo(const Point &pt);
+  void moveTo(const Point& pt);
   void moveTo(float x, float y);
-  void lineTo(const Point &pt);
+  void lineTo(const Point& pt);
   void lineTo(float x, float y);
   void curveTo(float x1, float y1, float x2, float y2, float x3, float y3);
-  void curveTo(const Point &pt1, const Point &pt2, const Point &pt3);
-  void curveTo(const std::vector<Point> &points);
+  void curveTo(const Point& pt1, const Point& pt2, const Point& pt3);
+  void curveTo(const std::vector<Point>& points);
   
 };
 

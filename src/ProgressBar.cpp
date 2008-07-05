@@ -36,7 +36,7 @@
 
 using namespace Vaca;
 
-ProgressBar::ProgressBar(Widget *parent, Style style)
+ProgressBar::ProgressBar(Widget* parent, Style style)
   : Widget(WidgetClassName(PROGRESS_CLASS), parent, style)
 {
   // default values
@@ -45,7 +45,7 @@ ProgressBar::ProgressBar(Widget *parent, Style style)
 }
 
 ProgressBar::ProgressBar(int minValue, int maxValue,
-			 Widget *parent, Style style)
+			 Widget* parent, Style style)
   : Widget(WidgetClassName(PROGRESS_CLASS), parent, style)
 {
   assert(minValue <= maxValue);
@@ -88,7 +88,7 @@ int ProgressBar::getMaximum()
  * PBM_GETRANGE
  * 
  */
-void ProgressBar::getRange(int &minValue, int &maxValue)
+void ProgressBar::getRange(int& minValue, int& maxValue)
 {
   PBRANGE pbr;
   sendMessage(PBM_GETRANGE, 0, reinterpret_cast<LPARAM>(&pbr));
@@ -132,7 +132,7 @@ void ProgressBar::addValue(int delta)
   sendMessage(PBM_DELTAPOS, delta, 0);
 }
 
-void ProgressBar::onPreferredSize(Size &sz)
+void ProgressBar::onPreferredSize(Size& sz)
 {
   // WinXP with themes needs at least 10 pixels of height
   sz = Size(16, 16);

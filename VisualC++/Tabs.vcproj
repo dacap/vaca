@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="Tabs"
-	ProjectGUID="{D05824AE-25DA-4DD8-88B8-393156EB78E0}"
+	ProjectGUID="{962B1AE6-82BE-4B0E-A5F7-418E9364048C}"
 	RootNamespace="Tabs"
 	Keyword="Win32Proj">
 	<Platforms>

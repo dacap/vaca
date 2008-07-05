@@ -38,7 +38,7 @@
 
 using namespace Vaca;
 
-DockFrame::DockFrame(DockBar *dockBar, Widget *parent, Style style)
+DockFrame::DockFrame(DockBar* dockBar, Widget* parent, Style style)
   : Frame(DockFrameClass::getClassName(), dockBar->getText(), parent, style)
   , m_dockBar(dockBar)
 {
@@ -73,14 +73,14 @@ bool DockFrame::keepSynchronized()
 /**
  * Generates the DockBar::onResizingFrame() event for m_dockBar member.
  */
-void DockFrame::onResizing(int edge, Rect &rc)
+void DockFrame::onResizing(int edge, Rect& rc)
 {
   Frame::onResizing(edge, rc);
 
   m_dockBar->onResizingFrame(this, edge, rc);
 }
 
-bool DockFrame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult)
+bool DockFrame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult)
 {
   if (Frame::wndProc(message, wParam, lParam, lResult))
     return true;

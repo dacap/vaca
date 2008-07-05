@@ -76,15 +76,15 @@ class VACA_DLL MdiChild : public Register<MdiChildClass>, public Frame
   void initialize();
 
 public:
-  MdiChild(const String &title, MdiClient *parent, Style style = MdiChildStyle);
-  MdiChild(const String &title, MdiFrame *parent, Style style = MdiChildStyle);
+  MdiChild(const String& title, MdiClient* parent, Style style = MdiChildStyle);
+  MdiChild(const String& title, MdiFrame* parent, Style style = MdiChildStyle);
   virtual ~MdiChild();
 
 protected:
   // reflection
-  // virtual bool onReflectedCommand(int id, int code, LRESULT &lResult);
+  // virtual bool onReflectedCommand(int id, int code, LRESULT& lResult);
 
-  virtual bool wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult);
+  virtual bool wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult);
 //   virtual LRESULT defWndProc(UINT message, WPARAM wParam, LPARAM lParam);
 
 private:
@@ -97,7 +97,7 @@ private:
 class VACA_DLL MdiClient : public Widget
 {
 public:
-  MdiClient(Widget *parent, Style style = MdiClientStyle);
+  MdiClient(Widget* parent, Style style = MdiClientStyle);
   virtual ~MdiClient();
 
   void cascade();
@@ -105,20 +105,20 @@ public:
   void tileVertical();
   void arrangeIcons();
 
-  MdiChild *getActive();
-  void activate(MdiChild *mdiChild);
-  void activateNext(MdiChild *mdiChild = NULL);
-  void activatePrevious(MdiChild *mdiChild = NULL);
+  MdiChild* getActive();
+  void activate(MdiChild* mdiChild);
+  void activateNext(MdiChild* mdiChild = NULL);
+  void activatePrevious(MdiChild* mdiChild = NULL);
 
-  MdiChild *getChildById(int wID);
+  MdiChild* getChildById(int wID);
 
-  // void maximize(MdiChild *window);
-  // void restore(MdiChild *window);
+  // void maximize(MdiChild* window);
+  // void restore(MdiChild* window);
 
-  virtual bool preTranslateMessage(MSG &msg);
+  virtual bool preTranslateMessage(MSG& msg);
 
 private:
-  virtual HWND createHWND(LPCTSTR className, Widget *parent, Style style);
+  virtual HWND createHWND(LPCTSTR className, Widget* parent, Style style);
 };
 
 /**
@@ -132,25 +132,25 @@ class VACA_DLL MdiFrame : public Frame
 
 private:
 
-  MdiClient *m_mdiClient;
+  MdiClient* m_mdiClient;
 
 public:
 
-  MdiFrame(const String &title,
-	   Widget *parent = NULL,
+  MdiFrame(const String& title,
+	   Widget* parent = NULL,
 	   Style style = MdiFrameStyle,
 	   bool customMdiClient = false);
-//   MdiFrame(Widget *parent, Style style = ChildStyle); // TODO ChildStyle???
+//   MdiFrame(Widget* parent, Style style = ChildStyle); // TODO ChildStyle???
   virtual ~MdiFrame();
 
-  MdiClient *getMdiClient();
-  MdiClient *setMdiClient(MdiClient *mdiClient);
+  MdiClient* getMdiClient();
+  MdiClient* setMdiClient(MdiClient* mdiClient);
 
-  virtual MenuBar *setMenuBar(MenuBar *menubar);
+  virtual MenuBar* setMenuBar(MenuBar* menubar);
   void refreshMenuBar();
 
 protected:
-  virtual bool wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult);
+  virtual bool wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult);
 //   virtual LRESULT defWndProc(UINT message, WPARAM wParam, LPARAM lParam);
 };
 

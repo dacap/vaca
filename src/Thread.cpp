@@ -45,8 +45,8 @@ struct ThreadData
   int threadId;
   int frameCount;
   bool breakLoop;
-  Widget *outsideWidget; // widget used to call createHWND
-//   void *data;
+  Widget* outsideWidget; // widget used to call createHWND
+//   void* data;
   boost::signal<void ()> callInNextRound;
 
   ThreadData(int id) {
@@ -67,12 +67,12 @@ struct ThreadData
 // static boost::thread_specific_ptr<ThreadData> threadData;
 
 static boost::mutex data_mutex;
-static std::vector<ThreadData *> dataOfEachThread;
+static std::vector<ThreadData*> dataOfEachThread;
 
-static ThreadData *getThreadData()
+static ThreadData* getThreadData()
 {
   boost::mutex::scoped_lock lock(data_mutex);
-  std::vector<ThreadData *>::iterator it;
+  std::vector<ThreadData*>::iterator it;
   int id = ::GetCurrentThreadId();
 
   // first of all search the thread-data in the list "dataOfEachThread"...
@@ -81,7 +81,7 @@ static ThreadData *getThreadData()
       return *it;		// return it
 
   // create the data for the this thread
-  ThreadData *data = new ThreadData(id);
+  ThreadData* data = new ThreadData(id);
   VACA_TRACE("new data-thread %d\n", id);
 
   // add it to the list
@@ -99,7 +99,7 @@ static ThreadData *getThreadData()
 void Vaca::__vaca_remove_all_thread_data()
 {
   boost::mutex::scoped_lock lock(data_mutex);
-  std::vector<ThreadData *>::iterator it;
+  std::vector<ThreadData*>::iterator it;
 
   for (it=dataOfEachThread.begin(); it!=dataOfEachThread.end(); ++it) {
     VACA_TRACE("delete data-thread %d\n", (*it)->threadId);
@@ -109,12 +109,12 @@ void Vaca::__vaca_remove_all_thread_data()
   dataOfEachThread.clear();
 }
 
-Widget *Vaca::__vaca_get_outside_widget()
+Widget* Vaca::__vaca_get_outside_widget()
 {
   return getThreadData()->outsideWidget;
 }
 
-void Vaca::__vaca_set_outside_widget(Widget *widget)
+void Vaca::__vaca_set_outside_widget(Widget* widget)
 {
   getThreadData()->outsideWidget = widget;
 }
@@ -148,7 +148,7 @@ void Thread::doMessageLoop()
 /**
  * Does the message loop until the @a widget is hidden.
  */
-void Thread::doMessageLoopFor(Widget *widget)
+void Thread::doMessageLoopFor(Widget* widget)
 {
   // get widget HWND
   HWND hwnd = widget->getHWND();
@@ -194,9 +194,9 @@ void Thread::callInNextRound(const boost::signal<void ()>::slot_type& functor)
  * Gets a message in a blocking way, returns true if the msg parameter
  * was filled
  */
-bool Thread::getMessage(Message &msg)
+bool Thread::getMessage(Message& msg)
 {
-  ThreadData *threadData = getThreadData();
+  ThreadData* threadData = getThreadData();
 
   // break this loop? (explicit break or no-more visible frames)
   if (threadData->breakLoop || threadData->frameCount == 0)
@@ -233,13 +233,13 @@ bool Thread::getMessage(Message &msg)
  * Gets a message in a non-blocking way, returns true if the msg
  * parameter was filled
  */
-bool Thread::peekMessage(Message &msg)
+bool Thread::peekMessage(Message& msg)
 {
   msg.hwnd = NULL;
   return ::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE) != FALSE;
 }
 
-void Thread::processMessage(Message &msg)
+void Thread::processMessage(Message& msg)
 {
   if (!preTranslateMessage(msg)) {
     // Send preTranslateMessage to the active window (useful for
@@ -247,7 +247,7 @@ void Thread::processMessage(Message &msg)
     // because it returns windows from other applications
     HWND hactive = GetActiveWindow();
     if (hactive != NULL && hactive != msg.hwnd) {
-      Widget *activeWidget = Widget::fromHWND(hactive);
+      Widget* activeWidget = Widget::fromHWND(hactive);
       if (activeWidget->preTranslateMessage(msg))
 	return;
     }
@@ -265,10 +265,10 @@ void Thread::processMessage(Message &msg)
  * Widget pointer (using Widget::fromHWND()) and then (if it isn't
  * NULL), call its Widget::preTranslateMessage().
  */
-bool Thread::preTranslateMessage(Message &msg)
+bool Thread::preTranslateMessage(Message& msg)
 {
   if (msg.hwnd != NULL) {
-    Widget *widget = Widget::fromHWND(msg.hwnd);
+    Widget* widget = Widget::fromHWND(msg.hwnd);
 
     // with WinXP there is a "CicMarshalWndClass" that sends messages
     // to the application, I really don't why, and what is that window,
@@ -287,12 +287,12 @@ bool Thread::preTranslateMessage(Message &msg)
   return false;
 }
 
-void Thread::addFrame(Frame *frame)
+void Thread::addFrame(Frame* frame)
 {
   ++getThreadData()->frameCount;
 }
 
-void Thread::removeFrame(Frame *frame)
+void Thread::removeFrame(Frame* frame)
 {
   --getThreadData()->frameCount;
 

@@ -41,28 +41,28 @@ using namespace Vaca;
 /**
  * Creates a new anchor layout.
  */
-AnchorLayout::AnchorLayout(const Size &refSize)
+AnchorLayout::AnchorLayout(const Size& refSize)
   : m_refSize(refSize)
 {
 }
 
-void AnchorLayout::layout(Widget *parent, Widget::Container &widgets, const Rect &parentRc)
+void AnchorLayout::layout(Widget* parent, Widget::Container& widgets, const Rect& parentRc)
 {
   Size delta(parentRc.getSize() - m_refSize);
 
   beginMovement(widgets);
 
   for (Widget::Container::iterator it=widgets.begin(); it!=widgets.end(); ++it) {
-    Widget *widget = *it;
+    Widget* widget = *it;
 
     if (widget->isLayoutFree())
       continue;
 
-    Constraint *constraint = widget->getConstraint();
+    Constraint* constraint = widget->getConstraint();
     if (constraint == NULL)
       continue;
 
-    Anchor *anchor = dynamic_cast<Anchor *>(constraint);
+    Anchor* anchor = dynamic_cast<Anchor *>(constraint);
     assert(anchor != NULL);
 
     Borders borders = anchor->getBorders();

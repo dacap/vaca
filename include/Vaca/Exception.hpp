@@ -48,10 +48,10 @@ class Exception : public std::exception
 public:
 
   Exception() : std::exception() { }
-  Exception(const String &message) : std::exception(), m_message(message) { }
+  Exception(const String& message) : std::exception(), m_message(message) { }
   virtual ~Exception() throw() { }
 
-  virtual const char *what( ) const throw() {
+  virtual const char* what( ) const throw() {
     return m_message.c_str();
   }
 

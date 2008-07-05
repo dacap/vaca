@@ -36,18 +36,10 @@
 
 #include "Vaca/base.hpp"
 
-#ifdef VACA_FLEX_STRING
-#  include "Vaca/flex/flex_string.h"
-#endif
-
 namespace Vaca {
 
 #ifndef VACA_STRING_BASE
-#  ifdef VACA_FLEX_STRING
-#    define VACA_STRING_BASE flex_string<Character>
-#  else
-#    define VACA_STRING_BASE std::basic_string<Character>
-#  endif
+#  define VACA_STRING_BASE std::basic_string<Character>
 #endif
 
 /**
@@ -64,14 +56,14 @@ public:
 
   String();
   explicit String(int length);
-  String(const String &str);
-  String(const VACA_STRING_BASE &str);
-  String(const char *str);
-  String(const char *str, int length);
-  String(const wchar_t *str);
+  String(const String& str);
+  String(const VACA_STRING_BASE& str);
+  String(const char* str);
+  String(const char* str, int length);
+  String(const wchar_t* str);
   virtual ~String();
 
-  // String &format(LPCTSTR fmt, ...);
+  // String& format(LPCTSTR fmt, ...);
 
   //////////////////////////////////////////////////////////////////////
   // Conversion
@@ -99,10 +91,10 @@ public:
   String getFileExtension() const;
   String getFileTitle() const;
 
-  String addPathComponent(const String &component) const;
+  String addPathComponent(const String& component) const;
 
 //   String removeExtension() const;
-//   String replaceExtension(const String &newExtension) const;
+//   String replaceExtension(const String& newExtension) const;
 
 };
 
@@ -116,7 +108,7 @@ public:
  *
  * @return A new string.
  */
-inline String operator+(const String &_s1, const char *_s2)
+inline String operator+(const String& _s1, const char* _s2)
 {
   String _res(_s1);
   _res.append(String(_s2));
@@ -133,7 +125,7 @@ inline String operator+(const String &_s1, const char *_s2)
  *
  * @return A new string.
  */
-inline String operator+(const String &_s1, const wchar_t *_s2)
+inline String operator+(const String& _s1, const wchar_t* _s2)
 {
   String _res(_s1);
   _res.append(String(_s2));
@@ -150,7 +142,7 @@ inline String operator+(const String &_s1, const wchar_t *_s2)
  *
  * @return A new string.
  */
-inline String operator+(const char *_s1, const String &_s2)
+inline String operator+(const char* _s1, const String& _s2)
 {
   String _res(_s1);
   _res.append(_s2);
@@ -167,7 +159,7 @@ inline String operator+(const char *_s1, const String &_s2)
  *
  * @return A new string.
  */
-inline String operator+(const wchar_t *_s1, const String &_s2)
+inline String operator+(const wchar_t* _s1, const String& _s2)
 {
   String _res(_s1);
   _res.append(_s2);

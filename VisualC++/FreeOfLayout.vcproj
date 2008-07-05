@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="FreeOfLayout"
-	ProjectGUID="{AE5A2F12-4967-437A-9A2F-2FA22944403F}"
+	ProjectGUID="{9260EB2B-6E97-4064-B017-01E573F8E96C}"
 	RootNamespace="FreeOfLayout"
 	Keyword="Win32Proj">
 	<Platforms>

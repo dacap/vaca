@@ -1,5 +1,8 @@
+default: all
+
 # ----------------------------------------------------------------------
 # Configuration
+# ----------------------------------------------------------------------
 
 # DEBUG = 1
 # STATIC = 1
@@ -17,6 +20,7 @@ endif
 
 # ----------------------------------------------------------------------
 # Extensions
+# ----------------------------------------------------------------------
 
 OBJ = .o
 LIB = .a
@@ -24,11 +28,13 @@ EXE = .exe
 
 # ----------------------------------------------------------------------
 # Boost directories (you should change this)
+# ----------------------------------------------------------------------
 
 include Makefile.boost
 
 # ----------------------------------------------------------------------
 # Programs
+# ----------------------------------------------------------------------
 
 AR	= ar
 GXX	= g++
@@ -40,6 +46,7 @@ WINDRES = windres
 
 # ----------------------------------------------------------------------
 # Sources & Examples
+# ----------------------------------------------------------------------
 
 LIB_SOURCES = Anchor AnchorLayout Application BandedDockArea		\
 	      BasicDockArea Bix BoxConstraint BoxLayout Brush Button	\
@@ -65,12 +72,16 @@ EXAMPLES = AnchorLayouts AutoCompletion Bixes BouncingBalls BoxLayouts	\
 	   Sudoku SystemImageList Tabs TextEditor Threads Timers 	\
 	   ToolBars Trees
 
-# EXAMPLES = DataGrids
-# EXAMPLES = Bixes
-# EXAMPLES = Xuls
+TESTS = \
+	test_point \
+	test_rect \
+	test_signals \
+	test_size \
+	test_string
 
 # ----------------------------------------------------------------------
 # Flags
+# ----------------------------------------------------------------------
 
 CXXFLAGS = -I$(BOOST_ROOT) -Iinclude -I. -Ithird_party -DBOOST_BIND_NO_PLACEHOLDERS \
 	   -W -Wall -Wno-unused
@@ -102,6 +113,7 @@ EXE_LIBS = $(LIBS)
 
 # ----------------------------------------------------------------------
 # STATIC or SHARED?
+# ----------------------------------------------------------------------
 
 ifdef STATIC
 
@@ -131,6 +143,7 @@ endif
 
 # ----------------------------------------------------------------------
 # PROFILE?
+# ----------------------------------------------------------------------
 
 ifdef PROFILE
   CXXFLAGS += -pg
@@ -146,6 +159,7 @@ endif
 
 # ----------------------------------------------------------------------
 # UNICODE
+# ----------------------------------------------------------------------
 
 ifdef UNICODE
   ifdef SUFFIX
@@ -157,6 +171,7 @@ endif
 
 # ----------------------------------------------------------------------
 # DEBUG or NDEBUG?
+# ----------------------------------------------------------------------
 
 ifdef DEBUG
   VACA_LIB_FLAGS += -D_DEBUG
@@ -174,6 +189,7 @@ endif
 
 # ----------------------------------------------------------------------
 # Memory leak detector
+# ----------------------------------------------------------------------
 
 ifdef MEMORY_LEAK_DETECTOR
 #   VACA_LIB_FLAGS += -D_DEBUG
@@ -186,6 +202,7 @@ endif
 
 # ----------------------------------------------------------------------
 # Files
+# ----------------------------------------------------------------------
 
 VACA_LIB = lib/libvaca$(SUFFIX)$(LIB)
 ifdef UNICODE
@@ -196,20 +213,16 @@ endif
 
 LIB_OBJS = $(addprefix obj/Library., $(addsuffix $(SUFFIX)$(OBJ), $(LIB_SOURCES)))
 EXAMPLES_EXE = $(addprefix bin/, $(addsuffix $(SUFFIX)$(EXE), $(EXAMPLES)))
+TESTS_EXE = $(addprefix bin/, $(addsuffix $(SUFFIX)$(EXE), $(TESTS)))
 
 EXAMPLES_DIRS_WITH_RC = $(dir $(wildcard examples/*/*.rc))
 
-ALL_TARGETS = stdvaca.h.gch $(VACA_DLL) $(EXAMPLES_EXE)
-
 # ----------------------------------------------------------------------
-# Rules
+# Generic Rules
+# ----------------------------------------------------------------------
 
-default: all
-
-all: $(ALL_TARGETS)
-
-vpath %.cpp $(addprefix examples/, $(EXAMPLES))
-vpath %.rc $(EXAMPLES_DIRS_WITH_RC)
+# vpath %.cpp $(addprefix examples/, $(EXAMPLES)) tests
+# vpath %.rc $(EXAMPLES_DIRS_WITH_RC)
 
 obj/Library.%$(SUFFIX)$(OBJ): src/%.cpp
 	$(GXX) $(CXXFLAGS) $(VACA_LIB_FLAGS) -o $@ -c $<
@@ -225,6 +238,9 @@ obj/Example.res: examples/Example.rc
 
 obj/Example.%.res: %.rc
 	$(WINDRES) $(addprefix -I, $(EXAMPLES_DIRS_WITH_RC)) -O coff -o $@ -i $<
+
+obj/Test.%$(SUFFIX)$(OBJ): tests/%.cpp
+	$(GXX) $(CXXFLAGS) $(VACA_EXE_FLAGS) -o $@ -c $<
 
 %.h.gch: %.h
 	$(GXX) $(CXXFLAGS) -o $@ -c $<
@@ -268,6 +284,33 @@ bin/ToolBars$(SUFFIX)$(EXE): obj/Example.ToolBars$(SUFFIX)$(OBJ) obj/Example.Too
 
 bin/Bixes$(SUFFIX)$(EXE): obj/Example.Bixes$(SUFFIX)$(OBJ) obj/Example.Bixes.res $(VACA_LIB)
 	$(GXX) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
+
+# tests
+
+bin/%$(EXE): obj/Test.%$(OBJ) $(VACA_LIB)
+	$(GXX) $(LFLAGS) -mconsole -o $@ $^ $(EXE_LIBS)
+
+# ----------------------------------------------------------------------
+# Rules
+# ----------------------------------------------------------------------
+
+all: stdvaca.h.gch lib examples tests
+
+lib: $(VACA_DLL)
+
+examples:  $(EXAMPLES_EXE)
+
+tests: $(TESTS_EXE)
+
+runtests:
+	@for file in bin/test_*.exe ; do \
+		echo Running ./$$file ... ; \
+		if ./$$file ; then \
+			echo " - OK" ; \
+		else \
+			echo " - *FAIL*" ; \
+		fi ; \
+	done
 
 deps:
 	$(GXX) -MM $(CXXFLAGS) src/*.cpp | sed -e 's|^\([A-Za-z_0-9]\+\)|obj/Library.\1\$$\(SUFFIX\)|' > .deps

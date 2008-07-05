@@ -65,7 +65,7 @@ MenuItem::MenuItem()
  *           can't use automatic IDs and manual IDs mixed,
  *           assertions'll fail.
  */
-MenuItem::MenuItem(const String &text, Keys::Type defaultShortcut, int id)
+MenuItem::MenuItem(const String& text, Keys::Type defaultShortcut, int id)
 {
   {
     boost::mutex::scoped_lock lock(menuIdCounterMutex);
@@ -93,12 +93,12 @@ MenuItem::MenuItem(const String &text, Keys::Type defaultShortcut, int id)
 
 MenuItem::~MenuItem()
 {
-  Menu *parent = getParent();
+  Menu* parent = getParent();
   if (parent != NULL)
     parent->remove(this);
 }
 
-Menu *MenuItem::getParent()
+Menu* MenuItem::getParent()
 {
   return m_parent;
 }
@@ -108,12 +108,12 @@ int MenuItem::getId()
   return m_id;
 }
 
-const String &MenuItem::getText()
+const String& MenuItem::getText()
 {
   return m_text;
 }
 
-void MenuItem::setText(const String &text)
+void MenuItem::setText(const String& text)
 {
   m_text = text;
 
@@ -219,7 +219,7 @@ void MenuItem::addShortcut(Keys::Type shortcut)
   m_shortcuts.push_back(shortcut);
 }
 
-MenuItem *MenuItem::checkShortcuts(Keys::Type pressedKey)
+MenuItem* MenuItem::checkShortcuts(Keys::Type pressedKey)
 {
   for (std::vector<Keys::Type>::iterator
 	 it=m_shortcuts.begin(); it!=m_shortcuts.end(); ++it) {
@@ -240,7 +240,7 @@ bool MenuItem::isMdiList() const { return false; }
  * after an onUpdate() and only if it leaves the MenuItem enabled (see
  * setEnabled() method),
  */
-void MenuItem::onAction(MenuItemEvent &ev)
+void MenuItem::onAction(MenuItemEvent& ev)
 {
   Action(ev);
 }
@@ -255,7 +255,7 @@ void MenuItem::onAction(MenuItemEvent &ev)
  *
  * The default implementation fires the MenuItem::Update signal.
  */
-void MenuItem::onUpdate(MenuItemEvent &ev)
+void MenuItem::onUpdate(MenuItemEvent& ev)
 {
   Update(ev);
 }
@@ -287,7 +287,7 @@ Menu::Menu()
   subClass();
 }
 
-Menu::Menu(const String &text)
+Menu::Menu(const String& text)
   : MenuItem(text)
 {
   m_HMENU = ::CreatePopupMenu();
@@ -320,7 +320,7 @@ Menu::~Menu()
   assert(m_HMENU != NULL);
 
   while (!m_container.empty()) {
-    MenuItem *menuItem = m_container.front();
+    MenuItem* menuItem = m_container.front();
     delete menuItem;
   }
 
@@ -364,7 +364,7 @@ void Menu::subClass()
     // the item can't have data
     assert(mii.dwItemData == 0);
 
-    MenuItem *menuItem = NULL;
+    MenuItem* menuItem = NULL;
 
     switch (mii.fType) {
 
@@ -400,9 +400,9 @@ void Menu::subClass()
  * @warning The @a menuItem is deleted automatically if you don't
  *          remove it before to destroy the Menu.
  *
- * @see insert(int, MenuItem *), remove(MenuItem *)
+ * @see insert(int, MenuItem*), remove(MenuItem*)
  */
-MenuItem *Menu::add(MenuItem *menuItem)
+MenuItem* Menu::add(MenuItem* menuItem)
 {
   insert(m_container.size(), menuItem);
   return menuItem;
@@ -417,22 +417,22 @@ MenuItem *Menu::add(MenuItem *menuItem)
  * @warning If you use the Menu::remove method with the returned
  *          MenuItem, you will be responsible to delete it.
  *
- * @see add(MenuItem *), remove(MenuItem *)
+ * @see add(MenuItem*), remove(MenuItem*)
  */
-MenuItem *Menu::add(const String &string, Keys::Type defaultShortcut)
+MenuItem* Menu::add(const String& string, Keys::Type defaultShortcut)
 {
-  MenuItem *menuItem = add(new MenuItem(string, defaultShortcut));
+  MenuItem* menuItem = add(new MenuItem(string, defaultShortcut));
   return menuItem;
 }
 
 /**
  * Adds a new MenuSeparator at the end of the Menu.
  *
- * @see add(MenuItem *), remove(MenuItem *)
+ * @see add(MenuItem*), remove(MenuItem*)
  */
 void Menu::addSeparator()
 {
-  MenuItem *menuItem = add(new MenuSeparator());
+  MenuItem* menuItem = add(new MenuSeparator());
 }
 
 /**
@@ -441,9 +441,9 @@ void Menu::addSeparator()
  * @warning The inserted @a menuItem is deleted automatically if you don't
  *          remove it before to destroy the Menu.
  *
- * @see remove(MenuItem *), insert(int, const String &)
+ * @see remove(MenuItem*), insert(int, const String &)
  */
-MenuItem *Menu::insert(int index, MenuItem *menuItem)
+MenuItem* Menu::insert(int index, MenuItem* menuItem)
 {
   assert(index >= 0 && index <= static_cast<int>(m_container.size()));
 
@@ -476,7 +476,7 @@ MenuItem *Menu::insert(int index, MenuItem *menuItem)
   else if (menuItem->isMenu()) {
     mii.fMask |= MIIM_STRING | MIIM_SUBMENU;
     mii.fType = MFT_STRING;
-    Menu *menu = static_cast<Menu *>(menuItem);
+    Menu* menu = static_cast<Menu*>(menuItem);
     mii.hSubMenu = menu->getHMENU();
     mii.dwTypeData = buf;
     mii.cch = len;
@@ -510,11 +510,11 @@ MenuItem *Menu::insert(int index, MenuItem *menuItem)
  * @warning If you use the Menu::remove method with the returned
  *          MenuItem, you will be responsible to delete it.
  *
- * @see insert(int, MenuItem *), remove(MenuItem *)
+ * @see insert(int, MenuItem*), remove(MenuItem*)
  */
-MenuItem *Menu::insert(int index, const String &text)
+MenuItem* Menu::insert(int index, const String& text)
 {
-  MenuItem *menuItem = insert(index, new MenuItem(text));
+  MenuItem* menuItem = insert(index, new MenuItem(text));
   return menuItem;
 }
 
@@ -523,7 +523,7 @@ MenuItem *Menu::insert(int index, const String &text)
  */
 void Menu::insertSeparator(int index)
 {
-  MenuItem *menuItem = insert(index, new MenuSeparator());
+  MenuItem* menuItem = insert(index, new MenuSeparator());
 }
 
 /**
@@ -534,7 +534,7 @@ void Menu::insertSeparator(int index)
  *
  * @return The same pointer to the specified parameter @a menuItem
  */
-MenuItem *Menu::remove(MenuItem *menuItem)
+MenuItem* Menu::remove(MenuItem* menuItem)
 {
   assert(m_HMENU != NULL);
 
@@ -556,8 +556,8 @@ MenuItem *Menu::remove(MenuItem *menuItem)
  *          to destroy it in the future.
  *
  * @code
- * Menu *menu = ...
- * MenuItem *menuItem = menu->getMenuItemByIndex(2);
+ * Menu* menu = ...
+ * MenuItem* menuItem = menu->getMenuItemByIndex(2);
  * menu->remove(menuItem);
  * delete menuItem;
  * @endcode
@@ -568,28 +568,28 @@ MenuItem *Menu::remove(MenuItem *menuItem)
  * delete menu->remove(2);
  * @endcode
  *
- * @see remove(MenuItem *)
+ * @see remove(MenuItem*)
  */
-MenuItem *Menu::remove(int index)
+MenuItem* Menu::remove(int index)
 {
-  MenuItem *menuItem = getMenuItemByIndex(index);
+  MenuItem* menuItem = getMenuItemByIndex(index);
   remove(menuItem);
   return menuItem;
 }
 
-MenuItem *Menu::getMenuItemByIndex(int index)
+MenuItem* Menu::getMenuItemByIndex(int index)
 {
   return m_container[index];
 }
 
-MenuItem *Menu::getMenuItemById(int id)
+MenuItem* Menu::getMenuItemById(int id)
 {
   if (id == 0)
     return NULL;
 
-  MenuItem *menuItem = NULL;
+  MenuItem* menuItem = NULL;
 
-  std::stack<MenuItem *> stack;
+  std::stack<MenuItem*> stack;
   stack.push(this);
 
   while (!stack.empty()) {
@@ -600,7 +600,7 @@ MenuItem *Menu::getMenuItemById(int id)
     stack.pop();
 
     if (menuItem->isMenu()) {
-      Menu::Container &subMenus(static_cast<Menu *>(menuItem)->m_container);
+      Menu::Container& subMenus(static_cast<Menu*>(menuItem)->m_container);
 
       for (Menu::Container::iterator it=subMenus.begin();
 	   it!=subMenus.end(); ++it)
@@ -611,7 +611,7 @@ MenuItem *Menu::getMenuItemById(int id)
   return NULL;
 }
 
-int Menu::getMenuItemIndex(MenuItem *menuItem)
+int Menu::getMenuItemIndex(MenuItem* menuItem)
 {
   Container::iterator it;
   int c = 0;
@@ -634,10 +634,10 @@ Menu::Container Menu::getMenuItems()
   return m_container;
 }
 
-MenuItem *Menu::checkShortcuts(Keys::Type pressedKey)
+MenuItem* Menu::checkShortcuts(Keys::Type pressedKey)
 {
   for (Container::iterator it=m_container.begin(); it!=m_container.end(); ++it) {
-    MenuItem *menuItem = (*it)->checkShortcuts(pressedKey);
+    MenuItem* menuItem = (*it)->checkShortcuts(pressedKey);
     if (menuItem != NULL)
       return menuItem;
   }
@@ -645,7 +645,7 @@ MenuItem *Menu::checkShortcuts(Keys::Type pressedKey)
   return NULL;
 }
 
-// PopupMenu *Menu::getPopupMenu()
+// PopupMenu* Menu::getPopupMenu()
 // {
 //   // TODO
 //   return NULL;
@@ -656,11 +656,11 @@ bool Menu::isMenu() const
   return true;
 }
 
-// Menu *Menu::getMenuByHMENU(HMENU hmenu)
+// Menu* Menu::getMenuByHMENU(HMENU hmenu)
 // {
-//   Menu *lastMenu = NULL;
+//   Menu* lastMenu = NULL;
 
-//   std::stack<Menu *> stack;
+//   std::stack<Menu*> stack;
 //   stack.push(this);
 
 //   while (!stack.empty()) {
@@ -670,11 +670,11 @@ bool Menu::isMenu() const
 
 //     stack.pop();
 
-//     Menu::Container &subMenus(lastMenu->m_container);
+//     Menu::Container& subMenus(lastMenu->m_container);
 //     for (Menu::Container::iterator it=subMenus.begin();
 // 	 it!=subMenus.end(); ++it) {
 //       if ((*it)->isMenu())
-// 	stack.push(static_cast<Menu *>(*it));
+// 	stack.push(static_cast<Menu*>(*it));
 //     }
 //   }
 
@@ -704,19 +704,19 @@ MenuBar::~MenuBar()
 {
 }
 
-MdiListMenu *MenuBar::getMdiListMenu()
+MdiListMenu* MenuBar::getMdiListMenu()
 {
-  std::stack<MenuItem *> stack;
+  std::stack<MenuItem*> stack;
   stack.push(this);
 
   while (!stack.empty()) {
-    MenuItem *menuItem = stack.top();
+    MenuItem* menuItem = stack.top();
     stack.pop();
 
     if (menuItem->isMdiList())
-      return static_cast<MdiListMenu *>(menuItem);
+      return static_cast<MdiListMenu*>(menuItem);
     else if (menuItem->isMenu()) {
-      Container container = static_cast<Menu *>(menuItem)->getMenuItems();
+      Container container = static_cast<Menu*>(menuItem)->getMenuItems();
       for (Container::iterator it=container.begin();
 	   it!=container.end(); ++it)
 	stack.push(*it);
@@ -730,7 +730,7 @@ MdiListMenu *MenuBar::getMdiListMenu()
 // MdiListMenu
 
 
-MdiListMenu::MdiListMenu(const String &text)
+MdiListMenu::MdiListMenu(const String& text)
  : Menu(text)
 {
 }

@@ -48,17 +48,17 @@ class VACA_DLL Image
   HDC m_fromHDC;
   Size m_size;
   HBITMAP m_HBITMAP;
-  Graphics *m_graphics;
+  Graphics* m_graphics;
 
 public:
 
   Image();
   Image(ResourceId imageId);
-  Image(const String &fileName);
-  Image(const Size &sz);
-  Image(const Size &sz, int bpp);
-  Image(const Size &sz, Graphics &g);
-  Image(const Image &image);
+  Image(const String& fileName);
+  Image(const Size& sz);
+  Image(const Size& sz, int bpp);
+  Image(const Size& sz, Graphics& g);
+  Image(const Image& image);
   virtual ~Image();
 
   bool isValid();
@@ -67,16 +67,16 @@ public:
   int getHeight() const;
   Size getSize() const;
 
-  Graphics *getGraphics();
+  Graphics* getGraphics();
 
   HBITMAP getHBITMAP();
 
-  Image &operator=(const Image &image);
+  Image& operator=(const Image& image);
 
 private:
 
   void destroy();
-  void copyTo(Image &image) const;
+  void copyTo(Image& image) const;
   
 };
 

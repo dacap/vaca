@@ -35,7 +35,7 @@
 
 using namespace Vaca;
 
-MenuItemEvent::MenuItemEvent(MenuItem *source)
+MenuItemEvent::MenuItemEvent(MenuItem* source)
   : Event(source)
 {
 }
@@ -44,7 +44,7 @@ MenuItemEvent::~MenuItemEvent()
 {
 }
 
-MenuItem *MenuItemEvent::getMenuItem()
+MenuItem* MenuItemEvent::getMenuItem()
 {
-  return dynamic_cast<MenuItem *>(getSource());
+  return dynamic_cast<MenuItem*>(getSource());
 }

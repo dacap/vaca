@@ -48,7 +48,7 @@ class VACA_DLL GroupBox : public Widget
 {
 public:
 
-  GroupBox(const String &text, Widget *parent, Style style = GroupBoxStyle);
+  GroupBox(const String& text, Widget* parent, Style style = GroupBoxStyle);
   virtual ~GroupBox();
 
   virtual Rect getLayoutBounds();
@@ -58,9 +58,9 @@ public:
 protected:
 
   // events
-  virtual void onPreferredSize(Size &sz);
+  virtual void onPreferredSize(Size& sz);
 
-  virtual bool wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT &lResult);
+  virtual bool wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult);
 
 };
 

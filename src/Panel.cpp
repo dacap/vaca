@@ -40,12 +40,12 @@ using namespace Vaca;
  *          want to use this widget in a Dialog (in this way, if you
  *          press the Tab key, the children are explored too).
  */
-Panel::Panel(Widget *parent, Style style)
+Panel::Panel(Widget* parent, Style style)
   : Widget(PanelClass::getClassName(), parent, style)
 {
 }
 
-Panel::Panel(const WidgetClassName &className, Widget *parent, Style style)
+Panel::Panel(const WidgetClassName& className, Widget* parent, Style style)
   : Widget(className, parent, style)
 {
 }

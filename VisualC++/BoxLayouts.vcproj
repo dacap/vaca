@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="BoxLayouts"
-	ProjectGUID="{F7B5BE18-31D4-46D7-9E4B-9062FABA487B}"
+	ProjectGUID="{02166773-1412-4884-9BC7-F4E20A0F1282}"
 	RootNamespace="BoxLayouts"
 	Keyword="Win32Proj">
 	<Platforms>

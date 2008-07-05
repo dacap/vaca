@@ -66,14 +66,14 @@ Image::Image(ResourceId imageId)
   ZeroMemory(&bc, sizeof(bc));
   bc.bcSize = sizeof(bc);
   GetDIBits(m_fromHDC, m_HBITMAP, 0, 0, NULL,
-	    reinterpret_cast<BITMAPINFO *>(&bc), 0);
+	    reinterpret_cast<BITMAPINFO*>(&bc), 0);
   m_size = Size(bc.bcWidth, bc.bcHeight);
 
   // graphics
   m_graphics = NULL;
 }
 
-Image::Image(const String &fileName)
+Image::Image(const String& fileName)
 {
   m_fromHDC = GetDC(GetDesktopWindow());
 
@@ -99,14 +99,14 @@ Image::Image(const String &fileName)
   ZeroMemory(&bc, sizeof(bc));
   bc.bcSize = sizeof(bc);
   GetDIBits(m_fromHDC, m_HBITMAP, 0, 0, NULL,
-	    reinterpret_cast<BITMAPINFO *>(&bc), 0);
+	    reinterpret_cast<BITMAPINFO*>(&bc), 0);
   m_size = Size(bc.bcWidth, bc.bcHeight);
 
   // graphics
   m_graphics = NULL;
 }
 
-Image::Image(const Size &sz)
+Image::Image(const Size& sz)
 {
   assert(sz.w > 0 && sz.h > 0);
 
@@ -116,7 +116,7 @@ Image::Image(const Size &sz)
   m_graphics = NULL;
 }
 
-Image::Image(const Size &sz, int bpp)
+Image::Image(const Size& sz, int bpp)
 {
   assert(sz.w > 0 && sz.h > 0);
 
@@ -138,7 +138,7 @@ Image::Image(const Size &sz, int bpp)
   binf.bmiColors[0] = dummy;
   binf.bmiHeader = bhdr;
 
-  char *bits = NULL;
+  char* bits = NULL;
   m_fromHDC = GetDC(GetDesktopWindow());
   m_size = sz;
   m_HBITMAP = CreateDIBSection(m_fromHDC, &binf, DIB_RGB_COLORS,
@@ -147,7 +147,7 @@ Image::Image(const Size &sz, int bpp)
   m_graphics = NULL;
 }
 
-Image::Image(const Size &sz, Graphics &g)
+Image::Image(const Size& sz, Graphics& g)
 {
   assert(g.getHDC() != NULL);
   assert(sz.w > 0 && sz.h > 0);
@@ -158,7 +158,7 @@ Image::Image(const Size &sz, Graphics &g)
   m_graphics = NULL;
 }
 
-Image::Image(const Image &image)
+Image::Image(const Image& image)
 {
   m_fromHDC = image.m_fromHDC;
   m_size = image.getSize();
@@ -198,7 +198,7 @@ Size Image::getSize() const
  *
  * @warning You can't delete the returned pointer.
  */
-Graphics *Image::getGraphics()
+Graphics* Image::getGraphics()
 {
   if (m_graphics == NULL) {
     assert(m_fromHDC != NULL);
@@ -212,7 +212,7 @@ HBITMAP Image::getHBITMAP()
   return m_HBITMAP;
 }
 
-Image &Image::operator=(const Image &image)
+Image& Image::operator=(const Image& image)
 {
   destroy();
 
@@ -238,7 +238,7 @@ void Image::destroy()
   }
 }
 
-void Image::copyTo(Image &image) const
+void Image::copyTo(Image& image) const
 {
-  image.getGraphics()->drawImage(*const_cast<Image *>(this), 0, 0);
+  image.getGraphics()->drawImage(*const_cast<Image*>(this), 0, 0);
 }

@@ -41,7 +41,7 @@ using namespace Vaca;
 //////////////////////////////////////////////////////////////////////
 // Edit
 
-Edit::Edit(const String &text, Widget *parent, Style style)
+Edit::Edit(const String& text, Widget* parent, Style style)
   : Widget(WidgetClassName(WC_EDIT), parent, style)
 {
   setText(text);
@@ -135,7 +135,7 @@ void Edit::deselect()
   sendMessage(EM_SETSEL, static_cast<WPARAM>(-1), 0);
 }
 
-void Edit::onPreferredSize(Size &sz)
+void Edit::onPreferredSize(Size& sz)
 {
   Size textSize;
   Style style = getStyle();
@@ -173,7 +173,7 @@ void Edit::onPreferredSize(Size &sz)
   sz = textSize+border;
 }
 
-void Edit::onChange(Event &ev)
+void Edit::onChange(Event& ev)
 {
   Change(ev);
 }
@@ -181,7 +181,7 @@ void Edit::onChange(Event &ev)
 /**
  * Converts the EN_CHANGE in onChange.
  */
-bool Edit::onReflectedCommand(int id, int code, LRESULT &lResult)
+bool Edit::onReflectedCommand(int id, int code, LRESULT& lResult)
 {
   if (Widget::onReflectedCommand(id, code, lResult))
     return true;
@@ -202,7 +202,7 @@ bool Edit::onReflectedCommand(int id, int code, LRESULT &lResult)
 //////////////////////////////////////////////////////////////////////
 // PasswordEdit
 
-PasswordEdit::PasswordEdit(const String &text, Widget *parent, Style style)
+PasswordEdit::PasswordEdit(const String& text, Widget* parent, Style style)
   : Edit(text, parent, style)
 {
 }
@@ -224,7 +224,7 @@ void PasswordEdit::setPasswordCharacter(Character passwordChar)
 //////////////////////////////////////////////////////////////////////
 // MultilineEdit
 
-MultilineEdit::MultilineEdit(const String &text, Widget *parent, Style style)
+MultilineEdit::MultilineEdit(const String& text, Widget* parent, Style style)
   : Edit(text, parent, style)
 {
 }

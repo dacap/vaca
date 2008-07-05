@@ -47,85 +47,85 @@ Size::Size(int w, int h)
   this->h = h;
 }
 
-Size::Size(const Size &size)
+Size::Size(const Size& size)
 {
   w = size.w;
   h = size.h;
 }
 
-Size::Size(const Point &point)
+Size::Size(const Point& point)
 {
   w = point.x;
   h = point.y;
 }
 
-Size Size::createUnion(const Size &sz) const
+Size Size::createUnion(const Size& sz) const
 {
   return Size(VACA_MAX(w, sz.w),
 	      VACA_MAX(h, sz.h));
 }
 
-Size Size::createIntersect(const Size &sz) const
+Size Size::createIntersect(const Size& sz) const
 {
   return Size(VACA_MIN(w, sz.w),
 	      VACA_MIN(h, sz.h));
 }
 
-const Size &Size::operator=(const Size &sz)
+const Size& Size::operator=(const Size& sz)
 {
   w = sz.w;
   h = sz.h;
   return *this;
 }
 
-const Size &Size::operator+=(const Size &sz)
+const Size& Size::operator+=(const Size& sz)
 {
   w += sz.w;
   h += sz.h;
   return *this;
 }
 
-const Size &Size::operator-=(const Size &sz)
+const Size& Size::operator-=(const Size& sz)
 {
   w -= sz.w;
   h -= sz.h;
   return *this;
 }
 
-const Size &Size::operator+=(int value)
+const Size& Size::operator+=(int value)
 {
   w += value;
   h += value;
   return *this;
 }
 
-const Size &Size::operator-=(int value)
+const Size& Size::operator-=(int value)
 {
   w -= value;
   h -= value;
   return *this;
 }
 
-const Size &Size::operator*=(int value)
+const Size& Size::operator*=(int value)
 {
   w *= value;
   h *= value;
   return *this;
 }
 
-const Size &Size::operator/=(int value)
+const Size& Size::operator/=(int value)
 {
   w /= value;
   h /= value;
   return *this;
 }
 
-Size Size::operator+(const Size &sz) const
+Size Size::operator+(const Size& sz) const
 {
   return Size(w+sz.w, h+sz.h);
 }
 
-Size Size::operator-(const Size &sz) const
+Size Size::operator-(const Size& sz) const
 {
   return Size(w-sz.w, h-sz.h);
 }
@@ -155,12 +155,12 @@ Size Size::operator-() const
   return Size(-w, -h);
 }
 
-bool Size::operator==(const Size &sz) const
+bool Size::operator==(const Size& sz) const
 {
   return w == sz.w && h == sz.h;
 }
 
-bool Size::operator!=(const Size &sz) const
+bool Size::operator!=(const Size& sz) const
 {
   return w != sz.w || h != sz.h;
 }

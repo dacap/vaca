@@ -74,7 +74,7 @@ class VACA_DLL DockArea : public Register<DockAreaClass>, public Widget
 
 public:
 
-  DockArea(Side side, Widget *parent, Style style = DockAreaStyle);
+  DockArea(Side side, Widget* parent, Style style = DockAreaStyle);
   virtual ~DockArea();
 
   bool isHorizontal();
@@ -99,24 +99,24 @@ public:
    *	 DockArea, so try to use the more biggest are to
    *     return a true hit-test.
    */
-  virtual bool hitTest(DockBar *bar, const Point &cursor, const Point &anchor, bool fromInside) = 0;
+  virtual bool hitTest(DockBar* bar, const Point& cursor, const Point& anchor, bool fromInside) = 0;
 
   /**
    * Returns a default DockInfo for the floating DockBar that want to be
    * docked by double-click by first-time.
    */
-  virtual DockInfo *createDefaultDockInfo(DockBar *bar) = 0;
+  virtual DockInfo* createDefaultDockInfo(DockBar* bar) = 0;
 
   /**
    * @return A new created dockInfo (you must to delete this pointer).
    */
-  virtual DockInfo *createDockInfo(DockBar *bar, const Point &cursor, const Point &anchor) = 0;
+  virtual DockInfo* createDockInfo(DockBar* bar, const Point& cursor, const Point& anchor) = 0;
 
   /**
    * Draws the shape (generally a rectangle) in Xor mode that represents
    * the specified @a dockInfo.
    */
-  virtual void drawXorDockInfoShape(Graphics &g, DockInfo *dockInfo) = 0;
+  virtual void drawXorDockInfoShape(Graphics& g, DockInfo* dockInfo) = 0;
 
   /**
    * Lays out all dock bars inside the dock area using the DockInfo of
@@ -128,18 +128,18 @@ public:
 
 private:
 
-  void addDockBar(DockBar *dockBar);
-  void removeDockBar(DockBar *dockBar);
+  void addDockBar(DockBar* dockBar);
+  void removeDockBar(DockBar* dockBar);
 
 protected:
   // events
-  virtual void onPreferredSize(Size &sz) = 0;
+  virtual void onPreferredSize(Size& sz) = 0;
 //   virtual void onDestroy();
 
   // new events
-  virtual void onAddDockBar(DockBar *dockBar);
-  virtual void onRemoveDockBar(DockBar *dockBar);
-  virtual void onRedock(DockBar *dockBar, DockInfo *newDockInfo);
+  virtual void onAddDockBar(DockBar* dockBar);
+  virtual void onRemoveDockBar(DockBar* dockBar);
+  virtual void onRedock(DockBar* dockBar, DockInfo* newDockInfo);
 
 };
 

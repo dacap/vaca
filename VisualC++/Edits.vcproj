@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="Edits"
-	ProjectGUID="{B8ED8457-F597-4476-80F7-4336716EEA77}"
+	ProjectGUID="{D20F12D0-A22A-412F-8B02-4A3A4F8F513D}"
 	RootNamespace="Edits"
 	Keyword="Win32Proj">
 	<Platforms>

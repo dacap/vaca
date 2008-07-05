@@ -61,8 +61,8 @@ class VACA_DLL Panel : public Register<PanelClass>, public Widget
 {
 public:
 
-  Panel(Widget *parent, Style style = PanelStyle);
-  Panel(const WidgetClassName &className, Widget *parent, Style style = PanelStyle);
+  Panel(Widget* parent, Style style = PanelStyle);
+  Panel(const WidgetClassName& className, Widget* parent, Style style = PanelStyle);
   virtual ~Panel();
 
 };

@@ -56,7 +56,7 @@ public:
   virtual Side getSide() { return side; }
 };
 
-BandedDockArea::BandedDockArea(Side side, Widget *parent, Style style)
+BandedDockArea::BandedDockArea(Side side, Widget* parent, Style style)
   : DockArea(side, parent, style)
 {
 }
@@ -65,7 +65,7 @@ BandedDockArea::~BandedDockArea()
 {
 }
 
-bool BandedDockArea::hitTest(DockBar *bar, const Point &cursor, const Point &anchor, bool fromInside)
+bool BandedDockArea::hitTest(DockBar* bar, const Point& cursor, const Point& anchor, bool fromInside)
 {
   Rect bounds = getAbsoluteClientBounds();
   Size sz;
@@ -94,9 +94,9 @@ bool BandedDockArea::hitTest(DockBar *bar, const Point &cursor, const Point &anc
   return rc.contains(cursor);
 }
 
-DockInfo *BandedDockArea::createDefaultDockInfo(DockBar *bar)
+DockInfo* BandedDockArea::createDefaultDockInfo(DockBar* bar)
 {
-  BandedDockInfo *dockInfo = new BandedDockInfo();
+  BandedDockInfo* dockInfo = new BandedDockInfo();
   dockInfo->side = getSide();
   dockInfo->band = 0;
   dockInfo->offset = 0;
@@ -106,7 +106,7 @@ DockInfo *BandedDockArea::createDefaultDockInfo(DockBar *bar)
   return dockInfo;
 }
 
-DockInfo *BandedDockArea::createDockInfo(DockBar *bar, const Point &cursor, const Point &anchor)
+DockInfo* BandedDockArea::createDockInfo(DockBar* bar, const Point& cursor, const Point& anchor)
 {
   Rect bounds = getAbsoluteClientBounds();
   Size size = bar->getDockedSize(getSide());
@@ -134,7 +134,7 @@ DockInfo *BandedDockArea::createDockInfo(DockBar *bar, const Point &cursor, cons
   // "band == count" is a valid option (the DockBar must be docked in
   // a new band)
 
-  BandedDockInfo *dockInfo = new BandedDockInfo();
+  BandedDockInfo* dockInfo = new BandedDockInfo();
   dockInfo->side = getSide();
   dockInfo->band = band;
   dockInfo->offset = isHorizontal() ? origin.x: origin.y;
@@ -144,9 +144,9 @@ DockInfo *BandedDockArea::createDockInfo(DockBar *bar, const Point &cursor, cons
   return dockInfo;
 }
 
-void BandedDockArea::drawXorDockInfoShape(Graphics &g, DockInfo *_dockInfo)
+void BandedDockArea::drawXorDockInfoShape(Graphics& g, DockInfo* _dockInfo)
 {
-  BandedDockInfo *dockInfo = static_cast<BandedDockInfo *>(_dockInfo);
+  BandedDockInfo* dockInfo = static_cast<BandedDockInfo*>(_dockInfo);
   Rect bounds = getAbsoluteClientBounds();
   Rect externRect;
   Rect internRect;
@@ -198,16 +198,16 @@ void BandedDockArea::layout()
     Rect bandBounds = getBandBounds(bandIndex);
 
     // for each dock bar
-//     std::vector<DockBar *>::iterator it = m_bandInfo[c].bars.begin();
-//     std::vector<DockBar *>::iterator end = m_bandInfo[c].bars.end();
+//     std::vector<DockBar*>::iterator it = m_bandInfo[c].bars.begin();
+//     std::vector<DockBar*>::iterator end = m_bandInfo[c].bars.end();
     std::vector<Rect> eachBarBounds;
     int barIndex, bars = m_bandInfo[bandIndex].bars.size();
     int lastMovedBarIndex = -1;
 
     // get the real bounds of each bar in this band
     for (barIndex=0; barIndex<bars; ++barIndex) {
-      BandedDockInfo *dockInfo =
-	static_cast<BandedDockInfo *>(m_bandInfo[bandIndex].bars[barIndex]->getDockInfo());
+      BandedDockInfo* dockInfo =
+	static_cast<BandedDockInfo*>(m_bandInfo[bandIndex].bars[barIndex]->getDockInfo());
 
       assert(dockInfo != NULL);
 
@@ -251,8 +251,8 @@ void BandedDockArea::layout()
 
     // set the bounds of each DockBar
     for (barIndex=0; barIndex<bars; ++barIndex) {
-      DockBar *dockBar = m_bandInfo[bandIndex].bars[barIndex];
-      // BandedDockInfo *dockInfo = static_cast<BandedDockInfo *>(dockBar->getDockInfo());
+      DockBar* dockBar = m_bandInfo[bandIndex].bars[barIndex];
+      // BandedDockInfo* dockInfo = static_cast<BandedDockInfo*>(dockBar->getDockInfo());
 
       dockBar->setBounds(eachBarBounds[barIndex]);
       dockBar->layout();
@@ -261,7 +261,7 @@ void BandedDockArea::layout()
 
 }
 
-void BandedDockArea::onPreferredSize(Size &sz)
+void BandedDockArea::onPreferredSize(Size& sz)
 {
   std::vector<BandInfo>::iterator it;
 //   int count = 0;
@@ -283,7 +283,7 @@ void BandedDockArea::onPreferredSize(Size &sz)
 //     ;
 }
 
-void BandedDockArea::onPaint(Graphics &g)
+void BandedDockArea::onPaint(Graphics& g)
 {
 #if 0
   Color topLeft = System::getColor(COLOR_3DSHADOW);
@@ -313,9 +313,9 @@ void BandedDockArea::onPaint(Graphics &g)
 #endif
 }
 
-void BandedDockArea::onAddDockBar(DockBar *dockBar)
+void BandedDockArea::onAddDockBar(DockBar* dockBar)
 {
-  BandedDockInfo *dockInfo = static_cast<BandedDockInfo *>(dockBar->getDockInfo());
+  BandedDockInfo* dockInfo = static_cast<BandedDockInfo*>(dockBar->getDockInfo());
   assert(dockInfo != NULL);
 
   int bandCount = m_bandInfo.size();
@@ -331,11 +331,11 @@ void BandedDockArea::onAddDockBar(DockBar *dockBar)
   m_bandInfo[dockInfo->band].bars.push_back(dockBar);
 
   // remove the "lastMovedInBand" flag of each bar that is in the band
-  std::vector<DockBar *>::iterator it2 = m_bandInfo[dockInfo->band].bars.begin();
-  std::vector<DockBar *>::iterator end = m_bandInfo[dockInfo->band].bars.end();
+  std::vector<DockBar*>::iterator it2 = m_bandInfo[dockInfo->band].bars.begin();
+  std::vector<DockBar*>::iterator end = m_bandInfo[dockInfo->band].bars.end();
   for (; it2 != end; ++it2) {
-    DockBar *dockBar2 = *it2;
-    BandedDockInfo *dockInfo2 = static_cast<BandedDockInfo *>(dockBar2->getDockInfo());
+    DockBar* dockBar2 = *it2;
+    BandedDockInfo* dockInfo2 = static_cast<BandedDockInfo*>(dockBar2->getDockInfo());
     dockInfo2->lastMovedInBand = false;
   }
 
@@ -346,9 +346,9 @@ void BandedDockArea::onAddDockBar(DockBar *dockBar)
   updateBandSize(dockInfo->band);
 }
 
-void BandedDockArea::onRemoveDockBar(DockBar *dockBar)
+void BandedDockArea::onRemoveDockBar(DockBar* dockBar)
 {
-  BandedDockInfo *dockInfo = static_cast<BandedDockInfo *>(dockBar->getDockInfo());
+  BandedDockInfo* dockInfo = static_cast<BandedDockInfo*>(dockBar->getDockInfo());
   assert(dockInfo != NULL);
 
   int bandIndex = dockInfo->band;
@@ -370,12 +370,12 @@ void BandedDockArea::onRemoveDockBar(DockBar *dockBar)
 
     // update dock bars band indexes
     for (; it!=m_bandInfo.end(); ++it) {
-      std::vector<DockBar *>::iterator it2 = it->bars.begin();
-      std::vector<DockBar *>::iterator end = it->bars.end();
+      std::vector<DockBar*>::iterator it2 = it->bars.begin();
+      std::vector<DockBar*>::iterator end = it->bars.end();
     
       for (; it2!=end; ++it2) {
-	DockBar *dockBar2 = *it2;
-	BandedDockInfo *dockInfo2 = static_cast<BandedDockInfo *>(dockBar2->getDockInfo());
+	DockBar* dockBar2 = *it2;
+	BandedDockInfo* dockInfo2 = static_cast<BandedDockInfo*>(dockBar2->getDockInfo());
 
 	assert(dockInfo2 != NULL);
 
@@ -388,10 +388,10 @@ void BandedDockArea::onRemoveDockBar(DockBar *dockBar)
     updateBandSize(bandIndex);
 }
 
-void BandedDockArea::onRedock(DockBar *dockBar, DockInfo *_newDockInfo)
+void BandedDockArea::onRedock(DockBar* dockBar, DockInfo* _newDockInfo)
 {
-  BandedDockInfo *oldDockInfo = static_cast<BandedDockInfo *>(dockBar->getDockInfo());
-  BandedDockInfo *newDockInfo = static_cast<BandedDockInfo *>(_newDockInfo);
+  BandedDockInfo* oldDockInfo = static_cast<BandedDockInfo*>(dockBar->getDockInfo());
+  BandedDockInfo* newDockInfo = static_cast<BandedDockInfo*>(_newDockInfo);
 
   assert(oldDockInfo != NULL);
   assert(newDockInfo != NULL);
@@ -412,13 +412,13 @@ void BandedDockArea::updateBandSize(int bandIndex)
 {
   assert(bandIndex >= 0 && bandIndex < static_cast<int>(m_bandInfo.size()));
 
-  std::vector<DockBar *>::iterator it = m_bandInfo[bandIndex].bars.begin();
-  std::vector<DockBar *>::iterator end = m_bandInfo[bandIndex].bars.end();
+  std::vector<DockBar*>::iterator it = m_bandInfo[bandIndex].bars.begin();
+  std::vector<DockBar*>::iterator end = m_bandInfo[bandIndex].bars.end();
   int size = 0;
   
   for (; it!=end; ++it) {
-    DockBar *dockBar = *it;
-    BandedDockInfo *dockInfo = static_cast<BandedDockInfo *>(dockBar->getDockInfo());
+    DockBar* dockBar = *it;
+    BandedDockInfo* dockInfo = static_cast<BandedDockInfo*>(dockBar->getDockInfo());
 
     assert(dockInfo != NULL);
 
@@ -480,13 +480,13 @@ void BandedDockArea::fitBounds(int bandIndex, int barIndex1, std::vector<Rect> &
 {
   Rect bandBounds = getBandBounds(bandIndex);
   int barIndex2, bars = m_bandInfo[bandIndex].bars.size();
-  BandedDockInfo *di1 =
-    static_cast<BandedDockInfo *>(m_bandInfo[bandIndex].bars[barIndex1]->getDockInfo());
+  BandedDockInfo* di1 =
+    static_cast<BandedDockInfo*>(m_bandInfo[bandIndex].bars[barIndex1]->getDockInfo());
 
   for (barIndex2=0; barIndex2<bars; ++barIndex2) {
     if (barIndex1 != barIndex2) {
-      BandedDockInfo *di2 =
-	static_cast<BandedDockInfo *>(m_bandInfo[bandIndex].bars[barIndex2]->getDockInfo());
+      BandedDockInfo* di2 =
+	static_cast<BandedDockInfo*>(m_bandInfo[bandIndex].bars[barIndex2]->getDockInfo());
 
       if (!di2->lastMovedInBand) {
 	

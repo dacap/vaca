@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="TextEditor"
-	ProjectGUID="{E283229A-50AB-43C6-ACA8-A166FA503202}"
+	ProjectGUID="{2A974FD3-256C-4B66-8A79-C96E34F2C3C9}"
 	RootNamespace="TextEditor"
 	Keyword="Win32Proj">
 	<Platforms>

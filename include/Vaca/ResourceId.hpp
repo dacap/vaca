@@ -47,7 +47,7 @@ class VACA_DLL ResourceId
 public:
 
   explicit ResourceId(int id);
-  ResourceId(const ResourceId &rc);
+  ResourceId(const ResourceId& rc);
   virtual ~ResourceId();
 
   int getId();

@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="EyeDropper"
-	ProjectGUID="{3ED1733A-DA99-4D2C-BFB5-220510757E0F}"
+	ProjectGUID="{99D4CF30-5BD8-402C-90BC-92A1A59D61EF}"
 	RootNamespace="EyeDropper"
 	Keyword="Win32Proj">
 	<Platforms>

@@ -37,7 +37,7 @@
 
 using namespace Vaca;
 
-SpinButton::SpinButton(Widget *parent, Style style)
+SpinButton::SpinButton(Widget* parent, Style style)
   : Widget(WidgetClassName(UPDOWN_CLASS), parent, style)
 {
   // default values
@@ -46,7 +46,7 @@ SpinButton::SpinButton(Widget *parent, Style style)
 }
 
 SpinButton::SpinButton(int minValue, int maxValue, int value,
-		       Widget *parent, Style style)
+		       Widget* parent, Style style)
   : Widget(WidgetClassName(UPDOWN_CLASS), parent, style)
 {
   assert(minValue <= value);
@@ -88,7 +88,7 @@ int SpinButton::getMaximum()
   return maxValue;
 }
 
-void SpinButton::getRange(int &minValue, int &maxValue)
+void SpinButton::getRange(int& minValue, int& maxValue)
 {
   LPINT lpMinValue = &minValue;
   LPINT lpMaxValue = &minValue;
@@ -135,7 +135,7 @@ void SpinButton::setBase(int base)
   sendMessage(UDM_SETBASE, base, 0);
 }
 
-Widget *SpinButton::getBuddy()
+Widget* SpinButton::getBuddy()
 {
   HWND hwndBuddy = reinterpret_cast<HWND>(sendMessage(UDM_GETBUDDY, 0, 0));
   if (hwndBuddy != NULL)
@@ -144,14 +144,14 @@ Widget *SpinButton::getBuddy()
     return NULL;
 }
 
-void SpinButton::setBuddy(Widget *buddy)
+void SpinButton::setBuddy(Widget* buddy)
 {
   sendMessage(UDM_SETBUDDY, reinterpret_cast<WPARAM>(buddy->getHWND()), 0);
 }
 
-void SpinButton::onPreferredSize(Size &sz)
+void SpinButton::onPreferredSize(Size& sz)
 {
-  Widget *buddy = getBuddy();
+  Widget* buddy = getBuddy();
 
   if (buddy != NULL)
     sz = Size(17, buddy->getPreferredSize().h);
@@ -159,17 +159,17 @@ void SpinButton::onPreferredSize(Size &sz)
     sz = Size(17, 17);
 }
 
-void SpinButton::onChange(SpinButtonEvent &ev)
+void SpinButton::onChange(SpinButtonEvent& ev)
 {
   Change(ev);
 }
 
-// void SpinButton::onBeforeChange(SpinButtonEvent &ev)
+// void SpinButton::onBeforeChange(SpinButtonEvent& ev)
 // {
 //   BeforeChange(ev);
 // }
 
-// void SpinButton::onAfterChange(SpinButtonEvent &ev)
+// void SpinButton::onAfterChange(SpinButtonEvent& ev)
 // {
 //   AfterChange(ev);
 // }
@@ -182,7 +182,7 @@ void SpinButton::onChange(SpinButtonEvent &ev)
 //   }
 // }
 
-bool SpinButton::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT &lResult)
+bool SpinButton::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult)
 {
   if (Widget::onReflectedNotify(lpnmhdr, lResult))
     return true;

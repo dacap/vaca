@@ -724,8 +724,13 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		   LPSTR lpCmdLine, int nCmdShow)
 {
   Application app;
-  MainFrame frame;
-  frame.setVisible(true);
-  app.run();
+  try {
+    MainFrame frame;
+    frame.setVisible(true);
+    app.run();
+  }
+  catch (Exception &e) {
+    e.show();
+  }
   return 0;
 }

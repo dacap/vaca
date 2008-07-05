@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="Regions"
-	ProjectGUID="{AD4C6DF1-DE27-4DBB-A36D-01F18F607189}"
+	ProjectGUID="{CEBB603D-35F4-4A04-8807-5810560B8F91}"
 	RootNamespace="Regions"
 	Keyword="Win32Proj">
 	<Platforms>

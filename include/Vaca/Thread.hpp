@@ -61,7 +61,7 @@ public:
   // functions for the current thread
 
   static void doMessageLoop();
-  static void doMessageLoopFor(Widget *widget);
+  static void doMessageLoopFor(Widget* widget);
 
   static void pumpMessageQueue();
   static void breakMessageLoop();
@@ -70,22 +70,22 @@ public:
 
 protected:
 
-  static bool getMessage(Message &msg);
-  static bool peekMessage(Message &msg);
-  static void processMessage(Message &msg);
-  static bool preTranslateMessage(Message &msg);
+  static bool getMessage(Message& msg);
+  static bool peekMessage(Message& msg);
+  static void processMessage(Message& msg);
+  static bool preTranslateMessage(Message& msg);
 
 private:
 
-  static void addFrame(Frame *frame);
-  static void removeFrame(Frame *frame);
+  static void addFrame(Frame* frame);
+  static void removeFrame(Frame* frame);
 
 };
 
 void VACA_DLL __vaca_remove_all_thread_data();
 
-Widget * VACA_DLL __vaca_get_outside_widget();
-void VACA_DLL __vaca_set_outside_widget(Widget *widget);
+Widget* VACA_DLL __vaca_get_outside_widget();
+void VACA_DLL __vaca_set_outside_widget(Widget* widget);
 
 } // namespace Vaca
 

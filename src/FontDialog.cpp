@@ -38,7 +38,7 @@
 
 using namespace Vaca;
 
-FontDialog::FontDialog(Font *font, Widget *parent)
+FontDialog::FontDialog(Font* font, Widget* parent)
   : CommonDialog(parent)
   , m_font(font)
 {

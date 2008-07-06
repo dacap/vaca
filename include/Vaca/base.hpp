@@ -63,7 +63,7 @@ namespace Vaca {
 #endif
 
 #if 1
-  // Visual C++ has "max" and "min" has macros... so there is some
+  // Visual C++ has "max" and "min" as macros... so there is some
   // problems using "std::max" and "std::min"
   #define VACA_MIN(x,y)		((x) < (y) ? (x): (y))
   #define VACA_MAX(x,y)		((x) < (y) ? (y): (x))

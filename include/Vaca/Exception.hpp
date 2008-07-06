@@ -48,16 +48,22 @@ class Exception : public std::exception
 public:
 
   Exception() : std::exception() { }
-  Exception(const String& message) : std::exception(), m_message(message) { }
+  Exception(const String& message) : std::exception(),
+				     m_message(message) { }
   virtual ~Exception() throw() { }
 
-  virtual const char* what( ) const throw() {
-    return m_message.c_str();
+  virtual const char* what() const throw() {
+    return "Vaca::Exception";
+  }
+
+  virtual const String& getMessage() const throw() {
+    return m_message;
   }
 
   void show() {
-    MessageBox(NULL, m_message.empty() ? "No message": m_message.c_str(),
-	       "Vaca::Exception", MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
+    MessageBox(NULL, m_message.empty() ? _T("No message"):
+					 m_message.c_str(),
+	       _T("Vaca::Exception"), MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
   }
 
 };

@@ -75,13 +75,11 @@ TESTS = \
 	test_size \
 	test_string
 
-# EXAMPLES = 
-
 # ----------------------------------------------------------------------
 # Flags
 # ----------------------------------------------------------------------
 
-CXXFLAGS = -Iinclude -Iscintilla/include -Ithird_party -W -Wall -Wno-unused
+CXXFLAGS = -Iinclude -Iscintilla/include -W -Wall -Wno-unused
 DLLFLAGS =
 LFLAGS = -mwindows -Lobj
 LIBS =

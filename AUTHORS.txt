@@ -2,7 +2,7 @@
 DEVELOPERS
 ----------------------------------------------------------------------
 
-  David A. Capello <dacap@users.sourceforge.net>
+  David A. Capello <davidcapello@gmail.com>
 
 
 ----------------------------------------------------------------------

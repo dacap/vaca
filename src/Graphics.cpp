@@ -29,7 +29,6 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "stdvaca.h"
 #include "Vaca/Graphics.hpp"
 #include "Vaca/Image.hpp"
 #include "Vaca/ImageList.hpp"
@@ -43,6 +42,8 @@
 #include "Vaca/Region.hpp"
 #include "Vaca/Pen.hpp"
 #include "Vaca/Brush.hpp"
+
+#include <cmath>
 
 #ifndef GRADIENT_FILL_RECT_H
   #define GRADIENT_FILL_RECT_H 0
@@ -798,10 +799,10 @@ void Graphics::drawArc(Pen& pen, int x, int y, int w, int h, double startAngle, 
   HGDIOBJ oldPen = SelectObject(m_HDC, pen.getHPEN());
   int x1, y1, x2, y2;
 
-  x1 = x+w/2 + (int)(cos(startAngle*M_PI/180)*w);
-  y1 = y+h/2 - (int)(sin(startAngle*M_PI/180)*h);
-  x2 = x+w/2 + (int)(cos((startAngle+sweepAngle)*M_PI/180)*w);
-  y2 = y+h/2 - (int)(sin((startAngle+sweepAngle)*M_PI/180)*h);
+  x1 = x+w/2 + static_cast<int>(std::cos(startAngle*M_PI/180)*w);
+  y1 = y+h/2 - static_cast<int>(std::sin(startAngle*M_PI/180)*h);
+  x2 = x+w/2 + static_cast<int>(std::cos((startAngle+sweepAngle)*M_PI/180)*w);
+  y2 = y+h/2 - static_cast<int>(std::sin((startAngle+sweepAngle)*M_PI/180)*h);
 
   Arc(m_HDC, x, y, x+w, y+h, x1, y1, x2, y2);
 
@@ -821,10 +822,10 @@ void Graphics::drawPie(Pen& pen, int x, int y, int w, int h, double startAngle, 
   HGDIOBJ oldBrush = SelectObject(m_HDC, findHBRUSH(BS_NULL, 0, 0));
   int x1, y1, x2, y2;
 
-  x1 = x+w/2 + (int)(cos(startAngle*M_PI/180)*w);
-  y1 = y+h/2 - (int)(sin(startAngle*M_PI/180)*h);
-  x2 = x+w/2 + (int)(cos((startAngle+sweepAngle)*M_PI/180)*w);
-  y2 = y+h/2 - (int)(sin((startAngle+sweepAngle)*M_PI/180)*h);
+  x1 = x+w/2 + static_cast<int>(std::cos(startAngle*M_PI/180)*w);
+  y1 = y+h/2 - static_cast<int>(std::sin(startAngle*M_PI/180)*h);
+  x2 = x+w/2 + static_cast<int>(std::cos((startAngle+sweepAngle)*M_PI/180)*w);
+  y2 = y+h/2 - static_cast<int>(std::sin((startAngle+sweepAngle)*M_PI/180)*h);
 
   Pie(m_HDC, x, y, x+w, y+h, x1, y1, x2, y2);
 
@@ -845,10 +846,10 @@ void Graphics::drawChord(Pen& pen, int x, int y, int w, int h, double startAngle
   HGDIOBJ oldBrush = SelectObject(m_HDC, findHBRUSH(BS_NULL, 0, 0));
   int x1, y1, x2, y2;
 
-  x1 = x+w/2 + (int)(cos(startAngle*M_PI/180)*w);
-  y1 = y+h/2 - (int)(sin(startAngle*M_PI/180)*h);
-  x2 = x+w/2 + (int)(cos((startAngle+sweepAngle)*M_PI/180)*w);
-  y2 = y+h/2 - (int)(sin((startAngle+sweepAngle)*M_PI/180)*h);
+  x1 = x+w/2 + static_cast<int>(std::cos(startAngle*M_PI/180)*w);
+  y1 = y+h/2 - static_cast<int>(std::sin(startAngle*M_PI/180)*h);
+  x2 = x+w/2 + static_cast<int>(std::cos((startAngle+sweepAngle)*M_PI/180)*w);
+  y2 = y+h/2 - static_cast<int>(std::sin((startAngle+sweepAngle)*M_PI/180)*h);
 
   Chord(m_HDC, x, y, x+w, y+h, x1, y1, x2, y2);
 

@@ -29,59 +29,31 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "stdvaca.h"
 #include "Vaca/Mutex.hpp"
-#include "Vaca/Debug.hpp"
 
 using namespace Vaca;
 
-/**
- * @param multiProcess @c True means it's a Win32 Mutex HANDLE, @c
- * false means it's a CRITICAL_SECTION.
- * @param mutexName Can be specified only when @a multiProcess is true. It's
- * useful to known a Mutex in multiple-processes by its name.
- */
-Mutex::Mutex(bool multiProcess, LPCTSTR mutexName)
+Mutex::Mutex()
 {
-  m_criticalSection = !multiProcess;
-  
-  if (m_criticalSection) {
-    // critical sections can't have a name
-    assert(mutexName == NULL);
-
-    m_data = new CRITICAL_SECTION;
-    InitializeCriticalSection(reinterpret_cast<LPCRITICAL_SECTION>(m_data));
-  }
-  else {
-    m_data = CreateMutex(NULL, FALSE, mutexName);
-    // if (m_data == 0 || m_data == INVALID_HANDLE_VALUE)
-    // throw 
-  }
+  InitializeCriticalSection(&m_cs);
 }
 
 Mutex::~Mutex()
 {
-  if (m_criticalSection) {
-    DeleteCriticalSection(reinterpret_cast<LPCRITICAL_SECTION>(m_data));
-    delete reinterpret_cast<LPCRITICAL_SECTION>(m_data);
-  }
-  else {
-    CloseHandle(m_data);
-  }
+  DeleteCriticalSection(&m_cs);
 }
 
 void Mutex::lock()
 {
-  if (m_criticalSection)
-    EnterCriticalSection(reinterpret_cast<LPCRITICAL_SECTION>(m_data));
-  else
-    WaitForSingleObject(m_data, INFINITE);
+  EnterCriticalSection(&m_cs);
+}
+
+bool Mutex::tryLock()
+{
+  return TryEnterCriticalSection(&m_cs);
 }
 
 void Mutex::unlock()
 {
-  if (m_criticalSection)
-    LeaveCriticalSection(reinterpret_cast<LPCRITICAL_SECTION>(m_data));
-  else
-    ReleaseMutex(m_data);
+  LeaveCriticalSection(&m_cs);
 }

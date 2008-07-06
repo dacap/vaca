@@ -32,7 +32,6 @@
 #ifndef VACA_TOOLBAR_HPP
 #define VACA_TOOLBAR_HPP
 
-#include <commctrl.h>
 #include <vector>
 
 #include "Vaca/base.hpp"

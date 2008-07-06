@@ -29,7 +29,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "stdvaca.h"		// M_PI mainly
+#include <cmath>
 #include <Vaca/Vaca.hpp>
 
 using namespace Vaca;
@@ -65,8 +65,8 @@ public:
     bool fill = m_fill.isSelected();
     Rect rc = getClientBounds();
 
-    Size extra = Size((int)(cos(M_PI*45/180)*rc.w/2),
-		      (int)(sin(M_PI*45/180)*rc.h/2));
+    Size extra = Size(static_cast<int>(std::cos(M_PI*45/180)*rc.w/2),
+		      static_cast<int>(std::sin(M_PI*45/180)*rc.h/2));
 
     Pen pen(Color::Red);
     g.drawArc(pen, rc, 0, 45);

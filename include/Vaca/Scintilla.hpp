@@ -32,8 +32,6 @@
 #ifndef VACA_SCINTILLA_HPP
 #define VACA_SCINTILLA_HPP
 
-#include <boost/signal.hpp>
-
 #include "Vaca/base.hpp"
 #include "Vaca/Widget.hpp"
 
@@ -608,7 +606,7 @@ public:
   // Notifications
 
   // signals
-  boost::signal<void ()> UpdateUI; ///< @see onUpdateUI
+  Signal0<void> UpdateUI; ///< @see onUpdateUI
 
 protected:
   // reflection

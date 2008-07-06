@@ -33,17 +33,16 @@
 #define VACA_LISTITEM_HPP
 
 #include <vector>
-#include <boost/noncopyable.hpp>
-#include <commctrl.h>
 
 #include "Vaca/base.hpp"
 #include "Vaca/Component.hpp"
+#include "Vaca/NonCopyable.hpp"
 
 namespace Vaca {
 
 class ListView;
 
-class VACA_DLL ListItem : private boost::noncopyable
+class VACA_DLL ListItem : private NonCopyable
 			, public Component
 {
   friend class ListView;

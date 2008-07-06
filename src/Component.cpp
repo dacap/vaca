@@ -29,27 +29,27 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "stdvaca.h"
 #include "Vaca/Component.hpp"
 #include "Vaca/Debug.hpp"
 
 #ifndef NDEBUG
-#include <boost/thread/mutex.hpp>
 #include <typeinfo>
+#include "Vaca/Mutex.hpp"
+#include "Vaca/ScopedLock.hpp"
 #endif
 
 using namespace Vaca;
 
 #ifndef NDEBUG
-static boost::mutex instanceCounterMutex; // used to access instanceCounter
-static int instanceCounter = 0;
+static Mutex instanceCounterMutex; // used to access instanceCounter
+static volatile int instanceCounter = 0;
 #endif
 
 Component::Component()
 {
 #ifndef NDEBUG
   {
-    boost::mutex::scoped_lock lock(instanceCounterMutex);
+    ScopedLock hold(instanceCounterMutex);
     VACA_TRACE("new Component (%d, %p)\n", ++instanceCounter, this);
   }
 #endif
@@ -63,7 +63,7 @@ Component::~Component()
 
 #ifndef NDEBUG
   {
-    boost::mutex::scoped_lock lock(instanceCounterMutex);
+    ScopedLock hold(instanceCounterMutex);
     VACA_TRACE("delete Component (%d, %p)\n", --instanceCounter, this);
   }
 #endif

@@ -110,12 +110,12 @@ public:
   {
     setLayout(new BoxLayout(Orientation::Vertical, true));
 
-    m_button4.Action.connect(Bind(&MainFrame::onSelectColor, this));
+    m_button4.Action.connect(&MainFrame::onSelectColor, this);
 
     setSize(getPreferredSize());
   }
 
-  void onSelectColor()
+  void onSelectColor(Event& ev)
   {
     ColorDialog dlg(m_button4.getBgColor(), this);
     if (dlg.doModal()) {

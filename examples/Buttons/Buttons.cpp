@@ -83,7 +83,7 @@ public:
     bindButton(m_radioButton3);
     bindButton(m_radioButton4);
 
-    m_disableButton.Action.connect(Bind(&MainFrame::toggleDisabled, this));
+    m_disableButton.Action.connect(&MainFrame::onToggleDisabled, this);
 
     setSize(getPreferredSize());
     center();
@@ -106,7 +106,7 @@ private:
     layout();
   }
 
-  void toggleDisabled()
+  void onToggleDisabled(Event& ev)
   {
     bool state = !m_disableButton.isSelected();
     m_button.setEnabled(state);

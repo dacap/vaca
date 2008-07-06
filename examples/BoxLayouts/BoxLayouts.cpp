@@ -93,22 +93,22 @@ public:
     m_expandEdit.setSelected(true);
 
     // bindings...
-    m_horizontal.Action.connect(Bind(&MainFrame::onSetupLayout, this));
-    m_vertical.Action.connect(Bind(&MainFrame::onSetupLayout, this));
-    m_homogeneous.Action.connect(Bind(&MainFrame::onSetupLayout, this));
-    m_heterogeneous.Action.connect(Bind(&MainFrame::onSetupLayout, this));
-    m_expandLabel.Action.connect(Bind(&MainFrame::onSetupConstraints, this));
-    m_expandEdit.Action.connect(Bind(&MainFrame::onSetupConstraints, this));
-    m_expandButton.Action.connect(Bind(&MainFrame::onSetupConstraints, this));
+    m_horizontal.Action.connect(&MainFrame::onSetupLayout, this);
+    m_vertical.Action.connect(&MainFrame::onSetupLayout, this);
+    m_homogeneous.Action.connect(&MainFrame::onSetupLayout, this);
+    m_heterogeneous.Action.connect(&MainFrame::onSetupLayout, this);
+    m_expandLabel.Action.connect(&MainFrame::onSetupConstraints, this);
+    m_expandEdit.Action.connect(&MainFrame::onSetupConstraints, this);
+    m_expandButton.Action.connect(&MainFrame::onSetupConstraints, this);
 
     // relayout when edit the text (to see how Edit::onPreferredSize
     // modifies the BoxLayout behavior)
-    m_edit.Change.connect(Bind(&MainFrame::layout, this));
+    m_edit.Change.connect(&MainFrame::onChangeEdit, this);
   }
 
 protected:
 
-  void onSetupLayout()
+  void onSetupLayout(Event& ev)
   {
     Orientation newOrientation = m_vertical.isSelected() ? Orientation::Vertical:
 							   Orientation::Horizontal;
@@ -133,7 +133,7 @@ protected:
     m_expandButton.setEnabled(!isHomogeneous);
   }
 
-  void onSetupConstraints()
+  void onSetupConstraints(Event& ev)
   {
     // when we set a constraint, we must to delete the old returned
     // constraint...
@@ -143,6 +143,11 @@ protected:
 
     // relayout the m_top panel
     m_top.layout();
+  }
+
+  void onChangeEdit(Event& ev)
+  {
+    layout();
   }
 
 };

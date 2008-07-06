@@ -29,7 +29,6 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "stdvaca.h"
 #include "Vaca/DockBar.hpp"
 #include "Vaca/DockFrame.hpp"
 #include "Vaca/Debug.hpp"
@@ -37,7 +36,6 @@
 #include "Vaca/MouseEvent.hpp"
 #include "Vaca/Debug.hpp"
 #include "Vaca/System.hpp"
-#include "Vaca/Bind.hpp"
 
 #define DEF_GRIPPER_SIZE 8
 
@@ -333,8 +331,8 @@ void DockBar::makeFloat(const Rect* rect)
 
     m_dockFrame = new DockFrame(this, m_owner);
     m_dockFrame->addChild(this, true);
-    m_dockFrame->Close.connect(Bind(&DockBar::onDockFrameClose, this));
-    // m_dockFrame->Destroy.connect(Bind(&DockBar::onDockFrameDestroy, this));
+    m_dockFrame->Close.connect(&DockBar::onDockFrameClose, this);
+    // m_dockFrame->Destroy.connect(&DockBar::onDockFrameDestroy, this);
 
     setVisible(true);
 
@@ -776,8 +774,8 @@ void DockBar::cleanUp()
 
   // delete the DockFrame
   if (m_dockFrame != NULL) {
-    m_dockFrame->Close.disconnect_all_slots();
-    // m_dockFrame->Destroy.disconnect_all_slots();
+    m_dockFrame->Close.disconnectAll();
+    // m_dockFrame->Destroy.disconnectAll();
 
     if (m_dockFrame->getHWND() != NULL)
       m_dockFrame->removeChild(this, true);

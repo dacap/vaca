@@ -141,10 +141,10 @@ class Model
 
 public:
 
-  boost::signal<void (Element *element, Element *parent)> BeforeAddElement;
-  boost::signal<void (Element *element)> AfterAddElement;
-  boost::signal<void (Element *element)> BeforeRemoveElement;
-  boost::signal<void (Element *element, Element *parent)> AfterRemoveElement;
+  Signal2<void, Element*, Element*> BeforeAddElement;
+  Signal1<void, Element*>           AfterAddElement;
+  Signal1<void, Element*>           BeforeRemoveElement;
+  Signal2<void, Element*, Element*> AfterRemoveElement;
 
   Model() {
     m_root = NULL;
@@ -217,16 +217,16 @@ class ModelViewAsTreeView : public TreeView
     
 public:
 
-  boost::signal<void (Element *)> ElementSelected;
+  Signal1<void, Element*> ElementSelected;
 
   ModelViewAsTreeView(Model *model, Widget *parent)
     : TreeView(parent)
     , m_model(model)
   {
-    m_model->BeforeAddElement.connect(Bind(&ModelViewAsTreeView::onBeforeAddElement, this));
-    m_model->AfterAddElement.connect(Bind(&ModelViewAsTreeView::onAfterAddElement, this));
-    m_model->BeforeRemoveElement.connect(Bind(&ModelViewAsTreeView::onBeforeRemoveElement, this));
-    m_model->AfterRemoveElement.connect(Bind(&ModelViewAsTreeView::onAfterRemoveElement, this));
+    m_model->BeforeAddElement.connect(&ModelViewAsTreeView::onBeforeAddElement, this);
+    m_model->AfterAddElement.connect(&ModelViewAsTreeView::onAfterAddElement, this);
+    m_model->BeforeRemoveElement.connect(&ModelViewAsTreeView::onBeforeRemoveElement, this);
+    m_model->AfterRemoveElement.connect(&ModelViewAsTreeView::onAfterRemoveElement, this);
   }
 
   void selectElement(Element *element)
@@ -234,7 +234,7 @@ public:
     TreeView::iterator it;
 
     for (it = begin(); it != end(); ++it) {
-      ElementViewAsTreeNode *node = dynamic_cast<ElementViewAsTreeNode *>(*it);
+      ElementViewAsTreeNode* node = dynamic_cast<ElementViewAsTreeNode*>(*it);
       if (node->getElement() == element) {
 	setSelectedNode(node);
 	break;
@@ -244,15 +244,15 @@ public:
 
 protected:
 
-  virtual void onAfterSelect(TreeViewEvent &ev)
+  virtual void onAfterSelect(TreeViewEvent& ev)
   {
     TreeView::onAfterSelect(ev);
     if (!ev.isCanceled()) {
       // generate the ElementSelected signal...
 
-      TreeNode *node = ev.getTreeNode();
+      TreeNode* node = ev.getTreeNode();
       if (node != NULL) {
-	ElementViewAsTreeNode *elemNode = dynamic_cast<ElementViewAsTreeNode *>(node);
+	ElementViewAsTreeNode* elemNode = dynamic_cast<ElementViewAsTreeNode*>(node);
 	ElementSelected(elemNode->getElement());
       }
       else
@@ -262,14 +262,14 @@ protected:
 
 private:
 
-  void onBeforeAddElement(Element *element, Element *parent)
+  void onBeforeAddElement(Element* element, Element* parent)
   {
   }
 
-  void onAfterAddElement(Element *element)
+  void onAfterAddElement(Element* element)
   {
-    ElementViewAsTreeNode *elementNode = new ElementViewAsTreeNode(element);
-    ElementViewAsTreeNode *parentNode = findNodeByElement(element->getParent());
+    ElementViewAsTreeNode* elementNode = new ElementViewAsTreeNode(element);
+    ElementViewAsTreeNode* parentNode = findNodeByElement(element->getParent());
 
     if (parentNode != NULL) {
       parentNode->addNode(elementNode);	// add the new node in the parent
@@ -287,25 +287,25 @@ private:
     invalidate(false);
   }
 
-  void onBeforeRemoveElement(Element *element)
+  void onBeforeRemoveElement(Element* element)
   {
-    ElementViewAsTreeNode *elementNode = findNodeByElement(element);
+    ElementViewAsTreeNode* elementNode = findNodeByElement(element);
     removeNode(elementNode);
     delete elementNode;
 
     invalidate(false);
   }
 
-  void onAfterRemoveElement(Element *element, Element *parent)
+  void onAfterRemoveElement(Element* element, Element* parent)
   {
   }
 
-  ElementViewAsTreeNode *findNodeByElement(Element *element)
+  ElementViewAsTreeNode *findNodeByElement(Element* element)
   {
     TreeView::iterator it;
 
     for (it = begin(); it != end(); ++it) {
-      ElementViewAsTreeNode *node = dynamic_cast<ElementViewAsTreeNode *>(*it);
+      ElementViewAsTreeNode* node = dynamic_cast<ElementViewAsTreeNode*>(*it);
       if (node->getElement() == element)
 	return node;
     }
@@ -320,20 +320,20 @@ private:
 
 class ElementViewAsWidgets : public MultilineEdit
 {
-  Element *m_element;
+  Element* m_element;
   bool m_selected;
 
 public:
 
-  boost::signal<void (Element *)> ElementSelected;
+  Signal1<void, Element*> ElementSelected;
 
-  ElementViewAsWidgets(Element *element, Widget *parent)
+  ElementViewAsWidgets(Element* element, Widget* parent)
     : MultilineEdit(element->getName(), parent, MultilineEditStyle + AutoVerticalScrollEditStyle)
   {
     m_element = element;
     m_selected = false;
 
-    Change.connect(Bind(&Widget::layout, parent));
+    Change.connect(&ElementViewAsWidgets::onChange, this);
   }
 
   Element *getElement() {
@@ -366,29 +366,34 @@ protected:
     MultilineEdit::onLostFocus(ev);
   }
 
+  void onChange(Event& ev)
+  {
+    getParent()->layout();
+  }
+
 };
 
 //////////////////////////////////////////////////////////////////////
 
 class ModelViewAsWidgets : public Panel
 {
-  Model *m_model;
-  Bix *m_bix;
-  std::map<Element *, Bix *> m_mapElemBix;
+  Model* m_model;
+  Bix* m_bix;
+  std::map<Element*, Bix*> m_mapElemBix;
 
 public:
 
-  boost::signal<void (Element *)> ElementSelected;
+  Signal1<void, Element*> ElementSelected;
 
   ModelViewAsWidgets(Model *model, Widget *parent)
     : Panel(parent, PanelStyle + ClientEdgeStyle)
     , m_model(model)
     , m_bix(NULL)
   {
-    m_model->BeforeAddElement.connect(Bind(&ModelViewAsWidgets::onBeforeAddElement, this));
-    m_model->AfterAddElement.connect(Bind(&ModelViewAsWidgets::onAfterAddElement, this));
-    m_model->BeforeRemoveElement.connect(Bind(&ModelViewAsWidgets::onBeforeRemoveElement, this));
-    m_model->AfterRemoveElement.connect(Bind(&ModelViewAsWidgets::onAfterRemoveElement, this));
+    m_model->BeforeAddElement.connect(&ModelViewAsWidgets::onBeforeAddElement, this);
+    m_model->AfterAddElement.connect(&ModelViewAsWidgets::onAfterAddElement, this);
+    m_model->BeforeRemoveElement.connect(&ModelViewAsWidgets::onBeforeRemoveElement, this);
+    m_model->AfterRemoveElement.connect(&ModelViewAsWidgets::onAfterRemoveElement, this);
   }
 
   virtual ~ModelViewAsWidgets()
@@ -404,7 +409,7 @@ public:
     Container children = getChildren();
     Container::iterator it;
     for (it = children.begin(); it != children.end(); ++it) {
-      ElementViewAsWidgets *w = dynamic_cast<ElementViewAsWidgets *>(*it);
+      ElementViewAsWidgets* w = dynamic_cast<ElementViewAsWidgets*>(*it);
 
       if (w->getElement() == element ||
 	  w->getElement()->isAncestor(element)) {
@@ -450,7 +455,7 @@ private:
       
       if (flags == 0) {
 	ElementViewAsWidgets *elementWidget = new ElementViewAsWidgets(element, this);
-	elementWidget->ElementSelected.connect(Bind(&ModelViewAsWidgets::onElementSelected, this));
+	elementWidget->ElementSelected.connect(&ModelViewAsWidgets::onElementSelected, this);
 	parentBix->add(elementWidget);
       }
       else {
@@ -486,7 +491,7 @@ private:
       Container children = getChildren();
       Container::iterator it;
       for (it = children.begin(); it != children.end(); ++it) {
-	ElementViewAsWidgets *w = dynamic_cast<ElementViewAsWidgets *>(*it);
+	ElementViewAsWidgets* w = dynamic_cast<ElementViewAsWidgets*>(*it);
 
 	if (w->getElement() == element) {
 	  Element *parentElement = element->getParent();
@@ -503,7 +508,7 @@ private:
       Container children = getChildren();
       Container::iterator it;
       for (it = children.begin(); it != children.end(); ++it) {
-	ElementViewAsWidgets *w = dynamic_cast<ElementViewAsWidgets *>(*it);
+	ElementViewAsWidgets* w = dynamic_cast<ElementViewAsWidgets*>(*it);
 
 	if (w->getElement()->isAncestor(element)) {
 	  w->getParent()->removeChild(w, true);
@@ -568,8 +573,8 @@ public:
     m_treeView.setPreferredSize(Size(256, 256));
 
     // signals
-    m_treeView.ElementSelected.connect(Bind(&MainFrame::onElementSelectedFromTreeView, this));
-    m_widgetsView.ElementSelected.connect(Bind(&MainFrame::onElementSelectedFromWidgets, this));
+    m_treeView.ElementSelected.connect(&MainFrame::onElementSelectedFromTreeView, this);
+    m_widgetsView.ElementSelected.connect(&MainFrame::onElementSelectedFromWidgets, this);
 
     // setup the tool bar
     m_toolBar.getSet().setImageList(m_imageList);

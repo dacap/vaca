@@ -32,277 +32,345 @@
 #ifndef VACA_BIND_HPP
 #define VACA_BIND_HPP
 
-#include <boost/bind.hpp>
-#include <boost/bind/placeholders.hpp>
-
 namespace Vaca {
 
-//////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////
 
-/**
- * @fn Bind 
- * @brief It's like boost::bind, but with automatic boost::arg<1>, boost::arg<2>, etc.
- *
- * You can use directly boost::bind to connect methods in
- * signals. Also, if you are using an overrided method, you should use
- * the original boost::bind to avoid compile errors by ambiguity.
- */
+  template<typename R, typename F>
+  struct BindAdapter0_fun
+  {
+    F f;
+  public:
+    BindAdapter0_fun(const F& f) : f(f) { }
 
-//////////////////////////////////////////////////////////////////////
+    R operator()() { return f(); }
 
-// Bind(&T::f, a1)
-// R T::f()
-// a1->f()
+    template<typename A1>
+    R operator()(A1 a1) { return f(); }
 
-template<class R, class T, class A1>
-boost::_bi::bind_t<R, boost::_mfi::mf0<R, T>, typename boost::_bi::list_av_1<A1>::type>
-Bind(R (T::*f) (), A1 a1)
-{
-  return boost::bind(f, a1);
-}
+    template<typename A1, typename A2>
+    R operator()(A1 a1, A2 a2) { return f(); }
 
-// Bind(&T::f, a1)
-// R T::f() const
-// a1->f()
+    template<typename A1, typename A2, typename A3>
+    R operator()(A1 a1, A2 a2, A3 a3) { return f(); }
 
-template<class R, class T, class A1>
-boost::_bi::bind_t<R, boost::_mfi::cmf0<R, T>, typename boost::_bi::list_av_1<A1>::type>
-Bind(R (T::*f) () const, A1 a1)
-{
-  return boost::bind(f, a1);
-}
+    template<typename A1, typename A2, typename A3, typename A4>
+    R operator()(A1 a1, A2 a2, A3 a3, A4 a4) { return f(); }
+  };
 
-//////////////////////////////////////////////////////////////////////
+  template<typename F>
+  struct BindAdapter0_fun<void, F>
+  {
+    F f;
+  public:
+    BindAdapter0_fun(const F& f) : f(f) { }
 
-// Bind(&T::f, a1, a2)
-// R T::f(b1)
-// a1->f(a2)
+    void operator()() { f(); }
 
-template<class R, class T, class B1, class A1, class A2>
-boost::_bi::bind_t<R, boost::_mfi::mf1<R, T, B1>, typename boost::_bi::list_av_2<A1, A2>::type>
-Bind(R (T::*f) (B1), A1 a1, A2 a2)
-{
-  return boost::bind(f, a1, a2);
-}
+    template<typename A1>
+    void operator()(A1 a1) { f(); }
 
-// Bind(&T::f, a1, a2)
-// R T::f(b1) const
-// a1->f(a2)
+    template<typename A1, typename A2>
+    void operator()(A1 a1, A2 a2) { f(); }
 
-template<class R, class T, class B1, class A1, class A2>
-boost::_bi::bind_t<R, boost::_mfi::cmf1<R, T, B1>, typename boost::_bi::list_av_2<A1, A2>::type>
-Bind(R (T::*f) (B1) const, A1 a1, A2 a2)
-{
-  return boost::bind(f, a1, a2);
-}
+    template<typename A1, typename A2, typename A3>
+    void operator()(A1 a1, A2 a2, A3 a3) { f(); }
 
-// Bind(&T::f, a1)
-// R T::f(b1)
-// a1->f(_1)
+    template<typename A1, typename A2, typename A3, typename A4>
+    void operator()(A1 a1, A2 a2, A3 a3, A4 a4) { f(); }
+  };
 
-template<class R, class T, class B1, class A1>
-boost::_bi::bind_t<R, boost::_mfi::mf1<R, T, B1>, typename boost::_bi::list_av_2<A1, boost::arg<1> >::type>
-Bind(R (T::*f) (B1), A1 a1)
-{
-  return boost::bind(f, a1, boost::arg<1>());
-}
+  template<typename R, typename F>
+  BindAdapter0_fun<R, F>
+  Bind(const F& f)
+  {
+    return BindAdapter0_fun<R, F>(f);
+  }
 
-// Bind(&T::f, a1)
-// R T::f(b1) const
-// a1->f(_1)
+  //////////////////////////////////////////////////////////////////////
 
-template<class R, class T, class B1, class A1>
-boost::_bi::bind_t<R, boost::_mfi::cmf1<R, T, B1>, typename boost::_bi::list_av_2<A1, boost::arg<1> >::type>
-Bind(R (T::*f) (B1) const, A1 a1)
-{
-  return boost::bind(f, a1, boost::arg<1>());
-}
+  template<typename R, typename T>
+  struct BindAdapter0_mem
+  {
+    R (T::*m)();
+    T* t;
+  public:
+    template<typename T2>
+    BindAdapter0_mem(R (T::*m)(), T2* t) : m(m), t(t) { }
 
-//////////////////////////////////////////////////////////////////////
+    R operator()() { return (t->*m)(); }
 
-// Bind(&T::f, a1, a2, a3)
-// R T::f(b1, b2)
-// a1->f(a2, a3)
+    template <typename A1>
+    R operator()(A1 a1) { return (t->*m)(); }
 
-template<class R, class T, class B1, class B2, class A1, class A2, class A3>
-boost::_bi::bind_t<R, boost::_mfi::mf2<R, T, B1, B2>, typename boost::_bi::list_av_3<A1, A2, A3>::type>
-Bind(R (T::*f) (B1, B2), A1 a1, A2 a2, A3 a3)
-{
-  return boost::bind(f, a1, a2, a3);
-}
+    template <typename A1, typename A2>
+    R operator()(A1 a1, A2 a2) { return (t->*m)(); }
 
-// Bind(&T::f, a1, a2, a3)
-// R T::f(b1, b2) const
-// a1->f(a2, a3)
+    template <typename A1, typename A2, typename A3>
+    R operator()(A1 a1, A2 a2, A3 a3) { return (t->*m)(); }
 
-template<class R, class T, class B1, class B2, class A1, class A2, class A3>
-boost::_bi::bind_t<R, boost::_mfi::cmf2<R, T, B1, B2>, typename boost::_bi::list_av_3<A1, A2, A3>::type>
-Bind(R (T::*f) (B1, B2) const, A1 a1, A2 a2, A3 a3)
-{
-  return boost::bind(f, a1, a2, a3);
-}
+    template <typename A1, typename A2, typename A3, typename A4>
+    R operator()(A1 a1, A2 a2, A3 a3, A4 a4) { return (t->*m)(); }
+  };
 
-// Bind(&T::f, a1)
-// R T::f(b1, b2)
-// a1->f(_1, _2)
+  template<typename T>
+  struct BindAdapter0_mem<void, T>
+  {
+    void (T::*m)();
+    T* t;
+  public:
+    template<typename T2>
+    BindAdapter0_mem(void (T::*m)(), T2* t) : m(m), t(t) { }
 
-template<class R, class T, class B1, class B2, class A1>
-boost::_bi::bind_t<R, boost::_mfi::mf2<R, T, B1, B2>, typename boost::_bi::list_av_3<A1, boost::arg<1>, boost::arg<2> >::type>
-Bind(R (T::*f) (B1, B2), A1 a1)
-{
-  return boost::bind(f, a1, boost::arg<1>(), boost::arg<2>());
-}
+    void operator()() { (t->*m)(); }
 
-// Bind(&T::f, a1)
-// R T::f(b1, b2) const
-// a1->f(_1, _2)
+    template <typename A1>
+    void operator()(A1 a1) { (t->*m)(); }
 
-template<class R, class T, class B1, class B2, class A1>
-boost::_bi::bind_t<R, boost::_mfi::cmf2<R, T, B1, B2>, typename boost::_bi::list_av_3<A1, boost::arg<1>, boost::arg<2> >::type>
-Bind(R (T::*f) (B1, B2) const, A1 a1)
-{
-  return boost::bind(f, a1, boost::arg<1>(), boost::arg<2>());
-}
+    template <typename A1, typename A2>
+    void operator()(A1 a1, A2 a2) { (t->*m)(); }
 
-//////////////////////////////////////////////////////////////////////
+    template <typename A1, typename A2, typename A3>
+    void operator()(A1 a1, A2 a2, A3 a3) { (t->*m)(); }
 
-// Bind(&T::f, a1, a2, a3, a4)
-// R T::f(b1, b2, b3)
-// a1->f(a2, a3, a4)
+    template <typename A1, typename A2, typename A3, typename A4>
+    void operator()(A1 a1, A2 a2, A3 a3, A4 a4) { (t->*m)(); }
+  };
 
-template<class R, class T, class B1, class B2, class B3, class A1, class A2, class A3, class A4>
-boost::_bi::bind_t<R, boost::_mfi::mf3<R, T, B1, B2, B3>, typename boost::_bi::list_av_4<A1, A2, A3, A4>::type>
-Bind(R (T::*f) (B1, B2, B3), A1 a1, A2 a2, A3 a3, A4 a4)
-{
-  return boost::bind(f, a1, a2, a3, a4);
-}
+  template<typename R, typename T, typename T2>
+  BindAdapter0_mem<R, T>
+  Bind(R (T::*m)(), T2* t)
+  {
+    return BindAdapter0_mem<R, T>(m, t);
+  }
 
-// Bind(&T::f, a1, a2, a3, a4)
-// R T::f(b1, b2, b3) const
-// a1->f(a2, a3, a4)
+  //////////////////////////////////////////////////////////////////////
 
-template<class R, class T, class B1, class B2, class B3, class A1, class A2, class A3, class A4>
-boost::_bi::bind_t<R, boost::_mfi::cmf3<R, T, B1, B2, B3>, typename boost::_bi::list_av_4<A1, A2, A3, A4>::type>
-Bind(R (T::*f) (B1, B2, B3) const, A1 a1, A2 a2, A3 a3, A4 a4)
-{
-  return boost::bind(f, a1, a2, a3, a4);
-}
+  template<typename R, typename F, typename B1>
+  struct BindAdapter1_fun
+  {
+    F f;
+    B1 b1;
+  public:
+    BindAdapter1_fun(const F& f, B1 b1) : f(f), b1(b1) { }
 
-// Bind(&T::f, a1)
-// R T::f(b1, b2, b3)
-// a1->f(_1, _2, _3)
+    R operator()() { return f(b1); }
 
-template<class R, class T, class B1, class B2, class B3, class A1>
-boost::_bi::bind_t<R, boost::_mfi::mf3<R, T, B1, B2, B3>, typename boost::_bi::list_av_4<A1, boost::arg<1>, boost::arg<2>, boost::arg<3> >::type>
-Bind(R (T::*f) (B1, B2, B3), A1 a1)
-{
-  return boost::bind(f, a1, boost::arg<1>(), boost::arg<2>(), boost::arg<3>());
-}
+    template<typename A1>
+    R operator()(A1 a1) { return f(b1); }
 
-// Bind(&T::f, a1)
-// R T::f(b1, b2, b3) const
-// a1->f(_1, _2, _3)
+    template<typename A1, typename A2>
+    R operator()(A1 a1, A2 a2) { return f(b1); }
 
-template<class R, class T, class B1, class B2, class B3, class A1>
-boost::_bi::bind_t<R, boost::_mfi::cmf3<R, T, B1, B2, B3>, typename boost::_bi::list_av_4<A1, boost::arg<1>, boost::arg<2>, boost::arg<3> >::type>
-Bind(R (T::*f) (B1, B2, B3) const, A1 a1)
-{
-  return boost::bind(f, a1, boost::arg<1>(), boost::arg<2>(), boost::arg<3>());
-}
+    template<typename A1, typename A2, typename A3>
+    R operator()(A1 a1, A2 a2, A3 a3) { return f(b1); }
 
-//////////////////////////////////////////////////////////////////////
+    template<typename A1, typename A2, typename A3, typename A4>
+    R operator()(A1 a1, A2 a2, A3 a3, A4 a4) { return f(b1); }
+  };
 
-// Bind(&T::f, a1, a2, a3, a4, a5)
-// R T::f(b1, b2, b3, b4)
-// a1->f(a2, a3, a4, a5)
+  template<typename F, typename B1>
+  struct BindAdapter1_fun<void, F, B1>
+  {
+    F f;
+    B1 b1;
+  public:
+    BindAdapter1_fun(const F& f, B1 b1) : f(f), b1(b1) { }
 
-template<class R, class T, class B1, class B2, class B3, class B4, class A1, class A2, class A3, class A4, class A5>
-boost::_bi::bind_t<R, boost::_mfi::mf4<R, T, B1, B2, B3, B4>, typename boost::_bi::list_av_5<A1, A2, A3, A4, A5>::type>
-Bind(R (T::*f) (B1, B2, B3, B4), A1 a1, A2 a2, A3 a3, A4 a4, A5 a5)
-{
-  return boost::bind(f, a1, a2, a3, a4, a5);
-}
+    void operator()() { f(b1); }
 
-// Bind(&T::f, a1, a2, a3, a4, a5)
-// R T::f(b1, b2, b3, b4) const
-// a1->f(a2, a3, a4, a5)
+    template<typename A1>
+    void operator()(A1 a1) { f(b1); }
 
-template<class R, class T, class B1, class B2, class B3, class B4, class A1, class A2, class A3, class A4, class A5>
-boost::_bi::bind_t<R, boost::_mfi::cmf4<R, T, B1, B2, B3, B4>, typename boost::_bi::list_av_5<A1, A2, A3, A4, A5>::type>
-Bind(R (T::*f) (B1, B2, B3, B4) const, A1 a1, A2 a2, A3 a3, A4 a4, A5 a5)
-{
-  return boost::bind(f, a1, a2, a3, a4, a5);
-}
+    template<typename A1, typename A2>
+    void operator()(A1 a1, A2 a2) { f(b1); }
 
-// Bind(&T::f, a1)
-// R T::f(b1, b2, b3, b4)
-// a1->f(_1, _2, _3, _4)
+    template<typename A1, typename A2, typename A3>
+    void operator()(A1 a1, A2 a2, A3 a3) { f(b1); }
 
-template<class R, class T, class B1, class B2, class B3, class B4, class A1>
-boost::_bi::bind_t<R, boost::_mfi::mf4<R, T, B1, B2, B3, B4>, typename boost::_bi::list_av_5<A1, boost::arg<1>, boost::arg<2>, boost::arg<3>, boost::arg<4> >::type>
-Bind(R (T::*f) (B1, B2, B3, B4), A1 a1)
-{
-  return boost::bind(f, a1, boost::arg<1>(), boost::arg<2>(), boost::arg<3>(), boost::arg<4>());
-}
+    template<typename A1, typename A2, typename A3, typename A4>
+    void operator()(A1 a1, A2 a2, A3 a3, A4 a4) { f(b1); }
+  };
 
-// Bind(&T::f, a1)
-// R T::f(b1, b2, b3, b4) const
-// a1->f(_1, _2, _3, _4)
+  template<typename R, typename F, typename B1>
+  BindAdapter1_fun<R, F, B1>
+  Bind(const F& f, B1 b1)
+  {
+    return BindAdapter1_fun<R, F, B1>(f, b1);
+  }
 
-template<class R, class T, class B1, class B2, class B3, class B4, class A1>
-boost::_bi::bind_t<R, boost::_mfi::cmf4<R, T, B1, B2, B3, B4>, typename boost::_bi::list_av_5<A1, boost::arg<1>, boost::arg<2>, boost::arg<3>, boost::arg<4> >::type>
-Bind(R (T::*f) (B1, B2, B3, B4) const, A1 a1)
-{
-  return boost::bind(f, a1, boost::arg<1>(), boost::arg<2>(), boost::arg<3>(), boost::arg<4>());
-}
+  //////////////////////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////////////////////////
+  template<typename R, typename T, typename B1>
+  struct BindAdapter1_mem
+  {
+    R (T::*m)(B1);
+    T* t;
+    B1 b1;
+  public:
+    template<typename T2>
+    BindAdapter1_mem(R (T::*m)(B1), T2* t, B1 b1) : m(m), t(t), b1(b1) { }
 
-// Bind(&T::f, a1, a2, a3, a4, a5, a6)
-// R T::f(b1, b2, b3, b4, b5)
-// a1->f(a2, a3, a4, a5, a6)
+    R operator()() { return (t->*m)(b1); }
 
-template<class R, class T, class B1, class B2, class B3, class B4, class B5, class A1, class A2, class A3, class A4, class A5, class A6>
-boost::_bi::bind_t<R, boost::_mfi::mf5<R, T, B1, B2, B3, B4, B5>, typename boost::_bi::list_av_6<A1, A2, A3, A4, A5, A6>::type>
-Bind(R (T::*f) (B1, B2, B3, B4, B5), A1 a1, A2 a2, A3 a3, A4 a4, A5 a5, A6 a6)
-{
-  return boost::bind(f, a1, a2, a3, a4, a5, a6);
-}
+    template <typename A1>
+    R operator()(A1 a1) { return (t->*m)(b1); }
 
-// Bind(&T::f, a1, a2, a3, a4, a5, a6)
-// R T::f(b1, b2, b3, b4, b5) const
-// a1->f(a2, a3, a4, a5, a6)
+    template <typename A1, typename A2>
+    R operator()(A1 a1, A2 a2) { return (t->*m)(b1); }
 
-template<class R, class T, class B1, class B2, class B3, class B4, class B5, class A1, class A2, class A3, class A4, class A5, class A6>
-boost::_bi::bind_t<R, boost::_mfi::cmf5<R, T, B1, B2, B3, B4, B5>, typename boost::_bi::list_av_6<A1, A2, A3, A4, A5, A6>::type>
-Bind(R (T::*f) (B1, B2, B3, B4, B5) const, A1 a1, A2 a2, A3 a3, A4 a4, A5 a5, A6 a6)
-{
-  return boost::bind(f, a1, a2, a3, a4, a5, a6);
-}
+    template <typename A1, typename A2, typename A3>
+    R operator()(A1 a1, A2 a2, A3 a3) { return (t->*m)(b1); }
 
-// Bind(&T::f, a1)
-// R T::f(b1, b2, b3, b4, b5)
-// a1->f(_1, _2, _3, _4, _5)
+    template <typename A1, typename A2, typename A3, typename A4>
+    R operator()(A1 a1, A2 a2, A3 a3, A4 a4) { return (t->*m)(b1); }
+  };
 
-template<class R, class T, class B1, class B2, class B3, class B4, class B5, class A1>
-boost::_bi::bind_t<R, boost::_mfi::mf5<R, T, B1, B2, B3, B4, B5>, typename boost::_bi::list_av_6<A1, boost::arg<1>, boost::arg<2>, boost::arg<3>, boost::arg<4>, boost::arg<5> >::type>
-Bind(R (T::*f) (B1, B2, B3, B4, B5), A1 a1)
-{
-  return boost::bind(f, a1, boost::arg<1>(), boost::arg<2>(), boost::arg<3>(), boost::arg<4>(), boost::arg<5>());
-}
+  template<typename T, typename B1>
+  struct BindAdapter1_mem<void, T, B1>
+  {
+    void (T::*m)(B1);
+    T* t;
+    B1 b1;
+  public:
+    template<typename T2>
+    BindAdapter1_mem(void (T::*m)(B1), T2* t, B1 b1) : m(m), t(t), b1(b1) { }
 
-// Bind(&T::f, a1)
-// R T::f(b1, b2, b3, b4, b5) const
-// a1->f(_1, _2, _3, _4, _5)
+    void operator()() { (t->*m)(b1); }
 
-template<class R, class T, class B1, class B2, class B3, class B4, class B5, class A1>
-boost::_bi::bind_t<R, boost::_mfi::cmf5<R, T, B1, B2, B3, B4, B5>, typename boost::_bi::list_av_6<A1, boost::arg<1>, boost::arg<2>, boost::arg<3>, boost::arg<4>, boost::arg<5> >::type>
-Bind(R (T::*f) (B1, B2, B3, B4, B5) const, A1 a1)
-{
-  return boost::bind(f, a1, boost::arg<1>(), boost::arg<2>(), boost::arg<3>(), boost::arg<4>(), boost::arg<5>());
-}
+    template <typename A1>
+    void operator()(A1 a1) { (t->*m)(b1); }
 
-//////////////////////////////////////////////////////////////////////
+    template <typename A1, typename A2>
+    void operator()(A1 a1, A2 a2) { (t->*m)(b1); }
+
+    template <typename A1, typename A2, typename A3>
+    void operator()(A1 a1, A2 a2, A3 a3) { (t->*m)(b1); }
+
+    template <typename A1, typename A2, typename A3, typename A4>
+    void operator()(A1 a1, A2 a2, A3 a3, A4 a4) { (t->*m)(b1); }
+  };
+
+  template<typename R, typename T, typename T2, typename B1>
+  BindAdapter1_mem<R, T, B1>
+  Bind(R (T::*m)(B1), T2* t, B1 b1)
+  {
+    return BindAdapter1_mem<R, T, B1>(m, t, b1);
+  }
+
+  //////////////////////////////////////////////////////////////////////
+
+  template<typename R, typename F, typename B1, typename B2>
+  struct BindAdapter2_fun
+  {
+    F f;
+    B1 b1;
+    B2 b2;
+  public:
+    BindAdapter2_fun(const F& f, B1 b1, B2 b2) : f(f), b1(b1), b2(b2) { }
+
+    R operator()() { return f(b1, b2); }
+
+    template<typename A1>
+    R operator()(A1 a1) { return f(b1, b2); }
+
+    template<typename A1, typename A2>
+    R operator()(A1 a1, A2 a2) { return f(b1, b2); }
+
+    template<typename A1, typename A2, typename A3>
+    R operator()(A1 a1, A2 a2, A3 a3) { return f(b1, b2); }
+
+    template<typename A1, typename A2, typename A3, typename A4>
+    R operator()(A1 a1, A2 a2, A3 a3, A4 a4) { return f(b1, b2); }
+  };
+
+  template<typename F, typename B1, typename B2>
+  struct BindAdapter2_fun<void, F, B1, B2>
+  {
+    F f;
+    B1 b1;
+    B2 b2;
+  public:
+    BindAdapter2_fun(const F& f, B1 b1, B2 b2) : f(f), b1(b1), b2(b2) { }
+
+    void operator()() { f(b1, b2); }
+
+    template<typename A1>
+    void operator()(A1 a1) { f(b1, b2); }
+
+    template<typename A1, typename A2>
+    void operator()(A1 a1, A2 a2) { f(b1, b2); }
+
+    template<typename A1, typename A2, typename A3>
+    void operator()(A1 a1, A2 a2, A3 a3) { f(b1, b2); }
+
+    template<typename A1, typename A2, typename A3, typename A4>
+    void operator()(A1 a1, A2 a2, A3 a3, A4 a4) { f(b1, b2); }
+  };
+
+  template<typename R, typename F, typename B1, typename B2>
+  BindAdapter2_fun<R, F, B1, B2>
+  Bind(const F& f, B1 b1, B2 b2)
+  {
+    return BindAdapter2_fun<R, F, B1, B2>(f, b1, b2);
+  }
+
+  //////////////////////////////////////////////////////////////////////
+
+  template<typename R, typename T, typename B1, typename B2>
+  struct BindAdapter2_mem
+  {
+    R (T::*m)(B1, B2);
+    T* t;
+    B1 b1;
+    B2 b2;
+  public:
+    template<typename T2>
+    BindAdapter2_mem(R (T::*m)(B1, B2), T2* t, B1 b1, B2 b2) : m(m), t(t), b1(b1), b2(b2) { }
+
+    R operator()() { return (t->*m)(b1, b2); }
+
+    template<typename A1>
+    R operator()(A1 a1) { return (t->*m)(b1, b2); }
+
+    template<typename A1, typename A2>
+    R operator()(A1 a1, A2 a2) { return (t->*m)(b1, b2); }
+
+    template<typename A1, typename A2, typename A3>
+    R operator()(A1 a1, A2 a2, A3 a3) { return (t->*m)(b1, b2); }
+
+    template<typename A1, typename A2, typename A3, typename A4>
+    R operator()(A1 a1, A2 a2, A3 a3, A4 a4) { return (t->*m)(b1, b2); }
+  };
+
+  template<typename T, typename B1, typename B2>
+  struct BindAdapter2_mem<void, T, B1, B2>
+  {
+    void (T::*m)(B1, B2);
+    T* t;
+    B1 b1;
+    B2 b2;
+  public:
+    template<typename T2>
+    BindAdapter2_mem(void (T::*m)(B1, B2), T2* t, B1 b1, B2 b2) : m(m), t(t), b1(b1), b2(b2) { }
+
+    void operator()() { (t->*m)(b1, b2); }
+
+    template<typename A1>
+    void operator()(A1 a1) { (t->*m)(b1, b2); }
+
+    template<typename A1, typename A2>
+    void operator()(A1 a1, A2 a2) { (t->*m)(b1, b2); }
+  };
+
+  template<typename R, typename T, typename T2, typename B1, typename B2>
+  BindAdapter2_mem<R, T, B1, B2>
+  Bind(R (T::*m)(B1, B2), T2* t, B1 b1, B2 b2)
+  {
+    return BindAdapter2_mem<R, T, B1, B2>(m, t, b1, b2);
+  }
+
+  //////////////////////////////////////////////////////////////////////
 
 } // namespace Vaca
 

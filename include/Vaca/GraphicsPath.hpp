@@ -33,13 +33,6 @@
 #define VACA_GRAPHICSPATH_HPP
 
 #include "Vaca/base.hpp"
-// #include "Vaca/Rect.hpp"
-// #include "Vaca/Color.hpp"
-// #include "Vaca/String.hpp"
-
-// #include <list>
-// #include <vector>
-// #include <boost/noncopyable.hpp>
 
 namespace Vaca {
 

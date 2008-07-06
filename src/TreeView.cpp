@@ -29,7 +29,6 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "stdvaca.h"
 #include "Vaca/TreeView.hpp"
 #include "Vaca/TreeViewEvent.hpp"
 #include "Vaca/System.hpp"
@@ -99,16 +98,12 @@ void TreeViewIterator::increment()
 
 void TreeViewIterator::decrement()
 {
+  // TODO
 }
 
 bool TreeViewIterator::equal(TreeViewIterator const& other) const
 {
   return (this->m_currentNode == other.m_currentNode);
-}
-
-TreeNode* TreeViewIterator::dereference() const
-{
-  return m_currentNode;
 }
     
 //////////////////////////////////////////////////////////////////////

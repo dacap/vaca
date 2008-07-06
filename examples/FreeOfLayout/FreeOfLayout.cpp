@@ -70,7 +70,7 @@ public:
 
     m_loginButton.Action.connect(Bind(&MainFrame::defaultOkAction, this));
     m_cancelButton.Action.connect(Bind(&MainFrame::defaultCancelAction, this));
-    m_administrator.Action.connect(Bind(&MainFrame::onAdministrator, this));
+    m_administrator.Action.connect(&MainFrame::onAdministrator, this);
 
     setSize(getNonClientSize() +
 	    Size(2+70+2+130+2, 2+(23+2)*4));
@@ -84,7 +84,7 @@ public:
   
 protected:
 
-  void onAdministrator()
+  void onAdministrator(Event& ev)
   {
     bool enabled = !m_administrator.isSelected();
     m_usernameLabel.setEnabled(enabled);

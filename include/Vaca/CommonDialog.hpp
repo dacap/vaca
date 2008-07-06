@@ -32,11 +32,11 @@
 #ifndef VACA_COMMONDIALOG_HPP
 #define VACA_COMMONDIALOG_HPP
 
-#include <commdlg.h>
-#include <boost/noncopyable.hpp>
-
 #include "Vaca/base.hpp"
 #include "Vaca/Component.hpp"
+#include "Vaca/NonCopyable.hpp"
+
+#include <commdlg.h>
 
 namespace Vaca {
 
@@ -45,7 +45,7 @@ class Widget;
 /**
  * Base class for common dialogs.
  */
-class VACA_DLL CommonDialog : private boost::noncopyable
+class VACA_DLL CommonDialog : private NonCopyable
 			    , public Component
 {
   Widget* m_parent;

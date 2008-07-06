@@ -32,8 +32,7 @@
 #ifndef VACA_TREEVIEW_HPP
 #define VACA_TREEVIEW_HPP
 
-#include <commctrl.h>
-#include <boost/iterator/iterator_facade.hpp>
+#include <iterator>
 
 #include "Vaca/base.hpp"
 #include "Vaca/Widget.hpp"
@@ -61,10 +60,8 @@ class ImageList;
  * @internal You should use #TreeView::iterator.
  */
 class VACA_DLL TreeViewIterator
-  : public boost::iterator_facade<TreeViewIterator,
-				  TreeNode*,
-				  boost::bidirectional_traversal_tag,
-				  TreeNode*>
+  : public std::iterator<std::bidirectional_iterator_tag,
+			 TreeNode*>
 {
   TreeNode* m_currentNode;
 
@@ -75,14 +72,33 @@ public:
 
   TreeViewIterator& operator=(const TreeViewIterator& other);
 
-private:
-  friend class boost::iterator_core_access;
+  TreeNode*& operator*() { return m_currentNode; }
+  TreeNode** operator->() { return &m_currentNode; }
+  TreeViewIterator& operator++() {
+    increment();
+    return *this;
+  }
+  TreeViewIterator operator++(int) {
+    TreeViewIterator i = *this;
+    increment();
+    return i;
+  }
+  TreeViewIterator& operator--() {
+    decrement();
+    return *this;
+  }
+  TreeViewIterator operator--(int) {
+    TreeViewIterator i = *this;
+    decrement();
+    return i;
+  }
+  bool operator==(const TreeViewIterator& i) const { return equal(i); }
+  bool operator!=(const TreeViewIterator& i) const { return !equal(i); }
 
+private:
   void increment();
   void decrement();
   bool equal(TreeViewIterator const& other) const;
-  TreeNode* dereference() const;
-    
 };
 
 /**
@@ -126,16 +142,16 @@ public:
   virtual void setBgColor(Color color);
 
   // signals
-  boost::signal<void (TreeViewEvent&)> BeforeExpand;
-  boost::signal<void (TreeViewEvent&)> BeforeCollapse;
-  boost::signal<void (TreeViewEvent&)> BeforeSelect;
-  boost::signal<void (TreeViewEvent&)> BeforeLabelEdit;
-  boost::signal<void (TreeViewEvent&)> AfterExpand;
-  boost::signal<void (TreeViewEvent&)> AfterCollapse;
-  boost::signal<void (TreeViewEvent&)> AfterSelect;
-  boost::signal<void (TreeViewEvent&)> AfterLabelEdit;
-//   boost::signal<void (TreeViewEvent&)> BeginDrag;
-//   boost::signal<void (TreeViewEvent&)> EndDrag;
+  Signal1<void, TreeViewEvent&> BeforeExpand;
+  Signal1<void, TreeViewEvent&> BeforeCollapse;
+  Signal1<void, TreeViewEvent&> BeforeSelect;
+  Signal1<void, TreeViewEvent&> BeforeLabelEdit;
+  Signal1<void, TreeViewEvent&> AfterExpand;
+  Signal1<void, TreeViewEvent&> AfterCollapse;
+  Signal1<void, TreeViewEvent&> AfterSelect;
+  Signal1<void, TreeViewEvent&> AfterLabelEdit;
+//   Signal1<void, TreeViewEvent&> BeginDrag;
+//   Signal1<void, TreeViewEvent&> EndDrag;
 
 protected:
   // new events

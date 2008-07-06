@@ -101,9 +101,9 @@ public:
   void setBuddy(Widget* buddy);
 
   // signals
-  boost::signal<void (SpinButtonEvent&)> Change;
-//   boost::signal<void (SpinButtonEvent&)> BeforeChange;
-//   boost::signal<void (SpinButtonEvent&)> AfterChange;
+  Signal1<void, SpinButtonEvent&> Change;
+//   Signal1<void, SpinButtonEvent&> BeforeChange;
+//   Signal1<void, SpinButtonEvent&> AfterChange;
   
 protected:
   // events

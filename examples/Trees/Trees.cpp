@@ -32,7 +32,6 @@
 #include <Vaca/Vaca.hpp>
 
 using namespace Vaca;
-using namespace boost;
 
 // this is a customized TreeNode
 class InfiniteTreeNode : public TreeNode
@@ -126,10 +125,10 @@ public:
     m_treeView1.addNode(new InfiniteTreeNode("Infinite Node"));
 
     // bind some events
-    m_treeView1.AfterExpand   .connect(Bind(&MainFrame::onAfter, this, _1, "expanded"));
-    m_treeView1.AfterCollapse .connect(Bind(&MainFrame::onAfter, this, _1, "collapsed"));
-    m_treeView1.AfterSelect   .connect(Bind(&MainFrame::onAfter, this, _1, "selected"));
-    m_treeView1.AfterLabelEdit.connect(Bind(&MainFrame::onAfter, this, _1, "edited"));
+    m_treeView1.AfterExpand   .connect(&MainFrame::onAfterExpand,    this);
+    m_treeView1.AfterCollapse .connect(&MainFrame::onAfterCollapse,  this);
+    m_treeView1.AfterSelect   .connect(&MainFrame::onAfterSelect,    this);
+    m_treeView1.AfterLabelEdit.connect(&MainFrame::onAfterLabelEdit, this);
 
     m_addItem.Action          .connect(Bind(&MainFrame::onAddItem, this));
     m_deleteItem.Action       .connect(Bind(&MainFrame::onDeleteItem, this));
@@ -140,12 +139,17 @@ public:
 protected:
 
   // onAfter some event (like onAfterExpand or onAfterCollapse)
-  void onAfter(TreeViewEvent &ev, String action)
+  void onAfter(TreeViewEvent& ev, const String& action)
   {
     m_label.setText("You "+action+" \""+ev.getTreeNode()->getText()+"\" item.");
     // the label could be bigger, relayout...
     layout();
   }
+
+  void onAfterExpand   (TreeViewEvent& ev) { onAfter(ev, "expanded"); }
+  void onAfterCollapse (TreeViewEvent& ev) { onAfter(ev, "collapsed"); }
+  void onAfterSelect   (TreeViewEvent& ev) { onAfter(ev, "selected"); }
+  void onAfterLabelEdit(TreeViewEvent& ev) { onAfter(ev, "edited"); }
 
   // adds three items in the m_treeView1
   void onAddItem()
@@ -169,7 +173,7 @@ protected:
 
   // when a button to pass items from one TreeView to other is pressed
   // this method is called...
-  void onFromTo(TreeView *treeA, TreeView *treeB)
+  void onFromTo(TreeView* treeA, TreeView* treeB)
   {
     // get the selected node in the tree "A"
     TreeNode *nodeA = treeA->getSelectedNode();

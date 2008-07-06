@@ -32,8 +32,6 @@
 #ifndef VACA_BUTTONBASE_HPP
 #define VACA_BUTTONBASE_HPP
 
-#include <boost/signal.hpp>
-
 #include "Vaca/Widget.hpp"
 
 namespace Vaca {
@@ -85,7 +83,7 @@ public:
   void setSelected(bool state);
 
   // signals
-  boost::signal<void (Event&)> Action; ///< @see onAction
+  Signal1<void, Event&> Action; ///< @see onAction
 
 protected:
   // events

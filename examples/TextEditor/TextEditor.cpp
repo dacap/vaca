@@ -30,7 +30,7 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <Vaca/Vaca.hpp>
-#include "scintilla/include/Scintilla.h"
+#include "Scintilla.h"
 #include "resource.h"
 
 using namespace Vaca;
@@ -333,12 +333,12 @@ private:
     // File/Save
     menuItem = fileMenu->add("&Save\tCtrl+S", Keys::Control | Keys::S);
     menuItem->Action.connect(Bind(&MainFrame::onSave, this));
-    menuItem->Update.connect(Bind(&MainFrame::onUpdate_forSave, this));
+    menuItem->Update.connect(&MainFrame::onUpdate_forSave, this);
 
     // File/Save As
     menuItem = fileMenu->add("Save &as...");
     menuItem->Action.connect(Bind(&MainFrame::onSaveAs, this));
-    menuItem->Update.connect(Bind(&MainFrame::onUpdate_getTextEditor_Available, this));
+    menuItem->Update.connect(&MainFrame::onUpdate_getTextEditor_Available, this);
 
     // ---
     fileMenu->addSeparator();
@@ -350,12 +350,12 @@ private:
     // Edit/Undo
     menuItem = editMenu->add("&Undo\tCtrl+Z", Keys::Control | Keys::Z);
     menuItem->Action.connect(Bind(&MainFrame::onUndo, this));
-    menuItem->Update.connect(Bind(&MainFrame::onUpdate_canUndo, this));
+    menuItem->Update.connect(&MainFrame::onUpdate_canUndo, this);
 
     // Edit/Redo
     menuItem = editMenu->add("&Redo\tCtrl+Y", Keys::Control | Keys::Y);
     menuItem->Action.connect(Bind(&MainFrame::onRedo, this));
-    menuItem->Update.connect(Bind(&MainFrame::onUpdate_canRedo, this));
+    menuItem->Update.connect(&MainFrame::onUpdate_canRedo, this);
 
     // ---
     editMenu->addSeparator();
@@ -363,22 +363,22 @@ private:
     // Edit/Cut
     menuItem = editMenu->add("Cu&t\tCtrl+X", Keys::Control | Keys::X);
     menuItem->Action.connect(Bind(&MainFrame::onCut, this));
-    menuItem->Update.connect(Bind(&MainFrame::onUpdate_getTextEditor_Available, this));
+    menuItem->Update.connect(&MainFrame::onUpdate_getTextEditor_Available, this);
 
     // Edit/Copy
     menuItem = editMenu->add("&Copy\tCtrl+C", Keys::Control | Keys::C);
     menuItem->Action.connect(Bind(&MainFrame::onCopy, this));
-    menuItem->Update.connect(Bind(&MainFrame::onUpdate_getTextEditor_Available, this));
+    menuItem->Update.connect(&MainFrame::onUpdate_getTextEditor_Available, this);
 
     // Edit/Paste
     menuItem = editMenu->add("&Paste\tCtrl+V", Keys::Control | Keys::P);
     menuItem->Action.connect(Bind(&MainFrame::onPaste, this));
-    menuItem->Update.connect(Bind(&MainFrame::onUpdate_getTextEditor_Available, this));
+    menuItem->Update.connect(&MainFrame::onUpdate_getTextEditor_Available, this);
 
     // Edit/Clear
     menuItem = editMenu->add("Clea&r");
     menuItem->Action.connect(Bind(&MainFrame::onClear, this));
-    menuItem->Update.connect(Bind(&MainFrame::onUpdate_getTextEditor_Available, this));
+    menuItem->Update.connect(&MainFrame::onUpdate_getTextEditor_Available, this);
 
     // ---
     editMenu->addSeparator();
@@ -386,12 +386,12 @@ private:
     // Edit/Find
     menuItem = editMenu->add("&Find\tCtrl+F", Keys::Control | Keys::F);
     menuItem->Action.connect(Bind(&MainFrame::onFindReplace, this, false));
-    menuItem->Update.connect(Bind(&MainFrame::onUpdate_getTextEditor_Available, this));
+    menuItem->Update.connect(&MainFrame::onUpdate_getTextEditor_Available, this);
 
     // Edit/Replace
     menuItem = editMenu->add("R&eplace\tCtrl+H", Keys::Control | Keys::H);
     menuItem->Action.connect(Bind(&MainFrame::onFindReplace, this, true));
-    menuItem->Update.connect(Bind(&MainFrame::onUpdate_getTextEditor_Available, this));
+    menuItem->Update.connect(&MainFrame::onUpdate_getTextEditor_Available, this);
 
     // Options/Change Font
     menuItem = optionsMenu->add("Change &Font");
@@ -400,22 +400,22 @@ private:
     // Options/View EOL
     menuItem = optionsMenu->add("View &EOL");
     menuItem->Action.connect(Bind(&MainFrame::onToggleViewEol, this));
-    menuItem->Update.connect(Bind(&MainFrame::onUpdate_viewEol, this));
+    menuItem->Update.connect(&MainFrame::onUpdate_viewEol, this);
 
     // Windows/Close
     menuItem = windowsMenu->add("&Close\tCtrl+W", Keys::Control | Keys::W);
     menuItem->Action.connect(Bind(&MainFrame::onCloseWindow, this));
-    menuItem->Update.connect(Bind(&MainFrame::onUpdate_getTextEditor_Available, this));
+    menuItem->Update.connect(&MainFrame::onUpdate_getTextEditor_Available, this);
 
     // Windows/Duplicate
     menuItem = windowsMenu->add("&Duplicate\tCtrl+D", Keys::Control | Keys::D);
     menuItem->Action.connect(Bind(&MainFrame::onDuplicateWindow, this));
-    menuItem->Update.connect(Bind(&MainFrame::onUpdate_getTextEditor_Available, this));
+    menuItem->Update.connect(&MainFrame::onUpdate_getTextEditor_Available, this);
 
     // Windows/Cascade
     menuItem = windowsMenu->add("&Cascade");
     menuItem->Action.connect(Bind(&MdiClient::cascade, getMdiClient()));
-    menuItem->Update.connect(Bind(&MainFrame::onUpdate_getTextEditor_Available, this));
+    menuItem->Update.connect(&MainFrame::onUpdate_getTextEditor_Available, this);
 
     // Menu bar
     menuBar->add(fileMenu);
@@ -481,7 +481,7 @@ private:
     saveTextEditor(getTextEditor(), "Save file", false);
   }
 
-  void onUpdate_forSave(MenuItemEvent &ev)
+  void onUpdate_forSave(MenuItemEvent& ev)
   {
     TextEditor *textEditor = getTextEditor();
     ev.getMenuItem()->setEnabled((textEditor != NULL)
@@ -494,7 +494,7 @@ private:
     saveTextEditor(getTextEditor(), "Save file as...", true);
   }
 
-  void onUpdate_getTextEditor_Available(MenuItemEvent &ev)
+  void onUpdate_getTextEditor_Available(MenuItemEvent& ev)
   {
     ev.getMenuItem()->setEnabled(getTextEditor() != NULL);
   }
@@ -558,10 +558,10 @@ private:
   {
     if (m_findDlg == NULL) {
       m_findDlg = new FindTextDialog(replace, this);
-      m_findDlg->FindNext.connect(Bind(&MainFrame::onFindNext, this));
-      m_findDlg->Replace.connect(Bind(&MainFrame::onReplace, this));
-      m_findDlg->ReplaceAll.connect(Bind(&MainFrame::onReplaceAll, this));
-      m_findDlg->Cancel.connect(Bind(&MainFrame::onCancelFind, this));
+      m_findDlg->FindNext.connect(&MainFrame::onFindNext, this);
+      m_findDlg->Replace.connect(&MainFrame::onReplace, this);
+      m_findDlg->ReplaceAll.connect(&MainFrame::onReplaceAll, this);
+      m_findDlg->Cancel.connect(&MainFrame::onCancelFind, this);
       m_findDlg->setVisible(true);
     }
     else
@@ -679,7 +679,7 @@ private:
   }
 
   // when the user press the close button in a MdiChild (TextEditor child)
-  void onCloseTextEditor(CloseEvent &ev)
+  void onCloseTextEditor(CloseEvent& ev)
   {
     TextEditor *textEditor = dynamic_cast<TextEditor *>(ev.getSource());
 
@@ -763,7 +763,7 @@ private:
     textEditor->getEditor().setViewEol(m_viewEol);
 
     // bind the close event
-    textEditor->Close.connect(Bind(&MainFrame::onCloseTextEditor, this));
+    textEditor->Close.connect(&MainFrame::onCloseTextEditor, this);
   }
 
   // Saves the file that is associated with 'textEditor'.  Returns

@@ -130,8 +130,8 @@ public:
     m_filesList.addColumn("SHA1");
 
     // signals
-    m_filesList.DropFiles.connect(Bind(&MainFrame::onDropFilesInFilesList, this));
-    m_filesList.AfterSelect.connect(Bind(&MainFrame::onSelectFileInList, this));
+    m_filesList.DropFiles.connect(&MainFrame::onDropFilesInFilesList, this);
+    m_filesList.AfterSelect.connect(&MainFrame::onSelectFileInList, this);
 
     // image list (get the small image list from the system)
     System::getImageList(m_imageList, true);
@@ -140,7 +140,7 @@ public:
 
 private:
 
-  void onDropFilesInFilesList(DropFilesEvent &ev)
+  void onDropFilesInFilesList(DropFilesEvent& ev)
   {
     std::vector<String> files = ev.getFiles();
     
@@ -168,7 +168,7 @@ private:
       m_filesList.setPreferredColumnWidth(i, true);
   }
 
-  void onSelectFileInList(ListViewEvent &ev)
+  void onSelectFileInList(ListViewEvent& ev)
   {
     int itemIndex = ev.getItemIndex();
     if (itemIndex >= 0) {

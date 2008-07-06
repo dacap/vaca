@@ -29,65 +29,30 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_DOCKFRAME_HPP
-#define VACA_DOCKFRAME_HPP
+#include "Vaca/TimePoint.hpp"
 
-#include "Vaca/base.hpp"
-#include "Vaca/Frame.hpp"
-#include "Vaca/Event.hpp"
+using namespace Vaca;
 
-namespace Vaca {
-
-/**
- * Default style for DockFrame: CaptionStyle, SizeBoxStyle,
- * SysMenuStyle, WS_POPUP, and WS_EX_TOOLWINDOW.
- */
-#define DockFrameStyle		(WithCaptionFrameStyle +		\
-				 WithSystemMenuFrameStyle +		\
-				 ResizableFrameStyle +			\
-				 Style(WS_POPUP, WS_EX_TOOLWINDOW))
-
-class DockBar;
-
-/**
- * Win32 class used by the DockFrame class.
- */
-class DockFrameClass : public WidgetClass
+TimePoint::TimePoint()
 {
-public:
-  static WidgetClassName getClassName()
-  { return WidgetClassName("Vaca.DockFrame"); }
-};
+  QueryPerformanceCounter(&m_point);
+  QueryPerformanceFrequency(&m_freq);
+}
+
+TimePoint::~TimePoint()
+{
+}
 
 /**
- * A Frame for a DockBar, commondly called "Pallete Window". A
- * DockFrame is the container for a floating DockBar, it's the window
- * with the WS_EX_TOOLWINDOW style.
+ * Returns the life-time in seconds of this object.
  *
- * @internal You shouldn't use this class, it's used internally by DockBar.
+ * The life-time is the elapsed time from the construction of the
+ * object.
  */
-class VACA_DLL DockFrame : public Register<DockFrameClass>, public Frame
+double TimePoint::elapsed() const
 {
-  DockBar* m_dockBar;	 // the DockBar that is inside the client area
-
-public:
-
-  DockFrame(DockBar* dockBar, Widget* parent = NULL, Style style = DockFrameStyle);
-  virtual ~DockFrame();
-
-//   Signal0<void> Destroy;
-
-protected:
-
-  virtual bool keepSynchronized();
-
-  // events
-//   virtual void onDestroy();
-  virtual void onResizing(int edge, Rect& rc);
-
-  virtual bool wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult);
-};
-
-} // namespace Vaca
-
-#endif
+  LARGE_INTEGER now;
+  QueryPerformanceCounter(&now);
+  return static_cast<double>(now.QuadPart - m_point.QuadPart)
+    / static_cast<double>(m_freq.QuadPart);
+}

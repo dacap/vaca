@@ -32,8 +32,6 @@
 #ifndef VACA_CHECKBOX_HPP
 #define VACA_CHECKBOX_HPP
 
-#include <boost/signal.hpp>
-
 #include "Vaca/ButtonBase.hpp"
 
 namespace Vaca {

@@ -32,8 +32,6 @@
 #ifndef VACA_LISTVIEW_HPP
 #define VACA_LISTVIEW_HPP
 
-#include <commctrl.h>
-
 #include "Vaca/base.hpp"
 #include "Vaca/Widget.hpp"
 #include "Vaca/CancelableEvent.hpp"
@@ -126,9 +124,9 @@ public:
 //   int getCurrentItem();
 
   // signals
-  boost::signal<void (ListViewEvent&)> BeforeSelect;
-  boost::signal<void (ListViewEvent&)> AfterSelect;
-  boost::signal<void (ListViewEvent&)> ColumnClick;
+  Signal1<void, ListViewEvent&> BeforeSelect;
+  Signal1<void, ListViewEvent&> AfterSelect;
+  Signal1<void, ListViewEvent&> ColumnClick;
 
 protected:
   // new events

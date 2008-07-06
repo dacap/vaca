@@ -32,8 +32,6 @@
 #ifndef VACA_LINKLABEL_HPP
 #define VACA_LINKLABEL_HPP
 
-#include <boost/signal.hpp>
-
 #include "Vaca/base.hpp"
 #include "Vaca/CustomLabel.hpp"
 // #include "Vaca/Panel.hpp"
@@ -74,7 +72,7 @@ public:
   virtual Color getLinkColor();
   virtual Color getHoverColor();
 
-  boost::signal<void (Event&)> Action; ///< @see onAction
+  Signal1<void, Event&> Action; ///< @see onAction
 
 protected:
 

@@ -142,13 +142,13 @@ public:
     , m_hexFormat("Hex", this)
   {
     setLayout(new BoxLayout(Orientation::Vertical, false));
-    m_hexFormat.Action.connect(Bind(&MainFrame::onHexToggle, this));
+    m_hexFormat.Action.connect(&MainFrame::onHexToggle, this);
     setSize(getPreferredSize());
   }
 
 protected:
 
-  void onHexToggle()
+  void onHexToggle(Event& ev)
   {
     m_eyeDropper.setHexFormat(m_hexFormat.isSelected());
   }

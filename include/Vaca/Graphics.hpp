@@ -34,12 +34,12 @@
 
 #include <list>
 #include <vector>
-#include <boost/noncopyable.hpp>
 
-#include "Vaca/base.hpp"
-#include "Vaca/Rect.hpp"
 #include "Vaca/Color.hpp"
+#include "Vaca/NonCopyable.hpp"
+#include "Vaca/Rect.hpp"
 #include "Vaca/String.hpp"
+#include "Vaca/base.hpp"
 
 namespace Vaca {
 
@@ -57,7 +57,7 @@ class Widget;
  * Class to handle a graphics context.  It's used to handle the Win32
  * HDCs.
  */
-class VACA_DLL Graphics : private boost::noncopyable
+class VACA_DLL Graphics : private NonCopyable
 {
 
   friend class Application;

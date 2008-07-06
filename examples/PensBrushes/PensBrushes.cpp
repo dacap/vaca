@@ -197,25 +197,24 @@ public:
     m_roundEndCap.setSelected(true);
     m_roundJoin.setSelected(true);
 
-    m_penWidth.Change.connect(Bind(&Preview::setPenWidth, &m_preview,
-				  Bind(&Slider::getValue, &m_penWidth)));
-
+    m_penWidth.Change.connect(Bind(&MainFrame::onChangePenWidth, this));
     m_penColor.Action.connect(Bind(&MainFrame::onSelectPenColor, this));
     m_brushColor.Action.connect(Bind(&MainFrame::onSelectBrushColor, this));
-
-    m_closeFigure.Action.connect(Bind(&Preview::setCloseFigure, &m_preview,
-				      Bind(&CheckBox::isSelected, &m_closeFigure)));
-
-    m_roundEndCap.Action.connect(Bind(&Preview::setPenEndCap, &m_preview, PenEndCap::Round));
-    m_squareEndCap.Action.connect(Bind(&Preview::setPenEndCap, &m_preview, PenEndCap::Square));
-    m_flatEndCap.Action.connect(Bind(&Preview::setPenEndCap, &m_preview, PenEndCap::Flat));
-
-    m_roundJoin.Action.connect(Bind(&Preview::setPenJoin, &m_preview, PenJoin::Round));
-    m_bevelJoin.Action.connect(Bind(&Preview::setPenJoin, &m_preview, PenJoin::Bevel));
-    m_miterJoin.Action.connect(Bind(&Preview::setPenJoin, &m_preview, PenJoin::Miter));
+    m_closeFigure.Action.connect(Bind(&MainFrame::onCloseFigure, this));
+    m_roundEndCap.Action.connect(Bind(&MainFrame::onEndCap, this, PenEndCap::Round));
+    m_squareEndCap.Action.connect(Bind(&MainFrame::onEndCap, this, PenEndCap::Square));
+    m_flatEndCap.Action.connect(Bind(&MainFrame::onEndCap, this, PenEndCap::Flat));
+    m_roundJoin.Action.connect(Bind(&MainFrame::onJoin, this, PenJoin::Round));
+    m_bevelJoin.Action.connect(Bind(&MainFrame::onJoin, this, PenJoin::Bevel));
+    m_miterJoin.Action.connect(Bind(&MainFrame::onJoin, this, PenJoin::Miter));
   }
 
 private:
+
+  void onChangePenWidth()
+  {
+    m_preview.setPenWidth(m_penWidth.getValue());
+  }
 
   void onSelectPenColor()
   {
@@ -229,6 +228,21 @@ private:
     ColorDialog dlg(m_preview.getBrushColor(), this);
     if (dlg.doModal())
       m_preview.setBrushColor(dlg.getColor());
+  }
+
+  void onCloseFigure()
+  {
+    m_preview.setCloseFigure(m_closeFigure.isSelected());
+  }
+
+  void onEndCap(PenEndCap::enumeration value)
+  {
+    m_preview.setPenEndCap(value);
+  }
+
+  void onJoin(PenJoin::enumeration value)
+  {
+    m_preview.setPenJoin(value);
   }
   
 };

@@ -29,7 +29,6 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "stdvaca.h"
 #include "Vaca/BandedDockArea.hpp"
 #include "Vaca/DockBar.hpp"
 #include "Vaca/Frame.hpp"

@@ -36,7 +36,6 @@ using namespace Vaca;
 void configure_frame(Frame &frame);
 void configure_editor(Edit &edit, Font &normalFont, Font &hotFont, int preferredWidth);
 void configure_num_editor(Edit &edit);
-void limit_frame_resizing(Frame &frame, int edge, Rect &rc);
 void filter_num_keys(KeyEvent &ev);
 
 int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
@@ -88,10 +87,19 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 }
 
 
+struct limit_frame_resizing
+{
+  Frame* f;
+  limit_frame_resizing(Frame* f) : f(f) { }
+  void operator()(int edge, Rect& rc) {
+    Rect bounds = f->getBounds();
+    rc = Rect(rc.x, bounds.y, rc.w, bounds.h);
+  }
+};
+
 void configure_frame(Frame &frame)
 {
-  using namespace boost; // because 'bind', 'ref', '_1' and '_2' are in boost namespace
-  frame.Resizing.connect(bind(&limit_frame_resizing, ref(frame), _1, _2));
+  frame.Resizing.connect(limit_frame_resizing(&frame));
 }
 
 
@@ -113,13 +121,6 @@ void configure_editor(Edit &edit, Font &normalFont, Font &hotFont, int preferred
 void configure_num_editor(Edit &edit)
 {
   edit.KeyTyped.connect(&filter_num_keys);
-}
-
-// limit to horizontal resizing only
-void limit_frame_resizing(Frame &frame, int edge, Rect &rc)
-{
-  Rect bounds = frame.getBounds();
-  rc = Rect(rc.x, bounds.y, rc.w, bounds.h);
 }
 
 void filter_num_keys(KeyEvent &ev)

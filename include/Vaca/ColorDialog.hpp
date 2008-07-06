@@ -32,8 +32,6 @@
 #ifndef VACA_COLORDIALOG_HPP
 #define VACA_COLORDIALOG_HPP
 
-// #include <boost/signal.hpp>
-
 #include "Vaca/base.hpp"
 #include "Vaca/CommonDialog.hpp"
 #include "Vaca/Color.hpp"

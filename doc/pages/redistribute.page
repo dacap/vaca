@@ -4,8 +4,7 @@
 
 @page redistribute Redistribute Vaca
 
-If you make an application using the dynamic version of Vaca (@c .DLL),
-you must to distribute the @a vaca.dll with your @c .EXEs. Also, you
-must to add the @c boost_signals-gcc-1_33_1.dll (for MinGW).
+If you make an application using the dynamic version of Vaca (@c
+.DLL), you have to distribute the @a vaca.dll with your @c .EXEs.
 
 */

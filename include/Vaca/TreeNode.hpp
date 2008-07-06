@@ -33,11 +33,10 @@
 #define VACA_TREENODE_HPP
 
 #include <vector>
-#include <commctrl.h>
-#include <boost/noncopyable.hpp>
 
 #include "Vaca/base.hpp"
 #include "Vaca/Component.hpp"
+#include "Vaca/NonCopyable.hpp"
 #include "Vaca/String.hpp"
 
 namespace Vaca {
@@ -51,7 +50,7 @@ class TreeViewIterator;
  * asociated, and a state (collapsed/expanded). A node can be parent
  * of sub-TreeNodes.
  */
-class VACA_DLL TreeNode : private boost::noncopyable
+class VACA_DLL TreeNode : private NonCopyable
 			, public Component
 {
 public:

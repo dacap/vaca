@@ -79,8 +79,8 @@ public:
   std::vector<int> getSelectedItems();
 
   // signals
-  boost::signal<void (Event&)> Action;	 ///< @see onAction
-  boost::signal<void (Event&)> SelChange; ///< @see onSelChange
+  Signal1<void, Event&> Action;	   ///< @see onAction
+  Signal1<void, Event&> SelChange; ///< @see onSelChange
 
 protected:
   // events

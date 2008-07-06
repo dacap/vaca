@@ -33,16 +33,16 @@
 #define VACA_WIDGET_HPP
 
 #include <vector>
-#include <boost/signal.hpp>
-#include <boost/noncopyable.hpp>
 
 #include "Vaca/base.hpp"
 #include "Vaca/Color.hpp"
 #include "Vaca/Component.hpp"
 #include "Vaca/Exception.hpp"
 #include "Vaca/Graphics.hpp"
+#include "Vaca/NonCopyable.hpp"
 #include "Vaca/Rect.hpp"
 #include "Vaca/ScrollInfo.hpp"
+#include "Vaca/Signal.hpp"
 #include "Vaca/Size.hpp"
 #include "Vaca/String.hpp"
 #include "Vaca/Style.hpp"
@@ -344,7 +344,7 @@ public:
  * This is the core of Vaca. Calls CreateWindowEx and DestroyWindow,
  * and its wndProc() converts the main messages (@c "WM_*") to events.
  */
-class VACA_DLL Widget : private boost::noncopyable
+class VACA_DLL Widget : private NonCopyable
 		      , public Component
 {
   friend void delete_widget(Widget* widget);
@@ -615,21 +615,21 @@ public:
   // SIGNALS (signals are public, see TN004)
   // ===============================================================
 
-  boost::signal<void (const Size&)> Resize;		///< @see onResize
-  boost::signal<void (MouseEvent&)> MouseEnter;		///< @see onMouseEnter
-  boost::signal<void ()> MouseLeave;			///< @see onMouseLeave
-  boost::signal<void (MouseEvent&)> MouseDown;		///< @see onMouseDown
-  boost::signal<void (MouseEvent&)> MouseUp;		///< @see onMouseUp
-  boost::signal<void (MouseEvent&)> DoubleClick;	///< @see onDoubleClick
-  boost::signal<void (MouseEvent&)> MouseMove;		///< @see onMouseMove
-  boost::signal<void (MouseEvent&)> MouseWheel;		///< @see onMouseWheel
-  boost::signal<void ()> CancelMode;			///< @see CancelMode
-  boost::signal<void (KeyEvent&)> KeyUp;		///< @see onKeyUp
-  boost::signal<void (KeyEvent&)> KeyDown;		///< @see onKeyDown
-  boost::signal<void (KeyEvent&)> KeyTyped;		///< @see onKeyTyped
-  boost::signal<void (Event&)> GotFocus;		///< @see onGotFocus
-  boost::signal<void (Event&)> LostFocus;		///< @see onLostFocus
-  boost::signal<void (DropFilesEvent&)> DropFiles;	///< @see onDropFiles
+  Signal1<void, const Size&> Resize; ///< @see onResize
+  Signal1<void, MouseEvent&> MouseEnter; ///< @see onMouseEnter
+  Signal0<void> MouseLeave; ///< @see onMouseLeave
+  Signal1<void, MouseEvent&> MouseDown; ///< @see onMouseDown
+  Signal1<void, MouseEvent&> MouseUp; ///< @see onMouseUp
+  Signal1<void, MouseEvent&> DoubleClick; ///< @see onDoubleClick
+  Signal1<void, MouseEvent&> MouseMove; ///< @see onMouseMove
+  Signal1<void, MouseEvent&> MouseWheel; ///< @see onMouseWheel
+  Signal0<void> CancelMode; ///< @see CancelMode
+  Signal1<void, KeyEvent&> KeyUp; ///< @see onKeyUp
+  Signal1<void, KeyEvent&> KeyDown; ///< @see onKeyDown
+  Signal1<void, KeyEvent&> KeyTyped; ///< @see onKeyTyped
+  Signal1<void, Event&> GotFocus; ///< @see onGotFocus
+  Signal1<void, Event&> LostFocus; ///< @see onLostFocus
+  Signal1<void, DropFilesEvent&> DropFiles; ///< @see onDropFiles
 
 protected:
 

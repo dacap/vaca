@@ -30,7 +30,6 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <Vaca/Vaca.hpp>
-#include <boost/logic/tribool.hpp>
 
 #include <shlobj.h>
 #include <shlwapi.h>
@@ -46,9 +45,12 @@ namespace globals {
 
 class FileTreeNode : public TreeNode
 {
+  enum Subfolders { UnknownSubfolders,
+		    WithSubfolders,
+		    WithoutSubfolders };
   LPITEMIDLIST m_pidl;
   LPITEMIDLIST m_relativePidl;
-  boost::tribool m_hasSubFolders;
+  Subfolders m_hasSubfolders;
 
 public:
 
@@ -78,7 +80,7 @@ public:
     setImage(shfi.iIcon);
 
     // sub-folders
-    m_hasSubFolders = boost::indeterminate;
+    m_hasSubfolders = UnknownSubfolders;
   }
 
   virtual ~FileTreeNode()
@@ -92,10 +94,11 @@ public:
   virtual bool hasChildren()
   {
     // calculate sub-folders?
-    if (boost::indeterminate(m_hasSubFolders))
-      m_hasSubFolders = findSubFolders();
+    if (m_hasSubfolders == UnknownSubfolders)
+      m_hasSubfolders = findSubFolders() ? WithSubfolders:
+					   WithoutSubfolders;
 
-    return m_hasSubFolders;
+    return m_hasSubfolders == WithSubfolders;
   }
 
 protected:
@@ -116,7 +119,7 @@ protected:
 	LPITEMIDLIST itemPidl = NULL;
 	ULONG fetched;
 
-	m_hasSubFolders = false;	// right now, it hasn't sub-folders
+	m_hasSubfolders = WithoutSubfolders;	// right now, it hasn't sub-folders
 
 	pFolder->EnumObjects(NULL, SHCONTF_FOLDERS, &pEnum);
 
@@ -124,8 +127,8 @@ protected:
 	  while (pEnum->Next(1, &itemPidl, &fetched) == S_OK && fetched == 1) {
 	    this->addNode(new FileTreeNode(itemPidl, m_pidl));
 
-	    if (m_hasSubFolders != true)
-	      m_hasSubFolders = true; // well, now it has sub-folders
+	    if (m_hasSubfolders != WithSubfolders)
+	      m_hasSubfolders = WithSubfolders; // well, now it has sub-folders
 	  }
 
 	  pEnum->Release();
@@ -135,8 +138,9 @@ protected:
       if (pFolder != globals::pDesktop)
 	pFolder->Release();
     }
-    else
-      m_hasSubFolders = false;
+    else {
+      m_hasSubfolders = WithoutSubfolders;
+    }
   }
 
 private:

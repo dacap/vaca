@@ -627,31 +627,31 @@ class AutoCompletionComboBox : public ComboBox
   
 public:
 
-  AutoCompletionComboBox(Widget *parent)
+  AutoCompletionComboBox(Widget* parent)
     : ComboBox(parent, EditComboBoxStyle)
     , m_timer(250)
   {
     for (int c=0; c<ColorNames_size; ++c)
       addItem(ColorNames[c].name);
 
-    m_timer.Action.connect(Bind(&AutoCompletionComboBox::complete, this));
+    m_timer.Action.connect(&AutoCompletionComboBox::complete, this);
   }
 
   // signals
-  boost::signal<void (const Color &color)> SelColor;
-  boost::signal<void ()> NoColor;
+  Signal1<void, const Color&> SelColor;
+  Signal0<void> NoColor;
 
 protected:
 
   // events
-  virtual void onSelChange(Event &ev)
+  virtual void onSelChange(Event& ev)
   {
     ComboBox::onSelChange(ev);
     fireSignal();
   }
 
   // events
-  virtual void onEditChange(Event &ev)
+  virtual void onEditChange(Event& ev)
   {
     ComboBox::onEditChange(ev);
     m_timer.start();
@@ -703,11 +703,11 @@ private:
 
 class ColorViewer : public Panel
 {
-  Color *m_color;
+  Color* m_color;
 
 public:
 
-  ColorViewer(Widget *parent)
+  ColorViewer(Widget* parent)
     : Panel(parent)
   {
     m_color = NULL;
@@ -720,7 +720,7 @@ public:
       delete m_color;
   }
 
-  void setColor(const Color &color)
+  void setColor(const Color& color)
   {
     if (m_color != NULL)
       delete m_color;
@@ -740,7 +740,7 @@ public:
 
 protected:
 
-  virtual void onPaint(Graphics &g)
+  virtual void onPaint(Graphics& g)
   {
     Rect rc = getClientBounds(); 
 
@@ -788,8 +788,8 @@ public:
 
     m_comboBox.requestFocus();
 
-    m_comboBox.SelColor.connect(Bind(&ColorViewer::setColor, &m_colorViewer));
-    m_comboBox.NoColor.connect(Bind(&ColorViewer::setNoColor, &m_colorViewer));
+    m_comboBox.SelColor.connect(&ColorViewer::setColor, &m_colorViewer);
+    m_comboBox.NoColor.connect(&ColorViewer::setNoColor, &m_colorViewer);
 
     setSize(getPreferredSize());
     center();

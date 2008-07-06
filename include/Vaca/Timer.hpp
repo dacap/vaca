@@ -32,28 +32,27 @@
 #ifndef VACA_TIMER_HPP
 #define VACA_TIMER_HPP
 
-#include <boost/signal.hpp>
-
 #include "Vaca/base.hpp"
+#include "Vaca/Signal.hpp"
+#include "Vaca/NonCopyable.hpp"
+#include "Vaca/Thread.hpp"
 
 namespace Vaca {
 
 class Application;
 struct _Timer;
 
-class VACA_DLL Timer : private boost::noncopyable
+class VACA_DLL Timer : private NonCopyable
 {
   friend class Application;
   friend struct _Timer;
 
-// public:
-
-  int     m_threadOwnerId;
-  bool    m_running : 1;
-  bool    m_firstTick : 1;
-  int     m_interval;
-  int     m_timeCounter;
-  int     m_tickCounter;
+  Thread::id m_threadOwnerId;
+  bool       m_running : 1;
+  bool       m_firstTick : 1;
+  int        m_interval;
+  int        m_timeCounter;
+  int        m_tickCounter;
 
 public:
 
@@ -71,7 +70,7 @@ public:
   static void pollTimers();
 
   // signals
-  boost::signal<void ()> Action;   ///< @see onAction
+  Signal0<void> Action;   ///< @see onAction
 
 protected:
 

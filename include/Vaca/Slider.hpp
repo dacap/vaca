@@ -68,7 +68,7 @@ public:
   void setValue(int posValue);
 
   // signals
-  boost::signal<void (Event&)> Change; ///< @see onChange
+  Signal1<void, Event&> Change; ///< @see onChange
 
 protected:
   // events

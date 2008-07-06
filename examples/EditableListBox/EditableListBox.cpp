@@ -83,10 +83,10 @@ private:
   void onEditKeyDown(KeyEvent &ev)
   {
     if (ev.getKeyCode() == Keys::Enter)
-      onEditLostFocus();
+      onEditLostFocus(ev);
   }
 
-  void onEditLostFocus()
+  void onEditLostFocus(Event& ev)
   {
     endEdit();
   }
@@ -96,8 +96,8 @@ private:
     if (index >= 0 && m_edit == NULL) {
       // create an Edit widget without client-edge
       m_edit = new Edit(getItemText(index), this, EditStyle - ClientEdgeStyle);
-      m_edit->KeyDown.connect(Bind(&EditableListBox::onEditKeyDown, this));
-      m_edit->LostFocus.connect(Bind(&EditableListBox::onEditLostFocus, this));
+      m_edit->KeyDown.connect(&EditableListBox::onEditKeyDown, this);
+      m_edit->LostFocus.connect(&EditableListBox::onEditLostFocus, this);
       m_edit->selectAll();
       m_edit->requestFocus();
 

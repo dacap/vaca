@@ -29,7 +29,6 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "stdvaca.h"
 #include "Vaca/System.hpp"
 #include "Vaca/Rect.hpp"
 #include "Vaca/Point.hpp"
@@ -37,8 +36,10 @@
 #include "Vaca/Color.hpp"
 #include "Vaca/Debug.hpp"
 #include "Vaca/ImageList.hpp"
+#include "Vaca/Mutex.hpp"
+#include "Vaca/ScopedLock.hpp"
 
-#include <boost/thread/mutex.hpp>
+#include <lmcons.h>
 
 using namespace Vaca;
 
@@ -352,10 +353,10 @@ String System::getFriendlyUserName()
 
 int System::getOS()
 {
-  static boost::mutex mutex;
-  static OS::Type cached = OS::Unknown;
+  static Mutex mutex;
+  static volatile OS::Type cached = OS::Unknown;
 
-  boost::mutex::scoped_lock lock(mutex);
+  ScopedLock hold(mutex);
 
   if (cached != OS::Unknown)
     return cached;

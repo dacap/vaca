@@ -29,23 +29,26 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "stdvaca.h"
 #include "Vaca/Debug.hpp"
+#include "Vaca/Mutex.hpp"
+#include "Vaca/ScopedLock.hpp"
 #include "Vaca/System.hpp"
 #include "Vaca/Thread.hpp"
 
-#include <boost/thread/mutex.hpp>
-
 using namespace Vaca;
 
-static boost::mutex log_mutex;
+static Mutex log_mutex;
 static FILE* log_file = NULL;
+static bool log_closed = false;
 
 void Vaca::__vaca_trace(LPCSTR filename, UINT line, LPCSTR fmt, ...)
 {
-  boost::mutex::scoped_lock lock(log_mutex);
+  ScopedLock hold(log_mutex);
   char buf[1024];		// TODO: overflow
   va_list ap;
+
+  if (log_closed)
+    return;
 
   va_start(ap, fmt);
   vsprintf(buf, fmt, ap);
@@ -64,11 +67,13 @@ void Vaca::__vaca_trace(LPCSTR filename, UINT line, LPCSTR fmt, ...)
 
 void Vaca::__vaca_close_log_file()
 {
-  boost::mutex::scoped_lock lock(log_mutex);
+  ScopedLock hold(log_mutex);
 
   if (log_file != NULL) {
     fprintf(log_file, "Log file closed\n");
     fclose(log_file);
     log_file = NULL;
+
+    log_closed = TRUE;
   }
 }

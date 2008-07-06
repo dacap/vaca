@@ -47,14 +47,14 @@
 #endif
 
 #include <vector>
-#include <boost/signal.hpp>
-#include <boost/noncopyable.hpp>
 
 #include "Vaca/base.hpp"
 #include "Vaca/Component.hpp"
 #include "Vaca/String.hpp"
 #include "Vaca/Event.hpp"
 #include "Vaca/Keys.hpp"
+#include "Vaca/Signal.hpp"
+#include "Vaca/NonCopyable.hpp"
 
 namespace Vaca {
 
@@ -67,7 +67,7 @@ class MdiListMenu;
 /**
  * A menu item.
  */
-class VACA_DLL MenuItem : private boost::noncopyable
+class VACA_DLL MenuItem : private NonCopyable
 			, public Component
 {
   friend class Menu;
@@ -110,8 +110,8 @@ public:
   virtual void onUpdate(MenuItemEvent& ev);
 
   // signals
-  boost::signal<void (MenuItemEvent&)> Action; ///< @see onAction
-  boost::signal<void (MenuItemEvent&)> Update; ///< @see onUpdate
+  Signal1<void, MenuItemEvent&> Action; ///< @see onAction
+  Signal1<void, MenuItemEvent&> Update; ///< @see onUpdate
 };
 
 /**

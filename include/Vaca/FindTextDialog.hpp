@@ -62,10 +62,10 @@ public:
   bool isBackward();
   bool isForward();
 
-  boost::signal<void ()> FindNext;
-  boost::signal<void ()> Replace;
-  boost::signal<void ()> ReplaceAll;
-  boost::signal<void ()> Cancel;
+  Signal0<void> FindNext;
+  Signal0<void> Replace;
+  Signal0<void> ReplaceAll;
+  Signal0<void> Cancel;
 
 protected:
 

@@ -29,42 +29,21 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "stdvaca.h"
 #include "Vaca/Timer.hpp"
 #include "Vaca/Thread.hpp"
 #include "Vaca/Debug.hpp"
-
-#include <boost/timer.hpp>
+#include "Vaca/Mutex.hpp"
+#include "Vaca/ScopedLock.hpp"
+#include "Vaca/TimePoint.hpp"
+#include "Vaca/Condition.hpp"
 
 using namespace Vaca;
 
-static boost::mutex        timer_mutex;		// monitor
-static boost::thread*      timer_thread = NULL; // the thread that process timers
+static Mutex               timer_mutex;		// monitor
+static Thread*             timer_thread = NULL; // the thread that process timers
 static std::vector<Timer*> timers;              // list of timers to be processed
 static bool                timer_break = false; // break the loop in timer_thread_proc()
-static boost::condition    wakeup_condition;    // wake-up the timer thread loop
-
-// returns current time plus "msecs" milliseconds, to be used in
-// Boost.Threads waiting routines
-static inline boost::xtime xt_delay(int msecs)
-{
-  const int MILLISECONDS_PER_SECOND = 1000;
-  const int NANOSECONDS_PER_SECOND = 1000000000;
-  const int NANOSECONDS_PER_MILLISECOND = 1000000;
-
-  // convert millisecconds to seconds/nanoseconds
-  int d_secs = msecs / MILLISECONDS_PER_SECOND;
-  int d_nsecs = (msecs % MILLISECONDS_PER_SECOND) * NANOSECONDS_PER_MILLISECOND;
-
-  boost::xtime xt;
-  boost::xtime_get(&xt, boost::TIME_UTC);
-
-  // apply delta-seconds/nanoseconds
-  xt.nsec = (xt.nsec+d_nsecs) % NANOSECONDS_PER_SECOND;
-  xt.sec = xt.sec+d_secs + (d_nsecs / NANOSECONDS_PER_SECOND);
-
-  return xt;
-}
+static Condition           wakeup_condition;    // wake-up the timer thread loop
 
 /**
  * @param interval In milliseconds.
@@ -125,7 +104,7 @@ void Timer::start()
   Timer::start_timer_thread();
 
   {
-    boost::mutex::scoped_lock lock(timer_mutex);
+    ScopedLock hold(timer_mutex);
 
     if (!m_running) {
       // add timer
@@ -138,7 +117,7 @@ void Timer::start()
     m_tickCounter = 0;
 
     // wake up timer thread
-    wakeup_condition.notify_one();
+    wakeup_condition.notifyOne();
   }
 }
 
@@ -189,7 +168,7 @@ void Timer::onAction()
  */
 void Timer::run_timer_thread()
 {
-  boost::mutex::scoped_lock lock(timer_mutex);
+  ScopedLock hold(timer_mutex);
   unsigned int start, end, period, delay;
   unsigned int inf = UINT_MAX;//std::numeric_limits<unsigned int>::max();
   std::vector<Timer*>::iterator it;
@@ -256,9 +235,9 @@ void Timer::run_timer_thread()
       
     // wait wake-up condition or the "delay" to process the next timer-action
     if (delay == inf)
-      wakeup_condition.wait(lock);
+      wakeup_condition.wait(hold);
     else
-      wakeup_condition.timed_wait(lock, xt_delay(delay));
+      wakeup_condition.waitFor(hold, delay / 1000.0);
   }
 }
 
@@ -267,10 +246,10 @@ void Timer::run_timer_thread()
  */
 void Timer::start_timer_thread()
 {
-  boost::mutex::scoped_lock lock(timer_mutex);
+  ScopedLock hold(timer_mutex);
 
   if (timer_thread == NULL)
-    timer_thread = new boost::thread(&run_timer_thread);
+    timer_thread = new Thread(&run_timer_thread);
 }
 
 /**
@@ -280,10 +259,10 @@ void Timer::start_timer_thread()
  */
 void Timer::stop_timer_thread()
 {
-  boost::thread* thrd;
+  Thread* thrd = NULL;
   
   {
-    boost::mutex::scoped_lock lock(timer_mutex);
+    ScopedLock hold(timer_mutex);
 
     if (timer_thread == NULL)
       return;
@@ -292,7 +271,7 @@ void Timer::stop_timer_thread()
     timer_thread = NULL;
 
     timer_break = true;
-    wakeup_condition.notify_one();
+    wakeup_condition.notifyOne();
   }
 
   thrd->join();
@@ -306,7 +285,7 @@ void Timer::stop_timer_thread()
  */
 void Timer::remove_timer(Timer* t)
 {
-  boost::mutex::scoped_lock lock(timer_mutex);
+  ScopedLock hold(timer_mutex);
 
   remove_element_from_container(timers, t);
 }
@@ -316,14 +295,14 @@ void Timer::remove_timer(Timer* t)
  */
 void Timer::fire_actions_for_thread()
 {
-  int currentThreadId = ::GetCurrentThreadId();
+  Thread::id currentThreadId = ::GetCurrentThreadId();
   std::vector<Timer*> timers_for_thread;
   std::vector<Timer*>::iterator it;
   Timer* timer;
 
   // make a copy of timers for this thread only
   {
-    boost::mutex::scoped_lock lock(timer_mutex);
+    ScopedLock hold(timer_mutex);
 
     for (it = timers.begin(); it != timers.end(); ) {
       timer = *(it++);
@@ -339,20 +318,22 @@ void Timer::fire_actions_for_thread()
        it != timers_for_thread.end(); ) {
     timer = *(it++);
 
-    boost::timer warning_time;
+    TimePoint warning_time;
     double timeout = timer->m_interval / 1000.0;
 
+    // for each accumulated tick
     while (timer->m_tickCounter > 0) {
       timer->m_tickCounter--;
 
       // fire action
       timer->onAction();
 
+      // warning! this is taking to long, we have to force a break of
+      // the loop discarding the rest of ticks (m_tickCounter)
       if (warning_time.elapsed() > timeout)
 	timer->m_tickCounter = 0;
     }
   }
 
-  // yield
-  ::Sleep(0);
+  Thread::yield();
 }

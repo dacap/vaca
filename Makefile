@@ -27,12 +27,6 @@ LIB = .a
 EXE = .exe
 
 # ----------------------------------------------------------------------
-# Boost directories (you should change this)
-# ----------------------------------------------------------------------
-
-include Makefile.boost
-
-# ----------------------------------------------------------------------
 # Programs
 # ----------------------------------------------------------------------
 
@@ -52,16 +46,17 @@ LIB_SOURCES = Anchor AnchorLayout Application BandedDockArea		\
 	      BasicDockArea Bix BoxConstraint BoxLayout Brush Button	\
 	      ButtonBase CancelableEvent CheckBox ClientLayout		\
 	      Clipboard CloseEvent Color ColorDialog ComboBox		\
-	      CommonDialog Component Constraint Cursor CustomButton	\
-	      CustomLabel Debug Dialog DockArea DockBar DockFrame	\
-	      DropFilesEvent Edit Event FileDialog FindTextDialog Font	\
-	      FontDialog Frame Graphics GroupBox Icon Image ImageList	\
-	      KeyEvent Keys Label Layout LinkLabel ListBox ListView	\
-	      Mdi Menu MenuItemEvent MouseEvent Panel Pen Point		\
-	      ProgressBar RadioButton ReBar Rect Region ResourceId	\
-	      Scintilla Size Slider SpinButton Spinner String Style	\
-	      System Tab Thread Timer ToggleButton ToolBar TreeNode	\
-	      TreeView TreeViewEvent Vaca Widget WidgetClass
+	      CommonDialog Component Condition Constraint Cursor	\
+	      CustomButton CustomLabel Debug Dialog DockArea DockBar	\
+	      DockFrame DropFilesEvent Edit Event FileDialog		\
+	      FindTextDialog Font FontDialog Frame Graphics GroupBox	\
+	      Icon Image ImageList KeyEvent Keys Label Layout		\
+	      LinkLabel ListBox ListView Mdi Menu MenuItemEvent		\
+	      MouseEvent Mutex Panel Pen Point ProgressBar RadioButton	\
+	      ReBar Rect Region ResourceId Scintilla Size Slider	\
+	      SpinButton Spinner String Style System Tab Thread		\
+	      TimePoint Timer ToggleButton ToolBar TreeNode TreeView	\
+	      TreeViewEvent Vaca Widget WidgetClass
 
 EXAMPLES = AnchorLayouts AutoCompletion Bixes BouncingBalls BoxLayouts	\
 	   Buttons ColoredButton ComboBoxes Commands DataGrids		\
@@ -69,22 +64,24 @@ EXAMPLES = AnchorLayouts AutoCompletion Bixes BouncingBalls BoxLayouts	\
 	   Hashing HelloWorld Images Labels LikeScript Maths		\
 	   MenuResource MiniExplorer PensBrushes Primitives		\
 	   ProgressBars Regions Scribble Sliders Spinners StdCommands	\
-	   Sudoku SystemImageList Tabs TextEditor Threads Timers 	\
+	   Sudoku SystemImageList Tabs TextEditor Threads Timers	\
 	   ToolBars Trees
 
 TESTS = \
+	test_bind \
 	test_point \
 	test_rect \
-	test_signals \
+	test_signal \
 	test_size \
 	test_string
+
+# EXAMPLES = 
 
 # ----------------------------------------------------------------------
 # Flags
 # ----------------------------------------------------------------------
 
-CXXFLAGS = -I$(BOOST_ROOT) -Iinclude -I. -Ithird_party -DBOOST_BIND_NO_PLACEHOLDERS \
-	   -W -Wall -Wno-unused
+CXXFLAGS = -Iinclude -Iscintilla/include -Ithird_party -W -Wall -Wno-unused
 DLLFLAGS =
 LFLAGS = -mwindows -Lobj
 LIBS =
@@ -108,7 +105,6 @@ ifdef ALLEG_IMPL
   LIBS += -lalleg
 endif
 
-LIBS += $(BOOSTLIBS)
 EXE_LIBS = $(LIBS)
 
 # ----------------------------------------------------------------------
@@ -116,8 +112,6 @@ EXE_LIBS = $(LIBS)
 # ----------------------------------------------------------------------
 
 ifdef STATIC
-
-  BOOSTLIBS = $(BOOST_SIGNALS_STATIC) $(BOOST_THREAD_STATIC)
 
   VACA_LIB_FLAGS = -DVACA_STATIC
   VACA_EXE_FLAGS = -DVACA_STATIC
@@ -129,8 +123,6 @@ ifdef STATIC
   endif
 
 else
-
-  BOOSTLIBS = $(BOOST_SIGNALS_SHARED) $(BOOST_THREAD_SHARED)
 
   VACA_LIB_FLAGS = -DVACA_SRC
   VACA_EXE_FLAGS = 
@@ -221,8 +213,8 @@ EXAMPLES_DIRS_WITH_RC = $(dir $(wildcard examples/*/*.rc))
 # Generic Rules
 # ----------------------------------------------------------------------
 
-# vpath %.cpp $(addprefix examples/, $(EXAMPLES)) tests
-# vpath %.rc $(EXAMPLES_DIRS_WITH_RC)
+vpath %.cpp $(addprefix examples/, $(EXAMPLES)) tests
+vpath %.rc $(EXAMPLES_DIRS_WITH_RC)
 
 obj/Library.%$(SUFFIX)$(OBJ): src/%.cpp
 	$(GXX) $(CXXFLAGS) $(VACA_LIB_FLAGS) -o $@ -c $<
@@ -242,15 +234,15 @@ obj/Example.%.res: %.rc
 obj/Test.%$(SUFFIX)$(OBJ): tests/%.cpp
 	$(GXX) $(CXXFLAGS) $(VACA_EXE_FLAGS) -o $@ -c $<
 
-%.h.gch: %.h
-	$(GXX) $(CXXFLAGS) -o $@ -c $<
+# %.h.gch: %.h
+# 	$(GXX) $(CXXFLAGS) -o $@ -c $<
 
 ifdef STATIC
-$(VACA_LIB): stdvaca.h.gch $(LIB_OBJS)
+$(VACA_LIB): $(LIB_OBJS)
 	$(RM) -f $@
 	$(AR) crs $(VACA_LIB) $(LIB_OBJS)
 else
-$(VACA_LIB): stdvaca.h.gch $(LIB_OBJS)
+$(VACA_LIB): $(LIB_OBJS)
 	$(RM) -f $@
 
 $(VACA_DLL): $(VACA_LIB)
@@ -294,7 +286,7 @@ bin/%$(EXE): obj/Test.%$(OBJ) $(VACA_LIB)
 # Rules
 # ----------------------------------------------------------------------
 
-all: stdvaca.h.gch lib examples tests
+all: lib examples tests
 
 lib: $(VACA_DLL)
 

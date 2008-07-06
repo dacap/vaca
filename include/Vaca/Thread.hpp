@@ -32,30 +32,65 @@
 #ifndef VACA_THREAD_HPP
 #define VACA_THREAD_HPP
 
-#include <boost/thread.hpp>
-#include <boost/signal.hpp>
-
 #include "Vaca/base.hpp"
+#include "Vaca/Exception.hpp"
+#include "Vaca/NonCopyable.hpp"
+#include "Vaca/Slot.hpp"
 
 namespace Vaca {
 
 class Frame;
 class Widget;
 
+class CreateThreadException : public Exception
+{
+public:
+
+  CreateThreadException() : Exception() { }
+  CreateThreadException(const String& message) : Exception(message) { }
+  virtual ~CreateThreadException() throw() { }
+
+};
+  
 /**
  * A thread of execution.
  */
-class VACA_DLL Thread : public boost::thread
+class VACA_DLL Thread : public NonCopyable
 {
   friend class Frame;
 
 public:
 
   typedef MSG Message;
+  typedef DWORD id;
+
+private:
+
+  HANDLE m_handle;
+  id     m_id;
+
+public:
 
   Thread();
-  explicit Thread(const boost::function0<void>& threadfunc);
-  virtual ~Thread();
+  ~Thread();
+
+  /**
+   * @exception CreateThreadException
+   */
+  template<typename F>
+  explicit Thread(F f) {
+    _Thread(Slot0_fun<void, F>(f));
+  }
+
+  id getId() const;
+
+  // void execute();
+  // void suspend();
+  // void resume();
+  void join();
+  bool isJoinable() const;
+
+  void setPriority(int priority);
 
   //////////////////////////////////////////////////////////////////////
   // functions for the current thread
@@ -66,7 +101,9 @@ public:
   static void pumpMessageQueue();
   static void breakMessageLoop();
 
-  static void callInNextRound(const boost::signal<void ()>::slot_type& functor);
+  static void yield();
+
+  // static void callInNextRound(const Slot0<void>& functor);
 
 protected:
 
@@ -77,6 +114,7 @@ protected:
 
 private:
 
+  void _Thread(const Slot0<void>& slot);
   static void addFrame(Frame* frame);
   static void removeFrame(Frame* frame);
 

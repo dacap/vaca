@@ -32,9 +32,8 @@
 #ifndef VACA_ICON_HPP
 #define VACA_ICON_HPP
 
-#include <boost/noncopyable.hpp>
-
 #include "Vaca/base.hpp"
+#include "Vaca/NonCopyable.hpp"
 #include "Vaca/Size.hpp"
 
 namespace Vaca {
@@ -44,7 +43,7 @@ class String;
 /**
  * An icon (HICON wrapper).
  */
-class VACA_DLL Icon : private boost::noncopyable
+class VACA_DLL Icon : private NonCopyable
 {
   HICON m_HICON;
 

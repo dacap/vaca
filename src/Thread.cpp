@@ -29,56 +29,61 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "stdvaca.h"
 #include "Vaca/Thread.hpp"
 #include "Vaca/Debug.hpp"
 #include "Vaca/Frame.hpp"
+#include "Vaca/Signal.hpp"
 #include "Vaca/Timer.hpp"
+#include "Vaca/Mutex.hpp"
+#include "Vaca/ScopedLock.hpp"
+#include "Vaca/Slot.hpp"
 
 #include <vector>
 #include <algorithm>
+#include <memory>
 
 using namespace Vaca;
 
+//////////////////////////////////////////////////////////////////////
+
+// TODO
+// - replace with some C++0x's Thread-Local Storage
+// - or use __thread in GCC, and
+//   __declspec( thread ) in MSVC
+
 struct ThreadData
 {
-  int threadId;
+  Thread::id threadId;
   int frameCount;
   bool breakLoop;
   Widget* outsideWidget; // widget used to call createHWND
-//   void* data;
-  boost::signal<void ()> callInNextRound;
+  Signal0<void> callInNextRound;
 
   ThreadData(int id) {
     threadId = id;
     frameCount = 0;
     breakLoop = false;
     outsideWidget = NULL;
-
-//     VACA_TRACE("thread begin (%d)\n", ::GetCurrentThreadId());
   }
-
-//   ~ThreadData() {
-//     VACA_TRACE("thread end (%d)\n", ::GetCurrentThreadId());
-//   }
 
 };
 
-// static boost::thread_specific_ptr<ThreadData> threadData;
-
-static boost::mutex data_mutex;
+static Mutex data_mutex;
 static std::vector<ThreadData*> dataOfEachThread;
 
 static ThreadData* getThreadData()
 {
-  boost::mutex::scoped_lock lock(data_mutex);
-  std::vector<ThreadData*>::iterator it;
-  int id = ::GetCurrentThreadId();
+  ScopedLock hold(data_mutex);
+  std::vector<ThreadData*>::iterator it, end = dataOfEachThread.end();
+  Thread::id id = ::GetCurrentThreadId();
 
   // first of all search the thread-data in the list "dataOfEachThread"...
-  for (it=dataOfEachThread.begin(); it!=dataOfEachThread.end(); ++it)
+  for (it=dataOfEachThread.begin();
+       it!=end;
+       ++it) {
     if ((*it)->threadId == id)	// it's already created...
       return *it;		// return it
+  }
 
   // create the data for the this thread
   ThreadData* data = new ThreadData(id);
@@ -98,10 +103,10 @@ static ThreadData* getThreadData()
 
 void Vaca::__vaca_remove_all_thread_data()
 {
-  boost::mutex::scoped_lock lock(data_mutex);
-  std::vector<ThreadData*>::iterator it;
+  ScopedLock hold(data_mutex);
+  std::vector<ThreadData*>::iterator it, end = dataOfEachThread.end();
 
-  for (it=dataOfEachThread.begin(); it!=dataOfEachThread.end(); ++it) {
+  for (it=dataOfEachThread.begin(); it!=end; ++it) {
     VACA_TRACE("delete data-thread %d\n", (*it)->threadId);
     delete *it;
   }
@@ -119,17 +124,131 @@ void Vaca::__vaca_set_outside_widget(Widget* widget)
   getThreadData()->outsideWidget = widget;
 }
 
-Thread::Thread()
+//////////////////////////////////////////////////////////////////////
+
+static DWORD WINAPI ThreadProxy(LPVOID slot)
 {
+  std::auto_ptr<Slot0<void> > slot_ptr(reinterpret_cast<Slot0<void>*>(slot));
+  (*slot_ptr)();
+  return 0;
 }
 
-Thread::Thread(const boost::function0<void>& threadfunc)
-  : boost::thread(threadfunc)
+Thread::Thread()
 {
+  m_handle = GetCurrentThread();
+  m_id = GetCurrentThreadId();
+
+  VACA_TRACE("current Thread (%p, %d)\n", this, m_id);
+}
+
+void Thread::_Thread(const Slot0<void>& slot)
+{
+  Slot0<void>* slotclone = slot.clone();
+
+  m_handle = CreateThread(NULL, 0,
+			  ThreadProxy,
+			  // clone the slot
+			  reinterpret_cast<LPVOID>(slotclone),
+			  CREATE_SUSPENDED, &m_id);
+  if (!m_handle) {
+    delete slotclone;
+    throw CreateThreadException();
+  }
+
+  VACA_TRACE("new Thread (%p, %d)\n", this, m_id);
+  ResumeThread(m_handle);
 }
 
 Thread::~Thread()
 {
+  if (isJoinable() && m_handle != NULL) {
+     CloseHandle(reinterpret_cast<HANDLE>(m_handle));
+     m_handle = NULL;
+  }
+
+  VACA_TRACE("delete Thread (%p, %d)\n", this, m_id);
+}
+
+/**
+ * Returns the thread ID. This is equal to Win32's GetCurrentThreadId() for
+ * the current thread or the ID returned by Win32's CreateThread().
+ */
+Thread::id Thread::getId() const
+{
+  return m_id;
+}
+
+/**
+ * Starts the execution of the thread. You have to call this routine
+ * one time to start the thread execution.
+ */
+// void Thread::execute()
+// {
+//   assert(isJoinable());
+
+//   resume();
+// }
+
+/**
+ * Suspends a thread in execution (Win32's SuspendThread).
+ */
+// void Thread::suspend()
+// {
+//   assert(m_handle != NULL);
+ 
+//   SuspendThread(m_handle);
+// }
+
+/**
+ * Resumes the suspended thread (Win32's ResumeThread).
+ */
+// void Thread::resume()
+// {
+//   assert(m_handle != NULL);
+
+//   ResumeThread(m_handle);
+// }
+
+/**
+ * Waits the thread to finish, and them closes it.
+ */
+void Thread::join()
+{
+  assert(m_handle != NULL);
+  assert(isJoinable());
+
+  WaitForSingleObject(reinterpret_cast<HANDLE>(m_handle), INFINITE);
+  CloseHandle(reinterpret_cast<HANDLE>(m_handle));
+  m_handle = NULL;
+
+  VACA_TRACE("join Thread (%p, %d)\n", this, m_id);
+}
+
+/**
+ * Returns true if this thread can be waited by the current thread.
+ */
+bool Thread::isJoinable() const
+{
+  return m_id != ::GetCurrentThreadId();
+}
+
+/**
+ * Sets the priority of the thread.
+ * 
+ * @param priority Can be one of the following values:
+ * @li THREAD_PRIORITY_ABOVE_NORMAL
+ * @li THREAD_PRIORITY_BELOW_NORMAL
+ * @li THREAD_PRIORITY_HIGHEST
+ * @li THREAD_PRIORITY_IDLE
+ * @li THREAD_PRIORITY_LOWEST
+ * @li THREAD_PRIORITY_NORMAL
+ * @li THREAD_PRIORITY_TIME_CRITICAL
+ */
+void Thread::setPriority(int priority)
+{
+  assert(m_handle != NULL);
+ 
+  SetThreadPriority(m_handle, priority);
 }
 
 /**
@@ -184,11 +303,16 @@ void Thread::breakMessageLoop()
   ::PostThreadMessage(::GetCurrentThreadId(), WM_NULL, 0, 0);
 }
 
-void Thread::callInNextRound(const boost::signal<void ()>::slot_type& functor)
+void Thread::yield()
 {
-  getThreadData()->callInNextRound.connect(functor);
-  ::PostThreadMessage(::GetCurrentThreadId(), WM_NULL, 0, 0);
+  ::Sleep(0);
 }
+
+// void Thread::callInNextRound(const Slot0<void>& functor)
+// {
+//   getThreadData()->callInNextRound.connect(functor);
+//   ::PostThreadMessage(::GetCurrentThreadId(), WM_NULL, 0, 0);
+// }
 
 /**
  * Gets a message in a blocking way, returns true if the msg parameter
@@ -222,7 +346,7 @@ bool Thread::getMessage(Message& msg)
     // make the call and remove all the slots
     if (!threadData->callInNextRound.empty()) {
       threadData->callInNextRound();
-      threadData->callInNextRound.disconnect_all_slots();
+      threadData->callInNextRound.disconnectAll();
     }
   }
 

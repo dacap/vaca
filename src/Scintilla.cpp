@@ -29,12 +29,11 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "stdvaca.h"
 #include "Vaca/Scintilla.hpp"
 #include "Vaca/Font.hpp"
 #include "Vaca/WidgetClass.hpp"
-#include "scintilla/include/Scintilla.h"
-#include "scintilla/include/SciLexer.h"
+#include "Scintilla.h"
+#include "SciLexer.h"
 
 using namespace Vaca;
 

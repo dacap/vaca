@@ -10,47 +10,57 @@ using namespace Vaca;
 
 namespace test0 {
 
-  void func0_void() { }
-  void func1_void(int a) { }
-  void func2_void(int a, string b) { }
-  int func0_int() { return -1; }
-  int func1_int(int a) { return a; }
-  int func2_int(int a, int b) { return a+b; }
-  string func0_string() { return "empty"; }
-  string func1_string(string a) { return a; }
-  string func2_string(string a, string b) { return a+b; }
+  int count0_void = 0;
+  int count1_void = 0;
+  int count2_void = 0;
+  int count0_int = 0;
+  int count1_int = 0;
+  int count2_int = 0;
+  int count0_string = 0;
+  int count1_string = 0;
+  int count2_string = 0;
 
-  struct struct0_void { void operator()() { } };
-  struct struct1_void { void operator()(int a) { } };
-  struct struct2_void { void operator()(int a, string b) { } };
-  struct struct0_int { int operator()() { return -1; } };
-  struct struct1_int { int operator()(int a) { return a; } };
-  struct struct2_int { int operator()(int a, int b) { return a+b; } };
-  struct struct0_string { string operator()() { return "empty"; } };
-  struct struct1_string { string operator()(string a) { return a; } };
-  struct struct2_string { string operator()(string a, string b) { return a+b; } };
+  void func0_void() { ++count0_void; }
+  void func1_void(int a) { ++count1_void; }
+  void func2_void(int a, string b) { ++count2_void; }
+  int func0_int() { ++count0_int; return -1; }
+  int func1_int(int a) { ++count1_int; return a; }
+  int func2_int(int a, int b) { ++count2_int; return a+b; }
+  string func0_string() { ++count0_string; return "empty"; }
+  string func1_string(string a) { ++count1_string; return a; }
+  string func2_string(string a, string b) { ++count2_string; return a+b; }
 
-  class class0_void { public: void method() { } };
-  class class1_void { public: void method(int a) { } };
-  class class2_void { public: void method(int a, string b) { } };
-  class class0_int { public: int method() { return -1; } };
-  class class1_int { public: int method(int a) { return a; } };
-  class class2_int { public: int method(int a, int b) { return a+b; } };
-  class class0_string { public: string method() { return "empty"; } };
-  class class1_string { public: string method(string a) { return a; } };
-  class class2_string { public: string method(string a, string b) { return a+b; } };
+  struct struct0_void { void operator()() { ++count0_void; } };
+  struct struct1_void { void operator()(int a) { ++count1_void; } };
+  struct struct2_void { void operator()(int a, string b) { ++count2_void; } };
+  struct struct0_int { int operator()() { ++count0_int; return -1; } };
+  struct struct1_int { int operator()(int a) { ++count1_int; return a; } };
+  struct struct2_int { int operator()(int a, int b) { ++count2_int; return a+b; } };
+  struct struct0_string { string operator()() { ++count0_string; return "empty"; } };
+  struct struct1_string { string operator()(string a) { ++count1_string; return a; } };
+  struct struct2_string { string operator()(string a, string b) { ++count2_string; return a+b; } };
+
+  class class0_void { public: void method() { ++count0_void; } };
+  class class1_void { public: void method(int a) { ++count1_void; } };
+  class class2_void { public: void method(int a, string b) { ++count2_void; } };
+  class class0_int { public: int method() { ++count0_int; return -1; } };
+  class class1_int { public: int method(int a) { ++count1_int; return a; } };
+  class class2_int { public: int method(int a, int b) { ++count2_int; return a+b; } };
+  class class0_string { public: string method() { ++count0_string; return "empty"; } };
+  class class1_string { public: string method(string a) { ++count1_string; return a; } };
+  class class2_string { public: string method(string a, string b) { ++count2_string; return a+b; } };
 
   void test_coverage()
   {
-    Signal0<void>			sig0_void;
-    Signal1<void, int>			sig1_void;
-    Signal2<void, int, string>		sig2_void;
-    Signal0<int>			sig0_int;
-    Signal1<int, int>			sig1_int;
-    Signal2<int, int, int>		sig2_int;
-    Signal0<string>			sig0_string;
-    Signal1<string, string>		sig1_string;
-    Signal2<string, string, string>	sig2_string;
+    Signal0<void>                   sig0_void;
+    Signal1<void, int>              sig1_void;
+    Signal2<void, int, string>      sig2_void;
+    Signal0<int>                    sig0_int;
+    Signal1<int, int>               sig1_int;
+    Signal2<int, int, int>          sig2_int;
+    Signal0<string>                 sig0_string;
+    Signal1<string, string>         sig1_string;
+    Signal2<string, string, string> sig2_string;
 
     sig0_void.connect(&func0_void);
     sig1_void.connect(&func1_void);
@@ -72,15 +82,15 @@ namespace test0 {
     sig1_string.connect(struct1_string());
     sig2_string.connect(struct2_string());
 
-    class0_void i1; sig0_void.connect(&i1, &class0_void::method);
-    class1_void i2; sig1_void.connect(&i2, &class1_void::method);
-    class2_void i3; sig2_void.connect(&i3, &class2_void::method);
-    class0_int i4; sig0_int.connect(&i4, &class0_int::method);
-    class1_int i5; sig1_int.connect(&i5, &class1_int::method);
-    class2_int i6; sig2_int.connect(&i6, &class2_int::method);
-    class0_string i7; sig0_string.connect(&i7, &class0_string::method);
-    class1_string i8; sig1_string.connect(&i8, &class1_string::method);
-    class2_string i9; sig2_string.connect(&i9, &class2_string::method);
+    class0_void i1; sig0_void.connect(&class0_void::method, &i1);
+    class1_void i2; sig1_void.connect(&class1_void::method, &i2);
+    class2_void i3; sig2_void.connect(&class2_void::method, &i3);
+    class0_int i4; sig0_int.connect(&class0_int::method, &i4);
+    class1_int i5; sig1_int.connect(&class1_int::method, &i5);
+    class2_int i6; sig2_int.connect(&class2_int::method, &i6);
+    class0_string i7; sig0_string.connect(&class0_string::method, &i7);
+    class1_string i8; sig1_string.connect(&class1_string::method, &i8);
+    class2_string i9; sig2_string.connect(&class2_string::method, &i9);
 
     sig0_void();
     sig1_void(1);
@@ -91,6 +101,16 @@ namespace test0 {
     sig0_string();
     sig1_string("Hello World!");
     sig2_string("Hi", "Bye");
+
+    assert(count0_void == 3);
+    assert(count1_void == 3);
+    assert(count2_void == 3);
+    assert(count0_int == 3);
+    assert(count1_int == 3);
+    assert(count2_int == 3);
+    assert(count0_string == 3);
+    assert(count1_string == 3);
+    assert(count2_string == 3);
 
     // with "default_result"
     sig0_int(0);
@@ -152,8 +172,8 @@ namespace test1 {
     {
       Q q1(1);
       Q q2(2);
-      Slot0<void>* b = s.connect(&q1, &Q::ok);
-      Slot0<void>* c = s.connect(&q2, &Q::cancel);
+      Slot0<void>* b = s.connect(&Q::ok, &q1);
+      Slot0<void>* c = s.connect(&Q::cancel, &q2);
       s();
     }
     assert(func1_counter == 2);
@@ -260,7 +280,7 @@ namespace test4 {
 
     Signal2<int, int, int> s3;
     sum_of_squares i;
-    s3.connect(&i, &sum_of_squares::add);
+    s3.connect(&sum_of_squares::add, &i);
     assert(s3(4, 1) == 9);
     assert(s3(5, 0) == 9+25);
   }

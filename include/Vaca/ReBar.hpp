@@ -32,8 +32,6 @@
 #ifndef VACA_REBAR_HPP
 #define VACA_REBAR_HPP
 
-#include <commctrl.h>
-
 #include "Vaca/base.hpp"
 #include "Vaca/Widget.hpp"
 

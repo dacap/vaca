@@ -29,20 +29,21 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "stdvaca.h"
 #include "Vaca/Menu.hpp"
 #include "Vaca/MenuItemEvent.hpp"
 #include "Vaca/Debug.hpp"
 #include "Vaca/System.hpp"
 #include "Vaca/Mdi.hpp"
 #include "Vaca/ResourceException.hpp"
+#include "Vaca/Mutex.hpp"
+#include "Vaca/ScopedLock.hpp"
 
-#include <boost/thread/mutex.hpp>
+#include <stack>
 
 using namespace Vaca;
 
-static boost::mutex menuIdCounterMutex;
-static int menuIdCounter = VACA_FIRST_AUTOID;
+static Mutex menuIdCounterMutex;
+static volatile int menuIdCounter = VACA_FIRST_AUTOID;
 
 //////////////////////////////////////////////////////////////////////
 // MenuItem
@@ -68,7 +69,7 @@ MenuItem::MenuItem()
 MenuItem::MenuItem(const String& text, Keys::Type defaultShortcut, int id)
 {
   {
-    boost::mutex::scoped_lock lock(menuIdCounterMutex);
+    ScopedLock hold(menuIdCounterMutex);
     
     if (id < 0) {
       id = menuIdCounter++;

@@ -342,7 +342,7 @@ public:
     simulation_model::init_balls();
     simulation_model::init_segments();
 
-    m_timer.Action.connect(Bind(&MainFrame::onTick, this));
+    m_timer.Action.connect(&MainFrame::onTick, this);
     m_timer.start();
 
     setSize(400, 300);
@@ -427,6 +427,12 @@ protected:
     }
   }
 
+  void onMouseDown(MouseEvent &ev)
+  {
+    Frame::onMouseDown(ev);
+    simulation_model::add_ball();
+  }
+  
 private:
 
   void onTick()

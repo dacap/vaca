@@ -34,8 +34,6 @@
 
 #if 0
 
-#include <boost/signal.hpp>
-
 #include "Vaca/base.hpp"
 #include "Vaca/String.hpp"
 
@@ -88,8 +86,8 @@ public:
 //   virtual const String& getToolTip() const { return mToolTip; }
 //   virtual const String& getDescription() const { return mDescription; }
 
-  boost::signal<void ()> Action;
-  boost::signal<void (CommandState&)> Update;
+  Signal0<void> Action;
+  Signal1<void, CommandState&> Update;
 
   // events
   virtual void onAction();

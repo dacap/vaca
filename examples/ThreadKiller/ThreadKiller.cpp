@@ -29,12 +29,11 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include <boost/thread.hpp>
 #include <Vaca/Vaca.hpp>
 
 using namespace Vaca;
 
-void thread_killer(ThreadId id)
+void thread_killer(Thread::id id)
 {
   int counter = 0;
 
@@ -52,7 +51,7 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		   LPSTR lpCmdLine, int nCmdShow)
 {
   Application app;
-  Thread otherThread(boost::bind(&thread_killer, app.getId()));
+  Thread otherThread(Bind(&thread_killer, app.getId()));
 
   Dialog dialog("ThreadKiller", NULL, DialogStyle - WithSystemMenuFrameStyle);
   Label label("In tree seconds this window'll be self destroyed", &dialog);

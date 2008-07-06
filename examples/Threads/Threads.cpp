@@ -46,9 +46,21 @@ void hello_world(const String &title)
 int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
   Application app;
-  boost::thread_group threads;
-  for (int c=1; c<=10; ++c)
-    threads.create_thread(boost::bind(&hello_world, String::fromInt(c)));
-  threads.join_all();
+  std::vector<Thread*> threads;	// group of threads
+  std::vector<Thread*>::iterator it;
+
+  // create 10 threads
+  for (int c=0; c<10; ++c) {
+    Thread* t = new Thread(Bind<void>(&hello_world, String::fromInt(c+1)));
+    threads.push_back(t);
+  }
+
+  // join all threads
+  for (it=threads.begin(); it!=threads.end(); ++it) {
+    Thread* t = *it;
+    t->join();
+    delete t;
+  }
+
   return 0;
 }

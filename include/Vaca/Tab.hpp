@@ -98,8 +98,8 @@ public:
   Size getNonClientSize();
 
   // signals
-//   boost::signal<void (Event&)> PageChanging;
-  boost::signal<void (Event&)> PageChange; ///< @see onPageChange
+//   Signal1<void, Event&> PageChanging;
+  Signal1<void, Event&> PageChange; ///< @see onPageChange
 
 protected:
   // events

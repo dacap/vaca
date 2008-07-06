@@ -9,7 +9,7 @@
 @b Consideration: I speak Spanish and I don't know how to write in English.
    	          This documentation is only a draft. This is not a literary
 		  novel, it's just a document to know what the library does.
-		  If you find a mistake, please, <a href="http://www.davidcapello.com.ar/?p=mail">report it to me</a>.
+		  If you find a mistake, please, <a href="http://www.davidcapello.com.ar/mail/">report it to me</a>.
 
 @b Warning: This library is under development, this is not a stable
 release. The API is mutating in the current development stage. Please,
@@ -20,10 +20,10 @@ This library is licensed under the terms of the @ref license "BSD license".
 
 <h2>Introduction</h2>
 
-Vaca is a library to wrap the Win32 API with C++ classes. Also, it's has
-some extra functionalities like dockable tool bars and layout
-managers. This library uses templates (but not generic programming),
-the STL and the Boost libraries (Boost.Signals mainly).
+Vaca is a library to wrap the Win32 API with C++ classes. Also, it's
+has some extra functionalities like dockable tool bars and layout
+managers. This library uses templates and STL (but not generic
+programming).
 
 <h2>Objetives</h2>
 

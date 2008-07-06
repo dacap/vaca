@@ -89,9 +89,9 @@ public:
   virtual void layout();
 
   // signals
-  boost::signal<void (Event&)> Action;	 ///< @see onAction
-  boost::signal<void (Event&)> SelChange; ///< @see onSelChange
-  boost::signal<void (Event&)> EditChange; ///< @see onEditChange
+  Signal1<void, Event&> Action;	    ///< @see onAction
+  Signal1<void, Event&> SelChange;  ///< @see onSelChange
+  Signal1<void, Event&> EditChange; ///< @see onEditChange
 
 protected:
   // events

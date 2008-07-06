@@ -56,21 +56,20 @@ public:
     m_spinButton2.setConstraint(new BoxConstraint(true));
     m_spinButton3.setConstraint(new BoxConstraint(true));
 
-    m_spinButton1.Change.connect(Bind(&MainFrame::onSpinButtonChange, this,
-				      boost::arg<1>(), &m_spinner1));
-    
-    m_spinButton2.Change.connect(Bind(&MainFrame::onSpinButtonChange, this,
-				      boost::arg<1>(), &m_spinner2));
-    
+    m_spinButton1.Change.connect(&MainFrame::onSpinButtonChange, this);
+    m_spinButton2.Change.connect(&MainFrame::onSpinButtonChange, this);
+
     setSize(Size(200, 160));
     center();
   }
 
 protected:
   
-  void onSpinButtonChange(SpinButtonEvent &ev, Spinner *spinner)
+  void onSpinButtonChange(SpinButtonEvent& ev)
   {
-    spinner->setValue(spinner->getValue() + ev.getDelta());
+    if (Spinner *spinner = dynamic_cast<Spinner*>(ev.getSource())) {
+      spinner->setValue(spinner->getValue() + ev.getDelta());
+    }
   }
 
 };

@@ -32,14 +32,13 @@
 #ifndef VACA_SCOPEDLOCK_HPP
 #define VACA_SCOPEDLOCK_HPP
 
-#include <boost/noncopyable.hpp>
-
 #include "Vaca/base.hpp"
 #include "Vaca/Mutex.hpp"
+#include "Vaca/NonCopyable.hpp"
 
 namespace Vaca {
 
-class ScopedLock : private boost::noncopyable
+class ScopedLock : private NonCopyable
 {
   Mutex& m_mutex;
 
@@ -51,13 +50,17 @@ public:
     m_mutex.lock();
   }
 
-  virtual ~ScopedLock()
+  ~ScopedLock()
   {
     m_mutex.unlock();
   }
 
-};
+  Mutex& getMutex() const
+  {
+    return m_mutex;
+  }
 
+};
 
 } // namespace Vaca
 

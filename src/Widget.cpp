@@ -29,7 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "stdvaca.h"
+#include "Vaca/Widget.hpp"
+#include "Vaca/WidgetClass.hpp"
 #include "Vaca/Brush.hpp"
 #include "Vaca/Constraint.hpp"
 #include "Vaca/Cursor.hpp"
@@ -45,8 +46,8 @@
 #include "Vaca/Point.hpp"
 #include "Vaca/Region.hpp"
 #include "Vaca/System.hpp"
-#include "Vaca/Widget.hpp"
-#include "Vaca/WidgetClass.hpp"
+#include "Vaca/Mutex.hpp"
+#include "Vaca/ScopedLock.hpp"
 
 // comment this to use the old behaviour (using GWL_USERDATA to store
 // the "Widget" pointer)
@@ -60,33 +61,9 @@ using namespace Vaca;
 #ifdef USE_PROP
 #define VACAATOM (reinterpret_cast<LPCTSTR>(MAKELPARAM(vacaAtom, 0)))
 
-static boost::mutex vacaAtomMutex; // used to access vacaAtom
-static ATOM vacaAtom = 0;
+static Mutex vacaAtomMutex; // used to access vacaAtom
+static volatile ATOM vacaAtom = 0;
 #endif
-
-// struct ThreadDataForWidget
-// {
-//   Widget* outsideWidget; // widget used to call createHWND
-
-//   ThreadDataForWidget() {
-//     outsideWidget = NULL;
-//   }
-
-//   ~ThreadDataForWidget() {
-//     outsideWidget = NULL;
-//   }
-
-// };
-
-// static boost::thread_specific_ptr<ThreadDataForWidget> threadData;
-
-// static ThreadDataForWidget* getThreadData()
-// {
-//   if (threadData.get() == NULL)
-//     threadData.reset(new ThreadDataForWidget);
-
-//   return threadData.get();
-// }
 
 // default callback to destroy a HWND
 static void Widget_DestroyHWNDProc(HWND hwnd)
@@ -191,7 +168,7 @@ Widget::Widget(const WidgetClassName& className, Widget* parent, Style style)
   // creates the "VacaAtom" (the property name to put the "Widget*"
   // pointer in the HWNDs)
   {
-    boost::mutex::scoped_lock lock(vacaAtomMutex);
+    ScopedLock hold(vacaAtomMutex);
     if (vacaAtom == 0) {
       vacaAtom = GlobalAddAtom(_T("VacaAtom"));
       assert(vacaAtom != 0);
@@ -1579,7 +1556,7 @@ Widget* Widget::fromHWND(HWND hwnd)
 {
   // unbox the pointer
 #ifdef USE_PROP
-  // boost::mutex::scoped_lock lock(vacaAtomMutex);
+  // ScopedLock hold(vacaAtomMutex);
   return reinterpret_cast<Widget*>(::GetProp(hwnd, VACAATOM));
 #else
   return reinterpret_cast<Widget*>(::GetWindowLongPtr(hwnd, GWL_USERDATA));
@@ -2011,7 +1988,7 @@ void Widget::create(const WidgetClassName& className, Widget* parent, Style styl
 
   // create the HWND handler
 //   {
-//     ScopedLock lock(outsideWidgetMutex);
+//     ScopedLock hold(outsideWidgetMutex);
 //     assert(outsideWidget == NULL);
 
 //     outsideWidget = this;
@@ -2068,7 +2045,7 @@ void Widget::subClass()
   // box the pointer
 #ifdef USE_PROP
   {
-    // boost::mutex::scoped_lock lock(vacaAtomMutex);
+    // ScopedLock hold(vacaAtomMutex);
     SetProp(m_HWND, VACAATOM, reinterpret_cast<HANDLE>(this));
   }
 #else

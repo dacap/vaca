@@ -32,12 +32,10 @@
 #ifndef VACA_IMAGELIST_HPP
 #define VACA_IMAGELIST_HPP
 
-#include <commctrl.h>
-#include <boost/noncopyable.hpp>
-
 #include "Vaca/base.hpp"
 #include "Vaca/Image.hpp"
 #include "Vaca/Color.hpp"
+#include "Vaca/NonCopyable.hpp"
 #include "Vaca/ResourceId.hpp"
 #include "Vaca/SelfDestruction.hpp"
 
@@ -45,7 +43,7 @@ namespace Vaca {
 
 class String;
 
-class VACA_DLL ImageList : private boost::noncopyable
+class VACA_DLL ImageList : private NonCopyable
 {
   HIMAGELIST m_HIMAGELIST;
   bool m_selfDestruction;

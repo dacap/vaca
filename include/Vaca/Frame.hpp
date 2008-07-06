@@ -33,7 +33,6 @@
 #define VACA_FRAME_HPP
 
 #include <vector>
-#include <boost/signal.hpp>
 
 #include "Vaca/base.hpp"
 #include "Vaca/Widget.hpp"
@@ -122,10 +121,10 @@ public:
   virtual bool isLayoutFree();
   virtual bool keepSynchronized();
 
-  boost::signal<void (Event&)> Activate;     ///< @see onActivate
-  boost::signal<void (Event&)> Deactivate;   ///< @see onDeactivate
-  boost::signal<void (CloseEvent&)> Close;   ///< @see onClose
-  boost::signal<void (int, Rect&)> Resizing; ///< @see onResizing
+  Signal1<void, Event&> Activate;     ///< @see onActivate
+  Signal1<void, Event&> Deactivate;   ///< @see onDeactivate
+  Signal1<void, CloseEvent&> Close;   ///< @see onClose
+  Signal2<void, int, Rect&> Resizing; ///< @see onResizing
 
   // static int getFramesCount();
 //   static int getVisibleFramesByThread(int threadId);

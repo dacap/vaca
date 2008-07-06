@@ -32,30 +32,28 @@
 #ifndef VACA_MUTEX_HPP
 #define VACA_MUTEX_HPP
 
-#include <boost/noncopyable.hpp>
-
 #include "Vaca/base.hpp"
+#include "Vaca/NonCopyable.hpp"
 
 namespace Vaca {
 
 /**
- * A mutex. Can be an Win32 CRITICAL_SECTION or a HANDLE to an Win32
- * Mutex. Critical sections are faster (because are executed in
- * user-mode), but them can be used only to synchronize multiple
- * threads of the same single process. Mutex are slower (kernel-mode),
- * but them can be used in multiple threads and processes.
+ * A mutex, a Win32's CRITICAL_SECTION wrapper.
+ *
+ * This kind of mutex can be used to synchronize multiple threads of
+ * the same process.
  */
-class VACA_DLL Mutex : private boost::noncopyable
+class VACA_DLL Mutex : private NonCopyable
 {
-  bool m_criticalSection;
-  void* m_data;
+  CRITICAL_SECTION m_cs;
 
 public:
 
-  Mutex(bool multiProcess = false, LPCTSTR mutexName = NULL);
+  Mutex();
   ~Mutex();
 
   void lock();
+  bool tryLock();
   void unlock();
 
 };

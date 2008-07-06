@@ -33,7 +33,7 @@
 #include <time.h>
 
 #include <Vaca/Vaca.hpp>
-#include "grid.h"
+#include "grid.hpp"
 
 using namespace Vaca;
 

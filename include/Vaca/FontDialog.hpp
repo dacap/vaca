@@ -32,8 +32,6 @@
 #ifndef VACA_FONTDIALOG_HPP
 #define VACA_FONTDIALOG_HPP
 
-#include <boost/signal.hpp>
-
 #include "Vaca/base.hpp"
 #include "Vaca/CommonDialog.hpp"
 #include "Vaca/String.hpp"

@@ -44,6 +44,29 @@ class MainFrame : public Frame
   LinkLabel m_label3;
   Font m_tabFont;
 
+  class SideMenuItem : public MenuItem
+  {
+    Side m_side;
+    TabBase& m_tab;
+
+  public:
+    SideMenuItem(const String& text, Side side, TabBase& tab)
+      : MenuItem(text)
+      , m_side(side)
+      , m_tab(tab) { }
+
+    virtual void onAction(MenuItemEvent& ev) {
+      MenuItem::onAction(ev);
+      m_tab.setSide(m_side);
+    }
+    
+    virtual void onUpdate(MenuItemEvent& ev) {
+      MenuItem::onUpdate(ev);
+      setRadio(m_tab.getSide() == m_side);
+    }
+    
+  };
+
 public:
 
   MainFrame()
@@ -102,41 +125,20 @@ private:
     // Options/Multiline
     menuItem = optionsMenu->add("&Multiline");
     menuItem->Action.connect(Bind(&MainFrame::onMultiline, this));
-    menuItem->Update.connect(Bind(&MainFrame::onUpdateMultiline, this));
+    menuItem->Update.connect(&MainFrame::onUpdateMultiline, this);
 
     // Options/Side
     optionsMenu->add(sideMenu);
-
-    // Options/Side/Top
-    menuItem = sideMenu->add("&Top");
-    menuItem->Action.connect(Bind(&Tab::setSide, &m_tab, Side::Top));
-    menuItem->Update.connect(Bind(&MainFrame::onUpdateSide, this, Side::Top, boost::arg<1>()));
-
-    // Options/Side/Left
-    menuItem = sideMenu->add("&Left");
-    menuItem->Action.connect(Bind(&Tab::setSide, &m_tab, Side::Left));
-    menuItem->Update.connect(Bind(&MainFrame::onUpdateSide, this, Side::Left, boost::arg<1>()));
-
-    // Options/Side/Bottom
-    menuItem = sideMenu->add("&Bottom");
-    menuItem->Action.connect(Bind(&Tab::setSide, &m_tab, Side::Bottom));
-    menuItem->Update.connect(Bind(&MainFrame::onUpdateSide, this, Side::Bottom, boost::arg<1>()));
-
-    // Options/Side/Right
-    menuItem = sideMenu->add("&Right");
-    menuItem->Action.connect(Bind(&Tab::setSide, &m_tab, Side::Right));
-    menuItem->Update.connect(Bind(&MainFrame::onUpdateSide, this, Side::Right, boost::arg<1>()));
+    sideMenu->add(new SideMenuItem("&Top", Side::Top, m_tab));
+    sideMenu->add(new SideMenuItem("&Left", Side::Left, m_tab));
+    sideMenu->add(new SideMenuItem("&Bottom", Side::Bottom, m_tab));
+    sideMenu->add(new SideMenuItem("&Right", Side::Right, m_tab));
 
     // Menu bar
     menuBar->add(appMenu);
     menuBar->add(optionsMenu);
-    menuBar->add("&Read me")->
-      Action.connect(Bind(&MainFrame::msgBox, this,
-			  "A Tab widget with pages in Left or Right sides\n"
-			  "must be Multiline. Also, when you use themes on\n"
-			  "WinXP, you can't use Left or Right sides at all.\n",
-			  "Win32 Limitation", MB_OK));
-    
+    menuBar->add("&Read me")->Action.connect(Bind(&MainFrame::onReadMe, this));
+
     return menuBar;
   }
 
@@ -154,17 +156,19 @@ private:
     m_tab.setMultiline(!m_tab.isMultiline());
   }
 
-  void onUpdateMultiline(MenuItemEvent &ev)
+  void onUpdateMultiline(MenuItemEvent& ev)
   {
     ev.getMenuItem()->setChecked(m_tab.isMultiline());
     ev.getMenuItem()->setEnabled(m_tab.getSide() != Side::Left &&
 				 m_tab.getSide() != Side::Right);
   }
 
-  void onUpdateSide(Side side, MenuItemEvent &ev)
-  {
-    ev.getMenuItem()->setRadio(m_tab.getSide() == side);
-  }
+  // void onUpdateSide(MenuItemEvent& ev)
+  // {
+  //   if (SideMenuItem* menuItem = dynamic_cast<SideMenuItem*>(ev.getMenuItem())) {
+  //     menuItem->setRadio(m_tab.getSide() == menuItem->getSide());
+  //   }
+  // }
 
   void onPageLink(int page)
   {
@@ -176,6 +180,14 @@ private:
   {
     updatePage();
     m_labelLast.setText("Last clicked " + m_tab.getPageText(m_tab.getActivePage()));
+  }
+
+  void onReadMe()
+  {
+    msgBox("A Tab widget with pages in Left or Right sides\n"
+	   "must be Multiline. Also, when you use themes on\n"
+	   "WinXP, you can't use Left or Right sides at all.\n",
+	   "Win32 Limitation", MB_OK);
   }
 
 private:

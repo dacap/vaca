@@ -6,6 +6,10 @@ Vaca 0.0.6
     way to complicate the core API). See the "Commands" example to see a
     complete example of how to implement commands for menus and
     tool-bars.
+- Removed dependencies with Boost library.
+  - Added Slot/Signal and Bind (placeholders aren't available, sorry).
+  - Added Condition (from William E. Kempf code).
+  - Added TimePoint.
 - OpenFileDialog::setFileName now is public.
 - Added WidgetClassName.
 - Renamed all headers files from .h to .hpp
@@ -14,7 +18,7 @@ Vaca 0.0.6
 - Renamed CreateHWNDException to CreateWidgetException.
 - Fixed a bug in EditableListBox (when remove a node in a ListBox with
   vertical scroll).
-- Removed all utilities (they could be too big to include inside the
+- Removed all utilities (they were too big to include inside the
   main Vaca distribution).
 - Finally Trees example works (Added removeNode to TreeNode and TreeView).
 - Renamed acquireFocus to requestFocus.
@@ -30,16 +34,11 @@ Vaca 0.0.6
 - Fixed bugs with memory allocation/deallocation (usage of delete[])
 - Fixed bugs with TreeNode/TreeView.
 - Fixed problem with infinite message-loop when all Frames are hidden.
-- Fixed problems with AddressBook and Unicode support.
 - Fixed String(const char *, ...) constructors with Unicode activated.
 - Added two methods for String: to_string and to_wstring.
 - Added more signals for Widget: See LikeScript example (idea of
   Przemyslaw Szurmak).
-- Now Vaca uses Boost.Threads library:
-  - Vaca::Thread is a boost::thread wrapper.
-  - removed Mutex: use boost::mutex instead
-  - removed ScopedLock: use boost::mutex::scoped_lock instead
-- New Bix layout manager (finally).
+- New Bix layout manager.
 
 Vaca 0.0.5
 

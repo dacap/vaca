@@ -67,24 +67,21 @@ namespace Vaca {
 
     ~Signal0_base()
     {
-      typename SlotList::iterator end = m_slots.end();
-      for (typename SlotList::iterator
-	     it = m_slots.begin(); it != end; ++it)
-	delete *it;
+      disconnectAll();
     }
 
-    template<typename T>
-    SlotType* connect(const T& t)
+    template<typename F>
+    SlotType* connect(const F& f)
     {
-      SlotType* slot = new Slot0_call<R, T>(t);
+      SlotType* slot = new Slot0_fun<R, F>(f);
       m_slots.push_back(slot);
       return slot;
     }
 
     template<class T>
-    SlotType* connect(T* t, R (T::*m)())
+    SlotType* connect(R (T::*m)(), T* t)
     {
-      SlotType* slot = new Slot0_mem<R, T>(t, m);
+      SlotType* slot = new Slot0_mem<R, T>(m, t);
       m_slots.push_back(slot);
       return slot;
     }
@@ -97,6 +94,19 @@ namespace Vaca {
     void disconnect(SlotType* slot)
     {
       remove_element_from_container(m_slots, slot);
+    }
+
+    void disconnectAll()
+    {
+      typename SlotList::iterator end = m_slots.end();
+      for (typename SlotList::iterator
+	     it = m_slots.begin(); it != end; ++it)
+	delete *it;
+    }
+
+    bool empty() const
+    {
+      return m_slots.empty();
     }
 
   };
@@ -193,24 +203,21 @@ namespace Vaca {
 
     ~Signal1_base()
     {
-      typename SlotList::iterator end = m_slots.end();
-      for (typename SlotList::iterator
-	     it = m_slots.begin(); it != end; ++it)
-	delete *it;
+      disconnectAll();
     }
 
-    template<typename T>
-    SlotType* connect(const T& t)
+    template<typename F>
+    SlotType* connect(const F& f)
     {
-      SlotType* slot = new Slot1_call<R, T, A1>(t);
+      SlotType* slot = new Slot1_fun<R, F, A1>(f);
       m_slots.push_back(slot);
       return slot;
     }
 
     template<class T>
-    SlotType* connect(T* t, R (T::*m)(A1))
+    SlotType* connect(R (T::*m)(A1), T* t)
     {
-      SlotType* slot = new Slot1_mem<R, T, A1>(t, m);
+      SlotType* slot = new Slot1_mem<R, T, A1>(m, t);
       m_slots.push_back(slot);
       return slot;
     }
@@ -223,6 +230,19 @@ namespace Vaca {
     void disconnect(SlotType* slot)
     {
       remove_element_from_container(m_slots, slot);
+    }
+
+    void disconnectAll()
+    {
+      typename SlotList::iterator end = m_slots.end();
+      for (typename SlotList::iterator
+	     it = m_slots.begin(); it != end; ++it)
+	delete *it;
+    }
+
+    bool empty() const
+    {
+      return m_slots.empty();
     }
 
   };
@@ -319,24 +339,21 @@ namespace Vaca {
 
     ~Signal2_base()
     {
-      typename SlotList::iterator end = m_slots.end();
-      for (typename SlotList::iterator
-	     it = m_slots.begin(); it != end; ++it)
-	delete *it;
+      disconnectAll();
     }
 
-    template<typename T>
-    SlotType* connect(const T& t)
+    template<typename F>
+    SlotType* connect(const F& f)
     {
-      SlotType* slot = new Slot2_call<R, T, A1, A2>(t);
+      SlotType* slot = new Slot2_fun<R, F, A1, A2>(f);
       m_slots.push_back(slot);
       return slot;
     }
 
     template<class T>
-    SlotType* connect(T* t, R (T::*m)(A1, A2))
+    SlotType* connect(R (T::*m)(A1, A2), T* t)
     {
-      SlotType* slot = new Slot2_mem<R, T, A1, A2>(t, m);
+      SlotType* slot = new Slot2_mem<R, T, A1, A2>(m, t);
       m_slots.push_back(slot);
       return slot;
     }
@@ -349,6 +366,19 @@ namespace Vaca {
     void disconnect(SlotType* slot)
     {
       remove_element_from_container(m_slots, slot);
+    }
+
+    void disconnectAll()
+    {
+      typename SlotList::iterator end = m_slots.end();
+      for (typename SlotList::iterator
+	     it = m_slots.begin(); it != end; ++it)
+	delete *it;
+    }
+
+    bool empty() const
+    {
+      return m_slots.empty();
     }
 
   };

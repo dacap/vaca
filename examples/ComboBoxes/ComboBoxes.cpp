@@ -63,8 +63,8 @@ public:
       m_combo4.addItem(text);
     }
 
-    m_combo1.SelChange.connect(Bind(&MainFrame::onComboChange, this));
-    m_combo2.EditChange.connect(Bind(&MainFrame::onEditChange, this));
+    m_combo1.SelChange.connect(&MainFrame::onComboChange, this);
+    m_combo2.EditChange.connect(&MainFrame::onEditChange, this);
 
     setSize(getPreferredSize());
     center();
@@ -87,12 +87,12 @@ protected:
 
 private:
   
-  void onComboChange()
+  void onComboChange(Event& ev)
   {
     m_combo2.setCurrentItem(m_combo1.getCurrentItem());
   }
 
-  void onEditChange()
+  void onEditChange(Event& ev)
   {
     m_combo3.setText(m_combo2.getText());
   }

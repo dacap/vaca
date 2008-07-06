@@ -96,7 +96,7 @@ public:
   void deselect();
 
   // signals
-  boost::signal<void (Event&)> Change; ///< @see onChange
+  Signal1<void, Event&> Change; ///< @see onChange
 
 protected:
   // events

@@ -29,7 +29,6 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "stdvaca.h"
 #include "Vaca/LinkLabel.hpp"
 #include "Vaca/Point.hpp"
 #include "Vaca/MouseEvent.hpp"
@@ -40,8 +39,6 @@
 #include "Vaca/Pen.hpp"
 #include "Vaca/KeyEvent.hpp"
 #include "Vaca/Image.hpp"
-
-#include <boost/algorithm/string/find.hpp>
 
 using namespace Vaca;
 

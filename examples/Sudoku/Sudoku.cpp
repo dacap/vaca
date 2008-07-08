@@ -126,9 +126,9 @@ public:
 
 class MainFrame : public Frame
 {
+public:	// MSVC needs it to be public because grid<cell> needs to access to it
   ////////////////////////////////////////
   // a cell
-
   struct cell {
     int digit;
     bool given;
@@ -141,6 +141,7 @@ class MainFrame : public Frame
     }
   };
 
+private:  
   ////////////////////////////////////////
   // a predicates and functors
 

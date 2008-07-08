@@ -2,8 +2,24 @@
 # Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
 # All rights reserved.
 
-CXXFLAGS = -Iinclude -Iscintilla/include -wd4355 -Ob1 -EHa -Zi -DVACA_STATIC=1 -DVACA_WIN32_IMPL -DWINVER=0x0500 -D_WIN32_IE=0x0500 -D_WIN32_WINNT=0x0500
-LIBS = User32.lib Shell32.lib ComCtl32.lib ComDlg32.lib Gdi32.lib Msimg32.lib WinMM.lib AdvAPI32.lib Ole32.lib
+STATIC = 1
+DEBUG = 1
+
+CPPFLAGS = -Iinclude -Iscintilla/include -wd4355 -Ob1 -EHa -DVACA_WIN32_IMPL -DWINVER=0x0500 -D_WIN32_IE=0x0500 -D_WIN32_WINNT=0x0500
+LIBS = User32.lib Shell32.lib ComCtl32.lib ComDlg32.lib Gdi32.lib Msimg32.lib WinMM.lib AdvAPI32.lib Ole32.lib ShLwApi.lib
+
+!if "$(DEBUG)" == "1"
+CPPFLAGS = $(CPPFLAGS) -Zi
+# TARGOPTS=$(TARGOPTS) /MTd
+# CRTLIB=libcmtd.lib
+# !else
+# TARGOPTS=$(TARGOPTS) /MT
+# CRTLIB=libcmt.lib
+!endif
+
+!if "$(STATIC)" == "1"
+CPPFLAGS = $(CPPFLAGS) -DVACA_STATIC=1
+!endif
 
 OBJS = \
   obj/Anchor.obj obj/AnchorLayout.obj obj/Application.obj		\
@@ -31,24 +47,167 @@ OBJS = \
   obj/TreeNode.obj obj/TreeView.obj obj/TreeViewEvent.obj obj/Vaca.obj	\
   obj/Widget.obj obj/WidgetClass.obj
 
+EXAMPLES = bin/AnchorLayouts.exe bin/AutoCompletion.exe bin/Bixes.exe	\
+  bin/BouncingBalls.exe bin/BoxLayouts.exe bin/Buttons.exe		\
+  bin/ColoredButton.exe bin/ComboBoxes.exe bin/Commands.exe		\
+  bin/DataGrids.exe bin/EditableListBox.exe bin/Edits.exe		\
+  bin/EyeDropper.exe bin/FontMetrics.exe bin/FreeOfLayout.exe		\
+  bin/Hashing.exe bin/HelloWorld.exe bin/Images.exe bin/Labels.exe	\
+  bin/LikeScript.exe bin/Maths.exe bin/MenuResource.exe			\
+  bin/MiniExplorer.exe bin/PensBrushes.exe bin/Primitives.exe		\
+  bin/ProgressBars.exe bin/Regions.exe bin/Scribble.exe			\
+  bin/Sliders.exe bin/Spinners.exe bin/StdCommands.exe bin/Sudoku.exe	\
+  bin/SystemImageList.exe bin/Tabs.exe bin/TextEditor.exe		\
+  bin/Threads.exe bin/Timers.exe bin/ToolBars.exe bin/Trees.exe
+
 {src}.cpp{obj}.obj :
-	cl -nologo $(CXXFLAGS) -Foobj/ -c $<
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c $<
 
 all : lib examples
 
 lib : obj/Vaca.lib
 
-examples : bin/AutoCompletion.exe
+examples : $(EXAMPLES)
+
+clean :
+	del obj\*.obj
+
+distclean : clean
+	del bin\*.exe obj\*.lib
 
 obj/Vaca.lib : $(OBJS)
 	lib -NOLOGO /OUT:obj/Vaca.lib $?
 
-obj/AutoCompletion.obj : examples/AutoCompletion/AutoCompletion.cpp
-	cl -nologo $(CXXFLAGS) -Foobj/ -c examples/AutoCompletion/AutoCompletion.cpp
+######################################################################
+# Examples
 
-bin/AutoCompletion.exe : obj/AutoCompletion.obj
+bin/Hashing.exe : obj/Hashing.obj obj/md5.obj obj/sha1.obj
+
+{obj}.obj{bin}.exe :
 	link -NOLOGO -SUBSYSTEM:WINDOWS -MACHINE:X86 -DEBUG \
-		obj/AutoCompletion.obj $(OBJS) $(LIBS) \
-		-OUT:bin/AutoCompletion.exe 
+		$** obj/Vaca.lib $(LIBS) -OUT:$@
 
-# 	link -LIBPATH:obj -OUT:bin/AutoCompletion.exe -SUBSYSTEM:WINDOWS -MACHINE:X86 obj/AutoCompletion.obj $(OBJS) 
+obj/AnchorLayouts.obj : examples/AnchorLayouts/AnchorLayouts.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/AnchorLayouts/AnchorLayouts.cpp
+
+obj/AutoCompletion.obj : examples/AutoCompletion/AutoCompletion.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/AutoCompletion/AutoCompletion.cpp
+
+obj/Bixes.obj : examples/Bixes/Bixes.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/Bixes/Bixes.cpp
+
+obj/BouncingBalls.obj : examples/BouncingBalls/BouncingBalls.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/BouncingBalls/BouncingBalls.cpp
+
+obj/BoxLayouts.obj : examples/BoxLayouts/BoxLayouts.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/BoxLayouts/BoxLayouts.cpp
+
+obj/Buttons.obj : examples/Buttons/Buttons.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/Buttons/Buttons.cpp
+
+obj/ColoredButton.obj : examples/ColoredButton/ColoredButton.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/ColoredButton/ColoredButton.cpp
+
+obj/ComboBoxes.obj : examples/ComboBoxes/ComboBoxes.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/ComboBoxes/ComboBoxes.cpp
+
+obj/Commands.obj : examples/Commands/Commands.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/Commands/Commands.cpp
+
+obj/DataGrids.obj : examples/DataGrids/DataGrids.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/DataGrids/DataGrids.cpp
+
+obj/EditableListBox.obj : examples/EditableListBox/EditableListBox.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/EditableListBox/EditableListBox.cpp
+
+obj/Edits.obj : examples/Edits/Edits.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/Edits/Edits.cpp
+
+obj/EyeDropper.obj : examples/EyeDropper/EyeDropper.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/EyeDropper/EyeDropper.cpp
+
+obj/FontMetrics.obj : examples/FontMetrics/FontMetrics.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/FontMetrics/FontMetrics.cpp
+
+obj/FreeOfLayout.obj : examples/FreeOfLayout/FreeOfLayout.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/FreeOfLayout/FreeOfLayout.cpp
+
+obj/Hashing.obj : examples/Hashing/Hashing.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/Hashing/Hashing.cpp
+
+obj/md5.obj : examples/Hashing/md5.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/Hashing/md5.cpp
+
+obj/sha1.obj : examples/Hashing/sha1.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/Hashing/sha1.cpp
+
+obj/HelloWorld.obj : examples/HelloWorld/HelloWorld.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/HelloWorld/HelloWorld.cpp
+
+obj/Images.obj : examples/Images/Images.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/Images/Images.cpp
+
+obj/Labels.obj : examples/Labels/Labels.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/Labels/Labels.cpp
+
+obj/LikeScript.obj : examples/LikeScript/LikeScript.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/LikeScript/LikeScript.cpp
+
+obj/Maths.obj : examples/Maths/Maths.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/Maths/Maths.cpp
+
+obj/MenuResource.obj : examples/MenuResource/MenuResource.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/MenuResource/MenuResource.cpp
+
+obj/MiniExplorer.obj : examples/MiniExplorer/MiniExplorer.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/MiniExplorer/MiniExplorer.cpp
+
+obj/PensBrushes.obj : examples/PensBrushes/PensBrushes.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/PensBrushes/PensBrushes.cpp
+
+obj/Primitives.obj : examples/Primitives/Primitives.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/Primitives/Primitives.cpp
+
+obj/ProgressBars.obj : examples/ProgressBars/ProgressBars.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/ProgressBars/ProgressBars.cpp
+
+obj/Regions.obj : examples/Regions/Regions.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/Regions/Regions.cpp
+
+obj/Scribble.obj : examples/Scribble/Scribble.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/Scribble/Scribble.cpp
+
+obj/Sliders.obj : examples/Sliders/Sliders.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/Sliders/Sliders.cpp
+
+obj/Spinners.obj : examples/Spinners/Spinners.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/Spinners/Spinners.cpp
+
+obj/StdCommands.obj : examples/StdCommands/StdCommands.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/StdCommands/StdCommands.cpp
+
+obj/Sudoku.obj : examples/Sudoku/Sudoku.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/Sudoku/Sudoku.cpp
+
+obj/SystemImageList.obj : examples/SystemImageList/SystemImageList.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/SystemImageList/SystemImageList.cpp
+
+obj/Tabs.obj : examples/Tabs/Tabs.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/Tabs/Tabs.cpp
+
+obj/TextEditor.obj : examples/TextEditor/TextEditor.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/TextEditor/TextEditor.cpp
+
+obj/Threads.obj : examples/Threads/Threads.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/Threads/Threads.cpp
+
+obj/Timers.obj : examples/Timers/Timers.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/Timers/Timers.cpp
+
+obj/ToolBars.obj : examples/ToolBars/ToolBars.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/ToolBars/ToolBars.cpp
+
+obj/Trees.obj : examples/Trees/Trees.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/Trees/Trees.cpp
+
+######################################################################

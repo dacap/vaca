@@ -44,6 +44,8 @@ Examples
 - DataGrids (complete)
 - Sudoku (double-buffered, with better hot-tracking, better cell
   handle, and fix the "infinite-loop" bug in the level generator)
+- Remove CommandsAlt, LikeDOS, ThreadKiller
+- Finish Xuls
 
 
 ----------------------------------------------------------------------

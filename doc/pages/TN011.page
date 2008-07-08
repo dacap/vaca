@@ -30,7 +30,7 @@ destroyed when you change the layout manager or the constraint. E.g.:
   }
 @endcode
 
-Remember to use this code this if you make instances of
+Remember to use the following code if you make instances of
 @c Layout (or @c Constraint) in the stack:
 
 @code
@@ -39,8 +39,8 @@ Remember to use this code this if you make instances of
     ClientLayout layout;
     frame.setLayout(&layout);
     ...
-    frame.setLayout(NULL); // <-- you must to do this... if you don't
-                           //     "layout" will be deleted two times
+    frame.setLayout(NULL); // you have to do this because "layout" would be
+                           // deleted in ~Frame() by second time
   }
 @endcode
 

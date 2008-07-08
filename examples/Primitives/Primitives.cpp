@@ -29,8 +29,12 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include <cmath>
 #include <Vaca/Vaca.hpp>
+
+#include <cmath>
+#ifndef M_PI
+#  define M_PI 3.14159265358979323846 
+#endif
 
 using namespace Vaca;
 

@@ -91,7 +91,7 @@ public:
 
 private:
 
-  void bindButton(ButtonBase &button)
+  void bindButton(ButtonBase& button)
   {
     button.Action.connect(Bind(&MainFrame::updateLabel, this));
   }

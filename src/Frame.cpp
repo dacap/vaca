@@ -43,7 +43,6 @@
 #include "Vaca/Mdi.hpp"
 #include "Vaca/Thread.hpp"
 #include "Vaca/Icon.hpp"
-#include "Vaca/Command.hpp"
 #include "Vaca/BandedDockArea.hpp"
 
 using namespace Vaca;

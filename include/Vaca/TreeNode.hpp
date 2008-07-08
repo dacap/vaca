@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -50,8 +50,7 @@ class TreeViewIterator;
  * asociated, and a state (collapsed/expanded). A node can be parent
  * of sub-TreeNodes.
  */
-class VACA_DLL TreeNode : private NonCopyable
-			, public Component
+class VACA_DLL TreeNode : public Component
 {
 public:
 

@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -99,7 +99,7 @@ public:
 };
 
 /**
- * Concatenate a Vaca::String with a normal C string.
+ * Concatenate a String with a normal C string.
  * 
  * With this you can do:
  * @code
@@ -116,7 +116,7 @@ inline String operator+(const String& _s1, const char* _s2)
 }
 
 /**
- * Concatenate a Vaca::String with a C string with wide-characters.
+ * Concatenate a String with a C string with wide-characters.
  * 
  * With this you can do:
  * @code
@@ -133,7 +133,7 @@ inline String operator+(const String& _s1, const wchar_t* _s2)
 }
 
 /**
- * Concatenate a normal C string and a Vaca::String.
+ * Concatenate a normal C string and a String.
  * 
  * With this you can do:
  * @code
@@ -150,7 +150,7 @@ inline String operator+(const char* _s1, const String& _s2)
 }
 
 /**
- * Concatenate a C string with wide-characters and a Vaca::String.
+ * Concatenate a C string with wide-characters and a String.
  * 
  * With this you can do:
  * @code

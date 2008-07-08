@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -47,7 +47,7 @@ class VACA_DLL Timer : private NonCopyable
   friend class Application;
   friend struct _Timer;
 
-  Thread::id m_threadOwnerId;
+  Thread::Id m_threadOwnerId;
   bool       m_running : 1;
   bool       m_firstTick : 1;
   int        m_interval;

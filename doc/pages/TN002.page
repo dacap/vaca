@@ -6,15 +6,15 @@
 
 @image html CreateDestroyWindows.png
 
-<h2>Where are created HWNDs?</h2>
+<h2>Where are HWNDs created?</h2>
 
 All HWNDs are created inside
-@ref Vaca::Widget#createHWND "Widget::createHWND"
+@link Vaca::Widget#createHWND Widget::createHWND@endlink
 method using the Win32 API routine @c CreateWindowEx. But this
 method is privated, you can't call it (although you can
 override it), the only one that calls this method is
-@ref Vaca::Widget#create "Widget::create". Its main task
-is to setup the @a m_HWND member of @ref Vaca::Widget "Widget"
+@link Vaca::Widget#create Widget::create@endlink. Its main task
+is to setup the @a m_HWND member of @link Vaca::Widget Widget@endlink
 instances and to do the classic Win32 subclassing (setting the
 GWL_WNDPROC property):
 @code
@@ -23,7 +23,8 @@ baseWndProc = (WNDPROC)
 		   GWLP_WNDPROC,
 		   (LONG_PTR) getGlobalWndProc());
 @endcode
-See @ref Vaca::Widget#subClass() "Widget::subClass()" for more information.
+See @link Vaca::Widget#subClass() Widget::subClass()@endlink
+for more information.
 
 <h2>HWND life time</h2>
 
@@ -41,36 +42,45 @@ Widget. That is if we create a button:
 <h2>You can override createHWND</h2>
 
 This shouldn't be your case, but if you want to make something like
-Vaca::MdiClient#createHWND, it is, to make your customized
-CreateWindowEx call, you can override @c createHWND, but remember that
-you must to call @ref Vaca::Widget#create "create" inside the constructor of
-your own class, and give @a className=NULL to @ref Vaca::Widget#Widget "Widget()".
+@link Vaca::MdiClient#createHWND MdiClient::createHWND@endlink, it is,
+to make your customized @c CreateWindowEx call, you can override @c createHWND,
+but remember that you must to call
+@link Vaca::Widget#create create@endlink inside the constructor of
+your own class, and give @a className=NULL to
+@link Vaca::Widget#Widget Widget()@endlink.
 This is a little example:
 @code
-class MySuperDuperWidget : public Widget
+class MyWidgetClass : public WidgetClass
+{
+public:
+  static MyWidgetClass getClassName()
+  { return MyWidgetClass("Vaca.MyWidgetClass"); }
+};
+
+class MyWidget : public Register<MyWidgetClass>
+	       , public Widget
 {
 public:
 
-  MySuperDuperWidget(Widget *parent) 
-    : Widget(NULL, parent, NoStyle)
+  MyWidget(Widget* parent)
+    : Widget(NULL, parent, NoStyle)      // <-- see className=NULL
   {
-    create(_T("MySuperDuperWidget"), parent, ChildStyle);
+    create(MyWidgetClass::getClassName(),
+	   parent,
+	   ChildStyle);
   }
 
 protected:
 
+  // customized call to CreateWindowEx
   virtual HWND createHWND(LPCTSTR className,
-                          Widget *parent,
+                          Widget* parent,
                           Style style)
   {
-    return CreateWindowEx(style.extended,
-			  className,
-			  _T(""),
+    return CreateWindowEx(style.extended, className, _T(""),
 			  style.regular,
-			  CW_USEDEFAULT,
-			  CW_USEDEFAULT,
-			  CW_USEDEFAULT,
-			  CW_USEDEFAULT,
+			  CW_USEDEFAULT, CW_USEDEFAULT,
+			  CW_USEDEFAULT, CW_USEDEFAULT,
 			  parent ? parent->getHWND(): (HWND)NULL,
 			  (HMENU)NULL,
 			  Application::getHINSTANCE(),
@@ -79,6 +89,8 @@ protected:
 };
 @endcode
 
-@see @ref TN001, Vaca::Widget#Widget, Vaca::Widget#~Widget.
+@see @ref TN001,
+     @link Vaca::Widget#Widget Widget()@endlink,
+     @link Vaca::Widget#~Widget ~Widget()@endlink.
 
 */

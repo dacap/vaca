@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -38,7 +38,7 @@ namespace Vaca {
 
 /**
  * A Widget style: it is a pair of values: regular style (a set of
- * Win32 @c WS_ values) and extended style (a set of Win32 @c WS_EX_
+ * Win32's @c WS_ values) and extended style (a set of Win32's @c WS_EX_
  * values).
  *
  * You can add and substract styles with the + and - operators.

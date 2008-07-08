@@ -1,8 +1,10 @@
-# DOXYGEN = "c:/doxygen/bin/doxygen.exe"
-DOXYGEN = "C:/Archivos de programa/doxygen/bin/doxygen.exe"
+DOXYGEN = "$(PROGRAMFILES)/doxygen/bin/doxygen.exe"
 
 all:
-# USAR CON MUCHO CUIDADO, SOBREESCRIBE LOS ARCHIVOS: header.html footer.html style.css Doxyfile
-#	$(DOXYGEN) -w html last_header.html last_footer.html last_style.css Doxyfile.en
-	$(DOXYGEN) Doxyfile.en
-# 	$(DOXYGEN) Doxyfile.es
+	$(DOXYGEN) Doxyfile
+
+gen1:
+	$(DOXYGEN) -g new_Doxyfile
+
+gen2:
+	$(DOXYGEN) -w html new_header.html new_footer.html new_style.css new_Doxyfile

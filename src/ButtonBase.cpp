@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -60,7 +60,8 @@ bool ButtonBase::isSelected()
 
 /**
  * Selects or deselects (checks or unchecks) the button depending of
- * @a state parameter.
+ * @a state parameter. The button is automatically redrawn, you don't
+ * need to call #invalidate().
  *
  * @param state
  *     true if you want to check the button, or false if you want

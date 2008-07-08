@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -35,7 +35,14 @@
 using namespace Vaca;
 
 /**
+ * Creates an event from the mouse.
+ *
+ * @param source Source of the event (a Widget or Component)
+ * @param point Point where the mouse happened
+ * @param clicks How many clicks the user pressed? 1 means click-down, 2 means double-click.
  * @param flags Flags used internally (see MK_* constants of Win32)
+ * @param trigger Which buttons were pressed
+ * @param delta The wheel delta (Z axis) counted in notches. @todo positive is up or down?
  */
 MouseEvent::MouseEvent(Widget* source, Point point, int clicks,
 		       int flags, MouseButtons trigger, int delta)
@@ -53,7 +60,11 @@ MouseEvent::~MouseEvent()
 }
 
 /**
- * Returns the X component of the mouse position (getPoint).
+ * Returns the X component of the mouse position (#getPoint).
+ *
+ * The position is relative to the client-bounds of the source.
+ * 
+ * @see #getSource, Widget::getClientBounds
  */
 int MouseEvent::getX() const
 {
@@ -61,7 +72,11 @@ int MouseEvent::getX() const
 }
 
 /**
- * Returns the Y component of the mouse position (getPoint).
+ * Returns the Y component of the mouse position (#getPoint).
+ * 
+ * The position is relative to the client-bounds of the source.
+ *
+ * @see #getSource, Widget::getClientBounds
  */
 int MouseEvent::getY() const
 {
@@ -69,8 +84,9 @@ int MouseEvent::getY() const
 }
 
 /**
- * Returns the mouse position relative to the Widget client area
- * (@ref Widget::getClientBounds()).
+ * Returns the mouse position relative to the Widget client area.
+ *
+ * @see Widget#getClientBounds
  */
 Point MouseEvent::getPoint() const
 {
@@ -90,11 +106,7 @@ int MouseEvent::getClicks() const
 
 /**
  * Returns the button that trigger the event (if the event is
- * Widget::mouseUp or Widget::mouseDown).
- *
- * @param isLeftButtonPressed
- * @param isRightButtonPressed
- * @param isMiddleButtonPressed
+ * Widget#onMouseUp or Widget#onMouseDown).
  */
 MouseButtons MouseEvent::getButton() const
 {

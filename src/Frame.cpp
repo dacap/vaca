@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -465,31 +465,8 @@ Rect Frame::getLayoutBounds()
   return rc;
 }
 
-/** 
- * Adds a new command to the Frame. The command is deleted
- * automatically in the Frame's destructor. If you want to avoid this,
- * you should to call removeCommand before.
- * 
- * @param command 
- *
- * @see @ref TN010
- */
-// void Frame::addCommand(Command* command)
-// {
-//   m_commands.push_back(command);
-// }
-
-/** 
- * 
- * 
- * @param command 
- */
-// void Frame::removeCommand(Command* command)
-// {
-//   remove_element_from_container(m_commands, command);
-// }
-
 /**
+ * Adds a new DockArea in the Frame.
  * 
  * @param dockArea It'll be automatically deleted in Frame's
  *                 destructor or deleteDockAreas. (if you don't
@@ -689,10 +666,8 @@ Widget::Container Frame::getSynchronizedGroup()
   return container;
 }
 
-/**
- * Used when WM_INITMENU or WM_INITMENUPOPUP message is received to
- * find the Menu of the m_menuBar, known only its HMENU.
- */
+// // Used when WM_INITMENU or WM_INITMENUPOPUP message is received to
+// // find the Menu of the m_menuBar, known only its HMENU.
 // Menu* Frame::getMenuByHMENU(HMENU hmenu)
 // {
 //   MenuBar* menuBar = getMenuBar();

@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -295,7 +295,7 @@ void Timer::remove_timer(Timer* t)
  */
 void Timer::fire_actions_for_thread()
 {
-  Thread::id currentThreadId = ::GetCurrentThreadId();
+  Thread::Id currentThreadId = ::GetCurrentThreadId();
   std::vector<Timer*> timers_for_thread;
   std::vector<Timer*>::iterator it;
   Timer* timer;

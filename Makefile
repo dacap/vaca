@@ -4,6 +4,7 @@ default: all
 # Configuration
 # ----------------------------------------------------------------------
 
+# RELEASE = 1
 # DEBUG = 1
 # STATIC = 1
 # PROFILE = 1
@@ -170,11 +171,18 @@ ifdef DEBUG
   LFLAGS += -g
   DLLFLAGS += -g
 else
-#   VACA_LIB_FLAGS += -DNDEBUG
-#   VACA_EXE_FLAGS += -DNDEBUG
   CXXFLAGS += -s
   LFLAGS += -s
   DLLFLAGS += -s
+endif
+
+# ----------------------------------------------------------------------
+# RELEASE (optimized and without-asserts)
+# ----------------------------------------------------------------------
+
+ifdef RELEASE
+  CXXFLAGS += -O3 -DNDEBUG
+  LFLAGS += -O3
 endif
 
 # ----------------------------------------------------------------------

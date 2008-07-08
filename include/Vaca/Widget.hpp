@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -39,7 +39,6 @@
 #include "Vaca/Component.hpp"
 #include "Vaca/Exception.hpp"
 #include "Vaca/Graphics.hpp"
-#include "Vaca/NonCopyable.hpp"
 #include "Vaca/Rect.hpp"
 #include "Vaca/ScrollInfo.hpp"
 #include "Vaca/Signal.hpp"
@@ -344,8 +343,7 @@ public:
  * This is the core of Vaca. Calls CreateWindowEx and DestroyWindow,
  * and its wndProc() converts the main messages (@c "WM_*") to events.
  */
-class VACA_DLL Widget : private NonCopyable
-		      , public Component
+class VACA_DLL Widget : public Component
 {
   friend void delete_widget(Widget* widget);
   friend void Vaca::__internal_checked_delete_widget(Widget* widget);

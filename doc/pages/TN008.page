@@ -8,9 +8,18 @@ Vaca can be compiled with Unicode support without problems for
 W2K/WinXP. If you want to add Unicode support for Win95/98/Me, you
 will need the Microsoft Layer for Unicode (MSLU).
 
-<A href="http://www.microsoft.com/msdownload/platformsdk/sdkupdate/psdkredist.htm">http://www.microsoft.com/msdownload/platformsdk/sdkupdate/psdkredist.htm</A>
+<a href="http://www.microsoft.com/msdownload/platformsdk/sdkupdate/psdkredist.htm">http://www.microsoft.com/msdownload/platformsdk/sdkupdate/psdkredist.htm</a>
 
 To avoid the MSLU, don't compile Vaca with Unicode support when you
 want to use your application on Win95/98/Me.
+
+<h2>Why the Edit widget doesn't support Unicode character even when I
+compiled Vaca with Unicode support?</h2>
+
+The Vaca's Edit widget is Win32's EDIT control, and it doesn't support
+Unicode characters. The same happen for ComboBoxes because they use
+Edit control too.
+
+The solution is to use a RichEdit widget in replacement of Edit.
 
 */

@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -75,17 +75,19 @@ static void Widget_DestroyHWNDProc(HWND hwnd)
 // References stuff
 
 /**
- * Safe way to delete from memory the widget. It deletes the specified
+ * Safe way to delete a widget from memory. It deletes the specified
  * widget if it isn't referenced, or defer its deletion for a secure
- * point of deletion (for example, when it's completelly
- * unreferenced).
+ * point of deletion (e.g. when it's completelly unreferenced after an
+ * event is processed).
+ *
+ * @see @ref TN006
  */
 void Vaca::delete_widget(Widget* widget)
 {
   // is unreferenced?
   if (widget->getRefCount() == 0)
     delete widget;
-  // is referenced, we must defer the "delete" for "__internal_checked_delete_widget"
+  // is referenced, we defer the "delete" for "__internal_checked_delete_widget"
   else {
     assert(widget->getRefCount() > 0);
 
@@ -197,7 +199,7 @@ Widget::Widget(const WidgetClassName& className, Widget* parent, Style style)
 }
 
 /**
- * Destroys the widget, literally calling Win32 DestroyWindow function.
+ * Destroys the widget, literally calling Win32's DestroyWindow function.
  * 
  * At this point the widget shouldn't have any children, also there is
  * an assert to valid this. So you should care about to remove all
@@ -225,7 +227,7 @@ Widget::Widget(const WidgetClassName& className, Widget* parent, Style style)
  * }
  * @endcode
  *
- * @see @ref TN002
+ * @see @ref TN002, #setDestroyHWNDProc
  */
 Widget::~Widget()
 {
@@ -304,7 +306,7 @@ Widget::~Widget()
 
 /**
  * Returns the parent of the widget. This method doesn't use the
- * GetParent routine of Win32.
+ * Win32's GetParent.
  */
 Widget* Widget::getParent()
 {
@@ -351,7 +353,7 @@ Widget::Container Widget::getChildren()
  *
  * @warning You can't delete the returned pointer (use "delete setLayout(NULL)" instead).
  *
- * @see setLayout, getConstraint, @ref TN010
+ * @see setLayout, getConstraint, @ref TN010, @ref TN011
  */
 Layout* Widget::getLayout()
 {
@@ -361,9 +363,9 @@ Layout* Widget::getLayout()
 /**
  * Changes the current layout manager to arrange widget's children.
  *
- * The @a layout pointer'll be deleted automatically in the
- * #Vaca::Widget::~Widget destructor. If you change the layout manager, you
- * must to delete the old pointer returned.
+ * The @a layout pointer'll be deleted automatically in the #~Widget()
+ * destructor. If you change the layout manager, you must to delete
+ * the old pointer returned.
  *
  * @code
  * {
@@ -478,7 +480,7 @@ bool Widget::isLayoutFree()
 
 /**
  * Returns the widget's text, label, or frame's title. It uses
- * GetWindowTextLength and GetWindowText functions of Win32.
+ * Win32's GetWindowTextLength and GetWindowText.
  *
  * @see setText
  */
@@ -500,7 +502,7 @@ String Widget::getText()
 
 /**
  * Changes the widget's text, label, or frame's title. It uses the
- * SetWindowText of Win32.
+ * Win32's SetWindowText.
  */
 void Widget::setText(const String& str)
 {
@@ -636,7 +638,7 @@ Rect Widget::getAbsoluteBounds()
 }
 
 /**
- * Gets the client bounds. It's like Win32 GetClientRect.
+ * Gets the client bounds. It's like Win32's GetClientRect.
  * Remember that it's the area which you should use to draw
  * the widget.
  *
@@ -801,8 +803,9 @@ Size Widget::getPreferredSize()
  *     This can have both attributes (width and height) in
  *     zero, which means that it'll behave same as #getPreferredSize().
  *     If the width is great than zero the #onPreferredSize will try to
- *     fit in that width (this is useful to fit #Label or #Edit controls
- *     in a specified width and calculate the height it could occupy).
+ *     fit in that width (this is useful to fit @link Vaca::Label Label@endlink
+ *     or @link Vaca::Edit Edit@endlink controls in a specified width and
+ *     calculate the height it could occupy).
  *
  * @see #getPreferredSize()
  */
@@ -977,7 +980,7 @@ void Widget::setVisible(bool visible)
  * Returns true if the widget is enabled.
  * <p>
  * It's like to ask if the widget hasn't the WS_DISABLED style.
- * Really, this method calls the Win32 IsWindowEnabled function.
+ * Really, this method calls the Win32's IsWindowEnabled function.
  */
 bool Widget::isEnabled()
 {
@@ -989,7 +992,7 @@ bool Widget::isEnabled()
 /**
  * Changes the enable-state of the widget. If @a state is true removes
  * the WS_DISABLED style, if @a state is false adds the WS_DISABLED
- * style. It's like to call the Win32 EnableWindow.
+ * style. It's like to call the Win32's EnableWindow.
  */
 void Widget::setEnabled(bool state)
 {
@@ -1548,7 +1551,7 @@ HWND Widget::getParentHWND()
  * 
  * @warning Old versions of Vaca uses the GWL_USERDATA field to get
  *          the pointer Widget pointer, now it uses a property through
- *          Win32 API's @c GetProp called @em "VacaAtom".
+ *          Win32's @c GetProp called @em "VacaAtom".
  *
  * @see getHWND
  */
@@ -1916,7 +1919,7 @@ bool Widget::onReflectedDrawItem(Graphics& g, LPDRAWITEMSTRUCT lpDrawItem)
  *     The child to add inside the widget.
  *
  * @param setParent
- *     If it's true the Win32 SetParent wil be used.
+ *     If it's true the Win32's SetParent wil be used.
  */
 void Widget::addChild(Widget* child, bool setParent)
 {
@@ -1942,7 +1945,7 @@ void Widget::addChild(Widget* child, bool setParent)
  *     The child that we want to remove from the parent.
  *
  * @param setParent
- *     If it's true the Win32 SetParent will be used.
+ *     If it's true the Win32's SetParent will be used.
  */
 void Widget::removeChild(Widget* child, bool setParent)
 {
@@ -1980,7 +1983,7 @@ void Widget::create(const WidgetClassName& className, Widget* parent, Style styl
   assert(parent == NULL || parent->m_HWND != NULL);
 
   // all parents must to have the WS_EX_CONTROLPARENT style to avoid
-  // infinite loops in Win32 dialog boxes (for more information see
+  // infinite loops in Win32's dialog boxes (for more information see
   // the 'src/msw/window.cpp' file of 'wxWidgets' library)
   if ((parent != NULL) &&
       (parent->getStyle().extended & WS_EX_CONTROLPARENT) != 0)
@@ -2022,10 +2025,10 @@ void Widget::create(const WidgetClassName& className, Widget* parent, Style styl
 }
 
 /**
- * @brief Does the classic Win32 subclassing replacing GWLP_WNDPROC.
+ * @brief Does the classic Win32's subclassing replacing GWLP_WNDPROC.
  * 
  * In the GWLP_WNDPROC property of all HWND is the WNDPROC procedure
- * that is called each time a message is arrived/processed by the Win32
+ * that is called each time a message is arrived/processed by the Win32's
  * message-queue.
  *
  * @see getGlobalWndProc, wndProc, @ref TN002
@@ -2587,7 +2590,7 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
 
 /**
  * Calls the default window procedure (m_defWndProc that points to
- * Win32 DefWindowProc by default). If m_baseWndProc isn't NULL, it's
+ * Win32's DefWindowProc by default). If m_baseWndProc isn't NULL, it's
  * called instead.
  */
 LRESULT Widget::defWndProc(UINT message, WPARAM wParam, LPARAM lParam)
@@ -2670,7 +2673,13 @@ void Widget::setDefWndProc(WNDPROC proc)
 }
 
 /**
- * TODO docme
+ * Sets the destroy-procedure associated with this widget.
+ * 
+ * Each widget has a procedure to be called when it's destroyed, it is
+ * the last procedure to be called in #~Widget() destructor. By
+ * default it's Win32's DestroyWindow.
+ *
+ * @see #~Widget()
  */
 void Widget::setDestroyHWNDProc(void (*proc)(HWND))
 {
@@ -2695,7 +2704,7 @@ bool Widget::preTranslateMessage(MSG& msg)
 }
 
 /**
- * Sends a message to the HWND, like Win32 SendMessage.
+ * Sends a message to the HWND, like Win32's SendMessage.
  */
 LRESULT Widget::sendMessage(UINT message, WPARAM wParam, LPARAM lParam)
 {

@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -64,7 +64,7 @@ public:
 
 /**
  * The abstract class to create DockAreas. A DockArea is the place
- * where you can dock tool bars (any DockBar really).
+ * where you can dock toolbars (any DockBar really).
  */
 class VACA_DLL DockArea : public Register<DockAreaClass>, public Widget
 {

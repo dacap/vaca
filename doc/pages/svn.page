@@ -1,0 +1,17 @@
+// -*- C++ -*-
+
+/**
+
+@page svn SVN Access
+
+You can access to the latest source code in development using
+<a href="http://subversion.tigris.org/">Subversion</a>:
+
+@code
+svn co https://vaca.svn.sourceforge.net/svnroot/vaca/trunk vaca
+@endcode
+
+Or you can <a href="http://vaca.svn.sourceforge.net/viewvc/vaca/trunk">browse the SVN
+repository</a> with your web-browser.
+
+*/

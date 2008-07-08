@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -34,7 +34,6 @@
 
 #include "Vaca/base.hpp"
 #include "Vaca/Component.hpp"
-#include "Vaca/NonCopyable.hpp"
 
 #include <commdlg.h>
 
@@ -45,8 +44,7 @@ class Widget;
 /**
  * Base class for common dialogs.
  */
-class VACA_DLL CommonDialog : private NonCopyable
-			    , public Component
+class VACA_DLL CommonDialog : public Component
 {
   Widget* m_parent;
 

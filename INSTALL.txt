@@ -9,72 +9,40 @@ using the DLL imports routines.
 How to compile Vaca manually?
 ----------------------------------------------------------------------
 
-(Imagining that you decompressed the Vaca.zip in the "Vaca/" directory)
+Decompress the Vaca.zip in the "C:\Vaca\" directory (you can
+decompress it anywhere).
 
-To compile the source code with your compiler you should:
-* First of all compile boost 1.34.0 (this is the hard part :)
-* After that, you have to compile the Vaca sources using some
-  special flags:
-  - because Vaca uses dynamic_cast, compile using Run-Time Type
-    information, there are some compilers that doesn't need flags
-    by default (like GCC), but Visual C++ needs the /GR flag;
-  - make the boost root directory as a include-path (e.g. -Ic:/boost_1_34_0),
-    to access the <boost/*.hpp> files;
-  - put the "Vaca/include/" directory in the include-paths list, to access
-    the "Vaca/*.h" files;
-  - put the "Vaca/" directory in the include-paths list, to access "stdvaca.h";
-  - you must to define some constants:
-    * -DVACA_SRC (the most important one, all the source code of Vaca
-      library must be compiled using this flag, the examples and
-      applications must be compiled without this flag)
-    * -DVACA_STATIC when you don't want to use the DLL, and you just want to
-      to use the static library
-    * -DWINVER=0x0500
-    * -D_WIN32_IE=0x0500
-    * -D_WIN32_WINNT=0x0500
-    * -DUNICODE and -D_UNICODE to add Unicode support
-    * -D_DEBUG when you want debug information
-    * -DNDEBUG when you don't want debug information
-  - finally compile all the *.cpp using that flags and put all the
-    objects files (.o .obj) in a library file (.lib .a).
+You have to compile the Vaca sources using some special flags:
+- because Vaca uses dynamic_cast, compile using Run-Time Type
+  information, there are some compilers that doesn't need flags
+  by default (like GCC), but Visual C++ needs the /GR flag;
+- put the "C:\Vaca\include" directory in the include-paths list, to access
+  the "C:\Vaca\include\Vaca\*.hpp" files;
+- you have to define some constants:
+  * -DVACA_SRC (the most important one, all the source code of Vaca
+    library must be compiled using this flag, the examples and
+    applications must be compiled without this flag)
+  * -DVACA_STATIC when you don't want to use the DLL, and you just want to
+    to use the static library
+  * -DWINVER=0x0500
+  * -D_WIN32_IE=0x0500
+  * -D_WIN32_WINNT=0x0500
+  * -DUNICODE and -D_UNICODE to add Unicode support
+  * -D_DEBUG when you want debug information
+  * -DNDEBUG when you don't want debug information (and no assertions)
+- finally compile all the *.cpp using that flags and put all the
+  objects files (.o .obj) in a library file (.lib .a).
 
 
 Visual C++ 7.1
 ----------------------------------------------------------------------
 
-If you have boost 1.34.0 installed in c:/boost_1_34_0, you don't need
-to modify anything. If not, you need to modify the paths (for the
-includes and the libs). Also, don't try to compile the shared version,
-it'll fail. You should be able to compile the static version only.
+TODO
 
-To reconfigure the directories
-1. Right-click example in the "Solution Explorer" pane and select "Properties"
-   from the resulting pop-up menu.
-2. In "Configuration Properties > Linker > Additional Library Directories",
-   enter the path to the Boost binaries, e.g.
-   "C:\boost_1_33_1\bin\boost\libs\signals\build\libboost_signals.lib\vc-7_1\debug\runtime-link-static\threading-multi";"C:\boost_1_33_1\bin\boost\libs\signals\build\libboost_signals.lib\vc-7_1\debug\runtime-link-static"
-3. From the Build menu, select Build Solution.
 
 MinGW
 ----------------------------------------------------------------------
 
-To compile Vaca you need Boost library, please, modify the Makefile to
-your requirements:
-
-  BOOST_ROOT = c:/boost_1_34_0
-  BOOST_BIN = bin.v2
-  BOOST_VERSION = 1_34
-  BOOST_TOOLSET = gcc-mingw-3.4.2
-  BOOST_SHORTTOOLSET = mgw34
-
-  (you can use an enviroment variable to replace each variable without
-   modifing the makefile)
-
-E.g. The path to search the static version of Boost.Signals will be:
-
-  $(BOOST_ROOT)/$(BOOST_BIN)/libs/signals/build/$(BOOST_TOOLSET)/release/link-static/threading-multi/libboost_signals-$(BOOST_SHORTTOOLSET)-mt-$(BOOST_VERSION)$(LIB)
-
-In the future will be a better solution (maybe a Jamfile)
 You can use:
 
   make [DEBUG=1] [STATIC=1] [PROFILE=1] [UNICODE=1]
@@ -91,12 +59,12 @@ in the bin directory.
 You will need to decompress the Scintilla zip (scintilla167.zip) in
 the vaca root directory. You should have a directory structure like:
 
-   Vaca/
-     bin/
-     scintilla/
-       bin/
-       include/
+   Vaca
+     bin
+     scintilla
+       bin
+       include
        ...
 
 Compile Scintilla and move the libraries (SciLexer.dll)
-from "Vaca/scintilla/bin" to "Vaca/bin".
+from "C:\Vaca\scintilla\bin" to "C:\Vaca\bin".

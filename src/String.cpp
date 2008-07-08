@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -139,9 +139,9 @@ std::string String::to_string() const
 }
 
 /**
- * Converts the Vaca::String to a new a string with wide-characters
+ * Converts the String to a new a string with wide-characters
  * (std::wstring). If Vaca was compiled without the Unicode support
- * (it is that Vaca::String is just ASCII), it converts the string to
+ * (it is that String is just ASCII), it converts the string to
  * @c wstring using the Win32 routine @c MultiByteToWideChar.
  */
 std::wstring String::to_wstring() const

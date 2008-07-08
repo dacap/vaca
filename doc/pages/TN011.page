@@ -4,21 +4,21 @@
 
 @page TN011 TN011 - Technical Note 011: Layout Managers
 
-<h2>Memory Management</h2>
-
-When you use @c setLayout or @c setConstraint, you must to specify a
-pointer to a @c Layout or a @c Constraint respectively. These pointers are
+When you use @link Vaca::Widget#setLayout setLayout@endlink or
+@link Vaca::Widget#setConstraint setConstraint@endlink, you must to specify a
+pointer to a @link Vaca::Layout Layout@endlink or a
+@link Vaca::Constraint Constraint@endlink respectively. These pointers are
 deleted automatically when the widget is destroyed, but they're not
 destroyed when you change the layout manager or the constraint. E.g.:
 
 @code
   {
-    Layout *betterLayout = new MyBetterLayout();
+    Layout* betterLayout = new MyBetterLayout();
     ...
     {
       Frame frame(...);
       frame.setLayout(new MyLayout(...));
-      MyLayout *oldLayout = frame.setLayout(betterLayout);
+      MyLayout* oldLayout = frame.setLayout(betterLayout);
 
       delete oldLayout; // <-- we must to destroy the layout: it isn't 
                         //     deleted automatically because it isn't
@@ -30,8 +30,8 @@ destroyed when you change the layout manager or the constraint. E.g.:
   }
 @endcode
 
-Remember to use a code like this if you make non-dynamic instances of
-Layout (or Constraint):
+Remember to use this code this if you make instances of
+@c Layout (or @c Constraint) in the stack:
 
 @code
   {
@@ -40,10 +40,13 @@ Layout (or Constraint):
     frame.setLayout(&layout);
     ...
     frame.setLayout(NULL); // <-- you must to do this... if you don't
-                           //     the "layout" will be deleted two times
+                           //     "layout" will be deleted two times
   }
 @endcode
 
-@see Layout, Constraint, Widget#setLayout, Widget#setConstraint
+@see @link Vaca::Layout Layout@endlink,
+     @link Vaca::Constraint Constraint@endlink,
+     @link Vaca::Widget#setLayout Widget::setLayout@endlink,
+     @link Vaca::Widget#setConstraint Widget::setConstraint@endlink
 
 */

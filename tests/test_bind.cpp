@@ -181,6 +181,40 @@ void test2_int()
   s2(5, 5);
 }
 
+void test_raw_bind_classes()
+{
+  BindAdapter0_fun<void, void (*)()>		       void0fun(&f0);
+  BindAdapter1_fun<void, void (*)(int), int>	       void1fun(&f1, 5);
+  BindAdapter2_fun<void, void (*)(int, int), int, int> void2fun(&f2, 5, 5);
+  BindAdapter0_fun<int, int (*)()>		       int0fun(&f0_int);
+  BindAdapter1_fun<int, int (*)(int), int>	       int1fun(&f1_int, 5);
+  BindAdapter2_fun<int, int (*)(int, int), int, int>   int2fun(&f2_int, 5, 5);
+
+  T3 t3;
+  BindAdapter0_mem<void, T3>	       void0mem(&T3::method0, &t3);
+  BindAdapter1_mem<void, T3, int>      void1mem(&T3::method1, &t3, 5);
+  BindAdapter2_mem<void, T3, int, int> void2mem(&T3::method2, &t3, 5, 5);
+  BindAdapter0_mem<int, T3>	       int0mem(&T3::method0_int, &t3);
+  BindAdapter1_mem<int, T3, int>       int1mem(&T3::method1_int, &t3, 5);
+  BindAdapter2_mem<int, T3, int, int>  int2mem(&T3::method2_int, &t3, 5, 5);
+
+  void0fun(); void0fun(0); void0fun(0,0); void0fun(0,0,0); void0fun(0,0,0,0);
+  void1fun(); void1fun(0); void1fun(0,0); void1fun(0,0,0); void1fun(0,0,0,0);
+  void2fun(); void2fun(0); void2fun(0,0); void2fun(0,0,0); void2fun(0,0,0,0);
+
+  void0mem(); void0mem(0); void0mem(0,0); void0mem(0,0,0); void0mem(0,0,0,0);
+  void1mem(); void1mem(0); void1mem(0,0); void1mem(0,0,0); void1mem(0,0,0,0);
+  void2mem(); void2mem(0); void2mem(0,0); void2mem(0,0,0); void2mem(0,0,0,0);
+
+  int0fun(); int0fun(0); int0fun(0,0); int0fun(0,0,0); int0fun(0,0,0,0);
+  int1fun(); int1fun(0); int1fun(0,0); int1fun(0,0,0); int1fun(0,0,0,0);
+  int2fun(); int2fun(0); int2fun(0,0); int2fun(0,0,0); int2fun(0,0,0,0);
+
+  int0mem(); int0mem(0); int0mem(0,0); int0mem(0,0,0); int0mem(0,0,0,0);
+  int1mem(); int1mem(0); int1mem(0,0); int1mem(0,0,0); int1mem(0,0,0,0);
+  int2mem(); int2mem(0); int2mem(0,0); int2mem(0,0,0); int2mem(0,0,0,0);
+}
+
 int main()
 {
   test0_void();
@@ -189,5 +223,6 @@ int main()
   test1_int();
   test2_void();
   test2_int();
+  test_raw_bind_classes();
   return 0;
 }

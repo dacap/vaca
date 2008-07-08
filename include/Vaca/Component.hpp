@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -33,13 +33,14 @@
 #define VACA_COMPONENT_HPP
 
 #include "Vaca/base.hpp"
+#include "Vaca/NonCopyable.hpp"
 
 namespace Vaca {
 
 /**
  * Base class for every component in Vaca.
  */
-class VACA_DLL Component
+class VACA_DLL Component : private NonCopyable
 {
   int m_refCount;
   

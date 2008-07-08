@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -62,12 +62,12 @@ class VACA_DLL Thread : public NonCopyable
 public:
 
   typedef MSG Message;
-  typedef DWORD id;
+  typedef DWORD Id;
 
 private:
 
   HANDLE m_handle;
-  id     m_id;
+  Id     m_id;
 
 public:
 
@@ -82,7 +82,7 @@ public:
     _Thread(Slot0_fun<void, F>(f));
   }
 
-  id getId() const;
+  Id getId() const;
 
   // void execute();
   // void suspend();

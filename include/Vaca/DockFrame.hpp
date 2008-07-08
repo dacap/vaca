@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -60,7 +60,7 @@ public:
 };
 
 /**
- * A Frame for a DockBar, commondly called "Pallete Window". A
+ * A Frame for a DockBar, commondly called "Palette Window". A
  * DockFrame is the container for a floating DockBar, it's the window
  * with the WS_EX_TOOLWINDOW style.
  *

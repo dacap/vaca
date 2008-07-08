@@ -6,17 +6,15 @@
 
 @image html Vaca.gif
 
-@b Consideration: I speak Spanish and I don't know how to write in English.
-   	          This documentation is only a draft. This is not a literary
-		  novel, it's just a document to know what the library does.
-		  If you find a mistake, please, <a href="http://www.davidcapello.com.ar/mail/">report it to me</a>.
+About this documentation: If you find a mistake, please <a
+href="http://www.davidcapello.com.ar/mail/">report it to me</a>.
 
 @b Warning: This library is under development, this is not a stable
 release. The API is mutating in the current development stage. Please,
 if you want to use this library for real work be careful, or wait the first
 stable release (from there we'll maintain backward compability).
 
-This library is licensed under the terms of the @ref license "BSD license".
+Vaca is licensed under the terms of the @ref license "BSD license".
 
 <h2>Introduction</h2>
 
@@ -25,102 +23,64 @@ has some extra functionalities like dockable tool bars and layout
 managers. This library uses templates and STL (but not generic
 programming).
 
+First versions of Vaca depend of <a href="http://www.boost.org/">Boost</a>
+libraries. Right now Vaca doesn't need Boost anymore.
+
 <h2>Objetives</h2>
 
 @li Fit design to make programming more easy.
-@li Constructors must construct, if I do @c "new MyWindow()", then my
-    window must be created (see @ref TN002).
-@li Documentation for every tricky situation, its solution, and
-    examples.
+@li <a href="http://en.wikipedia.org/wiki/Resource_acquisition_is_initialization">Constructors initialize resources</a>.
+    If I do @c "new MyWindow()", then my window should be created (see @ref TN002).
+@li Documentation for every tricky situation, its solution, and examples.
 @li Technical Notes about how more common (or uncommon) problems were solved.
 
-<h2>Message &mdash; Event &mdash; Signal (MES) Architecture</h2>
+<h2>Message &mdash; Event &mdash; Signal/Slot (MESS) Architecture</h2>
 
 Definitions:
 
-- A @em message is a message received from Windows (e.g. @c WM_KEYUP).
-- An @em event is a virtual method (e.g. @c #Vaca::Widget::onKeyUp method).
+- A @em message is a message received from Windows. E.g. @c WM_KEYUP.
+- An @em event is a virtual method. E.g. @link Vaca::Widget#onKeyUp onKeyUp@endlink method.
 - A @em signal is a variable member which anybody can connect their callbacks
-  (e.g. @c #Vaca::Widget::KeyDown signal).
+  E.g. @link Vaca::Widget#KeyUp KeyUp@endlink signal.
+- A @em slot is a instance of @link Vaca::Slot0 Slot@endlink that wraps functions,
+  function objects (@e functors), or classes' methods.
+  They are automatically created/connected to signals when you
+  use functions like @link Vaca::Signal0_base#connect Signal::connect@endlink.
 
 General behavior:
 
-- A @em message is received from Windows OS with a @c WM_ constant value (e.g. @c WM_PAINT).
-- A global WndProc (@ref Vaca::Widget::getGlobalWndProc) extracts the @c GWL_USERDATA
-  from the @c HWND that received the message.
-- In the @c GWL_USERDATA is located an instance of the #Vaca::Widget class
-  (<b>new versions of Vaca stores the Widget pointer in the "VacaAtom" property</b>, see
-  #Vaca::Widget::fromHWND for more information).
-- This instance is used to call the #Vaca::Widget::wndProc method to process
-  the message.
-- Depending the message it calls other method (an @em event) that can be override
-  (like #Vaca::Widget::onPaint, #Vaca::Widget::onResize, etc.).
-- Some default implementations of the events fire a @em signal related to the event.
-- The signal can be intercepted by anyone (like a C# delegate).
+- A @em message is received from Windows OS. E.g. @c WM_PAINT.
+- A global WndProc (@link Vaca::Widget#getGlobalWndProc getGlobalWndProc@endlink)
+  extracts the @c GWL_USERDATA from the @c HWND that received the message. Note:
+  New versions of Vaca stores the Widget pointer in the "VacaAtom" property, see
+  @link Vaca::Widget#fromHWND fromHWND@endlink for more information.
+- In the @c GWL_USERDATA is located a pointer to a @link Vaca::Widget Widget@endlink.
+- This instance is used to call the @link Vaca::Widget#wndProc wndProc@endlink
+  method to process the message.
+- Depending the message received by @c wndProc, it calls other method (an @em event)
+  that can be overridden (like @link Vaca::Widget#onPaint onPaint@endlink,
+  @link Vaca::Widget#onResize onResize@endlink, etc.).
+- Default implementations of the events fire a @em signal related to that event.
+- The signal can be intercepted by anyone (like a C# delegate). Each connection
+  to a signal is called a @link Vaca::Slot0 slot@endlink.
 - Signals are the only variable members of classes that should be public, and their
-  names must begin with a capital letter (like #Vaca::Button::Action).
+  names must begin with a capital letter (like @link Vaca::Button#Action Action@endlink).
 
 Generally in Vaca we define virtual methods to handle events in the
 widget itself, and signals for events that should be intercepted by
 the parent window. Maybe in the future, signals will exist for every
 event (like events and delegates in .NET framework).
 
-@image html MES.png
+@image html MESS.png
 
 <h2>Alternatives</h2>
 
-<h3>MFC</h3>
-
-MFC needs message maps. They are ugly, they are evil, I just don't
-like it. You can't modify message maps in run-time. It's too hard to
-program with message maps when you don't have the Visual C++ editor.
-Do you try to remember all that macros? Impossible.
-
-<h3>wxWidgets</h3>
-
-Same as MFC, but it's free. It don't use C++ templates (and so STL
-containers). Anyway this could be a good alternative for really big
-projects.
-
-<h3>GTK</h3>
-
-It doesn't support the native look and feel of Windows.
-
-<h3>Qt</h3>
-
-License problem for the Windows version. Also it needs a
-pre-precompiler to use the new language: C+++
-
-<h3>SmartWin++</h3>
-
-Generic programming is good, I really don't known how much good them
-can be for GUI programming. Keep tracking this library, could be better
-what we think.
-
-<h3>Add here your favorite one...</h3>
-
-Sure that I forget a lot of libraries (like Fox, fltk, VCF,
-Windows++. etc.), but each one has something that I didn't like it.
-Generally, one thing that I don't like of some libraries is the fact
-that they have a (poor) visual editor that ("generally") is developed
-using other library (or other language like C#).
-
-<h2>Why other library?</h2>
-
-Having so many options to choose, the question is obligatory, so why
-to create another library?
-
-A long time ago I was tried to find some library to program under
-Windows using C++ that is relatively small as much in source code as
-in the final size of the generated executable files (and all of this
-without having license problems). There are situations where you must
-develop a relatively small piece of software but you can't because:
-
-(a) The user has Windows. \n
-(b) You don't have the money to buy products like the Microsoft Visual Studio .NET. \n
-(c) You don't have enough time to program with all the difficulties of wxWidgets or GTK.
-
-So what we can do? A new library.
+There are a lot of better alternatives to use instead of Vaca. If you
+have to build a serious project, I recommend you to use
+<a href="http://www.wxwidgets.org/">wxWidgets</a>, but
+there are
+<a href="http://en.wikipedia.org/wiki/List_of_widget_toolkits">other
+good choices</a>.
 
 <h2>Unicode support</h2>
 
@@ -131,6 +91,73 @@ See @ref TN008.
 @li Win95 and WinNT4 are not supported (at least, I'm not thinking to
     add support for them).
 @li Tested on Win98, Win2K, and WinXP.
-@li Compiled with Mingw (GCC 3.4.2) and VC 7.1.
+@li Compiled with Mingw (GCC 3.4.2) and MSVC 7.1.
+
+<h2>Main classes</h2>
+
+@li Application and system:
+    @link Vaca::Application Application@endlink,
+    @link Vaca::System System@endlink.
+@li Graphics:
+    @link Vaca::Point Point@endlink,
+    @link Vaca::Size Size@endlink,
+    @link Vaca::Rect Rect@endlink,
+    @link Vaca::Region Region@endlink,
+    @link Vaca::Pen Pen@endlink,
+    @link Vaca::Brush Brush@endlink,
+    @link Vaca::Image Image@endlink,
+    @link Vaca::Icon Icon@endlink,
+    @link Vaca::Font Font@endlink,
+    @link Vaca::Graphics Graphics@endlink.
+@li MESS:
+    @link Vaca::Thread::Message Message@endlink,
+    @link Vaca::Event Event@endlink,
+    @link Vaca::Signal0 Signal0@endlink/@link Vaca::Signal1 1@endlink/@link Vaca::Signal2 2@endlink,
+    @link Vaca::Slot0 Slot0@endlink/@link Vaca::Slot1 1@endlink/@link Vaca::Slot2 2@endlink,
+    (@link Vaca::Bind Bind@endlink).
+@li Widgets:
+    @link Vaca::Widget Widget@endlink,
+    @link Vaca::Panel Panel@endlink,
+    @link Vaca::Label Label@endlink,
+    @link Vaca::Edit Edit@endlink,
+    @link Vaca::ButtonBase Button@endlink,
+    @link Vaca::GroupBox GroupBox@endlink,
+    @link Vaca::ListBox ListBox@endlink,
+    @link Vaca::Slider Slider@endlink,
+    @link Vaca::Frame Frame@endlink.
+@li Menus:
+    @link Vaca::Menu Menu@endlink,
+    @link Vaca::MenuBar MenuBar@endlink,
+    @link Vaca::MenuItem MenuItem@endlink.
+@li Tabs widgets:
+    @link Vaca::Tab Tab@endlink,
+    @link Vaca::TabPage TabPage@endlink.
+@li Special widgets:
+    @link Vaca::Spinner Spinner@endlink,
+    @link Vaca::SpinButton SpinButton@endlink,
+    @link Vaca::LinkLabel LinkLabel@endlink,
+    @link Vaca::ProgressBar ProgressBar@endlink,
+    @link Vaca::ListView ListView@endlink,
+    @link Vaca::TreeView TreeView@endlink,
+    @link Vaca::SciEditor SciEditor@endlink.
+@li Layout managers:
+    @link Vaca::Layout Layout@endlink,
+    @link Vaca::Constraint Constraint@endlink.
+@li Toolbars:
+    @link Vaca::ToolBar ToolBar@endlink,
+    @link Vaca::DockBar DockBar@endlink,
+    @link Vaca::DockArea DockArea@endlink.
+@li MDI:
+    @link Vaca::MdiChild MdiChild@endlink,
+    @link Vaca::MdiClient MdiClient@endlink,
+    @link Vaca::MdiFrame MdiFrame@endlink,
+    @link Vaca::MdiListMenu MdiListMenu@endlink.
+@li Multithreading support:
+    @link Vaca::Thread Thread@endlink,
+    @link Vaca::Mutex Mutex@endlink,
+    @link Vaca::ScopedLock ScopedLock@endlink,
+    @link Vaca::Condition Condition@endlink.
+@li Error handling:
+    @link Vaca::Exception Exception@endlink.
 
 */

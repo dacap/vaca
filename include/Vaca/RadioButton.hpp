@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -41,7 +41,7 @@ namespace Vaca {
 				 Style(BS_RADIOBUTTON, 0))
   
 /**
- * Groups a set of @ref RadioButton "RadioButtons". It's used to known
+ * Groups a set of @link Vaca::RadioButton RadioButtons@endlink. It's used to known
  * which RadioButton should be desactived when the user select a
  * RadioButton of its same group.
  */

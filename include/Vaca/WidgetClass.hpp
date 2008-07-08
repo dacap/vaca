@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -104,7 +104,7 @@ public:
 
   /**
    * Returns the class name to be used in the lpszClassName field of
-   * the WNDCLASSEX structure in the @ref Register<T>#Register "Register constructor".
+   * the WNDCLASSEX structure in the @link Vaca::Register#Register Register constructor@endlink.
    */
   static WidgetClassName getClassName()
   { return WidgetClassName("Vaca.Widget"); }

@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -53,7 +53,7 @@ using namespace Vaca;
 
 struct ThreadData
 {
-  Thread::id threadId;
+  Thread::Id threadId;
   int frameCount;
   bool breakLoop;
   Widget* outsideWidget; // widget used to call createHWND
@@ -75,7 +75,7 @@ static ThreadData* getThreadData()
 {
   ScopedLock hold(data_mutex);
   std::vector<ThreadData*>::iterator it, end = dataOfEachThread.end();
-  Thread::id id = ::GetCurrentThreadId();
+  Thread::Id id = ::GetCurrentThreadId();
 
   // first of all search the thread-data in the list "dataOfEachThread"...
   for (it=dataOfEachThread.begin();
@@ -173,7 +173,7 @@ Thread::~Thread()
  * Returns the thread ID. This is equal to Win32's GetCurrentThreadId() for
  * the current thread or the ID returned by Win32's CreateThread().
  */
-Thread::id Thread::getId() const
+Thread::Id Thread::getId() const
 {
   return m_id;
 }
@@ -252,7 +252,8 @@ void Thread::setPriority(int priority)
 }
 
 /**
- * Does the message loop while there are visible @ref Frame Frames.
+ * Does the message loop while there are visible @link Vaca::Frame
+ * Frame@endlink Frames.
  *
  * @see Frame::setVisible
  */

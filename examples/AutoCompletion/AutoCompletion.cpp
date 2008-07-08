@@ -776,7 +776,7 @@ class MainFrame : public Frame
 public:
 
   MainFrame()
-    : Frame("ComboBoxes")
+    : Frame("AutoCompletion")
     , m_label("Input the name of a color (it'll be autocompleted)", this)
     , m_bottomPanel(this)
     , m_comboBox(&m_bottomPanel)

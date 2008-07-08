@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -42,7 +42,8 @@ namespace Vaca {
 #define BandedDockAreaStyle		ChildStyle
 
 /**
- * An area where you can put tool-bars separated by bands.
+ * An area where you can put @link Vaca::DockBar DockBars@endlink
+ * separated by bands.
  */
 class VACA_DLL BandedDockArea : public DockArea
 {

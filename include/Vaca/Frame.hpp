@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -87,7 +87,6 @@ public:
 class VACA_DLL Frame : public Register<FrameClass>, public Widget
 {
   MenuBar* m_menuBar;		       // The menu bar.
-//   std::vector<Command*> m_commands;   // collection of Commands that can be executed in this Frame
   std::vector<DockArea*> m_dockAreas;  // Areas where you can dock a tool-bar.
   bool m_counted;		       // true if this Frame is counted in the frames' list
 
@@ -97,7 +96,6 @@ public:
   Frame(const WidgetClassName& className, const String& title, Widget* parent = NULL, Style style = FrameStyle);
   virtual ~Frame();
 
-  // bool isVisible();
   virtual void setVisible(bool visible);
 
   MenuBar* getMenuBar();
@@ -126,17 +124,12 @@ public:
   Signal1<void, CloseEvent&> Close;   ///< @see onClose
   Signal2<void, int, Rect&> Resizing; ///< @see onResizing
 
-  // static int getFramesCount();
-//   static int getVisibleFramesByThread(int threadId);
-
   virtual bool preTranslateMessage(MSG& msg);
 
 protected:
   // events
   virtual void onPreferredSize(Size& sz);
-//   virtual void onDestroy();
   virtual void onResize(const Size& sz);
-//   virtual void onKeyDown(KeyEvent& ev);
   virtual bool onActionById(int actionId);
 
   // new events
@@ -150,7 +143,6 @@ protected:
 private:
 
   void initialize(const String& title);
-//   Menu* getMenuByHMENU(HMENU hmenu);
   void updateMenuItem(MenuItem* menuItem);
   Container getSynchronizedGroup();
   

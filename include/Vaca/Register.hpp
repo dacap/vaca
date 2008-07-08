@@ -73,8 +73,9 @@ public:
    */
   Register()
   {
+    WidgetClassName widget_class_name = T::getClassName();
+    LPCTSTR class_name = widget_class_name.toLPCTSTR();
     WNDCLASSEX wcex;
-    LPCTSTR class_name = T::getClassName().toLPCTSTR();
 
     if (!GetClassInfoEx(Application::getHINSTANCE(), class_name, &wcex)) {
       wcex.cbSize        = sizeof(WNDCLASSEX); 

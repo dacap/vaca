@@ -34,6 +34,7 @@
 #include "Vaca/ParseException.hpp"
 
 #include <stack>
+#include <cassert>
 
 using namespace Vaca;
 

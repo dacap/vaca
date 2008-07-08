@@ -40,18 +40,18 @@ const WidgetClassName WidgetClassName::None;
 // WidgetClassName
 
 WidgetClassName::WidgetClassName()
+  : m_className("")
 {
-  m_className = "";
 }
 
 WidgetClassName::WidgetClassName(const String& className)
+  : m_className(className)
 {
-  m_className = className;
 }
 
 WidgetClassName::WidgetClassName(const WidgetClassName& className)
+  : m_className(className.m_className)
 {
-  m_className = className.m_className;
 }
 
 WidgetClassName::~WidgetClassName()

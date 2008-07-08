@@ -36,6 +36,9 @@
 #include "Vaca/Condition.hpp"
 #include "Vaca/ScopedLock.hpp"
 
+#include <cassert>
+#include <limits>
+
 using namespace Vaca;
 
 class ScopedUnlock : private NonCopyable

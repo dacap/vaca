@@ -32,6 +32,9 @@
 #ifndef VACA_GRAPHICSPATH_HPP
 #define VACA_GRAPHICSPATH_HPP
 
+#include <list>
+#include <vector>
+
 #include "Vaca/base.hpp"
 
 namespace Vaca {

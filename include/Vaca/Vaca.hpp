@@ -54,7 +54,6 @@
 #include "Vaca/Color.hpp"
 #include "Vaca/ColorDialog.hpp"
 #include "Vaca/ComboBox.hpp"
-#include "Vaca/Command.hpp"
 #include "Vaca/CommonDialog.hpp"
 #include "Vaca/Component.hpp"
 #include "Vaca/Constraint.hpp"

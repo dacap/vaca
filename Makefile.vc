@@ -1,0 +1,54 @@
+# Vaca - Visual Application Components Abstraction
+# Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
+# All rights reserved.
+
+CXXFLAGS = -Iinclude -Iscintilla/include -wd4355 -Ob1 -EHa -Zi -DVACA_STATIC=1 -DVACA_WIN32_IMPL -DWINVER=0x0500 -D_WIN32_IE=0x0500 -D_WIN32_WINNT=0x0500
+LIBS = User32.lib Shell32.lib ComCtl32.lib ComDlg32.lib Gdi32.lib Msimg32.lib WinMM.lib AdvAPI32.lib Ole32.lib
+
+OBJS = \
+  obj/Anchor.obj obj/AnchorLayout.obj obj/Application.obj		\
+  obj/BandedDockArea.obj obj/BasicDockArea.obj obj/Bix.obj		\
+  obj/BoxConstraint.obj obj/BoxLayout.obj obj/Brush.obj obj/Button.obj	\
+  obj/ButtonBase.obj obj/CancelableEvent.obj obj/CheckBox.obj		\
+  obj/ClientLayout.obj obj/Clipboard.obj obj/CloseEvent.obj		\
+  obj/Color.obj obj/ColorDialog.obj obj/ComboBox.obj			\
+  obj/CommonDialog.obj obj/Component.obj obj/Condition.obj		\
+  obj/Constraint.obj obj/Cursor.obj obj/CustomButton.obj		\
+  obj/CustomLabel.obj obj/Debug.obj obj/Dialog.obj obj/DockArea.obj	\
+  obj/DockBar.obj obj/DockFrame.obj obj/DropFilesEvent.obj		\
+  obj/Edit.obj obj/Event.obj obj/FileDialog.obj obj/FindTextDialog.obj	\
+  obj/Font.obj obj/FontDialog.obj obj/Frame.obj obj/Graphics.obj	\
+  obj/GraphicsPath.obj obj/GroupBox.obj obj/Icon.obj obj/Image.obj	\
+  obj/ImageList.obj obj/KeyEvent.obj obj/Keys.obj obj/Label.obj		\
+  obj/Layout.obj obj/LinkLabel.obj obj/ListBox.obj obj/ListView.obj	\
+  obj/Mdi.obj obj/Menu.obj obj/MenuItemEvent.obj obj/MouseEvent.obj	\
+  obj/Mutex.obj obj/Panel.obj obj/Pen.obj obj/Point.obj			\
+  obj/ProgressBar.obj obj/RadioButton.obj obj/ReBar.obj obj/Rect.obj	\
+  obj/Region.obj obj/ResourceId.obj obj/Scintilla.obj obj/Size.obj	\
+  obj/Slider.obj obj/SpinButton.obj obj/Spinner.obj obj/String.obj	\
+  obj/Style.obj obj/System.obj obj/Tab.obj obj/Thread.obj		\
+  obj/TimePoint.obj obj/Timer.obj obj/ToggleButton.obj obj/ToolBar.obj	\
+  obj/TreeNode.obj obj/TreeView.obj obj/TreeViewEvent.obj obj/Vaca.obj	\
+  obj/Widget.obj obj/WidgetClass.obj
+
+{src}.cpp{obj}.obj :
+	cl -nologo $(CXXFLAGS) -Foobj/ -c $<
+
+all : lib examples
+
+lib : obj/Vaca.lib
+
+examples : bin/AutoCompletion.exe
+
+obj/Vaca.lib : $(OBJS)
+	lib -NOLOGO /OUT:obj/Vaca.lib $?
+
+obj/AutoCompletion.obj : examples/AutoCompletion/AutoCompletion.cpp
+	cl -nologo $(CXXFLAGS) -Foobj/ -c examples/AutoCompletion/AutoCompletion.cpp
+
+bin/AutoCompletion.exe : obj/AutoCompletion.obj
+	link -NOLOGO -SUBSYSTEM:WINDOWS -MACHINE:X86 -DEBUG \
+		obj/AutoCompletion.obj $(OBJS) $(LIBS) \
+		-OUT:bin/AutoCompletion.exe 
+
+# 	link -LIBPATH:obj -OUT:bin/AutoCompletion.exe -SUBSYSTEM:WINDOWS -MACHINE:X86 obj/AutoCompletion.obj $(OBJS) 

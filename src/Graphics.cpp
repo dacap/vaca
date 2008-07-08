@@ -44,6 +44,9 @@
 #include "Vaca/Brush.hpp"
 
 #include <cmath>
+#ifndef M_PI
+#  define M_PI 3.14159265358979323846 
+#endif
 
 #ifndef GRADIENT_FILL_RECT_H
   #define GRADIENT_FILL_RECT_H 0

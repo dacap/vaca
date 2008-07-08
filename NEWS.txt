@@ -1,11 +1,5 @@
 Vaca 0.0.6
 
-- Restructured all action-by-ID stuff: TODO
-  - Renamed Widget::onIdAction() to Widget::onActionById().
-  - Removed Command and CommandState structures (they're just another
-    way to complicate the core API). See the "Commands" example to see a
-    complete example of how to implement commands for menus and
-    tool-bars.
 - Removed dependencies with Boost library.
   - Added Slot/Signal and Bind (placeholders aren't available, sorry).
   - Added Condition (from William E. Kempf code).
@@ -16,6 +10,8 @@ Vaca 0.0.6
 - Added WidgetHitTestEnum.
 - Changed all enumerations to Enum and EnumSet.
 - Renamed CreateHWNDException to CreateWidgetException.
+- Fixed a bug in Register() where WidgetClassName weren't the same
+  life time as "class_name".
 - Fixed a bug in EditableListBox (when remove a node in a ListBox with
   vertical scroll).
 - Removed all utilities (they were too big to include inside the
@@ -39,6 +35,12 @@ Vaca 0.0.6
 - Added more signals for Widget: See LikeScript example (idea of
   Przemyslaw Szurmak).
 - New Bix layout manager.
+- Restructured all action-by-ID stuff:
+  - Renamed Widget::onIdAction() to Widget::onActionById().
+  - Removed Command and CommandState structures (they're just another
+    way to complicate the core API). See the "Commands" example to see a
+    complete example of how to implement commands for menus and
+    tool-bars.
 
 Vaca 0.0.5
 

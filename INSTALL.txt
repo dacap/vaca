@@ -1,16 +1,7 @@
-Important note about static version
+
 ----------------------------------------------------------------------
-
-When compile the static version of the library, remember to use the
--DVACA_STATIC=1 flag in your compiler (in your project) to avoid
-using the DLL imports routines.
-
-
 How to compile Vaca manually?
 ----------------------------------------------------------------------
-
-Decompress the Vaca.zip in the "C:\Vaca\" directory (you can
-decompress it anywhere).
 
 You have to compile the Vaca sources using some special flags:
 - because Vaca uses dynamic_cast, compile using Run-Time Type
@@ -34,22 +25,51 @@ You have to compile the Vaca sources using some special flags:
   objects files (.o .obj) in a library file (.lib .a).
 
 
-Visual C++ 7.1
+----------------------------------------------------------------------
+Visual C++
 ----------------------------------------------------------------------
 
-TODO
+1) Decompress the Vaca-x.x.x.zip in the "C:\Vaca\" directory (you can
+   decompress it anywhere).
+2) Open a cmd shell (Start/Run/cmd) and then execute the vsvars32.bat:
+
+     C:\Documents and Settings\Username>cd C:\Vaca
+     C:\Vaca>vsvars32.bat
+
+3) Run nmake in the Vaca directory:
+
+     C:\Vaca>nmake -f Makefile.vc
 
 
+----------------------------------------------------------------------
 MinGW
 ----------------------------------------------------------------------
 
-You can use:
+1) Decompress the Vaca-x.x.x.zip in the "C:\Vaca\" directory (you can
+   decompress it anywhere).
+2) Open a cmd shell (Start/Run/cmd) and check that you have MinGW right
+   installed:
 
-  make [DEBUG=1] [STATIC=1] [PROFILE=1] [UNICODE=1]
+     C:\Documents and Settings\Username>cd C:\Vaca
+     C:\Vaca>g++ --version
+     g++ (GCC) 3.4.5 (mingw special)
+     ...
 
-To compile a specific variant of Vaca library.
+     C:\Vaca>make --version
+     GNU Make version 3.79.1, by Richard Stallman and Roland McGrath.
+     ...
 
+   If you get errors, maybe you have to setup the enviroment variables.
+   E.g.:
 
+     C:\Vaca>set PATH=c:\mingw\bin;c:\msys\1.0\bin;%PATH%
+
+3) Run make in the Vaca directory:
+
+     C:\Vaca>make [DEBUG=1] [STATIC=1] [PROFILE=1] [UNICODE=1] [RELEASE=1]
+
+  
+----------------------------------------------------------------------
 Scintilla
 ----------------------------------------------------------------------
 

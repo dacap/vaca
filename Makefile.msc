@@ -1,0 +1,282 @@
+# Vaca - Visual Application Components Abstraction
+# Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
+# All rights reserved.
+
+# ----------------------------------------------------------------------
+# Configuration
+# ----------------------------------------------------------------------
+
+STATIC = 1
+DEBUG = 1
+
+# ----------------------------------------------------------------------
+# Flags
+# ----------------------------------------------------------------------
+
+CPPFLAGS = -Iinclude -Iscintilla/include -wd4355 -Ob1 -EHa	\
+	   -DVACA_WIN32_IMPL -DWINVER=0x0500 -D_WIN32_IE=0x0500	\
+	   -D_WIN32_WINNT=0x0500
+
+LIBS = User32.lib Shell32.lib ComCtl32.lib ComDlg32.lib Gdi32.lib	\
+       Msimg32.lib WinMM.lib AdvAPI32.lib Ole32.lib ShLwApi.lib
+
+!if "$(DEBUG)" == "1"
+CPPFLAGS = $(CPPFLAGS) -Zi
+# TARGOPTS=$(TARGOPTS) /MTd
+# CRTLIB=libcmtd.lib
+# !else
+# TARGOPTS=$(TARGOPTS) /MT
+# CRTLIB=libcmt.lib
+!endif
+
+!if "$(STATIC)" == "1"
+CPPFLAGS = $(CPPFLAGS) -DVACA_STATIC=1
+!endif
+
+# ----------------------------------------------------------------------
+# Files
+# ----------------------------------------------------------------------
+
+OBJS = obj/Anchor.obj obj/AnchorLayout.obj obj/Application.obj		\
+  obj/BandedDockArea.obj obj/BasicDockArea.obj obj/Bix.obj		\
+  obj/BoxConstraint.obj obj/BoxLayout.obj obj/Brush.obj obj/Button.obj	\
+  obj/ButtonBase.obj obj/CancelableEvent.obj obj/CheckBox.obj		\
+  obj/ClientLayout.obj obj/Clipboard.obj obj/CloseEvent.obj		\
+  obj/Color.obj obj/ColorDialog.obj obj/ComboBox.obj			\
+  obj/CommonDialog.obj obj/Component.obj obj/Condition.obj		\
+  obj/Constraint.obj obj/Cursor.obj obj/CustomButton.obj		\
+  obj/CustomLabel.obj obj/Debug.obj obj/Dialog.obj obj/DockArea.obj	\
+  obj/DockBar.obj obj/DockFrame.obj obj/DropFilesEvent.obj		\
+  obj/Edit.obj obj/Event.obj obj/FileDialog.obj obj/FindTextDialog.obj	\
+  obj/Font.obj obj/FontDialog.obj obj/Frame.obj obj/Graphics.obj	\
+  obj/GraphicsPath.obj obj/GroupBox.obj obj/Icon.obj obj/Image.obj	\
+  obj/ImageList.obj obj/KeyEvent.obj obj/Keys.obj obj/Label.obj		\
+  obj/Layout.obj obj/LinkLabel.obj obj/ListBox.obj obj/ListView.obj	\
+  obj/Mdi.obj obj/Menu.obj obj/MenuItemEvent.obj obj/MouseEvent.obj	\
+  obj/Mutex.obj obj/Panel.obj obj/Pen.obj obj/Point.obj			\
+  obj/ProgressBar.obj obj/RadioButton.obj obj/ReBar.obj obj/Rect.obj	\
+  obj/Region.obj obj/ResourceId.obj obj/Scintilla.obj obj/Size.obj	\
+  obj/Slider.obj obj/SpinButton.obj obj/Spinner.obj obj/String.obj	\
+  obj/Style.obj obj/System.obj obj/Tab.obj obj/Thread.obj		\
+  obj/TimePoint.obj obj/Timer.obj obj/ToggleButton.obj obj/ToolBar.obj	\
+  obj/TreeNode.obj obj/TreeView.obj obj/TreeViewEvent.obj obj/Vaca.obj	\
+  obj/Widget.obj obj/WidgetClass.obj
+
+EXAMPLES_EXE = bin/AnchorLayouts.exe bin/AutoCompletion.exe		\
+  bin/Bixes.exe bin/BouncingBalls.exe bin/BoxLayouts.exe		\
+  bin/Buttons.exe bin/ColoredButton.exe bin/ComboBoxes.exe		\
+  bin/Commands.exe bin/DataGrids.exe bin/EditableListBox.exe		\
+  bin/Edits.exe bin/EyeDropper.exe bin/FontMetrics.exe			\
+  bin/FreeOfLayout.exe bin/Hashing.exe bin/HelloWorld.exe		\
+  bin/Images.exe bin/Labels.exe bin/LikeScript.exe bin/Maths.exe	\
+  bin/MenuResource.exe bin/MiniExplorer.exe bin/PensBrushes.exe		\
+  bin/Primitives.exe bin/ProgressBars.exe bin/Regions.exe		\
+  bin/Scribble.exe bin/Sliders.exe bin/Spinners.exe			\
+  bin/StdCommands.exe bin/Sudoku.exe bin/SystemImageList.exe		\
+  bin/Tabs.exe bin/TextEditor.exe bin/Threads.exe bin/Timers.exe	\
+  bin/ToolBars.exe bin/Trees.exe
+
+TESTS_EXE = bin/test_bind.exe bin/test_point.exe bin/test_rect.exe	\
+  bin/test_signal.exe bin/test_size.exe bin/test_string.exe
+
+# ----------------------------------------------------------------------
+# Rules
+# ----------------------------------------------------------------------
+
+!ifdef _CONSOLE_
+SUBSYSTEM = CONSOLE
+!else
+SUBSYSTEM = WINDOWS
+!endif
+
+{obj}.obj{bin}.exe:
+	link -NOLOGO -SUBSYSTEM:$(SUBSYSTEM) -MACHINE:X86 -DEBUG \
+		$** lib/Vaca.lib $(LIBS) -OUT:$@
+
+{src}.cpp{obj}.obj:
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c $<
+
+all: lib examples tests
+
+lib: lib/Vaca.lib
+
+examples: lib $(EXAMPLES_EXE)
+
+tests: lib tests2
+
+tests2:
+	@$(MAKE) -NOLOGO -F Makefile.msc tests3 _CONSOLE_=1
+
+tests3: $(TESTS_EXE)
+
+runtests: tests
+	@for %f in (bin/test_*.exe) do @if 1 equ 1 (	\
+		@echo Running %f... &			\
+		bin\%f &				\
+		if %ERRORLEVEL% EQU 0 (			\
+			@echo - OK			\
+		) ELSE (				\
+			@echo - *FAIL*			\
+		)					\
+	)
+
+clean:
+	-del obj\*.obj
+
+distclean: clean
+	-del bin\*.exe
+	-del lib\*.lib
+
+lib/Vaca.lib: $(OBJS)
+	lib -NOLOGO /OUT:lib/Vaca.lib $?
+
+# ----------------------------------------------------------------------
+# Examples
+# ----------------------------------------------------------------------
+
+bin/Hashing.exe: obj/Hashing.obj obj/md5.obj obj/sha1.obj
+
+obj/AnchorLayouts.obj: examples/AnchorLayouts/AnchorLayouts.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/AnchorLayouts/AnchorLayouts.cpp
+
+obj/AutoCompletion.obj: examples/AutoCompletion/AutoCompletion.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/AutoCompletion/AutoCompletion.cpp
+
+obj/Bixes.obj: examples/Bixes/Bixes.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/Bixes/Bixes.cpp
+
+obj/BouncingBalls.obj: examples/BouncingBalls/BouncingBalls.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/BouncingBalls/BouncingBalls.cpp
+
+obj/BoxLayouts.obj: examples/BoxLayouts/BoxLayouts.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/BoxLayouts/BoxLayouts.cpp
+
+obj/Buttons.obj: examples/Buttons/Buttons.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/Buttons/Buttons.cpp
+
+obj/ColoredButton.obj: examples/ColoredButton/ColoredButton.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/ColoredButton/ColoredButton.cpp
+
+obj/ComboBoxes.obj: examples/ComboBoxes/ComboBoxes.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/ComboBoxes/ComboBoxes.cpp
+
+obj/Commands.obj: examples/Commands/Commands.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/Commands/Commands.cpp
+
+obj/DataGrids.obj: examples/DataGrids/DataGrids.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/DataGrids/DataGrids.cpp
+
+obj/EditableListBox.obj: examples/EditableListBox/EditableListBox.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/EditableListBox/EditableListBox.cpp
+
+obj/Edits.obj: examples/Edits/Edits.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/Edits/Edits.cpp
+
+obj/EyeDropper.obj: examples/EyeDropper/EyeDropper.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/EyeDropper/EyeDropper.cpp
+
+obj/FontMetrics.obj: examples/FontMetrics/FontMetrics.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/FontMetrics/FontMetrics.cpp
+
+obj/FreeOfLayout.obj: examples/FreeOfLayout/FreeOfLayout.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/FreeOfLayout/FreeOfLayout.cpp
+
+obj/Hashing.obj: examples/Hashing/Hashing.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/Hashing/Hashing.cpp
+
+obj/md5.obj: examples/Hashing/md5.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/Hashing/md5.cpp
+
+obj/sha1.obj: examples/Hashing/sha1.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/Hashing/sha1.cpp
+
+obj/HelloWorld.obj: examples/HelloWorld/HelloWorld.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/HelloWorld/HelloWorld.cpp
+
+obj/Images.obj: examples/Images/Images.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/Images/Images.cpp
+
+obj/Labels.obj: examples/Labels/Labels.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/Labels/Labels.cpp
+
+obj/LikeScript.obj: examples/LikeScript/LikeScript.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/LikeScript/LikeScript.cpp
+
+obj/Maths.obj: examples/Maths/Maths.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/Maths/Maths.cpp
+
+obj/MenuResource.obj: examples/MenuResource/MenuResource.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/MenuResource/MenuResource.cpp
+
+obj/MiniExplorer.obj: examples/MiniExplorer/MiniExplorer.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/MiniExplorer/MiniExplorer.cpp
+
+obj/PensBrushes.obj: examples/PensBrushes/PensBrushes.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/PensBrushes/PensBrushes.cpp
+
+obj/Primitives.obj: examples/Primitives/Primitives.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/Primitives/Primitives.cpp
+
+obj/ProgressBars.obj: examples/ProgressBars/ProgressBars.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/ProgressBars/ProgressBars.cpp
+
+obj/Regions.obj: examples/Regions/Regions.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/Regions/Regions.cpp
+
+obj/Scribble.obj: examples/Scribble/Scribble.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/Scribble/Scribble.cpp
+
+obj/Sliders.obj: examples/Sliders/Sliders.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/Sliders/Sliders.cpp
+
+obj/Spinners.obj: examples/Spinners/Spinners.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/Spinners/Spinners.cpp
+
+obj/StdCommands.obj: examples/StdCommands/StdCommands.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/StdCommands/StdCommands.cpp
+
+obj/Sudoku.obj: examples/Sudoku/Sudoku.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/Sudoku/Sudoku.cpp
+
+obj/SystemImageList.obj: examples/SystemImageList/SystemImageList.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/SystemImageList/SystemImageList.cpp
+
+obj/Tabs.obj: examples/Tabs/Tabs.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/Tabs/Tabs.cpp
+
+obj/TextEditor.obj: examples/TextEditor/TextEditor.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/TextEditor/TextEditor.cpp
+
+obj/Threads.obj: examples/Threads/Threads.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/Threads/Threads.cpp
+
+obj/Timers.obj: examples/Timers/Timers.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/Timers/Timers.cpp
+
+obj/ToolBars.obj: examples/ToolBars/ToolBars.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/ToolBars/ToolBars.cpp
+
+obj/Trees.obj: examples/Trees/Trees.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/Trees/Trees.cpp
+
+# ----------------------------------------------------------------------
+# Tests
+# ----------------------------------------------------------------------
+
+obj/test_bind.obj: tests/test_bind.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c tests/test_bind.cpp
+
+obj/test_point.obj: tests/test_point.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c tests/test_point.cpp
+
+obj/test_rect.obj: tests/test_rect.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c tests/test_rect.cpp
+
+obj/test_signal.obj: tests/test_signal.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c tests/test_signal.cpp
+
+obj/test_size.obj: tests/test_size.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c tests/test_size.cpp
+
+obj/test_string.obj: tests/test_string.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c tests/test_string.cpp

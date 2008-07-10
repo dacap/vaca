@@ -226,16 +226,18 @@ double String::parseDouble() const
  */
 String String::getFilePath() const
 {
-  const_iterator it, it2;
+  const_reverse_iterator rit;
   String res;
 
-  for (it=end()-1; it!=begin()-1; --it)
-    if (*it == '\\' || *it == '/')
+  for (rit=rbegin(); rit!=rend(); ++rit)
+    if (*rit == '\\' || *rit == '/')
       break;
 
-  if (it != begin()-1)
-    for (it2=begin(); it2!=it; ++it2)
-      res.push_back(*it2);
+  if (rit != rend()) {
+    ++rit;
+    std::copy(begin(), const_iterator(rit.base()),
+	      std::back_inserter(res));
+  }
 
   return res;
 }
@@ -248,15 +250,15 @@ String String::getFilePath() const
  */
 String String::getFileName() const
 {
-  const_iterator it;
+  const_reverse_iterator rit;
   String res;
 
-  for (it=end()-1; it!=begin()-1; --it)
-    if (*it == '\\' || *it == '/')
+  for (rit=rbegin(); rit!=rend(); ++rit)
+    if (*rit == '\\' || *rit == '/')
       break;
 
-  for (++it; it!=end(); ++it)
-    res.push_back(*it);
+  std::copy(const_iterator(rit.base()), end(),
+	    std::back_inserter(res));
 
   return res;
 }
@@ -269,18 +271,20 @@ String String::getFileName() const
  */
 String String::getFileExtension() const
 {
-  const_iterator it;
+  const_reverse_iterator rit;
   String res;
 
-  for (it=end()-1; it!=begin()-1; --it)
-    if (*it == '\\' || *it == '/')
+  for (rit=rbegin(); rit!=rend(); ++rit) {
+    if (*rit == '\\' || *rit == '/')
       return res;
-    else if (*it == '.')
+    else if (*rit == '.')
       break;
+  }
 
-  if (it != begin()-1)
-    for (++it; it!=end(); ++it)
-      res.push_back(*it);
+  if (rit != rend()) {
+    std::copy(const_iterator(rit.base()), end(),
+	      std::back_inserter(res));
+  }
 
   return res;
 }
@@ -293,18 +297,19 @@ String String::getFileExtension() const
  */
 String String::getFileTitle() const
 {
-  const_iterator it;
+  const_reverse_iterator rit;
   String res;
 
-  for (it=end()-1; it!=begin()-1; --it)
-    if (*it == '\\' || *it == '/')
+  for (rit=rbegin(); rit!=rend(); ++rit)
+    if (*rit == '\\' || *rit == '/')
       break;
 
-  for (++it; it!=end(); ++it)
+  for (const_iterator it(rit.base()); it!=end(); ++it) {
     if (*it == '.')
       break;
     else
       res.push_back(*it);
+  }
 
   return res;
 }

@@ -39,9 +39,56 @@ void test_parse()
 void test_filename()
 {
   assert(String("C:\\foo\\main.cpp").getFilePath() == _T("C:\\foo"));
+  assert(String("./main.cpp").getFilePath() == _T("."));
+  assert(String(".\\main.cpp").getFilePath() == _T("."));
+  assert(String("\\main.cpp").getFilePath() == _T(""));
+  assert(String("main.cpp").getFilePath() == _T(""));
+  assert(String("main.").getFilePath() == _T(""));
+  assert(String("main").getFilePath() == _T(""));
+  assert(String("C:/foo/").getFilePath() == _T("C:/foo"));
+  assert(String("C:\\").getFilePath() == _T("C:"));
+  assert(String("C:\\.cpp").getFilePath() == _T("C:"));
+  assert(String(".cpp").getFilePath() == _T(""));
+  assert(String("").getFilePath() == _T(""));
+
   assert(String("C:\\foo\\main.cpp").getFileName() == _T("main.cpp"));
+  assert(String("./main.cpp").getFileName() == _T("main.cpp"));
+  assert(String(".\\main.cpp").getFileName() == _T("main.cpp"));
+  assert(String("\\main.cpp").getFileName() == _T("main.cpp"));
+  assert(String("main.cpp").getFileName() == _T("main.cpp"));
+  assert(String("main.").getFileName() == _T("main."));
+  assert(String("main").getFileName() == _T("main"));
+  assert(String("C:/foo/").getFileName() == _T(""));
+  assert(String("C:\\").getFileName() == _T(""));
+  assert(String("C:\\.cpp").getFileName() == _T(".cpp"));
+  assert(String(".cpp").getFileName() == _T(".cpp"));
+  assert(String("").getFileName() == _T(""));
+
   assert(String("C:\\foo\\main.cpp").getFileExtension() == _T("cpp"));
+  assert(String("./main.cpp").getFileExtension() == _T("cpp"));
+  assert(String(".\\main.cpp").getFileExtension() == _T("cpp"));
+  assert(String("\\main.cpp").getFileExtension() == _T("cpp"));
+  assert(String("main.cpp").getFileExtension() == _T("cpp"));
+  assert(String("main.").getFileExtension() == _T(""));
+  assert(String("main").getFileExtension() == _T(""));
+  assert(String("C:/foo/").getFileExtension() == _T(""));
+  assert(String("C:\\").getFileExtension() == _T(""));
+  assert(String("C:\\.cpp").getFileExtension() == _T("cpp"));
+  assert(String(".cpp").getFileExtension() == _T("cpp"));
+  assert(String("").getFileExtension() == _T(""));
+
   assert(String("C:\\foo\\main.cpp").getFileTitle() == _T("main"));
+  assert(String("./main.cpp").getFileTitle() == _T("main"));
+  assert(String(".\\main.cpp").getFileTitle() == _T("main"));
+  assert(String("\\main.cpp").getFileTitle() == _T("main"));
+  assert(String("main.cpp").getFileTitle() == _T("main"));
+  assert(String("main.").getFileTitle() == _T("main"));
+  assert(String("main").getFileTitle() == _T("main"));
+  assert(String("C:/foo/").getFileTitle() == _T(""));
+  assert(String("C:\\").getFileTitle() == _T(""));
+  assert(String("C:\\.cpp").getFileTitle() == _T(""));
+  assert(String(".cpp").getFileTitle() == _T(""));
+  assert(String("").getFileTitle() == _T(""));
 
   String path("C:\\foo");
   path = path.addPathComponent("src");

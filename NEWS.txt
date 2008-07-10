@@ -10,6 +10,7 @@ Vaca 0.0.6
 - Added WidgetHitTestEnum.
 - Changed all enumerations to Enum and EnumSet.
 - Renamed CreateHWNDException to CreateWidgetException.
+- Now String::getFile* methods use reverse_iterator.
 - Fixed a bug in Register() where WidgetClassName weren't the same
   life time as "class_name".
 - Fixed a bug in EditableListBox (when remove a node in a ListBox with

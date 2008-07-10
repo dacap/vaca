@@ -300,11 +300,11 @@ all: lib examples tests
 
 lib: $(VACA_DLL)
 
-examples:  $(EXAMPLES_EXE)
+examples: $(EXAMPLES_EXE)
 
 tests: $(TESTS_EXE)
 
-runtests:
+runtests: tests
 	@for file in bin/test_*.exe ; do \
 		echo Running ./$$file ... ; \
 		if ./$$file ; then \

@@ -29,8 +29,7 @@ libraries. Right now Vaca doesn't need Boost anymore.
 <h2>Objetives</h2>
 
 @li Fit design to make programming more easy.
-@li <a href="http://en.wikipedia.org/wiki/Resource_acquisition_is_initialization">Constructors initialize resources</a>.
-    If I do @c "new MyWindow()", then my window should be created (see @ref TN002).
+@li Constructors initialize resources. If I do @c "new MyWindow()", then my window should be created (see @ref TN002).
 @li Documentation for every tricky situation, its solution, and examples.
 @li Technical Notes about how more common (or uncommon) problems were solved.
 

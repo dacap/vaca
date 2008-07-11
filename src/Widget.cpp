@@ -449,9 +449,7 @@ Constraint* Widget::setConstraint(Constraint* constraint)
  * Widget is shown for first time or it's resized, this method is
  * called.
  *
- * @see getLayout, setLayout, getLayoutBounds. The @ref
- * exampleCalendar "Calendar example" to known how to override this
- * method.
+ * @see getLayout, setLayout, getLayoutBounds.
  */
 void Widget::layout()
 {

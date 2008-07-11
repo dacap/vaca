@@ -54,7 +54,7 @@ class TabPage;
 /**
  * Widget that contains tabs to switch between them. This class
  * doesn't controls pages automatically, it's useful when you want a
- * special behaviour for the tabs (see Tabs example). If you want
+ * special behaviour for the tabs (see @c Tabs example). If you want
  * to put one Panel in the each page, and swap them when the user
  * change the pages, you should use the Tab widget.
  *

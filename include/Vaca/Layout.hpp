@@ -49,7 +49,7 @@ namespace Vaca {
  * 
  * @warning If the parent widget doesn't have a layout manager
  *          specified, the children bounds aren't modified (see the
- *          <code>FreeOfLayout</code> example).
+ *          @c FreeOfLayout example).
  *
  * @see @ref TN011
  */

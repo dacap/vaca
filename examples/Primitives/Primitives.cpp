@@ -54,7 +54,7 @@ public:
     m_fill.setConstraint(new Anchor(Rect(10, 75, 80, 20), Borders::Bottom));
 
     // when the "Fill" button is pressed, we must to call:
-    // ((MainFrame *)this)->invalidate(true);
+    // ((MainFrame*)this)->invalidate(true);
     m_fill.Action.connect(Bind(&MainFrame::invalidate, this, true));
   }
 
@@ -122,7 +122,7 @@ public:
 int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		   LPSTR lpCmdLine, int nCmdShow)
 {
-  Example *app(new Example);
+  Example* app(new Example);
   app->run();
   delete app;
   return 0;

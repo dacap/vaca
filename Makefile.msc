@@ -43,7 +43,7 @@ OBJS = obj/Anchor.obj obj/AnchorLayout.obj obj/Application.obj		\
   obj/ButtonBase.obj obj/CancelableEvent.obj obj/CheckBox.obj		\
   obj/ClientLayout.obj obj/Clipboard.obj obj/CloseEvent.obj		\
   obj/Color.obj obj/ColorDialog.obj obj/ComboBox.obj			\
-  obj/CommonDialog.obj obj/Component.obj obj/Condition.obj		\
+  obj/CommonDialog.obj obj/Component.obj obj/ConditionVariable.obj	\
   obj/Constraint.obj obj/Cursor.obj obj/CustomButton.obj		\
   obj/CustomLabel.obj obj/Debug.obj obj/Dialog.obj obj/DockArea.obj	\
   obj/DockBar.obj obj/DockFrame.obj obj/DropFilesEvent.obj		\
@@ -121,10 +121,16 @@ runtests: tests
 	)
 
 clean:
+	-del bin\*.ilk
+	-del bin\*.pdb
+	-del obj\*.res
+	-del obj\*.o
 	-del obj\*.obj
 
 distclean: clean
+	-del bin\*.dll
 	-del bin\*.exe
+	-del lib\*.a
 	-del lib\*.lib
 
 lib/Vaca.lib: $(OBJS)

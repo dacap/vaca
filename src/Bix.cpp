@@ -332,7 +332,7 @@ void Bix::remove(Bix* subbix)
     SubBixElement* element = dynamic_cast<SubBixElement*>(*it);
     if (element != NULL &&
 	element->bix == subbix) {
-      remove_element_from_container(m_elements, element);
+      remove_from_container(m_elements, element);
       return;
     }
   }
@@ -349,7 +349,7 @@ void Bix::remove(Widget* child)
     WidgetElement* element = dynamic_cast<WidgetElement*>(*it);
     if (element != NULL &&
 	element->widget == child) {
-      remove_element_from_container(m_elements, element);
+      remove_from_container(m_elements, element);
       return;
     }
   }

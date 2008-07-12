@@ -35,11 +35,11 @@ using namespace Vaca;
 
 class SlidersPanel : public Panel
 {
-  Slider *m_slider[6];
+  Slider* m_slider[6];
 
 public:
 
-  SlidersPanel(Orientation orientation, Widget *parent)
+  SlidersPanel(Orientation orientation, Widget* parent)
     : Panel(parent)
   {
     bool isHorz = (orientation == Orientation::Horizontal);
@@ -87,8 +87,8 @@ public:
   void connectSliders()
   {
     for (int c=0; c<3; ++c) {
-      Slider *s1 = m_slider[c*2  ];
-      Slider *s2 = m_slider[c*2+1];
+      Slider* s1 = m_slider[c*2  ];
+      Slider* s2 = m_slider[c*2+1];
 
       s1->Change.connect(Bind(&SlidersPanel::onSliderChange, this, s1, s2));
       s2->Change.connect(Bind(&SlidersPanel::onSliderChange, this, s2, s1));
@@ -99,7 +99,7 @@ public:
 
 protected:
   
-  void onSliderChange(Slider *source, Slider *destination)
+  void onSliderChange(Slider* source, Slider* destination)
   {
     destination->setValue(source->getValue());
   }
@@ -159,7 +159,7 @@ public:
 int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		   LPSTR lpCmdLine, int nCmdShow)
 {
-  Example *app(new Example);
+  Example* app(new Example);
   app->run();
   delete app;
   return 0;

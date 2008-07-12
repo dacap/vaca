@@ -1952,7 +1952,7 @@ void Widget::removeChild(Widget* child, bool setParent)
   assert(child->m_HWND != NULL);
   assert(child->m_parent == this);
 
-  remove_element_from_container(m_children, child);
+  remove_from_container(m_children, child);
 
   if (setParent) {
     ::SetParent(child->m_HWND, NULL);

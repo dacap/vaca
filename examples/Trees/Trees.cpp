@@ -117,7 +117,7 @@ public:
     m_treeView1.addNode(new TreeNode("Leaf node"));
 
     // add a node with three children
-    TreeNode *node = new TreeNode("Node with sub-nodes (three children)");
+    TreeNode* node = new TreeNode("Node with sub-nodes (three children)");
     addThreeChildren(node);
     m_treeView1.addNode(node);
 
@@ -154,7 +154,7 @@ protected:
   // adds three items in the m_treeView1
   void onAddItem()
   {
-    TreeNode *node = m_treeView1.getSelectedNode();
+    TreeNode* node = m_treeView1.getSelectedNode();
     addThreeChildren(node != NULL ? node:
 				    m_treeView1.getRootNode());
 
@@ -164,7 +164,7 @@ protected:
   // deletes the selected item in the m_treeView1
   void onDeleteItem()
   {
-    TreeNode *node = m_treeView1.getSelectedNode();
+    TreeNode* node = m_treeView1.getSelectedNode();
     if (node != NULL)
       delete node;
 
@@ -176,13 +176,13 @@ protected:
   void onFromTo(TreeView* treeA, TreeView* treeB)
   {
     // get the selected node in the tree "A"
-    TreeNode *nodeA = treeA->getSelectedNode();
+    TreeNode* nodeA = treeA->getSelectedNode();
     if (nodeA != NULL) {
       // remove the selected node in the tree "A"
       treeA->removeNode(nodeA);
 
       // ...and put it as a child of the selected node in the tree "B"
-      TreeNode *nodeB = treeB->getSelectedNode();
+      TreeNode* nodeB = treeB->getSelectedNode();
       if (nodeB != NULL)
 	nodeB->addNode(nodeA);
       else
@@ -194,7 +194,7 @@ protected:
 
 private:
 
-  void addThreeChildren(TreeNode *container)
+  void addThreeChildren(TreeNode* container)
   {
     container->addNode(new TreeNode("A"));
     container->addNode(new TreeNode("B"));
@@ -217,7 +217,7 @@ public:
 int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		   LPSTR lpCmdLine, int nCmdShow)
 {
-  Example *app(new Example);
+  Example* app(new Example);
   app->run();
   delete app;
   return 0;

@@ -35,7 +35,7 @@
 #include "Vaca/Mutex.hpp"
 #include "Vaca/ScopedLock.hpp"
 #include "Vaca/TimePoint.hpp"
-#include "Vaca/Condition.hpp"
+#include "Vaca/ConditionVariable.hpp"
 
 using namespace Vaca;
 
@@ -43,7 +43,7 @@ static Mutex               timer_mutex;		// monitor
 static Thread*             timer_thread = NULL; // the thread that process timers
 static std::vector<Timer*> timers;              // list of timers to be processed
 static bool                timer_break = false; // break the loop in timer_thread_proc()
-static Condition           wakeup_condition;    // wake-up the timer thread loop
+static ConditionVariable   wakeup_condition;    // wake-up the timer thread loop
 
 /**
  * @param interval In milliseconds.
@@ -287,7 +287,7 @@ void Timer::remove_timer(Timer* t)
 {
   ScopedLock hold(timer_mutex);
 
-  remove_element_from_container(timers, t);
+  remove_from_container(timers, t);
 }
 
 /**

@@ -218,7 +218,7 @@ private:
 
       case Orientation::Vertical: {
 	LOGFONT lf;
-	Font *currentFont = g.getFont();
+	Font* currentFont = g.getFont();
 
 	if (currentFont->getLogFont(&lf)) {
 	  lf.lfEscapement = 900;
@@ -245,14 +245,14 @@ private:
   }
 
   struct drawChr {
-    void operator()(Graphics *g, const String &str, const Rect &rc)
+    void operator()(Graphics* g, const String& str, const Rect& rc)
     {
       g->drawString(str, rc.getOrigin());
     }
   };
     
   template<typename Functor>
-  void forEachChar(Graphics *g, Functor functor)
+  void forEachChar(Graphics* g, Functor functor)
   {
     g->setFont(&m_font);
 
@@ -312,7 +312,7 @@ public:
 int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		   LPSTR lpCmdLine, int nCmdShow)
 {
-  Example *app(new Example);
+  Example* app(new Example);
   app->run();
   delete app;
   return 0;

@@ -43,7 +43,7 @@ class EyeDropper : public Panel
   
 public:
 
-  EyeDropper(Widget *parent)
+  EyeDropper(Widget* parent)
     : Panel(parent)
     , m_font("Courier", 10)
     , m_cursor(ResourceId(IDC_EYEDROPPER))

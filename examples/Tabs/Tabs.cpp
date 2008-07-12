@@ -106,13 +106,13 @@ public:
 
 private:
 
-  MenuBar *createMenuBar()
+  MenuBar* createMenuBar()
   {
-    MenuBar *menuBar  = new MenuBar();
-    Menu *appMenu     = new Menu("&Tabs");
-    Menu *optionsMenu = new Menu("&Options");
-    Menu *sideMenu    = new Menu("&Side");
-    MenuItem *menuItem;
+    MenuBar* menuBar  = new MenuBar();
+    Menu* appMenu     = new Menu("&Tabs");
+    Menu* optionsMenu = new Menu("&Options");
+    Menu* sideMenu    = new Menu("&Side");
+    MenuItem* menuItem;
 
     // Tabs/Exit
     menuItem = appMenu->add("E&xit");
@@ -213,7 +213,7 @@ public:
 int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		   LPSTR lpCmdLine, int nCmdShow)
 {
-  Example *app(new Example);
+  Example* app(new Example);
   app->run();
   delete app;
   return 0;

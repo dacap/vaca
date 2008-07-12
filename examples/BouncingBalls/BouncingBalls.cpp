@@ -111,7 +111,7 @@ struct segment
 struct ball;
 
 std::vector<segment> segments;
-std::vector<ball *> balls;
+std::vector<ball*> balls;
 
 v2dfloat friction_with_air = 1.0;
 v2dfloat friction_with_ball = 1.0;
@@ -155,7 +155,7 @@ struct ball
     for (int c=0; c<steps; ++c) {
 
       // collision with balls
-      for (std::vector<ball *>::iterator
+      for (std::vector<ball*>::iterator
 	     it = balls.begin(); it != balls.end(); ++it) {
 	ball *other = *it;
 
@@ -232,9 +232,9 @@ struct ball
 
 void move_balls()
 {
-  for (std::vector<ball *>::iterator
+  for (std::vector<ball*>::iterator
 	 it = balls.begin(); it != balls.end(); ++it) {
-    ball *bal = *it;
+    ball* bal = *it;
     
     // move balls
     bal->vel += bal->acc;
@@ -247,9 +247,9 @@ void move_balls()
 
 void draw_balls(Graphics &g, double a, double b)
 {
-  for (std::vector<ball *>::iterator
+  for (std::vector<ball*>::iterator
 	 it = balls.begin(); it != balls.end(); ++it) {
-    ball *bal = *it;
+    ball* bal = *it;
     Brush brush(bal->color);
 
     g.fillEllipse(brush,

@@ -40,7 +40,7 @@ class TimerViewer : public Panel
   
 public:
 
-  TimerViewer(int msecs, Color color, Widget *parent)
+  TimerViewer(int msecs, Color color, Widget* parent)
     : Panel(parent)
     , m_timer(msecs)
     , m_on(false)

@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_CONDITION_HPP
-#define VACA_CONDITION_HPP
+#ifndef VACA_CONDITION_VARIABLE_HPP
+#define VACA_CONDITION_VARIABLE_HPP
 
 #include "Vaca/base.hpp"
 #include "Vaca/NonCopyable.hpp"
@@ -40,17 +40,17 @@ namespace Vaca {
 
 class ScopedLock;
 
-class CreateConditionException : public Exception
+class CreateConditionVariableException : public Exception
 {
 public:
 
-  CreateConditionException() : Exception() { }
-  CreateConditionException(const String& message) : Exception(message) { }
-  virtual ~CreateConditionException() throw() { }
+  CreateConditionVariableException() : Exception() { }
+  CreateConditionVariableException(const String& message) : Exception(message) { }
+  virtual ~CreateConditionVariableException() throw() { }
 
 };
 
-class VACA_DLL Condition : private NonCopyable
+class VACA_DLL ConditionVariable : private NonCopyable
 {
   void* m_gate;
   void* m_queue;
@@ -61,8 +61,8 @@ class VACA_DLL Condition : private NonCopyable
 			   // still waiting to be removed from m_queue
 public:
 
-  Condition();
-  ~Condition();
+  ConditionVariable();
+  ~ConditionVariable();
 
   void notifyOne();
   void notifyAll();

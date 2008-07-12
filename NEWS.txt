@@ -2,9 +2,8 @@ Vaca 0.0.6
 
 - Removed dependencies with Boost library.
   - Added Slot/Signal and Bind (placeholders aren't available, sorry).
-  - Added Condition (from William E. Kempf code).
+  - Added ConditionVariable (from William E. Kempf code, Boost.Threads).
   - Added TimePoint.
-- OpenFileDialog::setFileName now is public.
 - Added WidgetClassName.
 - Renamed all headers files from .h to .hpp
 - Added WidgetHitTestEnum.
@@ -12,7 +11,7 @@ Vaca 0.0.6
 - Renamed CreateHWNDException to CreateWidgetException.
 - Now String::getFile* methods use reverse_iterator.
 - Fixed a bug in Register() where WidgetClassName weren't the same
-  life time as "class_name".
+  scope as "class_name".
 - Fixed a bug in EditableListBox (when remove a node in a ListBox with
   vertical scroll).
 - Removed all utilities (they were too big to include inside the
@@ -27,10 +26,10 @@ Vaca 0.0.6
     use MAKEPOINTS to get negative coordinates when we capture the
     mouse.
   - Added Graphics::drawPolyline(const vector<Point>& points).
-- Fixed some memory leaks in some examples.
+- Fixed memory leaks in some examples.
 - Fixed bugs with memory allocation/deallocation (usage of delete[])
 - Fixed bugs with TreeNode/TreeView.
-- Fixed problem with infinite message-loop when all Frames are hidden.
+- Fixed problem with infinite message-loops when all Frames are hidden.
 - Fixed String(const char *, ...) constructors with Unicode activated.
 - Added two methods for String: to_string and to_wstring.
 - Added more signals for Widget: See LikeScript example (idea of

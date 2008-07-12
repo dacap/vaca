@@ -42,7 +42,7 @@ class Console : public MultilineEdit
   
 public:
 
-  Console(Widget *parent)
+  Console(Widget* parent)
     : MultilineEdit("", parent, MultilineEditStyle + ScrollStyle)
     , m_font("Courier New", 10)
   {
@@ -111,7 +111,7 @@ private:
 
 //   void initializeCommands()
 //   {
-//     Command *command;
+//     Command* command;
 
 //     command = new Command(IDM_ITEM1);
 //     command->Action.connect(Bind(&Console::println, &m_console, "Item1 selected"));
@@ -171,7 +171,7 @@ public:
 int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		   LPSTR lpCmdLine, int nCmdShow)
 {
-  Example *app(new Example);
+  Example* app(new Example);
   app->run();
   delete app;
   return 0;

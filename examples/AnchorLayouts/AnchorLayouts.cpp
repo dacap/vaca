@@ -49,7 +49,7 @@ class AnchoredWidget : public Panel
   
 public:
 
-  AnchoredWidget(const Anchor &anchor, Widget *parent)
+  AnchoredWidget(const Anchor &anchor, Widget* parent)
     : Panel(parent)
     , m_anchor(anchor)
   {
@@ -228,7 +228,7 @@ public:
 int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		   LPSTR lpCmdLine, int nCmdShow)
 {
-  Example *app(new Example);
+  Example* app(new Example);
   app->run();
   delete app;
   return 0;

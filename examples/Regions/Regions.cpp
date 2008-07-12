@@ -37,7 +37,7 @@ using namespace Vaca;
 
 class Regions : public Panel
 {
-  Region *m_region;
+  Region* m_region;
   Point m_startPoint;
   Point m_oldPoint;
   bool m_readOnly;
@@ -46,7 +46,7 @@ class Regions : public Panel
 
 public:
 
-  Regions(Widget *parent)
+  Regions(Widget* parent)
     : Panel(parent, PanelStyle + ClientEdgeStyle)
     , m_region(NULL)
     , m_readOnly(true)
@@ -54,7 +54,7 @@ public:
     setBgColor(Color::White);
   }
 
-  void setRegion(Region *region, bool readOnly, bool ellipses = false)
+  void setRegion(Region* region, bool readOnly, bool ellipses = false)
   {
     m_region = region;
     m_readOnly = readOnly;
@@ -259,7 +259,7 @@ public:
 int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		   LPSTR lpCmdLine, int nCmdShow)
 {
-  Example *app(new Example);
+  Example* app(new Example);
   app->run();
   delete app;
   return 0;

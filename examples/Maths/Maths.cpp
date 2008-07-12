@@ -48,8 +48,8 @@ struct Point_f
   Point_f(float u, float v) : x(u), y(v) { }
   Point_f(const Point_f &pt) : x(pt.x), y(pt.y) { }
   Point_f(const Point &pt) : x(pt.x), y(pt.y) { }
-  Point_f &operator=(const Point_f &pt) { x=pt.x; y=pt.y; return *this; }
-  bool operator==(const Point_f &pt) { return x==pt.x && y==pt.y; }
+  Point_f& operator=(const Point_f& pt) { x=pt.x; y=pt.y; return *this; }
+  bool operator==(const Point_f& pt) { return x==pt.x && y==pt.y; }
 
 };
 
@@ -60,7 +60,7 @@ class AxisPage : public TabPage
 {
 public:
 
-  AxisPage(const String &text, Tab *parent)
+  AxisPage(const String& text, Tab* parent)
     : TabPage(text, parent, TabPageStyle + ClientEdgeStyle)
   {
     setBgColor(Color::White);
@@ -116,7 +116,7 @@ protected:
   
 public:
 
-  EditablePointsPage(const String &text, Tab *parent)
+  EditablePointsPage(const String& text, Tab* parent)
     : AxisPage(text, parent)
   {
     mPoints.push_back(Point_f(-2,  0));
@@ -139,8 +139,7 @@ protected:
       // ...or remove the point with the right one
       else {
 	// remove point
-	remove_element_from_container(mPoints,
-				      mPoints[mHotPoint]);
+	remove_from_container(mPoints, mPoints[mHotPoint]);
 
 	// update hot-tracking point
 	mHotPoint = -1;
@@ -248,7 +247,7 @@ float func_log(float x) { return log(x); }
 struct function
 {
   float (*f)(float x);
-  char *expr;
+  char* expr;
 } functions[] = {
   { func_x, "x" },
   { func_xx, "x^2" },
@@ -272,7 +271,7 @@ class FunctionsPage : public AxisPage
   
 public:
 
-  FunctionsPage(Tab *parent)
+  FunctionsPage(Tab* parent)
     : AxisPage("2-D functions y=f(x)", parent)
     , m_timer(1500)
     , m_currentFunction(0)
@@ -323,7 +322,7 @@ class Lagrange : public EditablePointsPage
 {
 public:
 
-  Lagrange(Tab *parent)
+  Lagrange(Tab* parent)
     : EditablePointsPage("Lagrange polynomial", parent)
   {
   }
@@ -372,7 +371,7 @@ class Bezier : public EditablePointsPage
 {
 public:
 
-  Bezier(Tab *parent)
+  Bezier(Tab* parent)
     : EditablePointsPage("Bézier curve", parent)
   {
   }
@@ -460,7 +459,7 @@ public:
 int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		   LPSTR lpCmdLine, int nCmdShow)
 {
-  Example *app(new Example);
+  Example* app(new Example);
   app->run();
   delete app;
   return 0;

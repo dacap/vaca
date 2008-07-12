@@ -355,7 +355,7 @@ void BandedDockArea::onRemoveDockBar(DockBar* dockBar)
   assert(bandIndex >= 0 && bandIndex < bandCount);
 
   // remove the dockBar from the band
-  remove_element_from_container(m_bandInfo[bandIndex].bars, dockBar);
+  remove_from_container(m_bandInfo[bandIndex].bars, dockBar);
 
   // preserve band? (this is from onRedock)
   if (dockInfo->preserveBand)

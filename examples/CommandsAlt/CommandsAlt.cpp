@@ -41,7 +41,7 @@ class Console : public MultilineEdit
   
 public:
 
-  Console(Widget *parent)
+  Console(Widget* parent)
     : MultilineEdit("", parent, MultilineEditStyle + ScrollStyle)
     , m_font("Courier New", 10)
   {
@@ -105,7 +105,7 @@ public:
     addCommand(new MyCommand(1001, m_console));
 
     // method 3: Hook the command in MenuItem::Action signal
-    MenuItem *menuItem;
+    MenuItem* menuItem;
     menuItem = new MenuItem("&Cmd1(Ctrl+1)",
 			    Keys::Control | Keys::D1,
 			    1000);
@@ -146,7 +146,7 @@ protected:
   }
 
   // routine used by method 1
-  void onCommandSlot(Command *cmd)
+  void onCommandSlot(Command* cmd)
   {
     m_console.println("MainFrame::onCommandSlot("+
 		     String::fromInt(cmd->getId())+")");
@@ -168,7 +168,7 @@ public:
 int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		   LPSTR lpCmdLine, int nCmdShow)
 {
-  Example *app(new Example);
+  Example* app(new Example);
   app->run();
   delete app;
   return 0;

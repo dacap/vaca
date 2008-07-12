@@ -43,7 +43,7 @@ class EditableListBox : public ListBox
 
 public:
 
-  EditableListBox(Widget *parent)
+  EditableListBox(Widget* parent)
     : ListBox(parent)
   {
     m_edit = NULL;

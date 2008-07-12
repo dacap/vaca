@@ -37,7 +37,7 @@ using namespace Vaca;
 
 struct ColorName
 {
-  const char *name;
+  const char* name;
   int rgb;
 } ColorNames[] = {		// The colors where taken from Emacs
   { "alice blue", 0xf0f8ff },
@@ -811,7 +811,7 @@ public:
 int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		   LPSTR lpCmdLine, int nCmdShow)
 {
-  Example *app(new Example);
+  Example* app(new Example);
   app->run();
   delete app;
   return 0;

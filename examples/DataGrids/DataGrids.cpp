@@ -49,7 +49,7 @@ public:
   virtual String getString() const = 0;
   virtual void beginEdit(const Rect &cellBounds) = 0;
   virtual void endEdit() = 0;
-  virtual DataValue *clone() = 0;
+  virtual DataValue* clone() = 0;
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -64,7 +64,7 @@ public:
   virtual String getString() const;
   virtual void beginEdit(const Rect &cellBounds);
   virtual void endEdit();
-  virtual DataValue *clone();
+  virtual DataValue* clone();
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -79,7 +79,7 @@ public:
   virtual String getString() const;
   virtual void beginEdit(const Rect &cellBounds);
   virtual void endEdit();
-  virtual DataValue *clone();
+  virtual DataValue* clone();
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -94,7 +94,7 @@ public:
   virtual String getString() const;
   virtual void beginEdit(const Rect &cellBounds);
   virtual void endEdit();
-  virtual DataValue *clone();
+  virtual DataValue* clone();
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -109,7 +109,7 @@ public:
   virtual String getString() const;
   virtual void beginEdit(const Rect &cellBounds);
   virtual void endEdit();
-  virtual DataValue *clone();
+  virtual DataValue* clone();
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -134,8 +134,8 @@ class DataColumn
   
   String m_name;
   String m_header;
-  DataTable *m_table;
-  DataValue *m_defaultValue;
+  DataTable* m_table;
+  DataValue* m_defaultValue;
 //   int m_headerHeight;
 //   int m_columnWidth;
 //   int m_preferredColumnWidth;
@@ -143,26 +143,26 @@ class DataColumn
   
 public:
 
-  DataColumn(const String &name, DataValue *defaultValue);
+  DataColumn(const String& name, DataValue* defaultValue);
   virtual ~DataColumn();
 
   String getName() const;
-  void setName(const String &name);
+  void setName(const String& name);
 
   String getHeader() const;
-  void setHeader(const String &header);
+  void setHeader(const String& header);
 
   bool getAllowNull() const;
   void setAllowNull(bool state);
   
-  DataTable *getTable();
-  DataValue *getDefaultValue();
+  DataTable* getTable();
+  DataValue* getDefaultValue();
 
-  DataRow *operator[](int index);
+  DataRow* operator[](int index);
 
 private:
   
-  void setTable(DataTable *table);
+  void setTable(DataTable* table);
 
 };
 
@@ -173,25 +173,25 @@ class DataRow
 {
   friend class DataTable;
 
-  DataTable *m_table;
-  std::vector<DataValue *> m_values;
+  DataTable* m_table;
+  std::vector<DataValue*> m_values;
 //   int m_rowHeight;
   
 private:
 
-  DataRow(DataTable *table);
+  DataRow(DataTable*table);
 
 public:
 
   virtual ~DataRow();
 
-  DataTable *getTable();
+  DataTable* getTable();
 
-  DataValue *getValue(int columntIndex);
+  DataValue* getValue(int columntIndex);
   void setValue(int columntIndex, DataValue *value);
 
-//   DataColumn *operator[](int index);
-//   DataColumn *operator[](const String &columnName);
+//   DataColumn* operator[](int index);
+//   DataColumn* operator[](const String &columnName);
 
 };
 
@@ -201,8 +201,8 @@ public:
 class DataTable
 {
   String m_name;
-  std::vector<DataColumn *> m_columns;
-  std::vector<DataRow *> m_rows;
+  std::vector<DataColumn*> m_columns;
+  std::vector<DataRow*> m_rows;
   
 public:
 
@@ -219,19 +219,19 @@ public:
 
   virtual ~DataTable()
   {
-    for (std::vector<DataColumn *>::iterator
+    for (std::vector<DataColumn*>::iterator
 	   it = m_columns.begin(); it != m_columns.end(); ++it) {
       delete *it;
     }
     VACA_TRACE("~DataTable()\n");
   }
 
-  DataRow *createRow()
+  DataRow* createRow()
   {
     return new DataRow(this);
   }
 
-  void addColumn(DataColumn *column)
+  void addColumn(DataColumn* column)
   {
     // a column without owner
     assert(column->getTable() == NULL);
@@ -240,7 +240,7 @@ public:
     m_columns.push_back(column);
   }
 
-  void addRow(DataRow *row)
+  void addRow(DataRow* row)
   {
     // a row created by this table
     assert(row->getTable() == this);
@@ -268,26 +268,26 @@ public:
     return m_rows.size();
   }
 
-  DataColumn *getColumn(int index)
+  DataColumn* getColumn(int index)
   {
     assert(index >= 0 && index < getColumnCount());
     return m_columns[index];
   }
 
-  DataRow *getRow(int index)
+  DataRow* getRow(int index)
   {
     assert(index >= 0 && index < getRowCount());
     return m_rows[index];
   }
 
-  DataColumn *operator[](int index)
+  DataColumn* operator[](int index)
   {
     return getColumn(index);
   }
 
-  DataColumn *operator[](const String &columnName)
+  DataColumn* operator[](const String &columnName)
   {
-    for (std::vector<DataColumn *>::iterator
+    for (std::vector<DataColumn*>::iterator
 	   it = m_columns.begin(); it != m_columns.end(); ++it) {
       if ((*it)->getName() == columnName)
 	return *it;
@@ -302,18 +302,18 @@ public:
 
 class DataSet
 {
-  std::vector<DataTable *> m_tables;
+  std::vector<DataTable*> m_tables;
 
 public:
 
   DataSet();
   virtual ~DataSet();
 
-  void addTable(DataTable *table);
-  std::vector<DataTable *> getTables();
+  void addTable(DataTable* table);
+  std::vector<DataTable*> getTables();
   int getTableCount();
-  DataTable *operator[](int index);
-  DataTable *operator[](const String &tableName);
+  DataTable* operator[](int index);
+  DataTable* operator[](const String &tableName);
   
 };
 
@@ -324,19 +324,19 @@ DataSet::DataSet()
 
 DataSet::~DataSet()
 {
-  for (std::vector<DataTable *>::iterator
+  for (std::vector<DataTable*>::iterator
 	 it = m_tables.begin(); it != m_tables.end(); ++it) {
     delete *it;
   }
   VACA_TRACE("~DataSet()\n");
 }
 
-void DataSet::addTable(DataTable *table)
+void DataSet::addTable(DataTable* table)
 {
   m_tables.push_back(table);
 }
 
-std::vector<DataTable *> DataSet::getTables()
+std::vector<DataTable*> DataSet::getTables()
 {
   return m_tables;
 }
@@ -346,15 +346,15 @@ int DataSet::getTableCount()
   return m_tables.size();
 }
 
-DataTable *DataSet::operator[](int index)
+DataTable* DataSet::operator[](int index)
 {
   assert(index >= 0 && index < getTableCount());
   return m_tables[index];
 }
 
-DataTable *DataSet::operator[](const String &tableName)
+DataTable* DataSet::operator[](const String &tableName)
 {
-  for (std::vector<DataTable *>::iterator
+  for (std::vector<DataTable*>::iterator
 	 it = m_tables.begin(); it != m_tables.end(); ++it) {
     if ((*it)->getName() == tableName)
       return *it;
@@ -369,7 +369,7 @@ DataTable *DataSet::operator[](const String &tableName)
 class DataGrid : public Panel
 {
   struct Column {
-    DataColumn *columnData;
+    DataColumn* columnData;
     TextAlign headerAlign;
     TextAlign dataAlign;
     // int headerHeight;
@@ -377,11 +377,11 @@ class DataGrid : public Panel
     int preferredColumnWidth;
   };
   struct Row {
-    DataRow *rowData;
+    DataRow* rowData;
     int rowHeight;
   };
-  std::vector<Column *> m_columns;
-  std::vector<Row *> m_rows;
+  std::vector<Column*> m_columns;
+  std::vector<Row*> m_rows;
   int m_currentRow;
   int m_hotRow;
   int m_hotCol;
@@ -403,15 +403,15 @@ class DataGrid : public Panel
   bool m_crudColumn;
   int m_crudColumnWidth;
 
-  DataSet *m_dataSet;
-  DataTable *m_dataTable;
+  DataSet* m_dataSet;
+  DataTable* m_dataTable;
 
 public:
 
-  DataGrid(Widget *parent);
+  DataGrid(Widget* parent);
   virtual ~DataGrid();
 
-  void setDataSet(DataSet *set);
+  void setDataSet(DataSet* set);
 
   bool getFlatMode() const;
   void setFlatMode(bool state);
@@ -439,9 +439,9 @@ protected:
 private:
 
   void clearGrid();
-  void setDataTable(DataTable *table);
-  void addColumn(DataColumn *column);
-  void addRow(DataRow *row);
+  void setDataTable(DataTable* table);
+  void addColumn(DataColumn* column);
+  void addRow(DataRow* row);
   int getColumnCount();
   int getRowCount();
   int getColumnByPoint(const Point &pt, bool useRows);
@@ -465,7 +465,7 @@ private:
 #define NULL_COLUMN_INDEX (-2)
 #define CRUD_COLUMN_INDEX (-1)
 
-DataGrid::DataGrid(Widget *parent)
+DataGrid::DataGrid(Widget* parent)
   : Panel(parent, PanelStyle +
 		  ScrollStyle +
 		  ClientEdgeStyle +
@@ -494,7 +494,7 @@ DataGrid::~DataGrid()
   clearGrid();
 }
 
-void DataGrid::setDataSet(DataSet *set)
+void DataGrid::setDataSet(DataSet* set)
 {
   m_dataSet = set;
   if (set->getTableCount() > 0)
@@ -869,7 +869,7 @@ void DataGrid::onPaint(Graphics &g)
 	  Color textColor;
 
 	  if (j != CRUD_COLUMN_INDEX) {
-	    DataValue *value = m_rows[i]->rowData->getValue(j);
+	    DataValue* value = m_rows[i]->rowData->getValue(j);
 	    if (value != NULL)
 	      text = value->getString();
 	    else
@@ -942,7 +942,7 @@ void DataGrid::clearGrid()
   m_columns.clear();
 }
 
-void DataGrid::setDataTable(DataTable *table)
+void DataGrid::setDataTable(DataTable* table)
 {
   m_dataTable = table;
   int cols = m_dataTable->getColumnCount();
@@ -955,9 +955,9 @@ void DataGrid::setDataTable(DataTable *table)
     addRow(m_dataTable->getRow(i));
 }
   
-void DataGrid::addColumn(DataColumn *column)
+void DataGrid::addColumn(DataColumn* column)
 {
-  Column *col = new Column;
+  Column* col = new Column;
 
   col->columnData = column;
   col->headerAlign = TextAlign::Left;
@@ -976,9 +976,9 @@ void DataGrid::addColumn(DataColumn *column)
   m_columns.push_back(col);
 }
 
-void DataGrid::addRow(DataRow *row)
+void DataGrid::addRow(DataRow* row)
 {
-  Row *r = new Row;
+  Row* r = new Row;
   r->rowData = row;
 //   r->rowHeight = m_columns[0]->headerHeight;
   r->rowHeight = m_headerHeight;
@@ -1235,7 +1235,7 @@ DataIntValue::~DataIntValue() { }
 String DataIntValue::getString() const { return String::fromInt(m_value); }
 void DataIntValue::beginEdit(const Rect &cellBounds) { }
 void DataIntValue::endEdit() { }
-DataValue *DataIntValue::clone() { return new DataIntValue(m_value); }
+DataValue* DataIntValue::clone() { return new DataIntValue(m_value); }
 
 //////////////////////////////////////////////////////////////////////
 // DataStringValue
@@ -1245,7 +1245,7 @@ DataStringValue::~DataStringValue() { }
 String DataStringValue::getString() const { return m_value; }
 void DataStringValue::beginEdit(const Rect &cellBounds) { }
 void DataStringValue::endEdit() { }
-DataValue *DataStringValue::clone() { return new DataStringValue(m_value); }
+DataValue* DataStringValue::clone() { return new DataStringValue(m_value); }
 
 //////////////////////////////////////////////////////////////////////
 // DataBoolValue
@@ -1255,7 +1255,7 @@ DataBoolValue::~DataBoolValue() { }
 String DataBoolValue::getString() const { return m_value ? "1": "0"; }
 void DataBoolValue::beginEdit(const Rect &cellBounds) { }
 void DataBoolValue::endEdit() { }
-DataValue *DataBoolValue::clone() { return new DataBoolValue(m_value); }
+DataValue* DataBoolValue::clone() { return new DataBoolValue(m_value); }
 
 //////////////////////////////////////////////////////////////////////
 // DataDoubleValue
@@ -1265,12 +1265,12 @@ DataDoubleValue::~DataDoubleValue() { }
 String DataDoubleValue::getString() const { return String::fromDouble(m_value, 16); }
 void DataDoubleValue::beginEdit(const Rect &cellBounds) { }
 void DataDoubleValue::endEdit() { }
-DataValue *DataDoubleValue::clone() { return new DataDoubleValue(m_value); }
+DataValue* DataDoubleValue::clone() { return new DataDoubleValue(m_value); }
 
 //////////////////////////////////////////////////////////////////////
 // DataColumn
 
-DataColumn::DataColumn(const String &name, DataValue *defaultValue)
+DataColumn::DataColumn(const String& name, DataValue* defaultValue)
 {
   VACA_TRACE("DataColumn()\n");
   m_name = name;
@@ -1317,22 +1317,22 @@ void DataColumn::setAllowNull(bool state)
   m_allowNull = state;
 }
 
-DataTable *DataColumn::getTable()
+DataTable* DataColumn::getTable()
 {
   return m_table;
 }
 
-DataValue *DataColumn::getDefaultValue()
+DataValue* DataColumn::getDefaultValue()
 {
   return m_defaultValue;
 }
 
-void DataColumn::setTable(DataTable *table)
+void DataColumn::setTable(DataTable* table)
 {
   m_table = table;
 }
 
-DataRow *DataColumn::operator[](int index)
+DataRow* DataColumn::operator[](int index)
 {
   assert(m_table != NULL);
   return m_table->getRow(index);
@@ -1341,7 +1341,7 @@ DataRow *DataColumn::operator[](int index)
 //////////////////////////////////////////////////////////////////////
 // DataRow
 
-DataRow::DataRow(DataTable *table)
+DataRow::DataRow(DataTable* table)
 {
   assert(table != NULL);
 
@@ -1352,7 +1352,7 @@ DataRow::DataRow(DataTable *table)
   int j, cols = m_table->getColumnCount();
 
   for (j=0; j<cols; ++j) {
-    DataValue *value = m_table->getColumn(j)->getDefaultValue();
+    DataValue* value = m_table->getColumn(j)->getDefaultValue();
     m_values.push_back(value != NULL ? value->clone(): NULL);
   }
 }
@@ -1362,34 +1362,34 @@ DataRow::~DataRow()
   VACA_TRACE("~DataRow()\n");
 
   // remove values for each column
-  for (std::vector<DataValue *>::iterator
+  for (std::vector<DataValue*>::iterator
 	 it = m_values.begin(); it != m_values.end(); ++it)
     delete *it;
 }
 
-DataTable *DataRow::getTable()
+DataTable* DataRow::getTable()
 {
   return m_table;
 }
 
-DataValue *DataRow::getValue(int columntIndex)
+DataValue* DataRow::getValue(int columntIndex)
 {
   return m_values[columntIndex];
 }
 
-void DataRow::setValue(int columntIndex, DataValue *value)
+void DataRow::setValue(int columntIndex, DataValue* value)
 {
   delete m_values[columntIndex];
   m_values[columntIndex] = value;
 }
 
-// DataColumn *DataRow::operator[](int index)
+// DataColumn* DataRow::operator[](int index)
 // {
 //   assert(m_table != NULL);
 //   return (*m_table)[index];
 // }
 
-// DataColumn *DataRow::operator[](const String &columnName)
+// DataColumn* DataRow::operator[](const String& columnName)
 // {
 //   assert(m_table != NULL);
 //   return (*m_table)[columnName];
@@ -1416,17 +1416,17 @@ private:
 
   struct Student {
     int id;
-    const char *name;
+    const char* name;
     int age;
     String clas;
     bool subscribed;
     double average;
   };
   
-  DataSet *createDataSet()
+  DataSet* createDataSet()
   {
-    DataSet *set(new DataSet());
-    DataTable *table(new DataTable());
+    DataSet* set(new DataSet());
+    DataTable* table(new DataTable());
     set->addTable(table);
 
     table->addColumn(new DataColumn("ID", new DataIntValue(0)));
@@ -1444,7 +1444,7 @@ private:
     };
 
     for (int i=0; i<4; ++i) {
-      DataRow *row = table->createRow();
+      DataRow* row = table->createRow();
       row->setValue(0, new DataIntValue   (students[i].id));
       row->setValue(1, new DataStringValue(students[i].name));
       row->setValue(2, new DataIntValue   (students[i].age));
@@ -1473,7 +1473,7 @@ public:
 int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		   LPSTR lpCmdLine, int nCmdShow)
 {
-  Example *app(new Example);
+  Example* app(new Example);
   app->run();
   delete app;
   return 0;

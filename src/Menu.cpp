@@ -544,7 +544,7 @@ MenuItem* Menu::remove(MenuItem* menuItem)
 
   menuItem->m_parent = NULL;
 
-  remove_element_from_container(m_container, menuItem);
+  remove_from_container(m_container, menuItem);
 
   return menuItem;
 }

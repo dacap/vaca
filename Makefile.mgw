@@ -51,9 +51,9 @@ LIB_SOURCES = Anchor AnchorLayout Application BandedDockArea		\
 	      BasicDockArea Bix BoxConstraint BoxLayout Brush Button	\
 	      ButtonBase CancelableEvent CheckBox ClientLayout		\
 	      Clipboard CloseEvent Color ColorDialog ComboBox		\
-	      CommonDialog Component Condition Constraint Cursor	\
-	      CustomButton CustomLabel Debug Dialog DockArea DockBar	\
-	      DockFrame DropFilesEvent Edit Event FileDialog		\
+	      CommonDialog Component ConditionVariable Constraint	\
+	      Cursor CustomButton CustomLabel Debug Dialog DockArea	\
+	      DockBar DockFrame DropFilesEvent Edit Event FileDialog	\
 	      FindTextDialog Font FontDialog Frame Graphics GroupBox	\
 	      Icon Image ImageList KeyEvent Keys Label Layout		\
 	      LinkLabel ListBox ListView Mdi Menu MenuItemEvent		\
@@ -319,10 +319,10 @@ deps:
 	$(GXX) -MM $(CXXFLAGS) examples/*/*.cpp | sed -e 's|^\([A-Za-z_0-9]\+\)|obj/Example.\1\$$\(SUFFIX\)|' >> .deps
 
 clean:
-	-$(RM) -f obj/*$(OBJ) obj/*.res
+	-$(RM) -f bin/*.ilk bin/*.pdb obj/*.res obj/*.o obj/*.obj
 
 distclean: clean
-	-$(RM) -f lib/*$(LIB) $(VACA_DLL) $(EXAMPLES_EXE)
+	-$(RM) -f bin/*.dll bin/*.exe lib/*.a lib/*.lib
 
 ifdef MINGW_ROOT
 install: $(VACA_LIB) $(VACA_DLL)

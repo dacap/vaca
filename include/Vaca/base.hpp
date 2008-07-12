@@ -50,7 +50,7 @@ namespace Vaca {
 
 #define VACA_VERSION     0
 #define VACA_SUB_VERSION 0
-#define VACA_WIP_VERSION 5
+#define VACA_WIP_VERSION 6
 
 #ifdef VACA_STATIC
   #define VACA_DLL
@@ -114,7 +114,10 @@ struct TextAlignEnum
 };
 
 /**
- * Horizontal alignment.
+ * Horizontal alignment. One of the following values:
+ * @li TextAlign::Left
+ * @li TextAlign::Center
+ * @li TextAlign::Right
  */
 typedef Enum<TextAlignEnum> TextAlign;
 
@@ -134,7 +137,10 @@ struct VerticalAlignEnum
 };
 
 /**
- * Vertical alignment.
+ * Vertical alignment. One of the following values:
+ * @li VerticalAlign::Top
+ * @li VerticalAlign::Middle
+ * @li VerticalAlign::Bottom
  */
 typedef Enum<VerticalAlignEnum> VerticalAlign;
 
@@ -155,11 +161,11 @@ struct SideEnum
 };
 
 /**
- * A side can be one of the following values:
- * - Side::Left
- * - Side::Top
- * - Side::Right
- * - Side::Bottom
+ * A side. One of the following values:
+ * @li Side::Left
+ * @li Side::Top
+ * @li Side::Right
+ * @li Side::Bottom
  */
 typedef Enum<SideEnum> Side;
 
@@ -181,11 +187,11 @@ struct BordersEnumSet
 };
 
 /**
- * Borders can be a zero or more of the following values:
- * - Borders::Left
- * - Borders::Top
- * - Borders::Right
- * - Borders::Bottom
+ * A set of borders. Zero or more of the following values:
+ * @li Borders::Left
+ * @li Borders::Top
+ * @li Borders::Right
+ * @li Borders::Bottom
  */
 typedef EnumSet<BordersEnumSet> Borders;
 
@@ -198,8 +204,8 @@ typedef EnumSet<BordersEnumSet> Borders;
  */
 template<typename _ContainerType,
 	 typename _ElementType>
-void remove_element_from_container(_ContainerType& container,
-				   const _ElementType& element)
+void remove_from_container(_ContainerType& container,
+			   const _ElementType& element)
 {
   typename _ContainerType::iterator
     it = std::find(container.begin(),

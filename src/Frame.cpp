@@ -484,7 +484,7 @@ void Frame::addDockArea(DockArea* dockArea)
  */
 void Frame::removeDockArea(DockArea* dockArea)
 {
-  remove_element_from_container(m_dockAreas, dockArea);
+  remove_from_container(m_dockAreas, dockArea);
 }
 
 /**

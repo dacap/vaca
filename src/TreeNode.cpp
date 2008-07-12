@@ -54,7 +54,7 @@ TreeNode::~TreeNode()
 
   // remove this node from the "m_children" field of the parent
   if (m_parent != NULL)
-    remove_element_from_container(m_parent->m_children, this);
+    remove_from_container(m_parent->m_children, this);
 
   // clone "m_children" collection, because when a TreeNode is
   // deleted, it is removed by its self from the m_children of the
@@ -102,7 +102,7 @@ void TreeNode::removeNode(TreeNode* node)
   assert(node->m_parent == this);
 
   // remove this node from the "m_children" container of the parent
-  remove_element_from_container(this->m_children, node);
+  remove_from_container(this->m_children, node);
 
   node->m_parent = NULL;
   node->removeFromTreeView();

@@ -59,7 +59,7 @@ class Console : public MultilineEdit
   
 public:
 
-  Console(Widget *parent)
+  Console(Widget* parent)
     : MultilineEdit("", parent, MultilineEditStyle + ScrollStyle)
     , m_font("Courier New", 10)
   {

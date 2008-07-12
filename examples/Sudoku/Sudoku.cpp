@@ -90,7 +90,7 @@ class InsertSeedDialog : public Dialog
 
 public:
 
-  InsertSeedDialog(Widget *parent)
+  InsertSeedDialog(Widget* parent)
     : Dialog("Game Seed", parent)
     , mTop(this)
     , mBottom(this)
@@ -382,8 +382,8 @@ protected:
       m_hotCell->digit = digit;
 
       // remove the new selected entry from the history
-      remove_element_from_container(m_hotCell->history,
-				    m_hotCell->digit);
+      remove_from_container(m_hotCell->history,
+			    m_hotCell->digit);
 
       // check warning & win
       updateWarnings();
@@ -427,9 +427,9 @@ protected:
 
 private:
 
-  MenuBar *createMenuBar()
+  MenuBar* createMenuBar()
   {
-    Menu *gameMenu = new Menu("&Game");
+    Menu* gameMenu = new Menu("&Game");
     gameMenu->add("&New\tCtrl+Shift+N", Keys::Control | Keys::Shift | Keys::N)
       ->Action.connect(Bind(&MainFrame::onNew, this));
     gameMenu->add("New with &seed\tCtrl+N", Keys::Control | Keys::N)
@@ -437,7 +437,7 @@ private:
     gameMenu->addSeparator();
     gameMenu->add("&Exit")->Action.connect(Bind(&MainFrame::setVisible, this, false));
 
-    MenuBar *menuBar = new MenuBar;
+    MenuBar* menuBar = new MenuBar;
     menuBar->add(gameMenu);
     menuBar->add("&Help")->Action.connect(Bind(&MainFrame::onHelp, this));
 
@@ -588,7 +588,7 @@ private:
       for (int i=0; i<9; i++) {
 	for (int j=0; j<givens_for_digit[i]; j++) {
 	  grid_iterator it = digits[i][rand() % digits[i].size()];
-	  remove_element_from_container(digits[i], it);
+	  remove_from_container(digits[i], it);
 	  it->given = true;
 	}
       }
@@ -798,7 +798,7 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 {
   srand(static_cast<unsigned int>(time(NULL)));
 
-  Example *app(new Example);
+  Example* app(new Example);
   app->run();
   delete app;
   return 0;

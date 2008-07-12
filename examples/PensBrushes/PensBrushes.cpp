@@ -44,7 +44,7 @@ class Preview : public Panel
   
 public:
 
-  Preview(int penWidth, Widget *parent)
+  Preview(int penWidth, Widget* parent)
     : Panel(parent, PanelStyle + ClientEdgeStyle)
     , m_pen(Color::Red, penWidth)
     , m_brush(Color(0, 0, 200))
@@ -262,7 +262,7 @@ public:
 int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		   LPSTR lpCmdLine, int nCmdShow)
 {
-  Example *app(new Example);
+  Example* app(new Example);
   app->run();
   delete app;
   return 0;

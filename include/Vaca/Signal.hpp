@@ -42,6 +42,9 @@ namespace Vaca {
   //////////////////////////////////////////////////////////////////////
   // Signal0_base<R>
 
+  /**
+   * Base class for signals which call functions without parameters.
+   */
   template<typename R>
   class Signal0_base
   {
@@ -93,7 +96,7 @@ namespace Vaca {
 
     void disconnect(SlotType* slot)
     {
-      remove_element_from_container(m_slots, slot);
+      remove_from_container(m_slots, slot);
     }
 
     void disconnectAll()
@@ -178,6 +181,9 @@ namespace Vaca {
   //////////////////////////////////////////////////////////////////////
   // Signal1_base<R, A1>
 
+  /**
+   * Base class for signals which call functions with one parameter.
+   */
   template<typename R, typename A1>
   class Signal1_base
   {
@@ -229,7 +235,7 @@ namespace Vaca {
 
     void disconnect(SlotType* slot)
     {
-      remove_element_from_container(m_slots, slot);
+      remove_from_container(m_slots, slot);
     }
 
     void disconnectAll()
@@ -314,6 +320,9 @@ namespace Vaca {
   //////////////////////////////////////////////////////////////////////
   // Signal2_base<R, A1, A2>
 
+  /**
+   * Base class for signals which call functions with two parameters.
+   */
   template<typename R, typename A1, typename A2>
   class Signal2_base
   {
@@ -365,7 +374,7 @@ namespace Vaca {
 
     void disconnect(SlotType* slot)
     {
-      remove_element_from_container(m_slots, slot);
+      remove_from_container(m_slots, slot);
     }
 
     void disconnectAll()

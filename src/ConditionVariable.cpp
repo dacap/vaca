@@ -33,7 +33,7 @@
 // Vaca - Visual Application Components Abstraction
 // Adapted by David A. Capello
 
-#include "Vaca/Condition.hpp"
+#include "Vaca/ConditionVariable.hpp"
 #include "Vaca/ScopedLock.hpp"
 
 #include <cassert>
@@ -51,7 +51,7 @@ public:
   { m_lock.getMutex().lock(); }
 };
 
-Condition::Condition()
+ConditionVariable::ConditionVariable()
   : m_gone(0)
   , m_blocked(0)
   , m_waiting(0)
@@ -64,18 +64,18 @@ Condition::Condition()
     if (m_gate) CloseHandle(reinterpret_cast<HANDLE>(m_gate));
     if (m_queue) CloseHandle(reinterpret_cast<HANDLE>(m_queue));
     if (m_mutex) CloseHandle(reinterpret_cast<HANDLE>(m_mutex));
-    throw CreateConditionException();
+    throw CreateConditionVariableException();
   }
 }
 
-Condition::~Condition()
+ConditionVariable::~ConditionVariable()
 {
   CloseHandle(reinterpret_cast<HANDLE>(m_gate));
   CloseHandle(reinterpret_cast<HANDLE>(m_queue));
   CloseHandle(reinterpret_cast<HANDLE>(m_mutex));
 }
 
-void Condition::notifyOne()
+void ConditionVariable::notifyOne()
 {
   unsigned signals = 0;
 
@@ -121,7 +121,7 @@ void Condition::notifyOne()
   }
 }
 
-void Condition::notifyAll()
+void ConditionVariable::notifyAll()
 {
   unsigned signals = 0;
 
@@ -165,7 +165,7 @@ void Condition::notifyAll()
   }
 }
 
-void Condition::wait(ScopedLock& lock)
+void ConditionVariable::wait(ScopedLock& lock)
 {
   enterWait();
   ScopedUnlock unlock(lock);
@@ -219,7 +219,7 @@ void Condition::wait(ScopedLock& lock)
   }
 }
 
-bool Condition::waitFor(ScopedLock& lock, double seconds)
+bool ConditionVariable::waitFor(ScopedLock& lock, double seconds)
 {
   enterWait();
   ScopedUnlock unlock(lock);
@@ -298,7 +298,7 @@ bool Condition::waitFor(ScopedLock& lock, double seconds)
   return ret;
 }
 
-void Condition::enterWait()
+void ConditionVariable::enterWait()
 {
   int res = 0;
   res = WaitForSingleObject(reinterpret_cast<HANDLE>(m_gate), INFINITE);

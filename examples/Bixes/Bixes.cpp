@@ -49,17 +49,19 @@ public:
     Matrix
   };
 
+  typedef std::vector<Element*> Elements;
+
 private:
 
   String m_name;
   Type m_type;
   int m_columns;
-  Element *m_parent;
-  std::vector<Element *> m_children;
+  Element* m_parent;
+  Elements m_children;
 
 public:
 
-  Element(const String &name, Type type, int columns = 0) {
+  Element(const String& name, Type type, int columns = 0) {
     m_name = name;
     m_type = type;
     m_parent = NULL;
@@ -67,45 +69,27 @@ public:
   }
 
   virtual ~Element() {
-    std::vector<Element *>::iterator it;
+    Elements::iterator it;
     for (it = m_children.begin(); it != m_children.end(); ++it)
       delete *it;
   }
 
-  String getName() {
-    return m_name;
-  }
+  String getName() const { return m_name; }
+  Type getType() const { return m_type; }
+  int getColumns() const { return m_columns; }
+  Element* getParent() const { return m_parent; }
+  Elements getChildren() const { return m_children; }
 
-  void setName(const String &name) {
-    m_name = name;
-  }
+  void setName(const String& name) { m_name = name; }
+  void setType(Type type) { m_type = type; }
+  void setColumns(int columns) { m_columns = columns; }
 
-  Type getType() {
-    return m_type;
-  }
-
-  void setType(Type type) {
-    m_type = type;
-  }
-
-  int getColumns() {
-    return m_columns;
-  }
-
-  void setColumns(int columns) {
-    m_columns = columns;
-  }
-
-  bool acceptChildren() {
+  bool acceptChildren() const {
     return m_type != Element::Widget;
   }
 
-  Element *getParent() {
-    return m_parent;
-  }
-
-  bool isAncestor(Element *parent) {
-    Element *p = m_parent;
+  bool isAncestor(Element* parent) const {
+    Element* p = m_parent;
     
     while (p != NULL) {
       if (p == parent)
@@ -116,17 +100,13 @@ public:
     return false;
   }
 
-  std::vector<Element *> getChildren() {
-    return m_children;
-  }
-
-  void add(Element *e) {
+  void add(Element* e) {
     m_children.push_back(e);
     e->m_parent = this; 
   }
 
-  void remove(Element *e) {
-    remove_element_from_container(m_children, e);
+  void remove(Element* e) {
+    remove_from_container(m_children, e);
     e->m_parent = NULL; 
   }
 
@@ -137,7 +117,7 @@ public:
 
 class Model
 {
-  Element *m_root;
+  Element* m_root;
 
 public:
 
@@ -155,11 +135,11 @@ public:
       delete m_root;
   }
 
-  Element *getRoot() {
+  Element* getRoot() const {
     return m_root;
   }
 
-  void addElement(Element *element, Element *parent = NULL)
+  void addElement(Element* element, Element* parent = NULL)
   {
     if (parent == NULL)
       parent = m_root;
@@ -174,11 +154,11 @@ public:
     AfterAddElement(element);
   }
 
-  void removeElement(Element *element)
+  void removeElement(Element* element)
   {
     BeforeRemoveElement(element);
 
-    Element *parent = element->getParent();
+    Element* parent = element->getParent();
     if (parent != NULL)
       parent->remove(element);
     else if (element == m_root)
@@ -194,16 +174,16 @@ public:
 
 class ElementViewAsTreeNode : public TreeNode
 {
-  Element *m_element;
+  Element* m_element;
 
 public:
-  ElementViewAsTreeNode(Element *element)
+  ElementViewAsTreeNode(Element* element)
     : TreeNode(element->getName())
   {
     m_element = element;
   }
 
-  Element *getElement() {
+  Element* getElement() {
     return m_element;
   }
 };
@@ -213,13 +193,13 @@ public:
 
 class ModelViewAsTreeView : public TreeView
 {
-  Model *m_model;
+  Model* m_model;
     
 public:
 
   Signal1<void, Element*> ElementSelected;
 
-  ModelViewAsTreeView(Model *model, Widget *parent)
+  ModelViewAsTreeView(Model* model, Widget* parent)
     : TreeView(parent)
     , m_model(model)
   {
@@ -229,7 +209,7 @@ public:
     m_model->AfterRemoveElement.connect(&ModelViewAsTreeView::onAfterRemoveElement, this);
   }
 
-  void selectElement(Element *element)
+  void selectElement(Element* element)
   {
     TreeView::iterator it;
 
@@ -300,7 +280,7 @@ private:
   {
   }
 
-  ElementViewAsTreeNode *findNodeByElement(Element* element)
+  ElementViewAsTreeNode* findNodeByElement(Element* element)
   {
     TreeView::iterator it;
 
@@ -336,7 +316,7 @@ public:
     Change.connect(&ElementViewAsWidgets::onChange, this);
   }
 
-  Element *getElement() {
+  Element* getElement() {
     return m_element;
   }
 
@@ -355,13 +335,13 @@ public:
 
 protected:
 
-  virtual void onGotFocus(Event &ev)
+  virtual void onGotFocus(Event& ev)
   {
     MultilineEdit::onGotFocus(ev);
     ElementSelected(m_element);
   }
 
-  virtual void onLostFocus(Event &ev)
+  virtual void onLostFocus(Event& ev)
   {
     MultilineEdit::onLostFocus(ev);
   }
@@ -385,7 +365,7 @@ public:
 
   Signal1<void, Element*> ElementSelected;
 
-  ModelViewAsWidgets(Model *model, Widget *parent)
+  ModelViewAsWidgets(Model* model, Widget* parent)
     : Panel(parent, PanelStyle + ClientEdgeStyle)
     , m_model(model)
     , m_bix(NULL)
@@ -404,7 +384,7 @@ public:
       delete *it;
   }
 
-  void selectElement(Element *element)
+  void selectElement(Element* element)
   {
     Container children = getChildren();
     Container::iterator it;
@@ -423,7 +403,7 @@ public:
 
 private:
 
-  int convertElementTypeToBixFlags(Element *element)
+  int convertElementTypeToBixFlags(Element* element)
   {
     switch (element->getType()) {
       case Element::Row:    return BixRow; break;
@@ -434,7 +414,7 @@ private:
     }
   }
 
-  void onBeforeAddElement(Element *element, Element *parent)
+  void onBeforeAddElement(Element* element, Element* parent)
   {
     int flags = convertElementTypeToBixFlags(element);
 
@@ -451,10 +431,10 @@ private:
       }
     }
     else {
-      Bix *parentBix = m_mapElemBix[parent];
+      Bix* parentBix = m_mapElemBix[parent];
       
       if (flags == 0) {
-	ElementViewAsWidgets *elementWidget = new ElementViewAsWidgets(element, this);
+	ElementViewAsWidgets* elementWidget = new ElementViewAsWidgets(element, this);
 	elementWidget->ElementSelected.connect(&ModelViewAsWidgets::onElementSelected, this);
 	parentBix->add(elementWidget);
       }
@@ -481,11 +461,11 @@ private:
 //     invalidate(false);
   }
 
-  void onAfterAddElement(Element *element)
+  void onAfterAddElement(Element* element)
   {
   }
 
-  void onBeforeRemoveElement(Element *element)
+  void onBeforeRemoveElement(Element* element)
   {
     if (element->getType() == Element::Widget) {
       Container children = getChildren();
@@ -494,8 +474,8 @@ private:
 	ElementViewAsWidgets* w = dynamic_cast<ElementViewAsWidgets*>(*it);
 
 	if (w->getElement() == element) {
-	  Element *parentElement = element->getParent();
-	  Bix *parentBix = m_mapElemBix[parentElement];
+	  Element* parentElement = element->getParent();
+	  Bix* parentBix = m_mapElemBix[parentElement];
 
 	  parentBix->remove(w);
 	  w->getParent()->removeChild(w, true);
@@ -517,7 +497,7 @@ private:
       }
 
       if (element->getParent() != NULL) {
-	Bix *parentBix = m_mapElemBix[element->getParent()];
+	Bix* parentBix = m_mapElemBix[element->getParent()];
 	if (parentBix != NULL)
 	  parentBix->remove(m_mapElemBix[element]);
       }
@@ -530,11 +510,11 @@ private:
     layout();
   }
   
-  void onAfterRemoveElement(Element *element, Element *parent)
+  void onAfterRemoveElement(Element* element, Element* parent)
   {
   }
 
-  void onElementSelected(Element *element)
+  void onElementSelected(Element* element)
   {
     selectElement(element);
     ElementSelected(element);
@@ -547,7 +527,7 @@ private:
 class MainFrame : public Frame
 {
   Model m_model;
-  Element *m_selectedElement;
+  Element* m_selectedElement;
   ModelViewAsTreeView m_treeView;
   ModelViewAsWidgets m_widgetsView;
   ToolBar m_toolBar;
@@ -581,7 +561,7 @@ public:
     m_toolBar.getSet().addButton(0, IDM_ADD_COLUMN, TBSTATE_ENABLED);
     m_toolBar.getSet().addButton(1, IDM_ADD_ROW, TBSTATE_ENABLED);
     m_toolBar.getSet().addButton(2, IDM_ADD_MATRIX, TBSTATE_ENABLED);
-    m_toolBar.getSet().addButton(3, IDM_ADD_WIDGET, TBSTATE_ENABLED);
+    m_toolBar.getSet().addButton(3, IDM_ADD_WIDGET, TBSTATE_ENABLED | TBSTATE_HIDDEN);
     m_toolBar.getSet().addSeparator();
     m_toolBar.getSet().addButton(4, IDM_REMOVE, TBSTATE_ENABLED);
     m_toolBar.getSet().addSeparator();
@@ -595,7 +575,6 @@ public:
   }
 
 protected:
-
   
   virtual bool onActionById(int actionId)
   {
@@ -628,9 +607,9 @@ protected:
 	break;
 
       default:
-	return false;		// "id" not used
+	return false;		// "actionId" wasn't used
     }
-    return true;		// "id" was used
+    return true;		// "actionId" was used
   }
 
 private:
@@ -638,8 +617,8 @@ private:
   // adds the specified type of element has a child of the selected element
   void onAddElement(Element::Type elementType, int columns = 0)
   {
-    if (m_selectedElement == NULL ||
-	m_selectedElement->acceptChildren()) {
+    if ((m_selectedElement == NULL && m_model.getRoot() == NULL) ||
+	(m_selectedElement != NULL && m_selectedElement->acceptChildren())) {
       String name = "Unknown";
 
       switch (elementType) {
@@ -651,6 +630,9 @@ private:
 
       m_model.addElement(new Element(name, elementType, columns),
 			 m_selectedElement);
+
+      if (m_selectedElement == NULL)
+	m_treeView.selectElement(m_model.getRoot());
     }
   }
 
@@ -658,7 +640,7 @@ private:
   void onRemoveElement()
   {
     if (m_selectedElement != NULL) {
-      Element *e = m_selectedElement;
+      Element* e = m_selectedElement;
       m_selectedElement = NULL;
 
       m_model.removeElement(e);
@@ -666,7 +648,7 @@ private:
     }
   }
 
-  void onElementSelectedFromTreeView(Element *element)
+  void onElementSelectedFromTreeView(Element* element)
   {
     if (!m_disableReselect) {
       m_selectedElement = element;
@@ -677,7 +659,7 @@ private:
     }
   }
 
-  void onElementSelectedFromWidgets(Element *element)
+  void onElementSelectedFromWidgets(Element* element)
   {
     if (!m_disableReselect) {
       m_selectedElement = element;
@@ -688,7 +670,7 @@ private:
     }
   }
 
-  bool askIntValue(int &retValue)
+  bool askIntValue(int& retValue)
   {
     Dialog dlg("Insert a value", this);
     Label label("Number of columns of the matrix:", &dlg);
@@ -734,7 +716,7 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     frame.setVisible(true);
     app.run();
   }
-  catch (Exception &e) {
+  catch (Exception& e) {
     e.show();
   }
   return 0;

@@ -155,7 +155,7 @@ See @ref TN008.
     @link Vaca::Thread Thread@endlink,
     @link Vaca::Mutex Mutex@endlink,
     @link Vaca::ScopedLock ScopedLock@endlink,
-    @link Vaca::Condition Condition@endlink.
+    @link Vaca::ConditionVariable ConditionVariable@endlink.
 @li Error handling:
     @link Vaca::Exception Exception@endlink.
 

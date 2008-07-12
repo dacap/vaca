@@ -43,13 +43,13 @@ class Document;
 class View
 {
 protected:
-  Document *m_document;
+  Document* m_document;
 
 public:
   virtual ~View() { }
   virtual void onNotifyDocument() = 0;
 
-  virtual Document *getDocument() { return m_document; }
+  virtual Document* getDocument() { return m_document; }
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -59,9 +59,9 @@ class Document
 {
   String m_fileName;		// current file name for the document
   bool m_hasFileName;		// this document has a file name?
-  std::vector<View *> m_views;	// Views attached to this Document
+  std::vector<View*> m_views;	// Views attached to this Document
 
-  typedef std::vector<View *>::iterator iterator;
+  typedef std::vector<View*>::iterator iterator;
 
 public:
   
@@ -71,19 +71,19 @@ public:
   {
   }
 
-  void addView(View *view)
+  void addView(View* view)
   {
     m_views.push_back(view);
     notify();
   }
 
-  void removeView(View *view)
+  void removeView(View* view)
   {
-    remove_element_from_container(m_views, view);
+    remove_from_container(m_views, view);
     notify();
   }
 
-  int getViewNumber(View *view)
+  int getViewNumber(View* view)
   {
     int index = 1;
     for (iterator it=m_views.begin(); it!=m_views.end(); ++it, ++index) {
@@ -128,7 +128,7 @@ class TextEditor : public MdiChild, public View
 public:
 
   // creates a new TextEditor
-  TextEditor(const String &fileName, bool hasFileName, MdiFrame *parent)
+  TextEditor(const String& fileName, bool hasFileName, MdiFrame* parent)
     : MdiChild(fileName.getFileName(), parent,
 	       MdiChildStyle + ClientEdgeStyle)
     , m_editor(this)
@@ -143,7 +143,7 @@ public:
   // creates a new view for the specified textEditor
   TextEditor(TextEditor &textEditor)
     : MdiChild(textEditor.getText(),
-	       dynamic_cast<MdiClient *>(textEditor.getParent()),
+	       dynamic_cast<MdiClient*>(textEditor.getParent()),
 	       MdiChildStyle + ClientEdgeStyle)
     , View()
     , m_editor(this)
@@ -282,7 +282,7 @@ class MainFrame : public MdiFrame
   int m_docCounter; // counter for documents (only to make "Untitled1", "Untitled2", etc.)
   Font m_font;
   bool m_viewEol;
-  FindTextDialog *m_findDlg;
+  FindTextDialog* m_findDlg;
 
 public:
 
@@ -303,21 +303,21 @@ public:
     Widget::Container editors = getMdiClient()->getChildren();
 
     for (Widget::Container::iterator it=editors.begin(); it!=editors.end(); ++it) {
-      TextEditor *textEditor = dynamic_cast<TextEditor *>(*it);
+      TextEditor* textEditor = dynamic_cast<TextEditor*>(*it);
       delete_widget(textEditor);
     }
   }
 
 private:
 
-  MenuBar *createMenuBar()
+  MenuBar* createMenuBar()
   {
-    MenuBar *menuBar = new MenuBar;
-    Menu *fileMenu = new Menu("&File");
-    Menu *editMenu = new Menu("&Edit");
-    Menu *optionsMenu = new Menu("&Options");
-    MdiListMenu *windowsMenu = new MdiListMenu("&Windows");
-    MenuItem *menuItem;
+    MenuBar* menuBar = new MenuBar;
+    Menu* fileMenu = new Menu("&File");
+    Menu* editMenu = new Menu("&Edit");
+    Menu* optionsMenu = new Menu("&Options");
+    MdiListMenu* windowsMenu = new MdiListMenu("&Windows");
+    MenuItem* menuItem;
 
     // File/New
     menuItem = fileMenu->add("&New\tCtrl+N", Keys::Control | Keys::N);
@@ -451,7 +451,7 @@ private:
 	String fileName = *it;
 
 	// check if this file is already opened
-	TextEditor *textEditor = getTextEditorByFileName(fileName);
+	TextEditor* textEditor = getTextEditorByFileName(fileName);
 
 	// active that editor (if exist)
 	if (textEditor != NULL) {
@@ -483,7 +483,7 @@ private:
 
   void onUpdate_forSave(MenuItemEvent& ev)
   {
-    TextEditor *textEditor = getTextEditor();
+    TextEditor* textEditor = getTextEditor();
     ev.getMenuItem()->setEnabled((textEditor != NULL)
 				 && (!(textEditor->hasFileName())
 				     || (textEditor->getEditor().isModified())));
@@ -515,7 +515,7 @@ private:
 
   void onUpdate_canUndo(MenuItemEvent &ev)
   {
-    TextEditor *textEditor = getTextEditor();
+    TextEditor* textEditor = getTextEditor();
     ev.getMenuItem()->setEnabled((textEditor != NULL)
 				 && (textEditor->getEditor().canUndo()));
   }
@@ -527,7 +527,7 @@ private:
 
   void onUpdate_canRedo(MenuItemEvent &ev)
   {
-    TextEditor *textEditor = getTextEditor();
+    TextEditor* textEditor = getTextEditor();
     ev.getMenuItem()->setEnabled((textEditor != NULL)
 				 && (textEditor->getEditor().canRedo()));
   }
@@ -646,7 +646,7 @@ private:
 
       // set the font of all editors
       for (Widget::Container::iterator it=editors.begin(); it!=editors.end(); ++it)
-	dynamic_cast<TextEditor *>(*it)->getEditor().setFont(&m_font);
+	dynamic_cast<TextEditor*>(*it)->getEditor().setFont(&m_font);
     }
   }
 
@@ -658,7 +658,7 @@ private:
     Widget::Container editors = getMdiClient()->getChildren();
 
     for (Widget::Container::iterator it=editors.begin(); it!=editors.end(); ++it)
-      dynamic_cast<TextEditor *>(*it)->getEditor().setViewEol(m_viewEol);
+      dynamic_cast<TextEditor*>(*it)->getEditor().setViewEol(m_viewEol);
   }
 
   void onUpdate_viewEol(MenuItemEvent &ev)
@@ -668,7 +668,7 @@ private:
 
   void onCloseWindow()
   {
-    TextEditor *textEditor = getTextEditor();
+    TextEditor* textEditor = getTextEditor();
     if (closeTextEditor(textEditor, false))
       delete_widget(textEditor);
   }
@@ -681,7 +681,7 @@ private:
   // when the user press the close button in a MdiChild (TextEditor child)
   void onCloseTextEditor(CloseEvent& ev)
   {
-    TextEditor *textEditor = dynamic_cast<TextEditor *>(ev.getSource());
+    TextEditor* textEditor = dynamic_cast<TextEditor*>(ev.getSource());
 
     // show the warning dialog
     if (closeTextEditor(textEditor, false)) {
@@ -708,13 +708,13 @@ private:
   {
     MdiFrame::onClose(ev);
 
-    std::vector<Document *> asked;
+    std::vector<Document*> asked;
     Widget::Container editors = getMdiClient()->getChildren();
 
     // for each children
     for (Widget::Container::iterator it=editors.begin(); it!=editors.end(); ++it) {
-      TextEditor *textEditor = dynamic_cast<TextEditor *>(*it);
-      Document *document = textEditor->getDocument();
+      TextEditor* textEditor = dynamic_cast<TextEditor*>(*it);
+      Document* document = textEditor->getDocument();
 
       // we already asked to close document?
       if (std::find(asked.begin(), asked.end(), document) != asked.end())
@@ -741,9 +741,9 @@ private:
 private:
 
   // returns the current text editor
-  TextEditor *getTextEditor()
+  TextEditor* getTextEditor()
   {
-    return dynamic_cast<TextEditor *>(getMdiClient()->getActive());
+    return dynamic_cast<TextEditor*>(getMdiClient()->getActive());
   }
 
   // adds file filters to the FileDialog
@@ -754,7 +754,7 @@ private:
   }
 
   // adds a new text editor to the application
-  void addTextEditor(TextEditor *textEditor)
+  void addTextEditor(TextEditor* textEditor)
   {
     // set the font of the editor to the current selected font
     textEditor->getEditor().setFont(&m_font);
@@ -769,7 +769,7 @@ private:
   // Saves the file that is associated with 'textEditor'.  Returns
   // true if the file was saved, or false in case of error or if the
   // user cancels the operation.
-  bool saveTextEditor(TextEditor *textEditor, const String &saveDialogTitle,
+  bool saveTextEditor(TextEditor* textEditor, const String& saveDialogTitle,
 		      bool forceSelectName)
   {
     // the file doesn't have a file name?
@@ -809,7 +809,7 @@ private:
   }
 
   // returns false if the user don't want to close the text editor
-  bool closeTextEditor(TextEditor *textEditor, bool forceAsk)
+  bool closeTextEditor(TextEditor* textEditor, bool forceAsk)
   {
     if (m_findDlg != NULL)
       onCancelFind();
@@ -832,13 +832,13 @@ private:
   }
 
   // returns the first found TextEditor that is editing the "fileName"
-  TextEditor *getTextEditorByFileName(const String &fileName)
+  TextEditor* getTextEditorByFileName(const String& fileName)
   {
     Widget::Container listOfTextEditors = getMdiClient()->getChildren();
     Widget::Container::iterator it;
 
     for (it=listOfTextEditors.begin(); it!=listOfTextEditors.end(); ++it) {
-      TextEditor *textEditor = dynamic_cast<TextEditor *>(*it);
+      TextEditor* textEditor = dynamic_cast<TextEditor*>(*it);
 
       if (textEditor->getFileName() == fileName)
 	return textEditor;
@@ -864,7 +864,7 @@ public:
 int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		   LPSTR lpCmdLine, int nCmdShow)
 {
-  Example *app(new Example);
+  Example* app(new Example);
   app->run();
   delete app;
   return 0;

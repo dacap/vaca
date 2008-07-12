@@ -116,7 +116,7 @@ protected:
     bool isHomogeneous = m_homogeneous.isSelected();
     
     // setup the new layout manager, and hold the old layout
-    Layout *oldLayout =
+    Layout* oldLayout =
       m_top.setLayout(new BoxLayout(newOrientation,
 				    isHomogeneous));
 
@@ -166,7 +166,7 @@ public:
 int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		   LPSTR lpCmdLine, int nCmdShow)
 {
-  Example *app(new Example);
+  Example* app(new Example);
   app->run();
   delete app;
   return 0;

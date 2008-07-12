@@ -56,6 +56,7 @@
 #include "Vaca/ComboBox.hpp"
 #include "Vaca/CommonDialog.hpp"
 #include "Vaca/Component.hpp"
+#include "Vaca/ConditionVariable.hpp"
 #include "Vaca/Constraint.hpp"
 #include "Vaca/Cursor.hpp"
 #include "Vaca/CustomButton.hpp"

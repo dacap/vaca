@@ -38,7 +38,7 @@ using namespace Vaca;
 
 namespace globals {
   LPMALLOC pMalloc = NULL;
-  IShellFolder *pDesktop = NULL;
+  IShellFolder* pDesktop = NULL;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -105,7 +105,7 @@ protected:
   
   virtual void onBeforeExpand(TreeViewEvent &ev)
   {
-    IShellFolder *pFolder = NULL;
+    IShellFolder* pFolder = NULL;
 
     // it's the desktop
     if (this->getParent() == NULL)
@@ -115,7 +115,7 @@ protected:
 
     if (pFolder != NULL) {
       if (getChildren().empty()) {
-	IEnumIDList *pEnum = NULL;
+	IEnumIDList* pEnum = NULL;
 	LPITEMIDLIST itemPidl = NULL;
 	ULONG fetched;
 
@@ -151,7 +151,7 @@ private:
   {
     STRRET strDispName;
     TCHAR pszDisplayName[MAX_PATH];
-    IShellFolder *pFolder = NULL;
+    IShellFolder* pFolder = NULL;
 
     if (this->getParent() == NULL)
       pFolder = globals::pDesktop;

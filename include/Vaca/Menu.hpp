@@ -53,10 +53,10 @@
 #include "Vaca/String.hpp"
 #include "Vaca/Event.hpp"
 #include "Vaca/Keys.hpp"
-#include "Vaca/Signal.hpp"
 
 namespace Vaca {
 
+class Frame;
 class MenuItemEvent;
 class MenuItem;
 class Menu;
@@ -68,21 +68,23 @@ class MdiListMenu;
  */
 class VACA_DLL MenuItem : public Component
 {
+  friend class Frame;
   friend class Menu;
 
-  Menu  *m_parent;
+  Menu* m_parent;
   String m_text;
-  int    m_id;
+  CommandId m_id;
   std::vector<Keys::Type> m_shortcuts;
 
 public:
 
   MenuItem();
-  MenuItem(const String& text, Keys::Type defaultShortcut = Keys::None, int id = -1);
+  MenuItem(const String& text, CommandId id = 0, Keys::Type defaultShortcut = Keys::None);
   virtual ~MenuItem();
 
-  Menu *getParent();
-  int getId();
+  Menu* getParent();
+  Menu* getRoot();
+  CommandId getId();
 
   const String& getText();
   void setText(const String& text);
@@ -97,19 +99,16 @@ public:
   void addShortcut(Keys::Type shortcut);
 //   void addShortcut(Shortcut shortcut);
 
-  virtual MenuItem *checkShortcuts(Keys::Type pressedKey);
+  virtual MenuItem* checkShortcuts(Keys::Type pressedKey);
 
   virtual bool isMenu() const;
   virtual bool isSeparator() const;
   virtual bool isMdiList() const;
 
+protected:
   // events
   virtual void onAction(MenuItemEvent& ev);
   virtual void onUpdate(MenuItemEvent& ev);
-
-  // signals
-  Signal1<void, MenuItemEvent&> Action; ///< @see onAction
-  Signal1<void, MenuItemEvent&> Update; ///< @see onUpdate
 };
 
 /**
@@ -118,12 +117,10 @@ public:
 class VACA_DLL MenuSeparator : public MenuItem
 {
 public:
-  
   MenuSeparator();
   virtual ~MenuSeparator();
 
   virtual bool isSeparator() const;
-  
 };
 
 //   class CheckBoxMenuItem : public MenuItem {
@@ -147,24 +144,21 @@ public:
 class VACA_DLL Menu : public MenuItem
 {
 public:
-
   typedef std::vector<MenuItem*> Container;
 
 private:
-
   HMENU m_HMENU;
   Container m_container;
 
 public:
-
   Menu();
   explicit Menu(const String& text);
-  explicit Menu(int menuId);
+  explicit Menu(CommandId menuId);
   explicit Menu(HMENU hmenu);
   virtual ~Menu();
 
   MenuItem* add(MenuItem* menuItem);
-  MenuItem* add(const String& text, Keys::Type defaultShortcut = Keys::None);
+  MenuItem* add(const String& text, CommandId id, Keys::Type defaultShortcut = Keys::None);
   void addSeparator();
 
   MenuItem* insert(int index, MenuItem* menuItem);
@@ -175,7 +169,7 @@ public:
   MenuItem* remove(int index);
 
   MenuItem* getMenuItemByIndex(int index);
-  MenuItem* getMenuItemById(int id);
+  MenuItem* getMenuItemById(CommandId id);
   int getMenuItemIndex(MenuItem* menuItem);
   // int getFirstMenuItemIndexByRadio(MenuItem* menuItem);
   // int getLastMenuItemIndexByRadio(MenuItem* menuItem);
@@ -193,9 +187,7 @@ public:
   HMENU getHMENU();
 
 private:
-
   void subClass();
-  
 };
 
 /**
@@ -203,14 +195,21 @@ private:
  */
 class VACA_DLL MenuBar : public Menu
 {
-public:
+  friend class Frame;
 
+  Frame* m_frame;
+
+public:
   MenuBar();
-  explicit MenuBar(int menuId);
+  explicit MenuBar(CommandId menuId);
   virtual ~MenuBar();
+
+  Frame* getFrame();
 
   MdiListMenu* getMdiListMenu();
 
+private:
+  void setFrame(Frame* frame);
 };
 
 /** 
@@ -219,12 +218,10 @@ public:
 class VACA_DLL MdiListMenu : public Menu
 {
 public:
-
   MdiListMenu(const String& text);
   virtual ~MdiListMenu();
 
   virtual bool isMdiList() const;
-
 };
 
 /*

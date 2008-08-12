@@ -48,18 +48,17 @@
 
 namespace Vaca {
 
+class Command;  
 class Constraint;
 class Cursor;
 class DropFilesEvent;
 class Event;
 class KeyEvent;
 class Layout;
+class MakeWidgetRef;
 class MouseEvent;
 class Widget;
 class WidgetClassName;
-
-void VACA_DLL delete_widget(Widget* widget);
-void __internal_checked_delete_widget(Widget* widget);
 
 //////////////////////////////////////////////////////////////////////
 // Win32 Regular Window Styles
@@ -330,11 +329,9 @@ typedef Enum<WidgetHitTestEnum> WidgetHitTest;
 class CreateWidgetException : public Exception
 {
 public:
-
   CreateWidgetException() : Exception() { }
   CreateWidgetException(const String& message) : Exception(message) { }
   virtual ~CreateWidgetException() throw() { }
-
 };
 
 /**
@@ -345,8 +342,8 @@ public:
  */
 class VACA_DLL Widget : public Component
 {
+  friend class MakeWidgetRef;
   friend void delete_widget(Widget* widget);
-  friend void Vaca::__internal_checked_delete_widget(Widget* widget);
   
 public:
 
@@ -412,7 +409,7 @@ private:
   /**
    * Use an automatic double-buffering technique to call the #onPaint event.
    *
-   * @see #setDoubleBuffered
+   * @see #setDoubleBuffered, #doPaint
    */
   bool m_doubleBuffered : 1;
 
@@ -444,17 +441,27 @@ private:
   // ============================================================
 
   /**
-   * Procedure of the original Win32 control (like BUTTON or EDIT).
+   * Procedure of the original Win32's control (like BUTTON or EDIT).
+   *
+   * It's set in #subClass method.
    */
   WNDPROC m_baseWndProc;
 
   /**
-   * Used to replace the DefWindowProc by other procedure (like DefFrameProc).
+   * The default Win32's window procedure to be called if a
+   * @link Thread::Message message@endlink isn't used.
+   * 
+   * By default it is Win32's DefWindowProc, but you can change it
+   * using #setDefWndProc to replace it with other procedure like
+   * Win32's DefFrameProc.
+   *
+   * @see #setDefWndProc, #defWndProc
    */
   WNDPROC m_defWndProc;
 
   /**
-   * Used by MdiChild to use WM_MDIDESTROY instead of DestroyWindow.
+   * Used by MdiChild to send a WM_MDIDESTROY instead of calling
+   * Win32's DestroyWindow function.
    */
   void (*m_destroyHWNDProc)(HWND hwnd);
 
@@ -543,6 +550,7 @@ public:
   void invalidate(bool eraseBg);
   void invalidate(const Rect& rc, bool eraseBg);
   void update();
+  void updateIndicators();
 
   // ===============================================================
   // COMMON PROPERTIES
@@ -594,7 +602,7 @@ public:
   void setScrollPoint(const Point& pt);
   void hideScrollBar(Orientation orientation);
 
-  int msgBox(const String& text, const String& title, int flags);
+  Command* findCommandById(CommandId id);
 
   HWND getHWND();
   HWND getParentHWND();
@@ -624,7 +632,6 @@ public:
   Signal0<void> CancelMode; ///< @see CancelMode
   Signal1<void, KeyEvent&> KeyUp; ///< @see onKeyUp
   Signal1<void, KeyEvent&> KeyDown; ///< @see onKeyDown
-  Signal1<void, KeyEvent&> KeyTyped; ///< @see onKeyTyped
   Signal1<void, Event&> GotFocus; ///< @see onGotFocus
   Signal1<void, Event&> LostFocus; ///< @see onLostFocus
   Signal1<void, DropFilesEvent&> DropFiles; ///< @see onDropFiles
@@ -647,12 +654,12 @@ protected:
   virtual void onMouseWheel(MouseEvent& ev);
   virtual void onCancelMode();
   virtual void onSetCursor(WidgetHitTest hitTest);
-  virtual void onKeyUp(KeyEvent& ev);
   virtual void onKeyDown(KeyEvent& ev);
-  virtual void onKeyTyped(KeyEvent& ev);
+  virtual void onKeyUp(KeyEvent& ev);
   virtual void onGotFocus(Event& ev);
   virtual void onLostFocus(Event& ev);
-  virtual bool onActionById(int actionId);
+  virtual bool onCommand(CommandId id);
+  virtual void onUpdateIndicators();
   virtual void onBeforePosChange();
   virtual void onAfterPosChange();
   virtual void onScroll(Orientation orientation, int code);
@@ -687,6 +694,24 @@ private:
   static LRESULT CALLBACK globalWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 };
+
+/**
+ * Makes a reference to the specified widget. Reference lives in the
+ * scope of the MakeWidgetRef's instance.
+ */
+class VACA_DLL MakeWidgetRef : private NonCopyable
+{
+  Widget::Container m_container;
+
+public:
+  MakeWidgetRef(Widget* widget);
+  virtual ~MakeWidgetRef();
+
+private:
+  void safeDelete(Widget* widget);
+};
+
+void VACA_DLL delete_widget(Widget* widget);
 
 } // namespace Vaca
 

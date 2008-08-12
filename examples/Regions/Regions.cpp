@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -169,6 +169,7 @@ private:
 class MainFrame : public Frame
 {
   TabBase m_tab;
+  Label m_label;
   Regions m_regions;
   Region m_regionA;
   Region m_regionB;
@@ -179,10 +180,12 @@ public:
   MainFrame()
     : Frame("Regions")
     , m_tab(this)
+    , m_label("Use right/left mouse buttons to draw/erase regions", this)
     , m_regions(&m_tab)
   {
-    setLayout(new ClientLayout);
-    m_tab.setLayout(new BoxLayout(Orientation::Vertical, true)); // as ClientLayout, but with borders
+    setLayout(new BoxLayout(Orientation::Vertical, false));
+    m_tab.setConstraint(new BoxConstraint(true));
+    m_tab.setLayout(new BoxLayout(Orientation::Vertical, true));
 
     m_tab.addPage("Region A");
     m_tab.addPage("Region B");
@@ -251,7 +254,7 @@ class Example : public Application
 {
   MainFrame m_mainFrame;
 public:
-  virtual void main(std::vector<String> args) {
+  virtual void main() {
     m_mainFrame.setVisible(true);
   }
 };

@@ -50,16 +50,16 @@ WINDRES = windres
 LIB_SOURCES = Anchor AnchorLayout Application BandedDockArea		\
 	      BasicDockArea Bix BoxConstraint BoxLayout Brush Button	\
 	      ButtonBase CancelableEvent CheckBox ClientLayout		\
-	      Clipboard CloseEvent Color ColorDialog ComboBox		\
+	      Clipboard CloseEvent Color ColorDialog ComboBox Command	\
 	      CommonDialog Component ConditionVariable Constraint	\
 	      Cursor CustomButton CustomLabel Debug Dialog DockArea	\
 	      DockBar DockFrame DropFilesEvent Edit Event FileDialog	\
 	      FindTextDialog Font FontDialog Frame Graphics GroupBox	\
 	      Icon Image ImageList KeyEvent Keys Label Layout		\
 	      LinkLabel ListBox ListView Mdi Menu MenuItemEvent		\
-	      MouseEvent Mutex Panel Pen Point ProgressBar RadioButton	\
-	      ReBar Rect Region ResourceId Scintilla Size Slider	\
-	      SpinButton Spinner String Style System Tab Thread		\
+	      MouseEvent MsgBox Mutex Panel Pen Point ProgressBar	\
+	      RadioButton ReBar Rect Region ResourceId Scintilla Size	\
+	      Slider SpinButton Spinner String Style System Tab Thread	\
 	      TimePoint Timer ToggleButton ToolBar TreeNode TreeView	\
 	      TreeViewEvent Vaca Widget WidgetClass
 
@@ -70,7 +70,7 @@ EXAMPLES = AnchorLayouts AutoCompletion Bixes BouncingBalls BoxLayouts	\
 	   MenuResource MiniExplorer PensBrushes Primitives		\
 	   ProgressBars Regions Scribble Sliders Spinners StdCommands	\
 	   Sudoku SystemImageList Tabs TextEditor Threads Timers	\
-	   ToolBars Trees
+	   ToolBars Trees Undo
 
 TESTS = \
 	test_bind \
@@ -287,6 +287,9 @@ bin/ToolBars$(SUFFIX)$(EXE): obj/Example.ToolBars$(SUFFIX)$(OBJ) obj/Example.Too
 bin/Bixes$(SUFFIX)$(EXE): obj/Example.Bixes$(SUFFIX)$(OBJ) obj/Example.Bixes.res $(VACA_LIB)
 	$(GXX) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
 
+bin/Commands$(SUFFIX)$(EXE): obj/Example.Commands$(SUFFIX)$(OBJ) obj/Example.Commands.res $(VACA_LIB)
+	$(GXX) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
+
 # tests
 
 bin/%$(EXE): obj/Test.%$(OBJ) $(VACA_LIB)
@@ -322,7 +325,7 @@ clean:
 	-$(RM) -f bin/*.ilk bin/*.pdb obj/*.res obj/*.o obj/*.obj
 
 distclean: clean
-	-$(RM) -f bin/*.dll bin/*.exe lib/*.a lib/*.lib
+	-$(RM) -f bin/Vaca*.dll bin/*.exe lib/*.a lib/*.lib
 
 ifdef MINGW_ROOT
 install: $(VACA_LIB) $(VACA_DLL)

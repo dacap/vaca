@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -33,8 +33,8 @@
 // about what classes are accesible: we have all the classes available
 #include <Vaca/Vaca.hpp>
 
-// we can use the Vaca namespace by default to avoid writting
-// Vaca::Frame, Vaca::LinkLabel, Vaca::Font, etc.
+// we can use the Vaca namespace by default to avoid writting things
+// like Vaca::Frame, Vaca::LinkLabel, Vaca::Font, etc.
 using namespace Vaca;
 
 // the main window
@@ -52,9 +52,10 @@ public:
   MainFrame()
     // call the parent class constructor, with the title "HelloWorld"
     : Frame("HelloWorld")
-    // construct the link with the URL and the label to show
+    // construct the link with the URL and the label to show,
+    // every Widget receive the parent, in this case, "this" pointer
     , m_label("http://vaca.sourceforge.net/", "Hello World!", this)
-    //  construct the font to use in the link
+    // construct a font to use in the link label
     , m_linkFont("Verdana", 14)
   {
     // set the layout to the client area, because the link'll use the
@@ -81,9 +82,8 @@ class Example : public Application
 
 public:
 
-  // the Vaca main routine, it's like Java, it's called when we use
-  // Application::run...
-  virtual void main(std::vector<String> args) {
+  // it's called when we use Application::run...
+  virtual void main() {
     // at this point the frame is created (the constructor was called
     // from the Example constructor)...
 
@@ -98,11 +98,11 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		   LPSTR lpCmdLine, int nCmdShow)
 {
   // create the example application
-  Example app;
+  std::auto_ptr<Example> app(new Example());
 
   // run the application (calling Example::main)
-  app.run();
+  app->run();
 
-  // no errors
+  // the destructor of auto_ptr deletes the "app"
   return 0;
 }

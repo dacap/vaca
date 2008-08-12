@@ -43,12 +43,55 @@
 
 using namespace Vaca;
 
-System::System()
+/**
+ * Returns the parameters.
+ */
+std::vector<String> System::getArgs()
 {
-}
+  // Convert the command-line to a vector of arguments...
+  std::vector<String> args;
 
-System::~System()
-{
+  LPTSTR cmdline = _tcsdup(GetCommandLine());
+  Character quote;
+
+  for (int i = 0; cmdline[i] != 0; ) {
+    // eat spaces
+    while (cmdline[i] != 0 && _istspace(cmdline[i]))
+      ++i;
+
+    // string with quotes?
+    if (cmdline[i] == '\"' || cmdline[i] == '\'')
+      quote = cmdline[i++];
+    else if (cmdline[i] == 0)
+      break;
+    else
+      quote = 0;
+
+    // read the string
+    String arg;
+    
+    for (; cmdline[i] != 0; ++i) {
+      // with quotes
+      if (quote != 0) {
+	if (cmdline[i] == quote) {
+	  ++i;
+	  break;
+	}
+	else if (cmdline[i] == '\\' && cmdline[i+1] == quote)
+	  ++i;
+      }
+      // without quotes
+      else if (_istspace(cmdline[i]))
+	break;
+
+      arg.push_back(cmdline[i]);
+    }
+
+    args.push_back(arg);
+  }
+
+  free(cmdline);
+  return args;
 }
 
 /**
@@ -418,6 +461,11 @@ bool System::isWin95_98_Me()
 bool System::isWinNT_2K_XP()
 {
   return (getOS() & (OS::WinNT | OS::Win2K | OS::WinXP | OS::WinServer2003)) != 0;
+}
+
+bool System::isWin2K_XP()
+{
+  return (getOS() & (OS::Win2K | OS::WinXP | OS::WinServer2003)) != 0;
 }
 
 bool System::isWinXP()

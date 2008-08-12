@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -83,11 +83,12 @@ protected:
     m_ellipsis3Label.setTextAlign(align);
   }
 
-  virtual void onResizing(int edge, Rect &rc)
+  virtual void onResizing(CardinalDirection dir, Rect &rc)
   {
     rc.y = getBounds().y;
     
-    if (edge != WMSZ_TOP && edge != WMSZ_BOTTOM) {
+    if (dir != CardinalDirection::North &&
+	dir != CardinalDirection::South) {
       // the height is calculated through the width that the user wants
       rc.h = getPreferredSize(Size(rc.getSize().w, 0)).h;
     }
@@ -104,7 +105,7 @@ class Example : public Application
 {
   MainFrame m_mainFrame;
 public:
-  virtual void main(std::vector<String> args) {
+  virtual void main() {
     m_mainFrame.setVisible(true);
   }
 };

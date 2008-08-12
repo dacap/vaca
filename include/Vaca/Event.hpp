@@ -38,8 +38,15 @@ namespace Vaca {
 
 class Component;
 
+/**
+ * Base class for every kind of event.
+ */
 class VACA_DLL Event
 {
+  /**
+   * The component which generates the event. It's specified in the
+   * @link Event#Event(Component*) Event's constructor@endlink
+   */
   Component* m_source;
 
 public:

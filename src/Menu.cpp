@@ -37,17 +37,15 @@
 #include "Vaca/ResourceException.hpp"
 #include "Vaca/Mutex.hpp"
 #include "Vaca/ScopedLock.hpp"
+#include "Vaca/Command.hpp"
 
 #include <stack>
 
 using namespace Vaca;
 
-static Mutex menuIdCounterMutex;
-static volatile int menuIdCounter = VACA_FIRST_AUTOID;
-
 //////////////////////////////////////////////////////////////////////
 // MenuItem
-
+
 MenuItem::MenuItem()
 {
   m_parent = NULL;
@@ -59,31 +57,10 @@ MenuItem::MenuItem()
  *
  * @param text You can use the \& character to underline a letter (e.g.: "&New")
  * @param defaultShortcut The default keyboard shortcut for this menu item.
- * @param id You can use an specified ID for the menu, or leave blank
- *           to use a default generated ID. <b>Remember</b> this rule:
- *           if you specify an ID in just one MenuItem, <b>you must
- *           to</b> specify IDs in all MenuItems that you create. You
- *           can't use automatic IDs and manual IDs mixed,
- *           assertions'll fail.
+ * @param id You can use an specified CommandId for the menu.
  */
-MenuItem::MenuItem(const String& text, Keys::Type defaultShortcut, int id)
+MenuItem::MenuItem(const String& text, CommandId id, Keys::Type defaultShortcut)
 {
-  {
-    ScopedLock hold(menuIdCounterMutex);
-    
-    if (id < 0) {
-      id = menuIdCounter++;
-    }
-    else {
-      // you can't use automatic and manual IDs mixed, use one option or
-      // other, but don't use both in the same application
-      assert(menuIdCounter == VACA_FIRST_AUTOID);
-    }
-
-    // check overflow
-    assert(menuIdCounter < VACA_FIRST_MDICHILD);
-  }
-
   m_parent = NULL;
   m_text = text;
   m_id = id;
@@ -104,7 +81,17 @@ Menu* MenuItem::getParent()
   return m_parent;
 }
 
-int MenuItem::getId()
+Menu* MenuItem::getRoot()
+{
+  Menu* root = m_parent;
+  if (root) {
+    while (root->m_parent != NULL)
+      root = root->m_parent;
+  }
+  return root;
+}
+
+CommandId MenuItem::getId()
 {
   return m_id;
 }
@@ -243,7 +230,7 @@ bool MenuItem::isMdiList() const { return false; }
  */
 void MenuItem::onAction(MenuItemEvent& ev)
 {
-  Action(ev);
+  // do nothing
 }
 
 /**
@@ -254,16 +241,35 @@ void MenuItem::onAction(MenuItemEvent& ev)
  * Internally, when the WM_INITMENU message is received, a Frame calls
  * this event.
  *
- * The default implementation fires the MenuItem::Update signal.
+ * The default implementation search for a Command with ID equal to
+ * MenuItem#getId, so the Command#isEnabled routine will be called to
+ * change the state of this MenuItem.
  */
 void MenuItem::onUpdate(MenuItemEvent& ev)
 {
-  Update(ev);
+  // does this menu item have an associated command-id?
+  if (m_id != 0) {
+    // search the command in the frame where is the menu-bar
+    if (MenuBar* menuBar = dynamic_cast<MenuBar*>(getRoot())) {
+      if (Frame* frame = menuBar->getFrame()) {
+	if (Command* cmd = frame->findCommandById(m_id)) {
+	  setEnabled(cmd->isEnabled());
+	  return;
+	}
+      }
+    }
+
+    // check if the application is a CommandsClient
+    if (CommandsClient* cc = dynamic_cast<CommandsClient*>(Application::getInstance())) {
+      if (Command* cmd = cc->getCommandById(m_id))
+	setEnabled(cmd->isEnabled());
+    }
+  }
 }
 
 //////////////////////////////////////////////////////////////////////
 // MenuSeparator
-
+
 MenuSeparator::MenuSeparator()
 {
 }
@@ -279,7 +285,7 @@ bool MenuSeparator::isSeparator() const
 
 //////////////////////////////////////////////////////////////////////
 // Menu
-
+
 Menu::Menu()
 {
   m_HMENU = ::CreateMenu();
@@ -297,7 +303,7 @@ Menu::Menu(const String& text)
   subClass();
 }
 
-Menu::Menu(int menuId)
+Menu::Menu(CommandId menuId)
 {
   m_HMENU = ::LoadMenu(Application::getHINSTANCE(),
 		       MAKEINTRESOURCE(menuId));
@@ -375,7 +381,7 @@ void Menu::subClass()
 	  menuItem->m_text = buf;
 	}
 	else {
-	  menuItem = new MenuItem(buf, Keys::None, mii.wID);
+	  menuItem = new MenuItem(buf, mii.wID, Keys::None);
 	}
 	break;
 
@@ -420,9 +426,9 @@ MenuItem* Menu::add(MenuItem* menuItem)
  *
  * @see add(MenuItem*), remove(MenuItem*)
  */
-MenuItem* Menu::add(const String& string, Keys::Type defaultShortcut)
+MenuItem* Menu::add(const String& string, CommandId id, Keys::Type defaultShortcut)
 {
-  MenuItem* menuItem = add(new MenuItem(string, defaultShortcut));
+  MenuItem* menuItem = add(new MenuItem(string, id, defaultShortcut));
   return menuItem;
 }
 
@@ -583,7 +589,7 @@ MenuItem* Menu::getMenuItemByIndex(int index)
   return m_container[index];
 }
 
-MenuItem* Menu::getMenuItemById(int id)
+MenuItem* Menu::getMenuItemById(CommandId id)
 {
   if (id == 0)
     return NULL;
@@ -689,20 +695,31 @@ HMENU Menu::getHMENU()
 
 //////////////////////////////////////////////////////////////////////
 // MenuBar
-
 
 MenuBar::MenuBar()
- : Menu()
+  : Menu()
+  , m_frame(NULL)
 {
 }
 
-MenuBar::MenuBar(int menuId)
+MenuBar::MenuBar(CommandId menuId)
   : Menu(menuId)
+  , m_frame(NULL)
 {
 }
 
 MenuBar::~MenuBar()
 {
+}
+
+Frame* MenuBar::getFrame()
+{
+  return m_frame;
+}
+
+void MenuBar::setFrame(Frame* frame)
+{
+  m_frame = frame;
 }
 
 MdiListMenu* MenuBar::getMdiListMenu()
@@ -729,7 +746,6 @@ MdiListMenu* MenuBar::getMdiListMenu()
 
 //////////////////////////////////////////////////////////////////////
 // MdiListMenu
-
 
 MdiListMenu::MdiListMenu(const String& text)
  : Menu(text)

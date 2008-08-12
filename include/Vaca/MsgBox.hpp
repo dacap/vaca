@@ -29,58 +29,76 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_BANDEDDOCKAREA_HPP
-#define VACA_BANDEDDOCKAREA_HPP
+#ifndef VACA_MSGBOX_HPP
+#define VACA_MSGBOX_HPP
 
 #include <vector>
 
 #include "Vaca/base.hpp"
-#include "Vaca/DockArea.hpp"
+#include "Vaca/Color.hpp"
+#include "Vaca/Component.hpp"
+#include "Vaca/Exception.hpp"
+#include "Vaca/Graphics.hpp"
+#include "Vaca/Rect.hpp"
+#include "Vaca/ScrollInfo.hpp"
+#include "Vaca/Signal.hpp"
+#include "Vaca/Size.hpp"
+#include "Vaca/String.hpp"
+#include "Vaca/Style.hpp"
 
 namespace Vaca {
 
-#define BandedDockAreaStyle		ChildStyle
-
-/**
- * An area where you can put @link Vaca::DockBar DockBars@endlink
- * separated by bands.
- */
-class VACA_DLL BandedDockArea : public DockArea
+class VACA_DLL MsgBox
 {
-  struct BandInfo
-  {
-    std::vector<DockBar*> bars; // bars in the band
-    int size;			// band's height (or width for vertical bands)
-    BandInfo() : bars()
-	       , size(0) { }
-  };
-
-  std::vector<BandInfo> m_bandInfo;
-
 public:
 
-  BandedDockArea(Side side, Widget* parent, Style style = BandedDockAreaStyle);
-  virtual ~BandedDockArea();
+  struct TypeEnum
+  {
+    enum enumeration {
+      Ok,
+      OkCancel,
+      YesNo,
+      YesNoCancel,
+      RetryCancel,
+      CancelRetryContinue,
+    };
+    static const enumeration default_value = Ok;
+  };
 
-  virtual bool hitTest(DockBar* bar, const Point& cursor, const Point& anchor, bool fromInside);
-  virtual DockInfo* createDefaultDockInfo(DockBar* bar);
-  virtual DockInfo* createDockInfo(DockBar* bar, const Point& cursor, const Point& anchor);
-  virtual void drawXorTracker(Graphics& g, DockInfo* dockInfo);
+  struct IconEnum
+  {
+    enum enumeration {
+      None,
+      Error,
+      Warning,
+      Question,
+      Information,
+    };
+    static const enumeration default_value = None;
+  };
 
-  virtual void layout();
+  struct ResultEnum
+  {
+    enum enumeration {
+      Ok, Cancel,
+      Yes, No,
+      Retry, Continue,
+    };
+    static const enumeration default_value = Ok;
+  };
 
-protected:
-  // events
-  virtual void onPreferredSize(Size& sz);
-  virtual void onPaint(Graphics& g);
-  virtual void onAddDockBar(DockBar* dockBar);
-  virtual void onRemoveDockBar(DockBar* dockBar);
-  virtual void onRedock(DockBar* dockBar, DockInfo* newDockInfo);
+  typedef Enum<TypeEnum> Type;
+  typedef Enum<IconEnum> Icon;
+  typedef Enum<ResultEnum> Result;
+  
+public:
 
-private:
-  void updateBandSize(int bandIndex);
-  Rect getBandBounds(int bandIndex);
-  void fitBounds(int bandIndex, int barIndex1, std::vector<Rect>& bounds);
+  static Result show(Widget* parent,
+		     const String& title,
+		     const String& text,
+		     Type type = Type::Ok,
+		     Icon icon = Icon::None,
+		     int default_button = -1);
 
 };
 

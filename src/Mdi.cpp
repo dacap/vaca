@@ -102,10 +102,7 @@ void MdiChild::initialize()
     getParent()->sendMessage(WM_MDIREFRESHMENU, 0, 0);
 }
 
-/**
- * Intercept commands from @c VACA_IDM_MDICHILD to activate this
- * MdiChild.
- */
+// // Intercept commands from @c VACA_IDM_MDICHILD to activate this MdiChild.
 // bool MdiChild::onReflectedCommand(int it, int code, LRESULT& lResult)
 // {
 //   if (Frame::onReflectedCommand(id, code, lResult))

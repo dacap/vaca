@@ -42,21 +42,24 @@ namespace Vaca {
 class Application;
 struct _Timer;
 
+/**
+ * A class to schedule events every @e x milliseconds.
+ */
 class VACA_DLL Timer : private NonCopyable
 {
   friend class Application;
   friend struct _Timer;
 
-  Thread::Id m_threadOwnerId;
-  bool       m_running : 1;
-  bool       m_firstTick : 1;
-  int        m_interval;
-  int        m_timeCounter;
-  int        m_tickCounter;
+  ThreadId m_threadOwnerId;
+  bool m_running : 1;
+  bool m_firstTick : 1;
+  int m_interval;
+  int m_timeCounter;
+  int m_tickCounter;
 
 public:
 
-  Timer(int interval = 100);
+  Timer(int interval);
   virtual ~Timer();
 
   int getInterval();

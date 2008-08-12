@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -64,17 +64,20 @@ public:
 class MainFrame : public Frame
 {
   Console m_console;
-  bool m_item2Enabled;
+  MenuItem* m_menuItem2;
 
 public:
 
   MainFrame()
     : Frame("MenuResource")
     , m_console(this)
-    , m_item2Enabled(true)
   {
+    // load the MenuBar from the resource with id=IDM_MENUBAR
     setMenuBar(new MenuBar(IDM_MENUBAR));
     setLayout(new ClientLayout);
+
+    // get the Item2
+    m_menuItem2 = getMenuBar()->getMenuItemById(IDM_ITEM2);
 
     // disable Item4
     getMenuBar()->getMenuItemById(IDM_ITEM4)->setEnabled(false);
@@ -82,23 +85,25 @@ public:
 
 private:
 
-  virtual bool onActionById(int actionId)
+  virtual bool onCommand(CommandId id)
   {
-    switch (actionId) {
+    // This is the raw way to handle commands, with a switch-case
+    // statement. You can see the "Commands" or "TextEditor" examples
+    // for a more sophisticated way using the "CommandsClient" class.
+    switch (id) {
 
       case IDM_ITEM1:
 	m_console.println("Item1 selected");
 	break;
 
       case IDM_ITEM2:
-	if (m_item2Enabled) {
-	  m_console.println("Item2 selected");
-	}
+	m_console.println("Item2 selected");
 	break;
 
       case IDM_ITEM3:
 	m_console.println("Item3 selected (change Item2 state)");
-	//m_item2Enabled ) {
+	// here we modify the state of the MenuItem directly
+	m_menuItem2->setEnabled(!m_menuItem2->isEnabled());
 	break;
 
       default:
@@ -109,50 +114,6 @@ private:
     return true;
   }
 
-//   void initializeCommands()
-//   {
-//     Command* command;
-
-//     command = new Command(IDM_ITEM1);
-//     command->Action.connect(Bind(&Console::println, &m_console, "Item1 selected"));
-//     command->Update.connect(Bind(&MainFrame::onUpdateItem1, this));
-//     addCommand(command);
-
-//     command = new Command(IDM_ITEM2);
-//     command->Action.connect(Bind(&Console::println, &m_console, "Item2 selected"));
-//     command->Update.connect(Bind(&MainFrame::onUpdateItem2, this));
-//     addCommand(command);
-
-//     command = new Command(IDM_ITEM3);
-//     command->Action.connect(Bind(&Console::println, &m_console, "Item3 selected"));
-//     command->Action.connect(Bind(&MainFrame::onActionItem3, this));
-//     command->Update.connect(Bind(&MainFrame::onUpdateItem3, this));
-//     addCommand(command);
-//   }
-
-//   void onUpdateItem1(CommandState &cmdState)
-//   {
-//     m_console.println("Item1 updated");
-//   }
-
-//   void onUpdateItem2(CommandState &cmdState)
-//   {
-//     m_console.println("Item2 updated");
-//     cmdState.setEnabled(m_item2Enabled);
-//   }
-
-//   void onUpdateItem3(CommandState &cmdState)
-//   {
-//     m_console.println("Item3 updated");
-//     cmdState.setChecked(!m_item2Enabled);
-//   }
-
-//   void onActionItem3()
-//   {
-//     m_item2Enabled = !m_item2Enabled;
-//     m_console.println(m_item2Enabled ? "Item2 enabled": "Item2 disabled");
-//   }
-
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -160,10 +121,8 @@ private:
 class Example : public Application
 {
   MainFrame m_mainFrame;
-
 public:
-  
-  virtual void main(std::vector<String> args) {
+  virtual void main() {
     m_mainFrame.setVisible(true);
   }
 };
@@ -171,8 +130,7 @@ public:
 int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		   LPSTR lpCmdLine, int nCmdShow)
 {
-  Example* app(new Example);
+  std::auto_ptr<Example> app(new Example);
   app->run();
-  delete app;
   return 0;
 }

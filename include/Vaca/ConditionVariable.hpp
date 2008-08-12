@@ -52,9 +52,9 @@ public:
 
 class VACA_DLL ConditionVariable : private NonCopyable
 {
-  void* m_gate;
-  void* m_queue;
-  void* m_mutex;
+  HANDLE m_gate;
+  HANDLE m_queue;
+  HANDLE m_mutex;
   unsigned m_gone;         // # threads that timed out and never made it to m_queue
   unsigned long m_blocked; // # threads blocked on the condition
   unsigned m_waiting;      // # threads no longer waiting for the condition but

@@ -42,7 +42,7 @@ OBJS = obj/Anchor.obj obj/AnchorLayout.obj obj/Application.obj		\
   obj/BoxConstraint.obj obj/BoxLayout.obj obj/Brush.obj obj/Button.obj	\
   obj/ButtonBase.obj obj/CancelableEvent.obj obj/CheckBox.obj		\
   obj/ClientLayout.obj obj/Clipboard.obj obj/CloseEvent.obj		\
-  obj/Color.obj obj/ColorDialog.obj obj/ComboBox.obj			\
+  obj/Color.obj obj/ColorDialog.obj obj/ComboBox.obj obj/Command.obj	\
   obj/CommonDialog.obj obj/Component.obj obj/ConditionVariable.obj	\
   obj/Constraint.obj obj/Cursor.obj obj/CustomButton.obj		\
   obj/CustomLabel.obj obj/Debug.obj obj/Dialog.obj obj/DockArea.obj	\
@@ -53,7 +53,7 @@ OBJS = obj/Anchor.obj obj/AnchorLayout.obj obj/Application.obj		\
   obj/ImageList.obj obj/KeyEvent.obj obj/Keys.obj obj/Label.obj		\
   obj/Layout.obj obj/LinkLabel.obj obj/ListBox.obj obj/ListView.obj	\
   obj/Mdi.obj obj/Menu.obj obj/MenuItemEvent.obj obj/MouseEvent.obj	\
-  obj/Mutex.obj obj/Panel.obj obj/Pen.obj obj/Point.obj			\
+  obj/MsgBox.obj obj/Mutex.obj obj/Panel.obj obj/Pen.obj obj/Point.obj	\
   obj/ProgressBar.obj obj/RadioButton.obj obj/ReBar.obj obj/Rect.obj	\
   obj/Region.obj obj/ResourceId.obj obj/Scintilla.obj obj/Size.obj	\
   obj/Slider.obj obj/SpinButton.obj obj/Spinner.obj obj/String.obj	\
@@ -128,19 +128,25 @@ clean:
 	-del obj\*.obj
 
 distclean: clean
-	-del bin\*.dll
+	-del bin\Vaca*.dll
 	-del bin\*.exe
 	-del lib\*.a
 	-del lib\*.lib
 
 lib/Vaca.lib: $(OBJS)
-	lib -NOLOGO /OUT:lib/Vaca.lib $?
+	lib -NOLOGO /OUT:lib/Vaca.lib $(OBJS)
 
 # ----------------------------------------------------------------------
 # Examples
 # ----------------------------------------------------------------------
 
 bin/Hashing.exe: obj/Hashing.obj obj/md5.obj obj/sha1.obj
+
+bin/TextEditor.exe: obj/TextEditor.obj obj/TextEditor.res
+
+obj/TextEditor.res: examples/TextEditor/TextEditor.rc
+	$(RC) -I examples examples/TextEditor/TextEditor.rc
+	move examples\\TextEditor\\TextEditor.res obj\\TextEditor.res
 
 obj/AnchorLayouts.obj: examples/AnchorLayouts/AnchorLayouts.cpp
 	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/AnchorLayouts/AnchorLayouts.cpp

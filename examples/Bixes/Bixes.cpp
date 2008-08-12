@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -524,7 +524,8 @@ private:
 
 //////////////////////////////////////////////////////////////////////
 
-class MainFrame : public Frame
+class MainFrame : public Frame,
+		  public CommandsClient
 {
   Model m_model;
   Element* m_selectedElement;
@@ -548,6 +549,14 @@ public:
     , m_widgetCounter(0)
     , m_disableReselect(false)
   {
+    // commands
+    addCommand(new SignalCommand(IDM_ADD_COLUMN, Bind(&MainFrame::cmdAddColumn, this)));
+    addCommand(new SignalCommand(IDM_ADD_ROW, Bind(&MainFrame::cmdAddRow, this)));
+    addCommand(new SignalCommand(IDM_ADD_MATRIX, Bind(&MainFrame::cmdAddMatrix, this)));
+    addCommand(new SignalCommand(IDM_ADD_WIDGET, Bind(&MainFrame::cmdAddWidget, this)));
+    addCommand(new SignalCommand(IDM_REMOVE, Bind(&MainFrame::cmdRemove, this)));
+    addCommand(new SignalCommand(IDM_PROPERTIES));
+
     // layout
     setLayout(Bix::parse("X[%,f%]", &m_treeView, &m_widgetsView));
     m_treeView.setPreferredSize(Size(256, 256));
@@ -558,14 +567,14 @@ public:
 
     // setup the tool bar
     m_toolBar.getSet().setImageList(m_imageList);
-    m_toolBar.getSet().addButton(0, IDM_ADD_COLUMN, TBSTATE_ENABLED);
-    m_toolBar.getSet().addButton(1, IDM_ADD_ROW, TBSTATE_ENABLED);
-    m_toolBar.getSet().addButton(2, IDM_ADD_MATRIX, TBSTATE_ENABLED);
-    m_toolBar.getSet().addButton(3, IDM_ADD_WIDGET, TBSTATE_ENABLED | TBSTATE_HIDDEN);
+    m_toolBar.getSet().addButton(new ToolButton(IDM_ADD_COLUMN, 0));
+    m_toolBar.getSet().addButton(new ToolButton(IDM_ADD_ROW, 1));
+    m_toolBar.getSet().addButton(new ToolButton(IDM_ADD_MATRIX, 2));
+    m_toolBar.getSet().addButton(new ToolButton(IDM_ADD_WIDGET, 3));
     m_toolBar.getSet().addSeparator();
-    m_toolBar.getSet().addButton(4, IDM_REMOVE, TBSTATE_ENABLED);
+    m_toolBar.getSet().addButton(new ToolButton(IDM_REMOVE, 4));
     m_toolBar.getSet().addSeparator();
-    m_toolBar.getSet().addButton(5, IDM_PROPERTIES, TBSTATE_ENABLED);
+    m_toolBar.getSet().addButton(new ToolButton(IDM_PROPERTIES, 5));
 
     // setup the defaults dock areas
     defaultDockAreas();
@@ -575,47 +584,69 @@ public:
   }
 
 protected:
-  
-  virtual bool onActionById(int actionId)
+
+  void cmdAddColumn()
   {
-    switch (actionId) {
+    addElement(Element::Column);
+    updateToolBarButtons();
+  }
 
-      case IDM_ADD_COLUMN:
-	onAddElement(Element::Column);
-	break;
+  void cmdAddRow()
+  {
+    addElement(Element::Row);
+    updateToolBarButtons();
+  }
 
-      case IDM_ADD_ROW:
-	onAddElement(Element::Row);
-	break;
+  void cmdAddMatrix()
+  {
+    int columns;
+    if (askIntValue(columns))
+      addElement(Element::Matrix, columns);
+    updateToolBarButtons();
+  }
 
-      case IDM_ADD_MATRIX: {
-	int columns;
-	if (askIntValue(columns))
-	  onAddElement(Element::Matrix, columns);
-	break;
-      }
+  void cmdAddWidget()
+  {
+    addElement(Element::Widget);
+    updateToolBarButtons();
+  }
 
-      case IDM_ADD_WIDGET:
-	onAddElement(Element::Widget);
-	break;
+  void cmdRemove()
+  {
+    removeElement();
+    updateToolBarButtons();
+  }
 
-      case IDM_REMOVE:
-	onRemoveElement();
-	break;
+  void onElementSelectedFromTreeView(Element* element)
+  {
+    if (!m_disableReselect) {
+      m_selectedElement = element;
 
-      case IDM_PROPERTIES:
-	break;
+      m_disableReselect = true;
+      m_widgetsView.selectElement(element);
+      m_disableReselect = false;
 
-      default:
-	return false;		// "actionId" wasn't used
+      updateToolBarButtons();
     }
-    return true;		// "actionId" was used
+  }
+
+  void onElementSelectedFromWidgets(Element* element)
+  {
+    if (!m_disableReselect) {
+      m_selectedElement = element;
+
+      m_disableReselect = true;
+      m_treeView.selectElement(element);
+      m_disableReselect = false;
+
+      updateToolBarButtons();
+    }
   }
 
 private:
 
   // adds the specified type of element has a child of the selected element
-  void onAddElement(Element::Type elementType, int columns = 0)
+  void addElement(Element::Type elementType, int columns = 0)
   {
     if ((m_selectedElement == NULL && m_model.getRoot() == NULL) ||
 	(m_selectedElement != NULL && m_selectedElement->acceptChildren())) {
@@ -637,7 +668,7 @@ private:
   }
 
   // remove the selected element
-  void onRemoveElement()
+  void removeElement()
   {
     if (m_selectedElement != NULL) {
       Element* e = m_selectedElement;
@@ -645,28 +676,6 @@ private:
 
       m_model.removeElement(e);
       delete e;
-    }
-  }
-
-  void onElementSelectedFromTreeView(Element* element)
-  {
-    if (!m_disableReselect) {
-      m_selectedElement = element;
-
-      m_disableReselect = true;
-      m_widgetsView.selectElement(element);
-      m_disableReselect = false;
-    }
-  }
-
-  void onElementSelectedFromWidgets(Element* element)
-  {
-    if (!m_disableReselect) {
-      m_selectedElement = element;
-
-      m_disableReselect = true;
-      m_treeView.selectElement(element);
-      m_disableReselect = false;
     }
   }
 
@@ -697,10 +706,39 @@ private:
 
       retValue = value.getText().parseInt();
       if (retValue < 1)
-	msgBox("You must to insert a value greater than 1", "Error", MB_OK);
+	MsgBox::show(this, "Error",
+		     "You must to insert a value greater than 1",
+		     MsgBox::Type::Ok,
+		     MsgBox::Icon::Error);
       else
 	return true;
     }
+  }
+
+  void updateToolBarButtons()
+  {
+    ToolButtonState canAdd =
+      ((m_selectedElement == NULL && m_model.getRoot() == NULL) ||
+       (m_selectedElement != NULL && m_selectedElement->acceptChildren())) ?
+      ToolButtonState::Enabled:
+      ToolButtonState::None;
+
+    ToolButtonState canRemove =
+      (m_selectedElement != NULL) ?
+      ToolButtonState::Enabled:
+      ToolButtonState::None;
+
+    ToolButtonState canShowProperties =
+      (m_selectedElement != NULL && m_selectedElement->getType() == Element::Matrix) ?
+      ToolButtonState::Enabled:
+      ToolButtonState::None;
+
+    m_toolBar.getSet().getButtonById(IDM_ADD_COLUMN)->setState(canAdd);
+    m_toolBar.getSet().getButtonById(IDM_ADD_ROW)->setState(canAdd);
+    m_toolBar.getSet().getButtonById(IDM_ADD_MATRIX)->setState(canAdd);
+    m_toolBar.getSet().getButtonById(IDM_ADD_WIDGET)->setState(canAdd);
+    m_toolBar.getSet().getButtonById(IDM_REMOVE)->setState(canRemove);
+    m_toolBar.getSet().getButtonById(IDM_PROPERTIES)->setState(canShowProperties);
   }
 
 };
@@ -710,8 +748,8 @@ private:
 int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		   LPSTR lpCmdLine, int nCmdShow)
 {
-  Application app;
   try {
+    Application app;
     MainFrame frame;
     frame.setVisible(true);
     app.run();

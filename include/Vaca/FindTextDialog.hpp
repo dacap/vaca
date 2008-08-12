@@ -35,6 +35,7 @@
 #include "Vaca/base.hpp"
 #include "Vaca/Dialog.hpp"
 #include "Vaca/String.hpp"
+#include "Vaca/Signal.hpp"
 
 namespace Vaca {
 
@@ -45,9 +46,10 @@ class Widget;
  */
 class VACA_DLL FindTextDialog : public Dialog
 {
-  bool m_replace;
-  UINT m_findMsgId;
+  static UINT m_findMsgId;
+
   FINDREPLACE m_findReplace;
+  bool m_replace;
 
 public:
 
@@ -57,26 +59,31 @@ public:
   String getFindWhat();
   String getReplaceWith();
 
+  void setFindWhat(const String& s);
+  void setReplaceWith(const String& s);
+
   bool isWholeWord();
   bool isMatchCase();
   bool isBackward();
   bool isForward();
 
-  Signal0<void> FindNext;
-  Signal0<void> Replace;
-  Signal0<void> ReplaceAll;
-  Signal0<void> Cancel;
+  // signals
+  Signal1<void, Event&> FindNext;
+  Signal1<void, Event&> Replace;
+  Signal1<void, Event&> ReplaceAll;
 
 protected:
 
   // new events
-  virtual void onFindNext();
-  virtual void onReplace();
-  virtual void onReplaceAll();
-  virtual void onCancel();
+  virtual void onFindNext(Event& ev);
+  virtual void onReplace(Event& ev);
+  virtual void onReplaceAll(Event& ev);
 
-  virtual bool wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult);
 private:
+
+  void getTextFromDlgItem(int id, String& s);
+  void setTextFromDlgItem(int id, const String& s);
+
   virtual HWND createHWND(LPCTSTR className, Widget* parent, Style style);
   static UINT_PTR CALLBACK hookProc(HWND hdlg, UINT uiMsg, WPARAM wParam, LPARAM lParam);
 

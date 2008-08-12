@@ -50,7 +50,6 @@ DockFrame::DockFrame(DockBar* dockBar, Widget* parent, Style style)
 
 DockFrame::~DockFrame()
 {
-//   dispose();
 }
 
 /**
@@ -70,13 +69,13 @@ bool DockFrame::keepSynchronized()
 // }
 
 /**
- * Generates the DockBar::onResizingFrame() event for m_dockBar member.
+ * Generates the DockBar#onResizingFrame event for m_dockBar member.
  */
-void DockFrame::onResizing(int edge, Rect& rc)
+void DockFrame::onResizing(CardinalDirection dir, Rect& rc)
 {
-  Frame::onResizing(edge, rc);
+  Frame::onResizing(dir, rc);
 
-  m_dockBar->onResizingFrame(this, edge, rc);
+  m_dockBar->onResizingFrame(this, dir, rc);
 }
 
 bool DockFrame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult)

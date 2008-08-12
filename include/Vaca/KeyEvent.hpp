@@ -62,20 +62,19 @@ class VACA_DLL KeyEvent : public Event
    *
    * @see #getCharCode
    */
-  int m_charCode;
+  Character m_charCode;
 
 public:
 
-  KeyEvent(Widget* source, Keys::Type keys, int charCode = 0);
+  KeyEvent(Widget* source, Keys::Type keys, Character charCode);
   virtual ~KeyEvent();
 
   void consume();
   bool isConsumed() const;
 
-  // Keys::Type getKeys() { return mKeys; }
   Keys::Type getKeyCode() const;
   Keys::Type getModifiers() const;
-  int getCharCode() const;
+  Character getCharCode() const;
 
   bool isShift() const;
   bool isControl() const;

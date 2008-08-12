@@ -29,61 +29,55 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_BANDEDDOCKAREA_HPP
-#define VACA_BANDEDDOCKAREA_HPP
+#include "Vaca/Command.hpp"
 
-#include <vector>
+using namespace Vaca;
 
-#include "Vaca/base.hpp"
-#include "Vaca/DockArea.hpp"
+//////////////////////////////////////////////////////////////////////
+// Command
 
-namespace Vaca {
-
-#define BandedDockAreaStyle		ChildStyle
-
-/**
- * An area where you can put @link Vaca::DockBar DockBars@endlink
- * separated by bands.
- */
-class VACA_DLL BandedDockArea : public DockArea
+Command::Command(CommandId id)
+  : m_id(id)
+  // , m_invoker(NULL)
 {
-  struct BandInfo
-  {
-    std::vector<DockBar*> bars; // bars in the band
-    int size;			// band's height (or width for vertical bands)
-    BandInfo() : bars()
-	       , size(0) { }
-  };
+}
 
-  std::vector<BandInfo> m_bandInfo;
+Command::~Command()
+{
+}
 
-public:
+//////////////////////////////////////////////////////////////////////
+// CommandsClient
 
-  BandedDockArea(Side side, Widget* parent, Style style = BandedDockAreaStyle);
-  virtual ~BandedDockArea();
+CommandsClient::CommandsClient()
+{
+}
 
-  virtual bool hitTest(DockBar* bar, const Point& cursor, const Point& anchor, bool fromInside);
-  virtual DockInfo* createDefaultDockInfo(DockBar* bar);
-  virtual DockInfo* createDockInfo(DockBar* bar, const Point& cursor, const Point& anchor);
-  virtual void drawXorTracker(Graphics& g, DockInfo* dockInfo);
+CommandsClient::~CommandsClient()
+{
+  std::vector<Command*>::iterator it;
+  for (it = m_commands.begin(); it != m_commands.end(); ++it)
+    delete *it;
+}
 
-  virtual void layout();
+void CommandsClient::addCommand(Command* cmd)
+{
+  m_commands.push_back(cmd);
+}
 
-protected:
-  // events
-  virtual void onPreferredSize(Size& sz);
-  virtual void onPaint(Graphics& g);
-  virtual void onAddDockBar(DockBar* dockBar);
-  virtual void onRemoveDockBar(DockBar* dockBar);
-  virtual void onRedock(DockBar* dockBar, DockInfo* newDockInfo);
+Command* CommandsClient::removeCommand(Command* cmd)
+{
+  remove_from_container(m_commands, cmd);
+  return cmd;
+}
 
-private:
-  void updateBandSize(int bandIndex);
-  Rect getBandBounds(int bandIndex);
-  void fitBounds(int bandIndex, int barIndex1, std::vector<Rect>& bounds);
-
-};
-
-} // namespace Vaca
-
-#endif
+Command* CommandsClient::getCommandById(CommandId id) const
+{
+  for (std::vector<Command*>::const_iterator
+	 it=m_commands.begin(); it!=m_commands.end(); ++it) {
+    Command* cmd = *it;
+    if (cmd->getId() == id)
+      return cmd;
+  }
+  return NULL;
+}

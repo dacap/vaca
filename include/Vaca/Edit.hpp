@@ -93,9 +93,15 @@ public:
   bool canUndo();
   void undo();
 
+  void cut();
+  void copy();
+  void paste();
+
   void selectAll();
-  void selectRange(int startIndex, int endIndex);
+  void selectRange(int start, int end);
   void deselect();
+  
+  void getSelection(int& start, int& end);
 
   // signals
   Signal1<void, Event&> Change; ///< @see onChange

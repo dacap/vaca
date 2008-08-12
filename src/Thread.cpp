@@ -37,6 +37,7 @@
 #include "Vaca/Mutex.hpp"
 #include "Vaca/ScopedLock.hpp"
 #include "Vaca/Slot.hpp"
+#include "Vaca/TimePoint.hpp"
 
 #include <vector>
 #include <algorithm>
@@ -53,16 +54,34 @@ using namespace Vaca;
 
 struct ThreadData
 {
-  Thread::Id threadId;
-  int frameCount;
-  bool breakLoop;
-  Widget* outsideWidget; // widget used to call createHWND
-  Signal0<void> callInNextRound;
+  /**
+   * The ID of this thread.
+   */
+  ThreadId threadId;
 
-  ThreadData(int id) {
+  /**
+   * Visible frames in this thread. A frame is an instance of Frame
+   * class.
+   */
+  std::vector<Frame*> frames;
+
+  TimePoint updateIndicatorsMark;
+  bool updateIndicators : 1;
+
+  /**
+   * True if the message-loop must be stopped.
+   */
+  bool breakLoop : 1;
+
+  /**
+   * Widget used to call createHWND.
+   */
+  Widget* outsideWidget;
+
+  ThreadData(ThreadId id) {
     threadId = id;
-    frameCount = 0;
     breakLoop = false;
+    updateIndicators = true;
     outsideWidget = NULL;
   }
 
@@ -75,7 +94,7 @@ static ThreadData* getThreadData()
 {
   ScopedLock hold(data_mutex);
   std::vector<ThreadData*>::iterator it, end = dataOfEachThread.end();
-  Thread::Id id = ::GetCurrentThreadId();
+  ThreadId id = ::GetCurrentThreadId();
 
   // first of all search the thread-data in the list "dataOfEachThread"...
   for (it=dataOfEachThread.begin();
@@ -94,11 +113,6 @@ static ThreadData* getThreadData()
 
   // return the allocated data
   return data;
-  
-//   if (threadData.get() == NULL)
-//     threadData.reset(new ThreadData);
-
-//   return threadData.get();
 }
 
 void Vaca::__vaca_remove_all_thread_data()
@@ -144,16 +158,19 @@ Thread::Thread()
 void Thread::_Thread(const Slot0<void>& slot)
 {
   Slot0<void>* slotclone = slot.clone();
+  DWORD id;
 
   m_handle = CreateThread(NULL, 0,
 			  ThreadProxy,
 			  // clone the slot
 			  reinterpret_cast<LPVOID>(slotclone),
-			  CREATE_SUSPENDED, &m_id);
+			  CREATE_SUSPENDED, &id);
   if (!m_handle) {
     delete slotclone;
     throw CreateThreadException();
   }
+
+  m_id = id;
 
   VACA_TRACE("new Thread (%p, %d)\n", this, m_id);
   ResumeThread(m_handle);
@@ -173,41 +190,10 @@ Thread::~Thread()
  * Returns the thread ID. This is equal to Win32's GetCurrentThreadId() for
  * the current thread or the ID returned by Win32's CreateThread().
  */
-Thread::Id Thread::getId() const
+ThreadId Thread::getId() const
 {
   return m_id;
 }
-
-/**
- * Starts the execution of the thread. You have to call this routine
- * one time to start the thread execution.
- */
-// void Thread::execute()
-// {
-//   assert(isJoinable());
-
-//   resume();
-// }
-
-/**
- * Suspends a thread in execution (Win32's SuspendThread).
- */
-// void Thread::suspend()
-// {
-//   assert(m_handle != NULL);
- 
-//   SuspendThread(m_handle);
-// }
-
-/**
- * Resumes the suspended thread (Win32's ResumeThread).
- */
-// void Thread::resume()
-// {
-//   assert(m_handle != NULL);
-
-//   ResumeThread(m_handle);
-// }
 
 /**
  * Waits the thread to finish, and them closes it.
@@ -309,47 +295,44 @@ void Thread::yield()
   ::Sleep(0);
 }
 
-// void Thread::callInNextRound(const Slot0<void>& functor)
-// {
-//   getThreadData()->callInNextRound.connect(functor);
-//   ::PostThreadMessage(::GetCurrentThreadId(), WM_NULL, 0, 0);
-// }
-
 /**
  * Gets a message in a blocking way, returns true if the msg parameter
  * was filled
  */
 bool Thread::getMessage(Message& msg)
 {
-  ThreadData* threadData = getThreadData();
+  ThreadData* data = getThreadData();
 
   // break this loop? (explicit break or no-more visible frames)
-  if (threadData->breakLoop || threadData->frameCount == 0)
+  if (data->breakLoop || data->frames.empty())
     return false;
+
+  // we have to update indicators?
+  if (data->updateIndicators &&
+      data->updateIndicatorsMark.elapsed() > 0.1) {
+    data->updateIndicators = false;
+
+    // for each registered frame we should call updateIndicators to
+    // update the state of all visible indicators (like top-level
+    // items in the menu-bar and buttons in the tool-bar)
+    for (std::vector<Frame*>::iterator
+	   it = data->frames.begin(),
+	   end = data->frames.end(); it != end; ++it) {
+      (*it)->updateIndicators();
+    }
+  }
 
   // get the message from the queue
   msg.hwnd = NULL;
   BOOL bRet = ::GetMessage(&msg, NULL, 0, 0);
 
   // WM_QUIT received?
-  if (bRet == 0) {
+  if (bRet == 0)
     return false;
-  }
-  // error
-  else if (bRet == -1) {
-    // TODO check the error
-  }
 
-  // WM_NULL message... maybe Timers or callInNextRound
-  if (msg.message == WM_NULL) {
+  // WM_NULL message... maybe Timers or CallInNextRound
+  if (msg.message == WM_NULL)
     Timer::pollTimers();
-
-    // make the call and remove all the slots
-    if (!threadData->callInNextRound.empty()) {
-      threadData->callInNextRound();
-      threadData->callInNextRound.disconnectAll();
-    }
-  }
 
   return true;
 }
@@ -392,20 +375,21 @@ void Thread::processMessage(Message& msg)
  */
 bool Thread::preTranslateMessage(Message& msg)
 {
+  // TODO process messages that produce a update-indicators event
+  if ((msg.message == WM_ACTIVATE) ||
+      (msg.message == WM_CLOSE) ||
+      (msg.message == WM_SETFOCUS) ||
+      (msg.message == WM_KILLFOCUS) ||
+      (msg.message >= WM_LBUTTONDOWN && msg.message <= WM_MBUTTONDBLCLK) ||
+      (msg.message >= WM_KEYDOWN && msg.message <= WM_DEADCHAR)) {
+    ThreadData* data = getThreadData();
+    data->updateIndicators = true;
+    data->updateIndicatorsMark = TimePoint();
+  }
+
   if (msg.hwnd != NULL) {
     Widget* widget = Widget::fromHWND(msg.hwnd);
-
-    // with WinXP there is a "CicMarshalWndClass" that sends messages
-    // to the application, I really don't why, and what is that window,
-    // but exist
-    // 
-    // TODO warning, if that CicMarshalWndClass has something in the
-    //      GWL_USERDATA we must to do identify an Vaca Widget with
-    //      another method (like properties)
-    if (widget == NULL)
-      return false;
-
-    if (widget->preTranslateMessage(msg))
+    if (widget && widget->preTranslateMessage(msg))
       return true;
   }
 
@@ -414,15 +398,15 @@ bool Thread::preTranslateMessage(Message& msg)
 
 void Thread::addFrame(Frame* frame)
 {
-  ++getThreadData()->frameCount;
+  getThreadData()->frames.push_back(frame);
 }
 
 void Thread::removeFrame(Frame* frame)
 {
-  --getThreadData()->frameCount;
+  remove_from_container(getThreadData()->frames, frame);
 
   // when this thread doesn't have more Frames to continue we must to
   // break the current message loop
-  if (getThreadData()->frameCount == 0)
+  if (getThreadData()->frames.empty())
     Thread::breakMessageLoop();
 }

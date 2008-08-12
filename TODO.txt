@@ -3,12 +3,6 @@ General
 ----------------------------------------------------------------------
 
 - Look at 'TODO' in source code
-- Fix Timer class: tick events can break all the message processing
-  (see BouncingBalls for an example of this bug).
-- Add a "WidgetClassName", because with a simple:
-    Panel("", parent, PanelStyle)
-  You can make a disaster. So this should fix it:
-    Panel(WidgetClassName(""), parent, PanelStyle)
 
 
 ----------------------------------------------------------------------
@@ -39,8 +33,6 @@ Examples
 - BouncingBall (fix resize wait, and fix timer break)
 - FontMetrics (finish it)
 - PensBrushes (finish Brushes stuff)
-- Trees (memory leaks, see Components, and big problems with
-  destruction of nodes)
 - DataGrids (complete)
 - Sudoku (double-buffered, with better hot-tracking, better cell
   handle, and fix the "infinite-loop" bug in the level generator)
@@ -49,21 +41,10 @@ Examples
 
 
 ----------------------------------------------------------------------
-Utilities
-----------------------------------------------------------------------
-
-- AddressBook (fix it, and complete it)
-- VacaDoc doesn't compile with UNICODE support
-
-
-----------------------------------------------------------------------
 API
 ----------------------------------------------------------------------
 
-- complete tool-bars behaviour
-  + add Command <-> ToolBar interaction.
-
-- Accelerators
+- Accelerators <-> Commands
 
 - DL_BEGINDRAG, DL_CANCELDRAG, DL_DRAGGING, DL_DROPPED
 
@@ -75,7 +56,7 @@ API
       onBeforePosChange();
       onAfterPosChange();
 
-- check the WM_WINDOWPOSCHANGING message, it's the key.
+- check the WM_WINDOWPOSCHANGING message.
 
 - methods to use: EnableScrollBar
 
@@ -103,12 +84,3 @@ API
 - Graphics::widenPath()
 
 - finish GraphicsPath class
-
-
-----------------------------------------------------------------------
-Documentation
-----------------------------------------------------------------------
-
-- Write more about the "Alternatives" in the index page. (I'll be
-  written it on Spanish)
-- There are a lot of methods without documentation.

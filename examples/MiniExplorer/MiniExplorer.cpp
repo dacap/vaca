@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -319,7 +319,7 @@ public:
     // the Application destructor calls CoUninitialize...
   }
 
-  virtual void main(std::vector<String> args)
+  virtual void main()
   {
     m_mainFrame->setVisible(true);
   }
@@ -329,8 +329,7 @@ public:
 int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		   LPSTR lpCmdLine, int nCmdShow)
 {
-  Example *app(new Example);
+  std::auto_ptr<Example> app(new Example);
   app->run();
-  delete app;
   return 0;
 }

@@ -62,12 +62,11 @@ class VACA_DLL Thread : public NonCopyable
 public:
 
   typedef MSG Message;
-  typedef DWORD Id;
 
 private:
 
   HANDLE m_handle;
-  Id     m_id;
+  ThreadId m_id;
 
 public:
 
@@ -82,11 +81,8 @@ public:
     _Thread(Slot0_fun<void, F>(f));
   }
 
-  Id getId() const;
+  ThreadId getId() const;
 
-  // void execute();
-  // void suspend();
-  // void resume();
   void join();
   bool isJoinable() const;
 
@@ -102,8 +98,6 @@ public:
   static void breakMessageLoop();
 
   static void yield();
-
-  // static void callInNextRound(const Slot0<void>& functor);
 
 protected:
 

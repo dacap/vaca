@@ -42,8 +42,7 @@
 
 // memory leaks
 #ifdef MEMORY_LEAK_DETECTOR
-#  include "stdvaca.h"
-#  include "debug_new.h"
+  #include "debug_new.h"
 #endif
 
 namespace Vaca {
@@ -79,9 +78,23 @@ namespace Vaca {
  */
 typedef TCHAR Character;
 
+/**
+ * An identifier for an application's Command.
+ *
+ * @see Widget#onCommand, Command
+ */
+typedef unsigned int CommandId;
+
+/**
+ * An identifier for a Thread.
+ */
+typedef unsigned int ThreadId;
+
 //////////////////////////////////////////////////////////////////////
 
 /**
+ * It's like a namespace for Orientation.
+ * 
  * @see Orientation
  */
 struct OrientationEnum
@@ -101,6 +114,8 @@ typedef Enum<OrientationEnum> Orientation;
 //////////////////////////////////////////////////////////////////////
 
 /**
+ * It's like a namespace for TextAlign.
+ * 
  * @see TextAlign
  */
 struct TextAlignEnum
@@ -124,6 +139,8 @@ typedef Enum<TextAlignEnum> TextAlign;
 //////////////////////////////////////////////////////////////////////
 
 /**
+ * It's like a namespace for VerticalAlign.
+ * 
  * @see VerticalAlign
  */
 struct VerticalAlignEnum
@@ -147,6 +164,8 @@ typedef Enum<VerticalAlignEnum> VerticalAlign;
 //////////////////////////////////////////////////////////////////////
 
 /**
+ * It's like a namespace for Side.
+ * 
  * @see Side
  */
 struct SideEnum
@@ -162,6 +181,7 @@ struct SideEnum
 
 /**
  * A side. One of the following values:
+ * 
  * @li Side::Left
  * @li Side::Top
  * @li Side::Right
@@ -172,6 +192,8 @@ typedef Enum<SideEnum> Side;
 //////////////////////////////////////////////////////////////////////
 
 /**
+ * It's like a namespace for Borders.
+ * 
  * @see Borders
  */
 struct BordersEnumSet
@@ -194,6 +216,41 @@ struct BordersEnumSet
  * @li Borders::Bottom
  */
 typedef EnumSet<BordersEnumSet> Borders;
+
+//////////////////////////////////////////////////////////////////////
+
+/**
+ * It's like a namespace for CardinalDirection.
+ * 
+ * @see CardinalDirection
+ */
+struct CardinalDirectionEnum
+{
+  enum enumeration {
+    North,
+    Northeast,
+    East,
+    Southeast,
+    South,
+    Southwest,
+    West,
+    Northwest
+  };
+  static const enumeration default_value = North;
+};
+
+/**
+ * A cardinal direction. One of the following values:
+ * @li CardinalDirection::North
+ * @li CardinalDirection::Northeast
+ * @li CardinalDirection::East
+ * @li CardinalDirection::Southeast
+ * @li CardinalDirection::South
+ * @li CardinalDirection::Southwest
+ * @li CardinalDirection::West
+ * @li CardinalDirection::Northwest
+ */
+typedef Enum<CardinalDirectionEnum> CardinalDirection;
 
 //////////////////////////////////////////////////////////////////////
 

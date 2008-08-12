@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -183,20 +183,20 @@ protected:
     invalidate(true);
   }
 
-  virtual void onResizing(int edge, Rect &rc)
+  virtual void onResizing(CardinalDirection dir, Rect &rc)
   {
     if (rc.w < m_minSize.w) {
-      if (edge == WMSZ_LEFT ||
-	  edge == WMSZ_TOPLEFT ||
-	  edge == WMSZ_BOTTOMLEFT)
+      if (dir == CardinalDirection::West ||
+	  dir == CardinalDirection::Northwest ||
+	  dir == CardinalDirection::Southwest)
 	rc.x = rc.x+rc.w-m_minSize.w;
       rc.w = m_minSize.w;
     }
 
     if (rc.h < m_minSize.h) {
-      if (edge == WMSZ_TOP ||
-	  edge == WMSZ_TOPLEFT ||
-	  edge == WMSZ_TOPRIGHT)
+      if (dir == CardinalDirection::North ||
+	  dir == CardinalDirection::Northeast ||
+	  dir == CardinalDirection::Northwest)
 	rc.y = rc.y+rc.h-m_minSize.h;
       rc.h = m_minSize.h;
     }
@@ -220,7 +220,7 @@ class Example : public Application
 {
   MainFrame m_mainFrame;
 public:
-  virtual void main(std::vector<String> args) {
+  virtual void main() {
     m_mainFrame.setVisible(true);
   }
 };
@@ -228,8 +228,7 @@ public:
 int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		   LPSTR lpCmdLine, int nCmdShow)
 {
-  Example* app(new Example);
+  std::auto_ptr<Example> app(new Example);
   app->run();
-  delete app;
   return 0;
 }

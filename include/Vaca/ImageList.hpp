@@ -43,6 +43,9 @@ namespace Vaca {
 
 class String;
 
+/**
+ * A list of images (Win32's HIMAGELIST wrapper).
+ */
 class VACA_DLL ImageList : private NonCopyable
 {
   HIMAGELIST m_HIMAGELIST;

@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -67,7 +67,7 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			       &ageLabel, &age,
 			       &ok, &cancel));
   } catch (ParseException &e) {
-    frame.msgBox(e.what(), "Error in the Bix::format string", MB_OK);
+    MsgBox::show(&frame, "Bix::parse Error", e.what());
     return 0;
   }
 
@@ -91,7 +91,7 @@ struct limit_frame_resizing
 {
   Frame* f;
   limit_frame_resizing(Frame* f) : f(f) { }
-  void operator()(int edge, Rect& rc) {
+  void operator()(CardinalDirection dir, Rect& rc) {
     Rect bounds = f->getBounds();
     rc = Rect(rc.x, bounds.y, rc.w, bounds.h);
   }
@@ -120,12 +120,13 @@ void configure_editor(Edit &edit, Font &normalFont, Font &hotFont, int preferred
 
 void configure_num_editor(Edit &edit)
 {
-  edit.KeyTyped.connect(&filter_num_keys);
+  edit.KeyDown.connect(&filter_num_keys);
 }
 
 void filter_num_keys(KeyEvent &ev)
 {
-  if (!(ev.getCharCode() >= '0' && ev.getCharCode() <= '9') &&
+  if ((ev.getCharCode() != 0) &&
+      !(ev.getCharCode() >= '0' && ev.getCharCode() <= '9') &&
       (ev.getCharCode() >= ' ')) {
     ev.consume();
   }

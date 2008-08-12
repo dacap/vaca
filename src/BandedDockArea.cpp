@@ -143,7 +143,7 @@ DockInfo* BandedDockArea::createDockInfo(DockBar* bar, const Point& cursor, cons
   return dockInfo;
 }
 
-void BandedDockArea::drawXorDockInfoShape(Graphics& g, DockInfo* _dockInfo)
+void BandedDockArea::drawXorTracker(Graphics& g, DockInfo* _dockInfo)
 {
   BandedDockInfo* dockInfo = static_cast<BandedDockInfo*>(_dockInfo);
   Rect bounds = getAbsoluteClientBounds();

@@ -79,10 +79,28 @@ public:
  * - If the dialog has an "OK" button is a good idea to bind its
  *   Button::Action to defaultOkAction().
  *
- * How to customize the close action? Just use your own onClose().
+ * Example:
+ * @code
+ * class MyDialog : public Dialog
+ * {
+ *   Button ok, cnl;
+ * public:
+ *   MyDialog()
+ *     : Dialog("My dialog")
+ *     , ok("OK", this)
+ *     , cnl("Cancel", this)
+ *   {
+ *     ok.Action.connect(Bind(&MyDialog::defaultOkAction, this));
+ *     cnl.Action.connect(Bind(&MyDialog::defaultCancelAction, this));
+ *     // ...
+ *   }
+ * };
+ * @endcode
+ *
+ * How to customize the close action? Just use your own #onClose.
  *
  * If you want to use a MenuBar, you should use a Frame instead of a
- * Dialog, because the Dialog::preTranslateMessage "eat" all
+ * Dialog, because the #preTranslateMessage "eat" all
  * Alt+Letter keyboard messages (used as mnemonics for MenuItems).
  */
 class VACA_DLL Dialog : public Register<DialogClass>, public Frame

@@ -46,7 +46,7 @@ struct DockBar::DragInfo
 {
   bool startDocked;  // The drag start with the DockBar docked.
   Rect startRect;    // The rectangle where the DockBar was before dragging.
-  Rect currentRect;  // Current drag rectangle (where to draw the XORed feedback rectangle).
+  Rect currentRect;  // Current drag rectangle (where to draw the XORed tracker-rectangle).
   Point begMousePos; // The position of the mouse when the drag start.
   Point oldMousePos; // Last mouse position visited
   bool oldCtrlState; // Old state of the Control key
@@ -59,7 +59,7 @@ static HHOOK dragHook = NULL;
 static bool isControlPressed = false;
 static HWND hwndDockWnd = NULL;
 
-// based on the code of James Brown (http://www.catch22.net)
+// Based on the code of J Brown (http://www.catch22.net)
 static LRESULT CALLBACK dragHookProc(int code, WPARAM wParam, LPARAM lParam)
 {
   ULONG state = (ULONG)lParam;
@@ -88,8 +88,9 @@ static LRESULT CALLBACK dragHookProc(int code, WPARAM wParam, LPARAM lParam)
   return CallNextHookEx(dragHook, code, wParam, lParam);
 }
 
-
-// Creates a new DockBar
+/**
+ * Creates a new DockBar
+ */
 DockBar::DockBar(const String& title, Frame* parent, Style style)
   : Widget(DockBarClass::getClassName(), parent, style)
 {
@@ -98,7 +99,6 @@ DockBar::DockBar(const String& title, Frame* parent, Style style)
   m_dockArea = NULL;
   m_drag = NULL;
   m_dockFrame = NULL;
-//   m_dockFrameGarbage = NULL;
   m_owner = parent;
   m_dockInfo = NULL;
 
@@ -117,11 +117,9 @@ DockBar::DockBar(const String& title, Frame* parent, Style style)
 
 DockBar::~DockBar()
 {
-//   dispose();
-
   assert(m_drag == NULL);
 
-  // undock, and delete DockFrame or DockFrameGarbage
+  // undock and delete DockFrame
   cleanUp();
 
   // delete DockInfo
@@ -129,7 +127,6 @@ DockBar::~DockBar()
     delete m_dockInfo;
     m_dockInfo = NULL;
   }
-  
 }
 
 /**
@@ -332,7 +329,6 @@ void DockBar::makeFloat(const Rect* rect)
     m_dockFrame = new DockFrame(this, m_owner);
     m_dockFrame->addChild(this, true);
     m_dockFrame->Close.connect(&DockBar::onDockFrameClose, this);
-    // m_dockFrame->Destroy.connect(&DockBar::onDockFrameDestroy, this);
 
     setVisible(true);
 
@@ -342,13 +338,13 @@ void DockBar::makeFloat(const Rect* rect)
   if (rect != NULL) {
     if (m_drag != NULL && m_drag->startDocked)
       m_dockFrame->setBounds(Rect(rect->getOrigin(),
-				 m_dockFrame->getNonClientSize() + floatingSize));
+				  m_dockFrame->getNonClientSize() + floatingSize));
     else
       m_dockFrame->setBounds(*rect);
   }
   else {
     m_dockFrame->setBounds(Rect(m_owner->getAbsoluteClientBounds().getOrigin(),
-			       m_dockFrame->getNonClientSize() + floatingSize));
+				m_dockFrame->getNonClientSize() + floatingSize));
   }
 
   m_dockFrame->setVisible(true);
@@ -356,22 +352,6 @@ void DockBar::makeFloat(const Rect* rect)
   focusOwner();
   onFloating();
 }
-
-// void DockBar::onDestroy()
-// {
-//   assert(m_drag == NULL);
-
-//   // undock, and delete DockFrame or DockFrameGarbage
-//   cleanUp();
-
-//   // delete DockInfo
-//   if (m_dockInfo != NULL) {
-//     delete m_dockInfo;
-//     m_dockInfo = NULL;
-//   }
-
-// //   Widget::onDestroy();
-// }
 
 void DockBar::onPreferredSize(Size& sz)
 {
@@ -386,36 +366,10 @@ void DockBar::onPreferredSize(Size& sz)
 void DockBar::onDockFrameClose(CloseEvent& ev)
 {
   Widget::setVisible(false);
-
-  m_dockFrame->removeChild(this, true);
-//   m_dockFrame->Destroy.disconnect_all_slots();
-  // TODO XXXX check this
-//   m_dockFrame->deleteAfterEvent();
-  delete_widget(m_dockFrame);
-  m_dockFrame = NULL;
+  cleanFrame();
+  if (m_owner)
+    m_owner->updateIndicators();
 }
-
-/**
- * Called when m_dockFrame is destroyed by its parent. In this case
- * m_dockFrameGarbage holds the m_dockFrame pointer to be deleted,
- * because the m_dockFrame is in its disposition process, we can't
- * delete right now the m_dockFrame, so we must to hold on the pointer
- * to postpone its deletion.
- */
-// void DockBar::onDockFrameDestroy()
-// {
-//   assert(m_dockFrame != NULL);
-
-//   if (getParent() == m_dockFrame) {
-// //     m_dockFrame->removeChild(this, false);
-//     m_dockFrame->removeChild(this, true);
-    
-//     // we can't delete m_dockFrame here (we come from its signal),
-//     // we must to postpone its deletetion
-//     m_dockFrameGarbage = m_dockFrame;
-//     m_dockFrame = NULL;
-//   }
-// }
 
 /**
  * Calls paintGripper().
@@ -446,7 +400,7 @@ void DockBar::onMouseDown(MouseEvent& ev)
     if (ev.getButton() == MouseButtons::Right) {
       if (!m_fullDrag) {
 	ScreenGraphics g;
-	cleanFeedbackShape(g);
+	cleanTracker(g);
       }
 
       endDrag();
@@ -465,7 +419,7 @@ void DockBar::onMouseDown(MouseEvent& ev)
 
       if (!m_fullDrag) {
 	ScreenGraphics g;
-	drawFeedbackShape(g);
+	drawTracker(g);
       }
     }
   }
@@ -492,7 +446,7 @@ void DockBar::onMouseMove(MouseEvent& ev)
     ScreenGraphics g;
 
     if (!m_fullDrag)
-      cleanFeedbackShape(g);
+      cleanTracker(g);
 
     if (m_drag->dockIn != NULL)
       delete m_drag->dockIn;
@@ -501,7 +455,7 @@ void DockBar::onMouseMove(MouseEvent& ev)
     if (m_fullDrag)
       dragBar();
     else
-      drawFeedbackShape(g);
+      drawTracker(g);
   }
 }
 
@@ -512,7 +466,7 @@ void DockBar::onMouseUp(MouseEvent& ev)
 
     if (!m_fullDrag) {
       ScreenGraphics g;
-      cleanFeedbackShape(g);
+      cleanTracker(g);
 
       dragBar();
     }
@@ -541,8 +495,10 @@ void DockBar::onDoubleClick(MouseEvent& ev)
 
     if (dockArea != NULL && m_dockInfo != NULL)
       dockIn(dockArea);
-    // else { do nothing, we can't dock the tool-bar, so it should
-    // continue floating }
+    else {
+      // do nothing, we can't dock the tool-bar, so it should
+      // continue floating
+    }
   }
 }
 
@@ -551,7 +507,7 @@ void DockBar::onCancelMode()
   if (m_drag != NULL) {
     if (!m_fullDrag) {
       ScreenGraphics g;
-      cleanFeedbackShape(g);
+      cleanTracker(g);
     }
     else {
       // TODO
@@ -576,13 +532,14 @@ void DockBar::onDocking()
  */
 void DockBar::onFloating()
 {
+  // do nothing
 }
 
 /**
  * When the DockBar is floating, and its DockFrame container is
- * resized (DockFrame::onResizing()), this event is fired.
+ * resized (DockFrame#onResizing), this event is fired.
  */
-void DockBar::onResizingFrame(DockFrame* frame, int edge, Rect& rc)
+void DockBar::onResizingFrame(DockFrame* frame, CardinalDirection dir, Rect& rc)
 {
 }
 
@@ -666,7 +623,9 @@ bool DockBar::isGripperVisible(bool docked, Side dockSide)
     return false;
 }
 
-// creates the DragInfo to start dragging this DockBar...
+/**
+ * Creates the DragInfo to start dragging this DockBar...
+ */
 void DockBar::beginDrag()
 {
   assert(m_drag == NULL);
@@ -713,7 +672,9 @@ void DockBar::beginDrag()
   //////////////////////////////////////////////////////////////////////
 }
 
-// moves the DockBar to the place that indicates the current m_drag information
+/**
+ * Moves the DockBar to the place that indicates the current m_drag information.
+ */
 void DockBar::dragBar()
 {
   // inside a dock bar
@@ -731,7 +692,9 @@ void DockBar::dragBar()
   }
 }
 
-// destroys the DragInfo (m_drag)
+/**
+ * Destroys the DragInfo (m_drag)
+ */
 void DockBar::endDrag()
 {
   assert(m_drag != NULL);
@@ -758,8 +721,10 @@ void DockBar::endDrag()
   releaseMouse();
 }
 
-// used to hide the DockBar, mainly deletes the m_dockFrame and removes
-// this DockBar from m_dockArea (if it isn't NULL)
+/**
+ * Used to hide the DockBar. It deletes the m_dockFrame and removes
+ * this DockBar from m_dockArea (if it isn't NULL).
+ */
 void DockBar::cleanUp()
 {
   // undock
@@ -768,27 +733,25 @@ void DockBar::cleanUp()
       m_dockArea->removeDockBar(this);
       m_dockArea->getParent()->layout();
     }
-
     m_dockArea = NULL;
   }
 
   // delete the DockFrame
   if (m_dockFrame != NULL) {
     m_dockFrame->Close.disconnectAll();
-    // m_dockFrame->Destroy.disconnectAll();
-
-    if (m_dockFrame->getHWND() != NULL)
-      m_dockFrame->removeChild(this, true);
-
-    delete_widget(m_dockFrame);
-    m_dockFrame = NULL;
+    cleanFrame();
   }
+}
 
-  // delete garbage
-//   if (m_dockFrameGarbage != NULL) {
-//     delete m_dockFrameGarbage;
-//     m_dockFrameGarbage = NULL;
-//   }
+void DockBar::cleanFrame()
+{
+  assert(m_dockFrame != NULL);
+
+  if (m_dockFrame->getHWND() != NULL)
+    m_dockFrame->removeChild(this, true);
+
+  delete_widget(m_dockFrame);
+  m_dockFrame = NULL;
 }
 
 /**
@@ -836,20 +799,20 @@ DockInfo* DockBar::calcDestination(Rect& rc)
   return NULL;
 }
 
-void DockBar::drawFeedbackShape(Graphics& g)
+void DockBar::drawTracker(Graphics& g)
 {
   if (m_drag->dockIn != NULL)
-    m_drag->inArea = xorFeedbackShape(g);
+    m_drag->inArea = xorTracker(g);
   else
-    xorFeedbackShape(g);
+    xorTracker(g);
 }
 
-void DockBar::cleanFeedbackShape(Graphics& g)
+void DockBar::cleanTracker(Graphics& g)
 {
-  xorFeedbackShape(g);
+  xorTracker(g);
 }
 
-DockArea* DockBar::xorFeedbackShape(Graphics& g)
+DockArea* DockBar::xorTracker(Graphics& g)
 {
   assert(m_drag != NULL);
 
@@ -859,7 +822,7 @@ DockArea* DockBar::xorFeedbackShape(Graphics& g)
 
     assert(dockArea != NULL);
     
-    dockArea->drawXorDockInfoShape(g, m_drag->dockIn);
+    dockArea->drawXorTracker(g, m_drag->dockIn);
 
     return dockArea;
   }
@@ -870,6 +833,9 @@ DockArea* DockBar::xorFeedbackShape(Graphics& g)
   }
 }
 
+/**
+ * @todo Move this method to DockFrame
+ */
 Size DockBar::getNonClientSizeForADockFrame()
 {
   Rect clientRect(0, 0, 1, 1);

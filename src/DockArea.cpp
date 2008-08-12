@@ -75,8 +75,8 @@ Side DockArea::getSide()
 }
 
 /**
- * Returns true, because the dock areas are controlled by the Frame,
- * not by the Layout manager.
+ * Returns true, because DockAreas are controlled by the Frame, not by
+ * the Layout manager.
  * 
  * @see Frame::layout
  */
@@ -86,7 +86,7 @@ bool DockArea::isLayoutFree()
 }
 
 /**
- * Adds the @a dockBar in this dock area.
+ * Adds the @a dockBar in this DockArea.
  *
  * @see onAddDockBar
  */
@@ -98,7 +98,7 @@ void DockArea::addDockBar(DockBar* dockBar)
 }
 
 /**
- * Removes the @a dockBar from this dock area.
+ * Removes the @a dockBar from this DockArea.
  *
  * @see onRemoveDockBar
  */
@@ -164,23 +164,3 @@ void DockArea::onRemoveDockBar(DockBar* dockBar)
 void DockArea::onRedock(DockBar* dockBar, DockInfo* newDockInfo)
 {
 }
-
-/**
- * Overrided to remove all dock bars from the dock area before to call
- * Widget::onDestroy (it's to avoid children to be destroyed).
- */
-// void DockArea::onDestroy()
-// {
-//   Widget::Container children = getChildren();
-//   Widget::Container::iterator it;
-
-//   for (it=children.begin(); it!=children.end(); ++it) {
-//     DockBar* dockBar = static_cast<DockBar*>(*it);
-
-//     removeDockBar(dockBar);
-//     dockBar->m_dockArea = NULL;
-//     dockBar->setVisible(false);
-//   }
-
-// //   Widget::onDestroy();
-// }

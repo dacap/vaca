@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -78,48 +78,41 @@ class MainFrame : public Frame
 public:
 
   MainFrame(Style toolSetStyle)
-    : Frame("ToolBars (WIP)")
+    : Frame("ToolBars")
     , m_toolBar1("ToolBar 1", this, toolSetStyle)
     , m_toolBar2("ToolBar 2", this, toolSetStyle)
     , m_toolBar3("ToolBar 3", this, toolSetStyle)
-    , m_dockBar("mDockBar", this)
-    , m_button1("Setup default dock areas (BandedDockArea)", &m_dockBar)
-    , m_button2("Setup basic dock areas (BasicDockArea)", &m_dockBar)
-    , m_button3("Clear all dock areas", &m_dockBar)
+    , m_dockBar("DockBar", this)
+    , m_button1("Setup BandedDockArea", &m_dockBar)
+    , m_button2("Setup BasicDockAreas)", &m_dockBar)
+    , m_button3("Clear DockAreas", &m_dockBar)
     , m_imageList(ResourceId(IDB_TOOLBAR), 16, Color(192, 192, 192))
     , m_console(this)
     , m_bottomPanel(this)
-    , m_button4("Show all dock bars", &m_bottomPanel)
+    , m_button4("Show all DockBars", &m_bottomPanel)
     , m_button5("Full Drag mode", &m_bottomPanel)
     , m_button6("Floating Gripper mode", &m_bottomPanel)
   {
     setLayout(new BoxLayout(Orientation::Vertical, false));
     m_console.setConstraint(new BoxConstraint(true));
-    m_bottomPanel.setLayout(new BoxLayout(Orientation::Horizontal, true, 0));
+    m_bottomPanel.setLayout(new BoxLayout(Orientation::Horizontal, false, 0));
 
     m_toolBar1.getSet().setImageList(m_imageList);
-    m_toolBar1.getSet().addButton(0, 1000, TBSTATE_ENABLED);
-    m_toolBar1.getSet().addButton(1, 1001, TBSTATE_ENABLED);
-    m_toolBar1.getSet().addButton(2, 1002, TBSTATE_ENABLED);
-    m_toolBar1.getSet().addSeparator();
-    m_toolBar1.getSet().addButton(3, 1003, TBSTATE_ENABLED);
-    m_toolBar1.getSet().addButton(4, 1004, TBSTATE_ENABLED);
-    m_toolBar1.getSet().addButton(5, 1005, TBSTATE_ENABLED);
-
     m_toolBar2.getSet().setImageList(m_imageList);
-    m_toolBar2.getSet().addButton(2, 1002, TBSTATE_ENABLED);
-    m_toolBar2.getSet().addToggleButton(2, 1002, TBSTATE_ENABLED);
-    m_toolBar2.getSet().addToggleButton(2, 1002, 0);
-    m_toolBar2.getSet().addToggleButton(2, 1002, TBSTATE_CHECKED);
-    m_toolBar2.getSet().addToggleButton(2, 1002, TBSTATE_ENABLED | TBSTATE_CHECKED);
-    m_toolBar2.getSet().addToggleButton(2, 1002, TBSTATE_ENABLED | TBSTATE_INDETERMINATE);
-    m_toolBar2.getSet().addToggleButton(2, 1002, TBSTATE_ENABLED | TBSTATE_MARKED);
-
     m_toolBar3.getSet().setImageList(m_imageList);
-    m_toolBar3.getSet().addButton(2, 1002, TBSTATE_ENABLED);
-    m_toolBar3.getSet().addDropDownButton(2, 1002, TBSTATE_ENABLED);
-    m_toolBar3.getSet().addWholeDropDownButton(2, 1002, TBSTATE_ENABLED);
-    m_toolBar3.getSet().addWholeDropDownButton(2, 1002, TBSTATE_ENABLED);
+
+    m_toolBar1.getSet().addButton(new ToolButton(1000, 0));
+    m_toolBar1.getSet().addButton(new ToolButton(1001, 1));
+    m_toolBar1.getSet().addButton(new ToolButton(1002, 2));
+    m_toolBar1.getSet().addSeparator();
+    m_toolBar1.getSet().addButton(new ToolButton(1003, 3));
+    m_toolBar1.getSet().addButton(new ToolButton(1004, 4));
+    m_toolBar1.getSet().addButton(new ToolButton(1005, 5));
+
+    for (int c=0; c<8; ++c) {
+      m_toolBar2.getSet().addButton(new ToolButton(1001, 1));
+      m_toolBar3.getSet().addButton(new ToolButton(1002, 2));
+    }
 
     m_dockBar.setLayout(new BoxLayout(Orientation::Vertical, true));
 
@@ -166,10 +159,7 @@ public:
     m_button5.Action.connect(Bind(&MainFrame::onToggleFullDrag, this));
     m_button6.Action.connect(Bind(&MainFrame::onToggleFloatingGripper, this));
 
-    // TODO when floating-gripper works, we can comment this line
-    m_button6.setEnabled(false);
-
-    m_console.println("You must to setup dock areas to dock the tool bars");
+    m_console.println("You must to setup DockAreas to dock the Tool/DockBars");
   }
 
 protected:
@@ -184,30 +174,33 @@ private:
 
   void onDefaultDockAreas()
   {
-    defaultDockAreas();
-    layout();
+    if (safeDeleteDockAreas()) {
+      defaultDockAreas();
+      layout();
 
-    m_console.println("Try to dock the tool bars in the new default (banded) dock areas");
+      m_console.println("Try to dock the Tool/DockBars in the BandedDockAreas that are around the Frame");
+    }
   }
 
   void onBasicDockAreas()
   {
-    deleteDockAreas();
-    addDockArea(new BasicDockArea(Side::Top,    this));
-    addDockArea(new BasicDockArea(Side::Bottom, this));
-    addDockArea(new BasicDockArea(Side::Left,   this));
-    addDockArea(new BasicDockArea(Side::Right,  this));
-    layout();
+    if (safeDeleteDockAreas()) {
+      addDockArea(new BasicDockArea(Side::Top,    this));
+      addDockArea(new BasicDockArea(Side::Bottom, this));
+      addDockArea(new BasicDockArea(Side::Left,   this));
+      addDockArea(new BasicDockArea(Side::Right,  this));
+      layout();
 
-    m_console.println("Try to dock the tool bars in the new basic dock areas");
+      m_console.println("Try to dock the Tool/DockBars in the new BasicDockAreas that are around the Frame");
+    }
   }
 
   void onClearDockAreas()
   {
-    deleteDockAreas();
-    layout();
-
-    m_console.println("All dock bars were cleared, right now you can't dock the bars");
+    if (safeDeleteDockAreas()) {
+      layout();
+      m_console.println("All DockAreas were cleared, right now you can't dock the Tool/DockBars");
+    }
   }
 
   void onShowAll()
@@ -217,7 +210,7 @@ private:
     m_toolBar3.setVisible(true);
     m_dockBar.setVisible(true);
 
-    m_console.println("Show all dock bars");
+    m_console.println("All DockBars are visible now");
   }
 
   void onToggleFullDrag()
@@ -244,6 +237,24 @@ private:
     m_console.println(String("Floating Gripper mode ") + (state ? "enabled": "disabled"));
   }
 
+private:
+
+  bool safeDeleteDockAreas()
+  {
+    if (m_toolBar1.isDocked() || m_toolBar2.isDocked() ||
+	m_toolBar3.isDocked() || m_dockBar.isDocked()) {
+      MsgBox::show(this, "Error",
+		   "You can't change DockAreas if you have some Tool/DockBars docked.",
+		   MsgBox::Type::Ok,
+		   MsgBox::Icon::Error);
+      return false;
+    }
+    else {
+      deleteDockAreas();
+      return true;
+    }
+  }
+
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -254,14 +265,13 @@ class Example : public Application
   MainFrame m_mainFrame2;
 
 public:
-
   Example()
     : m_mainFrame1(ToolSetStyle)
     , m_mainFrame2(ToolSetStyle + FlatToolSetStyle)
   {
   }
   
-  virtual void main(std::vector<String> args) {
+  virtual void main() {
     m_mainFrame1.setVisible(true);
     m_mainFrame2.setVisible(true);
   }
@@ -270,8 +280,7 @@ public:
 int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		   LPSTR lpCmdLine, int nCmdShow)
 {
-  Example* app(new Example);
+  std::auto_ptr<Example> app(new Example);
   app->run();
-  delete app;
   return 0;
 }

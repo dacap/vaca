@@ -106,6 +106,21 @@ void Edit::undo()
   sendMessage(EM_UNDO, 0, 0);
 }
 
+void Edit::cut()
+{
+  sendMessage(WM_CUT, 0, 0);
+}
+
+void Edit::copy()
+{
+  sendMessage(WM_COPY, 0, 0);
+}
+
+void Edit::paste()
+{
+  sendMessage(WM_PASTE, 0, 0);
+}
+
 /**
  * Selects all the text in the Edit widget.
  */
@@ -132,6 +147,19 @@ void Edit::selectRange(int startIndex, int endIndex)
 void Edit::deselect()
 {
   sendMessage(EM_SETSEL, static_cast<WPARAM>(-1), 0);
+}
+
+/**
+ * Returns the current selected range in the text-box.
+ */
+void Edit::getSelection(int& start, int& end)
+{
+  DWORD s, e;
+  sendMessage(EM_GETSEL,
+	      reinterpret_cast<WPARAM>(&s),
+	      reinterpret_cast<LPARAM>(&e));
+  start = s;
+  end = e;
 }
 
 void Edit::onPreferredSize(Size& sz)

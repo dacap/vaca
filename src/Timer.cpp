@@ -295,7 +295,7 @@ void Timer::remove_timer(Timer* t)
  */
 void Timer::fire_actions_for_thread()
 {
-  Thread::Id currentThreadId = ::GetCurrentThreadId();
+  ThreadId currentThreadId = ::GetCurrentThreadId();
   std::vector<Timer*> timers_for_thread;
   std::vector<Timer*>::iterator it;
   Timer* timer;

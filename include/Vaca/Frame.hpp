@@ -47,6 +47,7 @@ class Icon;
 class Menu;
 class MenuBar;
 class MenuItem;
+class Thread;
 
 #define WithCaptionFrameStyle		(Style(WS_CAPTION, 0))
 
@@ -122,7 +123,7 @@ public:
   Signal1<void, Event&> Activate;     ///< @see onActivate
   Signal1<void, Event&> Deactivate;   ///< @see onDeactivate
   Signal1<void, CloseEvent&> Close;   ///< @see onClose
-  Signal2<void, int, Rect&> Resizing; ///< @see onResizing
+  Signal2<void, CardinalDirection, Rect&> Resizing; ///< @see onResizing
 
   virtual bool preTranslateMessage(MSG& msg);
 
@@ -130,13 +131,14 @@ protected:
   // events
   virtual void onPreferredSize(Size& sz);
   virtual void onResize(const Size& sz);
-  virtual bool onActionById(int actionId);
+  virtual bool onCommand(CommandId id);
+  virtual void onUpdateIndicators();
 
   // new events
   virtual void onActivate(Event& ev);
   virtual void onDeactivate(Event& ev);
   virtual void onClose(CloseEvent& ev);
-  virtual void onResizing(int edge, Rect& rc);
+  virtual void onResizing(CardinalDirection dir, Rect& rc);
 
   virtual bool wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult);
 

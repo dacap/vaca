@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -100,17 +100,19 @@ protected:
 class Example : public Application
 {
 public:
-  virtual void main(std::vector<String> args) {
+  virtual void main() {
     MainFrame dlg;
 
     if (dlg.doModal())
-      dlg.msgBox("Welcome '"+dlg.getUserName()+"'",
-		 "Information",
-		 MB_OK | MB_ICONINFORMATION);
+      MsgBox::show(&dlg, "Information",
+		   "Welcome '"+dlg.getUserName()+"'",
+		   MsgBox::Type::Ok,
+		   MsgBox::Icon::Information);
     else
-      dlg.msgBox("You canceled the operation",
-		 "Information",
-		 MB_OK | MB_ICONINFORMATION);
+      MsgBox::show(&dlg, "Information",
+		   "You canceled the operation",
+		   MsgBox::Type::Ok,
+		   MsgBox::Icon::Information);
   }
 };
 

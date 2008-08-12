@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -106,16 +106,14 @@ public:
 
     // method 3: Hook the command in MenuItem::Action signal
     MenuItem* menuItem;
-    menuItem = new MenuItem("&Cmd1(Ctrl+1)",
-			    Keys::Control | Keys::D1,
-			    1000);
+    menuItem = new MenuItem("&Cmd1(Ctrl+1)", 1000,
+			    Keys::Control | Keys::D1);
 
     menuItem->Action.connect(Bind(&MainFrame::onMenuItemSlot, this));
     getMenuBar()->add(menuItem);
 
-    menuItem = new MenuItem("&Cmd2(Ctrl+2)",
-			    Keys::Control | Keys::D2,
-			    1001);
+    menuItem = new MenuItem("&Cmd2(Ctrl+2)", 1001,
+			    Keys::Control | Keys::D2);
 
     menuItem->Action.connect(Bind(&MainFrame::onMenuItemSlot, this));
     getMenuBar()->add(menuItem);
@@ -160,7 +158,7 @@ class Example : public Application
 {
   MainFrame m_mainFrame;
 public:
-  virtual void main(std::vector<String> args) {
+  virtual void main() {
     m_mainFrame.setVisible(true);
   }
 };

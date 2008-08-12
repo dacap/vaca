@@ -29,59 +29,86 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_BANDEDDOCKAREA_HPP
-#define VACA_BANDEDDOCKAREA_HPP
+#ifndef VACA_COMMAND_HPP
+#define VACA_COMMAND_HPP
 
 #include <vector>
 
 #include "Vaca/base.hpp"
-#include "Vaca/DockArea.hpp"
+#include "Vaca/NonCopyable.hpp"
+#include "Vaca/Signal.hpp"
 
 namespace Vaca {
 
-#define BandedDockAreaStyle		ChildStyle
+class Event;
 
 /**
- * An area where you can put @link Vaca::DockBar DockBars@endlink
- * separated by bands.
+ * A command, action or function of the application.
+ *
+ * @see CommandId
  */
-class VACA_DLL BandedDockArea : public DockArea
+class VACA_DLL Command : private NonCopyable
 {
-  struct BandInfo
-  {
-    std::vector<DockBar*> bars; // bars in the band
-    int size;			// band's height (or width for vertical bands)
-    BandInfo() : bars()
-	       , size(0) { }
-  };
-
-  std::vector<BandInfo> m_bandInfo;
+  CommandId m_id;
 
 public:
+  Command(CommandId id);
+  virtual ~Command();
 
-  BandedDockArea(Side side, Widget* parent, Style style = BandedDockAreaStyle);
-  virtual ~BandedDockArea();
+  CommandId getId() const { return m_id; }
 
-  virtual bool hitTest(DockBar* bar, const Point& cursor, const Point& anchor, bool fromInside);
-  virtual DockInfo* createDefaultDockInfo(DockBar* bar);
-  virtual DockInfo* createDockInfo(DockBar* bar, const Point& cursor, const Point& anchor);
-  virtual void drawXorTracker(Graphics& g, DockInfo* dockInfo);
+  virtual void execute() = 0;
 
-  virtual void layout();
+  virtual bool isEnabled() { return true; }
+  virtual bool isChecked() { return false; }
+  virtual bool isVisible() { return false; }
+};
 
-protected:
-  // events
-  virtual void onPreferredSize(Size& sz);
-  virtual void onPaint(Graphics& g);
-  virtual void onAddDockBar(DockBar* dockBar);
-  virtual void onRemoveDockBar(DockBar* dockBar);
-  virtual void onRedock(DockBar* dockBar, DockInfo* newDockInfo);
+/**
+ * Specialization of Command class to handle the
+ * @link Command#execute@endlink and @link Command#isEnabled@endlink
+ * as @link Signal0 signals@endlink.
+ */
+class SignalCommand : public Command
+{
+public:
+  SignalCommand(CommandId id) : Command(id) { }
 
-private:
-  void updateBandSize(int bandIndex);
-  Rect getBandBounds(int bandIndex);
-  void fitBounds(int bandIndex, int barIndex1, std::vector<Rect>& bounds);
+  template<typename F>
+  SignalCommand(CommandId id, const F& f) : Command(id) {
+    Execute.connect(f);
+  }
 
+  template<class T>
+  SignalCommand(CommandId id, void (T::*m)(), T* t) : Command(id) {
+    Execute.connect(m, t);
+  }
+
+  virtual ~SignalCommand() { }
+
+  virtual void execute() { Execute(); }
+  virtual bool isEnabled() {
+    return Enabled(true);	// true by default
+  }
+
+  Signal0<void> Execute;
+  Signal0<bool> Enabled;
+};
+
+/**
+ * An object that contains commands (Application).
+ */
+class VACA_DLL CommandsClient
+{
+  std::vector<Command*> m_commands;
+
+public:
+  CommandsClient();
+  virtual ~CommandsClient();
+
+  void addCommand(Command* cmd);
+  Command* removeCommand(Command* cmd);
+  Command* getCommandById(CommandId id) const;
 };
 
 } // namespace Vaca

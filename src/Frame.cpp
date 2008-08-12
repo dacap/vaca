@@ -89,13 +89,6 @@ Frame::~Frame()
     m_menuBar = NULL;
   }
 
-//   for (std::vector<Command*>::iterator it = m_commands.begin();
-//        it != m_commands.end();
-//        ++it) {
-//     Command* command = *it;
-//     delete command;
-//   }
-
   deleteDockAreas();
 
   if (m_counted) {
@@ -120,7 +113,7 @@ bool Frame::preTranslateMessage(MSG& msg)
 	// is menuItem enabled?
 	if (menuItem->isEnabled()) {
 	  // ok, we can do the action
-	  onActionById(menuItem->getId());
+	  onCommand(menuItem->getId());
 	}
 
 	return true;
@@ -162,16 +155,16 @@ void Frame::onResize(const Size& sz)
  * Convert a WM_COMMAND notification from a menus to a
  * MenuItem::onAction event.
  */
-bool Frame::onActionById(int actionId)
+bool Frame::onCommand(CommandId id)
 {
-  if (Widget::onActionById(actionId))
+  if (Widget::onCommand(id))
     return true;
 
   // use menu bar
   if (m_menuBar != NULL) {
-    MenuItem* menuItem = m_menuBar->getMenuItemById(actionId);
+    MenuItem* menuItem = m_menuBar->getMenuItemById(id);
 
-    VACA_TRACE("Frame::onActionById(%d), menuItem=%p\n", actionId, menuItem);
+    VACA_TRACE("Frame::onCommand(%d), menuItem=%p\n", id, menuItem);
 
     if (menuItem != NULL) {
       MenuItemEvent ev(menuItem);
@@ -179,25 +172,8 @@ bool Frame::onActionById(int actionId)
     }
   }
 
-  // call commands with the given ID
-//   for (std::vector<Command*>::iterator it = m_commands.begin();
-//        it != m_commands.end();
-//        ++it) {
-//     if ((*it)->getId() == actionId)
-//       (*it)->onAction();
-//   }
-
   return false;
 }
-
-// void Frame::onKeyDown(KeyEvent& ev)
-// {
-//   if (m_menuBar != NULL) {
-//     MenuItem* menuItem = m_menuBar->checkShortcuts(ev.getKeys());
-//     if (menuItem != NULL)
-//       menuItem->Action();
-//   }
-// }
 
 void Frame::onActivate(Event& ev)
 {
@@ -238,19 +214,38 @@ void Frame::onClose(CloseEvent& ev)
 }
 
 /**
- * @param edge Can be one of the following values:
- * @li WMSZ_LEFT
- * @li WMSZ_RIGHT
- * @li WMSZ_TOP
- * @li WMSZ_TOPLEFT
- * @li WMSZ_TOPRIGHT
- * @li WMSZ_BOTTOM
- * @li WMSZ_BOTTOMLEFT
- * @li WMSZ_BOTTOMRIGHT
+ * @param edge From where the user is resizing.
  */
-void Frame::onResizing(int edge, Rect& rc)
+void Frame::onResizing(CardinalDirection dir, Rect& rc)
 {
-  Resizing(edge, rc);
+  Resizing(dir, rc);
+}
+
+void Frame::onUpdateIndicators()
+{
+  Widget::onUpdateIndicators();
+
+  // update menu-bar
+  if (m_menuBar != NULL) {
+    Menu::Container children = m_menuBar->getMenuItems();
+
+    // update menus
+    for (Menu::Container::iterator it=children.begin(); it!=children.end(); ++it) {
+      MenuItem* menuItem = *it;
+      updateMenuItem(menuItem);
+    }
+
+    ::DrawMenuBar(getHWND());
+  }
+
+  // // update tool-bars
+  // for (std::vector<DockArea*>::iterator it=m_dockAreas.begin(); it!=m_dockAreas.end(); ++it) {
+  //   DockArea* dockArea = *it;
+  //   Container dockBars = dockArea->getChildren();
+  //   for (std::vector<Widget*>::iterator it=dockBars.begin(); it!=dockBars.end(); ++it) {
+  //     (*it)->updateIndicators();
+  //   }
+  // }
 }
 
 #if 0
@@ -374,7 +369,11 @@ MenuBar* Frame::setMenuBar(MenuBar* menuBar)
   ::SetMenu(hwnd, hmenu); // TODO check errors
 
   MenuBar* oldMenuBar = m_menuBar;
+
+  if (m_menuBar) m_menuBar->setFrame(NULL);
   m_menuBar = menuBar;
+  if (m_menuBar) m_menuBar->setFrame(this);
+
   return oldMenuBar;
 }
 
@@ -625,23 +624,7 @@ void Frame::updateMenuItem(MenuItem* menuItem)
   
   MenuItemEvent ev(menuItem);
   menuItem->onUpdate(ev);
-
-//   CommandState cmdState;
-
-//   for (std::vector<Command*>::iterator it = m_commands.begin();
-//        it != m_commands.end();
-//        ++it) {
-//     Command* command = *it;
-//     if (command->getId() == menuItem->getId())
-//       command->onUpdate(cmdState);
-//   }
-
-//   if (cmdState.getText()   != NULL) menuItem->setText   (*cmdState.getText());
-//   if (cmdState.isEnabled() != NULL) menuItem->setEnabled(*cmdState.isEnabled());
-//   if (cmdState.isChecked() != NULL) menuItem->setChecked(*cmdState.isChecked());
-//   if (cmdState.isRadio()   != NULL) menuItem->setRadio  (*cmdState.isRadio());
 }
-
 
 /**
  * Returns the collection of frames that are synchronized to its
@@ -782,7 +765,20 @@ bool Frame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult
     case WM_SIZING: {
       LPRECT lprc = reinterpret_cast<LPRECT>(lParam);
       Rect rc(lprc);
-      onResizing(wParam, rc);
+      CardinalDirection dir;
+
+      switch (wParam) {
+	case WMSZ_TOP:         dir = CardinalDirection::North;     break;
+	case WMSZ_TOPRIGHT:    dir = CardinalDirection::Northeast; break;
+	case WMSZ_RIGHT:       dir = CardinalDirection::East;      break;
+	case WMSZ_BOTTOMRIGHT: dir = CardinalDirection::Southeast; break;
+	case WMSZ_BOTTOM:      dir = CardinalDirection::South;     break;
+	case WMSZ_BOTTOMLEFT:  dir = CardinalDirection::Southwest; break;
+	case WMSZ_LEFT:        dir = CardinalDirection::West;      break;
+	case WMSZ_TOPLEFT:     dir = CardinalDirection::Northwest; break;
+      }
+
+      onResizing(dir, rc);
       *lprc = rc;
       lResult = TRUE;
       return true;

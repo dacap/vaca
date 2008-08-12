@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,15 @@
 
 using namespace Vaca;
 
+enum {
+  ID_EXIT = 1000,
+  ID_CHANGE_FONT,
+  ID_MULTILINE,
+  ID_READ_ME
+};
+
 class MainFrame : public Frame
+		, public CommandsClient
 {
   TabBase m_tab;
   Label m_labelHere;
@@ -83,6 +91,16 @@ public:
     setMenuBar(createMenuBar());
     setLayout(new ClientLayout);
 
+    // commands
+    SignalCommand* cmd;
+
+    addCommand(new SignalCommand(ID_EXIT, Bind(&MainFrame::setVisible, this, false)));
+    addCommand(new SignalCommand(ID_CHANGE_FONT, &MainFrame::onChangeFont, this));
+    addCommand(cmd = new SignalCommand(ID_MULTILINE));
+    cmd->Execute.connect(&MainFrame::onMultiline, this);
+    cmd->Enabled.connect(&MainFrame::onUpdateMultiline, this);
+    addCommand(new SignalCommand(ID_READ_ME, &MainFrame::onReadMe, this));
+
     // m_tab
     m_tab.setLayout(new BoxLayout(Orientation::Vertical, false));
 
@@ -112,32 +130,21 @@ private:
     Menu* appMenu     = new Menu("&Tabs");
     Menu* optionsMenu = new Menu("&Options");
     Menu* sideMenu    = new Menu("&Side");
-    MenuItem* menuItem;
 
-    // Tabs/Exit
-    menuItem = appMenu->add("E&xit");
-    menuItem->Action.connect(Bind(&MainFrame::setVisible, this, false));
+    appMenu->add("E&xit", ID_EXIT);
 
-    // Options/Change Font
-    menuItem = optionsMenu->add("Change &Font");
-    menuItem->Action.connect(Bind(&MainFrame::onChangeFont, this));
-
-    // Options/Multiline
-    menuItem = optionsMenu->add("&Multiline");
-    menuItem->Action.connect(Bind(&MainFrame::onMultiline, this));
-    menuItem->Update.connect(&MainFrame::onUpdateMultiline, this);
-
-    // Options/Side
+    optionsMenu->add("Change &Font", ID_CHANGE_FONT);
+    optionsMenu->add("&Multiline", ID_MULTILINE);
     optionsMenu->add(sideMenu);
+
     sideMenu->add(new SideMenuItem("&Top", Side::Top, m_tab));
     sideMenu->add(new SideMenuItem("&Left", Side::Left, m_tab));
     sideMenu->add(new SideMenuItem("&Bottom", Side::Bottom, m_tab));
     sideMenu->add(new SideMenuItem("&Right", Side::Right, m_tab));
 
-    // Menu bar
     menuBar->add(appMenu);
     menuBar->add(optionsMenu);
-    menuBar->add("&Read me")->Action.connect(Bind(&MainFrame::onReadMe, this));
+    menuBar->add("&Read me", ID_READ_ME);
 
     return menuBar;
   }
@@ -156,11 +163,12 @@ private:
     m_tab.setMultiline(!m_tab.isMultiline());
   }
 
-  void onUpdateMultiline(MenuItemEvent& ev)
+  bool onUpdateMultiline()
   {
-    ev.getMenuItem()->setChecked(m_tab.isMultiline());
-    ev.getMenuItem()->setEnabled(m_tab.getSide() != Side::Left &&
-				 m_tab.getSide() != Side::Right);
+    getMenuBar()->getMenuItemById(ID_MULTILINE)
+      ->setChecked(m_tab.isMultiline());
+    return (m_tab.getSide() != Side::Left &&
+	    m_tab.getSide() != Side::Right);
   }
 
   // void onUpdateSide(MenuItemEvent& ev)
@@ -184,10 +192,11 @@ private:
 
   void onReadMe()
   {
-    msgBox("A Tab widget with pages in Left or Right sides\n"
-	   "must be Multiline. Also, when you use themes on\n"
-	   "WinXP, you can't use Left or Right sides at all.\n",
-	   "Win32 Limitation", MB_OK);
+    // TODO remove this
+    MsgBox::show(this, "Win32 Limitations",
+		 "A Tab widget with pages in Left or Right sides\n"
+		 "must be Multiline. Also, when you use themes on\n"
+		 "WinXP, you can't use Left or Right sides at all.\n");
   }
 
 private:
@@ -205,7 +214,7 @@ class Example : public Application
 {
   MainFrame m_mainFrame;
 public:
-  virtual void main(std::vector<String> args) {
+  virtual void main() {
     m_mainFrame.setVisible(true);
   }
 };

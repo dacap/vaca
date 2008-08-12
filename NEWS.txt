@@ -35,12 +35,11 @@ Vaca 0.0.6
 - Added more signals for Widget: See LikeScript example (idea of
   Przemyslaw Szurmak).
 - New Bix layout manager.
-- Restructured all action-by-ID stuff:
-  - Renamed Widget::onIdAction() to Widget::onActionById().
-  - Removed Command and CommandState structures (they're just another
-    way to complicate the core API). See the "Commands" example to see a
-    complete example of how to implement commands for menus and
-    tool-bars.
+- Renamed Widget::onIdAction() to Widget::onCommand().
+- Added Command stuff (Command, CommandSignal, CommandsClient),
+  MenuItem and ToolBar uses commands now.
+- Removed MenuItem::Action and MenuItem::Update signals (commands
+  interface is preferred).
 
 Vaca 0.0.5
 

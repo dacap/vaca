@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -152,10 +152,11 @@ protected:
     // work in progress? (we are in "The Loop")
     if (m_state == Working) {
       // display a warning message
-      if (msgBox("The application is working.\r\n"
-		 "Do you really want to close it?",
-		 "Warning",
-		 MB_YESNO | MB_ICONWARNING | MB_DEFBUTTON2) == IDYES) {
+      if (MsgBox::show(this, "Warning",
+		       "The application is working.\r\n"
+		       "Do you really want to close it?",
+		       MsgBox::Type::YesNo,
+		       MsgBox::Icon::Warning, 2) == MsgBox::Result::Yes) {
 	// the user really want to close the window, abort the work
 	m_state = Aborting;
       }
@@ -166,10 +167,11 @@ protected:
     // need more time?
     else if (m_state == Paused) {
       // display a warning message
-      if (msgBox("The application is paused, but doesn't finish its work.\r\n"
-		 "Do you really want to close it?",
-		 "Warning",
-		 MB_YESNO | MB_ICONWARNING | MB_DEFBUTTON2) == IDYES) {
+      if (MsgBox::show(this, "Warning",
+		       "The application is paused, but doesn't finish its work.\r\n"
+		       "Do you really want to close it?",
+		       MsgBox::Type::YesNo,
+		       MsgBox::Icon::Warning, 2) == MsgBox::Result::Yes) {
 	// hide the dialog
 	Dialog::onClose(ev);
       }
@@ -191,7 +193,7 @@ class Example : public Application
 {
   MainFrame m_mainFrame;
 public:
-  virtual void main(std::vector<String> args) {
+  virtual void main() {
     m_mainFrame.setVisible(true);
   }
 };

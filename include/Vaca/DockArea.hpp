@@ -45,6 +45,12 @@ class DockBar;
 
 #define DockAreaStyle		ChildStyle
 
+/**
+ * Information needed for every DockBar that is docked in a specific
+ * DockArea. You have to specialized this class to use it in your own
+ * DockArea (e.g. BasicDockArea uses a BasicDockInfo for each DockBar
+ * docked on it).
+ */
 class DockInfo
 {
 public:
@@ -53,7 +59,7 @@ public:
 };
 
 /**
- * Win32 class used by the DockArea class.
+ * Registers the Win32 class used by the DockArea class.
  */
 class DockAreaClass : public WidgetClass
 {
@@ -113,10 +119,10 @@ public:
   virtual DockInfo* createDockInfo(DockBar* bar, const Point& cursor, const Point& anchor) = 0;
 
   /**
-   * Draws the shape (generally a rectangle) in Xor mode that represents
-   * the specified @a dockInfo.
+   * Draws the tracker (generally a rectangle) in Xor mode that
+   * represents the specified @a dockInfo.
    */
-  virtual void drawXorDockInfoShape(Graphics& g, DockInfo* dockInfo) = 0;
+  virtual void drawXorTracker(Graphics& g, DockInfo* dockInfo) = 0;
 
   /**
    * Lays out all dock bars inside the dock area using the DockInfo of
@@ -134,7 +140,6 @@ private:
 protected:
   // events
   virtual void onPreferredSize(Size& sz) = 0;
-//   virtual void onDestroy();
 
   // new events
   virtual void onAddDockBar(DockBar* dockBar);

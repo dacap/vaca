@@ -32,6 +32,7 @@
 #ifndef VACA_SYSTEM_HPP
 #define VACA_SYSTEM_HPP
 
+#include <vector>
 #include <shlobj.h>
 
 #include "Vaca/base.hpp"
@@ -45,14 +46,14 @@ class Color;
 class ImageList;
 
 /**
- * System class, to handle system related stuff.
+ * System namespace to handle system related stuff (it is a class to
+ * make more easy the DLL loading).
  */
 class VACA_DLL System
 {
 public:
 
-  System();
-  virtual ~System();
+  static std::vector<String> getArgs();
 
   static void println(String line);
   static void printf(LPCTSTR fmt, ...);
@@ -99,6 +100,7 @@ public:
 
   static bool isWin95_98_Me();
   static bool isWinNT_2K_XP();
+  static bool isWin2K_XP();
   static bool isWinXP();
 
 };

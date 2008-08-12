@@ -103,7 +103,7 @@ bool Dialog::doModal()
 }
 
 /**
- * Calls Win32 IsDialogMessage.
+ * Calls Win32's IsDialogMessage.
  */
 bool Dialog::preTranslateMessage(MSG& msg)
 {

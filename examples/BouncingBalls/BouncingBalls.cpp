@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -332,7 +332,7 @@ class MainFrame : public Frame
 public:
 
   MainFrame()
-    : Frame("BouncingBall (WIP)", NULL, FrameStyle + ClientEdgeStyle)
+    : Frame("BouncingBall", NULL, FrameStyle + ClientEdgeStyle)
     , m_timer(1000/TPS)
   {
     setDoubleBuffered(true);
@@ -358,34 +358,36 @@ protected:
 //     update();
 //   }
 
-  virtual void onResizing(int edge, Rect &rc)
+  virtual void onResizing(CardinalDirection dir, Rect &rc)
   {
-    Frame::onResizing(edge, rc);
+    Frame::onResizing(dir, rc);
 
-    if (edge == WMSZ_BOTTOM || edge == WMSZ_TOP) {
+    if (dir == CardinalDirection::North ||
+	dir == CardinalDirection::South) {
       int w = rc.h*4/3;
       rc = Rect(rc.x+rc.w/2-w/2, rc.y, w, rc.h);
     }
-    else if (edge == WMSZ_LEFT || edge == WMSZ_RIGHT) {
+    else if (dir == CardinalDirection::West ||
+	     dir == CardinalDirection::East) {
       int h = rc.w*3/4;
       rc = Rect(rc.x, rc.y+rc.h/2-h/2, rc.w, h);
     }
-    else if (edge == WMSZ_BOTTOMRIGHT) {
+    else if (dir == CardinalDirection::Southeast) {
       int w = rc.w > rc.h*4/3 ? rc.w: rc.h*4/3;
       int h = rc.w > rc.h*4/3 ? rc.w*3/4: rc.h;
       rc = Rect(rc.x, rc.y, w, h);
     }
-    else if (edge == WMSZ_BOTTOMLEFT) {
+    else if (dir == CardinalDirection::Southwest) {
       int w = rc.w > rc.h*4/3 ? rc.w: rc.h*4/3;
       int h = rc.w > rc.h*4/3 ? rc.w*3/4: rc.h;
       rc = Rect(rc.x+rc.w-w, rc.y, w, h);
     }
-    else if (edge == WMSZ_TOPRIGHT) {
+    else if (dir == CardinalDirection::Northeast) {
       int w = rc.w > rc.h*4/3 ? rc.w: rc.h*4/3;
       int h = rc.w > rc.h*4/3 ? rc.w*3/4: rc.h;
       rc = Rect(rc.x, rc.y+rc.h-h, w, h);
     }
-    else if (edge == WMSZ_TOPLEFT) {
+    else if (dir == CardinalDirection::Northwest) {
       int w = rc.w > rc.h*4/3 ? rc.w: rc.h*4/3;
       int h = rc.w > rc.h*4/3 ? rc.w*3/4: rc.h;
       rc = Rect(rc.x+rc.w-w, rc.y+rc.h-h, w, h);

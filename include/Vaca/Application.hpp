@@ -32,11 +32,9 @@
 #ifndef VACA_APPLICATION_HPP
 #define VACA_APPLICATION_HPP
 
-#include <vector>
-
 #include "Vaca/base.hpp"
-#include "Vaca/Thread.hpp"
 #include "Vaca/String.hpp"
+#include "Vaca/Thread.hpp"
 
 namespace Vaca {
 
@@ -68,7 +66,7 @@ public:
 
 private:
 
-  virtual void main(std::vector<String> args);
+  virtual void main();
 
 };
 

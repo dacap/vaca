@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -36,6 +36,13 @@
 #include "grid.hpp"
 
 using namespace Vaca;
+
+enum {
+  ID_GAME_NEW = 1000,
+  ID_GAME_NEW_WITH_SEED,
+  ID_GAME_EXIT,
+  ID_HELP,
+};
 
 //////////////////////////////////////////////////////////////////////
 // Algorithms
@@ -125,6 +132,7 @@ public:
 // The Sudoku window
 
 class MainFrame : public Frame
+		, public CommandsClient
 {
 public:	// MSVC needs it to be public because grid<cell> needs to access to it
   ////////////////////////////////////////
@@ -209,10 +217,16 @@ public:
 
     setBgColor(Color::White);
     setMenuBar(createMenuBar());
-    setSize(getNonClientSize()+Size(32*9, 32*9));
-    center();
+
+    // commands
+    addCommand(new SignalCommand(ID_GAME_NEW, &MainFrame::onNew, this));
+    addCommand(new SignalCommand(ID_GAME_NEW_WITH_SEED, &MainFrame::onNewWithSeed, this));
+    addCommand(new SignalCommand(ID_GAME_EXIT, Bind(&MainFrame::setVisible, this, false)));
+    addCommand(new SignalCommand(ID_HELP, &MainFrame::onHelp, this));
 
     setDoubleBuffered(true);
+    setSize(getNonClientSize()+Size(32*9, 32*9));
+    center();
 
     onNew();
   }
@@ -429,18 +443,16 @@ private:
 
   MenuBar* createMenuBar()
   {
-    Menu* gameMenu = new Menu("&Game");
-    gameMenu->add("&New\tCtrl+Shift+N", Keys::Control | Keys::Shift | Keys::N)
-      ->Action.connect(Bind(&MainFrame::onNew, this));
-    gameMenu->add("New with &seed\tCtrl+N", Keys::Control | Keys::N)
-      ->Action.connect(Bind(&MainFrame::onNewWithSeed, this));
-    gameMenu->addSeparator();
-    gameMenu->add("&Exit")->Action.connect(Bind(&MainFrame::setVisible, this, false));
-
     MenuBar* menuBar = new MenuBar;
-    menuBar->add(gameMenu);
-    menuBar->add("&Help")->Action.connect(Bind(&MainFrame::onHelp, this));
+    Menu* gameMenu = new Menu("&Game");
 
+    gameMenu->add("&New\tCtrl+Shift+N", ID_GAME_NEW, Keys::Control | Keys::Shift | Keys::N);
+    gameMenu->add("New with &seed\tCtrl+N", ID_GAME_NEW_WITH_SEED, Keys::Control | Keys::N);
+    gameMenu->addSeparator();
+    gameMenu->add("&Exit", ID_GAME_EXIT);
+
+    menuBar->add(gameMenu);
+    menuBar->add("&Help", ID_HELP);
     return menuBar;
   }
   
@@ -479,12 +491,13 @@ private:
 
   void onHelp()
   {
-    msgBox("Every 3x3 box, every column, and every row can't repeat the same digit.\n"
-	   "Use the number from 1 to 9 to add a digit, and the 0 to remove it.\n"
-	   "You can use the left mouse button to push the digit to the history,\n"
-	   "the right button to pop a digit from the history, and the middle button\n"
-	   "to remove the entire history.\n",
-	   "Help", MB_OK);
+    MsgBox::show
+      (this, "Help",
+       "Every 3x3 box, every column, and every row can't repeat the same digit.\n"
+       "Use the number from 1 to 9 to add a digit, and the 0 to remove it.\n"
+       "You can use the left mouse button to push the digit to the history,\n"
+       "the right button to pop a digit from the history, and the middle button\n"
+       "to remove the entire history.\n");
   }
 
   //////////////////////////////////////////////////////////////////////
@@ -532,7 +545,7 @@ private:
       if (it->digit == 0 || it->warning)
 	return;
 
-    msgBox("You win!!!", "Congratulations", MB_OK);
+    MsgBox::show(this, "Congratulations", "You win!!!");
 
     // set all to given
     std::for_each(m_puzzle.begin(), m_puzzle.end(), set_given_to_true());
@@ -788,7 +801,7 @@ class Example : public Application
 {
   MainFrame m_mainFrame;
 public:
-  virtual void main(std::vector<String> args) {
+  virtual void main() {
     m_mainFrame.setVisible(true);
   }
 };

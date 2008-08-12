@@ -37,12 +37,71 @@
 #include "Vaca/Debug.hpp"
 #include "Vaca/ImageList.hpp"
 #include "Vaca/DockFrame.hpp"
+#include "Vaca/Command.hpp"
 
 using namespace Vaca;
 
 //////////////////////////////////////////////////////////////////////
+// ToolButton
+
+ToolButton::ToolButton(CommandId id, int imageIndex, ToolButtonState state)
+  : // m_set(NULL)
+  // , 
+    m_buttonIndex(-1)
+  , m_imageIndex(imageIndex)
+  , m_commandId(id)
+  , m_state(state)
+{
+}
+
+ToolButton::ToolButton(const ToolButton& button)
+  : // m_set(NULL)
+  // , 
+    m_buttonIndex(button.m_buttonIndex)
+  , m_imageIndex(button.m_imageIndex)
+  , m_commandId(button.m_commandId)
+  , m_state(button.m_state)
+{
+}
+
+ToolButton::~ToolButton()
+{
+}
+
+// void ToolButton::setSet(ToolSet* set)
+// {
+//   m_set = set;
+// }
+
+void ToolButton::setState(ToolButtonState state)
+{
+  m_state = state;
+  // if (m_set)
+  //   m_set->updateButton(this);
+}
+
+int ToolButton::getTBSTATE() const
+{
+  int state = 0;
+
+  if (m_state & ToolButtonState::Enabled) state |= TBSTATE_ENABLED;
+  if (m_state & ToolButtonState::Checked) state |= TBSTATE_CHECKED;
+  if (m_state & ToolButtonState::Hidden) state |= TBSTATE_HIDDEN;
+
+  return state;
+}
+
+// void ToolButton::setTBSTATE(int tbstate)
+// {
+//   newState = 0;
+//   if (tbstate & TBSTATE_ENABLED) m_state = m_state | ToolButtonState::Enabled;
+//   if (tbstate & TBSTATE_CHECKED) m_state = m_state | ToolButtonState::Checked;
+//   if (tbstate & TBSTATE_HIDDEN) m_state = m_state | ToolButtonState::Hidden;
+//   setState(newState);
+// }
+
+//////////////////////////////////////////////////////////////////////
 // ToolSet
-
 
 // WARNING! if we use TB_ADDBITMAP or TB_ADDBUTTONS, we MUST TO send
 // the TB_BUTTONSTRUCTSIZE message, anyway, I'll try don't use those
@@ -56,6 +115,13 @@ ToolSet::ToolSet(Widget* parent, Style style)
 
 ToolSet::~ToolSet()
 {
+  int i, n = getButtonCount();
+  for (i=0; i<n; i++) {
+    ToolButton* button = getButtonByIndex(i);
+    if (button)
+      delete button;
+  }
+
   if (m_loadedImageList != NULL) {
     ImageList_Destroy(m_loadedImageList);
     m_loadedImageList = NULL;
@@ -138,94 +204,48 @@ void ToolSet::loadStandardImageList(int imageListId)
 }
 
 /**
- * (TB_INSERTBUTTON with BTNS_BUTTON)
+ * Adds a button to the ToolSet.
+ *
+ * It uses Win32's TB_INSERTBUTTON with BTNS_BUTTON.
  * 
  * @param imageIndex The images to use for this button from the
  *                   ImageList that you specified to setImageList().
  *
- * @param commandId
+ * @param id
  *      Identifier of the command. This is the identifier that will be
- *      sent to Widget#onActionById(int).
+ *      sent to Widget#onCommand.
  *
  * @param buttonState
- *     @li TBSTATE_CHECKED
- *     @li TBSTATE_ENABLED
- *     @li TBSTATE_HIDDEN
- *     @li TBSTATE_INDETERMINATE
- *     @li TBSTATE_ELLIPSES
- *     @li TBSTATE_MARKED
+ *      One of the following values:
+ *      @li TBState::Checked
+ *      @li TBState::Enabled
+ *      @li TBState::Hidden
  */
-void ToolSet::addButton(int imageIndex, int commandId, int buttonState)
+void ToolSet::addButton(ToolButton* button)
 {
   TBBUTTON tbb;
 
-  tbb.iBitmap = imageIndex; //I_IMAGENONE
-  tbb.idCommand = commandId;
-  tbb.fsState = buttonState;
-  tbb.fsStyle = BTNS_BUTTON;
-  tbb.dwData = 0;
+  tbb.iBitmap = button->getImageIndex();
+  tbb.idCommand = button->getCommandId();
+  tbb.fsState = button->getTBSTATE();
+  tbb.fsStyle = BTNS_BUTTON;	// TODO add ToolButtonStyles
   tbb.iString = 0;
+  tbb.dwData = reinterpret_cast<DWORD_PTR>(button);
 
-  sendMessage(TB_INSERTBUTTON, getButtonCount(),
-	      reinterpret_cast<LPARAM>(&tbb));
+  // button->setSet(this);
+  button->setButtonIndex(getButtonCount()-1);
 
-  updatePreferredSizes();
-}
-
-void ToolSet::addToggleButton(int imageIndex, int commandId, int buttonState)
-{
-  TBBUTTON tbb;
-
-  tbb.iBitmap = imageIndex; //I_IMAGENONE
-  tbb.idCommand = commandId;
-  tbb.fsState = buttonState;
-  tbb.fsStyle = BTNS_CHECK;
-  tbb.dwData = 0;
-  tbb.iString = 0;
-
-  sendMessage(TB_INSERTBUTTON, getButtonCount(),
-	      reinterpret_cast<LPARAM>(&tbb));
-
-  updatePreferredSizes();
-}
-
-void ToolSet::addDropDownButton(int imageIndex, int commandId, int buttonState)
-{
-  TBBUTTON tbb;
-
-  tbb.iBitmap = imageIndex; //I_IMAGENONE
-  tbb.idCommand = commandId;
-  tbb.fsState = buttonState;
-  tbb.fsStyle = BTNS_DROPDOWN;
-  tbb.dwData = 0;
-  tbb.iString = 0;
-
-  sendMessage(TB_INSERTBUTTON, getButtonCount(),
-	      reinterpret_cast<LPARAM>(&tbb));
-
-  updatePreferredSizes();
-}
-
-void ToolSet::addWholeDropDownButton(int imageIndex, int commandId, int buttonState)
-{
-  TBBUTTON tbb;
-
-  tbb.iBitmap = imageIndex; //I_IMAGENONE
-  tbb.idCommand = commandId;
-  tbb.fsState = buttonState;
-  tbb.fsStyle = BTNS_WHOLEDROPDOWN;
-  tbb.dwData = 0;
-  tbb.iString = 0;
-
-  sendMessage(TB_INSERTBUTTON, getButtonCount(),
+  sendMessage(TB_INSERTBUTTON,
+	      button->getButtonIndex()+1,
 	      reinterpret_cast<LPARAM>(&tbb));
 
   updatePreferredSizes();
 }
 
 /**
- * (TB_INSERTBUTTON with BTNS_SEP)
+ * Adds a separator in the ToolSet.
  * 
+ * It uses Win32's TB_INSERTBUTTON with BTNS_SEP.
  */
 void ToolSet::addSeparator(int width)
 {
@@ -235,6 +255,7 @@ void ToolSet::addSeparator(int width)
   tbb.idCommand = 0;
   tbb.fsState = 0;
   tbb.fsStyle = BTNS_SEP;
+  tbb.dwData = static_cast<DWORD_PTR>(NULL);
 
   sendMessage(TB_INSERTBUTTON, getButtonCount(),
 	      reinterpret_cast<LPARAM>(&tbb));
@@ -242,14 +263,55 @@ void ToolSet::addSeparator(int width)
   updatePreferredSizes();
 }
 
-/**
- * (TB_SETCMDID)
- * 
- */
-void ToolSet::setButtonCommandId(int buttonIndex, int newCommandId)
+void ToolSet::updateButton(ToolButton* button)
 {
-  BOOL res = sendMessage(TB_SETCMDID, buttonIndex, newCommandId);
-  assert(res != FALSE);
+  TBBUTTONINFO tbbi;
+
+  tbbi.cbSize = sizeof(TBBUTTONINFO);
+  tbbi.dwMask = TBIF_COMMAND | TBIF_IMAGE | TBIF_STATE;
+  tbbi.idCommand = button->getCommandId();
+  tbbi.iImage = button->getImageIndex();
+  tbbi.fsState = button->getTBSTATE();
+
+  sendMessage(TB_SETBUTTONINFO,
+	      button->getCommandId(),
+	      reinterpret_cast<LPARAM>(&tbbi));
+
+  updatePreferredSizes();
+}
+
+ToolButton* ToolSet::getButtonById(CommandId id)
+{
+  TBBUTTONINFO tbbi;
+
+  tbbi.cbSize = sizeof(TBBUTTONINFO);
+  tbbi.dwMask = TBIF_LPARAM;
+
+  if (sendMessage(TB_GETBUTTONINFO,
+		  id,
+		  reinterpret_cast<LPARAM>(&tbbi)) >= 0 &&
+      tbbi.lParam) {
+    return reinterpret_cast<ToolButton*>(tbbi.lParam);
+  }
+  else
+    return NULL;
+}
+
+ToolButton* ToolSet::getButtonByIndex(int index)
+{
+  TBBUTTONINFO tbbi;
+
+  tbbi.cbSize = sizeof(TBBUTTONINFO);
+  tbbi.dwMask = TBIF_LPARAM | TBIF_BYINDEX;
+
+  if (sendMessage(TB_GETBUTTONINFO,
+		  index,
+		  reinterpret_cast<LPARAM>(&tbbi)) >= 0 &&
+      tbbi.lParam) {
+    return reinterpret_cast<ToolButton*>(tbbi.lParam);
+  }
+  else
+    return NULL;
 }
 
 /**
@@ -257,7 +319,7 @@ void ToolSet::setButtonCommandId(int buttonIndex, int newCommandId)
  * (relative to client area). Returns a negative index if the point is
  * inside a (or the nearest of) a separator button.
  *
- * (TB_HITTEST)
+ * It uses Win32's TB_HITTEST.
  */
 int ToolSet::hitTest(const Point& pt)
 {
@@ -274,6 +336,39 @@ std::vector<Size> ToolSet::getPreferredSizes()
 void ToolSet::onPreferredSize(Size& sz)
 {
   sz = m_preferredSizes[getRows()];
+}
+
+void ToolSet::onUpdateIndicators()
+{
+  int i, n = getButtonCount();
+  for (i=0; i<n; i++) {
+    ToolButton* button = getButtonByIndex(i);
+    if (button) {
+      Command* cmd = findCommandById(button->getCommandId());
+      if (cmd) {
+	ToolButtonState state = button->getState();
+
+	if (cmd->isEnabled())
+	  state |= ToolButtonState::Enabled;
+	else
+	  state &= ~ToolButtonState::Enabled;
+
+	if (state != button->getState()) {
+	  button->setState(state);
+
+	  TBBUTTONINFO tbbi;
+
+	  tbbi.cbSize = sizeof(TBBUTTONINFO);
+	  tbbi.dwMask = TBIF_STATE;
+	  tbbi.fsState = button->getTBSTATE();
+
+	  sendMessage(TB_SETBUTTONINFO,
+		      button->getCommandId(),
+		      reinterpret_cast<LPARAM>(&tbbi));
+	}
+      }
+    }
+  }
 }
 
 bool ToolSet::onReflectedCommand(int id, int code, LRESULT& lResult)
@@ -348,17 +443,16 @@ void ToolSet::updatePreferredSizes()
 
 //////////////////////////////////////////////////////////////////////
 // ToolBar
-
 
 ToolBar::ToolBar(const String& title, Frame* parent, Style toolSetStyle, Style style)
   : DockBar(title, parent, style)
-  , mSet(this, toolSetStyle)
-  , mRowsWhenFloating(1)
+  , m_set(this, toolSetStyle)
+  , m_rowsWhenFloating(1)
 {
   setLayout(new ClientLayout);
 
-  mSet.removeStyle(Style(CCS_LEFT | CCS_TOP | CCS_RIGHT | CCS_BOTTOM | CCS_VERT, 0));
-  mSet.addStyle(Style(CCS_TOP, 0));
+  m_set.removeStyle(Style(CCS_LEFT | CCS_TOP | CCS_RIGHT | CCS_BOTTOM | CCS_VERT, 0));
+  m_set.addStyle(Style(CCS_TOP, 0));
 
   layout();
 }
@@ -369,7 +463,7 @@ ToolBar::~ToolBar()
 
 ToolSet& ToolBar::getSet()
 {
-  return mSet;
+  return m_set;
 }
 
 /**
@@ -380,10 +474,10 @@ ToolSet& ToolBar::getSet()
 Size ToolBar::getDockedSize(Side side)
 {
   Size size(0, 0);
-  std::vector<Size> preferredSizes = mSet.getPreferredSizes();
+  std::vector<Size> preferredSizes = m_set.getPreferredSizes();
 
   if (side == Side::Left || side == Side::Right)
-    size = preferredSizes[mSet.getButtonCount()];
+    size = preferredSizes[m_set.getButtonCount()];
   else
     size = preferredSizes[1];
 
@@ -392,17 +486,21 @@ Size ToolBar::getDockedSize(Side side)
 
 Size ToolBar::getFloatingSize()
 {
-  std::vector<Size> preferredSizes = mSet.getPreferredSizes();
+  std::vector<Size> preferredSizes = m_set.getPreferredSizes();
 
   return
-    preferredSizes[mRowsWhenFloating] +
+    preferredSizes[m_rowsWhenFloating] +
     measureGripper(false, Side::Left);
 }
 
-bool ToolBar::onActionById(int actionId)
+bool ToolBar::onCommand(CommandId id)
 {
-  return getOwnerFrame()->sendMessage(WM_COMMAND,
-				      MAKEWPARAM(actionId, 0), 0) == 0;
+  return getOwnerFrame()->sendMessage(WM_COMMAND, MAKEWPARAM(id, 0), 0) == 0;
+}
+
+void ToolBar::onUpdateIndicators()
+{
+  m_set.updateIndicators();
 }
 
 /**
@@ -417,62 +515,66 @@ void ToolBar::onDocking()
   DockBar::onDocking();
 
   if (getDockArea()->isHorizontal())
-    mSet.setRows(1, true);
+    m_set.setRows(1, true);
   else
-    mSet.setRows(mSet.getButtonCount(), false);
+    m_set.setRows(m_set.getButtonCount(), false);
 }
 
 void ToolBar::onFloating()
 {
   DockBar::onFloating();
 
-  mSet.setRows(mRowsWhenFloating, false);
+  m_set.setRows(m_rowsWhenFloating, false);
 }
 
-void ToolBar::onResizingFrame(DockFrame* frame, int edge, Rect& rc)
+void ToolBar::onResizingFrame(DockFrame* frame, CardinalDirection dir, Rect& rc)
 {
-  DockBar::onResizingFrame(frame, edge, rc);
+  DockBar::onResizingFrame(frame, dir, rc);
 
   Size prefSize = frame->getPreferredSize();
   Size extraSize = prefSize - getPreferredSize();
-  std::vector<Size> preferredSizes = mSet.getPreferredSizes();
+  std::vector<Size> preferredSizes = m_set.getPreferredSizes();
   int rows, maxRows = preferredSizes.size()-1;
 
   for (rows=1; rows<=maxRows; rows++) {
     //////////////////////////////////////////////////////////////////////
-    // WMSZ_RIGHT
-    if (edge == WMSZ_RIGHT && preferredSizes[rows].w+extraSize.w <= rc.w) {
-      mSet.setRows(mRowsWhenFloating = rows, false);
+    // East
+    if (dir == CardinalDirection::East &&
+	preferredSizes[rows].w+extraSize.w <= rc.w) {
+      m_set.setRows(m_rowsWhenFloating = rows, false);
       prefSize = frame->getPreferredSize();
       rc.setSize(prefSize);
       return;
     }
     //////////////////////////////////////////////////////////////////////
-    // WMSZ_LEFT
-    else if (edge == WMSZ_LEFT && preferredSizes[rows].w+extraSize.w <= rc.w) {
+    // West
+    else if (dir == CardinalDirection::West &&
+	     preferredSizes[rows].w+extraSize.w <= rc.w) {
 //       prefSize = preferredSizes[rows] + extraSize;
 
-      mSet.setRows(mRowsWhenFloating = rows, false);
+      m_set.setRows(m_rowsWhenFloating = rows, false);
       prefSize = frame->getPreferredSize();
       rc = Rect(Point(rc.x+rc.w-prefSize.w, rc.y), prefSize);
       return;
     }
     //////////////////////////////////////////////////////////////////////
-    // WMSZ_BOTTOM
-    else if (edge == WMSZ_BOTTOM && preferredSizes[rows].h+extraSize.h >= rc.h) {
+    // South
+    else if (dir == CardinalDirection::South &&
+	     preferredSizes[rows].h+extraSize.h >= rc.h) {
 //       prefSize = preferredSizes[rows] + extraSize;
 
-      mSet.setRows(mRowsWhenFloating = rows, false);
+      m_set.setRows(m_rowsWhenFloating = rows, false);
       prefSize = frame->getPreferredSize();
       rc.setSize(prefSize);
       return;
     }
     //////////////////////////////////////////////////////////////////////
-    // WMSZ_TOP
-    else if (edge == WMSZ_TOP && preferredSizes[rows].h+extraSize.h >= rc.h) {
+    // North
+    else if (dir == CardinalDirection::North &&
+	     preferredSizes[rows].h+extraSize.h >= rc.h) {
 //       prefSize = preferredSizes[rows] + extraSize;
 
-      mSet.setRows(mRowsWhenFloating = rows, false);
+      m_set.setRows(m_rowsWhenFloating = rows, false);
       prefSize = frame->getPreferredSize();
       rc = Rect(Point(rc.x, rc.y+rc.h-prefSize.h), prefSize);
       return;

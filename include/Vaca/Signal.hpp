@@ -58,35 +58,31 @@ namespace Vaca {
 
   public:
     Signal0_base() { }
-
     Signal0_base(const Signal0_base<R>& s)
     {
-      typename SlotList::const_iterator end = s.m_slots.end();
-      for (typename SlotList::const_iterator
-    	     it = s.m_slots.begin(); it != end; ++it) {
-    	m_slots.push_back((*it)->clone());
-      }
+      copy(s);
     }
-
     ~Signal0_base()
     {
       disconnectAll();
     }
 
+    SlotType* addSlot(SlotType* slot)
+    {
+      m_slots.push_back(slot);
+      return slot;
+    }
+
     template<typename F>
     SlotType* connect(const F& f)
     {
-      SlotType* slot = new Slot0_fun<R, F>(f);
-      m_slots.push_back(slot);
-      return slot;
+      return addSlot(new Slot0_fun<R, F>(f));
     }
 
     template<class T>
     SlotType* connect(R (T::*m)(), T* t)
     {
-      SlotType* slot = new Slot0_mem<R, T>(m, t);
-      m_slots.push_back(slot);
-      return slot;
+      return addSlot(new Slot0_mem<R, T>(m, t));
     }
 
     const SlotList& getSlots() const
@@ -105,11 +101,28 @@ namespace Vaca {
       for (typename SlotList::iterator
 	     it = m_slots.begin(); it != end; ++it)
 	delete *it;
+      m_slots.clear();
     }
 
     bool empty() const
     {
       return m_slots.empty();
+    }
+
+    Signal0_base& operator=(const Signal0_base<R>& s) {
+      copy(s);
+      return *this;
+    }
+
+  private:
+
+    void copy(const Signal0_base<R>& s)
+    {
+      typename SlotList::const_iterator end = s.m_slots.end();
+      for (typename SlotList::const_iterator
+    	     it = s.m_slots.begin(); it != end; ++it) {
+    	m_slots.push_back((*it)->clone());
+      }
     }
 
   };
@@ -197,35 +210,31 @@ namespace Vaca {
 
   public:
     Signal1_base() { }
-
     Signal1_base(const Signal1_base<R, A1>& s)
     {
-      typename SlotList::const_iterator end = s.m_slots.end();
-      for (typename SlotList::const_iterator
-    	     it = s.m_slots.begin(); it != end; ++it) {
-    	m_slots.push_back((*it)->clone());
-      }
+      copy(s);
     }
-
     ~Signal1_base()
     {
       disconnectAll();
     }
 
+    SlotType* addSlot(SlotType* slot)
+    {
+      m_slots.push_back(slot);
+      return slot;
+    }
+
     template<typename F>
     SlotType* connect(const F& f)
     {
-      SlotType* slot = new Slot1_fun<R, F, A1>(f);
-      m_slots.push_back(slot);
-      return slot;
+      return addSlot(new Slot1_fun<R, F, A1>(f));
     }
 
     template<class T>
     SlotType* connect(R (T::*m)(A1), T* t)
     {
-      SlotType* slot = new Slot1_mem<R, T, A1>(m, t);
-      m_slots.push_back(slot);
-      return slot;
+      return addSlot(new Slot1_mem<R, T, A1>(m, t));
     }
 
     const SlotList& getSlots() const
@@ -244,11 +253,28 @@ namespace Vaca {
       for (typename SlotList::iterator
 	     it = m_slots.begin(); it != end; ++it)
 	delete *it;
+      m_slots.clear();
     }
 
     bool empty() const
     {
       return m_slots.empty();
+    }
+
+    Signal1_base& operator=(const Signal1_base<R, A1>& s) {
+      copy(s);
+      return *this;
+    }
+
+  private:
+
+    void copy(const Signal1_base<R, A1>& s)
+    {
+      typename SlotList::const_iterator end = s.m_slots.end();
+      for (typename SlotList::const_iterator
+    	     it = s.m_slots.begin(); it != end; ++it) {
+    	m_slots.push_back((*it)->clone());
+      }
     }
 
   };
@@ -336,35 +362,31 @@ namespace Vaca {
 
   public:
     Signal2_base() { }
-
     Signal2_base(const Signal2_base<R, A1, A2>& s)
     {
-      typename SlotList::const_iterator end = s.m_slots.end();
-      for (typename SlotList::const_iterator
-    	     it = s.m_slots.begin(); it != end; ++it) {
-    	m_slots.push_back((*it)->clone());
-      }
+      copy(s);
     }
-
     ~Signal2_base()
     {
       disconnectAll();
     }
 
+    SlotType* addSlot(SlotType* slot)
+    {
+      m_slots.push_back(slot);
+      return slot;
+    }
+
     template<typename F>
     SlotType* connect(const F& f)
     {
-      SlotType* slot = new Slot2_fun<R, F, A1, A2>(f);
-      m_slots.push_back(slot);
-      return slot;
+      return addSlot(new Slot2_fun<R, F, A1, A2>(f));
     }
 
     template<class T>
     SlotType* connect(R (T::*m)(A1, A2), T* t)
     {
-      SlotType* slot = new Slot2_mem<R, T, A1, A2>(m, t);
-      m_slots.push_back(slot);
-      return slot;
+      return addSlot(new Slot2_mem<R, T, A1, A2>(m, t));
     }
 
     const SlotList& getSlots() const
@@ -383,11 +405,28 @@ namespace Vaca {
       for (typename SlotList::iterator
 	     it = m_slots.begin(); it != end; ++it)
 	delete *it;
+      m_slots.clear();
     }
 
     bool empty() const
     {
       return m_slots.empty();
+    }
+
+    Signal2_base& operator=(const Signal2_base<R, A1, A2>& s) {
+      copy(s);
+      return *this;
+    }
+
+  private:
+
+    void copy(const Signal2_base<R, A1, A2>& s)
+    {
+      typename SlotList::const_iterator end = s.m_slots.end();
+      for (typename SlotList::const_iterator
+    	     it = s.m_slots.begin(); it != end; ++it) {
+    	m_slots.push_back((*it)->clone());
+      }
     }
 
   };

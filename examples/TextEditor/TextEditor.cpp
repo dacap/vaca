@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -37,7 +37,7 @@ using namespace Vaca;
 
 //////////////////////////////////////////////////////////////////////
 // View
-
+
 class Document;
 
 class View
@@ -54,7 +54,7 @@ public:
 
 //////////////////////////////////////////////////////////////////////
 // Document
-
+
 class Document
 {
   String m_fileName;		// current file name for the document
@@ -120,7 +120,7 @@ public:
 
 //////////////////////////////////////////////////////////////////////
 // A MdiChild with a SciEditor in its client area
-
+
 class TextEditor : public MdiChild, public View
 {
   SciEditor m_editor; // text editor inside this MdiChild frame
@@ -276,13 +276,13 @@ public:
 
 //////////////////////////////////////////////////////////////////////
 // A MdiFrame with a collection of TextEditor as MdiChild
-
+
 class MainFrame : public MdiFrame
+		, public CommandsClient
 {
   int m_docCounter; // counter for documents (only to make "Untitled1", "Untitled2", etc.)
   Font m_font;
   bool m_viewEol;
-  FindTextDialog* m_findDlg;
 
 public:
 
@@ -291,10 +291,11 @@ public:
     , m_docCounter(0)
     , m_font("Courier New", 10)
     , m_viewEol(false)
-    , m_findDlg(NULL)
   {
     setMenuBar(createMenuBar());
     setIcon(IDI_VACA);
+
+    createCommands();
   }
 
   virtual ~MainFrame()
@@ -310,6 +311,9 @@ public:
 
 private:
 
+  //////////////////////////////////////////////////////////////////////
+  // menu-bar & commands
+
   MenuBar* createMenuBar()
   {
     MenuBar* menuBar = new MenuBar;
@@ -317,107 +321,33 @@ private:
     Menu* editMenu = new Menu("&Edit");
     Menu* optionsMenu = new Menu("&Options");
     MdiListMenu* windowsMenu = new MdiListMenu("&Windows");
-    MenuItem* menuItem;
 
-    // File/New
-    menuItem = fileMenu->add("&New\tCtrl+N", Keys::Control | Keys::N);
-    menuItem->Action.connect(Bind(&MainFrame::onNew, this));
-
-    // File/Open
-    menuItem = fileMenu->add("&Open\tCtrl+O", Keys::Control | Keys::O);
-    menuItem->Action.connect(Bind(&MainFrame::onOpen, this));
-
-    // ---
+    fileMenu->add("&New\tCtrl+N", ID_FILE_NEW, Keys::Control | Keys::N);
+    fileMenu->add("&Open\tCtrl+O", ID_FILE_OPEN, Keys::Control | Keys::O);
     fileMenu->addSeparator();
-
-    // File/Save
-    menuItem = fileMenu->add("&Save\tCtrl+S", Keys::Control | Keys::S);
-    menuItem->Action.connect(Bind(&MainFrame::onSave, this));
-    menuItem->Update.connect(&MainFrame::onUpdate_forSave, this);
-
-    // File/Save As
-    menuItem = fileMenu->add("Save &as...");
-    menuItem->Action.connect(Bind(&MainFrame::onSaveAs, this));
-    menuItem->Update.connect(&MainFrame::onUpdate_getTextEditor_Available, this);
-
-    // ---
+    fileMenu->add("&Save\tCtrl+S", ID_FILE_SAVE, Keys::Control | Keys::S);
+    fileMenu->add("Save &as...", ID_FILE_SAVE_AS);
     fileMenu->addSeparator();
+    fileMenu->add("E&xit", ID_FILE_EXIT);
 
-    // File/Exit
-    menuItem = fileMenu->add("E&xit");
-    menuItem->Action.connect(Bind(&MainFrame::onExit, this));
-
-    // Edit/Undo
-    menuItem = editMenu->add("&Undo\tCtrl+Z", Keys::Control | Keys::Z);
-    menuItem->Action.connect(Bind(&MainFrame::onUndo, this));
-    menuItem->Update.connect(&MainFrame::onUpdate_canUndo, this);
-
-    // Edit/Redo
-    menuItem = editMenu->add("&Redo\tCtrl+Y", Keys::Control | Keys::Y);
-    menuItem->Action.connect(Bind(&MainFrame::onRedo, this));
-    menuItem->Update.connect(&MainFrame::onUpdate_canRedo, this);
-
-    // ---
+    editMenu->add("&Undo\tCtrl+Z", ID_EDIT_UNDO, Keys::Control | Keys::Z);
+    editMenu->add("&Redo\tCtrl+Y", ID_EDIT_REDO, Keys::Control | Keys::Y);
     editMenu->addSeparator();
-
-    // Edit/Cut
-    menuItem = editMenu->add("Cu&t\tCtrl+X", Keys::Control | Keys::X);
-    menuItem->Action.connect(Bind(&MainFrame::onCut, this));
-    menuItem->Update.connect(&MainFrame::onUpdate_getTextEditor_Available, this);
-
-    // Edit/Copy
-    menuItem = editMenu->add("&Copy\tCtrl+C", Keys::Control | Keys::C);
-    menuItem->Action.connect(Bind(&MainFrame::onCopy, this));
-    menuItem->Update.connect(&MainFrame::onUpdate_getTextEditor_Available, this);
-
-    // Edit/Paste
-    menuItem = editMenu->add("&Paste\tCtrl+V", Keys::Control | Keys::P);
-    menuItem->Action.connect(Bind(&MainFrame::onPaste, this));
-    menuItem->Update.connect(&MainFrame::onUpdate_getTextEditor_Available, this);
-
-    // Edit/Clear
-    menuItem = editMenu->add("Clea&r");
-    menuItem->Action.connect(Bind(&MainFrame::onClear, this));
-    menuItem->Update.connect(&MainFrame::onUpdate_getTextEditor_Available, this);
-
-    // ---
+    editMenu->add("Cu&t\tCtrl+X", ID_EDIT_CUT, Keys::Control | Keys::X);
+    editMenu->add("&Copy\tCtrl+C", ID_EDIT_COPY, Keys::Control | Keys::C);
+    editMenu->add("&Paste\tCtrl+V", ID_EDIT_PASTE, Keys::Control | Keys::P);
+    editMenu->add("Clea&r", ID_EDIT_CLEAR);
     editMenu->addSeparator();
+    editMenu->add("&Find\tCtrl+F", ID_EDIT_FIND, Keys::Control | Keys::F);
+    editMenu->add("R&eplace\tCtrl+H", ID_EDIT_REPLACE, Keys::Control | Keys::H);
 
-    // Edit/Find
-    menuItem = editMenu->add("&Find\tCtrl+F", Keys::Control | Keys::F);
-    menuItem->Action.connect(Bind(&MainFrame::onFindReplace, this, false));
-    menuItem->Update.connect(&MainFrame::onUpdate_getTextEditor_Available, this);
+    optionsMenu->add("Change &Font", ID_OPTIONS_CHANGE_FONT);
+    optionsMenu->add("View &EOL", ID_OPTIONS_VIEW_EOL);
 
-    // Edit/Replace
-    menuItem = editMenu->add("R&eplace\tCtrl+H", Keys::Control | Keys::H);
-    menuItem->Action.connect(Bind(&MainFrame::onFindReplace, this, true));
-    menuItem->Update.connect(&MainFrame::onUpdate_getTextEditor_Available, this);
+    windowsMenu->add("&Close\tCtrl+W", ID_WINDOWS_CLOSE, Keys::Control | Keys::W);
+    windowsMenu->add("&Duplicate\tCtrl+D", ID_WINDOWS_DUPLICATE, Keys::Control | Keys::D);
+    windowsMenu->add("&Cascade", ID_WINDOWS_CASCADE);
 
-    // Options/Change Font
-    menuItem = optionsMenu->add("Change &Font");
-    menuItem->Action.connect(Bind(&MainFrame::onChangeFont, this));
-
-    // Options/View EOL
-    menuItem = optionsMenu->add("View &EOL");
-    menuItem->Action.connect(Bind(&MainFrame::onToggleViewEol, this));
-    menuItem->Update.connect(&MainFrame::onUpdate_viewEol, this);
-
-    // Windows/Close
-    menuItem = windowsMenu->add("&Close\tCtrl+W", Keys::Control | Keys::W);
-    menuItem->Action.connect(Bind(&MainFrame::onCloseWindow, this));
-    menuItem->Update.connect(&MainFrame::onUpdate_getTextEditor_Available, this);
-
-    // Windows/Duplicate
-    menuItem = windowsMenu->add("&Duplicate\tCtrl+D", Keys::Control | Keys::D);
-    menuItem->Action.connect(Bind(&MainFrame::onDuplicateWindow, this));
-    menuItem->Update.connect(&MainFrame::onUpdate_getTextEditor_Available, this);
-
-    // Windows/Cascade
-    menuItem = windowsMenu->add("&Cascade");
-    menuItem->Action.connect(Bind(&MdiClient::cascade, getMdiClient()));
-    menuItem->Update.connect(&MainFrame::onUpdate_getTextEditor_Available, this);
-
-    // Menu bar
     menuBar->add(fileMenu);
     menuBar->add(editMenu);
     menuBar->add(optionsMenu);
@@ -426,8 +356,74 @@ private:
     return menuBar;
   }
 
-  //////////////////////////////////////////////////////////////////////
-  // signal bindings
+  void createCommands()
+  {
+    SignalCommand* cmd;
+
+    addCommand(new SignalCommand(ID_FILE_NEW, &MainFrame::onNew, this));
+
+    addCommand(new SignalCommand(ID_FILE_OPEN, &MainFrame::onOpen, this));
+
+    addCommand(cmd = new SignalCommand(ID_FILE_SAVE));
+    cmd->Execute.connect(&MainFrame::onSave, this);
+    cmd->Enabled.connect(&MainFrame::canSave, this);
+
+    addCommand(cmd = new SignalCommand(ID_FILE_SAVE_AS));
+    cmd->Execute.connect(&MainFrame::onSaveAs, this);
+    cmd->Enabled.connect(&MainFrame::isTextEditorAvailable, this);
+
+    addCommand(new SignalCommand(ID_FILE_EXIT, &MainFrame::onExit, this));
+
+    addCommand(cmd = new SignalCommand(ID_EDIT_UNDO));
+    cmd->Execute.connect(&MainFrame::onUndo, this);
+    cmd->Enabled.connect(&MainFrame::canUndo, this);
+
+    addCommand(cmd = new SignalCommand(ID_EDIT_REDO));
+    cmd->Execute.connect(&MainFrame::onRedo, this);
+    cmd->Enabled.connect(&MainFrame::canRedo, this);
+
+    addCommand(cmd = new SignalCommand(ID_EDIT_CUT));
+    cmd->Execute.connect(&MainFrame::onCut, this);
+    cmd->Enabled.connect(&MainFrame::isTextEditorAvailable, this);
+
+    addCommand(cmd = new SignalCommand(ID_EDIT_COPY));
+    cmd->Execute.connect(&MainFrame::onCopy, this);
+    cmd->Enabled.connect(&MainFrame::isTextEditorAvailable, this);
+
+    addCommand(cmd = new SignalCommand(ID_EDIT_PASTE));
+    cmd->Execute.connect(&MainFrame::onPaste, this);
+    cmd->Enabled.connect(&MainFrame::isTextEditorAvailable, this);
+
+    addCommand(cmd = new SignalCommand(ID_EDIT_CLEAR));
+    cmd->Execute.connect(&MainFrame::onClear, this);
+    cmd->Enabled.connect(&MainFrame::isTextEditorAvailable, this);
+
+    addCommand(cmd = new SignalCommand(ID_EDIT_FIND));
+    cmd->Execute.connect(Bind(&MainFrame::onFindReplace, this, false));
+    cmd->Enabled.connect(&MainFrame::isTextEditorAvailable, this);
+
+    addCommand(cmd = new SignalCommand(ID_EDIT_REPLACE));
+    cmd->Execute.connect(Bind(&MainFrame::onFindReplace, this, true));
+    cmd->Enabled.connect(&MainFrame::isTextEditorAvailable, this);
+
+    addCommand(new SignalCommand(ID_OPTIONS_CHANGE_FONT, &MainFrame::onChangeFont, this));
+
+    addCommand(cmd = new SignalCommand(ID_OPTIONS_VIEW_EOL));
+    cmd->Execute.connect(&MainFrame::onToggleViewEol, this);
+    cmd->Enabled.connect(&MainFrame::updateViewEolMenuItem, this);
+
+    addCommand(cmd = new SignalCommand(ID_WINDOWS_CLOSE));
+    cmd->Execute.connect(&MainFrame::onCloseWindow, this);
+    cmd->Enabled.connect(&MainFrame::isTextEditorAvailable, this);
+
+    addCommand(cmd = new SignalCommand(ID_WINDOWS_DUPLICATE));
+    cmd->Execute.connect(&MainFrame::onDuplicateWindow, this);
+    cmd->Enabled.connect(&MainFrame::isTextEditorAvailable, this);
+
+    addCommand(cmd = new SignalCommand(ID_WINDOWS_CASCADE));
+    cmd->Execute.connect(&MdiClient::cascade, getMdiClient());
+    cmd->Enabled.connect(&MainFrame::isTextEditorAvailable, this);
+  }
 
   void onNew()
   {
@@ -466,9 +462,10 @@ private:
 	    addTextEditor(textEditor);
 	  else {
 	    delete_widget(textEditor);
-	    msgBox("Error opening file '"+fileName+"'",
-		   "Error",
-		   MB_OK | MB_ICONERROR);
+	    MsgBox::show(this, "Error",
+			 "Error opening file '"+fileName+"'",
+			 MsgBox::Type::Ok,
+			 MsgBox::Icon::Error);
 	    break;
 	  }
 	}
@@ -481,12 +478,12 @@ private:
     saveTextEditor(getTextEditor(), "Save file", false);
   }
 
-  void onUpdate_forSave(MenuItemEvent& ev)
+  bool canSave()
   {
     TextEditor* textEditor = getTextEditor();
-    ev.getMenuItem()->setEnabled((textEditor != NULL)
-				 && (!(textEditor->hasFileName())
-				     || (textEditor->getEditor().isModified())));
+    return (textEditor != NULL)
+      && (!(textEditor->hasFileName())
+	  || (textEditor->getEditor().isModified()));
   }
 
   void onSaveAs()
@@ -494,9 +491,9 @@ private:
     saveTextEditor(getTextEditor(), "Save file as...", true);
   }
 
-  void onUpdate_getTextEditor_Available(MenuItemEvent& ev)
+  bool isTextEditorAvailable()
   {
-    ev.getMenuItem()->setEnabled(getTextEditor() != NULL);
+    return getTextEditor() != NULL;
   }
 
   void onExit()
@@ -513,11 +510,10 @@ private:
     getTextEditor()->getEditor().undo();
   }
 
-  void onUpdate_canUndo(MenuItemEvent &ev)
+  bool canUndo()
   {
     TextEditor* textEditor = getTextEditor();
-    ev.getMenuItem()->setEnabled((textEditor != NULL)
-				 && (textEditor->getEditor().canUndo()));
+    return textEditor && (textEditor->getEditor().canUndo());
   }
 
   void onRedo()
@@ -525,11 +521,10 @@ private:
     getTextEditor()->getEditor().redo();
   }
 
-  void onUpdate_canRedo(MenuItemEvent &ev)
+  bool canRedo()
   {
     TextEditor* textEditor = getTextEditor();
-    ev.getMenuItem()->setEnabled((textEditor != NULL)
-				 && (textEditor->getEditor().canRedo()));
+    return textEditor && (textEditor->getEditor().canRedo());
   }
 
   void onCut()
@@ -556,28 +551,23 @@ private:
   // Find stuff begin
   void onFindReplace(bool replace)
   {
-    if (m_findDlg == NULL) {
-      m_findDlg = new FindTextDialog(replace, this);
-      m_findDlg->FindNext.connect(&MainFrame::onFindNext, this);
-      m_findDlg->Replace.connect(&MainFrame::onReplace, this);
-      m_findDlg->ReplaceAll.connect(&MainFrame::onReplaceAll, this);
-      m_findDlg->Cancel.connect(&MainFrame::onCancelFind, this);
-      m_findDlg->setVisible(true);
-    }
-    else
-      m_findDlg->requestFocus();
+    FindTextDialog dlg(replace, this);
+    dlg.FindNext.connect(Bind(&MainFrame::onFindNext, this, &dlg));
+    dlg.Replace.connect(Bind(&MainFrame::onReplace, this, &dlg));
+    dlg.ReplaceAll.connect(Bind(&MainFrame::onReplaceAll, this, &dlg));
+    dlg.doModal();
   }
 
-  void onFindNext()
+  void onFindNext(FindTextDialog* dlg)
   {
     SciEditor &sciEditor(getTextEditor()->getEditor());
-    String findWhat = m_findDlg->getFindWhat();
+    String findWhat = dlg->getFindWhat();
     int flags =
-      (m_findDlg->isMatchCase() ? SCFIND_MATCHCASE: 0) |
-      (m_findDlg->isWholeWord() ? SCFIND_WHOLEWORD: 0);
+      (dlg->isMatchCase() ? SCFIND_MATCHCASE: 0) |
+      (dlg->isWholeWord() ? SCFIND_WHOLEWORD: 0);
 
     // forward search
-    if (m_findDlg->isForward()) {
+    if (dlg->isForward()) {
       sciEditor.goToPos(sciEditor.getSelectionEnd());
       sciEditor.searchAnchor();
 
@@ -604,7 +594,7 @@ private:
     }
   }
 
-  void onReplace()
+  void onReplace(FindTextDialog* dlg)
   {
     SciEditor &sciEditor(getTextEditor()->getEditor());
     int start = sciEditor.getSelectionStart();
@@ -612,29 +602,24 @@ private:
 
     sciEditor.goToPos(start);
 
-    onFindNext();
+    onFindNext(dlg);
 
     if (start != end &&
 	start == sciEditor.getSelectionStart() &&
 	end == sciEditor.getSelectionEnd()) {
-      sciEditor.replaceSel(m_findDlg->getReplaceWith());
-      onFindNext();
+      sciEditor.replaceSel(dlg->getReplaceWith());
+      onFindNext(dlg);
     }
   }
 
-  void onReplaceAll()
+  void onReplaceAll(FindTextDialog* dlg)
   {
     SciEditor &sciEditor(getTextEditor()->getEditor());
     do {
-      onReplace();
+      onReplace(dlg);
     } while (sciEditor.getSelectionStart() != sciEditor.getSelectionEnd());
   }
 
-  void onCancelFind()
-  {
-    delete_widget(m_findDlg);
-    m_findDlg = NULL;
-  }
   // Find stuff end
   //////////////////////////////////////////////////////////////////////
 
@@ -661,9 +646,10 @@ private:
       dynamic_cast<TextEditor*>(*it)->getEditor().setViewEol(m_viewEol);
   }
 
-  void onUpdate_viewEol(MenuItemEvent &ev)
+  bool updateViewEolMenuItem()
   {
-    ev.getMenuItem()->setChecked(m_viewEol);
+    getMenuBar()->getMenuItemById(ID_OPTIONS_VIEW_EOL)->setChecked(m_viewEol);
+    return true;
   }
 
   void onCloseWindow()
@@ -702,7 +688,7 @@ private:
   //////////////////////////////////////////////////////////////////////
   // events
 
-  // when the user press the close button of the MainFrame we must
+  // when the user press the close button of the MainFrame we must to
   // close all the editors
   virtual void onClose(CloseEvent &ev)
   {
@@ -801,9 +787,10 @@ private:
     }
     // error...
     else {
-      msgBox("Error saving file '"+textEditor->getFileName()+"'",
-	     "Error",
-	     MB_OK | MB_ICONERROR);
+      MsgBox::show(this, "Error",
+		   "Error saving file '"+textEditor->getFileName()+"'",
+		   MsgBox::Type::Ok,
+		   MsgBox::Icon::Error);
       return false;
     }
   }
@@ -811,19 +798,17 @@ private:
   // returns false if the user don't want to close the text editor
   bool closeTextEditor(TextEditor* textEditor, bool forceAsk)
   {
-    if (m_findDlg != NULL)
-      onCancelFind();
-
     if ((textEditor->isLastView() || forceAsk) &&
 	textEditor->getEditor().isModified()) {
-      int ret = msgBox("Save changes to '"+textEditor->getFileName()+"'?",
-		       "TextEditor",
-		       MB_YESNOCANCEL | MB_ICONQUESTION);
+      MsgBox::Result res = MsgBox::show(this, "TextEditor",
+					"Save changes to '"+textEditor->getFileName()+"'?",
+					MsgBox::Type::YesNoCancel,
+					MsgBox::Icon::Question);
 
-      if (ret == IDCANCEL) {
+      if (res == MsgBox::Result::Cancel) {
 	return false;		// "Cancel" in message-box
       }
-      else if (ret == IDYES) {
+      else if (res == MsgBox::Result::Yes) {
 	if (!saveTextEditor(textEditor, "Save file", false))
 	  return false;		// "Cancel" in save-file dialog
       }
@@ -850,13 +835,12 @@ private:
 };
 
 //////////////////////////////////////////////////////////////////////
-
 
 class Example : public Application
 {
   MainFrame m_mainFrame;
 public:
-  virtual void main(std::vector<String> args) {
+  virtual void main() {
     m_mainFrame.setVisible(true);
   }
 };
@@ -864,8 +848,7 @@ public:
 int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		   LPSTR lpCmdLine, int nCmdShow)
 {
-  Example* app(new Example);
+  std::auto_ptr<Example> app(new Example);
   app->run();
-  delete app;
   return 0;
 }

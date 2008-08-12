@@ -61,7 +61,7 @@ namespace Vaca {
  *   virtual void onPaint(Graphics& g)
  *   {
  *     // don't call parent implementation, use your own code to
- *     // paint the your fancy-button
+ *     // paint your fancy-button
  *   }
  * }
  * @endcode

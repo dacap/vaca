@@ -48,6 +48,7 @@
 #include "Vaca/System.hpp"
 #include "Vaca/Mutex.hpp"
 #include "Vaca/ScopedLock.hpp"
+#include "Vaca/Command.hpp"
 
 // comment this to use the old behaviour (using GWL_USERDATA to store
 // the "Widget" pointer)
@@ -69,72 +70,6 @@ static volatile ATOM vacaAtom = 0;
 static void Widget_DestroyHWNDProc(HWND hwnd)
 {
   ::DestroyWindow(hwnd);
-}
-
-//////////////////////////////////////////////////////////////////////
-// References stuff
-
-/**
- * Safe way to delete a widget from memory. It deletes the specified
- * widget if it isn't referenced, or defer its deletion for a secure
- * point of deletion (e.g. when it's completelly unreferenced after an
- * event is processed).
- *
- * @see @ref TN006
- */
-void Vaca::delete_widget(Widget* widget)
-{
-  // is unreferenced?
-  if (widget->getRefCount() == 0)
-    delete widget;
-  // is referenced, we defer the "delete" for "__internal_checked_delete_widget"
-  else {
-    assert(widget->getRefCount() > 0);
-
-    // hide the window
-    ShowWindow(widget->m_HWND, SW_HIDE);
-
-    // delete after event flag
-    widget->m_deleteAfterEvent = true;
-  }
-}
-
-/**
- * @internal
- *
- * Checks if @a widget should be deleted right now, and if it is, deletes it.
- * Don't use this function, it's an internal routine that uses Vaca.
- */
-void Vaca::__internal_checked_delete_widget(Widget* widget)
-{
-  // is "delete-after-event" flag activated and is the widget unreferenced?
-  if (widget->m_deleteAfterEvent && widget->getRefCount() == 0) {
-    // ok, so we can delete it...
-    widget->m_deleteAfterEvent = false;
-    delete widget;
-  }
-}
-
-// increment the ref counter of "widget" and all the parents, filling
-// the "container" with all the widgets visited (referenced)
-static void ref_widget(Widget* widget, Widget::Container& container)
-{
-  while (widget != NULL) {
-    container.push_back(widget);
-    widget->ref();
-    widget = widget->getParent();
-  }
-}
-
-// decrement the ref counter of all the widget in the "container"
-static void unref_widget(Widget::Container& container)
-{
-  for (std::vector<Widget*>::iterator it = container.begin();
-       it != container.end();
-       ++it) {
-    (*it)->unref();
-    __internal_checked_delete_widget(*it);
-  }
 }
 
 // ============================================================
@@ -234,7 +169,7 @@ Widget::~Widget()
   assert(::IsWindow(m_HWND));
 
   // Lost the focus. WARNING: if we don't make this, Dialogs will die
-  // suddenly in an infinite loop when TAB key is pressed. It looks
+  // suddenly in an infinite loop when TAB key is pressed. It seems
   // like Win32 can't handle dialog boxes, the keyboard focus, and
   // destroyed HWND at the same time
   if (hasFocus())
@@ -939,6 +874,24 @@ void Widget::update()
   ::UpdateWindow(m_HWND);
 }
 
+/**
+ * Refreshes the state of indicators that could be inside this
+ * widget.
+ *
+ * An indicator is a MenuItem or a ToolButton which its state changes
+ * depending the current context of the Application. The current
+ * context gives to you different states for every Command, so we have
+ * to call Command#isEnabled for every visible indicator associated to
+ * a Command. This means that updateIndicators updates the state of
+ * visible ToolBar buttons and @link MenuItem MenuItems@endlink in the
+ * MenuBar (@link MenuItem MenuItems@endlink in the @link Menu sub-menus@endlink
+ * are updated when they are shown).
+ */
+void Widget::updateIndicators()
+{
+  onUpdateIndicators();
+}
+
 // ===============================================================
 // COMMON PROPERTIES
 // ===============================================================
@@ -1266,7 +1219,6 @@ bool Widget::hasMouseAbove()
 bool Widget::hasCapture()
 {
   assert(::IsWindow(m_HWND));
-
   return m_HWND == ::GetCapture();
 }
 
@@ -1457,67 +1409,26 @@ void Widget::hideScrollBar(Orientation orientation)
   ::SetScrollInfo(getHWND(), fnBar, &si, TRUE);
 }
 
-/**
- * Shows a message box, locking the widget. It's like call Win32's
- * MessageBox using the Widget's m_HWND (Widget::getHWND).
- * <p>
- * The next code is a tipical example where is displayed a message box
- * with the "Yes" and "No" buttons (@c MB_YESNO), an icon to indicate
- * a warning (@c MB_ICONWARNING), and finally display by default the
- * "No" button with the focus (@c MB_DEFBUTTON2):
- *
- * @code
- *   ... inside a Widget's method ...
- *
- *   if (msgBox("Are you sure?", "Warning", MB_YESNO |
- *                                          MB_ICONWARNING |
- *                                          MB_DEFBUTTON2) == IDYES) {
- *	// the user press Yes, do it!
- *   }
- *
- *   ...
- * @endcode
- *
- * @param text
- *     Text shown in the center of the dialog box. It can contains "\n" to break lines.
- *	
- * @param title
- *     Title for the dialog box.
- *	
- * @param flags
- *     What kind of message box to show.
- *     <p>
- *     @a flags should be one of these values:
- *     - @c MB_OK
- *     - @c MB_YESNO
- *     - @c MB_YESNOCANCEL
- *     - @c MB_RETRYCANCEL
- *     - @c MB_ABORTRETRYIGNORE
- *     - @c MB_CANCELTRYCONTINUE
- *     <p>
- *     Optionally combined with one of these ones:
- *     - @c MB_ICONWARNING
- *     - @c MB_ICONERROR
- *     - @c MB_ICONQUESTION
- *     - @c MB_ICONINFORMATION
- *     <p>
- *     More optionally combined with one of these other ones:
- *     - @c MB_DEFBUTTON1
- *     - @c MB_DEFBUTTON2
- *     - @c MB_DEFBUTTON3
- *
- * @return
- *     It can returns:
- *     - @c IDOK for @c MB_OK
- *     - @c IDYES or @c IDNO for @c MB_YESNO
- *     - @c IDYES, @c IDNO or @c IDCANCEL for @c MB_YESNOCANCEL
- *     - @c IDRETRY or @c IDCANCEL for @c MB_RETRYCANCEL
- *     - @c IDABORT, @c IDRETRY or @c IDIGNORE for @c MB_ABORTRETRYIGNORE
- *     - @c IDCANCEL, @c IDTRYAGAIN or @c IDCONTINUE for @c MB_CANCELTRYCONTINUE
- */
-int Widget::msgBox(const String& text, const String& title, int flags)
+Command* Widget::findCommandById(CommandId id)
 {
-  return ::MessageBox(m_HWND, text.c_str(), title.c_str(), flags);
+  // if this widget is a CommandsClient instance
+  if (CommandsClient* cc = dynamic_cast<CommandsClient*>(this)) {
+    if (Command* cmd = cc->getCommandById(id))
+      return cmd;
+  }
+
+  // does it have a parent?
+  if (getParent() != NULL) {
+    if (Command* cmd = getParent()->findCommandById(id))
+      return cmd;
+  }
+  // check if the application is a CommandsClient
+  else if (CommandsClient* cc = dynamic_cast<CommandsClient*>(Application::getInstance())) {
+    if (Command* cmd = cc->getCommandById(id))
+      return cmd;
+  }
+
+  return NULL;
 }
 
 /**
@@ -1758,26 +1669,26 @@ void Widget::onSetCursor(WidgetHitTest hitTest)
 }
 
 /**
- * The user presses a key. Event called when the WM_KEYUP message is
- * received.
+ * The user presses a key. Event called when the WM_KEYDOWN or WM_CHAR
+ * messages are received.
+ *
+ * @param ev Has the information about the key pressed. If
+ *   KeyEvent#getKeyCode isn't 0 the received message was WM_KEYDOWN,
+ *   otherwise KeyEvent#getCharCode isn't 0 and the message was
+ *   WM_CHAR.
  */
-void Widget::onKeyUp(KeyEvent& ev)
-{
-  KeyUp(ev);
-}
-
-// The user releases a key. Event called when the WM_KEYDOWN message
-// is received.
 void Widget::onKeyDown(KeyEvent& ev)
 {
   KeyDown(ev);
 }
 
-// The user releases a key. Event called when the WM_CHAR message is
-// received.
-void Widget::onKeyTyped(KeyEvent& ev)
+/**
+ * The user releases a key. Event called when the WM_KEYUP message is
+ * received.
+ */
+void Widget::onKeyUp(KeyEvent& ev)
 {
-  KeyTyped(ev);
+  KeyUp(ev);
 }
 
 /**
@@ -1797,28 +1708,50 @@ void Widget::onLostFocus(Event& ev)
 }
 
 /**
- * Called when an action/command by ID is activated by the user, this
- * can be a menu item or an accelerator.
+ * Called when a command by ID is activated by the user, this can be a
+ * menu item or an accelerator.
  *
- * Win32 details: When a WM_COMMAND message is received by ID (like a
- * menu or accelerator command) this method is invoked.
+ * Win32: When a WM_COMMAND message is received by ID (like a menu or
+ * accelerator command) this method is invoked.
  *
- * @param actionId
- *     Identifier of the action that was activated (by some
- *     method like ).
+ * @param commandId
+ *     Identifier of the command that was activated.
  *
  * @return
- *     It should returns true if the @a actionId was used.
+ *     It should returns true if the @a commandId was used.
  *
- * @warning Don't confuse with onReflectedCommand(): onActionById is used
+ * @warning Don't confuse with #onReflectedCommand: onCommand is used
  *          to handle command notifications that come directly from
- *          accelarators or menus, not from controls. Notifications
- *          by controls are controled by them via onReflectedCommand,
- *          onReflectedNotify, or onReflectedDrawItem.
+ *          accelarators or menus, not from Win32's
+ *          controls. Notifications by Win32's controls are handled
+ *          via onReflectedCommand, onReflectedNotify, or
+ *          onReflectedDrawItem.
+ *
+ * @see Command
  */
-bool Widget::onActionById(int actionId)
+bool Widget::onCommand(CommandId id)
 {
+  if (Command* cmd = findCommandById(id)) {
+    if (cmd->isEnabled()) {
+      cmd->execute();
+      return true;
+    }
+  }
   return false;
+}
+
+/**
+ * Event called to update the state of indicators.
+ *
+ * @see Widget#updateIndicators
+ */
+void Widget::onUpdateIndicators()
+{
+  for (Container::iterator
+	 it=m_children.begin(); it!=m_children.end(); ++it) {
+    Widget* child = *it;
+    child->updateIndicators();
+  }
 }
 
 /**
@@ -1861,9 +1794,9 @@ void Widget::onDropFiles(DropFilesEvent& ev)
  *     Notification code.
  * 
  * @param lResult
- *     Result to return by the wndProc() method.
+ *     Result to return by the #wndProc method.
  *
- * @warning Don't confuse with onActionById(): onReflectedCommand is used to handle
+ * @warning Don't confuse with #onCommand: onReflectedCommand is used to handle
  *          commands that this widget by self generated, were sent to the
  *          parent, and finally were reflected to this widget again by
  *          the parent.
@@ -2011,7 +1944,7 @@ void Widget::create(const WidgetClassName& className, Widget* parent, Style styl
     __vaca_set_outside_widget(NULL);
   }
 
-  if (m_HWND == NULL)
+  if (m_HWND == NULL || !::IsWindow(m_HWND))
     throw CreateWidgetException("Error creating widget of class \"" +
 				String(className.toLPCTSTR()) + "\"");
 
@@ -2029,7 +1962,7 @@ void Widget::create(const WidgetClassName& className, Widget* parent, Style styl
  * that is called each time a message is arrived/processed by the Win32's
  * message-queue.
  *
- * @see getGlobalWndProc, wndProc, @ref TN002
+ * @see getGlobalWndProc, wndProc, @ref TN002, #m_baseWndProc
  */
 void Widget::subClass()
 {
@@ -2124,8 +2057,8 @@ HWND Widget::createHWND(LPCTSTR className, Widget* parent, Style style)
  * For reflection, it does:
  * <ul>
  * <li>When <tt>WM_COMMAND</tt> is received, the onReflectedCommand() event
- *     <b>of the child</b> is called when it's a WM_COMMAND from a control, or the
- *     onActionById() event <b>of this widget</b> is called when the command
+ *     <b>of the child</b> is called when it is a WM_COMMAND from a control, or the
+ *     onCommand() event <b>of this widget</b> is called when the command
  *     come from a menu or an accelerator.</li>
  * <li>When <tt>WM_NOTIFY</tt> is received, the onReflectedNotify() event <b>of the
  *     child</b> is called.</li>
@@ -2388,7 +2321,17 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
       break;
       
     case WM_KEYDOWN: {
-      KeyEvent ev(this, Keys::fromMessageParams(wParam, lParam));
+      KeyEvent ev(this, Keys::fromMessageParams(wParam, lParam), 0);
+      onKeyDown(ev);
+      if (ev.isConsumed()) {
+	lResult = false;
+	ret = true;
+      }
+      break;
+    }
+
+    case WM_CHAR: {
+      KeyEvent ev(this, 0, wParam);
       onKeyDown(ev);
       if (ev.isConsumed()) {
 	lResult = false;
@@ -2398,19 +2341,10 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
     }
 
     case WM_KEYUP: {
-      KeyEvent ev(this, Keys::fromMessageParams(wParam, lParam));
+      KeyEvent ev(this,
+		  Keys::fromMessageParams(wParam, lParam),
+		  MapVirtualKey(wParam, 2));
       onKeyUp(ev);
-      if (ev.isConsumed()) {
-	lResult = false;
-	ret = true;
-      }
-      break;
-    }
-
-    case WM_CHAR: {
-      KeyEvent ev(this, Keys::None, wParam); // TODO complete Keys
-      // KeyEvent ev(this, Keys::fromMessageParams(wParam, lParam));
-      onKeyTyped(ev);
       if (ev.isConsumed()) {
 	lResult = false;
 	ret = true;
@@ -2423,21 +2357,17 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
 	HWND hwndCtrl = reinterpret_cast<HWND>(lParam);
 	Widget* child = Widget::fromHWND(hwndCtrl);
 	if (child != NULL) {
-	  Container refContainer;
-	  ref_widget(child, refContainer);
-
+	  MakeWidgetRef ref(child);
 	  ret = child->onReflectedCommand(LOWORD(wParam), // id
 					  HIWORD(wParam), // code
 					  lResult);
-
-	  unref_widget(refContainer);
 	}
       }
       // accelerator or a menu
       else if (HIWORD(wParam) == 1 ||
 	       HIWORD(wParam) == 0) {
-	if (onActionById(LOWORD(wParam))) {
-	  // ...onActionById returns true when processed the command
+	if (onCommand(static_cast<CommandId>(LOWORD(wParam)))) {
+	  // ...onCommand returns true when processed the command
 	  lResult = 0;		// processed
 	  ret = true;
 	}
@@ -2448,12 +2378,8 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
       LPNMHDR lpnmhdr = reinterpret_cast<LPNMHDR>(lParam);
       Widget* child = Widget::fromHWND(lpnmhdr->hwndFrom);
       if (child != NULL) {
-	Container refContainer;
-	ref_widget(child, refContainer);
-
+	MakeWidgetRef ref(child);
 	ret = child->onReflectedNotify(lpnmhdr, lResult);
-
-	unref_widget(refContainer);
       }
       break;
     }
@@ -2516,8 +2442,7 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
 	lResult = reinterpret_cast<LRESULT>(hBrush);
 	ret = true;
       }
-      break;
-    }
+      break;    }
 
     case WM_WINDOWPOSCHANGING:
       onBeforePosChange();
@@ -2542,12 +2467,8 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
 	if (lParam != 0) {
 	  Widget* child = Widget::fromHWND(reinterpret_cast<HWND>(lParam));
 	  if (child != NULL) {
-	    Container refContainer;
-	    ref_widget(child, refContainer);
-
+	    MakeWidgetRef ref(child);
 	    child->onScroll(orient, LOWORD(wParam));
-
-	    unref_widget(refContainer);
 	  }
 	}
 
@@ -2587,9 +2508,14 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
 }
 
 /**
- * Calls the default window procedure (m_defWndProc that points to
- * Win32's DefWindowProc by default). If m_baseWndProc isn't NULL, it's
- * called instead.
+ * Calls the default Win32's window procedure.
+ *
+ * The default window procedure is #m_baseWndProc if it is not @c NULL, or
+ * #m_defWndProc otherwise.
+ *
+ * If @c m_baseWndProc isn't @c NULL it's called instead.
+ *
+ * @internal
  */
 LRESULT Widget::defWndProc(UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -2600,7 +2526,15 @@ LRESULT Widget::defWndProc(UINT message, WPARAM wParam, LPARAM lParam)
 }
 
 /**
- * TODO docme
+ * Paints the widgets calling the #onPaint event.
+ *
+ * This method check the value of #m_doubleBuffered to do the
+ * double-buffering technique (draw in a Graphics of a temporary
+ * Image, and then copy it's content to @a g).
+ *
+ * @param g Where to draw.
+ * 
+ * @internal
  */
 bool Widget::doPaint(Graphics& g)
 {
@@ -2923,8 +2857,7 @@ LRESULT CALLBACK Widget::globalWndProc(HWND hwnd, UINT message, WPARAM wParam, L
     LRESULT lResult;
     bool used = false;
 
-    Container refContainer;
-    ref_widget(widget, refContainer);
+    MakeWidgetRef ref(widget);
 
     WPARAM old_wparam = widget->m_wparam;
     LPARAM old_lparam = widget->m_lparam;
@@ -2939,14 +2872,13 @@ LRESULT CALLBACK Widget::globalWndProc(HWND hwnd, UINT message, WPARAM wParam, L
     widget->m_wparam = old_wparam;
     widget->m_lparam = old_lparam;
 
-    unref_widget(refContainer);
-
     return lResult;
   }
   else {
 //     widget = getThreadData()->outsideWidget;
     widget = __vaca_get_outside_widget();
     if (widget != NULL) {
+      assert(hwnd != NULL);
       widget->m_HWND = hwnd;
       return widget->defWndProc(message, wParam, lParam);
     }
@@ -2958,4 +2890,73 @@ LRESULT CALLBACK Widget::globalWndProc(HWND hwnd, UINT message, WPARAM wParam, L
   Beep(900, 100);
 
   return FALSE;
+}
+
+// ============================================================
+// REFERENCES
+// ============================================================
+
+/**
+ * Increments the ref counter of "widget" and all the parents, filling
+ * the "container" with all the widgets visited (referenced).
+ */
+MakeWidgetRef::MakeWidgetRef(Widget* widget)
+{
+  while (widget != NULL) {
+    m_container.push_back(widget);
+    widget->ref();
+    widget = widget->getParent();
+  }
+}
+
+/**
+ * Decrements the ref counter of all the widget in the "container".
+ */
+MakeWidgetRef::~MakeWidgetRef()
+{
+  for (std::vector<Widget*>::iterator it = m_container.begin();
+       it != m_container.end();
+       ++it) {
+    (*it)->unref();
+    safeDelete(*it);
+  }
+}
+
+/**
+ * Checks if @a widget should be deleted right now, and if it is, deletes it.
+ * Don't use this function, it's an internal routine that uses Vaca.
+ */
+void MakeWidgetRef::safeDelete(Widget* widget)
+{
+  // is "delete-after-event" flag activated and is the widget unreferenced?
+  if (widget->m_deleteAfterEvent && widget->getRefCount() == 0) {
+    // ok, so we can delete it...
+    widget->m_deleteAfterEvent = false;
+    delete widget;
+  }
+}
+
+/**
+ * Safe way to delete a widget from memory. It deletes the specified
+ * widget if it isn't referenced, or defer its deletion for a secure
+ * point of deletion (e.g. when it's completelly unreferenced after an
+ * event is processed).
+ *
+ * @see @ref TN006
+ */
+void Vaca::delete_widget(Widget* widget)
+{
+  // is unreferenced?
+  if (widget->getRefCount() == 0)
+    delete widget;
+  // is referenced, we defer the "delete" for "__internal_checked_delete_widget"
+  else {
+    assert(widget->getRefCount() > 0);
+
+    // hide the window
+    ShowWindow(widget->m_HWND, SW_HIDE);
+
+    // delete after event flag
+    widget->m_deleteAfterEvent = true;
+  }
 }

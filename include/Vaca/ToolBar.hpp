@@ -57,7 +57,54 @@ namespace Vaca {
 #define ToolBarStyle	DockBarStyle
 
 class ImageList;
+class ToolSet;
 
+//////////////////////////////////////////////////////////////////////
+
+struct ToolButtonStateEnumSet
+{
+  enum enumeration {
+    None    = 0,
+    Enabled = 1,
+    Checked = 2,
+    Hidden  = 4
+  };
+};
+
+typedef EnumSet<ToolButtonStateEnumSet> ToolButtonState;
+
+//////////////////////////////////////////////////////////////////////
+
+class VACA_DLL ToolButton
+{
+  // ToolSet* m_set;
+  int m_buttonIndex;
+  int m_imageIndex;
+  CommandId m_commandId;
+  ToolButtonState m_state;
+
+public:
+  ToolButton(CommandId commandId, int imageIndex, ToolButtonState state = ToolButtonState::Enabled);
+  ToolButton(const ToolButton& button);
+  virtual ~ToolButton();
+
+  // ToolSet* getSet() const { return m_set; }
+  int getButtonIndex() const { return m_buttonIndex; }
+  int getImageIndex() const { return m_imageIndex; }
+  CommandId getCommandId() const { return m_commandId; }
+  ToolButtonState getState() const { return m_state; }
+
+  // void setSet(ToolSet* set);
+  void setButtonIndex(int buttonIndex) { m_buttonIndex = buttonIndex; }
+  void setImageIndex(int imageIndex) { m_imageIndex = imageIndex; }
+  void setCommandId(CommandId commandId) { m_commandId = commandId; }
+  void setState(ToolButtonState state);
+
+  int getTBSTATE() const;
+  // void setTBSTATE(int tbstate);
+
+};
+  
 /**
  * A Windows's tool bar of Comctl32.dll.
  *
@@ -83,14 +130,13 @@ public:
   void setImageList(ImageList& imageList);
   void loadStandardImageList(int imageListId = IDB_STD_SMALL_COLOR);
 
-  void addButton(int imageIndex, int commandId, int buttonState);
-  void addToggleButton(int imageIndex, int commandId, int buttonState);
-  // void addRadioButton(int imageIndex, int commandId, int buttonState);
-  void addDropDownButton(int imageIndex, int commandId, int buttonState);
-  void addWholeDropDownButton(int imageIndex, int commandId, int buttonState);
+  void addButton(ToolButton* button);
   void addSeparator(int width = 6);
 
-  void setButtonCommandId(int buttonIndex, int newCommandId);
+  void updateButton(ToolButton* button);
+
+  ToolButton* getButtonById(CommandId id);
+  ToolButton* getButtonByIndex(int index);
 
   int hitTest(const Point& pt);
 
@@ -100,9 +146,9 @@ public:
 protected:
   // events
   virtual void onPreferredSize(Size& sz);
+  virtual void onUpdateIndicators();
   // reflection
   virtual bool onReflectedCommand(int id, int code, LRESULT& lResult);
-//   virtual void onMouseDown(MouseEvent& ev);
   virtual bool wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult);
 
 };
@@ -113,8 +159,8 @@ protected:
  */
 class VACA_DLL ToolBar : public DockBar
 {
-  ToolSet mSet;
-  int mRowsWhenFloating;
+  ToolSet m_set;
+  int m_rowsWhenFloating;
 
 public:
 
@@ -130,10 +176,11 @@ public:
 
 protected:
   // events
-  virtual bool onActionById(int actionId);
+  virtual bool onCommand(CommandId id);
+  virtual void onUpdateIndicators();
   virtual void onDocking();
   virtual void onFloating();
-  virtual void onResizingFrame(DockFrame* frame, int edge, Rect& rc);
+  virtual void onResizingFrame(DockFrame* frame, CardinalDirection dir, Rect& rc);
 
 };
 

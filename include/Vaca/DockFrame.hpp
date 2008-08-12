@@ -68,22 +68,21 @@ public:
  */
 class VACA_DLL DockFrame : public Register<DockFrameClass>, public Frame
 {
-  DockBar* m_dockBar;	 // the DockBar that is inside the client area
+  /**
+   * The DockBar that is inside the client area.
+   */
+  DockBar* m_dockBar;
 
 public:
-
   DockFrame(DockBar* dockBar, Widget* parent = NULL, Style style = DockFrameStyle);
   virtual ~DockFrame();
-
-//   Signal0<void> Destroy;
 
 protected:
 
   virtual bool keepSynchronized();
 
   // events
-//   virtual void onDestroy();
-  virtual void onResizing(int edge, Rect& rc);
+  virtual void onResizing(CardinalDirection dir, Rect& rc);
 
   virtual bool wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult);
 };

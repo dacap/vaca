@@ -44,12 +44,17 @@ Clipboard::~Clipboard()
 {
 }
 
+bool Clipboard::isText() const
+{
+  return IsClipboardFormatAvailable(CF_TEXT);
+}
+
 String Clipboard::getString() const
 {
   HWND hwndOwner = m_owner ? m_owner->getHWND(): NULL;
   String str;
 
-  if (!IsClipboardFormatAvailable(CF_TEXT)) 
+  if (!IsClipboardFormatAvailable(CF_TEXT))
     return str;
 
   if (!OpenClipboard(hwndOwner)) 

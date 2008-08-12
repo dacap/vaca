@@ -107,80 +107,22 @@ HINSTANCE Application::getHINSTANCE()
 
 /**
  * The common way to start the application. You should call this
- * method from <em>main</em> or <em>WinMain</em>, using an instance of
+ * method from @e main or @e WinMain, using an instance of
  * a class derived of Application.
  */
 void Application::run()
 {
-  //////////////////////////////////////////////////////////////////////
-  // Convert the command-line to a vector of arguments...
-  std::vector<String> args;
-
-  LPTSTR cmdline = _tcsdup(GetCommandLine());
-  Character quote;
-
-  for (int i = 0; cmdline[i] != 0; ) {
-    // eat spaces
-    while (cmdline[i] != 0 && _istspace(cmdline[i]))
-      ++i;
-
-    // string with quotes?
-    if (cmdline[i] == '\"' || cmdline[i] == '\'')
-      quote = cmdline[i++];
-    else if (cmdline[i] == 0)
-      break;
-    else
-      quote = 0;
-
-    // read the string
-    String arg;
-    
-    for (; cmdline[i] != 0; ++i) {
-      // with quotes
-      if (quote != 0) {
-	if (cmdline[i] == quote) {
-	  ++i;
-	  break;
-	}
-	else if (cmdline[i] == '\\' && cmdline[i+1] == quote)
-	  ++i;
-      }
-      // without quotes
-      else if (_istspace(cmdline[i]))
-	break;
-
-      arg.push_back(cmdline[i]);
-    }
-
-    args.push_back(arg);
-  }
-
-  free(cmdline);
-  //////////////////////////////////////////////////////////////////////
-
-  VACA_TRACE("Calling main(...)\n");
-  main(args);
-
-  VACA_TRACE("before default doMessageLoop()\n");
-  try {
-    doMessageLoop();
-  }
-  catch (const std::exception& e) {
-    VACA_TRACE("std::exception() = %s\n", e.what());
-  }
-  catch (...) {
-    VACA_TRACE("unknown exception\n");
-  }
-  VACA_TRACE("after default doMessageLoop()\n");
+  main();
+  doMessageLoop();
 }
 
 /**
- * The application entry point <em>"a la"</em> Java.
+ * The application entry point.
  *
  * After calling run(), main() is executed, and when it finishes, the
  * doMessageLoop() is automatically executed.
  */
-void Application::main(std::vector<String> args)
+void Application::main()
 {
   // do nothing
 }

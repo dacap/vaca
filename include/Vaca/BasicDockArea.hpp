@@ -52,7 +52,7 @@ public:
   virtual bool hitTest(DockBar* bar, const Point& cursor, const Point& anchor, bool fromInside);
   virtual DockInfo* createDefaultDockInfo(DockBar* bar);
   virtual DockInfo* createDockInfo(DockBar* bar, const Point& cursor, const Point& anchor);
-  virtual void drawXorDockInfoShape(Graphics& g, DockInfo* dockInfo);
+  virtual void drawXorTracker(Graphics& g, DockInfo* dockInfo);
 
   virtual void layout();
 

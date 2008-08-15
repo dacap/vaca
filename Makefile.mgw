@@ -262,9 +262,15 @@ endif
 # general examples
 
 bin/%$(EXE): obj/Example.%$(OBJ) obj/Example.res $(VACA_LIB)
-	$(GXX) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
+	$(GXX) $(LFLAGS) -o $@ $^ $(EXE_LIBS) 
 
 # special examples
+
+bin/Bixes$(SUFFIX)$(EXE): obj/Example.Bixes$(SUFFIX)$(OBJ) obj/Example.Bixes.res $(VACA_LIB)
+	$(GXX) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
+
+bin/Commands$(SUFFIX)$(EXE): obj/Example.Commands$(SUFFIX)$(OBJ) obj/Example.Commands.res $(VACA_LIB)
+	$(GXX) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
 
 bin/EyeDropper$(SUFFIX)$(EXE): obj/Example.EyeDropper$(SUFFIX)$(OBJ) obj/Example.EyeDropper.res $(VACA_LIB)
 	$(GXX) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
@@ -284,12 +290,6 @@ bin/TextEditor$(SUFFIX)$(EXE): obj/Example.TextEditor$(SUFFIX)$(OBJ) obj/Example
 bin/ToolBars$(SUFFIX)$(EXE): obj/Example.ToolBars$(SUFFIX)$(OBJ) obj/Example.ToolBars.res $(VACA_LIB)
 	$(GXX) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
 
-bin/Bixes$(SUFFIX)$(EXE): obj/Example.Bixes$(SUFFIX)$(OBJ) obj/Example.Bixes.res $(VACA_LIB)
-	$(GXX) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
-
-bin/Commands$(SUFFIX)$(EXE): obj/Example.Commands$(SUFFIX)$(OBJ) obj/Example.Commands.res $(VACA_LIB)
-	$(GXX) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
-
 bin/WebCam$(SUFFIX)$(EXE): obj/Example.WebCam$(SUFFIX)$(OBJ) obj/Example.res $(VACA_LIB)
 	$(GXX) $(LFLAGS) -o $@ $^ $(EXE_LIBS) -lvfw32
 
@@ -304,7 +304,11 @@ bin/%$(EXE): obj/Test.%$(OBJ) $(VACA_LIB)
 
 all: lib examples tests
 
+ifdef STATIC
+lib: $(VACA_LIB)
+else
 lib: $(VACA_DLL)
+endif
 
 examples: $(EXAMPLES_EXE)
 

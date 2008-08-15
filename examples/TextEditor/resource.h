@@ -1,5 +1,6 @@
-#define IDI_VACA			100
-#define IDI_VACADOC			101
+#include "../resource.h"
+
+#define IDI_VACADOC			1000
 
 #define ID_FILE_NEW			1001
 #define ID_FILE_OPEN			1002

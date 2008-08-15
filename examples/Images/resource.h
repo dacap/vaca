@@ -1,2 +1,3 @@
-#define IDI_ICON	100
-#define IDB_VACA	101
+#include "../resource.h"
+
+#define IDB_VACA	1000

@@ -1,5 +1,6 @@
-#define IDI_VACA			100
-#define IDB_TOOLBAR			101
+#include "../resource.h"
+
+#define IDB_TOOLBAR			1000
 
 #define ID_FILE_NEW			1001
 #define ID_FILE_OPEN			1002

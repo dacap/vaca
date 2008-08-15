@@ -186,7 +186,8 @@ private:
 // Example implementation
 
 Example::Example()
-  : m_currentDoc(NULL)
+  : m_docCounter(0)
+  , m_currentDoc(NULL)
 {
   // Warning: the "Example::m_mainFrame" must be constructed after the
   // "Example::DocumentChange" member is constructed. See TN012.

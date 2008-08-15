@@ -2094,7 +2094,6 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
   switch (message) {
 
     case WM_ERASEBKGND:
-      // see TN011
       if (m_baseWndProc == NULL) {
 	HDC hdc = reinterpret_cast<HDC>(wParam);
 	// erase background only when the widget doesn't use
@@ -2117,7 +2116,6 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
       break;
 
     case WM_PAINT:
-      // see TN011
       if (m_baseWndProc == NULL) {
  	PAINTSTRUCT ps;
 	bool painted = false;

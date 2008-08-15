@@ -93,27 +93,27 @@ public:
     setLayout(new ClientLayout);
 
     // load the standard buttons
-    m_toolBar.getSet().loadStandardImageList();
+    m_toolBar.loadStandardImageList();
 
-    m_toolBar.getSet().addButton(new ToolButton(ID_FILENEW, STD_FILENEW));
-    m_toolBar.getSet().addButton(new ToolButton(ID_FILEOPEN, STD_FILEOPEN));
-    m_toolBar.getSet().addButton(new ToolButton(ID_FILESAVE, STD_FILESAVE));
-    m_toolBar.getSet().addSeparator();
-    m_toolBar.getSet().addButton(new ToolButton(ID_PRINT, STD_PRINT));
-    m_toolBar.getSet().addButton(new ToolButton(ID_PRINTPRE, STD_PRINTPRE));
-    m_toolBar.getSet().addSeparator();
-    m_toolBar.getSet().addButton(new ToolButton(ID_CUT, STD_CUT));
-    m_toolBar.getSet().addButton(new ToolButton(ID_COPY, STD_COPY));
-    m_toolBar.getSet().addButton(new ToolButton(ID_PASTE, STD_PASTE));
-    m_toolBar.getSet().addButton(new ToolButton(ID_DELETE, STD_DELETE));
-    m_toolBar.getSet().addSeparator();
-    m_toolBar.getSet().addButton(new ToolButton(ID_UNDO, STD_UNDO));
-    m_toolBar.getSet().addButton(new ToolButton(ID_REDOW, STD_REDOW));
-    m_toolBar.getSet().addSeparator();
-    m_toolBar.getSet().addButton(new ToolButton(ID_PROPERTIES, STD_PROPERTIES));
-    m_toolBar.getSet().addButton(new ToolButton(ID_FIND, STD_FIND));
-    m_toolBar.getSet().addButton(new ToolButton(ID_REPLACE, STD_REPLACE));
-    m_toolBar.getSet().addButton(new ToolButton(ID_HELP, STD_HELP));
+    m_toolBar.addButton(new ToolButton(ID_FILENEW, STD_FILENEW));
+    m_toolBar.addButton(new ToolButton(ID_FILEOPEN, STD_FILEOPEN));
+    m_toolBar.addButton(new ToolButton(ID_FILESAVE, STD_FILESAVE));
+    m_toolBar.addSeparator();
+    m_toolBar.addButton(new ToolButton(ID_PRINT, STD_PRINT));
+    m_toolBar.addButton(new ToolButton(ID_PRINTPRE, STD_PRINTPRE));
+    m_toolBar.addSeparator();
+    m_toolBar.addButton(new ToolButton(ID_CUT, STD_CUT));
+    m_toolBar.addButton(new ToolButton(ID_COPY, STD_COPY));
+    m_toolBar.addButton(new ToolButton(ID_PASTE, STD_PASTE));
+    m_toolBar.addButton(new ToolButton(ID_DELETE, STD_DELETE));
+    m_toolBar.addSeparator();
+    m_toolBar.addButton(new ToolButton(ID_UNDO, STD_UNDO));
+    m_toolBar.addButton(new ToolButton(ID_REDOW, STD_REDOW));
+    m_toolBar.addSeparator();
+    m_toolBar.addButton(new ToolButton(ID_PROPERTIES, STD_PROPERTIES));
+    m_toolBar.addButton(new ToolButton(ID_FIND, STD_FIND));
+    m_toolBar.addButton(new ToolButton(ID_REPLACE, STD_REPLACE));
+    m_toolBar.addButton(new ToolButton(ID_HELP, STD_HELP));
 
     // setup the defaults dock areas
     defaultDockAreas();

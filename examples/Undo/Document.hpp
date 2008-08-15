@@ -29,57 +29,52 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/Debug.hpp"
-#include "Vaca/Mutex.hpp"
-#include "Vaca/ScopedLock.hpp"
-#include "Vaca/System.hpp"
-#include "Vaca/Thread.hpp"
+#ifndef DOCUMENT_HPP
+#define DOCUMENT_HPP
+
+#include <Vaca/Vaca.hpp>
 
 using namespace Vaca;
 
-#ifndef NDEBUG
-static Mutex log_mutex;
-static FILE* log_file = NULL;
-static bool log_closed = false;
-#endif
+typedef String::size_type DocPos;
 
-void Vaca::__vaca_trace(LPCSTR filename, UINT line, LPCSTR fmt, ...)
+class Document
 {
-#ifndef NDEBUG
-  ScopedLock hold(log_mutex);
-  char buf[1024];		// TODO: overflow
-  va_list ap;
+  String m_name;
+  String m_string;
 
-  if (log_closed)
-    return;
+public:
 
-  va_start(ap, fmt);
-  vsprintf(buf, fmt, ap);
-  va_end(ap);
-
-  if (log_file == NULL) {
-    log_file = fopen("vaca.log", "w");
-    fprintf(log_file, "Log file created\n");
+  Document(const String& name) : m_name(name) {
   }
 
-  if (log_file != NULL) {
-    fprintf(log_file, "%s:%d: [%d] %s", filename, line, ::GetCurrentThreadId(), buf);
-    fflush(log_file);
+  ~Document() {
   }
-#endif
-}
 
-void Vaca::__vaca_close_log_file()
-{
-#ifndef NDEBUG
-  ScopedLock hold(log_mutex);
-
-  if (log_file != NULL) {
-    fprintf(log_file, "Log file closed\n");
-    fclose(log_file);
-    log_file = NULL;
-
-    log_closed = TRUE;
+  String getName() {
+    return m_name;
   }
-#endif
-}
+
+  Character at(DocPos pos) const {
+    return m_string.at(pos);
+  }
+
+  DocPos size() const {
+    return m_string.size();
+  }
+
+  void add(DocPos pos, Character chr) {
+    m_string.insert(pos, 1, chr);
+  }
+
+  void add(DocPos pos, const String& s) {
+    m_string.insert(pos, s);
+  }
+
+  void remove(DocPos pos, DocPos n) {
+    m_string.erase(pos, n);
+  }
+  
+};
+
+#endif // DOCUMENT_HPP

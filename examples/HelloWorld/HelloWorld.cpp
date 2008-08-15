@@ -89,6 +89,10 @@ public:
 
     // ...so we can make it visible to the user
     m_mainFrame.setVisible(true);
+
+    // After Application::main the Application::doMessageLoop method
+    // is called automatically. That routine gets and dispatches
+    // messages from/to any visible Frame.
   }
 
 };
@@ -103,6 +107,7 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
   // run the application (calling Example::main)
   app->run();
 
-  // the destructor of auto_ptr deletes the "app"
+  // the destructor of "std::auto_ptr" deletes the "app" pointer
+  // automatically
   return 0;
 }

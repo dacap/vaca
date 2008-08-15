@@ -30,307 +30,222 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <Vaca/Vaca.hpp>
+#include "Document.hpp"
+#include "Editor.hpp"
 
 using namespace Vaca;
 
-#define ID_MOVE_LEFT 1001
-
-//////////////////////////////////////////////////////////////////////
-
-class Document
-{
-  String m_string;
-public:
-  Document() { }
-  ~Document() { }
-
-  Character at(String::size_type pos) const { return m_string.at(pos); }
-  String::size_type size() const { return m_string.size(); }
-
-  void add(String::size_type pos, Character chr) {
-    m_string.insert(pos, 1, chr);
-  }
-
-  void add(String::size_type pos, const String& s) {
-    m_string.insert(pos, s);
-  }
-
-  void remove(String::size_type pos,
-	      String::size_type n) {
-    m_string.erase(pos, n);
-  }
-  
+enum {
+  ID_NEW_DOCUMENT,
+  ID_CLOSE_DOCUMENT,
+  ID_EXIT,
+  ID_SELECT_DOCUMENT
 };
 
 //////////////////////////////////////////////////////////////////////
+// Example class definition
 
-class Editor : public Panel
+class Document;
+class MainFrame;
+
+class Example : public Application
+	      , public CommandsClient
+{
+  typedef std::vector<Document*> Documents;
+
+  int m_docCounter;
+  Documents m_docs;
+  Document* m_currentDoc;
+  std::auto_ptr<MainFrame> m_mainFrame;
+
+public:
+  Example();
+  virtual ~Example();
+  virtual void main();
+
+  void onNew();
+  void onClose();
+
+  bool hasCurrentDoc();
+  void setCurrentDocument(Document* doc);
+
+  Documents getDocuments() { return m_docs; };
+  Document* getCurrentDocument() { return m_currentDoc; };
+
+  Signal1<void, Document*> DocumentChange;
+  Signal1<void, Document*> NewDocument;
+  Signal1<void, Document*> CloseDocument;
+};
+
+Example* GetApp()
+{
+  return static_cast<Example*>(Application::getInstance());
+}
+
+//////////////////////////////////////////////////////////////////////
+// DocMenuItem
+
+class DocMenuItem : public MenuItem
 {
   Document* m_doc;
-  Font m_font;
-  String::size_type m_carret;
-  bool m_carretVisible;
-  Timer m_carretFlicker;
-  const String::size_type max_length;
-  
 public:
-
-  Editor(Document* d, Widget* parent)
-    : Panel(parent)
-    , m_doc(d)
-    , m_font("Courier New", 24)
-    , m_carret(0)
-    , m_carretVisible(true)
-    , m_carretFlicker(750)
-    , max_length(10)
-  {
-    setBgColor(Color::White);
-    setDoubleBuffered(true);
-    setFont(&m_font);
-
-    m_doc->add(0, "Hello");
-    m_carret = m_doc->size();
-
-    m_carretFlicker.Action.connect(&Editor::toggleCarretVisibility, this);
-    m_carretFlicker.start();
-
-    setPreferredSize(Size(32*max_length, 32));
-    requestFocus();
+  DocMenuItem(Document* doc)
+    : MenuItem(doc->getName(), 0)
+    , m_doc(doc) {
   }
 
-  void goBeginOfLine() {
-    m_carret = 0;
-    makeCarretVisible();
+  Document* getDoc() {
+    return m_doc;
   }
 
-  void goEndOfLine() {
-    m_carret = m_doc->size();
-    makeCarretVisible();
-  }
-
-  void goPreviousChar() {
-    if (m_carret > 0)
-      m_carret--;
-    makeCarretVisible();
-  }
-
-  void goNextChar() {
-    if (m_carret < m_doc->size())
-      m_carret++;
-    makeCarretVisible();
-  }
-
-  void removePreviousChar() {
-    if (m_carret > 0)
-      m_doc->remove(--m_carret, 1);
-    makeCarretVisible();
-  }
-
-  void removeNextChar() {
-    if (m_carret < m_doc->size())
-      m_doc->remove(m_carret, 1);
-    makeCarretVisible();
-  }
-
-  void writeChar(Character chr) {
-    if (m_doc->size() < max_length)
-      m_doc->add(m_carret++, chr);
-    makeCarretVisible();
-  }
-
-protected:
-
-  virtual void onPaint(Graphics& g)
-  {
-    Rect rc(getClientBounds());
-    Pen blackPen(Color::Black);
-    Pen bluePen(Color::Blue);
-    Pen grayPen(Color(192, 192, 192));
-    Size celBox(32, 32);
-    Point origPt = rc.getCenter() - Point(celBox.w*max_length, celBox.h)/2;
-    String tmp(1);
-
-    grayPen.setStyle(PenStyle::Dot);
-
-    g.drawRoundRect(grayPen,
-		    Rect(origPt, Size(celBox.w*max_length, celBox.h)),
-		    Size(6, 6));
-    for (String::size_type i=0; i<m_doc->size(); ++i) {
-      int x = origPt.x+i*celBox.w;
-
-      g.drawRoundRect(blackPen,
-		      Rect(Point(x, origPt.y), celBox),
-		      Size(6, 6));
-
-      tmp[0] = m_doc->at(i);
-
-      g.setColor(Color::Black);
-      g.drawString(tmp, Point(x, origPt.y) + Point(celBox)/2 - Point(g.measureString(tmp))/2);
-    }
-
-    // draw the carret
-    if (m_carretVisible) {
-      int x = origPt.x + m_carret*celBox.w;
-      g.drawLine(bluePen,
-		 Point(x, origPt.y-8),
-		 Point(x, origPt.y+celBox.h+8));
-    }
-  }
-
-  virtual void onKeyDown(KeyEvent& ev)
-  {
-    Panel::onKeyDown(ev);
-
-    switch (ev.getKeyCode()) {
-      case Keys::Home: goBeginOfLine(); break;
-      case Keys::End: goEndOfLine(); break;
-      case Keys::Left: goPreviousChar(); break;
-      case Keys::Right: goNextChar(); break;
-      case Keys::Back: removePreviousChar(); break;
-      case Keys::Delete: removeNextChar(); break;
-      default:
-	if (ev.getCharCode() >= ' ') {
-	  writeChar(ev.getCharCode());
-	  break;
-	}
-	break;
-    }
-  }
-
-private:
-
-  void toggleCarretVisibility()
-  {
-    m_carretVisible = !m_carretVisible;
-    invalidate(true);
-  }
-
-  void makeCarretVisible()
-  {
-    m_carretVisible = true;
-    m_carretFlicker.start();	// restart timer
-    invalidate(true);
-  }
-  
-};
-
-//////////////////////////////////////////////////////////////////////
-
-// class ModelCommand : public Command
-// {
-//   Model* m_doc;
-// public:
-//   ModelCommand(CommandId id, Model* m) : Command(id), m_doc(m) { }
-//   Model* getModel() { return m_doc; }
-// };
-
-//////////////////////////////////////////////////////////////////////
-
-// class MoveLeftCommand : public ModelCommand
-// {
-// public:
-//   MoveLeftCommand(Model* m) : ModelCommand(ID_MOVE_LEFT, m) { }
-
-//   virtual void execute() {
-//   }
-
-//   virtual bool isEnabled() {
-//     return true;
-//   }
-// };
-
-//////////////////////////////////////////////////////////////////////
-
-class CmdStack : public Panel
-{
-public:
-  CmdStack(Widget* parent)
-    : Panel(parent)
-  {
+  virtual void onAction(MenuItemEvent& ev) {
+    MenuItem::onAction(ev);
+    GetApp()->setCurrentDocument(m_doc);
   }
 };
 
 //////////////////////////////////////////////////////////////////////
-
-// class DocumentContainer
-// {
-//   typedef std::vector<Command*> Commands;
-//   Commands m_cmds;
-
-// public:
-
-//   DocumentContainer() {
-//   }
-
-//   ~DocumentContainer() {
-//     for (Commands::iterator
-// 	   it=m_cmds.begin(); it!=m_cmds.end(); ++it) {
-//       delete *it;
-//     }
-//   }
-
-//   void add(Command* cmd) {
-//     m_cmds.push_back(cmd);
-//   }
-
-//   Document* get(CommandId id) {
-//     for (Commands::iterator
-// 	   it=m_cmds.begin(); it!=m_cmds.end(); ++it) {
-//       if ((*it)->getId() == id) {
-// 	return *it,
-//       }
-//     }
-//     return NULL;
-//   }
-// };
+// MainFrame
 
 class MainFrame : public Frame
 {
-  Document* m_doc;
   Editor m_editor;
-  CmdStack m_cmds;
+  Menu* m_listMenu;
 
 public:
-  MainFrame(Document* doc)
-    : Frame("Undo")
-    , m_doc(doc)
-    , m_editor(doc, this)
-    , m_cmds(this)
+  MainFrame()
+    : Frame("Undo (WIP)")
+    , m_editor(this)
   {
+    setMenuBar(createMenuBar());
     setLayout(new BoxLayout(Orientation::Horizontal, false));
     m_editor.setConstraint(new BoxConstraint(true));
-    m_cmds.setConstraint(new BoxConstraint(false));
 
-    // Example* app = dynamic_cast<Example*>(Application::getInstance());
+    GetApp()->DocumentChange.connect(&MainFrame::onDocumentChange, this);
+    GetApp()->NewDocument.connect(&MainFrame::onNewDocument, this);
+    GetApp()->CloseDocument.connect(&MainFrame::onCloseDocument, this);
+  }
+
+private:
+  MenuBar* createMenuBar()
+  {
+    MenuBar* menuBar = new MenuBar();
+    Menu* docMenu = new Menu("Document");
+    m_listMenu = new Menu("List");
+
+    docMenu->add("New", ID_NEW_DOCUMENT);
+    docMenu->add("Close", ID_CLOSE_DOCUMENT);
+    docMenu->addSeparator();
+    docMenu->add("Exit", ID_EXIT);
+
+    menuBar->add(docMenu);
+    menuBar->add(m_listMenu);
+    return menuBar;
+  }
+
+  void onDocumentChange(Document* doc)
+  {
+    m_editor.setDocument(doc);
+  }
+
+  void onNewDocument(Document* doc)
+  {
+    m_listMenu->add(new DocMenuItem(doc));
+    updateListMenuIds();
+  }
+
+  void onCloseDocument(Document* doc)
+  {
+    int i, count = m_listMenu->getItemCount();
+    for (i=0; i<count; ++i) {
+      DocMenuItem* item = static_cast<DocMenuItem*>(m_listMenu->getMenuItemByIndex(i));
+      if (item->getDoc() == doc) {
+	m_listMenu->remove(item);
+	updateListMenuIds();
+	delete item;
+	break;
+      }
+    }
+  }
+
+  // Important: After we modified the "m_listMenu" we have to call
+  // this routine to setup the IDs of each menu-item in the menu.
+  // See TN013
+  void updateListMenuIds()
+  {
+    int i, count = m_listMenu->getItemCount();
+    for (i=0; i<count; ++i) {
+      MenuItem* item = m_listMenu->getMenuItemByIndex(i);
+      item->setId(ID_SELECT_DOCUMENT+i);
+    }
   }
 
 };
 
 //////////////////////////////////////////////////////////////////////
+// Example implementation
 
-class Example : public Application
+Example::Example()
+  : m_currentDoc(NULL)
 {
-  typedef std::vector<Document*> Documents;
-  Documents m_docs;
-  Document m_doc;
-  MainFrame m_mainFrame;
+  // Warning: the "Example::m_mainFrame" must be constructed after the
+  // "Example::DocumentChange" member is constructed. See TN012.
+  m_mainFrame.reset(new MainFrame());
 
-public:
+  // commands
+  addCommand(new SignalCommand(ID_NEW_DOCUMENT, &Example::onNew, this));
+  addCommand(new SignalCommand(ID_EXIT, Bind(&MainFrame::setVisible, m_mainFrame.get(), false)));
+  
+  SignalCommand* cmd = new SignalCommand(ID_CLOSE_DOCUMENT);
+  cmd->Execute.connect(&Example::onClose, this);
+  cmd->Enabled.connect(&Example::hasCurrentDoc, this);
+  addCommand(cmd);
+}
 
-  Example() : m_mainFrame(&m_doc) { }
-
-  virtual ~Example() {
-    for (Documents::iterator
-	   it=m_docs.begin(); it!=m_docs.end(); ++it) {
-      delete *it;
-    }
+Example::~Example()
+{
+  for (Documents::iterator
+	 it=m_docs.begin(); it!=m_docs.end(); ++it) {
+    delete *it;
   }
+}
 
-  virtual void main() {
-    m_mainFrame.setVisible(true);
-  }
+void Example::main()
+{
+  m_mainFrame->setVisible(true);
+}
 
-};
+void Example::onNew()
+{
+  m_docCounter++;
+
+  // create the new document
+  Document* doc = new Document(String("Document #" + String::fromInt(m_docCounter)));
+  doc->add(0, "Text " + String::fromInt(m_docCounter));
+
+  // add the document to the list
+  m_docs.push_back(doc);
+
+  // new document signal, and set this document as the current one
+  NewDocument(doc);
+  DocumentChange(m_currentDoc = doc);
+}
+
+void Example::onClose()
+{
+  CloseDocument(m_currentDoc);
+  DocumentChange(m_currentDoc = NULL);
+}
+
+bool Example::hasCurrentDoc()
+{
+  return m_currentDoc != NULL;
+}
+
+void Example::setCurrentDocument(Document* doc)
+{
+  DocumentChange(m_currentDoc = doc);
+}
 
 //////////////////////////////////////////////////////////////////////
 

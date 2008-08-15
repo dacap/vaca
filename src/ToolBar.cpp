@@ -461,10 +461,10 @@ ToolBar::~ToolBar()
 {
 }
 
-ToolSet& ToolBar::getSet()
-{
-  return m_set;
-}
+// ToolSet& ToolBar::getSet()
+// {
+//   return m_set;
+// }
 
 /**
  * Returns the size of the ToolBar when it should be docked in the

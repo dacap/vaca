@@ -271,14 +271,14 @@ MainFrame::MainFrame()
   getMenuBar()->add(toolBarMenuItem);
 
   // setup the tool bar
-  m_toolBar.getSet().setImageList(m_imageList);
-  m_toolBar.getSet().addButton(new ToolButton(ID_FILE_NEW, 0));
-  m_toolBar.getSet().addButton(new ToolButton(ID_FILE_OPEN, 1));
-  m_toolBar.getSet().addButton(new ToolButton(ID_FILE_SAVE, 2));
-  m_toolBar.getSet().addSeparator();
-  m_toolBar.getSet().addButton(new ToolButton(ID_EDIT_CUT, 3));
-  m_toolBar.getSet().addButton(new ToolButton(ID_EDIT_COPY, 4));
-  m_toolBar.getSet().addButton(new ToolButton(ID_EDIT_PASTE, 5));
+  m_toolBar.setImageList(m_imageList);
+  m_toolBar.addButton(new ToolButton(ID_FILE_NEW, 0));
+  m_toolBar.addButton(new ToolButton(ID_FILE_OPEN, 1));
+  m_toolBar.addButton(new ToolButton(ID_FILE_SAVE, 2));
+  m_toolBar.addSeparator();
+  m_toolBar.addButton(new ToolButton(ID_EDIT_CUT, 3));
+  m_toolBar.addButton(new ToolButton(ID_EDIT_COPY, 4));
+  m_toolBar.addButton(new ToolButton(ID_EDIT_PASTE, 5));
 
   // setup the defaults dock areas
   defaultDockAreas();

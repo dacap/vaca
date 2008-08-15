@@ -97,21 +97,21 @@ public:
     m_console.setConstraint(new BoxConstraint(true));
     m_bottomPanel.setLayout(new BoxLayout(Orientation::Horizontal, false, 0));
 
-    m_toolBar1.getSet().setImageList(m_imageList);
-    m_toolBar2.getSet().setImageList(m_imageList);
-    m_toolBar3.getSet().setImageList(m_imageList);
+    m_toolBar1.setImageList(m_imageList);
+    m_toolBar2.setImageList(m_imageList);
+    m_toolBar3.setImageList(m_imageList);
 
-    m_toolBar1.getSet().addButton(new ToolButton(1000, 0));
-    m_toolBar1.getSet().addButton(new ToolButton(1001, 1));
-    m_toolBar1.getSet().addButton(new ToolButton(1002, 2));
-    m_toolBar1.getSet().addSeparator();
-    m_toolBar1.getSet().addButton(new ToolButton(1003, 3));
-    m_toolBar1.getSet().addButton(new ToolButton(1004, 4));
-    m_toolBar1.getSet().addButton(new ToolButton(1005, 5));
+    m_toolBar1.addButton(new ToolButton(1000, 0));
+    m_toolBar1.addButton(new ToolButton(1001, 1));
+    m_toolBar1.addButton(new ToolButton(1002, 2));
+    m_toolBar1.addSeparator();
+    m_toolBar1.addButton(new ToolButton(1003, 3));
+    m_toolBar1.addButton(new ToolButton(1004, 4));
+    m_toolBar1.addButton(new ToolButton(1005, 5));
 
     for (int c=0; c<8; ++c) {
-      m_toolBar2.getSet().addButton(new ToolButton(1001, 1));
-      m_toolBar3.getSet().addButton(new ToolButton(1002, 2));
+      m_toolBar2.addButton(new ToolButton(1001, 1));
+      m_toolBar3.addButton(new ToolButton(1002, 2));
     }
 
     m_dockBar.setLayout(new BoxLayout(Orientation::Vertical, true));

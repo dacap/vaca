@@ -70,7 +70,7 @@ EXAMPLES = AnchorLayouts AutoCompletion Bixes BouncingBalls BoxLayouts	\
 	   MenuResource MiniExplorer PensBrushes Primitives		\
 	   ProgressBars Regions Scribble Sliders Spinners StdCommands	\
 	   Sudoku SystemImageList Tabs TextEditor Threads Timers	\
-	   ToolBars Trees Undo
+	   ToolBars Trees Undo WebCam
 
 TESTS = \
 	test_bind \
@@ -289,6 +289,9 @@ bin/Bixes$(SUFFIX)$(EXE): obj/Example.Bixes$(SUFFIX)$(OBJ) obj/Example.Bixes.res
 
 bin/Commands$(SUFFIX)$(EXE): obj/Example.Commands$(SUFFIX)$(OBJ) obj/Example.Commands.res $(VACA_LIB)
 	$(GXX) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
+
+bin/WebCam$(SUFFIX)$(EXE): obj/Example.WebCam$(SUFFIX)$(OBJ) obj/Example.res $(VACA_LIB)
+	$(GXX) $(LFLAGS) -o $@ $^ $(EXE_LIBS) -lvfw32
 
 # tests
 

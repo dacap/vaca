@@ -79,7 +79,7 @@ class VACA_DLL MenuItem : public Component
 public:
 
   MenuItem();
-  MenuItem(const String& text, CommandId id = 0, Keys::Type defaultShortcut = Keys::None);
+  MenuItem(const String& text, CommandId id, Keys::Type defaultShortcut = Keys::None);
   virtual ~MenuItem();
 
   Menu* getParent();
@@ -88,6 +88,7 @@ public:
 
   const String& getText();
   void setText(const String& text);
+  void setId(CommandId id);
 
   bool isEnabled();
   void setEnabled(bool state);
@@ -162,7 +163,7 @@ public:
   void addSeparator();
 
   MenuItem* insert(int index, MenuItem* menuItem);
-  MenuItem* insert(int index, const String& text);
+  MenuItem* insert(int index, const String& text, CommandId id, Keys::Type defaultShortcut = Keys::None);
   void insertSeparator(int index);
 
   MenuItem* remove(MenuItem* menuItem);

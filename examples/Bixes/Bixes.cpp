@@ -566,15 +566,15 @@ public:
     m_widgetsView.ElementSelected.connect(&MainFrame::onElementSelectedFromWidgets, this);
 
     // setup the tool bar
-    m_toolBar.getSet().setImageList(m_imageList);
-    m_toolBar.getSet().addButton(new ToolButton(IDM_ADD_COLUMN, 0));
-    m_toolBar.getSet().addButton(new ToolButton(IDM_ADD_ROW, 1));
-    m_toolBar.getSet().addButton(new ToolButton(IDM_ADD_MATRIX, 2));
-    m_toolBar.getSet().addButton(new ToolButton(IDM_ADD_WIDGET, 3));
-    m_toolBar.getSet().addSeparator();
-    m_toolBar.getSet().addButton(new ToolButton(IDM_REMOVE, 4));
-    m_toolBar.getSet().addSeparator();
-    m_toolBar.getSet().addButton(new ToolButton(IDM_PROPERTIES, 5));
+    m_toolBar.setImageList(m_imageList);
+    m_toolBar.addButton(new ToolButton(IDM_ADD_COLUMN, 0));
+    m_toolBar.addButton(new ToolButton(IDM_ADD_ROW, 1));
+    m_toolBar.addButton(new ToolButton(IDM_ADD_MATRIX, 2));
+    m_toolBar.addButton(new ToolButton(IDM_ADD_WIDGET, 3));
+    m_toolBar.addSeparator();
+    m_toolBar.addButton(new ToolButton(IDM_REMOVE, 4));
+    m_toolBar.addSeparator();
+    m_toolBar.addButton(new ToolButton(IDM_PROPERTIES, 5));
 
     // setup the defaults dock areas
     defaultDockAreas();
@@ -733,12 +733,12 @@ private:
       ToolButtonState::Enabled:
       ToolButtonState::None;
 
-    m_toolBar.getSet().getButtonById(IDM_ADD_COLUMN)->setState(canAdd);
-    m_toolBar.getSet().getButtonById(IDM_ADD_ROW)->setState(canAdd);
-    m_toolBar.getSet().getButtonById(IDM_ADD_MATRIX)->setState(canAdd);
-    m_toolBar.getSet().getButtonById(IDM_ADD_WIDGET)->setState(canAdd);
-    m_toolBar.getSet().getButtonById(IDM_REMOVE)->setState(canRemove);
-    m_toolBar.getSet().getButtonById(IDM_PROPERTIES)->setState(canShowProperties);
+    m_toolBar.getButtonById(IDM_ADD_COLUMN)->setState(canAdd);
+    m_toolBar.getButtonById(IDM_ADD_ROW)->setState(canAdd);
+    m_toolBar.getButtonById(IDM_ADD_MATRIX)->setState(canAdd);
+    m_toolBar.getButtonById(IDM_ADD_WIDGET)->setState(canAdd);
+    m_toolBar.getButtonById(IDM_REMOVE)->setState(canRemove);
+    m_toolBar.getButtonById(IDM_PROPERTIES)->setState(canShowProperties);
   }
 
 };

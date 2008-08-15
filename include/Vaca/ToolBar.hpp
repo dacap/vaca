@@ -169,8 +169,6 @@ public:
 	  Style style = ToolBarStyle);
   virtual ~ToolBar();
 
-  ToolSet& getSet();
-
   virtual Size getDockedSize(Side side);
   virtual Size getFloatingSize();
 
@@ -181,6 +179,65 @@ protected:
   virtual void onDocking();
   virtual void onFloating();
   virtual void onResizingFrame(DockFrame* frame, CardinalDirection dir, Rect& rc);
+
+public:
+  //////////////////////////////////////////////////////////////////////
+  // Wrapper for the ToolSet
+
+  /** @see ToolSet#getButtonCount */
+  int getButtonCount() {
+    return m_set.getButtonCount();
+  }
+
+  /** @see ToolSet#getRows */
+  int getRows() {
+    return m_set.getRows();
+  }
+
+  /** @see ToolSet#setRows */
+  Rect setRows(int rows, bool expand) {
+    return m_set.setRows(rows, expand);
+  }
+
+  /** @see ToolSet#setImageList */
+  void setImageList(ImageList& imageList) {
+    return m_set.setImageList(imageList);
+  }
+
+  /** @see ToolSet#loadStandardImageList */
+  void loadStandardImageList(int imageListId = IDB_STD_SMALL_COLOR) {
+    m_set.loadStandardImageList(imageListId);
+  }
+
+  /** @see ToolSet#addButton */
+  void addButton(ToolButton* button) {
+    m_set.addButton(button);
+  }
+
+  /** @see ToolSet#addSeparator */
+  void addSeparator(int width = 6) {
+    m_set.addSeparator(width);
+  }
+
+  /** @see ToolSet#updateButton */
+  void updateButton(ToolButton* button) {
+    m_set.updateButton(button);
+  }
+
+  /** @see ToolSet#getButtonById */
+  ToolButton* getButtonById(CommandId id) {
+    return m_set.getButtonById(id);
+  }
+
+  /** @see ToolSet#getButtonByIndex */
+  ToolButton* getButtonByIndex(int index) {
+    return m_set.getButtonByIndex(index);
+  }
+
+  /** @see ToolSet#hitTest */
+  int hitTest(const Point& pt) {
+    return m_set.hitTest(pt);
+  }
 
 };
 

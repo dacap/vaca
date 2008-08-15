@@ -74,7 +74,7 @@ EXAMPLES_EXE = bin/AnchorLayouts.exe bin/AutoCompletion.exe		\
   bin/Scribble.exe bin/Sliders.exe bin/Spinners.exe			\
   bin/StdCommands.exe bin/Sudoku.exe bin/SystemImageList.exe		\
   bin/Tabs.exe bin/TextEditor.exe bin/Threads.exe bin/Timers.exe	\
-  bin/ToolBars.exe bin/Trees.exe
+  bin/ToolBars.exe bin/Trees.exe bin/Undo.exe bin/WebCam.exe
 
 TESTS_EXE = bin/test_bind.exe bin/test_point.exe bin/test_rect.exe	\
   bin/test_signal.exe bin/test_size.exe bin/test_string.exe

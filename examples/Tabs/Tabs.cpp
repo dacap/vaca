@@ -37,7 +37,11 @@ enum {
   ID_EXIT = 1000,
   ID_CHANGE_FONT,
   ID_MULTILINE,
-  ID_READ_ME
+  ID_READ_ME,
+  ID_TOP,
+  ID_RIGHT,
+  ID_LEFT,
+  ID_BOTTOM,
 };
 
 class MainFrame : public Frame
@@ -58,8 +62,8 @@ class MainFrame : public Frame
     TabBase& m_tab;
 
   public:
-    SideMenuItem(const String& text, Side side, TabBase& tab)
-      : MenuItem(text)
+    SideMenuItem(const String& text, CommandId id, Side side, TabBase& tab)
+      : MenuItem(text, id)
       , m_side(side)
       , m_tab(tab) { }
 
@@ -137,10 +141,10 @@ private:
     optionsMenu->add("&Multiline", ID_MULTILINE);
     optionsMenu->add(sideMenu);
 
-    sideMenu->add(new SideMenuItem("&Top", Side::Top, m_tab));
-    sideMenu->add(new SideMenuItem("&Left", Side::Left, m_tab));
-    sideMenu->add(new SideMenuItem("&Bottom", Side::Bottom, m_tab));
-    sideMenu->add(new SideMenuItem("&Right", Side::Right, m_tab));
+    sideMenu->add(new SideMenuItem("&Top", ID_TOP, Side::Top, m_tab));
+    sideMenu->add(new SideMenuItem("&Left", ID_LEFT, Side::Left, m_tab));
+    sideMenu->add(new SideMenuItem("&Bottom", ID_BOTTOM, Side::Bottom, m_tab));
+    sideMenu->add(new SideMenuItem("&Right", ID_RIGHT, Side::Right, m_tab));
 
     menuBar->add(appMenu);
     menuBar->add(optionsMenu);

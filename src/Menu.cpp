@@ -118,6 +118,23 @@ void MenuItem::setText(const String& text)
   }
 }
 
+void MenuItem::setId(CommandId id)
+{
+  m_id = id;
+
+  if (m_parent != NULL) {
+    MENUITEMINFO mii;
+
+    mii.cbSize = sizeof(MENUITEMINFO);
+    mii.fMask = MIIM_ID;
+    mii.wID = m_id;
+
+    SetMenuItemInfo(m_parent->getHMENU(),
+		    m_parent->getMenuItemIndex(this),
+		    TRUE, &mii);
+  }
+}
+
 bool MenuItem::isEnabled()
 {
   assert(m_parent != NULL);
@@ -295,7 +312,7 @@ Menu::Menu()
 }
 
 Menu::Menu(const String& text)
-  : MenuItem(text)
+  : MenuItem(text, 0)
 {
   m_HMENU = ::CreatePopupMenu();
   VACA_TRACE("%p = CreatePopupMenu()\n", m_HMENU);
@@ -509,8 +526,8 @@ MenuItem* Menu::insert(int index, MenuItem* menuItem)
 }
 
 /**
- * Inserts a new MenuItem with the specified @a text and @a defaultShortcut
- * at the @a index position of the Menu.
+ * Inserts a new MenuItem with the specified @a text at the @a index
+ * position of the Menu.
  *
  * @warning The returned MenuItem is deleted automatically when the
  *          Menu is destroyed.
@@ -519,9 +536,9 @@ MenuItem* Menu::insert(int index, MenuItem* menuItem)
  *
  * @see insert(int, MenuItem*), remove(MenuItem*)
  */
-MenuItem* Menu::insert(int index, const String& text)
+MenuItem* Menu::insert(int index, const String& text, CommandId id, Keys::Type defaultShortcut)
 {
-  MenuItem* menuItem = insert(index, new MenuItem(text));
+  MenuItem* menuItem = insert(index, new MenuItem(text, id, defaultShortcut));
   return menuItem;
 }
 
@@ -546,10 +563,17 @@ MenuItem* Menu::remove(MenuItem* menuItem)
   assert(m_HMENU != NULL);
 
   // TODO check if this works
-  RemoveMenu(m_HMENU, getMenuItemIndex(menuItem), MF_BYPOSITION);
+  ::RemoveMenu(m_HMENU, getMenuItemIndex(menuItem), MF_BYPOSITION);
+
+  // see the "RemoveMenu Function" in the MSDN, you "must call the
+  // DrawMenuBar function whenever a menu changes"
+  // http://msdn.microsoft.com/en-us/library/ms647994(VS.85).aspx
+  if (MenuBar* bar = dynamic_cast<MenuBar*>(getRoot())) {
+    Frame* frame = bar->getFrame();
+    ::DrawMenuBar(frame ? frame->getHWND(): NULL);
+  }
 
   menuItem->m_parent = NULL;
-
   remove_from_container(m_container, menuItem);
 
   return menuItem;

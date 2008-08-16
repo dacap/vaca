@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_ANCHOR_HPP
-#define VACA_ANCHOR_HPP
+#ifndef VACA_ANCHOR_H
+#define VACA_ANCHOR_H
 
 #include "Vaca/base.h"
 #include "Vaca/Constraint.h"
@@ -65,4 +65,4 @@ public:
 
 } // namespace Vaca
 
-#endif
+#endif // VACA_ANCHOR_H

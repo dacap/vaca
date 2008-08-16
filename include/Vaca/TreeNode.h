@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_TREENODE_HPP
-#define VACA_TREENODE_HPP
+#ifndef VACA_TREENODE_H
+#define VACA_TREENODE_H
 
 #include <vector>
 
@@ -121,4 +121,4 @@ private:
 
 } // namespace Vaca
 
-#endif
+#endif // VACA_TREENODE_H

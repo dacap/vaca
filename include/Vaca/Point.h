@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_POINT_HPP
-#define VACA_POINT_HPP
+#ifndef VACA_POINT_H
+#define VACA_POINT_H
 
 #include "Vaca/base.h"
 
@@ -78,5 +78,5 @@ public:
 
 } // namespace Vaca
 
-#endif
+#endif // VACA_POINT_H
 

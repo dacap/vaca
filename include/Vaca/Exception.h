@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_EXCEPTION_HPP
-#define VACA_EXCEPTION_HPP
+#ifndef VACA_EXCEPTION_H
+#define VACA_EXCEPTION_H
 
 #include <exception>
 
@@ -70,4 +70,4 @@ public:
 
 } // namespace Vaca
 
-#endif
+#endif // VACA_EXCEPTION_H

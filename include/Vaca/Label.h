@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_LABEL_HPP
-#define VACA_LABEL_HPP
+#ifndef VACA_LABEL_H
+#define VACA_LABEL_H
 
 #include "Vaca/base.h"
 #include "Vaca/Widget.h"
@@ -115,4 +115,4 @@ protected:
 
 } // namespace Vaca
 
-#endif
+#endif // VACA_LABEL_H

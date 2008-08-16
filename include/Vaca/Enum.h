@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_ENUM_HPP
-#define VACA_ENUM_HPP
+#ifndef VACA_ENUM_H
+#define VACA_ENUM_H
 
 namespace Vaca {
 
@@ -166,4 +166,4 @@ private:
 
 } // namespace Vaca
 
-#endif
+#endif // VACA_ENUM_H

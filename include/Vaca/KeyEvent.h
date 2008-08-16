@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_KEYEVENT_HPP
-#define VACA_KEYEVENT_HPP
+#ifndef VACA_KEYEVENT_H
+#define VACA_KEYEVENT_H
 
 #include "Vaca/base.h"
 #include "Vaca/Event.h"
@@ -84,4 +84,4 @@ public:
 
 } // namespace Vaca
 
-#endif
+#endif // VACA_KEYEVENT_H

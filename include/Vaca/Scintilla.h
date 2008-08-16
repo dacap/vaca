@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_SCINTILLA_HPP
-#define VACA_SCINTILLA_HPP
+#ifndef VACA_SCINTILLA_H
+#define VACA_SCINTILLA_H
 
 #include "Vaca/base.h"
 #include "Vaca/Widget.h"
@@ -647,4 +647,4 @@ protected:
 
 } // namespace Vaca
 
-#endif
+#endif // VACA_SCINTILLA_H

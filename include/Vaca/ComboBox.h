@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_COMBOBOX_HPP
-#define VACA_COMBOBOX_HPP
+#ifndef VACA_COMBOBOX_H
+#define VACA_COMBOBOX_H
 
 #include <vector>
 
@@ -112,4 +112,4 @@ private:
 
 } // namespace Vaca
 
-#endif
+#endif // VACA_COMBOBOX_H

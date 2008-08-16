@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_CLOSEEVENT_HPP
-#define VACA_CLOSEEVENT_HPP
+#ifndef VACA_CLOSEEVENT_H
+#define VACA_CLOSEEVENT_H
 
 #include "Vaca/CancelableEvent.h"
 
@@ -49,4 +49,4 @@ public:
 
 } // namespace Vaca
 
-#endif
+#endif // VACA_CLOSEEVENT_H

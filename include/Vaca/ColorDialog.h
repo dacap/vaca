@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_COLORDIALOG_HPP
-#define VACA_COLORDIALOG_HPP
+#ifndef VACA_COLORDIALOG_H
+#define VACA_COLORDIALOG_H
 
 #include "Vaca/base.h"
 #include "Vaca/CommonDialog.h"
@@ -61,4 +61,4 @@ public:
 
 } // namespace Vaca
 
-#endif
+#endif // VACA_COLORDIALOG_H

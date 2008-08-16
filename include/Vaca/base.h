@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_BASE_HPP
-#define VACA_BASE_HPP
+#ifndef VACA_BASE_H
+#define VACA_BASE_H
 
 #include <algorithm>
 #include <stdarg.h>
@@ -275,4 +275,4 @@ void remove_from_container(_ContainerType& container,
 
 } // namespace Vaca
 
-#endif
+#endif // VACA_BASE_H

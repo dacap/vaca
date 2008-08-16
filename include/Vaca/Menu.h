@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_MENU_HPP
-#define VACA_MENU_HPP
+#ifndef VACA_MENU_H
+#define VACA_MENU_H
 
 /**
  * First automatic ID generated for a MenuItem when its ID isn't
@@ -245,4 +245,4 @@ public:
 */
 } // namespace Vaca
 
-#endif
+#endif // VACA_MENU_H

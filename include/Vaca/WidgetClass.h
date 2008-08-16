@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_WIDGETCLASS_HPP
-#define VACA_WIDGETCLASS_HPP
+#ifndef VACA_WIDGETCLASS_H
+#define VACA_WIDGETCLASS_H
 
 #include "Vaca/base.h"
 #include "Vaca/String.h"
@@ -126,4 +126,4 @@ public:
 
 } // namespace Vaca
 
-#endif
+#endif // VACA_WIDGETCLASS_H

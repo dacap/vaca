@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_STRING_HPP
-#define VACA_STRING_HPP
+#ifndef VACA_STRING_H
+#define VACA_STRING_H
 
 #include <string>
 
@@ -168,4 +168,4 @@ inline String operator+(const wchar_t* _s1, const String& _s2)
 
 } // namespace Vaca
 
-#endif
+#endif // VACA_STRING_H

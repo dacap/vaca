@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_BIX_HPP
-#define VACA_BIX_HPP
+#ifndef VACA_BIX_H
+#define VACA_BIX_H
 
 #include "Vaca/base.h"
 #include "Vaca/Layout.h"
@@ -126,5 +126,4 @@ private:
 
 } // namespace Vaca
 
-#endif
-
+#endif // VACA_BIX_H

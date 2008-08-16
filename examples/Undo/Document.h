@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef DOCUMENT_HPP
-#define DOCUMENT_HPP
+#ifndef DOCUMENT_H
+#define DOCUMENT_H
 
 #include <Vaca/Vaca.h>
 
@@ -77,4 +77,4 @@ public:
   
 };
 
-#endif // DOCUMENT_HPP
+#endif // DOCUMENT_H

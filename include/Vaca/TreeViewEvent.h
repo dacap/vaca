@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_TREEVIEWEVENT_HPP
-#define VACA_TREEVIEWEVENT_HPP
+#ifndef VACA_TREEVIEWEVENT_H
+#define VACA_TREEVIEWEVENT_H
 
 #include "Vaca/base.h"
 #include "Vaca/CancelableEvent.h"
@@ -63,4 +63,4 @@ public:
 
 } // namespace Vaca
 
-#endif
+#endif // VACA_TREEVIEWEVENT_H

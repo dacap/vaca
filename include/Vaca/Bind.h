@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_BIND_HPP
-#define VACA_BIND_HPP
+#ifndef VACA_BIND_H
+#define VACA_BIND_H
 
 namespace Vaca {
 
@@ -596,4 +596,4 @@ namespace Vaca {
 
 } // namespace Vaca
 
-#endif
+#endif // VACA_BIND_H

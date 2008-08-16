@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_COLOR_HPP
-#define VACA_COLOR_HPP
+#ifndef VACA_COLOR_H
+#define VACA_COLOR_H
 
 #include "Vaca/base.h"
 
@@ -94,4 +94,4 @@ public:
 
 } // namespace Vaca
 
-#endif
+#endif // VACA_COLOR_H

@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_TIMER_HPP
-#define VACA_TIMER_HPP
+#ifndef VACA_TIMER_H
+#define VACA_TIMER_H
 
 #include "Vaca/base.h"
 #include "Vaca/Signal.h"
@@ -92,4 +92,4 @@ private:
 
 } // namespace Vaca
 
-#endif
+#endif // VACA_TIMER_H

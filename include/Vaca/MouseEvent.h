@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_MOUSEEVENT_HPP
-#define VACA_MOUSEEVENT_HPP
+#ifndef VACA_MOUSEEVENT_H
+#define VACA_MOUSEEVENT_H
 
 #include "Vaca/base.h"
 #include "Vaca/Enum.h"
@@ -110,4 +110,4 @@ public:
 
 } // namespace Vaca
 
-#endif
+#endif // VACA_MOUSEEVENT_H

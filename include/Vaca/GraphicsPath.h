@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_GRAPHICSPATH_HPP
-#define VACA_GRAPHICSPATH_HPP
+#ifndef VACA_GRAPHICSPATH_H
+#define VACA_GRAPHICSPATH_H
 
 #include <list>
 #include <vector>
@@ -80,4 +80,4 @@ public:
 
 } // namespace Vaca
 
-#endif
+#endif // VACA_GRAPHICSPATH_H

@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_SLOT_HPP_INCLUDED
-#define VACA_SLOT_HPP_INCLUDED
+#ifndef VACA_SLOT_H
+#define VACA_SLOT_H
 
 #include "Vaca/base.h"
 
@@ -250,4 +250,4 @@ namespace Vaca {
 
 } // namespace Vaca
 
-#endif // VACA_SLOT_HPP_INCLUDED
+#endif // VACA_SLOT_H

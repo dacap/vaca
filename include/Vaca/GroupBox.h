@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_GROUPBOX_HPP
-#define VACA_GROUPBOX_HPP
+#ifndef VACA_GROUPBOX_H
+#define VACA_GROUPBOX_H
 
 #include "Vaca/Widget.h"
 
@@ -66,4 +66,4 @@ protected:
 
 } // namespace Vaca
 
-#endif
+#endif // VACA_GROUPBOX_H

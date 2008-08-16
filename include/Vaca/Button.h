@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_BUTTON_HPP
-#define VACA_BUTTON_HPP
+#ifndef VACA_BUTTON_H
+#define VACA_BUTTON_H
 
 #include "Vaca/ButtonBase.h"
 
@@ -60,4 +60,4 @@ public:
 
 } // namespace Vaca
 
-#endif
+#endif // VACA_BUTTON_H

@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_THREAD_HPP
-#define VACA_THREAD_HPP
+#ifndef VACA_THREAD_H
+#define VACA_THREAD_H
 
 #include "Vaca/base.h"
 #include "Vaca/Exception.h"
@@ -121,4 +121,4 @@ void VACA_DLL __vaca_set_outside_widget(Widget* widget);
 
 } // namespace Vaca
 
-#endif
+#endif // VACA_THREAD_H

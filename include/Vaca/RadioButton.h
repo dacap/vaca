@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_RADIOBUTTON_HPP
-#define VACA_RADIOBUTTON_HPP
+#ifndef VACA_RADIOBUTTON_H
+#define VACA_RADIOBUTTON_H
 
 #include "Vaca/ButtonBase.h"
 
@@ -85,4 +85,4 @@ protected:
 
 } // namespace Vaca
 
-#endif
+#endif // VACA_RADIOBUTTON_H

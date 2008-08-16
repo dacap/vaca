@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_DATAGRID_HPP
-#define VACA_DATAGRID_HPP
+#ifndef VACA_DATAGRID_H
+#define VACA_DATAGRID_H
 
 #include "Vaca/base.h"
 #include "Vaca/Widget.h"
@@ -123,4 +123,4 @@ public:
 
 } // namespace Vaca
 
-#endif
+#endif // VACA_DATAGRID_H

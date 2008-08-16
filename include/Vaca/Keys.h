@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_KEYS_HPP
-#define VACA_KEYS_HPP
+#ifndef VACA_KEYS_H
+#define VACA_KEYS_H
 
 #include "Vaca/base.h"
 
@@ -246,4 +246,4 @@ struct Keys {
 
 } // namespace Vaca
 
-#endif
+#endif // VACA_KEYS_H

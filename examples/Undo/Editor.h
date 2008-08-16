@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef EDITOR_HPP
-#define EDITOR_HPP
+#ifndef EDITOR_H
+#define EDITOR_H
 
 #include <Vaca/Vaca.h>
 #include "Document.h"
@@ -199,4 +199,4 @@ private:
   
 };
 
-#endif // EDITOR_HPP
+#endif // EDITOR_H

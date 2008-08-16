@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_VACA_HPP
-#define VACA_VACA_HPP
+#ifndef VACA_VACA_H
+#define VACA_VACA_H
 
 #include "Vaca/base.h"
 
@@ -133,4 +133,4 @@
 #include "Vaca/Widget.h"
 #include "Vaca/WidgetClass.h"
 
-#endif
+#endif // VACA_VACA_H

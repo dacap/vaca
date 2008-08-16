@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_TAB_HPP
-#define VACA_TAB_HPP
+#ifndef VACA_TAB_H
+#define VACA_TAB_H
 
 #include "Vaca/Widget.h"
 #include "Vaca/Font.h"
@@ -166,4 +166,4 @@ public:
 
 } // namespace Vaca
 
-#endif
+#endif // VACA_TAB_H

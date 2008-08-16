@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_ITEM_HPP
-#define VACA_ITEM_HPP
+#ifndef VACA_ITEM_H
+#define VACA_ITEM_H
 
 namespace Vaca {
 
@@ -53,4 +53,4 @@ public:
 
 } // namespace Vaca
 
-#endif
+#endif // VACA_ITEM_H

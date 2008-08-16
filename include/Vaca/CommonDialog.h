@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_COMMONDIALOG_HPP
-#define VACA_COMMONDIALOG_HPP
+#ifndef VACA_COMMONDIALOG_H
+#define VACA_COMMONDIALOG_H
 
 #include "Vaca/base.h"
 #include "Vaca/Component.h"
@@ -62,4 +62,4 @@ public:
 
 } // namespace Vaca
 
-#endif
+#endif // VACA_COMMONDIALOG_H

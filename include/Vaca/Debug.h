@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_DEBUG_HPP
-#define VACA_DEBUG_HPP
+#ifndef VACA_DEBUG_H
+#define VACA_DEBUG_H
 
 #include <assert.h>
 
@@ -84,4 +84,4 @@ inline struct __vaca_trace_s __make_trace(LPCSTR filename, UINT line) {
 
 } // namespace Vaca
 
-#endif
+#endif // VACA_DEBUG_H

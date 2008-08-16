@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_DOCKAREA_HPP
-#define VACA_DOCKAREA_HPP
+#ifndef VACA_DOCKAREA_H
+#define VACA_DOCKAREA_H
 
 #include "Vaca/base.h"
 #include "Vaca/Widget.h"
@@ -150,4 +150,4 @@ protected:
 
 } // namespace Vaca
 
-#endif
+#endif // VACA_DOCKAREA_H

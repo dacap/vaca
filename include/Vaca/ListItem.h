@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_LISTITEM_HPP
-#define VACA_LISTITEM_HPP
+#ifndef VACA_LISTITEM_H
+#define VACA_LISTITEM_H
 
 #include <vector>
 
@@ -72,4 +72,4 @@ public:
 
 } // namespace Vaca
 
-#endif
+#endif // VACA_LISTITEM_H

@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_COMPONENT_HPP
-#define VACA_COMPONENT_HPP
+#ifndef VACA_COMPONENT_H
+#define VACA_COMPONENT_H
 
 #include "Vaca/base.h"
 #include "Vaca/NonCopyable.h"
@@ -58,4 +58,4 @@ public:
 
 } // namespace Vaca
 
-#endif
+#endif // VACA_COMPONENT_H

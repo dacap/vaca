@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_SYSTEM_HPP
-#define VACA_SYSTEM_HPP
+#ifndef VACA_SYSTEM_H
+#define VACA_SYSTEM_H
 
 #include <vector>
 #include <shlobj.h>
@@ -107,4 +107,4 @@ public:
 
 } // namespace Vaca
 
-#endif
+#endif // VACA_SYSTEM_H

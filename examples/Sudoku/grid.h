@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef GRID_HPP
-#define GRID_HPP
+#ifndef GRID_H
+#define GRID_H
 
 #include <iterator>
 
@@ -205,4 +205,4 @@ public:
   
 };
 
-#endif
+#endif // GRID_H

@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_DOCKBAR_HPP
-#define VACA_DOCKBAR_HPP
+#ifndef VACA_DOCKBAR_H
+#define VACA_DOCKBAR_H
 
 #include "Vaca/base.h"
 #include "Vaca/Frame.h"
@@ -176,4 +176,4 @@ private:
 
 } // namespace Vaca
 
-#endif
+#endif // VACA_DOCKBAR_H

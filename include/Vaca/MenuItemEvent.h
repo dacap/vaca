@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_MENUITEMEVENT_HPP
-#define VACA_MENUITEMEVENT_HPP
+#ifndef VACA_MENUITEMEVENT_H
+#define VACA_MENUITEMEVENT_H
 
 #include "Vaca/base.h"
 #include "Vaca/Event.h"
@@ -53,4 +53,4 @@ public:
 
 } // namespace Vaca
 
-#endif
+#endif // VACA_MENUITEMEVENT_H

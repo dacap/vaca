@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_PANEL_HPP
-#define VACA_PANEL_HPP
+#ifndef VACA_PANEL_H
+#define VACA_PANEL_H
 
 #include "Vaca/base.h"
 #include "Vaca/Widget.h"
@@ -69,4 +69,4 @@ public:
 
 } // namespace Vaca
 
-#endif
+#endif // VACA_PANEL_H

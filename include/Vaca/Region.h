@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_REGION_HPP
-#define VACA_REGION_HPP
+#ifndef VACA_REGION_H
+#define VACA_REGION_H
 
 #include "Vaca/base.h"
 #include "Vaca/SelfDestruction.h"
@@ -109,5 +109,5 @@ private:
 
 } // namespace Vaca
 
-#endif
+#endif // VACA_REGION_H
 

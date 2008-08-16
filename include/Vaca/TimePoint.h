@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_TIMEPOINT_HPP
-#define VACA_TIMEPOINT_HPP
+#ifndef VACA_TIMEPOINT_H
+#define VACA_TIMEPOINT_H
 
 #include "Vaca/base.h"
 
@@ -50,4 +50,4 @@ public:
 
 } // namespace Vaca
 
-#endif
+#endif // VACA_TIMEPOINT_H

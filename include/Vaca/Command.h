@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_COMMAND_HPP
-#define VACA_COMMAND_HPP
+#ifndef VACA_COMMAND_H
+#define VACA_COMMAND_H
 
 #include <vector>
 
@@ -113,4 +113,4 @@ public:
 
 } // namespace Vaca
 
-#endif
+#endif // VACA_COMMAND_H

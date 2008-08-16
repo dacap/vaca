@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_BOXCONSTRAINT_HPP
-#define VACA_BOXCONSTRAINT_HPP
+#ifndef VACA_BOXCONSTRAINT_H
+#define VACA_BOXCONSTRAINT_H
 
 #include "Vaca/base.h"
 #include "Vaca/Constraint.h"
@@ -63,4 +63,4 @@ public:
 
 } // namespace Vaca
 
-#endif
+#endif // VACA_BOXCONSTRAINT_H

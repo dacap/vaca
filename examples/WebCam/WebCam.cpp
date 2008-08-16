@@ -78,8 +78,8 @@ public:
     : ComboBox(parent)
   {
     for (int i=0; i<10; i++) {	// driver index goes from 0 to 9
-      char name[256];
-      char ver[256];
+      Character name[256];
+      Character ver[256];
       if (capGetDriverDescription(i, name, sizeof(name), ver, sizeof(ver)))
 	addItem(String(name)+" "+ver);
       else
@@ -174,7 +174,7 @@ private:
   virtual HWND createHWND(LPCTSTR className, Widget* parent, Style style)
   {
     // this routine is from VFW
-    return capCreateCaptureWindow((LPSTR)"WebCam",
+    return capCreateCaptureWindow(_T("WebCam"),
 				  style.regular,
 				  0, 0, 160, 120,
 				  parent ? parent->getHWND(): NULL,

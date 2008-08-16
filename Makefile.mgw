@@ -208,11 +208,7 @@ endif
 # ----------------------------------------------------------------------
 
 VACA_LIB = lib/libvaca$(SUFFIX)$(LIB)
-ifdef UNICODE
-  VACA_DLL = bin/VacaUnicode$(SUFFIX)$(DLL)
-else
-  VACA_DLL = bin/Vaca$(SUFFIX)$(DLL)
-endif
+VACA_DLL = bin/Vaca$(SUFFIX)$(DLL)
 
 LIB_OBJS = $(addprefix obj/Library., $(addsuffix $(SUFFIX)$(OBJ), $(LIB_SOURCES)))
 EXAMPLES_EXE = $(addprefix bin/, $(addsuffix $(SUFFIX)$(EXE), $(EXAMPLES)))

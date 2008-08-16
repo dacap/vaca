@@ -29,10 +29,10 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/FileDialog.hpp"
-#include "Vaca/Widget.hpp"
-#include "Vaca/Application.hpp"
-#include "Vaca/System.hpp"
+#include "Vaca/FileDialog.h"
+#include "Vaca/Widget.h"
+#include "Vaca/Application.h"
+#include "Vaca/System.h"
 
 // 32k is the limit for Win95/98/Me/NT4/2000/XP with ANSI version
 #define FILENAME_BUFSIZE (1024*32)

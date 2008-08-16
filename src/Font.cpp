@@ -29,9 +29,9 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/Font.hpp"
-#include "Vaca/Debug.hpp"
-#include "Vaca/Graphics.hpp"
+#include "Vaca/Font.h"
+#include "Vaca/Debug.h"
+#include "Vaca/Graphics.h"
 
 using namespace Vaca;
 

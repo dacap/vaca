@@ -1,6 +1,6 @@
 #include <cassert>
 
-#include "Vaca/Size.hpp"
+#include "Vaca/Size.h"
 
 using namespace Vaca;
 

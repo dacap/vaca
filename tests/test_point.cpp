@@ -1,6 +1,6 @@
 #include <cassert>
 
-#include "Vaca/Point.hpp"
+#include "Vaca/Point.h"
 
 using namespace Vaca;
 

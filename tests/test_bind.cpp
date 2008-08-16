@@ -1,7 +1,7 @@
 #include <cassert>
 
-#include "Vaca/Bind.hpp"
-#include "Vaca/Signal.hpp"
+#include "Vaca/Bind.h"
+#include "Vaca/Signal.h"
 
 using namespace Vaca;
 

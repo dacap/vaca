@@ -29,11 +29,11 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/Region.hpp"
-#include "Vaca/Rect.hpp"
-#include "Vaca/Debug.hpp"
-#include "Vaca/Point.hpp"
-#include "Vaca/Size.hpp"
+#include "Vaca/Region.h"
+#include "Vaca/Rect.h"
+#include "Vaca/Debug.h"
+#include "Vaca/Point.h"
+#include "Vaca/Size.h"
 
 using namespace Vaca;
 

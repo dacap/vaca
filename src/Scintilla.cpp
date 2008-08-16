@@ -29,9 +29,9 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/Scintilla.hpp"
-#include "Vaca/Font.hpp"
-#include "Vaca/WidgetClass.hpp"
+#include "Vaca/Scintilla.h"
+#include "Vaca/Font.h"
+#include "Vaca/WidgetClass.h"
 #include "Scintilla.h"
 #include "SciLexer.h"
 

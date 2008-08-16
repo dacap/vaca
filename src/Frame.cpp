@@ -29,21 +29,21 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/Frame.hpp"
-#include "Vaca/Application.hpp"
-#include "Vaca/Register.hpp"
-#include "Vaca/CloseEvent.hpp"
-#include "Vaca/Debug.hpp"
-#include "Vaca/Menu.hpp"
-#include "Vaca/MenuItemEvent.hpp"
-#include "Vaca/AnchorLayout.hpp"
-#include "Vaca/Event.hpp"
-#include "Vaca/Point.hpp"
-#include "Vaca/System.hpp"
-#include "Vaca/Mdi.hpp"
-#include "Vaca/Thread.hpp"
-#include "Vaca/Icon.hpp"
-#include "Vaca/BandedDockArea.hpp"
+#include "Vaca/Frame.h"
+#include "Vaca/Application.h"
+#include "Vaca/Register.h"
+#include "Vaca/CloseEvent.h"
+#include "Vaca/Debug.h"
+#include "Vaca/Menu.h"
+#include "Vaca/MenuItemEvent.h"
+#include "Vaca/AnchorLayout.h"
+#include "Vaca/Event.h"
+#include "Vaca/Point.h"
+#include "Vaca/System.h"
+#include "Vaca/Mdi.h"
+#include "Vaca/Thread.h"
+#include "Vaca/Icon.h"
+#include "Vaca/BandedDockArea.h"
 
 using namespace Vaca;
 

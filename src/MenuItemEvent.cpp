@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/MenuItemEvent.hpp"
-#include "Vaca/Menu.hpp"
+#include "Vaca/MenuItemEvent.h"
+#include "Vaca/Menu.h"
 
 using namespace Vaca;
 

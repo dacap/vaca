@@ -29,7 +29,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include <Vaca/Vaca.hpp>
+#include <Vaca/Vaca.h>
 
 #include "md5.h"
 #include "sha1.h"

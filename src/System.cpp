@@ -29,15 +29,15 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/System.hpp"
-#include "Vaca/Rect.hpp"
-#include "Vaca/Point.hpp"
-#include "Vaca/Size.hpp"
-#include "Vaca/Color.hpp"
-#include "Vaca/Debug.hpp"
-#include "Vaca/ImageList.hpp"
-#include "Vaca/Mutex.hpp"
-#include "Vaca/ScopedLock.hpp"
+#include "Vaca/System.h"
+#include "Vaca/Rect.h"
+#include "Vaca/Point.h"
+#include "Vaca/Size.h"
+#include "Vaca/Color.h"
+#include "Vaca/Debug.h"
+#include "Vaca/ImageList.h"
+#include "Vaca/Mutex.h"
+#include "Vaca/ScopedLock.h"
 
 #include <lmcons.h>
 

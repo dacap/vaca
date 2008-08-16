@@ -29,11 +29,11 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/FindTextDialog.hpp"
-#include "Vaca/Debug.hpp"
-#include "Vaca/Application.hpp"
-#include "Vaca/WidgetClass.hpp"
-#include "Vaca/CloseEvent.hpp"
+#include "Vaca/FindTextDialog.h"
+#include "Vaca/Debug.h"
+#include "Vaca/Application.h"
+#include "Vaca/WidgetClass.h"
+#include "Vaca/CloseEvent.h"
 
 using namespace Vaca;
 

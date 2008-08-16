@@ -29,19 +29,19 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/Graphics.hpp"
-#include "Vaca/Image.hpp"
-#include "Vaca/ImageList.hpp"
-#include "Vaca/Debug.hpp"
-#include "Vaca/Font.hpp"
-#include "Vaca/Rect.hpp"
-#include "Vaca/Point.hpp"
-#include "Vaca/Size.hpp"
-#include "Vaca/Widget.hpp"
-#include "Vaca/System.hpp"
-#include "Vaca/Region.hpp"
-#include "Vaca/Pen.hpp"
-#include "Vaca/Brush.hpp"
+#include "Vaca/Graphics.h"
+#include "Vaca/Image.h"
+#include "Vaca/ImageList.h"
+#include "Vaca/Debug.h"
+#include "Vaca/Font.h"
+#include "Vaca/Rect.h"
+#include "Vaca/Point.h"
+#include "Vaca/Size.h"
+#include "Vaca/Widget.h"
+#include "Vaca/System.h"
+#include "Vaca/Region.h"
+#include "Vaca/Pen.h"
+#include "Vaca/Brush.h"
 
 #include <cmath>
 #ifndef M_PI

@@ -29,9 +29,9 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/RadioButton.hpp"
-#include "Vaca/Debug.hpp"
-#include "Vaca/Event.hpp"
+#include "Vaca/RadioButton.h"
+#include "Vaca/Debug.h"
+#include "Vaca/Event.h"
 
 using namespace Vaca;
 

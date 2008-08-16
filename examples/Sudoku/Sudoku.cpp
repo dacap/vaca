@@ -32,8 +32,8 @@
 #include <algorithm>
 #include <time.h>
 
-#include <Vaca/Vaca.hpp>
-#include "grid.hpp"
+#include <Vaca/Vaca.h>
+#include "grid.h"
 
 using namespace Vaca;
 

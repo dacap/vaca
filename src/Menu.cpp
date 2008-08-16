@@ -29,15 +29,15 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/Menu.hpp"
-#include "Vaca/MenuItemEvent.hpp"
-#include "Vaca/Debug.hpp"
-#include "Vaca/System.hpp"
-#include "Vaca/Mdi.hpp"
-#include "Vaca/ResourceException.hpp"
-#include "Vaca/Mutex.hpp"
-#include "Vaca/ScopedLock.hpp"
-#include "Vaca/Command.hpp"
+#include "Vaca/Menu.h"
+#include "Vaca/MenuItemEvent.h"
+#include "Vaca/Debug.h"
+#include "Vaca/System.h"
+#include "Vaca/Mdi.h"
+#include "Vaca/ResourceException.h"
+#include "Vaca/Mutex.h"
+#include "Vaca/ScopedLock.h"
+#include "Vaca/Command.h"
 
 #include <stack>
 

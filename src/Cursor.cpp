@@ -29,10 +29,10 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/Cursor.hpp"
-#include "Vaca/Application.hpp"
-#include "Vaca/Debug.hpp"
-#include "Vaca/ResourceException.hpp"
+#include "Vaca/Cursor.h"
+#include "Vaca/Application.h"
+#include "Vaca/Debug.h"
+#include "Vaca/ResourceException.h"
 
 using namespace Vaca;
 

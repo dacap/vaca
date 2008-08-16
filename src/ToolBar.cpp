@@ -29,15 +29,15 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/ToolBar.hpp"
-#include "Vaca/AnchorLayout.hpp"
-#include "Vaca/Anchor.hpp"
-#include "Vaca/ClientLayout.hpp"
-#include "Vaca/Event.hpp"
-#include "Vaca/Debug.hpp"
-#include "Vaca/ImageList.hpp"
-#include "Vaca/DockFrame.hpp"
-#include "Vaca/Command.hpp"
+#include "Vaca/ToolBar.h"
+#include "Vaca/AnchorLayout.h"
+#include "Vaca/Anchor.h"
+#include "Vaca/ClientLayout.h"
+#include "Vaca/Event.h"
+#include "Vaca/Debug.h"
+#include "Vaca/ImageList.h"
+#include "Vaca/DockFrame.h"
+#include "Vaca/Command.h"
 
 using namespace Vaca;
 

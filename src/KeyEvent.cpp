@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/KeyEvent.hpp"
-#include "Vaca/Widget.hpp"
+#include "Vaca/KeyEvent.h"
+#include "Vaca/Widget.h"
 
 using namespace Vaca;
 

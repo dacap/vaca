@@ -29,12 +29,12 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/Application.hpp"
-#include "Vaca/Debug.hpp"
-#include "Vaca/Frame.hpp"
-#include "Vaca/Timer.hpp"
-#include "Vaca/Graphics.hpp"
-#include "Vaca/Font.hpp"
+#include "Vaca/Application.h"
+#include "Vaca/Debug.h"
+#include "Vaca/Frame.h"
+#include "Vaca/Timer.h"
+#include "Vaca/Graphics.h"
+#include "Vaca/Font.h"
 
 using namespace Vaca;
 

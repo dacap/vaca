@@ -29,9 +29,9 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include <Vaca/Vaca.hpp>
-#include "Document.hpp"
-#include "Editor.hpp"
+#include <Vaca/Vaca.h>
+#include "Document.h"
+#include "Editor.h"
 
 using namespace Vaca;
 

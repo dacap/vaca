@@ -29,11 +29,11 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/ButtonBase.hpp"
-#include "Vaca/Debug.hpp"
-#include "Vaca/Event.hpp"
-#include "Vaca/System.hpp"
-#include "Vaca/WidgetClass.hpp"
+#include "Vaca/ButtonBase.h"
+#include "Vaca/Debug.h"
+#include "Vaca/Event.h"
+#include "Vaca/System.h"
+#include "Vaca/WidgetClass.h"
 
 using namespace Vaca;
 

@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/CustomLabel.hpp"
-#include "Vaca/Debug.hpp"
+#include "Vaca/CustomLabel.h"
+#include "Vaca/Debug.h"
 
 using namespace Vaca;
 

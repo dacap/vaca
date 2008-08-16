@@ -29,9 +29,9 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/Clipboard.hpp"
-#include "Vaca/Widget.hpp"
-#include "Vaca/System.hpp"
+#include "Vaca/Clipboard.h"
+#include "Vaca/Widget.h"
+#include "Vaca/System.h"
 
 using namespace Vaca;
 

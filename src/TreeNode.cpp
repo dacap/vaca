@@ -29,10 +29,10 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/TreeNode.hpp"
-#include "Vaca/TreeView.hpp"
-#include "Vaca/TreeViewEvent.hpp"
-#include "Vaca/Debug.hpp"
+#include "Vaca/TreeNode.h"
+#include "Vaca/TreeView.h"
+#include "Vaca/TreeViewEvent.h"
+#include "Vaca/Debug.h"
 
 using namespace Vaca;
 

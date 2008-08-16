@@ -1,6 +1,6 @@
 #include <cassert>
 
-#include "Vaca/String.hpp"
+#include "Vaca/String.h"
 
 using namespace Vaca;
 

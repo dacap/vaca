@@ -29,10 +29,10 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/SpinButton.hpp"
-#include "Vaca/Application.hpp"
-#include "Vaca/Debug.hpp"
-#include "Vaca/WidgetClass.hpp"
+#include "Vaca/SpinButton.h"
+#include "Vaca/Application.h"
+#include "Vaca/Debug.h"
+#include "Vaca/WidgetClass.h"
 
 using namespace Vaca;
 

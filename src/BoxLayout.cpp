@@ -29,10 +29,10 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/BoxLayout.hpp"
-#include "Vaca/BoxConstraint.hpp"
-#include "Vaca/Size.hpp"
-#include "Vaca/Debug.hpp"
+#include "Vaca/BoxLayout.h"
+#include "Vaca/BoxConstraint.h"
+#include "Vaca/Size.h"
+#include "Vaca/Debug.h"
 
 using namespace Vaca;
 

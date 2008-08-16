@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/CloseEvent.hpp"
-#include "Vaca/Frame.hpp"
+#include "Vaca/CloseEvent.h"
+#include "Vaca/Frame.h"
 
 using namespace Vaca;
 

@@ -31,7 +31,7 @@
 
 #include <time.h>
 
-#include <Vaca/Vaca.hpp>
+#include <Vaca/Vaca.h>
 #include "resource.h"
 
 using namespace Vaca;

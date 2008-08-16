@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/CustomButton.hpp"
-#include "Vaca/Debug.hpp"
+#include "Vaca/CustomButton.h"
+#include "Vaca/Debug.h"
 
 using namespace Vaca;
 

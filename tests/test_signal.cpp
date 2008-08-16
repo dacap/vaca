@@ -1,7 +1,7 @@
 #include <cassert>
 #include <string>
 
-#include "Vaca/Signal.hpp"
+#include "Vaca/Signal.h"
 
 using namespace std;
 using namespace Vaca;

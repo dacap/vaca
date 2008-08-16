@@ -29,12 +29,12 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/BasicDockArea.hpp"
-#include "Vaca/DockBar.hpp"
-#include "Vaca/Frame.hpp"
-#include "Vaca/Point.hpp"
-#include "Vaca/Debug.hpp"
-#include "Vaca/Pen.hpp"
+#include "Vaca/BasicDockArea.h"
+#include "Vaca/DockBar.h"
+#include "Vaca/Frame.h"
+#include "Vaca/Point.h"
+#include "Vaca/Debug.h"
+#include "Vaca/Pen.h"
 
 using namespace Vaca;
 

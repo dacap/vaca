@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/Size.hpp"
-#include "Vaca/Point.hpp"
+#include "Vaca/Size.h"
+#include "Vaca/Point.h"
 
 using namespace Vaca;
 

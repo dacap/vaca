@@ -1,8 +1,8 @@
 #include <cassert>
 
-#include "Vaca/Rect.hpp"
-#include "Vaca/Point.hpp"
-#include "Vaca/Size.hpp"
+#include "Vaca/Rect.h"
+#include "Vaca/Point.h"
+#include "Vaca/Size.h"
 
 using namespace Vaca;
 

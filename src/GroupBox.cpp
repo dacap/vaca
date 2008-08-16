@@ -29,10 +29,10 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/GroupBox.hpp"
-#include "Vaca/Point.hpp"
-#include "Vaca/Brush.hpp"
-#include "Vaca/WidgetClass.hpp"
+#include "Vaca/GroupBox.h"
+#include "Vaca/Point.h"
+#include "Vaca/Brush.h"
+#include "Vaca/WidgetClass.h"
 
 using namespace Vaca;
 

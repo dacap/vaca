@@ -29,9 +29,9 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/MsgBox.hpp"
-#include "Vaca/System.hpp"
-#include "Vaca/Widget.hpp"
+#include "Vaca/MsgBox.h"
+#include "Vaca/System.h"
+#include "Vaca/Widget.h"
 
 using namespace Vaca;
 

@@ -29,13 +29,13 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/Timer.hpp"
-#include "Vaca/Thread.hpp"
-#include "Vaca/Debug.hpp"
-#include "Vaca/Mutex.hpp"
-#include "Vaca/ScopedLock.hpp"
-#include "Vaca/TimePoint.hpp"
-#include "Vaca/ConditionVariable.hpp"
+#include "Vaca/Timer.h"
+#include "Vaca/Thread.h"
+#include "Vaca/Debug.h"
+#include "Vaca/Mutex.h"
+#include "Vaca/ScopedLock.h"
+#include "Vaca/TimePoint.h"
+#include "Vaca/ConditionVariable.h"
 
 using namespace Vaca;
 

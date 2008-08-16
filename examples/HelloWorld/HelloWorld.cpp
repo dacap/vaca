@@ -31,7 +31,7 @@
 
 // we include the entire Vaca namespace, in this way we don't worry
 // about what classes are accesible: we have all the classes available
-#include <Vaca/Vaca.hpp>
+#include <Vaca/Vaca.h>
 
 // we can use the Vaca namespace by default to avoid writting things
 // like Vaca::Frame, Vaca::LinkLabel, Vaca::Font, etc.

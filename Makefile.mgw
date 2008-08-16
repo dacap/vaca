@@ -334,12 +334,12 @@ distclean: clean
 ifdef MINGW_ROOT
 install: $(VACA_LIB) $(VACA_DLL)
 	-$(MKDIR) $(MINGW_ROOT)/include/Vaca
-	$(CP) $(wildcard include/Vaca/*.hpp) $(MINGW_ROOT)/include/Vaca
+	$(CP) $(wildcard include/Vaca/*.h) $(MINGW_ROOT)/include/Vaca
 	$(CP) $(VACA_LIB) $(MINGW_ROOT)/lib
 
 uninstall:
 	@echo $(RM) $(MINGW_ROOT)/$(VACA_LIB)
-	@echo $(RM) $(wildcard $(MINGW_ROOT)/include/Vaca/*.hpp)
+	@echo $(RM) $(wildcard $(MINGW_ROOT)/include/Vaca/*.h)
 	@echo $(RMDIR) $(MINGW_ROOT)/include/Vaca
 else
 install:

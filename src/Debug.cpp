@@ -29,11 +29,11 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/Debug.hpp"
-#include "Vaca/Mutex.hpp"
-#include "Vaca/ScopedLock.hpp"
-#include "Vaca/System.hpp"
-#include "Vaca/Thread.hpp"
+#include "Vaca/Debug.h"
+#include "Vaca/Mutex.h"
+#include "Vaca/ScopedLock.h"
+#include "Vaca/System.h"
+#include "Vaca/Thread.h"
 
 using namespace Vaca;
 

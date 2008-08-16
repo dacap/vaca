@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/WidgetClass.hpp"
-#include "Vaca/Debug.hpp"
+#include "Vaca/WidgetClass.h"
+#include "Vaca/Debug.h"
 
 using namespace Vaca;
 

@@ -180,7 +180,7 @@ struct ball
 	    v2dfloat v2_n = other->vel * n;
 
 	    // equations for collisions between elastic particles
-	    // using COR, where w1 and w2 are the final velocities
+	    // using COR, where v1_f and v2_f are the final velocities
 	    v2dfloat v1_f = (v1_u*(m1-cor*m2)+(cor+1)*m2*v2_u) / (m1+m2);
 	    v2dfloat v2_f = (v2_u*(m2-cor*m1)+(cor+1)*m1*v1_u) / (m1+m2);
 

@@ -30,6 +30,7 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <Vaca/Vaca.h>
+#include <memory>
 #include <vfw.h>
 
 #ifndef WM_CAP_DRIVER_CONNECT
@@ -104,10 +105,15 @@ class WebCam : public Widget
 
 public:
   WebCam(Widget* parent)
+    // Create the Widget without a Win32 class (this means that the
+    // HWND will be created later). See TN002 for more information.
     : Widget(WidgetClassName::None, parent)
     , m_driverIndex(-1)
   {
+    // now we can create the widget because in this point is when our
+    // version of createHWND (see below) will be called
     create(WidgetClassName::None, parent, ChildStyle);
+    
     setPreferredSize(Size(320, 240));
   }
 

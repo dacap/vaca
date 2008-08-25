@@ -30,137 +30,168 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <Vaca/Vaca.h>
+#include <memory>
 
 using namespace Vaca;
 
-class SlidersPanel : public Panel
+class MainFrame : public Dialog
 {
-  Slider* m_slider[6];
-
-public:
-
-  SlidersPanel(Orientation orientation, Widget* parent)
-    : Panel(parent)
-  {
-    bool isHorz = (orientation == Orientation::Horizontal);
-      
-    setLayout(new BoxLayout(isHorz ? Orientation::Vertical:
-				     Orientation::Horizontal, false));
-
-    for (int c=0; c<6; ++c) {
-      // create the slider
-      m_slider[c] = new Slider(this);
-
-      // sliders have a range of 0-100 by default
-      m_slider[c]->setRange(0, c < 2 ? 100: 10);
-      
-      // sliders are horizontal by default
-      m_slider[c]->setOrientation(orientation);
-
-      // sliders don't have tick marks by default, so we'll show tick
-      // marks on sliders 2, 3, and 5
-      if (c == 2 || c == 3 || c == 5) {
-	// set tick marks to a visible state
-	m_slider[c]->setVisibleTickMarks(true);
-
-	// add a tick mark in the middle (the first and the last tick
-	// marks are added automatically)
-	m_slider[c]->addTickMark((m_slider[c]->getMinimum() +
-				 m_slider[c]->getMaximum()) / 2);
-      }
-    }
-
-    m_slider[0]->pointToSide(isHorz ? Side::Bottom: Side::Right);
-    m_slider[1]->pointToSide(isHorz ? Side::Top:    Side::Left);
-    m_slider[2]->pointToSide(isHorz ? Side::Bottom: Side::Right);
-    m_slider[3]->pointToSide(isHorz ? Side::Top:    Side::Left);
-    m_slider[4]->pointNowhere();
-    m_slider[5]->pointNowhere();
-  }
-
-  virtual ~SlidersPanel()
-  {
-    for (int c=0; c<6; ++c)
-      delete m_slider[c];
-  }
-
-  void connectSliders()
-  {
-    for (int c=0; c<3; ++c) {
-      Slider* s1 = m_slider[c*2  ];
-      Slider* s2 = m_slider[c*2+1];
-
-      s1->Change.connect(Bind(&SlidersPanel::onSliderChange, this, s1, s2));
-      s2->Change.connect(Bind(&SlidersPanel::onSliderChange, this, s2, s1));
-
-      onSliderChange(s1, s2);
-    }
-  }
-
-protected:
-  
-  void onSliderChange(Slider* source, Slider* destination)
-  {
-    destination->setValue(source->getValue());
-  }
-  
-};
-
-class MainFrame : public Frame
-{
-  Panel m_topPanel;
-  SlidersPanel m_leftPanel;
-  SlidersPanel m_rightPanel;
-  Button m_button;
+  Label m_rangeL;
+  Edit m_minValue;
+  Edit m_maxValue;
+  Label m_valueL;
+  Edit m_value;
+  GroupBox m_orienL;
+  GroupBox m_sidesL;
+  GroupBox m_ticks;
+  RadioGroup m_orienGroup;
+  RadioButton m_horz;
+  RadioButton m_vert;
+  CheckBox m_side1;
+  CheckBox m_side2;
+  CheckBox m_showTicks;
+  Label m_tickFreqL;
+  Edit m_tickFreq;
+  Separator m_sep;
+  Slider m_slider;
 
 public:
 
   MainFrame()
-    : Frame("Sliders")
-    , m_topPanel(this)
-    , m_leftPanel(Orientation::Horizontal, &m_topPanel)
-    , m_rightPanel(Orientation::Vertical, &m_topPanel)
-    , m_button("Connect Sliders", this)
+    : Dialog("Sliders", NULL, DialogStyle + ResizableFrameStyle)
+    , m_rangeL("Range (Min/Max):", this)
+    , m_minValue("0", this)
+    , m_maxValue("100", this)
+    , m_valueL("Value:", this)
+    , m_value("100", this)
+    , m_orienL("Orientation:", this)
+    , m_sidesL("Sides:", this)
+    , m_ticks("Ticks:", this)
+    , m_horz("Horizontal", m_orienGroup, &m_orienL)
+    , m_vert("Vertical", m_orienGroup, &m_orienL)
+    , m_side1("Top", &m_sidesL)
+    , m_side2("Bottom", &m_sidesL)
+    , m_showTicks("Visible", &m_ticks)
+    , m_tickFreqL("Frequency:", &m_ticks)
+    , m_tickFreq("", &m_ticks)
+    , m_sep(this)
+    , m_slider(this)
   {
-    // prepare layout
-    setLayout(new BoxLayout(Orientation::Vertical, false)); // no-homogeneous
-    m_topPanel.setConstraint(new BoxConstraint(true)); // expansible
-    m_topPanel.setLayout(new BoxLayout(Orientation::Horizontal, true, 0)); // homogeneous, no-border
+    setLayout(Bix::parse("X[Y[XY[%,eX[%,%];%,%],X[%,%],%],%,f%]",
+			 &m_rangeL, &m_minValue, &m_maxValue,
+			 &m_valueL, &m_value,
+			 &m_orienL, &m_sidesL,
+			 &m_ticks,
+			 &m_sep, &m_slider));
+    m_orienL.setLayout(new BoxLayout(Orientation::Vertical, false));
+    m_sidesL.setLayout(new BoxLayout(Orientation::Vertical, false));
+    m_ticks.setLayout(Bix::parse("Y[%,X[%,%]]",
+				 &m_showTicks,
+				 &m_tickFreqL, &m_tickFreq));
 
-    // when the "m_button" is pressed, this is the sequence of commands
-    // to execute:
-    //   ...
-    //   m_leftPanel.connectSliders();
-    //   m_rightPanel.connectSliders();
-    //   m_button.setEnabled(false);
-    //   ...
-    m_button.Action.connect(Bind(&SlidersPanel::connectSliders, &m_leftPanel));
-    m_button.Action.connect(Bind(&SlidersPanel::connectSliders, &m_rightPanel));
-    m_button.Action.connect(Bind(&Button::setEnabled, &m_button, false));
+    m_minValue.setPreferredSize(Size(64, m_minValue.getPreferredSize().h));
+    m_maxValue.setPreferredSize(Size(64, m_maxValue.getPreferredSize().h));
+    m_value.setPreferredSize(Size(64, m_value.getPreferredSize().h));
+    m_tickFreq.setPreferredSize(Size(64, m_tickFreq.getPreferredSize().h));
 
-    // set the size, center the frame, and we are done
-    setSize(getPreferredSize());
+    m_minValue.Change.connect(Bind(&MainFrame::onRangesChange, this));
+    m_maxValue.Change.connect(Bind(&MainFrame::onRangesChange, this));
+    m_value.Change.connect(Bind(&MainFrame::onRangesChange, this));
+
+    m_slider.Change.connect(Bind(&MainFrame::onSliderChange, this));
+
+    m_orienGroup.setSelectedIndex(0);
+    m_orienGroup.Change.connect(&MainFrame::onStyleChange, this);
+    m_side1.Action.connect(&MainFrame::onStyleChange, this);
+    m_side2.Action.connect(&MainFrame::onStyleChange, this);
+    m_showTicks.Action.connect(&MainFrame::onStyleChange, this);
+    m_tickFreq.Change.connect(&MainFrame::onStyleChange, this);
+
+    onRangesChange();
+
+    setSize(getPreferredSize()+Size(128, 0));
     center();
   }
 
-};
+private:
 
-//////////////////////////////////////////////////////////////////////
+  // updates the m_slider widget through the current configuration of
+  // in the other widgets
+  void onRangesChange()
+  {
+    int minValue = m_minValue.getText().parseInt();
+    int maxValue = m_maxValue.getText().parseInt();
+    int value = m_value.getText().parseInt();
 
-class Example : public Application
-{
-  MainFrame m_mainFrame;
-public:
-  virtual void main() {
-    m_mainFrame.setVisible(true);
+    bool minValueError = (minValue < Slider::MinLimit || minValue > maxValue || minValue > value);
+    bool maxValueError = (maxValue > Slider::MaxLimit || maxValue < minValue || maxValue < value);
+    bool valueError = (value < minValue || value > maxValue);
+
+    updateEditColors(m_minValue, minValueError);
+    updateEditColors(m_maxValue, maxValueError);
+    updateEditColors(m_value, valueError);
+
+    if (minValueError || maxValueError || valueError)
+      return;
+
+    m_slider.setRange(minValue, maxValue);
+    m_slider.setValue(value);
   }
+
+  void updateEditColors(Edit& edit, bool error)
+  {
+    edit.setBgColor(error ? Color::Red: Color::White);
+    edit.setFgColor(error ? Color::White: Color::Black);
+    edit.invalidate(true);
+  }
+
+  void onStyleChange(Event& ev)
+  {
+    bool horz = m_horz.isSelected();
+
+    m_slider.setOrientation(horz ? Orientation::Horizontal:
+				   Orientation::Vertical);
+
+    Sides sides;
+
+    if (horz) {
+      m_side1.setText("Top");
+      m_side2.setText("Bottom");
+
+      if (m_side1.isSelected()) sides |= Sides::Top;
+      if (m_side2.isSelected()) sides |= Sides::Bottom;
+    }
+    else {
+      m_side1.setText("Left");
+      m_side2.setText("Right");
+
+      if (m_side1.isSelected()) sides |= Sides::Left;
+      if (m_side2.isSelected()) sides |= Sides::Right;
+    }
+
+    m_slider.setSides(sides);
+    m_slider.setTickVisible(m_showTicks.isSelected());
+    m_slider.setTickFreq(m_tickFreq.getText().parseInt());
+  }
+
+  void onSliderChange()
+  {
+    m_value.setText(String::fromInt(m_slider.getValue()));
+  }
+
 };
 
 int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		   LPSTR lpCmdLine, int nCmdShow)
 {
-  Example* app(new Example);
-  app->run();
-  delete app;
+  try {
+    Application app;
+    MainFrame frm;
+    frm.setVisible(true);
+    app.run();
+  }
+  catch (Exception& e) {
+    e.show();
+  }
   return 0;
 }

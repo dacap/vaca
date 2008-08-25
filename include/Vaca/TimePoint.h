@@ -45,6 +45,8 @@ public:
   TimePoint();
   ~TimePoint();
 
+  void reset();
+
   double elapsed() const;
 };
 

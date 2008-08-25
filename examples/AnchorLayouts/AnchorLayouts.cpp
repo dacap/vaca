@@ -30,22 +30,23 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <Vaca/Vaca.h>
+#include <memory>
 
 using namespace Vaca;
 
-static Side sides[4] = { Side::Left,
-			 Side::Top,
-			 Side::Right,
-			 Side::Bottom };
-static Borders borders[4] = { Borders::Left,
-			      Borders::Top,
-			      Borders::Right,
-			      Borders::Bottom };
+static Side side[4] = { Side::Left,
+			Side::Top,
+			Side::Right,
+			Side::Bottom };
+static Sides sides[4] = { Sides::Left,
+			  Sides::Top,
+			  Sides::Right,
+			  Sides::Bottom };
 
 class AnchoredWidget : public Panel
 {
   Anchor m_anchor;
-  Borders m_hotBorders;
+  Sides m_hotSides;
   
 public:
 
@@ -80,14 +81,14 @@ protected:
     g.drawRect(pen, rc);
 
     for (int c=0; c<4; ++c)
-      drawRect(g, getSideRect(sides[c]), borders[c]);
+      drawRect(g, getSideRect(side[c]), sides[c]);
   }
 
   virtual void onMouseDown(MouseEvent &ev)
   {
     for (int c=0; c<4; ++c)
-      if (getSideRect(sides[c]).contains(ev.getPoint())) {
-	m_anchor.setBorders(m_anchor.getBorders() ^ borders[c]);
+      if (getSideRect(side[c]).contains(ev.getPoint())) {
+	m_anchor.setSides(m_anchor.getSides() ^ sides[c]);
 	getParent()->layout();
 	invalidate(true);
       }
@@ -96,14 +97,14 @@ protected:
   virtual void onMouseMove(MouseEvent &ev)
   {
     for (int c=0; c<4; ++c) {
-      if (getSideRect(sides[c]).contains(ev.getPoint())) {
-	if ((m_hotBorders & borders[c]) == 0) {
-	  m_hotBorders |= borders[c];
+      if (getSideRect(side[c]).contains(ev.getPoint())) {
+	if ((m_hotSides & sides[c]) == 0) {
+	  m_hotSides |= sides[c];
 	  invalidate(true);
 	}
       }
-      else if ((m_hotBorders & borders[c]) == borders[c]) {
-	m_hotBorders &= ~borders[c];
+      else if ((m_hotSides & sides[c]) == sides[c]) {
+	m_hotSides &= ~sides[c];
 	invalidate(true);
       }
     }
@@ -111,20 +112,20 @@ protected:
 
   virtual void onMouseLeave()
   {
-    if (m_hotBorders != 0) {
-      m_hotBorders = 0;
+    if (m_hotSides != 0) {
+      m_hotSides = 0;
       invalidate(true);
     }
   }
   
 private:
 
-  void drawRect(Graphics &g, const Rect &rc, Borders b)
+  void drawRect(Graphics &g, const Rect &rc, Sides b)
   {
-    Color color((m_hotBorders & b) == b ? Color::Yellow:
+    Color color((m_hotSides & b) == b ? Color::Yellow:
 					  getFgColor());
     
-    if ((m_anchor.getBorders() & b) == b) {
+    if ((m_anchor.getSides() & b) == b) {
       Brush brush(color);
       g.fillRect(brush, rc);
     }
@@ -164,11 +165,11 @@ public:
 
   MainFrame()
     : Frame("AnchorLayouts")
-    , m_allWidget   (Anchor(Rect( 48,  48, 160, 160), Borders::All), this)
-    , m_leftWidget  (Anchor(Rect(  8,  48,  32, 160), Borders::Left |  Borders::Top  | Borders::Bottom), this)
-    , m_topWidget   (Anchor(Rect( 48,   8, 160,  32), Borders::Top |  Borders::Left | Borders::Right), this)
-    , m_rightWidget (Anchor(Rect(216,  48,  32, 160), Borders::Right | Borders::Top  | Borders::Bottom), this)
-    , m_bottomWidget(Anchor(Rect( 48, 216, 160,  32), Borders::Bottom | Borders::Left | Borders::Right), this)
+    , m_allWidget   (Anchor(Rect( 48,  48, 160, 160), Sides::All), this)
+    , m_leftWidget  (Anchor(Rect(  8,  48,  32, 160), Sides::Left   | Sides::Top  | Sides::Bottom), this)
+    , m_topWidget   (Anchor(Rect( 48,   8, 160,  32), Sides::Top    | Sides::Left | Sides::Right), this)
+    , m_rightWidget (Anchor(Rect(216,  48,  32, 160), Sides::Right  | Sides::Top  | Sides::Bottom), this)
+    , m_bottomWidget(Anchor(Rect( 48, 216, 160,  32), Sides::Bottom | Sides::Left | Sides::Right), this)
   {
     m_refSize = Size(256, 256);
     setLayout(new AnchorLayout(m_refSize));

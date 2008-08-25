@@ -47,19 +47,19 @@ namespace Vaca {
 class VACA_DLL Anchor : public Constraint
 {
   Rect m_refRect;
-  Borders m_borders;
+  Sides m_sides;
 
 public:
 
-  Anchor(const Rect& refRect, Borders borders);
+  Anchor(const Rect& refRect, Sides borders);
   Anchor(const Anchor& anchor);
   virtual ~Anchor();
 
   Rect getRefRect() const;
   void setRefRect(const Rect& refRect);
 
-  Borders getBorders() const;
-  void setBorders(Borders borders);
+  Sides getSides() const;
+  void setSides(Sides borders);
 
 }; // Anchor
 

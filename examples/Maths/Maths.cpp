@@ -247,7 +247,7 @@ float func_log(float x) { return log(x); }
 struct function
 {
   float (*f)(float x);
-  char* expr;
+  const char* expr;
 } functions[] = {
   { func_x, "x" },
   { func_xx, "x^2" },

@@ -395,6 +395,13 @@ void ListView::editItemText(int itemIndex)
   ListView_EditLabel(getHWND(), itemIndex);
 }
 
+bool ListView::isItemSelected(int itemIndex)
+{
+  assert(::IsWindow(getHWND()));
+
+  return ListView_GetItemState(getHWND(), itemIndex, LVIS_SELECTED);
+}
+
 /**
  * Returns the index of the item that has the focus
  * (LVM_GETSELECTIONMARK).

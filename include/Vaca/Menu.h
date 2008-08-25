@@ -75,6 +75,8 @@ class VACA_DLL MenuItem : public Component
   String m_text;
   CommandId m_id;
   std::vector<Keys::Type> m_shortcuts;
+  bool m_enabled : 1;
+  bool m_checked : 1;
 
 public:
 

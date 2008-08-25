@@ -317,6 +317,8 @@ Rect System::getWorkAreaBounds()
  *     @li COLOR_HOTLIGHT
  *     @li COLOR_GRADIENTACTIVECAPTION
  *     @li COLOR_GRADIENTINACTIVECAPTION
+ *
+ * @todo make the index a Enum
  */
 Color System::getColor(int index)
 {

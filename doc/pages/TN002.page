@@ -46,7 +46,7 @@ This shouldn't be your case, but if you want to make something like
 to make your customized @c CreateWindowEx call, you can override @c createHWND,
 but remember that you must to call
 @link Vaca::Widget#create create@endlink inside the constructor of
-your own class, and give @a className=NULL to
+your own class, and give @a className=WidgetClassName::None to
 @link Vaca::Widget#Widget Widget()@endlink.
 This is a little example:
 @code
@@ -63,11 +63,10 @@ class MyWidget : public Register<MyWidgetClass>
 public:
 
   MyWidget(Widget* parent)
-    : Widget(NULL, parent, NoStyle)      // <-- see className=NULL
+    : Widget(WidgetClassName::None, parent, NoStyle)
   {
     create(MyWidgetClass::getClassName(),
-	   parent,
-	   ChildStyle);
+	   parent, ChildStyle);
   }
 
 protected:

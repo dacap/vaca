@@ -63,75 +63,75 @@ class WidgetClassName;
 //////////////////////////////////////////////////////////////////////
 // Win32 Regular Window Styles
 
-#ifndef WS_BORDER
-#define WS_BORDER		0x800000
-#define WS_CAPTION		0xc00000
-#define WS_CHILD		0x40000000
-#define WS_CHILDWINDOW		0x40000000
-#define WS_CLIPCHILDREN		0x2000000
-#define WS_CLIPSIBLINGS		0x4000000
-#define WS_DISABLED		0x8000000
-#define WS_DLGFRAME		0x400000
-#define WS_GROUP		0x20000
-#define WS_HSCROLL		0x100000
-#define WS_ICONIC		0x20000000
-#define WS_MAXIMIZE		0x1000000
-#define WS_MAXIMIZEBOX		0x10000
-#define WS_MINIMIZE		0x20000000
-#define WS_MINIMIZEBOX		0x20000
-#define WS_OVERLAPPED		0
-#define WS_OVERLAPPEDWINDOW	0xcf0000
-#define WS_POPUP		0x80000000
-#define WS_POPUPWINDOW		0x80880000
-#define WS_SIZEBOX		0x40000
-#define WS_SYSMENU		0x80000
-#define WS_TABSTOP		0x10000
-#define WS_THICKFRAME		0x40000
-#define WS_TILED		0
-#define WS_TILEDWINDOW		0xcf0000
-#define WS_VISIBLE		0x10000000
-#define WS_VSCROLL		0x200000
-#endif
+// #ifndef WS_BORDER
+// #define WS_BORDER		0x800000
+// #define WS_CAPTION		0xc00000
+// #define WS_CHILD		0x40000000
+// #define WS_CHILDWINDOW		0x40000000
+// #define WS_CLIPCHILDREN		0x2000000
+// #define WS_CLIPSIBLINGS		0x4000000
+// #define WS_DISABLED		0x8000000
+// #define WS_DLGFRAME		0x400000
+// #define WS_GROUP		0x20000
+// #define WS_HSCROLL		0x100000
+// #define WS_ICONIC		0x20000000
+// #define WS_MAXIMIZE		0x1000000
+// #define WS_MAXIMIZEBOX		0x10000
+// #define WS_MINIMIZE		0x20000000
+// #define WS_MINIMIZEBOX		0x20000
+// #define WS_OVERLAPPED		0
+// #define WS_OVERLAPPEDWINDOW	0xcf0000
+// #define WS_POPUP		0x80000000
+// #define WS_POPUPWINDOW		0x80880000
+// #define WS_SIZEBOX		0x40000
+// #define WS_SYSMENU		0x80000
+// #define WS_TABSTOP		0x10000
+// #define WS_THICKFRAME		0x40000
+// #define WS_TILED		0
+// #define WS_TILEDWINDOW		0xcf0000
+// #define WS_VISIBLE		0x10000000
+// #define WS_VSCROLL		0x200000
+// #endif
 
 //////////////////////////////////////////////////////////////////////
 // Win32 Extended Window Styles
 
-#ifndef WS_EX_ACCEPTFILES
-#define WS_EX_ACCEPTFILES	16
-#define WS_EX_APPWINDOW		0x40000
-#define WS_EX_CLIENTEDGE	512
-#define WS_EX_CONTEXTHELP	0x400
-#define WS_EX_CONTROLPARENT	0x10000
-#define WS_EX_DLGMODALFRAME	1
-#define WS_EX_LEFT		0
-#define WS_EX_LEFTSCROLLBAR	0x4000
-#define WS_EX_LTRREADING	0
-#define WS_EX_MDICHILD		64
-#define WS_EX_NOPARENTNOTIFY	4
-#define WS_EX_OVERLAPPEDWINDOW	0x300
-#define WS_EX_PALETTEWINDOW	0x188
-#define WS_EX_RIGHT		0x1000
-#define WS_EX_RIGHTSCROLLBAR	0
-#define WS_EX_RTLREADING	0x2000
-#define WS_EX_STATICEDGE	0x20000
-#define WS_EX_TOOLWINDOW	128
-#define WS_EX_TOPMOST		8
-#define WS_EX_TRANSPARENT	32
-#define WS_EX_WINDOWEDGE	256
-#endif
+// #ifndef WS_EX_ACCEPTFILES
+// #define WS_EX_ACCEPTFILES	16
+// #define WS_EX_APPWINDOW		0x40000
+// #define WS_EX_CLIENTEDGE	512
+// #define WS_EX_CONTEXTHELP	0x400
+// #define WS_EX_CONTROLPARENT	0x10000
+// #define WS_EX_DLGMODALFRAME	1
+// #define WS_EX_LEFT		0
+// #define WS_EX_LEFTSCROLLBAR	0x4000
+// #define WS_EX_LTRREADING	0
+// #define WS_EX_MDICHILD		64
+// #define WS_EX_NOPARENTNOTIFY	4
+// #define WS_EX_OVERLAPPEDWINDOW	0x300
+// #define WS_EX_PALETTEWINDOW	0x188
+// #define WS_EX_RIGHT		0x1000
+// #define WS_EX_RIGHTSCROLLBAR	0
+// #define WS_EX_RTLREADING	0x2000
+// #define WS_EX_STATICEDGE	0x20000
+// #define WS_EX_TOOLWINDOW	128
+// #define WS_EX_TOPMOST		8
+// #define WS_EX_TRANSPARENT	32
+// #define WS_EX_WINDOWEDGE	256
+// #endif
 
-#ifndef WS_EX_LAYOUTRTL
-#define WS_EX_LAYOUTRTL		0x400000
-#endif
-#ifndef WS_EX_LAYERED
-#define WS_EX_LAYERED		0x80000
-#endif
-#ifndef WS_EX_NOACTIVATE
-#define WS_EX_NOACTIVATE	0x8000000
-#endif
-#ifndef WS_EX_NOINHERITLAYOUT
-#define WS_EX_NOINHERITLAYOUT	0x100000
-#endif
+// #ifndef WS_EX_LAYOUTRTL
+// #define WS_EX_LAYOUTRTL		0x400000
+// #endif
+// #ifndef WS_EX_LAYERED
+// #define WS_EX_LAYERED		0x80000
+// #endif
+// #ifndef WS_EX_NOACTIVATE
+// #define WS_EX_NOACTIVATE	0x8000000
+// #endif
+// #ifndef WS_EX_NOINHERITLAYOUT
+// #define WS_EX_NOINHERITLAYOUT	0x100000
+// #endif
 
 // #ifndef WS_EX_COMPOSITED
 // #define WS_EX_COMPOSITED	0x2000000
@@ -594,6 +594,10 @@ public:
   void moveAfter(Widget* brother);
   void moveBefore(Widget* brother);
 
+  // ===============================================================
+  // SCROLL
+  // ===============================================================
+
   ScrollInfo getScrollInfo(Orientation orientation);
   void setScrollInfo(Orientation orientation, const ScrollInfo& scrollInfo);
   int getScrollPos(Orientation orientation);
@@ -602,7 +606,15 @@ public:
   void setScrollPoint(const Point& pt);
   void hideScrollBar(Orientation orientation);
 
+  // ===============================================================
+  // COMMANDS
+  // ===============================================================
+
   Command* findCommandById(CommandId id);
+
+  // ===============================================================
+  // WIN32 SPECIFIC
+  // ===============================================================
 
   HWND getHWND();
   HWND getParentHWND();
@@ -664,6 +676,7 @@ protected:
   virtual void onAfterPosChange();
   virtual void onScroll(Orientation orientation, int code);
   virtual void onDropFiles(DropFilesEvent& ev);
+  virtual void onRemoveChild(Widget* child);
 
   // ===============================================================
   // REFLECTION

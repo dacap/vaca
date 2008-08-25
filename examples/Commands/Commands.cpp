@@ -31,6 +31,7 @@
 
 #include <Vaca/Vaca.h>
 #include "resource.h"
+#include <memory>
 
 using namespace Vaca;
 

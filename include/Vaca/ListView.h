@@ -118,6 +118,7 @@ public:
   String getItemText(int itemIndex, int columnIndex = 0);
   void setItemText(int itemIndex, const String& text, int columnIndex = 0);
   void editItemText(int itemIndex);
+  bool isItemSelected(int itemIndex);
 
 //   void sortItems(std::less<ListItem> functor);
 

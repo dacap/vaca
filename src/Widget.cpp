@@ -1128,7 +1128,6 @@ void Widget::requestFocus()
 void Widget::releaseFocus()
 {
   assert(::IsWindow(m_HWND));
-  assert(m_HWND == ::GetFocus()); // you must to have the focus to use this method
 #if 0
   bool inDialog = false;
   Widget* parent = this;
@@ -1153,7 +1152,9 @@ void Widget::releaseFocus()
   else
     ::SetFocus(NULL);
 #else
-  ::SetFocus(NULL);
+  if (m_HWND == ::GetFocus()) {
+    ::SetFocus(NULL);
+  }
 #endif
 }
 
@@ -1776,11 +1777,15 @@ void Widget::onScroll(Orientation orient, int code)
 }
 
 /**
- * TODO docme
+ * When the user drops files to the widget this event is generated.
  */
 void Widget::onDropFiles(DropFilesEvent& ev)
 {
   DropFiles(ev);
+}
+
+void Widget::onRemoveChild(Widget* child)
+{
 }
 
 /**
@@ -1861,7 +1866,7 @@ void Widget::addChild(Widget* child, bool setParent)
 
   m_children.push_back(child);
   child->m_parent = this;
-
+  
   if (setParent) {
     child->addStyle(Style(WS_CHILD, 0));
     ::SetParent(child->m_HWND, m_HWND);
@@ -1884,6 +1889,8 @@ void Widget::removeChild(Widget* child, bool setParent)
   assert(child != NULL);
   assert(child->m_HWND != NULL);
   assert(child->m_parent == this);
+
+  onRemoveChild(child);
 
   remove_from_container(m_children, child);
 

@@ -32,45 +32,55 @@
 #include "Vaca/RadioButton.h"
 #include "Vaca/Debug.h"
 #include "Vaca/Event.h"
+#include "Vaca/Mutex.h"
+#include "Vaca/ScopedLock.h"
 
 using namespace Vaca;
 
 //////////////////////////////////////////////////////////////////////
 // RadioButton
 
-RadioButton::RadioButton(const String& text, const RadioGroup& group, Widget* parent, Style style)
+RadioButton::RadioButton(const String& text, RadioGroup& group, Widget* parent, Style style)
   : ButtonBase(parent, style)
-  , mRadioGroup(group)
+  , m_radioGroup(group)
 {
+  m_radioGroup.addMember(this);
   setText(text);
 }
 
 RadioButton::~RadioButton()
 {
+  m_radioGroup.removeMember(this);
 }
 
 const RadioGroup& RadioButton::getRadioGroup() const
 {
-  return mRadioGroup;
+  return m_radioGroup;
+}
+
+void RadioButton::onAction(Event& ev)
+{
+  ButtonBase::onAction(ev);
+  m_radioGroup.onChange(ev);
 }
 
 bool RadioButton::onReflectedCommand(int id, int code, LRESULT& lResult)
 {
   if (code == BN_CLICKED) {
-    Widget::Container siblings = getParent()->getChildren();
-    RadioGroup radioGroup(getRadioGroup());
+    // deselect all siblings RadioButtons
+    RadioGroup::Container& siblings = m_radioGroup.m_members;
 
-    for (Widget::Container::iterator it=siblings.begin(); it!=siblings.end(); ++it) {
-      RadioButton* sibling = dynamic_cast<RadioButton*>(*it);
-
-      if (sibling != NULL && sibling != this) {
-	if (sibling->getRadioGroup() == radioGroup &&
-	    sibling->isSelected()) {
-	  sibling->setSelected(false);
-	}
+    for (RadioGroup::Container::iterator
+	   it = siblings.begin();
+	 it != siblings.end(); ++it) {
+      RadioButton* sibling = *it;
+      if (sibling->getRadioGroup() == m_radioGroup &&
+	  sibling->isSelected()) {
+	sibling->setSelected(false);
       }
     }
 
+    // select this RadioButton
     setSelected(true);
   }
 
@@ -80,19 +90,56 @@ bool RadioButton::onReflectedCommand(int id, int code, LRESULT& lResult)
 //////////////////////////////////////////////////////////////////////
 // RadioGroup
 
-int RadioGroup::radioGroupCounter = 0;
+static Mutex mutex;
+static unsigned int radioGroupCounter = 0;
 
 RadioGroup::RadioGroup()
 {
-  m_groupId = ++RadioGroup::radioGroupCounter;
+  ScopedLock hold(mutex);
+  m_groupId = ++radioGroupCounter;
 }
 
-RadioGroup::RadioGroup(const RadioGroup& group)
+RadioGroup::~RadioGroup()
 {
-  m_groupId = group.m_groupId;
+}
+
+int RadioGroup::getSelectedIndex() const
+{
+  for (unsigned i=0; i<m_members.size(); ++i)
+    if (m_members[i]->isSelected())
+      return i;
+
+  return -1;
+}
+
+void RadioGroup::setSelectedIndex(int index)
+{
+  assert(index >= 0 && index < static_cast<int>(m_members.size()));
+
+  for (int i=0; i<static_cast<int>(m_members.size()); ++i)
+    m_members[i]->setSelected(i == index);
 }
 
 bool RadioGroup::operator==(const RadioGroup& other) const
 {
   return m_groupId == other.m_groupId;
+}
+
+void RadioGroup::onChange(Event& ev)
+{
+  Change(ev);
+}
+
+void RadioGroup::addMember(RadioButton* newMember)
+{
+  // the newMember can't be in the group
+  assert(find(m_members.begin(), m_members.end(), newMember) == m_members.end());
+
+  // now it is
+  m_members.push_back(newMember);
+}
+
+void RadioGroup::removeMember(RadioButton* currentMember)
+{
+  remove_from_container(m_members, currentMember);
 }

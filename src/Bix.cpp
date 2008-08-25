@@ -35,6 +35,7 @@
 
 #include <stack>
 #include <cassert>
+#include <algorithm>
 
 using namespace Vaca;
 
@@ -75,7 +76,11 @@ struct Bix::WidgetElement : public Bix::Element
 {
   Widget* widget;
   int flags;
-  WidgetElement(Widget* w, int f) { widget=w; flags=f; }
+  WidgetElement(Widget* w, int f) {
+    assert(w != NULL);
+    widget=w;
+    flags=f;
+  }
   virtual ~WidgetElement() { }
   virtual int getFlags() { return flags; };
   virtual bool isLayoutFree() { return widget->isLayoutFree(); }
@@ -389,8 +394,33 @@ Size Bix::getPreferredSize(Matrix& mat)
 {
   Size sz;
 
-  for (int x=0; x<mat.cols; ++x) sz.w += mat.size[0][x].w;
-  for (int y=0; y<mat.rows; ++y) sz.h += mat.size[y][0].h;
+  // X axis
+  if (isEvenX()) {
+    int max_w = 0;
+    for (int x=0; x<mat.cols; ++x) {
+      int w = mat.size[0][x].w;
+      max_w = std::max(max_w, w);
+    }
+    sz.w = max_w*mat.cols;
+  }
+  else {
+    for (int x=0; x<mat.cols; ++x)
+      sz.w += mat.size[0][x].w;
+  }
+
+  // Y axis
+  if (isEvenY()) {
+    int max_h = 0;
+    for (int y=0; y<mat.rows; ++y) {
+      int h = mat.size[0][y].h;
+      max_h = std::max(max_h, h);
+    }
+    sz.h = max_h*mat.rows;
+  }
+  else {
+    for (int y=0; y<mat.rows; ++y)
+      sz.h += mat.size[y][0].h;
+  }
 
   sz.w += m_border*2 + m_childSpacing*(mat.cols-1);
   sz.h += m_border*2 + m_childSpacing*(mat.rows-1);

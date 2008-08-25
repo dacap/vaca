@@ -59,27 +59,32 @@ LIB_SOURCES = Anchor AnchorLayout Application BandedDockArea		\
 	      Icon Image ImageList KeyEvent Keys Label Layout		\
 	      LinkLabel ListBox ListView Mdi Menu MenuItemEvent		\
 	      MouseEvent MsgBox Mutex Panel Pen Point ProgressBar	\
-	      RadioButton ReBar Rect Region ResourceId Scintilla Size	\
-	      Slider SpinButton Spinner String Style System Tab Thread	\
-	      TimePoint Timer ToggleButton ToolBar TreeNode TreeView	\
-	      TreeViewEvent Vaca Widget WidgetClass
+	      RadioButton ReBar Rect Region ResourceId Scintilla	\
+	      Separator Size Slider SpinButton Spinner StatusBar	\
+	      String Style System Tab Thread TimePoint Timer		\
+	      ToggleButton ToolBar TreeNode TreeView TreeViewEvent	\
+	      Vaca Widget WidgetClass
 
 EXAMPLES = AnchorLayouts AutoCompletion Bixes BouncingBalls BoxLayouts	\
 	   Buttons ColoredButton ComboBoxes Commands DataGrids		\
 	   EditableListBox Edits EyeDropper FontMetrics FreeOfLayout	\
 	   Hashing HelloWorld Images Labels LikeScript Maths		\
-	   MenuResource MiniExplorer PensBrushes Primitives		\
+	   MenuResource MiniExplorer Minimal PensBrushes Primitives	\
 	   ProgressBars Regions Scribble Sliders Spinners StdCommands	\
 	   Sudoku SystemImageList Tabs TextEditor Threads Timers	\
 	   ToolBars Trees Undo WebCam
 
 TESTS = \
 	test_bind \
+	test_menu \
 	test_point \
 	test_rect \
 	test_signal \
 	test_size \
-	test_string
+	test_string \
+	test_thread
+
+# EXAMPLES = Sliders
 
 # ----------------------------------------------------------------------
 # Flags
@@ -332,7 +337,7 @@ distclean: clean
 	-$(RM) -f bin/Vaca*.dll bin/*.exe lib/*.a lib/*.lib
 
 ifdef MINGW_ROOT
-install: $(VACA_LIB) $(VACA_DLL)
+install: lib
 	-$(MKDIR) $(MINGW_ROOT)/include/Vaca
 	$(CP) $(wildcard include/Vaca/*.h) $(MINGW_ROOT)/include/Vaca
 	$(CP) $(VACA_LIB) $(MINGW_ROOT)/lib

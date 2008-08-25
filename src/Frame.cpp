@@ -44,6 +44,7 @@
 #include "Vaca/Thread.h"
 #include "Vaca/Icon.h"
 #include "Vaca/BandedDockArea.h"
+#include "Vaca/StatusBar.h"
 
 using namespace Vaca;
 
@@ -72,6 +73,7 @@ Frame::Frame(const WidgetClassName& className, const String& title, Widget* pare
 void Frame::initialize(const String& title)
 {
   m_menuBar = NULL;
+  m_statusBar = NULL;
   m_counted = false;
 
   // we can set the title of the window now if we have the HWND (for
@@ -248,6 +250,14 @@ void Frame::onUpdateIndicators()
   // }
 }
 
+void Frame::onRemoveChild(Widget* child)
+{
+  Widget::onRemoveChild(child);
+
+  if (m_statusBar == child)
+    m_statusBar = NULL;
+}
+
 #if 0
 /**
  * Returns true if the windows is currently visible by the user.
@@ -289,6 +299,18 @@ void Frame::setVisible(bool visible)
     ::UpdateWindow(hwnd);
     if (m_menuBar != NULL)
       ::DrawMenuBar(hwnd);
+
+    // search for the StatusBar widget in the Frame
+    Widget::Container children = getChildren();
+    m_statusBar = NULL;
+    for (Widget::Container::iterator
+	   it=children.begin(); it!=children.end(); ++it) {
+      if (StatusBar* statusBar = dynamic_cast<StatusBar*>(*it)) {
+	// a Frame can't have two StatusBar
+	assert(!m_statusBar);
+	m_statusBar = statusBar;
+      }
+    }
 
     // layout children
     layout();
@@ -438,6 +460,10 @@ Rect Frame::getLayoutBounds()
 {
   Rect rc = Widget::getLayoutBounds();
 
+  // if the Frame has a StatusBar the layout-bounds are reduced in the bottom
+  if (m_statusBar)
+    rc.h -= m_statusBar->getPreferredSize().h;
+
   for (std::vector<DockArea*>::iterator it=m_dockAreas.begin(); it!=m_dockAreas.end(); ++it) {
     DockArea* dockArea = *it;
     Size dockSize = dockArea->getPreferredSize();
@@ -566,6 +592,18 @@ void Frame::layout()
   // get the bounding rectangle where is the layout
   Rect clientRect = getClientBounds();
   Rect layoutRect = getLayoutBounds();
+
+  // if the Frame has a StatusBar the clientRect is reduced in the bottom
+  if (m_statusBar) {
+    Size pref = m_statusBar->getPreferredSize();
+
+    m_statusBar->setBounds(Rect(clientRect.x,
+    				clientRect.y+clientRect.h-pref.h,
+    				clientRect.w,
+				pref.h));
+
+    clientRect.h -= pref.h;
+  }
 
   // put the dock areas arround the layout bounds
   for (std::vector<DockArea*>::iterator it=m_dockAreas.begin(); it!=m_dockAreas.end(); ++it) {

@@ -557,7 +557,7 @@ INPUT_ENCODING         = ISO-8859-1
 # *.hpp *.h++ *.idl *.odl *.cs *.php *.php3 *.inc *.m *.mm *.py *.f90
 
 FILE_PATTERNS          = *.cpp \
-                         *.hpp \
+                         *.h \
                          *.page
 
 # The RECURSIVE tag can be used to turn specify whether or not subdirectories 
@@ -809,7 +809,7 @@ DOCSET_BUNDLE_ID       = org.doxygen.Project
 # JavaScript and DHTML is required (for instance Mozilla 1.0+, Firefox 
 # Netscape 6.0+, Internet explorer 5.0+, Konqueror, or Safari).
 
-HTML_DYNAMIC_SECTIONS  = NO
+HTML_DYNAMIC_SECTIONS  = YES
 
 # If the GENERATE_HTMLHELP tag is set to YES, the CHM_FILE tag can 
 # be used to specify the file name of the resulting .chm file. You 

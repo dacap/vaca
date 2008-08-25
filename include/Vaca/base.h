@@ -192,11 +192,11 @@ typedef Enum<SideEnum> Side;
 //////////////////////////////////////////////////////////////////////
 
 /**
- * It's like a namespace for Borders.
+ * It's like a namespace for Sides.
  * 
- * @see Borders
+ * @see Sides
  */
-struct BordersEnumSet
+struct SidesEnumSet
 {
   enum {
     None   = 0,
@@ -209,13 +209,13 @@ struct BordersEnumSet
 };
 
 /**
- * A set of borders. Zero or more of the following values:
- * @li Borders::Left
- * @li Borders::Top
- * @li Borders::Right
- * @li Borders::Bottom
+ * A set of sides. Zero or more of the following values:
+ * @li Sides::Left
+ * @li Sides::Top
+ * @li Sides::Right
+ * @li Sides::Bottom
  */
-typedef EnumSet<BordersEnumSet> Borders;
+typedef EnumSet<SidesEnumSet> Sides;
 
 //////////////////////////////////////////////////////////////////////
 

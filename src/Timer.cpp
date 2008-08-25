@@ -37,6 +37,8 @@
 #include "Vaca/TimePoint.h"
 #include "Vaca/ConditionVariable.h"
 
+#include <limits>
+
 using namespace Vaca;
 
 static Mutex               timer_mutex;		// monitor
@@ -170,7 +172,7 @@ void Timer::run_timer_thread()
 {
   ScopedLock hold(timer_mutex);
   unsigned int start, end, period, delay;
-  unsigned int inf = UINT_MAX;//std::numeric_limits<unsigned int>::max();
+  unsigned int inf = std::numeric_limits<unsigned int>::max();
   std::vector<Timer*>::iterator it;
   Timer* timer;
 
@@ -328,8 +330,8 @@ void Timer::fire_actions_for_thread()
       // fire action
       timer->onAction();
 
-      // warning! this is taking to long, we have to force a break of
-      // the loop discarding the rest of ticks (m_tickCounter)
+      // warning! if this is taking to long, we have to force a break
+      // of the loop discarding the rest of ticks (m_tickCounter)
       if (warning_time.elapsed() > timeout)
 	timer->m_tickCounter = 0;
     }

@@ -64,13 +64,13 @@ void AnchorLayout::layout(Widget* parent, Widget::Container& widgets, const Rect
     Anchor* anchor = dynamic_cast<Anchor *>(constraint);
     assert(anchor != NULL);
 
-    Borders borders = anchor->getBorders();
+    Sides sides = anchor->getSides();
     Rect rc = anchor->getRefRect();
 
-    bool left   = (borders & Borders::Left  ) != Borders::None;
-    bool top    = (borders & Borders::Top   ) != Borders::None;
-    bool right  = (borders & Borders::Right ) != Borders::None;
-    bool bottom = (borders & Borders::Bottom) != Borders::None;
+    bool left   = (sides & Sides::Left  ) != Sides::None;
+    bool top    = (sides & Sides::Top   ) != Sides::None;
+    bool right  = (sides & Sides::Right ) != Sides::None;
+    bool bottom = (sides & Sides::Bottom) != Sides::None;
 
     if (left && right) {
       rc.w += delta.w;

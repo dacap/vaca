@@ -33,6 +33,9 @@
 // about what classes are accesible: we have all the classes available
 #include <Vaca/Vaca.h>
 
+// for auto_ptr
+#include <memory>
+
 // we can use the Vaca namespace by default to avoid writting things
 // like Vaca::Frame, Vaca::LinkLabel, Vaca::Font, etc.
 using namespace Vaca;

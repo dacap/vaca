@@ -35,12 +35,17 @@ using namespace Vaca;
 
 TimePoint::TimePoint()
 {
-  QueryPerformanceCounter(&m_point);
   QueryPerformanceFrequency(&m_freq);
+  reset();
 }
 
 TimePoint::~TimePoint()
 {
+}
+
+void TimePoint::reset()
+{
+  QueryPerformanceCounter(&m_point);
 }
 
 /**

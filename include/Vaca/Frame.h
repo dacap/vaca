@@ -47,6 +47,7 @@ class Icon;
 class Menu;
 class MenuBar;
 class MenuItem;
+class StatusBar;
 class Thread;
 
 #define WithCaptionFrameStyle		(Style(WS_CAPTION, 0))
@@ -88,6 +89,7 @@ public:
 class VACA_DLL Frame : public Register<FrameClass>, public Widget
 {
   MenuBar* m_menuBar;		       // The menu bar.
+  StatusBar* m_statusBar;	       // The status bar.
   std::vector<DockArea*> m_dockAreas;  // Areas where you can dock a tool-bar.
   bool m_counted;		       // true if this Frame is counted in the frames' list
 
@@ -133,6 +135,7 @@ protected:
   virtual void onResize(const Size& sz);
   virtual bool onCommand(CommandId id);
   virtual void onUpdateIndicators();
+  virtual void onRemoveChild(Widget* child);
 
   // new events
   virtual void onActivate(Event& ev);

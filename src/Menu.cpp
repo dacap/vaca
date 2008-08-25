@@ -50,6 +50,8 @@ MenuItem::MenuItem()
 {
   m_parent = NULL;
   m_id = 0;
+  m_enabled = true;
+  m_checked = false;
 }
 
 /**
@@ -64,6 +66,8 @@ MenuItem::MenuItem(const String& text, CommandId id, Keys::Type defaultShortcut)
   m_parent = NULL;
   m_text = text;
   m_id = id;
+  m_enabled = true;
+  m_checked = false;
 
   if (defaultShortcut != Keys::None)
     addShortcut(defaultShortcut);
@@ -137,53 +141,55 @@ void MenuItem::setId(CommandId id)
 
 bool MenuItem::isEnabled()
 {
-  assert(m_parent != NULL);
-
-  MENUITEMINFO mii;
-  mii.cbSize = sizeof(MENUITEMINFO);
-  mii.fMask = MIIM_STATE;
-  if (GetMenuItemInfo(m_parent->getHMENU(),
-		      m_parent->getMenuItemIndex(this),
-		      TRUE, &mii)) {
-    return (mii.fState & (MFS_DISABLED | MFS_GRAYED)) == 0;
+  if (m_parent) {
+    MENUITEMINFO mii;
+    mii.cbSize = sizeof(MENUITEMINFO);
+    mii.fMask = MIIM_STATE;
+    if (GetMenuItemInfo(m_parent->getHMENU(),
+  			m_parent->getMenuItemIndex(this),
+  			TRUE, &mii)) {
+      m_enabled = (mii.fState & (MFS_DISABLED | MFS_GRAYED)) == 0;
+    }
   }
-
-  return true;
+  return m_enabled;
 }
 
 void MenuItem::setEnabled(bool state)
 {
-  assert(m_parent != NULL);
+  m_enabled = state;
 
-  ::EnableMenuItem(m_parent->getHMENU(),
-		   m_parent->getMenuItemIndex(this),
-		   MF_BYPOSITION | (state ? MF_ENABLED: MF_GRAYED));
+  if (m_parent) {
+    ::EnableMenuItem(m_parent->getHMENU(),
+		     m_parent->getMenuItemIndex(this),
+		     MF_BYPOSITION | (m_enabled ? MF_ENABLED: MF_GRAYED));
+  }
 }
 
 bool MenuItem::isChecked()
 {
-  assert(m_parent != NULL);
-
-  MENUITEMINFO mii;
-  mii.cbSize = sizeof(MENUITEMINFO);
-  mii.fMask = MIIM_STATE;
-  if (GetMenuItemInfo(m_parent->getHMENU(),
-		      m_parent->getMenuItemIndex(this),
-		      TRUE, &mii)) {
-    return (mii.fState & MFS_CHECKED) != 0;
+  if (m_parent) {
+    MENUITEMINFO mii;
+    mii.cbSize = sizeof(MENUITEMINFO);
+    mii.fMask = MIIM_STATE;
+    if (GetMenuItemInfo(m_parent->getHMENU(),
+			m_parent->getMenuItemIndex(this),
+			TRUE, &mii)) {
+      m_checked = (mii.fState & MFS_CHECKED) != 0;
+    }
   }
-
-  return false;
+  return m_checked;
 }
 
 void MenuItem::setChecked(bool state)
 {
-  assert(m_parent != NULL);
+  m_checked = state;
 
-  ::CheckMenuItem(m_parent->getHMENU(),
-		  m_parent->getMenuItemIndex(this),
-		  MF_BYPOSITION |
-		  (state ? MF_CHECKED: MF_UNCHECKED));
+  if (m_parent) {
+    ::CheckMenuItem(m_parent->getHMENU(),
+		    m_parent->getMenuItemIndex(this),
+		    MF_BYPOSITION |
+		    (state ? MF_CHECKED: MF_UNCHECKED));
+  }
 }
 
 /**
@@ -490,9 +496,11 @@ MenuItem* Menu::insert(int index, MenuItem* menuItem)
   MENUITEMINFO mii;
   mii.cbSize = sizeof(MENUITEMINFO);
   mii.fMask = MIIM_FTYPE | MIIM_STATE | MIIM_ID | MIIM_DATA;
-  mii.dwItemData = reinterpret_cast<ULONG_PTR>(menuItem); 
-  mii.fState = MFS_ENABLED; 
-  mii.wID = menuItem->getId(); 
+  mii.dwItemData = reinterpret_cast<ULONG_PTR>(menuItem);
+  mii.fState =
+    (menuItem->isEnabled() ? MFS_ENABLED: MFS_DISABLED) |
+    (menuItem->isChecked() ? MFS_CHECKED: 0);
+  mii.wID = menuItem->getId();
 
   if (menuItem->isSeparator()) {
     mii.fType = MFT_SEPARATOR; 

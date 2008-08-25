@@ -37,11 +37,17 @@
 
 namespace Vaca {
 
-#define SliderStyle		(ChildStyle + Style(TBS_HORZ, 0) + Style(TBS_NOTICKS, 0))
+#define SliderStyle		(ChildStyle +				\
+				 FocusableStyle +			\
+				 Style(TBS_HORZ | TBS_BOTH |		\
+				       TBS_NOTICKS | TBS_AUTOTICKS, 0))
 
 class VACA_DLL Slider : public Widget
 {
 public:
+
+  static const int MinLimit;
+  static const int MaxLimit;
 
   Slider(Widget* parent, Style style = SliderStyle);
   Slider(int minValue, int maxValue, int value,
@@ -51,21 +57,25 @@ public:
   Orientation getOrientation();
   void setOrientation(Orientation orientation);
 
-  void pointNowhere();
-  void pointToSide(Side side);
+  Sides getSides();
+  void setSides(Sides sides);
 
-  void setVisibleTickMarks(bool state);
-  void addTickMark(int markPosition);
-  int getTickMarksCount();
-  void clearTickMarks();
+  void setTickVisible(bool state);
+  void setTickFreq(int freq);
 
-  int getMinimum();
-  int getMaximum();
+  int getMinValue();
+  int getMaxValue();
   void getRange(int& minValue, int& maxValue);
   void setRange(int minValue, int maxValue);
 
   int getValue();
   void setValue(int posValue);
+
+  int getLineSize();
+  void setLineSize(int lineSize);
+
+  int getPageSize();
+  void setPageSize(int pageSize);
 
   // signals
   Signal1<void, Event&> Change; ///< @see onChange

@@ -29,54 +29,22 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_LABEL_H
-#define VACA_LABEL_H
+#include "Vaca/Separator.h"
+#include "Vaca/WidgetClass.h"
 
-#include "Vaca/base.h"
-#include "Vaca/Widget.h"
+using namespace Vaca;
 
-namespace Vaca {
-
-/**
- * Default style for Label: a ChildStyle with SS_NOTIFY (to receive
- * mouse notifications).
- */
-#define LabelStyle		(ChildStyle + Style(SS_NOTIFY, 0))
-
-#define SimpleLabelStyle	(Style(SS_SIMPLE, 0))
-#define WordEllipsisLabelStyle	(Style(SS_WORDELLIPSIS, 0))
-#define EndEllipsisLabelStyle	(Style(SS_ENDELLIPSIS, 0))
-#define PathEllipsisLabelStyle	(Style(SS_PATHELLIPSIS, 0))
-
-/**
- * Static label control. It's just an informative label. Remember to
- * use the SS_NOTIFY if you derived from this class and want to use
- * mouse events (see the source code of LinkLabel for more
- * information). Also, you should be aware to use @c SS_ styles, some
- * can overlap the SS_CENTER or SS_RIGHT, so you should override
- * [gs]etTextAlign methods (like CustomLabel does).
- */
-class VACA_DLL Label : public Widget
+Separator::Separator(Widget* parent, Style style)
+  : Widget(WidgetClassName(WC_STATIC), parent, style)
 {
-public:
+}
 
-  Label(const String& text, Widget* parent, Style style = LabelStyle);
-  virtual ~Label();
+Separator::~Separator()
+{
+}
 
-  virtual TextAlign getTextAlign();
-  virtual void setTextAlign(TextAlign align);
-
-protected:
-  
-  bool useWordWrap();
-  int getFlagsForDrawString();
-
-  // events
-  virtual void onPreferredSize(Size& sz);
-  virtual void onResize(const Size& sz);
-
-};
-
-} // namespace Vaca
-
-#endif // VACA_LABEL_H
+void Separator::onPreferredSize(Size& sz)
+{
+  sz.w = 2;
+  sz.h = 2;
+}

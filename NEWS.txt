@@ -1,3 +1,13 @@
+Vaca 0.0.7
+
+- Renamed Borders to Sides.
+- Added StatusBar widget. Now Frame has an associated StatusBar.
+- Added Separator widget.
+- Added RadioGroup::onChange event/signal.
+- Fixed Bix::getPreferredSize when EvenX or EvenY flags are activated.
+- Now MenuItem::setEnabled/Checked can be used although the item isn't
+  in a parent Menu.
+
 Vaca 0.0.6
 
 - Removed dependencies with Boost library.

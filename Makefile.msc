@@ -55,12 +55,13 @@ OBJS = obj/Anchor.obj obj/AnchorLayout.obj obj/Application.obj		\
   obj/Mdi.obj obj/Menu.obj obj/MenuItemEvent.obj obj/MouseEvent.obj	\
   obj/MsgBox.obj obj/Mutex.obj obj/Panel.obj obj/Pen.obj obj/Point.obj	\
   obj/ProgressBar.obj obj/RadioButton.obj obj/ReBar.obj obj/Rect.obj	\
-  obj/Region.obj obj/ResourceId.obj obj/Scintilla.obj obj/Size.obj	\
-  obj/Slider.obj obj/SpinButton.obj obj/Spinner.obj obj/String.obj	\
-  obj/Style.obj obj/System.obj obj/Tab.obj obj/Thread.obj		\
-  obj/TimePoint.obj obj/Timer.obj obj/ToggleButton.obj obj/ToolBar.obj	\
-  obj/TreeNode.obj obj/TreeView.obj obj/TreeViewEvent.obj obj/Vaca.obj	\
-  obj/Widget.obj obj/WidgetClass.obj
+  obj/Region.obj obj/ResourceId.obj obj/Scintilla.obj			\
+  obj/Separator.obj obj/Size.obj obj/Slider.obj obj/SpinButton.obj	\
+  obj/Spinner.obj obj/String.obj obj/Style.obj obj/System.obj		\
+  obj/Tab.obj obj/Thread.obj obj/TimePoint.obj obj/Timer.obj		\
+  obj/ToggleButton.obj obj/ToolBar.obj obj/TreeNode.obj			\
+  obj/TreeView.obj obj/TreeViewEvent.obj obj/Vaca.obj obj/Widget.obj	\
+  obj/WidgetClass.obj
 
 EXAMPLES_EXE = bin/AnchorLayouts.exe bin/AutoCompletion.exe		\
   bin/Bixes.exe bin/BouncingBalls.exe bin/BoxLayouts.exe		\
@@ -76,8 +77,9 @@ EXAMPLES_EXE = bin/AnchorLayouts.exe bin/AutoCompletion.exe		\
   bin/Tabs.exe bin/TextEditor.exe bin/Threads.exe bin/Timers.exe	\
   bin/ToolBars.exe bin/Trees.exe bin/Undo.exe bin/WebCam.exe
 
-TESTS_EXE = bin/test_bind.exe bin/test_point.exe bin/test_rect.exe	\
-  bin/test_signal.exe bin/test_size.exe bin/test_string.exe
+TESTS_EXE = bin/test_bind.exe bin/test_menu.exe bin/test_point.exe	\
+  bin/test_rect.exe bin/test_signal.exe bin/test_size.exe		\
+  bin/test_string.exe bin/test_thread.exe
 
 # ----------------------------------------------------------------------
 # Rules

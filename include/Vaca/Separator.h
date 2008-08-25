@@ -29,91 +29,31 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_RADIOBUTTON_H
-#define VACA_RADIOBUTTON_H
+#ifndef VACA_SEPARATOR_H
+#define VACA_SEPARATOR_H
 
-#include "Vaca/ButtonBase.h"
+#include "Vaca/base.h"
+#include "Vaca/Widget.h"
 
 namespace Vaca {
 
-#define RadioButtonStyle	(ChildStyle +			\
-				 FocusableStyle +		\
-				 Style(BS_RADIOBUTTON, 0))
+#define SeparatorStyle		(ChildStyle + VisibleStyle + \
+				 Style(SS_NOTIFY | SS_SUNKEN, 0))
 
-class RadioButton;
-
-/**
- * Groups a set of @link Vaca::RadioButton RadioButtons@endlink. It's used to known
- * which RadioButton should be desactived when the user select a
- * RadioButton of its same group.
- */
-class VACA_DLL RadioGroup : public NonCopyable
+class VACA_DLL Separator : public Widget
 {
-  friend class RadioButton;
-
-  typedef std::vector<RadioButton*> Container;
-
-  /**
-   * Unique ID of the group.
-   * 
-   * @internal You never use (get or set) this value.
-   */
-  unsigned int m_groupId;
-
-  /**
-   * Members in the group.
-   */
-  Container m_members;
-
-public:
-  RadioGroup();
-  virtual ~RadioGroup();
-
-  int getSelectedIndex() const;
-  void setSelectedIndex(int index);
-
-  bool operator==(const RadioGroup& other) const;
-
-  // signals
-  Signal1<void, Event&> Change; ///< @see onChange
-
-protected:
-  // new events
-  virtual void onChange(Event& ev);
-
-private:
-  void addMember(RadioButton* newMember);
-  void removeMember(RadioButton* currentMember);
-};
-
-/**
- * Handles a radio button.
- *
- * @warning It is not a BS_AUTORADIOBUTTON, it's only an
- *          BS_RADIOBUTTON (so you can't get Q261192 bug).
- */
-class VACA_DLL RadioButton : public ButtonBase
-{
-  RadioGroup& m_radioGroup;
-
 public:
 
-  RadioButton(const String& text,
-	      RadioGroup& group,
-	      Widget* parent,
-	      Style style = RadioButtonStyle);
-  virtual ~RadioButton();
-
-  const RadioGroup& getRadioGroup() const;
+  Separator(Widget* parent, Style style = SeparatorStyle);
+  virtual ~Separator();
 
 protected:
+
   // events
-  virtual void onAction(Event& ev);
+  virtual void onPreferredSize(Size& sz);
 
-  // reflection
-  virtual bool onReflectedCommand(int id, int code, LRESULT& lResult);
 };
 
 } // namespace Vaca
 
-#endif // VACA_RADIOBUTTON_H
+#endif // VACA_SEPARATOR_H

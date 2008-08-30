@@ -72,6 +72,9 @@ public:
     m_cancelButton.Action.connect(Bind(&MainFrame::defaultCancelAction, this));
     m_administrator.Action.connect(&MainFrame::onAdministrator, this);
 
+    // so because we are not using layout managers we can't use
+    // getPreferredSize method, so we have to setup the window
+    // size manually
     setSize(getNonClientSize() +
 	    Size(2+70+2+130+2, 2+(23+2)*4));
     center();
@@ -95,32 +98,21 @@ protected:
 
 };
 
-//////////////////////////////////////////////////////////////////////
-
-class Example : public Application
-{
-public:
-  virtual void main() {
-    MainFrame dlg;
-
-    if (dlg.doModal())
-      MsgBox::show(&dlg, "Information",
-		   "Welcome '"+dlg.getUserName()+"'",
-		   MsgBox::Type::Ok,
-		   MsgBox::Icon::Information);
-    else
-      MsgBox::show(&dlg, "Information",
-		   "You canceled the operation",
-		   MsgBox::Type::Ok,
-		   MsgBox::Icon::Information);
-  }
-};
-
 int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		   LPSTR lpCmdLine, int nCmdShow)
 {
-  Example* app(new Example);
-  app->run();
-  delete app;
+  Application app;
+  MainFrame dlg;
+
+  if (dlg.doModal())
+    MsgBox::show(&dlg, "Information",
+		 "Welcome '"+dlg.getUserName()+"'",
+		 MsgBox::Type::Ok,
+		 MsgBox::Icon::Information);
+  else
+    MsgBox::show(&dlg, "Information",
+		 "You canceled the operation",
+		 MsgBox::Type::Ok,
+		 MsgBox::Icon::Information);
   return 0;
 }

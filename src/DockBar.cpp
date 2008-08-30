@@ -122,11 +122,7 @@ DockBar::~DockBar()
   // undock and delete DockFrame
   cleanUp();
 
-  // delete DockInfo
-  if (m_dockInfo != NULL) {
-    delete m_dockInfo;
-    m_dockInfo = NULL;
-  }
+  delete m_dockInfo;
 }
 
 /**
@@ -302,9 +298,7 @@ void DockBar::makeDock(DockArea* dockArea, DockInfo* dockInfo)
 
   // set the new DockInfo?
   if (m_dockInfo != dockInfo) {
-    if (m_dockInfo != NULL)
-      delete m_dockInfo;
-
+    delete m_dockInfo;
     m_dockInfo = dockInfo;
   }
 
@@ -448,8 +442,7 @@ void DockBar::onMouseMove(MouseEvent& ev)
     if (!m_fullDrag)
       cleanTracker(g);
 
-    if (m_drag->dockIn != NULL)
-      delete m_drag->dockIn;
+    delete m_drag->dockIn;
     m_drag->dockIn = calcDestination(m_drag->currentRect);
 
     if (m_fullDrag)
@@ -700,8 +693,7 @@ void DockBar::endDrag()
   assert(m_drag != NULL);
   
   // destroy the DragInfo...
-  if (m_drag->dockIn != NULL)
-    delete m_drag->dockIn;
+  delete m_drag->dockIn;
   delete m_drag;
   m_drag = NULL;
 

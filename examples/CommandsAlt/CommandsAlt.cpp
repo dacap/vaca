@@ -166,8 +166,7 @@ public:
 int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		   LPSTR lpCmdLine, int nCmdShow)
 {
-  Example* app(new Example);
-  app->run();
-  delete app;
+  Example app;
+  app.run();
   return 0;
 }

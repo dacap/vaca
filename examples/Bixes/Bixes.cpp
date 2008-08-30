@@ -131,8 +131,7 @@ public:
   }
 
   virtual ~Model() {
-    if (m_root != NULL)
-      delete m_root;
+    delete m_root;
   }
 
   Element* getRoot() const {

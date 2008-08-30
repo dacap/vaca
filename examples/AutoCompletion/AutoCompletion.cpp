@@ -716,25 +716,20 @@ public:
 
   virtual ~ColorViewer()
   {
-    if (m_color != NULL)
-      delete m_color;
+    delete m_color;
   }
 
   void setColor(const Color& color)
   {
-    if (m_color != NULL)
-      delete m_color;
-
+    delete m_color;
     m_color = new Color(color);
     invalidate(true);
   }
 
   void setNoColor()
   {
-    if (m_color != NULL) {
-      delete m_color;
-      m_color = NULL;
-    }
+    delete m_color;
+    m_color = NULL;
     invalidate(true);
   }
 
@@ -811,8 +806,7 @@ public:
 int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		   LPSTR lpCmdLine, int nCmdShow)
 {
-  Example* app(new Example);
-  app->run();
-  delete app;
+  Example app;
+  app.run();
   return 0;
 }

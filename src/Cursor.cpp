@@ -36,6 +36,10 @@
 
 using namespace Vaca;
 
+/**
+ * @throw ResourceException
+ *   When the resource with ID @a cursorId wasn't found.
+ */
 Cursor::Cursor(ResourceId cursorId)
 {
   m_HCURSOR = LoadCursor(Application::getHINSTANCE(), cursorId.toLPTSTR());
@@ -45,6 +49,10 @@ Cursor::Cursor(ResourceId cursorId)
     throw ResourceException("Can't load the cursor resource " + cursorId.toString());
 }
 
+/**
+ * @throw ResourceException
+ *   When the specified system @a cursor couldn't be loaded.
+ */
 Cursor::Cursor(SysCursor cursor)
 {
   LPCTSTR winCursor = IDC_ARROW;
@@ -88,6 +96,10 @@ Cursor::Cursor(SysCursor cursor)
     throw ResourceException("Can't load the SysCursor " + String::fromInt(cursor));
 }
 
+/**
+ * @throw ResourceException
+ *   When the cursor couldn't be loaded from the specified @a fileName.
+ */
 Cursor::Cursor(const String& fileName)
 {
   m_HCURSOR = reinterpret_cast<HCURSOR>
@@ -102,6 +114,10 @@ Cursor::Cursor(const String& fileName)
     throw ResourceException("Can't load cursor from file " + fileName);
 }
 
+/**
+ * @throw ResourceException
+ *   When the @a cursor couldn't be copied.
+ */
 Cursor::Cursor(const Cursor& cursor)
 {
   if (cursor.m_autoDelete) {

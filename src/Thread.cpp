@@ -155,6 +155,12 @@ Thread::Thread()
   VACA_TRACE("current Thread (%p, %d)\n", this, m_id);
 }
 
+/**
+ * @throw CreateThreadException
+ *   If the thread couldn't be created by Win32's @c CreateThread.
+ *
+ * @internal
+ */
 void Thread::_Thread(const Slot0<void>& slot)
 {
   Slot0<void>* slotclone = slot.clone();
@@ -296,8 +302,13 @@ void Thread::yield()
 }
 
 /**
- * Gets a message in a blocking way, returns true if the msg parameter
- * was filled
+ * Gets a message waiting for it: locks the execution of the program
+ * until a message is received from the OS.
+ * 
+ * @return 
+ *   True if the @a msg parameter was filled (because a message was received)
+ *   or false if there aren't more visible @link Frame frames@endlink
+ *   to dispatch messages.
  */
 bool Thread::getMessage(Message& msg)
 {
@@ -338,8 +349,14 @@ bool Thread::getMessage(Message& msg)
 }
 
 /**
- * Gets a message in a non-blocking way, returns true if the msg
- * parameter was filled
+ * Gets a message without waiting for it, if the queue is empty, this
+ * method returns false.
+ *
+ * The message is removed from the queue.
+ *
+ * @return
+ *   Returns true if the @a msg parameter was filled with the next message
+ *   in the queue or false if the queue was empty.
  */
 bool Thread::peekMessage(Message& msg)
 {

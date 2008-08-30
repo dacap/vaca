@@ -46,7 +46,35 @@ class VACA_DLL Rect
 {
 public:
 
-  int x, y, w, h;
+  /**
+   * Horizontal position of the rectangle's upper-left corner (increase from left to right).
+   *
+   * @c x=0 means the beginning of the left side in the screen or
+   * @link Widget#getClientBounds Widget's client area@endlink.
+   */
+  int x;
+
+  /**
+   * Vertical position of the rectangle's upper-left corner (increase from top to bottom).
+   * 
+   * @c y=0 means the beginning of the top side in the screen or
+   * @link Widget#getClientBounds Widget's client area@endlink.
+   */
+  int y;
+
+  /**
+   * Width of the rectangle (increase from left to right).
+   *
+   * @c w<1 means an empty rectangle.
+   */
+  int w;
+
+  /**
+   * Height of the rectangle (increase from left to right).
+   *
+   * @c h<1 means an empty rectangle.
+   */
+  int h;
 
   Rect();
   Rect(int w, int h);

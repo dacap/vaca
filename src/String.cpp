@@ -335,6 +335,34 @@ String String::addPathComponent(const String& component) const
 #endif
 }
 
+String String::getUrlHost() const
+{
+  String host;
+  int len = size();
+  for (int c=0; c<len; ++c) {
+    if (at(c) == ':' && at(c+1) == '/' && at(c+2) == '/') {
+      for (c+=3; c<len && at(c) != '/'; ++c)
+	host.push_back(at(c));
+    }
+  }
+  return host;
+}
+
+String String::getUrlObject() const
+{
+  String object;
+  int len = size();
+  for (int c=0; c<len; ++c) {
+    if (at(c) == ':' && at(c+1) == '/' && at(c+2) == '/') {
+      for (c+=3; c<len && at(c) != '/'; ++c)
+	;
+      for (; c<len; ++c)
+	object.push_back(at(c));
+    }
+  }
+  return object;
+}
+
 #if 0
 String String::removeExtension() const
 {

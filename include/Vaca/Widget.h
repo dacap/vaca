@@ -32,8 +32,6 @@
 #ifndef VACA_WIDGET_H
 #define VACA_WIDGET_H
 
-#include <vector>
-
 #include "Vaca/base.h"
 #include "Vaca/Color.h"
 #include "Vaca/Component.h"
@@ -45,6 +43,8 @@
 #include "Vaca/Size.h"
 #include "Vaca/String.h"
 #include "Vaca/Style.h"
+
+#include <vector>
 
 namespace Vaca {
 
@@ -537,6 +537,7 @@ public:
   Size getPreferredSize();
   Size getPreferredSize(const Size& fitIn);
   void setPreferredSize(const Size& fixedSize);
+  void setPreferredSize(int fixedWidth, int fixedHeight);
   
   // ===============================================================
   // REFRESH ISSUES

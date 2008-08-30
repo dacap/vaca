@@ -62,10 +62,12 @@ public:
  * A dockable bar. Each dock bar as two possible states: docked or
  * floating. When it's floating, the DockBar is inside a DockFrame,
  * when the DockBar is docked, it's inside a DockArea.
+ *
+ * @see ToolBar
  */
 class VACA_DLL DockBar : public Register<DockBarClass>, public Widget
 {
-  // TODO less friendship
+  // TODO less friendship here
   friend class DockArea;
   friend class DockFrame;
 

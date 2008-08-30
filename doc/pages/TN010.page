@@ -2,7 +2,7 @@
 
 /**
 
-@page TN010 TN010 - Technical Note 010: Auto-deleted objects
+@page TN010 TN010: Auto-deleted objects
 
 Vaca deletes (literally with C++ @c delete operator) some objects
 automatically that you create (with C++ @c new operator).

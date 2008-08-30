@@ -2,7 +2,7 @@
 
 /**
 
-@page TN013 TN013 - Technical Note 013: All menu-items must have their own ID
+@page TN013 TN013: All menu-items must have their own ID
 
 Every @link Vaca::MenuItem MenuItem@endlink that you create must have
 its own @link Vaca::CommandId CommandId@endlink. See the @c Undo example

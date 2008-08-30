@@ -2,7 +2,7 @@
 
 /**
 
-@page TN009 TN009 - Technical Note 009: Reflection
+@page TN009 TN009: Reflection
 
 Vaca supports reflection of @c WM_COMMAND, @c WM_NOTIFY and @c WM_DRAWITEM
 using the #Vaca::Widget methods:

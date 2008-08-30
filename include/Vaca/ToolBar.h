@@ -106,12 +106,17 @@ public:
 };
   
 /**
- * A Windows's tool bar of Comctl32.dll.
+ * A set of tool buttons.
+ * 
+ * @image html ToolSet.png
+ * 
+ * @warning
+ *   This is not a dockable tool bar. This is only a toolbar
+ *   as Microsoft defines like "a window that contains one or
+ *   more buttons". If you want a really dockable tool bar,
+ *   you should use the ToolBar class.
  *
- * @warning This is not a dockable tool bar. This is only a toolbar
- *          as Microsoft defines like "a window that contains one or
- *          more buttons". If you want a really dockable tool-bar,
- *          you should use the ToolBar class.
+ * @see ToolButton, ToolBar
  */
 class VACA_DLL ToolSet : public Widget
 {
@@ -154,8 +159,14 @@ protected:
 };
 
 /**
- * A dockable tool bar. If you are looking for the original Win32
- * tool bar control, you should look at the ToolSet.
+ * A dockable tool bar.
+ *
+ * @image html ToolBar.png
+ *
+ * @warning
+ *   This class uses a ToolSet to show @link ToolButton ToolButtons@endlink,
+ *   but a ToolSet is static, is just a set of buttons, ToolBar offers you
+ *   a dockable tool bar.
  */
 class VACA_DLL ToolBar : public DockBar
 {

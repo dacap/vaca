@@ -85,11 +85,7 @@ void Frame::initialize(const String& title)
 
 Frame::~Frame()
 {
-  if (m_menuBar != NULL//  && m_menuBar->isAutoDelete()
-      ) {
-    delete m_menuBar;
-    m_menuBar = NULL;
-  }
+  delete m_menuBar;
 
   deleteDockAreas();
 

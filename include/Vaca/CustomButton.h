@@ -43,8 +43,6 @@ namespace Vaca {
 
 /**
  * Customizable button to draw it with your own Widget#onPaint method.
- * It's like the BS_OWNERDRAW, but here the paint event is received by
- * the button itself, and not by the parent window (see @ref TN009).
  *
  * Example: 
  * @code
@@ -61,10 +59,14 @@ namespace Vaca {
  *   virtual void onPaint(Graphics& g)
  *   {
  *     // don't call parent implementation, use your own code to
- *     // paint your fancy-button
+ *     // paint your customized button
  *   }
  * }
  * @endcode
+ * 
+ * Win32 notes:
+ *   It is a BS_OWNERDRAW, the paint event is intercepted by
+ *   the parent of CustomButton and them reflected to it (see @ref TN009).
  */
 class VACA_DLL CustomButton : public Button
 {

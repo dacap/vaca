@@ -811,8 +811,7 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 {
   srand(static_cast<unsigned int>(time(NULL)));
 
-  Example* app(new Example);
-  app->run();
-  delete app;
+  Example app;
+  app.run();
   return 0;
 }

@@ -2,7 +2,7 @@
 
 /**
 
-@page TN004 TN004 - Technical Note 004: Signals are public
+@page TN004 TN004: Signals are public
 
 Maybe OOP fanatics'll explode of hungry when them see the @em public
 data members like @c Close or @c Action for every signal. But I think

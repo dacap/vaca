@@ -117,8 +117,7 @@ ToolSet::~ToolSet()
 {
   int i, n = getButtonCount();
   for (i=0; i<n; i++) {
-    ToolButton* button = getButtonByIndex(i);
-    if (button)
+    if (ToolButton* button = getButtonByIndex(i))
       delete button;
   }
 

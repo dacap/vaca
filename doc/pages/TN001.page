@@ -3,7 +3,7 @@
 /**
 
 @english
-@page TN001 TN001 - Technical Note 001: RegisterClass process
+@page TN001 TN001: RegisterClass process
 
 Vaca creates HWNDs in C++ constructors, one implication of this is
 that the RegisterClass must be called before an

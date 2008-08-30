@@ -1,5 +1,8 @@
 Vaca 0.0.7
 
+- Widget destructor deletes children.
+- Added HttpRequest class.
+- Added FontMetrics class.
 - Renamed Borders to Sides.
 - Added StatusBar widget. Now Frame has an associated StatusBar.
 - Added Separator widget.

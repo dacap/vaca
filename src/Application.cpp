@@ -42,8 +42,11 @@ HINSTANCE Application::m_HINSTANCE = NULL;
 Application* Application::m_instance = NULL;
 
 /**
- * Initializes the variables of the Application class. It calls
- * CoInitialize and InitCommonControls.
+ * Initializes the variables of the Application class.
+ *
+ * It calls Win32's @c CoInitialize and @c InitCommonControls.
+ *
+ * @see run
  */
 Application::Application()
   : Thread()
@@ -68,7 +71,9 @@ Application::Application()
 }
 
 /**
- * Finishes the application. It calls CoUninitialize.
+ * Finishes the application.
+ *
+ * It calls Win32's @c CoUninitialize.
  */
 Application::~Application()
 {
@@ -95,11 +100,22 @@ Application::~Application()
 #endif
 }
 
+/**
+ * Returns the Application's singleton.
+ *
+ * A program using Vaca must have one instance of Applicaton or a
+ * class derived from it.
+ */
 Application* Application::getInstance()
 {
   return m_instance;
 }
 
+/**
+ * Returns the Win32's @c HINSTANCE.
+ *
+ * @internal
+ */
 HINSTANCE Application::getHINSTANCE()
 {
   return Application::m_HINSTANCE;
@@ -107,8 +123,50 @@ HINSTANCE Application::getHINSTANCE()
 
 /**
  * The common way to start the application. You should call this
- * method from @e main or @e WinMain, using an instance of
- * a class derived of Application.
+ * method from @e main or @e WinMain, using the instance of
+ * Application.
+ *
+ * The work of this routine is really simple: it calls #main and then
+ * #doMessageLoop. You can make your own class derived from
+ * Application and override #main so you can customized the
+ * initialization (e.g. show a Frame).
+ *
+ * Example:
+ * @code
+ * int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
+ *                    LPSTR lpCmdLine, int nCmdShow)
+ * {
+ *   Application app;
+ *   Frame frm("My frame");
+ *   frm.setVisible(true);
+ *   app.run();
+ *   return 0;
+ * }
+ * @endcode
+ *
+ * The same example with a variation:
+ * @code
+ * class MyApp : public Application
+ * {
+ *   Frame frm;
+ * public:
+ *   MyApp() : frm("My frame") { }
+ *   
+ *   virtual void main() {
+ *     frm.setVisible(true);
+ *   }
+ * };
+ * 
+ * int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
+ *                    LPSTR lpCmdLine, int nCmdShow)
+ * {
+ *   MyApp app;
+ *   app.run();
+ *   return 0;
+ * }
+ * @endcode
+ *
+ * @see Thread#doMessageLoop
  */
 void Application::run()
 {
@@ -119,8 +177,9 @@ void Application::run()
 /**
  * The application entry point.
  *
- * After calling run(), main() is executed, and when it finishes, the
- * doMessageLoop() is automatically executed.
+ * After calling #run, #main is executed and when it finishes, the
+ * #doMessageLoop is automatically executed (to process messages
+ * for visible @link Frame frames@endlink).
  */
 void Application::main()
 {

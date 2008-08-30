@@ -254,7 +254,7 @@ void Example::setCurrentDocument(Document* doc)
 int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		   LPSTR lpCmdLine, int nCmdShow)
 {
-  std::auto_ptr<Example> app(new Example);
-  app->run();
+  Example app;
+  app.run();
   return 0;
 }

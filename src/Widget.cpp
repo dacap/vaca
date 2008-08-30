@@ -77,8 +77,9 @@ static void Widget_DestroyHWNDProc(HWND hwnd)
 // ============================================================
 
 /**
- * Creates a new widget with the specified class name. You can specify a
- * NULL @a className if you want to call create() method by your self
+ * Creates a new widget with the specified class name. You can specify
+ * WidgetClassName#None as @a className if you want to call #create
+ * method by your self
  * (see @ref TN002).
  *
  * You can't create widgets from a HWND, so you can't treat an
@@ -184,35 +185,18 @@ Widget::~Widget()
     getParent()->removeChild(this, false);
   }
 
-#if 0
   // delete all children (this is the case for children added using
-  // "new" operator and wasn't deleted)
-  Container children = getChildren();
-  for (Container::iterator it = children.begin();
-       it != children.end(); ++it)
+  // "new" operator that were not deleted)
+  Container children = getChildren(); // we need a copy of the children's list because...
+  for (Container::iterator
+	 it = children.begin(); it != children.end(); ++it) {
+    // ...each destructor will modify the m_children collection
     delete (*it);
-#endif
-  // maybe you forget to remove some children, so we must to check if
-  // m_children is empty...
-  assert(m_children.empty());
+  }
   
-  // delete the constraint
-  if (m_constraint != NULL) {
-    delete m_constraint;
-    m_constraint = NULL;
-  }
-
-  // delete the layout manager
-  if (m_layout != NULL) {
-    delete m_layout;
-    m_layout = NULL;
-  }
-
-  // preferred size
-  if (m_preferredSize != NULL) {
-    delete m_preferredSize;
-    m_preferredSize = NULL;
-  }
+  delete m_constraint;		// delete the constraint,
+  delete m_layout;		// the layout manager,
+  delete m_preferredSize;	// the preferred size
 
   // restore the old window-procedure
   if (m_baseWndProc != NULL)
@@ -631,7 +615,7 @@ void Widget::setBounds(const Rect& rc)
 }
 
 /**
- * TODO docme
+ * @todo docme
  */
 void Widget::setBounds(int x, int y, int w, int h)
 {
@@ -676,7 +660,7 @@ void Widget::setOrigin(const Point& pt)
 }
 
 /**
- * TODO docme
+ * @todo docme
  */
 void Widget::setOrigin(int x, int y)
 {
@@ -696,7 +680,7 @@ void Widget::setSize(const Size& sz)
 }
 
 /**
- * TODO docme
+ * @todo docme
  */
 void Widget::setSize(int w, int h)
 {
@@ -759,10 +743,13 @@ Size Widget::getPreferredSize(const Size& fitIn)
  */
 void Widget::setPreferredSize(const Size& fixedSize)
 {
-  if (m_preferredSize != NULL)
-    delete m_preferredSize;
-
+  delete m_preferredSize;
   m_preferredSize = new Size(fixedSize);
+}
+
+void Widget::setPreferredSize(int fixedWidth, int fixedHeight)
+{
+  setPreferredSize(Size(fixedWidth, fixedHeight));
 }
 
 // ===============================================================
@@ -1259,7 +1246,7 @@ void Widget::sendToBack()
 }
 
 /**
- * TODO docme
+ * @todo docme
  */
 void Widget::moveAfter(Widget* brother)
 {
@@ -1271,7 +1258,7 @@ void Widget::moveAfter(Widget* brother)
 }
 
 /**
- * TODO docme
+ * @todo docme
  */
 void Widget::moveBefore(Widget* brother)
 {
@@ -1289,7 +1276,7 @@ void Widget::moveBefore(Widget* brother)
 }
 
 /**
- * TODO docme
+ * @todo docme
  */
 ScrollInfo Widget::getScrollInfo(Orientation orientation)
 {
@@ -1340,7 +1327,7 @@ void Widget::setScrollInfo(Orientation orientation, const ScrollInfo& scrollInfo
 }
   
 /**
- * TODO docme
+ * @todo docme
  */
 int Widget::getScrollPos(Orientation orientation)
 {
@@ -1356,7 +1343,7 @@ int Widget::getScrollPos(Orientation orientation)
 }
 
 /**
- * TODO docme
+ * @todo docme
  */
 void Widget::setScrollPos(Orientation orientation, int pos)
 {
@@ -1377,7 +1364,7 @@ void Widget::setScrollPos(Orientation orientation, int pos)
 }
   
 /**
- * TODO docme
+ * @todo docme
  */
 Point Widget::getScrollPoint()
 {
@@ -1386,7 +1373,7 @@ Point Widget::getScrollPoint()
 }
 
 /**
- * TODO docme
+ * @todo docme
  */
 void Widget::setScrollPoint(const Point& pt)
 {
@@ -1395,7 +1382,7 @@ void Widget::setScrollPoint(const Point& pt)
 }
 
 /**
- * TODO docme
+ * @todo docme
  */
 void Widget::hideScrollBar(Orientation orientation)
 {
@@ -1410,6 +1397,17 @@ void Widget::hideScrollBar(Orientation orientation)
   ::SetScrollInfo(getHWND(), fnBar, &si, TRUE);
 }
 
+/**
+ * Returns the command with the specified ID searching in all the
+ * CommandsClient that this widget can know: itself, the parent
+ * (some ancestor), and the Application instance.
+ *
+ * The command is searched in this instance if the Widget is a
+ * CommandsClient (a @c dynamic_cast is used for this), then it looks
+ * for the parent (using this same method), and finally in the
+ * @link Application#getInstance Application instance@endlink (if the
+ * Application is a CommandsClient).
+ */
 Command* Widget::findCommandById(CommandId id)
 {
   // if this widget is a CommandsClient instance
@@ -1459,9 +1457,10 @@ HWND Widget::getParentHWND()
  * Vaca's Widget. In other words, you should use this only if you known
  * that the HWND was created inside Vaca bounds.
  * 
- * @warning Old versions of Vaca uses the GWL_USERDATA field to get
- *          the pointer Widget pointer, now it uses a property through
- *          Win32's @c GetProp called @em "VacaAtom".
+ * @warning
+ *   Old versions of Vaca uses the GWL_USERDATA field to get
+ *   the Widget, now it uses a property called @em "VacaAtom"
+ *   (through Win32's @c GetProp function).
  *
  * @see getHWND
  */
@@ -1469,7 +1468,7 @@ Widget* Widget::fromHWND(HWND hwnd)
 {
   // unbox the pointer
 #ifdef USE_PROP
-  // ScopedLock hold(vacaAtomMutex);
+  // ScopedLock hold(vacaAtomMutex); <-- is it necessary?
   return reinterpret_cast<Widget*>(::GetProp(hwnd, VACAATOM));
 #else
   return reinterpret_cast<Widget*>(::GetWindowLongPtr(hwnd, GWL_USERDATA));
@@ -1693,7 +1692,7 @@ void Widget::onKeyUp(KeyEvent& ev)
 }
 
 /**
- * TODO docme
+ * @todo docme
  */
 void Widget::onGotFocus(Event& ev)
 {
@@ -1701,7 +1700,7 @@ void Widget::onGotFocus(Event& ev)
 }
 
 /**
- * TODO docme
+ * @todo docme
  */
 void Widget::onLostFocus(Event& ev)
 {
@@ -1756,21 +1755,21 @@ void Widget::onUpdateIndicators()
 }
 
 /**
- * TODO docme (WM_WINDOWPOSCHANGING)
+ * @todo docme (WM_WINDOWPOSCHANGING)
  */
 void Widget::onBeforePosChange()
 {
 }
 
 /**
- * TODO docme (WM_WINDOWPOSCHANGED)
+ * @todo docme (WM_WINDOWPOSCHANGED)
  */
 void Widget::onAfterPosChange()
 {
 }
 
 /**
- * TODO docme
+ * @todo docme
  */
 void Widget::onScroll(Orientation orient, int code)
 {
@@ -1793,18 +1792,19 @@ void Widget::onRemoveChild(Widget* child)
  * (WM_COMMAND) reflected from the parent.
  *
  * @param id
- *     Identifier of the control or menu item.
+ *   Identifier of the control or menu item.
  * 
  * @param code
- *     Notification code.
+ *   Notification code.
  * 
  * @param lResult
- *     Result to return by the #wndProc method.
+ *   Result to return by the #wndProc method.
  *
- * @warning Don't confuse with #onCommand: onReflectedCommand is used to handle
- *          commands that this widget by self generated, were sent to the
- *          parent, and finally were reflected to this widget again by
- *          the parent.
+ * @warning
+ *   Don't confuse with #onCommand: onReflectedCommand is used to handle
+ *   commands that this widget by self generated, were sent to the
+ *   parent, and finally were reflected to this widget again by
+ *   the parent.
  */
 bool Widget::onReflectedCommand(int id, int code, LRESULT& lResult)
 {
@@ -1816,13 +1816,13 @@ bool Widget::onReflectedCommand(int id, int code, LRESULT& lResult)
  * reflected from the parent.
  *
  * @param lpnmhdr
- *     Information about the notification message.
+ *   Information about the notification message.
  * 
  * @param lResult
- *     Result to return by the wndProc() method.
+ *   Result to return by the #wndProc method.
  *
  * @return
- *     False if it doesn't use the notification.
+ *   False if it doesn't use the notification.
  */
 bool Widget::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult)
 {
@@ -1830,16 +1830,16 @@ bool Widget::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult)
 }
 
 /**
- * Fired when the parent widget (m_parent) received the WM_DRAWITEM
+ * Fired when the parent widget (#m_parent) received the WM_DRAWITEM
  * message.
  *
  * @param g
- *     Graphics context to draw the item (you can obtain the HDC from
- *     this argument).
+ *   Graphics context to draw the item (you can obtain the HDC from
+ *   this argument).
  * 
  * @param lpDrawItem
- *     Instance of the Win32 structure DRAWITEMSTRUCT to get information
- *     about the item to draw.
+ *   Instance of the Win32 structure DRAWITEMSTRUCT to get information
+ *   about the item to draw.
  *
  * @see onPaint
  */
@@ -1852,10 +1852,12 @@ bool Widget::onReflectedDrawItem(Graphics& g, LPDRAWITEMSTRUCT lpDrawItem)
  * Adds a child to this widget.
  *
  * @param child
- *     The child to add inside the widget.
+ *   The child to add inside the widget.
  *
  * @param setParent
- *     If it's true the Win32's SetParent wil be used.
+ *   If it's true the Win32's SetParent will be used.
+ * 
+ * @internal
  */
 void Widget::addChild(Widget* child, bool setParent)
 {
@@ -1882,6 +1884,8 @@ void Widget::addChild(Widget* child, bool setParent)
  *
  * @param setParent
  *     If it's true the Win32's SetParent will be used.
+ *
+ * @internal
  */
 void Widget::removeChild(Widget* child, bool setParent)
 {
@@ -1903,15 +1907,18 @@ void Widget::removeChild(Widget* child, bool setParent)
 }
 
 /**
- * It creates the HWND (m_HWND) to be used in the Widget. The only way
- * to customize this routine is overloading the Widget::createHWND()
- * method, calling Widget::Widget() with NULL as @c className, and
- * finally calling Widget::create() from the constructor of your own
- * widget class (for example MdiClient::MdiClient()).
+ * It creates the HWND (#m_HWND) to be used in the Widget. The only way
+ * to customize this routine is overloading the Widget#createHWND
+ * method, calling Widget#Widget with WidgetClassName#None as @c className, and
+ * finally calling Widget#create from the constructor of your own
+ * widget class (for example as MdiClient#MdiClient does).
  *
- * This method MUST BE called in one constructor (in Widget::Widget() or
- * in your own class if you used a NULL className in Widget's
- * constructor).
+ * This method @em "must be" called in one constructor (in Widget#Widget or
+ * in your own class if you used a WidgetClassName#None as @c className
+ * in Widget's constructor).
+ *
+ * @throw CreateWidgetException
+ *   If the window handler (HWND) couldn't be created through the #createHWND method.
  *
  * @see createHWND, @ref TN002
  */
@@ -1967,7 +1974,8 @@ void Widget::create(const WidgetClassName& className, Widget* parent, Style styl
  * 
  * In the GWLP_WNDPROC property of all HWND is the WNDPROC procedure
  * that is called each time a message is arrived/processed by the Win32's
- * message-queue.
+ * message-queue. So this method changes that procedure by #globalWndProc
+ * to hook all messages that come from Windows.
  *
  * @see getGlobalWndProc, wndProc, @ref TN002, #m_baseWndProc
  */
@@ -2001,21 +2009,28 @@ void Widget::subClass()
 }
 
 /**
- * This method should create the HWND handler for the Widget. This
- * routine is called from Widget::create() method, so if you overloaded
- * this, you should use the Widget constructor with a NULL className,
- * and then use the Widget::create method in your own class's
- * constructor. E.g:
+ * This method creates the HWND handler for the Widget.
  * 
+ * It is called inside Widget#create, so if you overload
+ * #createHWND, you must to call the Widget's constructor with
+ * WidgetClassName#None as @c className, and then use
+ * Widget#create in your own class's constructor. An example
+ * is the MdiChild class, which overwrites the #createHWND method, so it
+ * does something like the following code:
  * @code
  * MdiChild::MdiChild(const String& title,
  *                    MdiClient* parent,
  *                    Style style)
- *   : Frame(NULL, "", NULL, NoStyle) // <- className = NULL, "create" isn't called
+ *   // className=WidgetClassName::None so "create" isn't called
+ *   : Frame(WidgetClassName::None, "", NULL, NoStyle)
  * {
  *   ...
- *   create("Vaca.MdiChild", parent, style); // we call "create" manually
+ *   // we call "create" manually here
+ *   create("Vaca.MdiChild", parent, style);
  * }
+ * 
+ * // it's invoked from "create" from the MdiChild's constructor
+ * HWND MdiChild::createHWND(...) { ... }
  * @endcode
  *
  * @see create, @ref TN002
@@ -2091,6 +2106,10 @@ HWND Widget::createHWND(LPCTSTR className, Widget* parent, Style style)
  *   ...
  * }
  * @endcode
+ *
+ * @return
+ *   True if the message was used and lResult contains a valid value to be
+ *   returned by #globalWndProc.
  *
  * @see globalWndProc, getGlobalWndProc, defWndProc
  */
@@ -2516,11 +2535,12 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
  * Calls the default Win32's window procedure.
  *
  * The default window procedure is #m_baseWndProc if it is not @c NULL, or
- * #m_defWndProc otherwise.
- *
- * If @c m_baseWndProc isn't @c NULL it's called instead.
+ * #m_defWndProc otherwise. Even if #m_defWndProc was changed with #setDefWndProc
+ * but #m_baseWndProc is not @c NULL, #m_defWndProc is completelly ignored anyway.
  *
  * @internal
+ *
+ * @see setDefWndProc, m_defWndProc, m_baseWndProc
  */
 LRESULT Widget::defWndProc(UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -2602,7 +2622,12 @@ bool Widget::doPaint(Graphics& g)
 }
 
 /**
- * TODO docme
+ * Sets the default procedure to be called by #defWndProc when a
+ * message isn't processed.
+ *
+ * @internal
+ * 
+ * @see defWndProc, m_defWndProc
  */
 void Widget::setDefWndProc(WNDPROC proc)
 {
@@ -2651,8 +2676,8 @@ LRESULT Widget::sendMessage(UINT message, WPARAM wParam, LPARAM lParam)
 
 /**
  * The global procedure for Win32 used in all registered WNDCLASSes.
- * It's unique goal is to get the Widget pointer from HWND userdata
- * using Widget::fromHWND, and to call its wndProc method.
+ * It's unique goal is to get the Widget pointer from HWND
+ * using #fromHWND, and to call its #wndProc method.
  */
 LRESULT CALLBACK Widget::globalWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -2902,8 +2927,8 @@ LRESULT CALLBACK Widget::globalWndProc(HWND hwnd, UINT message, WPARAM wParam, L
 // ============================================================
 
 /**
- * Increments the ref counter of "widget" and all the parents, filling
- * the "container" with all the widgets visited (referenced).
+ * Increments the reference-counter of @a widget and all the parents, filling
+ * the #m_container with all the widgets referenced.
  */
 MakeWidgetRef::MakeWidgetRef(Widget* widget)
 {
@@ -2915,13 +2940,12 @@ MakeWidgetRef::MakeWidgetRef(Widget* widget)
 }
 
 /**
- * Decrements the ref counter of all the widget in the "container".
+ * Decrements the reference-counter of all the widget in #m_container.
  */
 MakeWidgetRef::~MakeWidgetRef()
 {
-  for (std::vector<Widget*>::iterator it = m_container.begin();
-       it != m_container.end();
-       ++it) {
+  for (std::vector<Widget*>::iterator
+	 it=m_container.begin(); it!=m_container.end(); ++it) {
     (*it)->unref();
     safeDelete(*it);
   }
@@ -2930,6 +2954,8 @@ MakeWidgetRef::~MakeWidgetRef()
 /**
  * Checks if @a widget should be deleted right now, and if it is, deletes it.
  * Don't use this function, it's an internal routine that uses Vaca.
+ *
+ * @internal
  */
 void MakeWidgetRef::safeDelete(Widget* widget)
 {
@@ -2954,7 +2980,7 @@ void Vaca::delete_widget(Widget* widget)
   // is unreferenced?
   if (widget->getRefCount() == 0)
     delete widget;
-  // is referenced, we defer the "delete" for "__internal_checked_delete_widget"
+  // is referenced, we defer the delete operation for "safeDelete"
   else {
     assert(widget->getRefCount() > 0);
 

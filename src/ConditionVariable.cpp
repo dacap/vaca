@@ -52,6 +52,11 @@ public:
   }
 };
 
+/**
+ * Creates a new ConditionVariable.
+ * 
+ * @throw CreateConditionVariableException
+ */
 ConditionVariable::ConditionVariable()
   : m_gone(0)
   , m_blocked(0)

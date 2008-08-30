@@ -87,8 +87,7 @@ LinkLabel::LinkLabel(const String& url, Image& image, Widget* parent, Style styl
 
 LinkLabel::~LinkLabel()
 {
-  if (m_underlineFont != NULL)
-    delete m_underlineFont;
+  delete m_underlineFont;
 }
 
 void LinkLabel::setFont(Font* font)
@@ -292,8 +291,7 @@ void LinkLabel::updateFont(Font* font)
 {
   assert(font != NULL);
 
-  if (m_underlineFont != NULL)
-    delete m_underlineFont;
+  delete m_underlineFont;
   m_underlineFont = new Font(*font, font->getStyle() | FontStyle::Underline);
 }
 

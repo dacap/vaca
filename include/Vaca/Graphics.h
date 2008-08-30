@@ -46,6 +46,7 @@ namespace Vaca {
 class Application;
 class Brush;
 class Font;
+class FontMetrics;
 class Image;
 class ImageList;
 class Pen;
@@ -93,6 +94,7 @@ class VACA_DLL Graphics : private NonCopyable
   bool  m_noPaint : 1;
   Color m_color;
   Font* m_font;
+  FontMetrics* m_fontMetrics;
   int   m_penStyle;
   int   m_penWidth;
 
@@ -131,6 +133,7 @@ public:
 
   Font* getFont();
   void setFont(Font* font);
+  FontMetrics& getFontMetrics();
 
   void setPenStyle(int penStyle);
   void setPenWidth(int penWidth);

@@ -29,30 +29,29 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/StatusBar.h"
-#include "Vaca/WidgetClass.h"
+#include <Vaca/Vaca.h>
 
 using namespace Vaca;
 
-StatusBar::StatusBar(Widget* parent, Style style)
-  : Widget(WidgetClassName(STATUSCLASSNAME), parent, style)
+class MainFrame : public Frame
 {
-}
+  Label label;
+public:
+  MainFrame() : Frame("Minimal")
+              , label("This is the minimal program using Vaca\r\n"
+		      "so you can copy && paste this code.", this)
+  {
+    setLayout(new ClientLayout);
+    setSize(getPreferredSize());
+  }
+};
 
-StatusBar::~StatusBar()
+int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
+		   LPSTR lpCmdLine, int nCmdShow)
 {
-}
-
-/**
- * A status bar is arranged by a Frame, but doesn't depend of the
- * current Layout manager in that Frame.
- */
-bool StatusBar::isLayoutFree()
-{
-  return true;
-}
-
-void StatusBar::onPreferredSize(Size& sz)
-{
-  sz.h = 16;
+  Application app;
+  MainFrame frm;
+  frm.setVisible(true);
+  app.run();
+  return 0;
 }

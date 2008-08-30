@@ -44,6 +44,8 @@ namespace Vaca {
 
 /**
  * Handles a check box button.
+ * 
+ * @image html CheckBox.png
  */
 class VACA_DLL CheckBox : public ButtonBase
 {

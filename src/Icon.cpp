@@ -47,6 +47,9 @@ Icon::Icon()
 
 /**
  * Loads an Icon from a ICON resource.
+ *
+ * @throw ResourceException
+ *   When the resource with ID @a iconId wasn't found.
  */
 Icon::Icon(int iconId, const Size& sz)
 {
@@ -61,6 +64,9 @@ Icon::Icon(int iconId, const Size& sz)
 
 /**
  * Loads an Icon from a file.
+ * 
+ * @throw ResourceException
+ *   When the icon couldn't be loaded from the specified @a fileName.
  */
 Icon::Icon(const String& fileName, const Size& sz)
 {

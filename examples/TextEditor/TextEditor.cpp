@@ -30,7 +30,6 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <Vaca/Vaca.h>
-#include <memory>
 #include "Scintilla.h"
 #include "resource.h"
 
@@ -849,7 +848,7 @@ public:
 int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		   LPSTR lpCmdLine, int nCmdShow)
 {
-  std::auto_ptr<Example> app(new Example);
-  app->run();
+  Example app;
+  app.run();
   return 0;
 }

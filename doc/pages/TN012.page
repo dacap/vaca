@@ -2,7 +2,7 @@
 
 /**
 
-@page TN012 TN012 - Technical Note 012: Using Parent's Signals in Children's Constructors
+@page TN012 TN012: Using Parent's Signals in Children's Constructors
 
 You can't use signals that aren't constructed. This piece of code has
 a bug:

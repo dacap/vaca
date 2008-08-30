@@ -44,26 +44,60 @@ namespace Vaca {
 class Exception : public std::exception
 {
   String m_message;
+  DWORD m_errorCode;
+  LPTSTR m_msgbuf;
 
 public:
 
-  Exception() : std::exception() { }
-  Exception(const String& message) : std::exception(),
-				     m_message(message) { }
-  virtual ~Exception() throw() { }
-
-  virtual const char* what() const throw() {
-    return "Vaca::Exception";
+  Exception()
+    : std::exception()
+  {
+    m_errorCode = GetLastError();
+    m_msgbuf = NULL;
   }
 
-  virtual const String& getMessage() const throw() {
+  Exception(const String& message)
+    : std::exception()
+    , m_message(message)
+  {
+    m_errorCode = GetLastError();
+
+    if (!FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | 
+			FORMAT_MESSAGE_FROM_SYSTEM | 
+			FORMAT_MESSAGE_IGNORE_INSERTS,
+			NULL,
+			m_errorCode,
+			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+			(LPTSTR)&m_msgbuf,
+			0, NULL))
+      m_msgbuf = NULL;
+  }
+
+  virtual ~Exception() throw()
+  {
+    LocalFree(m_msgbuf);
+  }
+
+  virtual const char* what() const throw()
+  {
+    return m_msgbuf ? m_msgbuf: "Vaca::Exception";
+  }
+
+  virtual const String& getMessage() const throw()
+  {
     return m_message;
   }
 
-  void show() {
-    MessageBox(NULL, m_message.empty() ? _T("No message"):
-					 m_message.c_str(),
-	       _T("Vaca::Exception"), MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
+  void show()
+  {
+    String msg = getMessage();
+    if (m_errorCode != ERROR_SUCCESS) {
+      if (!msg.empty())
+	msg += _T("\r\n\r\n");
+      msg += what();
+    }
+    MessageBox(NULL, msg.c_str(), _T("Exception"),
+	       MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
   }
 
 };

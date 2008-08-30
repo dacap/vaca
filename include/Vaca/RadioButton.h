@@ -87,10 +87,13 @@ private:
 };
 
 /**
- * Handles a radio button.
+ * A radio button.
  *
- * @warning It is not a BS_AUTORADIOBUTTON, it's only an
- *          BS_RADIOBUTTON (so you can't get Q261192 bug).
+ * @image html RadioButton.png
+ *
+ * @warning
+ *   It is not a BS_AUTORADIOBUTTON, it's only an
+ *   BS_RADIOBUTTON (so you can't get Q261192 bug).
  */
 class VACA_DLL RadioButton : public ButtonBase
 {

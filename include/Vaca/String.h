@@ -84,7 +84,7 @@ public:
   double parseDouble() const;
 
   //////////////////////////////////////////////////////////////////////
-  // File names & paths
+  // File names, paths and URLs
   
   String getFilePath() const;
   String getFileName() const;
@@ -92,6 +92,9 @@ public:
   String getFileTitle() const;
 
   String addPathComponent(const String& component) const;
+
+  String getUrlHost() const;
+  String getUrlObject() const;
 
 //   String removeExtension() const;
 //   String replaceExtension(const String& newExtension) const;

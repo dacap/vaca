@@ -54,6 +54,14 @@ public:
   
 /**
  * A thread of execution.
+ *
+ * Each thread that has widgets has a queue of messages, each message
+ * represent an event that the user generated with the input devices
+ * or a signal from the Operating System (OS). The #doMessageLoop is
+ * the method that gets messages from the OS and distributes them to
+ * widgets.
+ *
+ * @see doMessageLoop
  */
 class VACA_DLL Thread : public NonCopyable
 {
@@ -74,7 +82,10 @@ public:
   ~Thread();
 
   /**
-   * @exception CreateThreadException
+   * Creates a new thread running the specified function or functor @a f.
+   * 
+   * @throw CreateThreadException
+   *   If the thread couldn't be created by Win32's @c CreateThread.
    */
   template<typename F>
   explicit Thread(F f) {

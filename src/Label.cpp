@@ -36,6 +36,14 @@
 
 using namespace Vaca;
 
+/**
+ * Creates a new Label widget.
+ * 
+ * @warning
+ *   Remember that a character with a preceding ampersand (&)
+ *   will be underlined. So if you want to show a string with the '&',
+ *   you have to use "&&".
+ */
 Label::Label(const String& text, Widget* parent, Style style)
   : Widget(WidgetClassName(WC_STATIC), parent, style)
 {
@@ -66,8 +74,9 @@ TextAlign Label::getTextAlign()
 /**
  * Sets the text alignment.
  * 
- * @warning You can't change the text-alignment of a label with the
- *          SS_SIMPLE style.
+ * @warning
+ *   You can't change the text-alignment of a label with the
+ *   SimpleLabelStyle style.
  */
 void Label::setTextAlign(TextAlign align)
 {
@@ -102,6 +111,9 @@ bool Label::useWordWrap()
 	  ((style & SS_ELLIPSISMASK) == 0));
 }
 
+/**
+ * @todo the return value is too Win32 specific.
+ */
 int Label::getFlagsForDrawString()
 {
   // TODO complete this
@@ -112,8 +124,7 @@ int Label::getFlagsForDrawString()
 }
 
 /**
- * Uses Win32 GetTextExtentExPoint to returns the preferred size when
- * sz > Size(0,0).
+ * Returns the preferred size of the label using Graphics#measureString.
  */
 void Label::onPreferredSize(Size& sz)
 {

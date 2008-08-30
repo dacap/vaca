@@ -229,9 +229,6 @@ bool Font::getLogFont(LPLOGFONT lplf) const
 
 void Font::deleteHandles()
 {
-  if (Font::defaultFont != NULL) {
-    delete Font::defaultFont;
-    Font::defaultFont = NULL;
-  }
+  delete Font::defaultFont;
+  Font::defaultFont = NULL;
 }
-

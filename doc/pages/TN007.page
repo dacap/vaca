@@ -2,7 +2,7 @@
 
 /**
 
-@page TN007 TN007 - Technical Note 007: Calling CreateWindowEx without text
+@page TN007 TN007: Calling CreateWindowEx without text
 
 The @c CreateWindowEx called from @c Widget::createHWND specifies an empty
 text for the window. In general, properties that can be changed later,

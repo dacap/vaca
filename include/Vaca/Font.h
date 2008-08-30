@@ -38,6 +38,7 @@
 namespace Vaca {
 
 class Application;
+class Graphics;
 
 //////////////////////////////////////////////////////////////////////
 
@@ -66,6 +67,23 @@ struct FontStyleEnumSet
 typedef EnumSet<FontStyleEnumSet> FontStyle;
 
 //////////////////////////////////////////////////////////////////////
+
+class VACA_DLL FontMetrics
+{
+  friend class Graphics;
+
+  TEXTMETRIC m_textMetric;
+
+public:
+  FontMetrics() { }
+  FontMetrics(const FontMetrics& fm) : m_textMetric(fm.m_textMetric) { }
+  int getHeight() const { return m_textMetric.tmHeight; }
+  int getAscent() const { return m_textMetric.tmAscent; }
+  int getDescent() const { return m_textMetric.tmDescent; }
+  int getAverageCharWidth() const { return m_textMetric.tmAveCharWidth; }
+  int getMaximumCharWidth() const { return m_textMetric.tmMaxCharWidth; }
+  int getLeading() const { return m_textMetric.tmInternalLeading; }
+};
 
 /**
  * A font to be used in Graphics context.

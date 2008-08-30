@@ -56,8 +56,8 @@ LIB_SOURCES = Anchor AnchorLayout Application BandedDockArea		\
 	      Cursor CustomButton CustomLabel Debug Dialog DockArea	\
 	      DockBar DockFrame DropFilesEvent Edit Event FileDialog	\
 	      FindTextDialog Font FontDialog Frame Graphics GroupBox	\
-	      Icon Image ImageList KeyEvent Keys Label Layout		\
-	      LinkLabel ListBox ListView Mdi Menu MenuItemEvent		\
+	      HttpRequest Icon Image ImageList KeyEvent Keys Label	\
+	      Layout LinkLabel ListBox ListView Mdi Menu MenuItemEvent	\
 	      MouseEvent MsgBox Mutex Panel Pen Point ProgressBar	\
 	      RadioButton ReBar Rect Region ResourceId Scintilla	\
 	      Separator Size Slider SpinButton Spinner StatusBar	\
@@ -105,7 +105,7 @@ ifdef WIN32_IMPL
   LIBS += -lkernel32 -luser32 -lgdi32 -lcomdlg32 -lwinspool \
 	  -lwinmm -lshell32 -lshlwapi -lcomctl32 -lole32 \
 	  -loleaut32 -luuid -lrpcrt4 -ladvapi32 -lwsock32 \
-	  -lodbc32 -lcomctl32 -lsecur32 -lmsimg32
+	  -lodbc32 -lcomctl32 -lsecur32 -lmsimg32 -lwininet
 endif
 
 # Allegro

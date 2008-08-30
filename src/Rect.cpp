@@ -36,7 +36,11 @@
 using namespace Vaca;
 
 /**
- * Creates a new empty rectangle (@c w=0 and @c h=0)
+ * Creates a new empty rectangle with the origin in @c Point(0,0).
+ *
+ * The rectangle will be @c #x=#y=#w=#h=0
+ *
+ * @see isEmpty
  */
 Rect::Rect()
 {
@@ -46,6 +50,11 @@ Rect::Rect()
   h = 0;
 }
 
+/**
+ * Creates a new rectangle with the specified size with the origin in @c Point(0,0).
+ *
+ * The rectangle will be @c #x=#y=0.
+ */
 Rect::Rect(int w, int h)
 {
   this->x = 0;
@@ -54,6 +63,11 @@ Rect::Rect(int w, int h)
   this->h = h;
 }
 
+/**
+ * Creates a new rectangle with the specified size with the origin in @c Point(0,0).
+ *
+ * The rectangle will be @c #x=#y=0.
+ */
 Rect::Rect(const Size& size)
 {
   x = 0;
@@ -62,6 +76,9 @@ Rect::Rect(const Size& size)
   h = size.h;
 }
 
+/**
+ * Creates a copy of @a rect.
+ */
 Rect::Rect(const Rect& rect)
 {
   x = rect.x;
@@ -70,6 +87,10 @@ Rect::Rect(const Rect& rect)
   h = rect.h;
 }
 
+/**
+ * Creates a new rectangle with the origin in @a point
+ * and the specified @a size.
+ */
 Rect::Rect(const Point& point, const Size& size)
 {
   this->x = point.x;
@@ -78,6 +99,24 @@ Rect::Rect(const Point& point, const Size& size)
   this->h = size.h;
 }
 
+/**
+ * Creates a new rectangle with the origin in @a point1 and size equal
+ * to @a point2 - @a point1.
+ *
+ * If a coordinate of @a point1 is greater than @a point2 (Point#x
+ * and/or Point#y), the coordinates are swapped. So the rectangle
+ * will be:
+ * @code
+ * #x = MIN(point1.x, point2.x)
+ * #y = MIN(point1.y, point2.y)
+ * #w = MAX(point1.x, point2.x) - #x
+ * #h = MAX(point1.x, point2.x) - #y
+ * @endcode
+ * See that @a point2 isn't included in the rectangle, it's
+ * like the point returned by #getPoint2 method.
+ *
+ * @see #getPoint2
+ */
 Rect::Rect(const Point& point1, const Point& point2)
 {
   Point leftTop = point1;
@@ -110,31 +149,62 @@ Rect::Rect(int x, int y, int w, int h)
   this->h = h;
 }
 
+/**
+ * Verifies if the width and/or height of the rectangle are less or
+ * equal than zero.
+ */
 bool Rect::isEmpty() const
 {
   return (w < 1 || h < 1);
 }
 
+/**
+ * Returns the middle point of the rectangle (the centroid).
+ *
+ * @return
+ *   Point(#x+#w/2, #y+#h/2)
+ */
 Point Rect::getCenter() const
 {
   return Point(x+w/2, y+h/2);
 }
 
+/**
+ * Returns the point in the upper-left corner (that is inside the rectangle).
+ *
+ * @return
+ *   Point(#x, #y)
+ */
 Point Rect::getOrigin() const
 {
   return Point(x, y);
 }
 
+/**
+ * Returns point in the lower-right corner (that is outside the rectangle).
+ *
+ * @return
+ *   Point(#x+#w, #y+#h)
+ */
 Point Rect::getPoint2() const
 {
   return Point(x+w, y+h);
 }
 
+/**
+ * Returns the size of the rectangle.
+ *
+ * @return
+ *   Size(#w, #h)
+ */
 Size Rect::getSize() const
 {
   return Size(w, h);
 }
 
+/**
+ * Changes the origin of the rectangle without modifying its size.
+ */
 Rect& Rect::setOrigin(const Point& pt)
 {
   x = pt.x;
@@ -142,6 +212,9 @@ Rect& Rect::setOrigin(const Point& pt)
   return *this;
 }
 
+/**
+ * Changes the size of the rectangle without modifying its origin.
+ */
 Rect& Rect::setSize(const Size& sz)
 {
   w = sz.w;
@@ -149,6 +222,18 @@ Rect& Rect::setSize(const Size& sz)
   return *this;
 }
 
+/**
+ * Moves the rectangle origin in the specified delta.
+ *
+ * @param dx
+ *   How many pixels displace the #x coordinate (#x+=dx).
+ *
+ * @param dy
+ *   How many pixels displace the #y coordinate (#y+=dy).
+ *   
+ * @return
+ *   A reference to @c this.
+ */
 Rect& Rect::offset(int dx, int dy)
 {
   x += dx;
@@ -156,6 +241,15 @@ Rect& Rect::offset(int dx, int dy)
   return *this;
 }
 
+/**
+ * Moves the rectangle origin in the specified delta.
+ *
+ * @param point
+ *   How many pixels displace the origin (#x+=point.x, #y+=point.y).
+ *   
+ * @return
+ *   A reference to @c this.
+ */
 Rect& Rect::offset(const Point& point)
 {
   x += point.x;
@@ -163,6 +257,19 @@ Rect& Rect::offset(const Point& point)
   return *this;
 }
 
+/**
+ * Increases (or decreases if the delta is negative) the size of the
+ * rectangle.
+ * 
+ * @param dw
+ *   How many pixels to increase the width of the rectangle #w.
+ *
+ * @param dh
+ *   How many pixels to increase the height of the rectangle #h.
+ * 
+ * @return
+ *   A reference to @c this.
+ */
 Rect& Rect::inflate(int dw, int dh)
 {
   w += dw;
@@ -170,6 +277,17 @@ Rect& Rect::inflate(int dw, int dh)
   return *this;
 }
 
+/**
+ * Increases (or decreases if the delta is negative) the size of the
+ * rectangle.
+ * 
+ * @param size
+ *   How many pixels to increase the size of the
+ *   rectangle (#w+=size.w, #h+=size.h).
+ * 
+ * @return
+ *   A reference to @c this.
+ */
 Rect& Rect::inflate(const Size& size)
 {
   w += size.w;
@@ -177,6 +295,11 @@ Rect& Rect::inflate(const Size& size)
   return *this;
 }
 
+/**
+ * @todo docme
+ * @return
+ *   A reference to @c this.
+ */
 Rect& Rect::enlarge(int unit)
 {
   x -= unit;
@@ -186,6 +309,11 @@ Rect& Rect::enlarge(int unit)
   return *this;
 }
 
+/**
+ * @todo docme
+ * @return
+ *   A reference to @c this.
+ */
 Rect& Rect::shrink(int unit)
 {
   x += unit;
@@ -195,6 +323,9 @@ Rect& Rect::shrink(int unit)
   return *this;
 }
 
+/**
+ * Returns true if this rectangle encloses the @a pt point.
+ */
 bool Rect::contains(const Point& pt) const
 {
   return
@@ -203,7 +334,10 @@ bool Rect::contains(const Point& pt) const
 }
 
 /**
- * This rectangle entirely contains the @c rc rectangle.
+ * Returns true if this rectangle entirely contains the @a rc rectangle.
+ *
+ * @warning
+ *   If some rectangle is empty, this method returns false.
  */
 bool Rect::contains(const Rect& rc) const
 {
@@ -216,8 +350,11 @@ bool Rect::contains(const Rect& rc) const
 }
 
 /**
- * Returns true if the intersection between this rectangle with @c rc
+ * Returns true if the intersection between this rectangle with @a rc
  * rectangle is not empty.
+ * 
+ * @warning
+ *   If some rectangle is empty, this method returns false.
  */
 bool Rect::intersects(const Rect& rc) const
 {
@@ -230,7 +367,11 @@ bool Rect::intersects(const Rect& rc) const
 }
 
 /**
- * Returns the union rectangle between this and @c rc rectangles.
+ * Returns the union rectangle between this and @c rc rectangle.
+ *
+ * @warning
+ *   If some rectangle is empty, this method will return the
+ *   other rectangle.
  */
 Rect Rect::createUnion(const Rect& rc) const
 {
@@ -273,6 +414,12 @@ bool Rect::operator!=(const Rect& rc) const
     y != rc.y || h != rc.h;
 }
 
+/**
+ * Converts a Win32's rectangle (RECT structure) to a Vaca's rectangle
+ * (Rect class).
+ * 
+ * @internal
+ */
 Rect::Rect(LPCRECT rc)
 {
   x = rc->left;
@@ -281,6 +428,12 @@ Rect::Rect(LPCRECT rc)
   h = rc->bottom-rc->top;
 }
 
+/**
+ * Converts a Vaca's rectangle (Rect class) to a Win32's rectangle
+ * (RECT structure).
+ * 
+ * @internal
+ */
 Rect::operator RECT() const
 {
   RECT rc;

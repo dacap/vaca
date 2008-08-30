@@ -29,30 +29,74 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/StatusBar.h"
-#include "Vaca/WidgetClass.h"
+#ifndef VACA_HTTPREQUEST_H
+#define VACA_HTTPREQUEST_H
 
-using namespace Vaca;
+#include "Vaca/base.h"
+#include "Vaca/NonCopyable.h"
+#include "Vaca/Exception.h"
+#include "Vaca/String.h"
 
-StatusBar::StatusBar(Widget* parent, Style style)
-  : Widget(WidgetClassName(STATUSCLASSNAME), parent, style)
+#include <wininet.h>
+
+namespace Vaca {
+
+class VACA_DLL HttpRequestException : public Exception
 {
-}
-
-StatusBar::~StatusBar()
-{
-}
+public:
+  HttpRequestException() : Exception() { }
+  HttpRequestException(const String& message) : Exception(message) { }
+  virtual ~HttpRequestException() throw() { }
+};
 
 /**
- * A status bar is arranged by a Frame, but doesn't depend of the
- * current Layout manager in that Frame.
+ * Makes a HTTP request to invoke an object's method in a specified URL.
  */
-bool StatusBar::isLayoutFree()
+class VACA_DLL HttpRequest
 {
-  return true;
-}
+  class InetHandle {
+  public:
+    HINTERNET handle;
+    InetHandle(HINTERNET handle, const String& errorMsg);
+    virtual ~InetHandle();
+  };
 
-void StatusBar::onPreferredSize(Size& sz)
-{
-  sz.h = 16;
-}
+  class InetConnection : public InetHandle {
+  public:
+    InetConnection(const String& agentName);
+  };
+
+  class InetSession : public InetHandle {
+  public:
+    InetSession(InetConnection& conn, const String& host);
+  };
+
+  class InetRequest : public InetHandle {
+  public:
+    InetRequest(InetSession& ses,
+		const String& method,
+		const String& object);
+  };
+
+  InetConnection conn;
+  InetSession ses;
+  InetRequest req;
+
+public:
+  HttpRequest(const String& url, const String& method = _T("GET"));
+  virtual ~HttpRequest();
+
+  int send(const String& headers = _T(""), const char* body = NULL);
+  std::size_t read(char* buf, std::size_t length);
+
+  int getStatusCode();
+  std::size_t getContentLength();
+
+  bool hasHeader(const String& headerName);
+  String getHeader(const String& headerName);
+
+};
+
+} // namespace Vaca
+
+#endif // VACA_HTTPREQUEST_H

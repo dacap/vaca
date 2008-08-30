@@ -2,7 +2,7 @@
 
 /**
 
-@page TN006 TN006 - Technical Note 006: Deleting a Widget inside its event
+@page TN006 TN006: Deleting a Widget inside its event
 
 There are a big problem with signals: <b>YOU CAN'T DELETE A WIDGET
 INSIDE AN EVENT WHICH THE WIDGET BY ITSELF GENERATED</b>. The solution

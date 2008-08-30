@@ -41,17 +41,27 @@ namespace Vaca {
 class Widget;
 
 /**
- * This class is the main class of Vaca. You must to have one instance of
- * this class, or an instance of a class derived from it, in the whole
- * application.
- * 
- * This class calls CoInitialize and InitCommonControlsEx.
+ * The main class of Vaca: initializes and destroys the GUI library
+ * resources.
+ *
+ * A program that uses Vaca library must to create one instance of
+ * this class, or an instance of a derived class.
  */
 class VACA_DLL Application : public Thread
 {
 private:
 
+  /**
+   * The Win32's @c HINSTANCE.
+   *
+   * @internal
+   */
   static HINSTANCE m_HINSTANCE;
+
+  /**
+   * The singleton, the only instance of Application (or a class
+   * derived from Application) that a program can contain.
+   */
   static Application* m_instance;
 
 public:

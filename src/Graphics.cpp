@@ -109,6 +109,7 @@ Graphics::Graphics()
   m_autoDelete  = false;
   m_noPaint     = false;
   m_font        = Font::getDefault();
+  m_fontMetrics = NULL;
   m_penStyle    = PS_SOLID;
   m_penWidth    = 1;
 }
@@ -125,6 +126,7 @@ Graphics::Graphics(HDC hdc)
   m_autoDelete  = false;
   m_noPaint     = false;
   m_font        = NULL;
+  m_fontMetrics = NULL;
   m_penStyle    = PS_SOLID;
   m_penWidth    = 1;
 }
@@ -138,6 +140,7 @@ Graphics::Graphics(HDC hdc, Image& image)
   m_autoDelete  = true;
   m_noPaint     = false;
   m_font        = NULL;
+  m_fontMetrics = NULL;
   m_penStyle    = PS_SOLID;
   m_penWidth    = 1;
   
@@ -156,12 +159,15 @@ Graphics::Graphics(Widget* widget)
   m_noPaint     = false;
   m_color       = widget->getFgColor();
   m_font        = widget->getFont();
+  m_fontMetrics = NULL;
   m_penStyle    = PS_SOLID;
   m_penWidth    = 1;
 }
 
 Graphics::~Graphics()
 {
+  delete m_fontMetrics;
+
   if (m_autoRelease)
     ReleaseDC(NULL, m_HDC);
   else if (m_autoDelete)
@@ -291,6 +297,18 @@ void Graphics::setFont(Font* font)
 {
   assert(font != NULL);
   m_font = font;
+}
+
+FontMetrics& Graphics::getFontMetrics()
+{
+  if (!m_fontMetrics)
+    m_fontMetrics = new FontMetrics;
+
+  HGDIOBJ oldFont = SelectObject(m_HDC, reinterpret_cast<HGDIOBJ>(m_font->getHFONT()));
+  GetTextMetrics(m_HDC, &m_fontMetrics->m_textMetric);
+  SelectObject(m_HDC, oldFont);
+
+  return *m_fontMetrics;
 }
 
 void Graphics::setPenStyle(int penStyle)
@@ -1088,6 +1106,10 @@ void Graphics::drawFocus(const Rect& rc)
   ::DrawFocusRect(m_HDC, &_rc);
 }
 
+/**
+ * @warning
+ *   In Win98, 32767 is the limit for @a fitInWidth.
+ */
 Size Graphics::measureString(const String& str, int fitInWidth, int flags)
 {
   assert(m_HDC != NULL);
@@ -1243,6 +1265,9 @@ void Graphics::drawPolyline(Pen& pen, CONST POINT* lppt, int numPoints)
 //////////////////////////////////////////////////////////////////////
 // ScreenGraphics
 
+/**
+ * Creates a Graphics instance to draw in the screen (anywhere).
+ */
 ScreenGraphics::ScreenGraphics()
   : Graphics()
 {

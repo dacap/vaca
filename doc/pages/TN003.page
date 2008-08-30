@@ -2,7 +2,7 @@
 
 /**
 
-@page TN003 TN003 - Technical Note 003: Using dynamic_cast
+@page TN003 TN003: Using dynamic_cast
 
 Remember to activate the /GR flag (Enable Run-Time Type Information)
 when you compile with Visual C++.

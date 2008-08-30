@@ -525,8 +525,7 @@ MenuItem* Menu::insert(int index, MenuItem* menuItem)
 
   InsertMenuItem(m_HMENU, index, TRUE, &mii);
 
-  if (buf != NULL)
-    delete[] buf;
+  delete[] buf;
 
   m_container.insert(it, menuItem);
   menuItem->m_parent = this;

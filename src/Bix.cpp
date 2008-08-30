@@ -646,10 +646,52 @@ void Bix::fillMatrix(Matrix& mat)
  * Format of the string:
  * @li "X[...]"    Creates a row-vector to distribute components in horizontal way, each one separated by comma (,).
  * @li "Y[...]"    Creates a column-vector to distribute components in vertical way.
- * @li "XY[...]"   Creates a matrix to distribute components in a matricial way.
+ * @li "XY[...]"   Creates a matrix to distribute components in a matricial way (each column separated with ',' and each row with ';').
+ * @li "%"         Gets a widget from the @c ... paramenters.
+ * @li "f..."      Activates the BixFill flag for the next element (e.g.: "fX[...]" or "f%").
+ * @li "fx..."     Activates the BixFillX flag for the next element.
+ * @li "fy..."     Activates the BixFillY flag for the next element.
+ * @li "e..."      Activates the BixEven flag for the next element (e.g.: "eY[...]" or "e%").
+ * @li "ex..."     Activates the BixEvenX flag for the next element.
+ * @li "ey..."     Activates the BixEvenY flag for the next element.
+ *
+ * Example:
+ * @code
+ * Dialog dlg("Test");
+ * Label nameL("Username:", &dlg);
+ * Label passL("Password:", &dlg);
+ * Edit name("", &dlg);
+ * PasswordEdit pass("", &dlg);
+ * Button ok("OK", &dlg);
+ * Button cancel("Cancel", &dlg);
+ * 
+ * name.setPreferredSize(128, name.getPreferredSize().h);
+ * pass.setPreferredSize(128, pass.getPreferredSize().h);
+ *
+ * // See explanation below 
+ * dlg.setLayout(Bix::parse("Y[XY[%,f%;%,f%],X[fX[],eX[%,%]]]",
+ *                          &nameL, &name,
+ *                          &passL, &pass,
+ *                          &ok, &cancel));
+ *
+ * dlg.setSize(dlg.getPreferredSize());
+ * dlg.setVisible(true);
+ * @endcode
+ * In this case the @a fmt = @c "Y[XY[%,f%;%,f%],X[fX[],eX[%,%]]]", which
+ * means:
+ * @li the first "Y[...]" is a column, so the next two elements ("XY[...],X[...]")
+ *     will be arranged one below the other.
+ * @li then "XY[%,f%;%,f%]" is a grid of 2x2, where each '%' is a reference
+ *     to the next widget in the ... arguments (in this case @c nameL,
+ *     @c name, @c passL, and @c pass)
+ * @li "X[fX[],eX[%,%]]" is a row with two elements, the first one is
+ *     a dummy filler "fX[]", that "eats" the left-side available space,
+ *     then "eX[%,%]" is a sub-row that arranges two widgets (@c ok, @c cancel)
+ *     with same width and height ('e' means BixEven), so both buttons will
+ *     have the same size.
  *
  * @throw ParseException
- *     Throw when the syntax of the string @a fmt is bad-formed.
+ *   Throw when the syntax of the string @a fmt is bad-formed.
  */
 Bix* Bix::parse(const char* fmt, ...)
 {
@@ -791,8 +833,7 @@ Bix* Bix::parse(const char* fmt, ...)
     PARSE_ASSERT(bixes.empty(), "']' expected to close Bixes before end of string");
   }
   catch (...) {
-    if (mainBix != NULL)
-      delete mainBix;
+    delete mainBix;
 
     while (!columns.empty()) {
       delete columns.top();

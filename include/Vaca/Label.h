@@ -38,23 +38,47 @@
 namespace Vaca {
 
 /**
- * Default style for Label: a ChildStyle with SS_NOTIFY (to receive
- * mouse notifications).
+ * Default style for Label.
+ *
+ * It is ChildStyle with Win32's SS_NOTIFY (to receive mouse notifications).
  */
 #define LabelStyle		(ChildStyle + Style(SS_NOTIFY, 0))
 
+/**
+ * A simple label has left-alignment and is not wrapped in multiple lines.
+ */
 #define SimpleLabelStyle	(Style(SS_SIMPLE, 0))
+
+/**
+ * If the label is too long, ellipsis ("...") is used at the end of
+ * each word instead of wrap them.
+ */
 #define WordEllipsisLabelStyle	(Style(SS_WORDELLIPSIS, 0))
+
+/**
+ * If the label is too long, ellipsis ("...") is used at the end of
+ * the text. The text is not wrapped.
+ */
 #define EndEllipsisLabelStyle	(Style(SS_ENDELLIPSIS, 0))
+
+/**
+ * If the label is too long, ellipsis ("...") is used in the middle of
+ * the text. It is useful to show file name paths, because the
+ * ellipsis is used trying to show the file name part
+ * (String#getFileName). The text is not wrapped.
+ */
 #define PathEllipsisLabelStyle	(Style(SS_PATHELLIPSIS, 0))
 
 /**
- * Static label control. It's just an informative label. Remember to
- * use the SS_NOTIFY if you derived from this class and want to use
- * mouse events (see the source code of LinkLabel for more
- * information). Also, you should be aware to use @c SS_ styles, some
- * can overlap the SS_CENTER or SS_RIGHT, so you should override
- * [gs]etTextAlign methods (like CustomLabel does).
+ * A static label of text. It's just an informative label. Remember to
+ * pass the LabelStyle to @link Label#Label Label's constructor@endlink
+ * if you derived this class.
+ *
+ * @warning
+ *   For people that want to mix up Win32 @c SS_ styles with the ones
+ *   in @c LabelStyles, you should be aware to use them because some
+ *   can overlap the @c SS_CENTER or @c SS_RIGHT, so you should override
+ *   #getTextAlign and #getTextAlign methods (like CustomLabel does).
  */
 class VACA_DLL Label : public Widget
 {

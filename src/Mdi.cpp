@@ -398,10 +398,7 @@ MdiFrame::MdiFrame(const String& title, Widget* parent, Style style, bool custom
 
 MdiFrame::~MdiFrame()
 {
-//   assert(m_mdiClient != NULL);
-
-  if (m_mdiClient != NULL)
-    delete m_mdiClient;
+  delete m_mdiClient;
 }
 
 MdiClient* MdiFrame::getMdiClient()

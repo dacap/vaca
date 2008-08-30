@@ -2,7 +2,7 @@
 
 /**
 
-@page TN002 TN002 - Technical Note 002: CreateWindow and DestroyWindow
+@page TN002 TN002: CreateWindow and DestroyWindow
 
 @image html CreateDestroyWindows.png
 
@@ -46,13 +46,14 @@ This shouldn't be your case, but if you want to make something like
 to make your customized @c CreateWindowEx call, you can override @c createHWND,
 but remember that you must to call
 @link Vaca::Widget#create create@endlink inside the constructor of
-your own class, and give @a className=WidgetClassName::None to
-@link Vaca::Widget#Widget Widget()@endlink.
+your own class, and give WidgetClassName#None as @a className in
+@link Vaca::Widget#Widget Widget's constructor@endlink.
 This is a little example:
 @code
 class MyWidgetClass : public WidgetClass
 {
 public:
+  // This returns the name of your class for the Win32's API
   static MyWidgetClass getClassName()
   { return MyWidgetClass("Vaca.MyWidgetClass"); }
 };

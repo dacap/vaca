@@ -54,8 +54,7 @@ TabBase::TabBase(Widget* parent, Style style)
 
 TabBase::~TabBase()
 {
-  if (m_tabFont != NULL)
-    delete m_tabFont;
+  delete m_tabFont;
 }
 
 Font* TabBase::getFont()
@@ -104,8 +103,7 @@ void TabBase::updateFont()
       lf.lfOrientation = 0;
     }
 
-    if (m_tabFont != NULL)
-      delete m_tabFont;
+    delete m_tabFont;
     m_tabFont = new Font(&lf);
 
     Widget::setFont(m_tabFont);

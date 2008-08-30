@@ -33,9 +33,6 @@
 // about what classes are accesible: we have all the classes available
 #include <Vaca/Vaca.h>
 
-// for auto_ptr
-#include <memory>
-
 // we can use the Vaca namespace by default to avoid writting things
 // like Vaca::Frame, Vaca::LinkLabel, Vaca::Font, etc.
 using namespace Vaca;
@@ -74,6 +71,7 @@ public:
     // finally we set the main frame's size to its preferred size
     setSize(getPreferredSize());
   }
+
 };
 
 // the example application, every Vaca application must to have one
@@ -104,13 +102,19 @@ public:
 int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		   LPSTR lpCmdLine, int nCmdShow)
 {
-  // create the example application
-  std::auto_ptr<Example> app(new Example());
+  try {
+    // create the example application
+    Example app;
 
-  // run the application (calling Example::main)
-  app->run();
+    // run the application (calling Example::main)
+    app.run();
 
-  // the destructor of "std::auto_ptr" deletes the "app" pointer
-  // automatically
+    // the destructor of "Example" is called here
+  }
+  catch (Exception& e) {
+    // if some errors come from Vaca show it (this method shows the
+    // error as a MsgBox)
+    e.show();
+  }
   return 0;
 }

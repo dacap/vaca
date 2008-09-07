@@ -45,7 +45,7 @@ class Exception : public std::exception
 {
   String m_message;
   DWORD m_errorCode;
-  LPTSTR m_msgbuf;
+  LPSTR m_msgbuf;
 
 public:
 
@@ -68,7 +68,7 @@ public:
 			NULL,
 			m_errorCode,
 			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-			(LPTSTR)&m_msgbuf,
+			reinterpret_cast<LPSTR>(&m_msgbuf),
 			0, NULL))
       m_msgbuf = NULL;
   }
@@ -94,7 +94,7 @@ public:
     if (m_errorCode != ERROR_SUCCESS) {
       if (!msg.empty())
 	msg += _T("\r\n\r\n");
-      msg += what();
+      msg += String(what());
     }
     MessageBox(NULL, msg.c_str(), _T("Exception"),
 	       MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);

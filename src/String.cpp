@@ -266,6 +266,9 @@ String String::getFileName() const
 /**
  * Returns the file extension (the extension of "C:\foo\main.cpp" is
  * "cpp", without the path and its title).
+ * 
+ * @warning
+ *   For a file name like "pack.tar.gz" the extension is "gz".
  *
  * @see getFilePath, getFileTitle
  */
@@ -274,6 +277,7 @@ String String::getFileExtension() const
   const_reverse_iterator rit;
   String res;
 
+  // search for the first dot from the end of the string
   for (rit=rbegin(); rit!=rend(); ++rit) {
     if (*rit == '\\' || *rit == '/')
       return res;
@@ -293,19 +297,26 @@ String String::getFileExtension() const
  * Returns the file title (the title of "C:\foo\main.cpp" is "main",
  * without the path and without the extension).
  *
+ * @warning
+ *   For a file name like "pack.tar.gz" the title is "pack.tar".
+ *
  * @see getFilePath, getFileExtension
  */
 String String::getFileTitle() const
 {
   const_reverse_iterator rit;
+  const_iterator last_dot = end();
   String res;
 
-  for (rit=rbegin(); rit!=rend(); ++rit)
+  for (rit=rbegin(); rit!=rend(); ++rit) {
     if (*rit == '\\' || *rit == '/')
       break;
+    else if (*rit == '.' && last_dot == end())
+      last_dot = rit.base()-1;
+  }
 
   for (const_iterator it(rit.base()); it!=end(); ++it) {
-    if (*it == '.')
+    if (it == last_dot)
       break;
     else
       res.push_back(*it);

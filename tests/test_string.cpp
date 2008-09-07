@@ -39,6 +39,7 @@ void test_parse()
 void test_filename()
 {
   assert(String("C:\\foo\\main.cpp").getFilePath() == _T("C:\\foo"));
+  assert(String("C:/foo/pack.tar.gz").getFilePath() == _T("C:/foo"));
   assert(String("./main.cpp").getFilePath() == _T("."));
   assert(String(".\\main.cpp").getFilePath() == _T("."));
   assert(String("\\main.cpp").getFilePath() == _T(""));
@@ -52,6 +53,7 @@ void test_filename()
   assert(String("").getFilePath() == _T(""));
 
   assert(String("C:\\foo\\main.cpp").getFileName() == _T("main.cpp"));
+  assert(String("C:/foo/pack.tar.gz").getFileName() == _T("pack.tar.gz"));
   assert(String("./main.cpp").getFileName() == _T("main.cpp"));
   assert(String(".\\main.cpp").getFileName() == _T("main.cpp"));
   assert(String("\\main.cpp").getFileName() == _T("main.cpp"));
@@ -65,6 +67,7 @@ void test_filename()
   assert(String("").getFileName() == _T(""));
 
   assert(String("C:\\foo\\main.cpp").getFileExtension() == _T("cpp"));
+  assert(String("C:/foo/pack.tar.gz").getFileExtension() == _T("gz"));
   assert(String("./main.cpp").getFileExtension() == _T("cpp"));
   assert(String(".\\main.cpp").getFileExtension() == _T("cpp"));
   assert(String("\\main.cpp").getFileExtension() == _T("cpp"));
@@ -78,6 +81,7 @@ void test_filename()
   assert(String("").getFileExtension() == _T(""));
 
   assert(String("C:\\foo\\main.cpp").getFileTitle() == _T("main"));
+  assert(String("C:/foo/pack.tar.gz").getFileTitle() == _T("pack.tar"));
   assert(String("./main.cpp").getFileTitle() == _T("main"));
   assert(String(".\\main.cpp").getFileTitle() == _T("main"));
   assert(String("\\main.cpp").getFileTitle() == _T("main"));

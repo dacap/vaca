@@ -37,23 +37,29 @@
 
 namespace Vaca {
 
-struct Win32DestroyObject
+/**
+ * Helper for GdiObject class to destroy Win32's HGDIOBJ handles.
+ * 
+ * @internal
+ */
+struct Win32DestroyGdiObject
 {
   static void destroy(HGDIOBJ handle)
   {
     ::DeleteObject(handle);
   }
 };
-  
+
 /**
  * This class is a wrapper for Win32's GDI objects.
  *
  * @internal
  */
-template<typename T, class Destroyer = Win32DestroyObject>
+template<typename T, class Destroyer = Win32DestroyGdiObject>
 class GdiObject : public Referenceable
 {
   T m_handle;
+
 public:
   GdiObject() : m_handle(NULL) { }
   GdiObject(T handle) : m_handle(handle) { }
@@ -61,9 +67,11 @@ public:
     if (isValid())
       Destroyer::destroy(m_handle);
   }
+
   bool isValid() const { return m_handle != NULL; }
   T getHandle() const { return m_handle; }
   void setHandle(T handle) { m_handle = handle; }
+
 };
 
 } // namespace Vaca

@@ -84,9 +84,7 @@ protected:
     Point origin = rc.getCenter();
 
     // draw axis
-    Pen pen(Color::Blue);
-    pen.setStyle(PenStyle::Dot);
-
+    Pen pen(Color::Blue, 1, PenStyle::Dot);
     g.drawLine(pen, rc.x, rc.y+rc.h/2, rc.x+rc.w, rc.y+rc.h/2);
     g.drawLine(pen, rc.x+rc.w/2, rc.y, rc.x+rc.w/2, rc.y+rc.h);
   }
@@ -384,8 +382,7 @@ protected:
 
     // pens
     Pen greenPen(Color(0, 192, 0), 2);
-    Pen dashPen(Color::Blue);
-    dashPen.setStyle(PenStyle::Dash);
+    Pen dashPen(Color::Blue, 1, PenStyle::Dash);
 
     // number of points
     int n = mPoints.size();

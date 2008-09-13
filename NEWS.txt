@@ -3,7 +3,8 @@ Vaca 0.0.7
 - Added GraphicsPath.
 - All methods that return Win32 handles (HWND, HDC, HBRUSH,
   HRGN, etc.) now are called getHandle().
-- Now Font, Image, ImageList, and Region are SmartPtrs.
+- Brush, Cursor, Font, Icon, Image, ImageList, Pen, and
+  Region are SmartPtrs.
 - Added GdiObject and SmartPtr.
 - Widget destructor deletes children.
 - Added HttpRequest class.

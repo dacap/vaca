@@ -33,42 +33,33 @@
 #define VACA_BRUSH_H
 
 #include "Vaca/base.h"
-#include "Vaca/Enum.h"
-#include "Vaca/Color.h"
+#include "Vaca/GdiObject.h"
+#include "Vaca/SmartPtr.h"
 
 namespace Vaca {
 
-//////////////////////////////////////////////////////////////////////
-// Brush
+class Color;
 
 /**
- * A brush.
+ * A reference to a brush that can be used to fill shapes in a Graphics.
+ *
+ * @warning Win32's HBRUSH wrapper.
  */
-class VACA_DLL Brush
+class VACA_DLL Brush : private SmartPtr<GdiObject<HBRUSH> >
 {
-  HBRUSH m_handle;
-  bool m_modified;
-  Color m_color;
-  
 public:
 
-  explicit Brush(const Color& color);
+  Brush();
   Brush(const Brush& brush);
+  explicit Brush(const Color& color);
   virtual ~Brush();
 
   Brush& operator=(const Brush& brush);
 
   Color getColor() const;
-  void setColor(const Color& color);
 
-  HBRUSH getHandle();
+  HBRUSH getHandle() const;
 
-private:
-
-  void initialize();
-  void assign(const Brush& brush);
-  void destroy();
-  
 };
 
 } // namespace Vaca

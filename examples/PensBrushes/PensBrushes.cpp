@@ -54,49 +54,31 @@ public:
     setDoubleBuffered(true);
   }
 
-  void setPenWidth(int penWidth)
+  Pen getPen() const
   {
-    m_pen.setWidth(penWidth);
+    return m_pen;
+  }
+
+  void setPen(Pen pen)
+  {
+    m_pen = pen;
     invalidate(true);
   }
 
-  void setPenEndCap(PenEndCap penEndCap)
+  Brush getBrush() const
   {
-    m_pen.setEndCap(penEndCap);
-    invalidate(true);
+    return m_brush;
   }
 
-  void setPenJoin(PenJoin penJoin)
+  void setBrush(Brush brush)
   {
-    m_pen.setJoin(penJoin);
+    m_brush = brush;
     invalidate(true);
   }
 
   void setCloseFigure(bool closeFigure)
   {
     m_closeFigure = closeFigure;
-    invalidate(true);
-  }
-
-  Color getPenColor() const
-  {
-    return m_pen.getColor();
-  }
-
-  void setPenColor(Color color)
-  {
-    m_pen.setColor(color);
-    invalidate(true);
-  }
-
-  Color getBrushColor() const
-  {
-    return m_brush.getColor();
-  }
-
-  void setBrushColor(Color color)
-  {
-    m_brush.setColor(color);
     invalidate(true);
   }
 
@@ -186,37 +168,29 @@ public:
     m_roundEndCap.setSelected(true);
     m_roundJoin.setSelected(true);
 
-    m_penWidth.Change.connect(Bind(&MainFrame::onChangePenWidth, this));
+    m_penWidth.Change.connect(Bind(&MainFrame::regenerate, this));
+    m_endCapGroup.Change.connect(Bind(&MainFrame::regenerate, this));
+    m_joinGroup.Change.connect(Bind(&MainFrame::regenerate, this));
+
     m_penColor.Action.connect(Bind(&MainFrame::onSelectPenColor, this));
     m_brushColor.Action.connect(Bind(&MainFrame::onSelectBrushColor, this));
     m_closeFigure.Action.connect(Bind(&MainFrame::onCloseFigure, this));
-    m_roundEndCap.Action.connect(Bind(&MainFrame::onEndCap, this, PenEndCap::Round));
-    m_squareEndCap.Action.connect(Bind(&MainFrame::onEndCap, this, PenEndCap::Square));
-    m_flatEndCap.Action.connect(Bind(&MainFrame::onEndCap, this, PenEndCap::Flat));
-    m_roundJoin.Action.connect(Bind(&MainFrame::onJoin, this, PenJoin::Round));
-    m_bevelJoin.Action.connect(Bind(&MainFrame::onJoin, this, PenJoin::Bevel));
-    m_miterJoin.Action.connect(Bind(&MainFrame::onJoin, this, PenJoin::Miter));
   }
 
 private:
 
-  void onChangePenWidth()
-  {
-    m_preview.setPenWidth(m_penWidth.getValue());
-  }
-
   void onSelectPenColor()
   {
-    ColorDialog dlg(m_preview.getPenColor(), this);
+    ColorDialog dlg(m_preview.getPen().getColor(), this);
     if (dlg.doModal())
-      m_preview.setPenColor(dlg.getColor());
+      m_preview.setPen(createPen(dlg.getColor()));
   }
 
   void onSelectBrushColor()
   {
-    ColorDialog dlg(m_preview.getBrushColor(), this);
+    ColorDialog dlg(m_preview.getBrush().getColor(), this);
     if (dlg.doModal())
-      m_preview.setBrushColor(dlg.getColor());
+      m_preview.setBrush(Brush(dlg.getColor()));
   }
 
   void onCloseFigure()
@@ -224,16 +198,31 @@ private:
     m_preview.setCloseFigure(m_closeFigure.isSelected());
   }
 
-  void onEndCap(PenEndCap::enumeration value)
+  void regenerate()
   {
-    m_preview.setPenEndCap(value);
+    m_preview.setPen(createPen(m_preview.getPen().getColor()));
   }
 
-  void onJoin(PenJoin::enumeration value)
+  Pen createPen(const Color& color)
   {
-    m_preview.setPenJoin(value);
+    PenEndCap endCap;
+    PenJoin join;
+    switch (m_endCapGroup.getSelectedIndex()) {
+      case 0: endCap = PenEndCap::Round; break;
+      case 1: endCap = PenEndCap::Square; break;
+      case 2: endCap = PenEndCap::Flat; break;
+    }
+    switch (m_joinGroup.getSelectedIndex()) {
+      case 0: join = PenJoin::Round; break;
+      case 1: join = PenJoin::Bevel; break;
+      case 2: join = PenJoin::Miter; break;
+    }
+    return Pen(color,
+	       m_penWidth.getValue(),
+	       PenStyle::Solid,
+	       endCap, join);
   }
-  
+
 };
 
 //////////////////////////////////////////////////////////////////////

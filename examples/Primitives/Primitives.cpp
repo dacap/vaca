@@ -79,30 +79,16 @@ public:
 	       rc.getCenter()+Point(-extra.w, extra.h));
 
     if (!fill) {
-      pen.setColor(Color::Black);
-      g.drawRect(pen, Rect(rc.getCenter()-Point(extra), extra*2));
-
-      pen.setColor(Color::Green);
-      g.drawEllipse(pen, Rect(rc.x, rc.getCenter().y-rc.h/4, rc.w, rc.h/2));
-
-      pen.setColor(Color::Blue);
-      g.drawPie(pen, rc, 135, 45);
-
-      pen.setColor(Color::Magenta);
-      g.drawChord(pen, rc, 45+2, 90-4);
+      g.drawRect(Pen(Color::Black), Rect(rc.getCenter()-Point(extra), extra*2));
+      g.drawEllipse(Pen(Color::Green), Rect(rc.x, rc.getCenter().y-rc.h/4, rc.w, rc.h/2));
+      g.drawPie(Pen(Color::Blue), rc, 135, 45);
+      g.drawChord(Pen(Color::Magenta), rc, 45+2, 90-4);
     }
     else {
-      Brush brush(Color::Black);
-      g.fillRect(brush, Rect(rc.getCenter()-Point(extra), extra*2));
-
-      brush.setColor(Color::Green);
-      g.fillEllipse(brush, Rect(rc.x, rc.getCenter().y-rc.h/4, rc.w, rc.h/2));
-
-      brush.setColor(Color::Blue);
-      g.fillPie(brush, rc, 135, 45);
-
-      brush.setColor(Color::Magenta);
-      g.fillChord(brush, rc, 45+2, 90-4);
+      g.fillRect(Brush(Color::Black), Rect(rc.getCenter()-Point(extra), extra*2));
+      g.fillEllipse(Brush(Color::Green), Rect(rc.x, rc.getCenter().y-rc.h/4, rc.w, rc.h/2));
+      g.fillPie(Brush(Color::Blue), rc, 135, 45);
+      g.fillChord(Brush(Color::Magenta), rc, 45+2, 90-4);
     }
   }
 

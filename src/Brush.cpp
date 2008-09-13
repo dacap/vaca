@@ -30,75 +30,45 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "Vaca/Brush.h"
+#include "Vaca/Color.h"
+#include <cassert>
 
 using namespace Vaca;
 
-Brush::Brush(const Color& color)
+Brush::Brush()
+  : SmartPtr<GdiObject<HBRUSH> >(new GdiObject<HBRUSH>(CreateSolidBrush(RGB(0, 0, 0))))
 {
-  initialize();
-  m_color = color;
 }
 
 Brush::Brush(const Brush& brush)
+  : SmartPtr<GdiObject<HBRUSH> >(brush)
 {
-  initialize();
-  assign(brush);
+}
+
+Brush::Brush(const Color& color)
+  : SmartPtr<GdiObject<HBRUSH> >(new GdiObject<HBRUSH>(CreateSolidBrush(color.getColorRef())))
+{
 }
 
 Brush::~Brush()
 {
-  destroy();
 }
 
 Brush& Brush::operator=(const Brush& brush)
 {
-  assign(brush);
+  SmartPtr<GdiObject<HBRUSH> >::operator=(brush);
   return *this;
 }
 
 Color Brush::getColor() const
 {
-  return m_color;
+  LOGBRUSH lb;
+  assert(getHandle());
+  ::GetObject(getHandle(), sizeof(LOGBRUSH), &lb); 
+  return Color(lb.lbColor);
 }
 
-void Brush::setColor(const Color& color)
+HBRUSH Brush::getHandle() const
 {
-  if (m_color != color) {
-    m_color = color;
-    m_modified = true;
-  }
-}
-
-HBRUSH Brush::getHandle()
-{
-  if (m_modified || m_handle == NULL) {
-    m_modified = false;
-    destroy();
-
-    m_handle = CreateSolidBrush(m_color.getColorRef());
-  }
-  return m_handle;
-}
-
-void Brush::initialize()
-{
-  m_handle = NULL;
-  m_modified = false;
-}
-
-void Brush::assign(const Brush& brush)
-{
-  destroy();
-
-  m_handle = NULL;
-  m_modified = true;
-  m_color = brush.m_color;
-}
-
-void Brush::destroy()
-{
-  if (m_handle) {
-    DeleteObject(reinterpret_cast<HGDIOBJ>(m_handle));
-    m_handle = NULL;
-  }
+  return get()->getHandle();
 }

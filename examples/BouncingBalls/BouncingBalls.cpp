@@ -65,10 +65,8 @@ struct segment
 
   void draw(Graphics &g, double a, double b)
   {
-    Pen pen(Color::White, 3);
-    
     // segment
-    g.drawLine(pen,
+    g.drawLine(Pen(Color::White, 3),
 	       static_cast<int>(pos.x*a),
 	       static_cast<int>(pos.y*b),
 	       static_cast<int>((pos.x+dir.x)*a),
@@ -76,8 +74,7 @@ struct segment
 
     // normal
     vector2d normal = 8*dir.get_normal().normalize();
-    pen.setWidth(1);
-    g.drawLine(pen,
+    g.drawLine(Pen(Color::White, 1),
 	       static_cast<int>((pos.x+dir.x/2)*a),
 	       static_cast<int>((pos.y+dir.y/2)*b),
 	       static_cast<int>((pos.x+dir.x/2+normal.x)*a),

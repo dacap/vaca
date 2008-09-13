@@ -68,12 +68,12 @@ public:
     g.fillRect(brush, Rect(sz));
 
     // ...draw the scope
-    Pen pen(Color::Red, 3);
-    g.drawEllipse(pen, Rect(sz).shrink(4));
+    Pen pen3(Color::Red, 3);
+    g.drawEllipse(pen3, Rect(sz).shrink(4));
 
-    pen.setWidth(1);
-    g.drawLine(pen, 0, sz.h/2, sz.w, sz.h/2);
-    g.drawLine(pen, sz.w/2, 0, sz.w/2, sz.h);
+    Pen pen1(Color::Red, 1);
+    g.drawLine(pen1, 0, sz.h/2, sz.w, sz.h/2);
+    g.drawLine(pen1, sz.w/2, 0, sz.w/2, sz.h);
 
     // center the frame
     center();

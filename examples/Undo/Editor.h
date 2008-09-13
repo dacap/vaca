@@ -122,12 +122,10 @@ protected:
     Rect rc(getClientBounds());
     Pen blackPen(Color::Black);
     Pen bluePen(Color::Blue);
-    Pen grayPen(Color(192, 192, 192));
+    Pen grayPen(Color(192, 192, 192), 1, PenStyle::Dot);
     Size celBox(32, 32);
     Point origPt = rc.getCenter() - Point(celBox.w*max_length, celBox.h)/2;
     String tmp(1);
-
-    grayPen.setStyle(PenStyle::Dot);
 
     g.drawRoundRect(grayPen,
 		    Rect(origPt, Size(celBox.w*max_length, celBox.h)),

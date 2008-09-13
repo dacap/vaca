@@ -34,9 +34,12 @@
 
 #include "Vaca/base.h"
 #include "Vaca/Enum.h"
-#include "Vaca/Color.h"
+#include "Vaca/GdiObject.h"
+#include "Vaca/SmartPtr.h"
 
 namespace Vaca {
+
+class Color;
 
 //////////////////////////////////////////////////////////////////////
 // Pen Style
@@ -96,48 +99,28 @@ typedef Enum<PenJoinEnum> PenJoin;
  *
  * @see #Vaca::Graphics, #Vaca::Graphics::drawLine
  */
-class VACA_DLL Pen
+class VACA_DLL Pen : private SmartPtr<GdiObject<HPEN> >
 {
-  HPEN m_handle;
-  bool m_modified;
-  Color m_color;
-  int m_width;
-  PenStyle m_style;
-  PenEndCap m_endCap;
-  PenJoin m_join;
-  
 public:
 
-  // Cosmetic Pen
-  explicit Pen(const Color& color, int width = 1);
-//   Pen(Brush& brush, int width = 1);
+  Pen();
   Pen(const Pen& pen);
+  explicit Pen(const Color& color, int width = 1);
+  explicit Pen(const Color& color, int width,
+	       PenStyle style, // = PenStyle::Solid,
+	       PenEndCap endCap = PenEndCap::Round,
+	       PenJoin join = PenJoin::Round);
   virtual ~Pen();
 
   Pen& operator=(const Pen& pen);
 
   Color getColor() const;
-  void setColor(const Color& color);
-
   int getWidth() const;
-  void setWidth(int width);
-
   PenStyle getStyle() const;
-  void setStyle(PenStyle style);
-
   PenEndCap getEndCap() const;
-  void setEndCap(PenEndCap endCap);
-
   PenJoin getJoin() const;
-  void setJoin(PenJoin join);
 
-  HPEN getHandle();
-
-private:
-
-  void initialize();
-  void assign(const Pen& pen);
-  void destroy();
+  HPEN getHandle() const;
   
 };
 

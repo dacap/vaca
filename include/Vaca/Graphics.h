@@ -114,8 +114,8 @@ public:
   void setPixel(const Point& pt, const Color& color);
   void setPixel(int x, int y, const Color& color);
 
-  void strokePath(GraphicsPath& path, Pen& pen, const Point& pt);
-  void fillPath(GraphicsPath& path, Brush& brush, const Point& pt);
+  void strokePath(GraphicsPath& path, const Pen& pen, const Point& pt);
+  void fillPath(GraphicsPath& path, const Brush& brush, const Point& pt);
 
   void drawString(const String& str, const Point& pt);
   void drawString(const String& str, int x, int y);
@@ -134,39 +134,39 @@ public:
   void drawImageList(ImageList& imageList, int imageIndex, int x, int y, int style);
   void drawImageList(ImageList& imageList, int imageIndex, const Point& pt, int style);
 
-  void drawLine(Pen& pen, const Point& pt1, const Point& pt2);
-  void drawLine(Pen& pen, int x1, int y1, int x2, int y2);
-  void drawBezier(Pen& pen, const Point points[4]);
-  void drawBezier(Pen& pen, const std::vector<Point>& points);
-  void drawBezier(Pen& pen, const Point& pt1, const Point& pt2, const Point& pt3, const Point& pt4);
-  void drawBezier(Pen& pen, int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4);
-  void drawRect(Pen& pen, const Rect& rc);
-  void drawRect(Pen& pen, int x, int y, int w, int h);
-  void drawRoundRect(Pen& pen, const Rect& rc, const Size& ellipse);
-  void drawRoundRect(Pen& pen, int x, int y, int w, int h, int ellipseWidth, int ellipseHeight);
+  void drawLine(const Pen& pen, const Point& pt1, const Point& pt2);
+  void drawLine(const Pen& pen, int x1, int y1, int x2, int y2);
+  void drawBezier(const Pen& pen, const Point points[4]);
+  void drawBezier(const Pen& pen, const std::vector<Point>& points);
+  void drawBezier(const Pen& pen, const Point& pt1, const Point& pt2, const Point& pt3, const Point& pt4);
+  void drawBezier(const Pen& pen, int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4);
+  void drawRect(const Pen& pen, const Rect& rc);
+  void drawRect(const Pen& pen, int x, int y, int w, int h);
+  void drawRoundRect(const Pen& pen, const Rect& rc, const Size& ellipse);
+  void drawRoundRect(const Pen& pen, int x, int y, int w, int h, int ellipseWidth, int ellipseHeight);
   void draw3dRect(const Rect& rc, const Color& topLeft, const Color& bottomRight);
   void draw3dRect(int x, int y, int w, int h, const Color& topLeft, const Color& bottomRight);
-  void drawEllipse(Pen& pen, const Rect& rc);
-  void drawEllipse(Pen& pen, int x, int y, int w, int h);
-  void drawArc(Pen& pen, const Rect& rc, double startAngle, double sweepAngle);
-  void drawArc(Pen& pen, int x, int y, int w, int h, double startAngle, double sweepAngle);
-  void drawPie(Pen& pen, const Rect& rc, double startAngle, double sweepAngle);
-  void drawPie(Pen& pen, int x, int y, int w, int h, double startAngle, double sweepAngle);
-  void drawChord(Pen& pen, const Rect& rc, double startAngle, double sweepAngle);
-  void drawChord(Pen& pen, int x, int y, int w, int h, double startAngle, double sweepAngle);
-  void drawPolyline(Pen& pen, const std::vector<Point>& points);
+  void drawEllipse(const Pen& pen, const Rect& rc);
+  void drawEllipse(const Pen& pen, int x, int y, int w, int h);
+  void drawArc(const Pen& pen, const Rect& rc, double startAngle, double sweepAngle);
+  void drawArc(const Pen& pen, int x, int y, int w, int h, double startAngle, double sweepAngle);
+  void drawPie(const Pen& pen, const Rect& rc, double startAngle, double sweepAngle);
+  void drawPie(const Pen& pen, int x, int y, int w, int h, double startAngle, double sweepAngle);
+  void drawChord(const Pen& pen, const Rect& rc, double startAngle, double sweepAngle);
+  void drawChord(const Pen& pen, int x, int y, int w, int h, double startAngle, double sweepAngle);
+  void drawPolyline(const Pen& pen, const std::vector<Point>& points);
   
-  void fillRect(Brush& brush, const Rect& rc);
-  void fillRect(Brush& brush, int x, int y, int w, int h);
-  void fillRoundRect(Brush& brush, const Rect& rc, const Size& ellipse);
-  void fillRoundRect(Brush& brush, int x, int y, int w, int h, int ellipseWidth, int ellipseHeight);
-  void fillEllipse(Brush& brush, const Rect& rc);
-  void fillEllipse(Brush& brush, int x, int y, int w, int h);
-  void fillPie(Brush& brush, const Rect& rc, double startAngle, double sweepAngle);
-  void fillPie(Brush& brush, int x, int y, int w, int h, double startAngle, double sweepAngle);
-  void fillChord(Brush& brush, const Rect& rc, double startAngle, double sweepAngle);
-  void fillChord(Brush& brush, int x, int y, int w, int h, double startAngle, double sweepAngle);
-  void fillRegion(Brush& brush, const Region& rgn);
+  void fillRect(const Brush& brush, const Rect& rc);
+  void fillRect(const Brush& brush, int x, int y, int w, int h);
+  void fillRoundRect(const Brush& brush, const Rect& rc, const Size& ellipse);
+  void fillRoundRect(const Brush& brush, int x, int y, int w, int h, int ellipseWidth, int ellipseHeight);
+  void fillEllipse(const Brush& brush, const Rect& rc);
+  void fillEllipse(const Brush& brush, int x, int y, int w, int h);
+  void fillPie(const Brush& brush, const Rect& rc, double startAngle, double sweepAngle);
+  void fillPie(const Brush& brush, int x, int y, int w, int h, double startAngle, double sweepAngle);
+  void fillChord(const Brush& brush, const Rect& rc, double startAngle, double sweepAngle);
+  void fillChord(const Brush& brush, int x, int y, int w, int h, double startAngle, double sweepAngle);
+  void fillRegion(const Brush& brush, const Region& rgn);
 
   void fillGradientRect(const Rect& rc, const Color& startColor, const Color& endColor, Orientation orientation);
   void fillGradientRect(int x, int y, int w, int h, const Color& startColor, const Color& endColor, Orientation orientation);
@@ -190,9 +190,9 @@ private:
 
   void initialize();
   
-  void drawBezier(Pen& pen, CONST POINT* lppt, int numPoints);
-  void drawBezierTo(Pen& pen, CONST POINT* lppt, int numPoints);
-  void drawPolyline(Pen& pen, CONST POINT* lppt, int numPoints);
+  void drawBezier(const Pen& pen, CONST POINT* lppt, int numPoints);
+  void drawBezierTo(const Pen& pen, CONST POINT* lppt, int numPoints);
+  void drawPolyline(const Pen& pen, CONST POINT* lppt, int numPoints);
   void renderPath(GraphicsPath& path, HPEN hpen, HBRUSH hbrush, const Point& pt, bool fill);
   
 };

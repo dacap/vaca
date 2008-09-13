@@ -110,7 +110,7 @@ public:
     , m_driverIndex(-1)
   {
     // now we can create the widget because in this point is when our
-    // version of createHWND (see below) will be called
+    // version of createHandle (see below) will be called
     create(WidgetClassName::None, parent, ChildStyle);
     
     setPreferredSize(Size(320, 240));
@@ -176,13 +176,13 @@ public:
 private:
   // This is a tricky situation, we have to override this method to
   // obtain a custom HWND that isn't created with Win32's CreateWindowEx
-  virtual HWND createHWND(LPCTSTR className, Widget* parent, Style style)
+  virtual HWND createHandle(LPCTSTR className, Widget* parent, Style style)
   {
     // this routine is from VFW
     return capCreateCaptureWindow(_T("WebCam"),
 				  style.regular,
 				  0, 0, 160, 120,
-				  parent ? parent->getHWND(): NULL,
+				  parent ? parent->getHandle(): NULL,
 				  0);
   }
 };

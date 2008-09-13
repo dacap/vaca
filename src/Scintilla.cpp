@@ -77,17 +77,17 @@ SciEditor::~SciEditor()
  * sets the default style of the Scintilla editor (see for
  * STYLE_DEFAULT in the Scintilla documentation).
  */
-void SciEditor::setFont(Font* font)
+void SciEditor::setFont(Font font)
 {
   Widget::setFont(font);
 
   LOGFONT lf;
-  if (font->getLogFont(&lf)) {
-    FontStyle style = font->getStyle();
+  if (font.getLogFont(&lf)) {
+    FontStyle style = font.getStyle();
 
     // set font for the default style
     sendMessage(SCI_STYLESETFONT, STYLE_DEFAULT, reinterpret_cast<LPARAM>(lf.lfFaceName));
-    sendMessage(SCI_STYLESETSIZE, STYLE_DEFAULT, font->getPointSize());
+    sendMessage(SCI_STYLESETSIZE, STYLE_DEFAULT, font.getPointSize());
     sendMessage(SCI_STYLESETBOLD, STYLE_DEFAULT, style & FontStyle::Bold ? TRUE: FALSE);
     sendMessage(SCI_STYLESETITALIC, STYLE_DEFAULT, style & FontStyle::Italic ? TRUE: FALSE);
     sendMessage(SCI_STYLESETUNDERLINE, STYLE_DEFAULT, style & FontStyle::Underline ? TRUE: FALSE);

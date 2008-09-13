@@ -37,7 +37,7 @@
 
 using namespace Vaca;
 
-FontDialog::FontDialog(Font* font, Widget* parent)
+FontDialog::FontDialog(const Font& font, Widget* parent)
   : CommonDialog(parent)
   , m_font(font)
 {
@@ -52,7 +52,7 @@ bool FontDialog::doModal()
   CHOOSEFONT cf;
 
   cf.lStructSize = sizeof(CHOOSEFONT);
-  cf.hwndOwner = getParentHWND();
+  cf.hwndOwner = getParentHandle();
   cf.hDC = NULL;
   cf.lpLogFont = &m_logFont;
   cf.iPointSize = 0; 
@@ -61,21 +61,26 @@ bool FontDialog::doModal()
   cf.lCustData = 0L; 
   cf.lpfnHook = (LPCFHOOKPROC)NULL; 
   cf.lpTemplateName = (LPTSTR)NULL; 
-  cf.hInstance = (HINSTANCE)Application::getHINSTANCE();
+  cf.hInstance = (HINSTANCE)Application::getHandle();
   cf.lpszStyle = (LPTSTR)NULL; 
   cf.nFontType = SCREEN_FONTTYPE; 
   cf.nSizeMin = 4; 
   cf.nSizeMax = 72; 
 
-  if (m_font->getLogFont(&m_logFont))
+  if (m_font.getLogFont(&m_logFont))
     cf.Flags |= CF_INITTOLOGFONTSTRUCT;
 
   if (ChooseFont(&cf)) {
-    m_font->assign(&m_logFont);
+    m_font = Font(&m_logFont);
     return true;
   }
   else
     return false;
+}
+
+Font FontDialog::getFont() const
+{
+  return m_font;
 }
 
 bool FontDialog::getLogFont(LPLOGFONT lplf) const

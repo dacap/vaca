@@ -84,7 +84,7 @@ private:
   void getTextFromDlgItem(int id, String& s);
   void setTextFromDlgItem(int id, const String& s);
 
-  virtual HWND createHWND(LPCTSTR className, Widget* parent, Style style);
+  virtual HWND createHandle(LPCTSTR className, Widget* parent, Style style);
   static UINT_PTR CALLBACK hookProc(HWND hdlg, UINT uiMsg, WPARAM wParam, LPARAM lParam);
 
 };

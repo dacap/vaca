@@ -40,12 +40,18 @@ using namespace Vaca;
  * @param width Width of the pen. If it's 1, the pen will be cosmetic,
  *              if width > 0 the pen will be geometric.
  */
-Pen::Pen(Color color, int width)
+Pen::Pen(const Color& color, int width)
 {
   initialize();
   m_color = color;
   m_width = width;
   m_style = PenStyle::Solid;
+}
+
+Pen::Pen(const Pen& pen)
+{
+  initialize();
+  assign(pen);
 }
 
 /**
@@ -54,6 +60,12 @@ Pen::Pen(Color color, int width)
 Pen::~Pen()
 {
   destroy();
+}
+
+Pen& Pen::operator=(const Pen& pen)
+{
+  assign(pen);
+  return *this;
 }
 
 /**
@@ -71,7 +83,7 @@ Color Pen::getColor() const
  *
  * @param color New color for the pen.
  */
-void Pen::setColor(Color color)
+void Pen::setColor(const Color& color)
 {
   if (m_color != color) {
     m_color = color;
@@ -155,9 +167,9 @@ void Pen::setJoin(PenJoin join)
  * Returns the handler used by Win32 use the pen in graphics
  * primitives.
  */
-HPEN Pen::getHPEN()
+HPEN Pen::getHandle()
 {
-  if (m_modified || m_HPEN == NULL) {
+  if (m_modified || m_handle == NULL) {
     m_modified = false;
     destroy();
 
@@ -194,23 +206,36 @@ HPEN Pen::getHPEN()
     lb.lbHatch = 0;
 
     if (m_width == 1)
-      m_HPEN = ExtCreatePen(PS_COSMETIC | style, m_width, &lb, 0, NULL);
+      m_handle = ExtCreatePen(PS_COSMETIC | style, m_width, &lb, 0, NULL);
     else
-      m_HPEN = ExtCreatePen(PS_GEOMETRIC | style, m_width, &lb, 0, NULL);
+      m_handle = ExtCreatePen(PS_GEOMETRIC | style, m_width, &lb, 0, NULL);
   }
-  return m_HPEN;
+  return m_handle;
 }
 
 void Pen::initialize()
 {
-  m_HPEN = NULL;
+  m_handle = NULL;
   m_modified = false;
+}
+
+void Pen::assign(const Pen& pen)
+{
+  destroy();
+
+  m_handle = NULL;
+  m_modified = true;
+  m_color = pen.m_color;
+  m_width = pen.m_width;
+  m_style = pen.m_style;
+  m_endCap = pen.m_endCap;
+  m_join = pen.m_join;
 }
 
 void Pen::destroy()
 {
-  if (m_HPEN != NULL) {
-    DeleteObject(reinterpret_cast<HGDIOBJ>(m_HPEN));
-    m_HPEN = NULL;
+  if (m_handle) {
+    DeleteObject(reinterpret_cast<HGDIOBJ>(m_handle));
+    m_handle = NULL;
   }
 }

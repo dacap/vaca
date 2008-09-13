@@ -9,7 +9,7 @@
 <h2>Where are HWNDs created?</h2>
 
 All HWNDs are created inside
-@link Vaca::Widget#createHWND Widget::createHWND@endlink
+@link Vaca::Widget#createHandle Widget::createHandle@endlink
 method using the Win32 API routine @c CreateWindowEx. But this
 method is privated, you can't call it (although you can
 override it), the only one that calls this method is
@@ -39,11 +39,11 @@ Widget. That is if we create a button:
   // here myButton (and its HWND) doesn't exist
 @endcode
 
-<h2>You can override createHWND</h2>
+<h2>You can override createHandle</h2>
 
 This shouldn't be your case, but if you want to make something like
-@link Vaca::MdiClient#createHWND MdiClient::createHWND@endlink, it is,
-to make your customized @c CreateWindowEx call, you can override @c createHWND,
+@link Vaca::MdiClient#createHandle MdiClient::createHandle@endlink, it is,
+to make your customized @c CreateWindowEx call, you can override @c createHandle,
 but remember that you must to call
 @link Vaca::Widget#create create@endlink inside the constructor of
 your own class, and give WidgetClassName#None as @a className in
@@ -73,17 +73,17 @@ public:
 protected:
 
   // customized call to CreateWindowEx
-  virtual HWND createHWND(LPCTSTR className,
-                          Widget* parent,
-                          Style style)
+  virtual HWND createHandle(LPCTSTR className,
+                            Widget* parent,
+                            Style style)
   {
     return CreateWindowEx(style.extended, className, _T(""),
 			  style.regular,
 			  CW_USEDEFAULT, CW_USEDEFAULT,
 			  CW_USEDEFAULT, CW_USEDEFAULT,
-			  parent ? parent->getHWND(): (HWND)NULL,
+			  parent ? parent->getHandle(): (HWND)NULL,
 			  (HMENU)NULL,
-			  Application::getHINSTANCE(),
+			  Application::getHandle(),
 			  reinterpret_cast<LPVOID>(this));
   }
 };

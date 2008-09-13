@@ -54,9 +54,9 @@ void Layout::beginMovement(const Widget::Container& widgets)
 void Layout::moveWidget(Widget* widget, const Rect& rc)
 {
   if (m_HDWP != NULL) {
-    m_HDWP = DeferWindowPos(m_HDWP, widget->getHWND(), NULL,
-			   rc.x, rc.y, rc.w, rc.h, 
-			   SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOACTIVATE);
+    m_HDWP = DeferWindowPos(m_HDWP, widget->getHandle(), NULL,
+			    rc.x, rc.y, rc.w, rc.h, 
+			    SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOACTIVATE);
   }
 
 //   if (widget->getBounds() == rc)

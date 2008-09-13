@@ -165,14 +165,11 @@ Rect ToolSet::setRows(int rows, bool expand)
  */
 void ToolSet::setImageList(ImageList& imageList)
 {
-  assert(imageList.isValid());
-  
-  sendMessage(TB_SETIMAGELIST, 0,
-	      reinterpret_cast<LPARAM>(imageList.getHIMAGELIST()));
+  sendMessage(TB_SETIMAGELIST, 0, reinterpret_cast<LPARAM>(imageList.getHandle()));
 
   // TODO
 //   sendMessage(TB_SETHOTIMAGELIST, 0,
-// 	      reinterpret_cast<LPARAM>(imageList.getHIMAGELIST()));
+// 	      reinterpret_cast<LPARAM>(imageList.getHandle()));
 }
 
 /**
@@ -394,12 +391,12 @@ bool ToolSet::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResu
 
     case WM_LBUTTONDOWN:
       // we are above the ToolSet?
-      // if (getHWND() == ::WindowFromPoint(getAbsoluteCursorPos())) {
+      // if (getHandle() == ::WindowFromPoint(getAbsoluteCursorPos())) {
 
       // the mouse isn't above a button
       if (hitTest(Point(LOWORD(lParam), HIWORD(lParam))) < 0) {
 	// don't use the WM_LBUTTONDOWN message, send it to the parent
-	PostMessage(getParentHWND(), WM_LBUTTONDOWN, wParam, lParam);
+	PostMessage(getParentHandle(), WM_LBUTTONDOWN, wParam, lParam);
 	lResult = FALSE;
 	// lResult = TRUE;
 	return true;

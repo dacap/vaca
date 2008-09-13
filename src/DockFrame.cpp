@@ -45,7 +45,7 @@ DockFrame::DockFrame(DockBar* dockBar, Widget* parent, Style style)
 
   setLayout(new ClientLayout);
   bringToTop();
-  // SetWindowPos(getHWND(), HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+  // SetWindowPos(getHandle(), HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 }
 
 DockFrame::~DockFrame()

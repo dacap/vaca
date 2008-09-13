@@ -36,13 +36,15 @@
 
 using namespace Vaca;
 
-//////////////////////////////////////////////////////////////////////
-// Icon
-
+#define GdiObj GdiObject<HCURSOR, Win32DestroyIcon>
 
 Icon::Icon()
 {
-  m_HICON = NULL;
+}
+
+Icon::Icon(const Icon& icon)
+  : SmartPtr<GdiObj>(icon)
+{
 }
 
 /**
@@ -51,15 +53,18 @@ Icon::Icon()
  * @throw ResourceException
  *   When the resource with ID @a iconId wasn't found.
  */
-Icon::Icon(int iconId, const Size& sz)
+Icon::Icon(ResourceId iconId, const Size& sz)
+  : SmartPtr<GdiObj>(new GdiObj)
 {
-  m_HICON = reinterpret_cast<HICON>(LoadImage(Application::getHINSTANCE(),
-					      MAKEINTRESOURCE(iconId),
-					      IMAGE_ICON,
-					      sz.w, sz.h, 0));
+  HICON handle = reinterpret_cast<HICON>
+    (::LoadImage(Application::getHandle(),
+		 MAKEINTRESOURCE(iconId.getId()),
+		 IMAGE_ICON,
+		 sz.w, sz.h, 0));
+  if (handle == NULL)
+    throw ResourceException("Can't load the icon resource " + String::fromInt(iconId.getId()));
 
-  if (m_HICON == NULL)
-    throw ResourceException("Can't load the icon resource " + String::fromInt(iconId));
+  get()->setHandle(handle);
 }
 
 /**
@@ -69,65 +74,29 @@ Icon::Icon(int iconId, const Size& sz)
  *   When the icon couldn't be loaded from the specified @a fileName.
  */
 Icon::Icon(const String& fileName, const Size& sz)
+  : SmartPtr<GdiObj>(new GdiObj)
 {
-  m_HICON = reinterpret_cast<HICON>(LoadImage(Application::getHINSTANCE(),
-					      fileName.c_str(),
-					      IMAGE_ICON,
-					      sz.w, sz.h, LR_LOADFROMFILE));
-
-  if (m_HICON == NULL)
+  HICON handle = reinterpret_cast<HICON>
+    (::LoadImage(Application::getHandle(),
+		 fileName.c_str(),
+		 IMAGE_ICON,
+		 sz.w, sz.h, LR_LOADFROMFILE));
+  if (handle == NULL)
     throw ResourceException("Can't load icon from file " + fileName);
+
+  get()->setHandle(handle);
+}
+
+Icon::Icon(HICON handle)
+  : SmartPtr<GdiObj>(new GdiObj(handle))
+{
 }
 
 Icon::~Icon()
 {
-  if (m_HICON != NULL)
-    DestroyIcon(m_HICON);
 }
 
-HICON Icon::getHICON()
+HICON Icon::getHandle() const
 {
-  return m_HICON;
-}
-
-void Icon::setHICON(HICON hicon)
-{
-  m_HICON = hicon;
-}
-
-//////////////////////////////////////////////////////////////////////
-// SharedIcon
-
-
-SharedIcon::SharedIcon(int iconId, const Size& sz)
-{
-  HICON hicon = reinterpret_cast<HICON>(LoadImage(Application::getHINSTANCE(),
-						  MAKEINTRESOURCE(iconId),
-						  IMAGE_ICON,
-						  sz.w, sz.h, LR_SHARED));
-
-  if (hicon == NULL)
-    throw ResourceException("Can't load the icon resource " + String::fromInt(iconId));
-
-  setHICON(hicon);
-}
-
-SharedIcon::SharedIcon(const String& fileName, const Size& sz)
-{
-  HICON hicon = reinterpret_cast<HICON>(LoadImage(Application::getHINSTANCE(),
-						  fileName.c_str(),
-						  IMAGE_ICON,
-						  sz.w, sz.h,
-						  LR_LOADFROMFILE | LR_SHARED));
-
-  if (hicon == NULL)
-    throw ResourceException("Can't load icon from file " + fileName);
-
-  setHICON(hicon);
-}
-
-SharedIcon::~SharedIcon()
-{
-  // avoid to call DestroyIcon, this icon is shared
-  setHICON(NULL);
+  return get()->getHandle();
 }

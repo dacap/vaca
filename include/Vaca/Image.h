@@ -35,47 +35,60 @@
 #include "Vaca/base.h"
 #include "Vaca/ResourceId.h"
 #include "Vaca/Size.h"
+#include "Vaca/GdiObject.h"
+#include "Vaca/SmartPtr.h"
 
 namespace Vaca {
 
 class Graphics;
+class Image;
+
+/**
+ * @internal
+ */
+class VACA_DLL ImageHandle : public GdiObject<HBITMAP>
+{
+  friend class Image;
+  HDC m_hdc;
+  Graphics* m_graphics;
+public:
+  ImageHandle();
+  ImageHandle(HBITMAP handle);
+  virtual ~ImageHandle();
+};
 
 /**
  * An image (HBITMAP wrapper)
  */
-class VACA_DLL Image
+class VACA_DLL Image : private SmartPtr<ImageHandle>
 {
-  HDC m_fromHDC;
-  Size m_size;
-  HBITMAP m_HBITMAP;
-  Graphics* m_graphics;
-
 public:
-
   Image();
-  Image(ResourceId imageId);
-  Image(const String& fileName);
-  Image(const Size& sz);
-  Image(const Size& sz, int bpp);
+  explicit Image(ResourceId imageId);
+  explicit Image(const String& fileName);
+  explicit Image(const Size& sz);
+  Image(const Size& sz, int depth);
   Image(const Size& sz, Graphics& g);
   Image(const Image& image);
   virtual ~Image();
 
-  bool isValid();
+  bool isValid() const { return get()->isValid(); }
 
   int getWidth() const;
   int getHeight() const;
   Size getSize() const;
+  int getDepth() const;
 
   Graphics* getGraphics();
 
-  HBITMAP getHBITMAP();
+  HBITMAP getHandle() const;
 
   Image& operator=(const Image& image);
 
+  Image clone() const;
+
 private:
 
-  void destroy();
   void copyTo(Image& image) const;
   
 };

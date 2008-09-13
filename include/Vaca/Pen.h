@@ -98,7 +98,7 @@ typedef Enum<PenJoinEnum> PenJoin;
  */
 class VACA_DLL Pen
 {
-  HPEN m_HPEN;
+  HPEN m_handle;
   bool m_modified;
   Color m_color;
   int m_width;
@@ -109,13 +109,15 @@ class VACA_DLL Pen
 public:
 
   // Cosmetic Pen
-  explicit Pen(Color color, int width = 1);
+  explicit Pen(const Color& color, int width = 1);
 //   Pen(Brush& brush, int width = 1);
-//   Pen(const Pen& pen);
+  Pen(const Pen& pen);
   virtual ~Pen();
 
+  Pen& operator=(const Pen& pen);
+
   Color getColor() const;
-  void setColor(Color color);
+  void setColor(const Color& color);
 
   int getWidth() const;
   void setWidth(int width);
@@ -129,11 +131,12 @@ public:
   PenJoin getJoin() const;
   void setJoin(PenJoin join);
 
-  HPEN getHPEN();
+  HPEN getHandle();
 
 private:
 
   void initialize();
+  void assign(const Pen& pen);
   void destroy();
   
 };

@@ -50,7 +50,7 @@ class VACA_DLL ColorDialog : public CommonDialog
 
 public:
 
-  ColorDialog(Color color, Widget* parent);
+  ColorDialog(const Color& color, Widget* parent);
   virtual ~ColorDialog();
 
   virtual bool doModal();

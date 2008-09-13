@@ -50,7 +50,7 @@ static String MD5File(const String &fileName)
 
   unsigned char buf[1024];
   size_t len;
-  while (len = fread(buf, 1, 1024, stream))
+  while ((len = fread(buf, 1, 1024, stream)))
     MD5Update(&md5, buf, len);
 
   fclose(stream);
@@ -79,7 +79,7 @@ static String SHA1File(const String &fileName)
 
   unsigned char buf[1024];
   size_t len;
-  while (len = fread(buf, 1, 1024, stream))
+  while ((len = fread(buf, 1, 1024, stream)))
     SHA1Input(&sha, buf, len);
 
   fclose(stream);
@@ -104,7 +104,6 @@ class MainFrame : public Frame
   Edit m_shaEdit;
   LinkLabel m_md5Label;
   LinkLabel m_shaLabel;
-  ImageList m_imageList;
 
 public:
 
@@ -133,9 +132,8 @@ public:
     m_filesList.DropFiles.connect(&MainFrame::onDropFilesInFilesList, this);
     m_filesList.AfterSelect.connect(&MainFrame::onSelectFileInList, this);
 
-    // image list (get the small image list from the system)
-    System::getImageList(m_imageList, true);
-    m_filesList.setSmallImageList(&m_imageList);
+    // get the small image list from the system and put it in the ListView
+    m_filesList.setSmallImageList(System::getImageList(true));
   }
 
 private:

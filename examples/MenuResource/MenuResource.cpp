@@ -46,7 +46,7 @@ public:
     : MultilineEdit("", parent, MultilineEditStyle + ScrollStyle)
     , m_font("Courier New", 10)
   {
-    setFont(&m_font);
+    setFont(m_font);
     setBgColor(Color::Black);
     setFgColor(Color(0, 220, 0));
   }

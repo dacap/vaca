@@ -52,14 +52,14 @@ public:
   {
     setLayout(new BoxLayout(Orientation::Vertical, false));
     m_listView.setConstraint(new BoxConstraint(true));
-    m_bottom.setLayout(new BoxLayout(Orientation::Horizontal, true));
+    m_bottom.setLayout(new BoxLayout(Orientation::Horizontal, false));
 
     // get the system image-list
-    System::getImageList(m_imageList, false);
+    m_imageList = System::getImageList(false);
 
     // setup the ListView
     m_listView.setType(ListViewType::Icon);
-    m_listView.setNormalImageList(&m_imageList);
+    m_listView.setNormalImageList(m_imageList);
 
     // bindings
     m_browseButton.Action.connect(Bind(&MainFrame::onBrowse, this));
@@ -87,7 +87,7 @@ protected:
       m_listView.addItem("Image #"+String::fromInt(i), i);
     }
   }
-  
+
 };
 
 //////////////////////////////////////////////////////////////////////

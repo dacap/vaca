@@ -36,25 +36,33 @@
 
 using namespace Vaca;
 
+#define GdiObj GdiObject<HIMAGELIST, Win32DestroyImageList>
+
 ImageList::ImageList()
+  : SmartPtr<GdiObj>(new GdiObj(ImageList_Create(16, 16, ILC_COLOR32, 0, 1)))
 {
-  m_HIMAGELIST = NULL;
-  m_selfDestruction = false;
 }
 
-ImageList::ImageList(HIMAGELIST hImageList, SelfDestruction selfDestruction)
+ImageList::ImageList(const Size& sz)
+  : SmartPtr<GdiObj>(new GdiObj(ImageList_Create(sz.w, sz.w, ILC_COLOR32, 0, 1)))
 {
-  m_HIMAGELIST = hImageList;
-  m_selfDestruction = selfDestruction.isEnabled();
+  if (getHandle() == NULL)
+    throw ResourceException("Can't create the image-list");
+}
+
+ImageList::ImageList(HIMAGELIST hImageList)
+  : SmartPtr<GdiObj>(new GdiObj(hImageList))
+{
 }
 
 /**
  * Loads a ImageList from a BITMAP resource.
  */
 ImageList::ImageList(ResourceId bitmapId, int widthPerIcon, Color maskColor)
+  : SmartPtr<GdiObj>(new GdiObj())
 {
-  m_HIMAGELIST =
-    ImageList_LoadImage(Application::getHINSTANCE(),
+  HIMAGELIST himagelist =
+    ImageList_LoadImage(Application::getHandle(),
 			bitmapId.toLPTSTR(),
 			widthPerIcon,
 			1,
@@ -62,44 +70,34 @@ ImageList::ImageList(ResourceId bitmapId, int widthPerIcon, Color maskColor)
 			IMAGE_BITMAP,
 			0);
 
-  if (m_HIMAGELIST == NULL)
+  if (himagelist == NULL)
     throw ResourceException("Can't create the image-list resource " + bitmapId.toString());
 
-  m_selfDestruction = true;
+  get()->setHandle(himagelist);
 }
 
 /**
  * Loads a ImageList from a file.
  */
 ImageList::ImageList(const String& fileName, int widthPerIcon, Color maskColor)
+  : SmartPtr<GdiObj>(new GdiObj())
 {
-  m_HIMAGELIST =
-    ImageList_LoadImage(Application::getHINSTANCE(),
+  HIMAGELIST himagelist =
+    ImageList_LoadImage(Application::getHandle(),
 			fileName.c_str(), 
 			widthPerIcon,
 			1,
 			maskColor.getColorRef(),
 			IMAGE_BITMAP,
 			LR_LOADFROMFILE);
-
-  if (m_HIMAGELIST == NULL)
+  if (himagelist == NULL)
     throw ResourceException("Can't load the image-list from file " + fileName);
 
-  m_selfDestruction = true;
+  get()->setHandle(himagelist);
 }
 
 ImageList::~ImageList()
 {
-  destroy();
-}
-
-/**
- * Returns true if the image list is valid and can be used in
- * drawing routines like Graphics#drawImageList.
- */
-bool ImageList::isValid()
-{
-  return m_HIMAGELIST != NULL;
 }
 
 /**
@@ -110,29 +108,11 @@ bool ImageList::isValid()
  */
 int ImageList::getImageCount()
 {
-  assert(m_HIMAGELIST != NULL);
-  
-  return ImageList_GetImageCount(m_HIMAGELIST);
+  assert(getHandle());
+  return ImageList_GetImageCount(getHandle());
 }
 
-void ImageList::assign(HIMAGELIST hImageList, SelfDestruction selfDestruction)
+HIMAGELIST ImageList::getHandle()
 {
-  destroy();
-
-  m_HIMAGELIST = hImageList;
-  m_selfDestruction = selfDestruction.isEnabled();
-}
-
-HIMAGELIST ImageList::getHIMAGELIST()
-{
-  return m_HIMAGELIST;
-}
-
-void ImageList::destroy()
-{
-  if (m_HIMAGELIST != NULL && m_selfDestruction) {
-    ImageList_Destroy(m_HIMAGELIST);
-
-    m_HIMAGELIST = NULL;
-  }
+  return get()->getHandle();
 }

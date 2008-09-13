@@ -229,7 +229,7 @@ DragListBox::DragListBox(Widget* parent, Style style)
 {
   BOOL res;
 
-  res = MakeDragList(getHWND());
+  res = MakeDragList(getHandle());
   
   assert(res != FALSE);	// TODO throw exception
 }

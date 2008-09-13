@@ -57,7 +57,7 @@ class VACA_DLL LinkLabel : public CustomLabel
 
   State m_state;
   String m_url;
-  Font* m_underlineFont;
+  Font m_underlineFont;
   Image* m_image;
 
 public:
@@ -67,7 +67,7 @@ public:
   LinkLabel(const String& url, Image& image, Widget* parent, Style style = LinkLabelStyle);
   virtual ~LinkLabel();
 
-  virtual void setFont(Font* font);
+  virtual void setFont(Font font);
 
   virtual Color getLinkColor();
   virtual Color getHoverColor();
@@ -96,7 +96,7 @@ private:
 
   void init(String text, Image* image = NULL);
   void action();
-  void updateFont(Font* font);
+  void updateFont(const Font& font);
   Rect getLinkBounds(Graphics& g);
 
 };

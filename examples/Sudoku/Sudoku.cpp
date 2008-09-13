@@ -262,14 +262,14 @@ protected:
 	// warning
 	if (it->warning) {
 	  g.setColor(Color::White);
-	  g.setFont(&m_fontBold);
+	  g.setFont(m_fontBold);
 	}
 	// hot or normal
 	else {
 	  g.setColor(Color::Black);
 	  g.setFont(m_hotCell != m_puzzle.end() &&
-		    it->digit == m_hotCell->digit ? &m_fontBold: // hot
-						   &m_font); // normal
+		    it->digit == m_hotCell->digit ? m_fontBold: // hot
+						    m_font); // normal
 	}
 
 	if (it->digit != 0) {
@@ -283,7 +283,7 @@ protected:
 	if (!it->history.empty()) {
 	  int c = 0;
 
-	  g.setFont(&m_fontSmall);
+	  g.setFont(m_fontSmall);
 	  if (!it->warning)
 	    g.setColor(Color(190, 190, 190));
 

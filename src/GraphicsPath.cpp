@@ -30,96 +30,65 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "Vaca/GraphicsPath.h"
+#include "Vaca/Point.h"
 
-#if 0
+using namespace Vaca;
 
 GraphicsPath::GraphicsPath()
 {
-  mCurrentX = 0.0f;
-  mCurrentY = 0.0f;
-  mCurrentFigure = NULL;
-
-  startFigure();
 }
 
 GraphicsPath::~GraphicsPath()
 {
-  for (std::list<Figure*>::iterator
-	 fig = mFigures.begin(); fig != mFigures.end() ++fig) {
-    for (std::list<Segment*>::iterator
-	   seg = (*fig)->segments.begin(); seg != (*fig)->segments.end() ++seg)
-      delete *seg;
-
-    delete *fig;
-  }
-}
-
-void GraphicsPath::startFigure()
-{
-  Figure* figure = new Figure;
-
-  figure->start_x = mCurrentX;
-  figure->start_y = mCurrentY;
-  figure->closed = false;
-
-  mCurrentFigure = figure;
-  mFigures.push_back(mCurrentFigure);
 }
 
 void GraphicsPath::closeFigure()
 {
+  if (!m_types.empty())
+    m_types.back() |= PT_CLOSEFIGURE;
 }
 
 void GraphicsPath::moveTo(const Point& pt)
 {
-  moveTo(static_cast<float>(pt.x),
-	 static_cast<float>(pt.y));
+  moveTo(pt.x, pt.y);
 }
 
 void GraphicsPath::moveTo(int x, int y)
 {
-  moveTo(static_cast<float>(x),
-	 static_cast<float>(y));
-}
-
-void GraphicsPath::moveTo(float x, float y)
-{
-  mCurrentX = x;
-  mCurrentY = y;
+  if (!m_types.empty() && m_types.back() == PT_MOVETO) {
+    m_points.back().x = x;
+    m_points.back().y = y;
+  }
+  else
+    addPoint(PT_MOVETO, x, y);
 }
 
 void GraphicsPath::lineTo(const Point& pt)
 {
-  lineTo(static_cast<float>(pt.x),
-	 static_cast<float>(pt.y));
+  lineTo(pt.x, pt.y);
 }
 
 void GraphicsPath::lineTo(int x, int y)
 {
-  lineTo(static_cast<float>(x),
-	 static_cast<float>(y));
-}
-
-void GraphicsPath::lineTo(float x, float y)
-{
-  mCurrentX = x;
-  mCurrentY = y;
-}
-
-void GraphicsPath::curveTo(int x1, int y1, int x2, int y2, int x3, int y3)
-{
-}
-
-void GraphicsPath::curveTo(float x1, float y1, float x2, float y2, float x3, float y3)
-{
+  addPoint(PT_LINETO, x, y);
 }
 
 void GraphicsPath::curveTo(const Point& pt1, const Point& pt2, const Point& pt3)
 {
+  curveTo(pt1.x, pt1.y, pt2.x, pt2.y, pt3.x, pt3.y);
 }
 
-void GraphicsPath::curveTo(const std::vector<Point> &points)
+void GraphicsPath::curveTo(int x1, int y1, int x2, int y2, int x3, int y3)
 {
+  addPoint(PT_BEZIERTO, x1, y1);
+  addPoint(PT_BEZIERTO, x2, y2);
+  addPoint(PT_BEZIERTO, x3, y3);
 }
 
-#endif
+void GraphicsPath::addPoint(BYTE type, int x, int y)
+{
+  POINT point = { x, y };
+
+  m_types.push_back(type);
+  m_points.push_back(point);
+}

@@ -50,7 +50,7 @@ Dialog::Dialog(const String& title, Widget* parent, Style style)
   create(DialogClass::getClassName(), parent, style);
   setText(title);
 
-  SetWindowLongPtr(getHWND(), DWL_DLGPROC,
+  SetWindowLongPtr(getHandle(), DWL_DLGPROC,
 		   reinterpret_cast<LONG_PTR>(Dialog::globalDlgProc));
 
   m_state = false;
@@ -110,7 +110,7 @@ bool Dialog::preTranslateMessage(MSG& msg)
   if (Frame::preTranslateMessage(msg))
     return true;
 
-  if (IsDialogMessage(getHWND(), &msg))
+  if (IsDialogMessage(getHandle(), &msg))
     return true;
 
   return false;
@@ -166,24 +166,24 @@ void Dialog::defaultCancelAction()
 
 Widget* Dialog::getNextFocusableWidget(Widget* widget)
 {
-  assert(::IsWindow(getHWND()));
+  assert(::IsWindow(getHandle()));
 
-  HWND hwnd = GetNextDlgTabItem(getHWND(),
-				widget != NULL ? widget->getHWND(): NULL,
+  HWND hwnd = GetNextDlgTabItem(getHandle(),
+				widget != NULL ? widget->getHandle(): NULL,
 				FALSE);
 
-  return hwnd != NULL ? Widget::fromHWND(hwnd): NULL;
+  return hwnd != NULL ? Widget::fromHandle(hwnd): NULL;
 }
 
 Widget* Dialog::getPreviousFocusableWidget(Widget* widget)
 {
-  assert(::IsWindow(getHWND()));
+  assert(::IsWindow(getHandle()));
 
-  HWND hwnd = GetNextDlgTabItem(getHWND(),
-				widget != NULL ? widget->getHWND(): NULL,
+  HWND hwnd = GetNextDlgTabItem(getHandle(),
+				widget ? widget->getHandle(): NULL,
 				TRUE);
 
-  return hwnd != NULL ? Widget::fromHWND(hwnd): NULL;
+  return hwnd != NULL ? Widget::fromHandle(hwnd): NULL;
 }
 
 bool Dialog::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult)

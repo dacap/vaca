@@ -53,10 +53,10 @@ void Button::setDefault(bool state)
 {
   if (state) {
     addStyle(Style(BS_DEFPUSHBUTTON, 0));
-    SetWindowLong(getHWND(), GWL_ID, IDOK);
+    SetWindowLong(getHandle(), GWL_ID, IDOK);
   }
   else {
     removeStyle(Style(BS_DEFPUSHBUTTON, 0));
-    SetWindowLong(getHWND(), GWL_ID, 0);
+    SetWindowLong(getHandle(), GWL_ID, 0);
   }
 }

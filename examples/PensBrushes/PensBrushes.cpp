@@ -48,6 +48,7 @@ public:
     : Panel(parent, PanelStyle + ClientEdgeStyle)
     , m_pen(Color::Red, penWidth)
     , m_brush(Color(0, 0, 200))
+    , m_closeFigure(false)
   {
     setBgColor(Color::White);
     setDoubleBuffered(true);
@@ -105,28 +106,16 @@ protected:
   {
     Rect rc = getClientBounds();
 
-    // TODO fix this, we have two times the same thing, so we can use
-    // a GraphicsPath here instead...
-    
-    g.beginPath();
-    g.moveTo(rc.x+64, rc.y+64);
-    g.lineTo(m_pen, rc.x+rc.w/4, rc.y+rc.h*3/4);
-    g.lineTo(m_pen, rc.x+rc.w-64, rc.y+rc.h-64);
+    GraphicsPath path;
+    path.moveTo(rc.x+64, rc.y+64);
+    path.lineTo(rc.x+rc.w/4, rc.y+rc.h*3/4);
+    path.lineTo(rc.x+rc.w-64, rc.y+rc.h-64);
     if (m_closeFigure)
-      g.closeFigure();
-    g.endPath();
-    g.setMiterLimit(10000.0f);
-    g.fillPath(m_brush);
+      path.closeFigure();
     
-    g.beginPath();
-    g.moveTo(rc.x+64, rc.y+64);
-    g.lineTo(m_pen, rc.x+rc.w/4, rc.y+rc.h*3/4);
-    g.lineTo(m_pen, rc.x+rc.w-64, rc.y+rc.h-64);
-    if (m_closeFigure)
-      g.closeFigure();
-    g.endPath();
     g.setMiterLimit(10000.0f);
-    g.strokePath(m_pen);
+    g.fillPath(path, m_brush, Point(0, 0));
+    g.strokePath(path, m_pen, Point(0, 0));
   }
 
   virtual void onResize(const Size &sz)

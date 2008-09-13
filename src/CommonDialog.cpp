@@ -50,7 +50,7 @@ Widget* CommonDialog::getParent()
   return m_parent;
 }
 
-HWND CommonDialog::getParentHWND()
+HWND CommonDialog::getParentHandle()
 {
-  return m_parent != NULL ? m_parent->getHWND(): NULL;
+  return m_parent != NULL ? m_parent->getHandle(): NULL;
 }

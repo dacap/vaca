@@ -114,7 +114,7 @@ Widget::Widget(const WidgetClassName& className, Widget* parent, Style style)
   }
 
   // initialize members
-  m_HWND             = NULL;
+  m_handle           = NULL;
   m_parent           = NULL;
   m_fgColor          = System::getColor(COLOR_WINDOWTEXT);
   m_bgColor          = System::getColor(COLOR_3DFACE);
@@ -124,10 +124,10 @@ Widget::Widget(const WidgetClassName& className, Widget* parent, Style style)
   m_hasMouse         = false;
   m_deleteAfterEvent = false;
   m_doubleBuffered   = false;
-  m_font             = NULL;
   m_preferredSize    = NULL;
   m_defWndProc       = ::DefWindowProc;
   m_destroyHWNDProc  = Widget_DestroyHWNDProc;
+  m_hbrush           = NULL;
 
   // create with the specified "className"?
   if (className != WidgetClassName::None)
@@ -167,7 +167,7 @@ Widget::Widget(const WidgetClassName& className, Widget* parent, Style style)
  */
 Widget::~Widget()
 {
-  assert(::IsWindow(m_HWND));
+  assert(::IsWindow(m_handle));
 
   // Lost the focus. WARNING: if we don't make this, Dialogs will die
   // suddenly in an infinite loop when TAB key is pressed. It seems
@@ -177,7 +177,7 @@ Widget::~Widget()
     releaseFocus();
 
   // hide the window
-  ::ShowWindow(m_HWND, SW_HIDE);
+  ::ShowWindow(m_handle, SW_HIDE);
 
   if (getParent() != NULL) {
     // this is very important!!! we can't set the parent of the HWND:
@@ -200,23 +200,26 @@ Widget::~Widget()
 
   // restore the old window-procedure
   if (m_baseWndProc != NULL)
-    SetWindowLongPtr(m_HWND, GWLP_WNDPROC,
+    SetWindowLongPtr(m_handle, GWLP_WNDPROC,
 		     reinterpret_cast<LONG_PTR>(m_baseWndProc));
+
+  if (m_hbrush)
+    DeleteObject(m_hbrush);
 
   // Please!!! don't remove the pointer from the widget, why?
   // because some messages could be lost (like WM_DESTROY)
   // 
   // ...
   //   #ifdef USE_PROP
-  //     RemoveProp(m_HWND, VACAATOM);
+  //     RemoveProp(m_handle, VACAATOM);
   //   #else
-  //     SetWindowLongPtr(m_HWND, GWL_USERDATA, static_cast<LONG_PTR>(NULL));
+  //     SetWindowLongPtr(m_handle, GWL_USERDATA, static_cast<LONG_PTR>(NULL));
   //   #endif
   // ...
   
   // call the procedure to destroy the HWND handler
-  m_destroyHWNDProc(m_HWND);
-  m_HWND = NULL;
+  m_destroyHWNDProc(m_handle);
+  m_handle = NULL;
 }
 
 // ============================================================
@@ -242,14 +245,14 @@ Widget::Container Widget::getChildren()
 {
 #if 0				// don't use this alternative (it
 				// doesn't work to synchronize Frame)
-  assert(::IsWindow(m_HWND));
+  assert(::IsWindow(m_handle));
 
   Container container;
 
-  HWND hwndChild = ::GetWindow(m_HWND, GW_CHILD);
+  HWND hwndChild = ::GetWindow(m_handle, GW_CHILD);
   if (hwndChild != NULL) {
     do {
-      Widget* widget = Widget::fromHWND(hwndChild);
+      Widget* widget = Widget::fromHandle(hwndChild);
       if (widget != NULL)
 	container.push_back(widget);
     } while ((hwndChild = ::GetWindow(hwndChild, GW_HWNDNEXT)) != NULL);
@@ -403,14 +406,14 @@ bool Widget::isLayoutFree()
  */
 String Widget::getText()
 {
-  assert(::IsWindow(m_HWND));
+  assert(::IsWindow(m_handle));
 
-  int len = ::GetWindowTextLength(m_HWND);
+  int len = ::GetWindowTextLength(m_handle);
   if (!len)
     return String("");
   else {
     LPTSTR buf = (LPTSTR)new TCHAR[len+1];
-    ::GetWindowText(m_HWND, buf, len+1);
+    ::GetWindowText(m_handle, buf, len+1);
     String str = String(buf);
     delete[] buf;
     return str;
@@ -423,17 +426,16 @@ String Widget::getText()
  */
 void Widget::setText(const String& str)
 {
-  assert(::IsWindow(m_HWND));
-  ::SetWindowText(m_HWND, str.c_str());
+  assert(::IsWindow(m_handle));
+  ::SetWindowText(m_handle, str.c_str());
 }
 
 /**
  * Returns the current font used to paint the Widget. If you don't use
  * Widget::setFont, the default font is used (Font::getDefault).
  */
-Font* Widget::getFont()
+Font Widget::getFont() const
 {
-  assert(m_font != NULL);
   return m_font;
 }
 
@@ -443,14 +445,12 @@ Font* Widget::getFont()
  * Font::assign or Font::operator= methods for @a font, remember to
  * recall this routine with the same @a font.
  *
- * @see Font::assign, Font::operator=
+ * @see Font::operator=
  */
-void Widget::setFont(Font* font)
+void Widget::setFont(Font font)
 {
-  assert(font != NULL);
-  
   m_font = font;
-  sendMessage(WM_SETFONT, reinterpret_cast<WPARAM>(m_font->getHFONT()), TRUE);
+  sendMessage(WM_SETFONT, reinterpret_cast<WPARAM>(m_font.getHandle()), TRUE);
 }
 
 // ===============================================================
@@ -462,10 +462,10 @@ void Widget::setFont(Font* font)
  */
 Style Widget::getStyle()
 {
-  assert(::IsWindow(m_HWND));
+  assert(::IsWindow(m_handle));
 
-  return Style(::GetWindowLong(m_HWND, GWL_STYLE),
-	       ::GetWindowLong(m_HWND, GWL_EXSTYLE));
+  return Style(::GetWindowLong(m_handle, GWL_STYLE),
+	       ::GetWindowLong(m_handle, GWL_EXSTYLE));
 }
 
 /**
@@ -474,10 +474,10 @@ Style Widget::getStyle()
  */
 void Widget::setStyle(Style style)
 {
-  assert(::IsWindow(m_HWND));
+  assert(::IsWindow(m_handle));
 
-  ::SetWindowLong(m_HWND, GWL_STYLE, style.regular);
-  ::SetWindowLong(m_HWND, GWL_EXSTYLE, style.extended);
+  ::SetWindowLong(m_handle, GWL_STYLE, style.regular);
+  ::SetWindowLong(m_handle, GWL_EXSTYLE, style.extended);
 
   // TODO MSDN says to do this after SetWindowLong
 //   SetWindowPos(mWND, NULL, 0, 0, 0, 0,
@@ -489,7 +489,7 @@ void Widget::setStyle(Style style)
  */
 void Widget::addStyle(Style style)
 {
-  assert(::IsWindow(m_HWND));
+  assert(::IsWindow(m_handle));
 
   setStyle(getStyle() + style);
 }
@@ -499,7 +499,7 @@ void Widget::addStyle(Style style)
  */
 void Widget::removeStyle(Style style)
 {
-  assert(::IsWindow(m_HWND));
+  assert(::IsWindow(m_handle));
 
   setStyle(getStyle() - style);
 }
@@ -518,18 +518,18 @@ void Widget::removeStyle(Style style)
  */
 Rect Widget::getBounds()
 {
-  assert(::IsWindow(m_HWND));
+  assert(::IsWindow(m_handle));
 
   RECT rc;
-  ::GetWindowRect(m_HWND, &rc);
+  ::GetWindowRect(m_handle, &rc);
 
   if (m_parent != NULL &&
-      (::GetWindowLong(m_HWND, GWL_STYLE) & WS_CAPTION) == 0) {
+      (::GetWindowLong(m_handle, GWL_STYLE) & WS_CAPTION) == 0) {
     POINT pt1 = Point(rc.left, rc.top);
     POINT pt2 = Point(rc.right, rc.bottom);
 
-    ::ScreenToClient(m_parent->m_HWND, &pt1);
-    ::ScreenToClient(m_parent->m_HWND, &pt2);
+    ::ScreenToClient(m_parent->m_handle, &pt1);
+    ::ScreenToClient(m_parent->m_handle, &pt2);
 
     return Rect(pt1.x, pt1.y, pt2.x-pt1.x, pt2.y-pt1.y);
   }
@@ -546,10 +546,10 @@ Rect Widget::getBounds()
  */
 Rect Widget::getAbsoluteBounds()
 {
-  assert(::IsWindow(m_HWND));
+  assert(::IsWindow(m_handle));
 
   RECT rc;
-  ::GetWindowRect(m_HWND, &rc);
+  ::GetWindowRect(m_handle, &rc);
 
   return Rect(&rc);
 }
@@ -564,8 +564,8 @@ Rect Widget::getAbsoluteBounds()
 Rect Widget::getClientBounds()
 {
   RECT rc;
-  assert(::IsWindow(m_HWND));
-  ::GetClientRect(m_HWND, &rc);
+  assert(::IsWindow(m_handle));
+  ::GetClientRect(m_handle, &rc);
   return Rect(&rc);
 }
 
@@ -578,7 +578,7 @@ Rect Widget::getClientBounds()
 Rect Widget::getAbsoluteClientBounds()
 {
   RECT rc = getClientBounds();
-  ::MapWindowPoints(m_HWND, NULL, (POINT*)&rc, 2);
+  ::MapWindowPoints(m_handle, NULL, (POINT*)&rc, 2);
   return Rect(&rc);
 }
 
@@ -603,15 +603,15 @@ Rect Widget::getLayoutBounds()
  */
 void Widget::setBounds(const Rect& rc)
 {
-  assert(::IsWindow(m_HWND));
+  assert(::IsWindow(m_handle));
 
   /* TODO remove this
-  ::SetWindowPos(m_HWND, NULL,
+  ::SetWindowPos(m_handle, NULL,
 		 rc.left, rc.top, rc.getWidth(), rc.getHeight(),
 		 SWP_NOZORDER | SWP_NOACTIVATE);
   */
 
-  ::MoveWindow(m_HWND, rc.x, rc.y, rc.w, rc.h, TRUE);
+  ::MoveWindow(m_handle, rc.x, rc.y, rc.w, rc.h, TRUE);
 }
 
 /**
@@ -788,8 +788,8 @@ void Widget::setDoubleBuffered(bool doubleBuffered)
  */
 void Widget::validate()
 {
-  assert(::IsWindow(m_HWND));
-  ::ValidateRect(m_HWND, NULL);
+  assert(::IsWindow(m_handle));
+  ::ValidateRect(m_handle, NULL);
 }
 
 /**
@@ -800,10 +800,10 @@ void Widget::validate()
  */
 void Widget::validate(const Rect& rc)
 {
-  assert(::IsWindow(m_HWND));
+  assert(::IsWindow(m_handle));
 
   RECT rc2 = rc;
-  ::ValidateRect(m_HWND, &rc2);
+  ::ValidateRect(m_handle, &rc2);
 }
 
 /**
@@ -818,8 +818,8 @@ void Widget::validate(const Rect& rc)
  */
 void Widget::invalidate(bool eraseBg)
 {
-  assert(::IsWindow(m_HWND));
-  ::InvalidateRect(m_HWND, NULL, eraseBg);
+  assert(::IsWindow(m_handle));
+  ::InvalidateRect(m_handle, NULL, eraseBg);
 }
 
 /**
@@ -844,8 +844,8 @@ void Widget::invalidate(const Rect& rc, bool eraseBg)
 {
   RECT rc2 = rc;
 
-  assert(::IsWindow(m_HWND));
-  ::InvalidateRect(m_HWND, &rc2, eraseBg);
+  assert(::IsWindow(m_handle));
+  ::InvalidateRect(m_handle, &rc2, eraseBg);
 }
 
 /**
@@ -857,8 +857,8 @@ void Widget::invalidate(const Rect& rc, bool eraseBg)
  */
 void Widget::update()
 {
-  assert(::IsWindow(m_HWND));
-  ::UpdateWindow(m_HWND);
+  assert(::IsWindow(m_handle));
+  ::UpdateWindow(m_handle);
 }
 
 /**
@@ -892,9 +892,9 @@ void Widget::updateIndicators()
  */
 bool Widget::isVisible()
 {
-  assert(::IsWindow(m_HWND));
+  assert(::IsWindow(m_handle));
 
-  return ::IsWindowVisible(m_HWND) != FALSE;
+  return ::IsWindowVisible(m_handle) != FALSE;
 }
 
 /**
@@ -903,15 +903,15 @@ bool Widget::isVisible()
  */
 void Widget::setVisible(bool visible)
 {
-  assert(::IsWindow(m_HWND));
+  assert(::IsWindow(m_handle));
 
   if (hasFocus())
     releaseFocus();
 
   if (visible)
-    ::ShowWindow(m_HWND, SW_SHOW);
+    ::ShowWindow(m_handle, SW_SHOW);
   else
-    ::ShowWindow(m_HWND, SW_HIDE);
+    ::ShowWindow(m_handle, SW_HIDE);
 }
 
 /**
@@ -922,9 +922,9 @@ void Widget::setVisible(bool visible)
  */
 bool Widget::isEnabled()
 {
-  assert(::IsWindow(m_HWND));
+  assert(::IsWindow(m_handle));
 
-  return ::IsWindowEnabled(m_HWND) != FALSE;
+  return ::IsWindowEnabled(m_handle) != FALSE;
 }
 
 /**
@@ -934,14 +934,14 @@ bool Widget::isEnabled()
  */
 void Widget::setEnabled(bool state)
 {
-  assert(::IsWindow(m_HWND));
+  assert(::IsWindow(m_handle));
 
-//   if (::GetFocus() == m_HWND)
+//   if (::GetFocus() == m_handle)
 //     ::SetFocus(NULL);
   if (hasFocus())
     releaseFocus();
 
-  ::EnableWindow(m_HWND, state ? TRUE: FALSE);
+  ::EnableWindow(m_handle, state ? TRUE: FALSE);
 }
 
 /**
@@ -977,7 +977,7 @@ Color Widget::getBgColor()
  *
  * @see getFgColor
  */
-void Widget::setFgColor(Color color)
+void Widget::setFgColor(const Color& color)
 {
   m_fgColor = color;
 }
@@ -989,7 +989,7 @@ void Widget::setFgColor(Color color)
  *
  * @see getBgColor
  */
-void Widget::setBgColor(Color color)
+void Widget::setBgColor(const Color& color)
 {
   m_bgColor = color;
 }
@@ -1020,7 +1020,7 @@ typedef BOOL (WINAPI * SLWAProc)(HWND hwnd, COLORREF crKey, BYTE bAlpha, DWORD d
  */
 int Widget::getOpacity()
 {
-  assert(::IsWindow(m_HWND));
+  assert(::IsWindow(m_handle));
 
   HMODULE hUser32 = GetModuleHandle(_T("USER32.DLL"));
   GLWAProc pGLWA;
@@ -1032,9 +1032,9 @@ int Widget::getOpacity()
   if (pGLWA == NULL) {
     return 255;
   }
-  else if (GetWindowLong(m_HWND, GWL_EXSTYLE) & WS_EX_LAYERED) {
+  else if (GetWindowLong(m_handle, GWL_EXSTYLE) & WS_EX_LAYERED) {
     BYTE opacity;
-    pGLWA(m_HWND, NULL, &opacity, NULL);
+    pGLWA(m_handle, NULL, &opacity, NULL);
     return opacity;
   }
   else {
@@ -1053,7 +1053,7 @@ int Widget::getOpacity()
  */
 void Widget::setOpacity(int opacity)
 {
-  assert(::IsWindow(m_HWND));
+  assert(::IsWindow(m_handle));
   assert(opacity >= 0 && opacity < 256);
 
   HMODULE  hUser32 = GetModuleHandle(_T("USER32.DLL"));
@@ -1065,14 +1065,14 @@ void Widget::setOpacity(int opacity)
     return;
   }
   else if (opacity == 255) {
-    SetWindowLong(m_HWND, GWL_EXSTYLE,
-		  GetWindowLong(m_HWND, GWL_EXSTYLE) & (~WS_EX_LAYERED));
+    SetWindowLong(m_handle, GWL_EXSTYLE,
+		  GetWindowLong(m_handle, GWL_EXSTYLE) & (~WS_EX_LAYERED));
   }
   else {
-    SetWindowLong(m_HWND, GWL_EXSTYLE,
-  		  GetWindowLong(m_HWND, GWL_EXSTYLE) | WS_EX_LAYERED);
+    SetWindowLong(m_handle, GWL_EXSTYLE,
+  		  GetWindowLong(m_handle, GWL_EXSTYLE) | WS_EX_LAYERED);
 
-    pSLWA(m_HWND, 0, opacity, LWA_ALPHA);
+    pSLWA(m_handle, 0, opacity, LWA_ALPHA);
   }
 }
 
@@ -1086,7 +1086,7 @@ void Widget::setOpacity(int opacity)
  */
 void Widget::requestFocus()
 {
-  assert(::IsWindow(m_HWND));
+  assert(::IsWindow(m_handle));
 #if 0
   bool inDialog = false;
   Widget* parent = this;
@@ -1100,12 +1100,12 @@ void Widget::requestFocus()
 
   if (inDialog)
     parent->sendMessage(WM_NEXTDLGCTL,
-			reinterpret_cast<WPARAM>(m_HWND),
+			reinterpret_cast<WPARAM>(m_handle),
 			MAKELPARAM(TRUE, 0));
   else
-    ::SetFocus(m_HWND);
+    ::SetFocus(m_handle);
 #else
-  ::SetFocus(m_HWND);
+  ::SetFocus(m_handle);
 #endif
 }
 
@@ -1114,7 +1114,7 @@ void Widget::requestFocus()
  */
 void Widget::releaseFocus()
 {
-  assert(::IsWindow(m_HWND));
+  assert(::IsWindow(m_handle));
 #if 0
   bool inDialog = false;
   Widget* parent = this;
@@ -1139,7 +1139,7 @@ void Widget::releaseFocus()
   else
     ::SetFocus(NULL);
 #else
-  if (m_HWND == ::GetFocus()) {
+  if (m_handle == ::GetFocus()) {
     ::SetFocus(NULL);
   }
 #endif
@@ -1152,9 +1152,9 @@ void Widget::releaseFocus()
  */
 void Widget::captureMouse()
 {
-  assert(::IsWindow(m_HWND));
+  assert(::IsWindow(m_handle));
 
-  ::SetCapture(m_HWND);
+  ::SetCapture(m_handle);
 }
 
 /**
@@ -1162,8 +1162,8 @@ void Widget::captureMouse()
  */
 void Widget::releaseMouse()
 {
-  assert(::IsWindow(m_HWND));
-  assert(m_HWND == ::GetCapture()); // you must to have the capture to use this method
+  assert(::IsWindow(m_handle));
+  assert(m_handle == ::GetCapture()); // you must to have the capture to use this method
 
   ::ReleaseCapture();
 }
@@ -1173,8 +1173,8 @@ void Widget::releaseMouse()
  */
 bool Widget::hasFocus()
 {
-  assert(::IsWindow(m_HWND));
-  return m_HWND == ::GetFocus();
+  assert(::IsWindow(m_handle));
+  return m_handle == ::GetFocus();
 }
 
 /**
@@ -1196,7 +1196,7 @@ bool Widget::hasMouse()
  */
 bool Widget::hasMouseAbove()
 {
-  return ::WindowFromPoint(System::getCursorPos()) == m_HWND;
+  return ::WindowFromPoint(System::getCursorPos()) == m_handle;
 }
 
 /**
@@ -1206,8 +1206,8 @@ bool Widget::hasMouseAbove()
  */
 bool Widget::hasCapture()
 {
-  assert(::IsWindow(m_HWND));
-  return m_HWND == ::GetCapture();
+  assert(::IsWindow(m_handle));
+  return m_handle == ::GetCapture();
 }
 
 /**
@@ -1215,8 +1215,8 @@ bool Widget::hasCapture()
  */
 void Widget::setCursor(const Cursor& cursor)
 {
-  // getHCURSOR can be NULL, like the Cursor(NoCursor)
-  ::SetCursor(const_cast<Cursor*>(&cursor)->getHCURSOR());
+  // Cursor::getHandle can be NULL, like the Cursor(SysCursor(NoCursor))
+  ::SetCursor(const_cast<Cursor*>(&cursor)->getHandle());
 }
 
 // ===============================================================
@@ -1228,9 +1228,9 @@ void Widget::setCursor(const Cursor& cursor)
  */
 void Widget::bringToTop()
 {
-  assert(::IsWindow(m_HWND));
-//   BringWindowToTop(m_HWND);
-  ::SetWindowPos(m_HWND, HWND_TOP, 0, 0, 0, 0,
+  assert(::IsWindow(m_handle));
+//   BringWindowToTop(m_handle);
+  ::SetWindowPos(m_handle, HWND_TOP, 0, 0, 0, 0,
 		 SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
   
 }
@@ -1240,8 +1240,8 @@ void Widget::bringToTop()
  */
 void Widget::sendToBack()
 {
-  assert(::IsWindow(m_HWND));
-  SetWindowPos(m_HWND, HWND_BOTTOM, 0, 0, 0, 0,
+  assert(::IsWindow(m_handle));
+  SetWindowPos(m_handle, HWND_BOTTOM, 0, 0, 0, 0,
 	       SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
 }
 
@@ -1250,10 +1250,10 @@ void Widget::sendToBack()
  */
 void Widget::moveAfter(Widget* brother)
 {
-  assert(m_HWND != NULL && brother != NULL && brother->m_HWND != NULL);
+  assert(m_handle != NULL && brother != NULL && brother->m_handle != NULL);
   assert(m_parent == brother->m_parent);
 
-  SetWindowPos(m_HWND, brother->getHWND(), 0, 0, 0, 0,
+  SetWindowPos(m_handle, brother->getHandle(), 0, 0, 0, 0,
 	       SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
 }
 
@@ -1262,16 +1262,16 @@ void Widget::moveAfter(Widget* brother)
  */
 void Widget::moveBefore(Widget* brother)
 {
-  assert(m_HWND != NULL && brother != NULL && brother->m_HWND != NULL);
+  assert(m_handle != NULL && brother != NULL && brother->m_handle != NULL);
   assert(m_parent == brother->m_parent);
 
-  HWND hPrev = GetWindow(brother->m_HWND, GW_HWNDPREV);
+  HWND hPrev = GetWindow(brother->m_handle, GW_HWNDPREV);
   if (hPrev != NULL)
-    brother = Widget::fromHWND(hPrev);
+    brother = Widget::fromHandle(hPrev);
   else
     brother = NULL;
   
-  SetWindowPos(m_HWND, (brother != NULL ? brother->getHWND(): HWND_TOP),
+  SetWindowPos(m_handle, (brother != NULL ? brother->getHandle(): HWND_TOP),
 	       0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
 }
 
@@ -1280,7 +1280,7 @@ void Widget::moveBefore(Widget* brother)
  */
 ScrollInfo Widget::getScrollInfo(Orientation orientation)
 {
-  assert(::IsWindow(m_HWND));
+  assert(::IsWindow(m_handle));
     
   int fnBar = (orientation == Orientation::Horizontal) ? SB_HORZ: SB_VERT;
 
@@ -1288,7 +1288,7 @@ ScrollInfo Widget::getScrollInfo(Orientation orientation)
   si.cbSize = sizeof(si);
   si.fMask = SIF_ALL;
 
-  GetScrollInfo(m_HWND, fnBar, &si);
+  GetScrollInfo(m_handle, fnBar, &si);
 
   ScrollInfo scrollInfo;
   scrollInfo.minPos = si.nMin;
@@ -1310,7 +1310,7 @@ ScrollInfo Widget::getScrollInfo(Orientation orientation)
  */
 void Widget::setScrollInfo(Orientation orientation, const ScrollInfo& scrollInfo)
 {
-  assert(::IsWindow(m_HWND));
+  assert(::IsWindow(m_handle));
     
   int fnBar = (orientation == Orientation::Horizontal) ? SB_HORZ: SB_VERT;
 
@@ -1323,7 +1323,7 @@ void Widget::setScrollInfo(Orientation orientation, const ScrollInfo& scrollInfo
   si.nPos = scrollInfo.pos;
   si.nTrackPos = scrollInfo.trackPos;
 
-  ::SetScrollInfo(m_HWND, fnBar, &si, TRUE);
+  ::SetScrollInfo(m_handle, fnBar, &si, TRUE);
 }
   
 /**
@@ -1331,14 +1331,14 @@ void Widget::setScrollInfo(Orientation orientation, const ScrollInfo& scrollInfo
  */
 int Widget::getScrollPos(Orientation orientation)
 {
-  assert(::IsWindow(m_HWND));
+  assert(::IsWindow(m_handle));
     
   int fnBar = (orientation == Orientation::Horizontal) ? SB_HORZ: SB_VERT;
 
   SCROLLINFO si;
   si.cbSize = sizeof (si);
   si.fMask  = SIF_POS;
-  ::GetScrollInfo(m_HWND, fnBar, &si);
+  ::GetScrollInfo(m_handle, fnBar, &si);
   return si.nPos;
 }
 
@@ -1347,20 +1347,20 @@ int Widget::getScrollPos(Orientation orientation)
  */
 void Widget::setScrollPos(Orientation orientation, int pos)
 {
-  assert(::IsWindow(m_HWND));
+  assert(::IsWindow(m_handle));
 
   int fnBar = (orientation == Orientation::Horizontal) ? SB_HORZ: SB_VERT;
     
   SCROLLINFO si;
   si.cbSize = sizeof(si);
   si.fMask  = SIF_ALL;
-  ::GetScrollInfo(m_HWND, fnBar, &si);
+  ::GetScrollInfo(m_handle, fnBar, &si);
 
   si.fMask = SIF_POS;
   si.nPos = VACA_MID(si.nMin,
 		     pos,
 		     si.nMax - VACA_MAX(static_cast<int>(si.nPage) - 1, 0));
-  ::SetScrollInfo(m_HWND, fnBar, &si, TRUE);
+  ::SetScrollInfo(m_handle, fnBar, &si, TRUE);
 }
   
 /**
@@ -1386,7 +1386,7 @@ void Widget::setScrollPoint(const Point& pt)
  */
 void Widget::hideScrollBar(Orientation orientation)
 {
-  assert(::IsWindow(m_HWND));
+  assert(::IsWindow(m_handle));
 
   int fnBar = (orientation == Orientation::Horizontal) ? SB_HORZ: SB_VERT;
 
@@ -1394,7 +1394,7 @@ void Widget::hideScrollBar(Orientation orientation)
   si.cbSize = sizeof(si);
   si.fMask  = SIF_RANGE;
   si.nMin = si.nMax = 0;
-  ::SetScrollInfo(getHWND(), fnBar, &si, TRUE);
+  ::SetScrollInfo(getHandle(), fnBar, &si, TRUE);
 }
 
 /**
@@ -1433,22 +1433,22 @@ Command* Widget::findCommandById(CommandId id)
 /**
  * Returns the HWND of this Widget. This can't be NULL.
  *
- * @see fromHWND, getParentHWND
+ * @see fromHandle, getParentHandle
  */
-HWND Widget::getHWND()
+HWND Widget::getHandle()
 {
-  return m_HWND;
+  return m_handle;
 }
 
 /**
  * Returns the HWND of the parent, or NULL if this widget doesn't have a parent.
  *
- * @see getHWND
+ * @see getHandle
  */
-HWND Widget::getParentHWND()
+HWND Widget::getParentHandle()
 {
   Widget* parent = getParent();
-  return parent != NULL ? parent->getHWND(): NULL;
+  return parent != NULL ? parent->getHandle(): NULL;
 }
 
 /**
@@ -1462,9 +1462,9 @@ HWND Widget::getParentHWND()
  *   the Widget, now it uses a property called @em "VacaAtom"
  *   (through Win32's @c GetProp function).
  *
- * @see getHWND
+ * @see getHandle
  */
-Widget* Widget::fromHWND(HWND hwnd)
+Widget* Widget::fromHandle(HWND hwnd)
 {
   // unbox the pointer
 #ifdef USE_PROP
@@ -1655,7 +1655,7 @@ void Widget::onSetCursor(WidgetHitTest hitTest)
 {
   // if we have a m_baseWndProc, use it
   if (m_baseWndProc != NULL) {
-    CallWindowProc(m_baseWndProc, m_HWND, WM_SETCURSOR, m_wparam, m_lparam);
+    CallWindowProc(m_baseWndProc, m_handle, WM_SETCURSOR, m_wparam, m_lparam);
   }
   // if we aren't in the client area, maybe the defWndProc known more
   // about the cursor (like the cursors in Frame to resize the it)
@@ -1861,9 +1861,9 @@ bool Widget::onReflectedDrawItem(Graphics& g, LPDRAWITEMSTRUCT lpDrawItem)
  */
 void Widget::addChild(Widget* child, bool setParent)
 {
-  assert(::IsWindow(m_HWND));
+  assert(::IsWindow(m_handle));
   assert(child != NULL);
-  assert(child->m_HWND != NULL);
+  assert(child->m_handle != NULL);
   assert(child->m_parent == NULL);
 
   m_children.push_back(child);
@@ -1871,7 +1871,7 @@ void Widget::addChild(Widget* child, bool setParent)
   
   if (setParent) {
     child->addStyle(Style(WS_CHILD, 0));
-    ::SetParent(child->m_HWND, m_HWND);
+    ::SetParent(child->m_handle, m_handle);
     // sendMessage(WM_UPDATEUISTATE, UIS_SET..., 0);
   }
 }
@@ -1889,9 +1889,9 @@ void Widget::addChild(Widget* child, bool setParent)
  */
 void Widget::removeChild(Widget* child, bool setParent)
 {
-  assert(::IsWindow(m_HWND));
+  assert(::IsWindow(m_handle));
   assert(child != NULL);
-  assert(child->m_HWND != NULL);
+  assert(child->m_handle != NULL);
   assert(child->m_parent == this);
 
   onRemoveChild(child);
@@ -1899,7 +1899,7 @@ void Widget::removeChild(Widget* child, bool setParent)
   remove_from_container(m_children, child);
 
   if (setParent) {
-    ::SetParent(child->m_HWND, NULL);
+    ::SetParent(child->m_handle, NULL);
     child->removeStyle(Style(WS_CHILD, 0));
   }
 
@@ -1907,8 +1907,8 @@ void Widget::removeChild(Widget* child, bool setParent)
 }
 
 /**
- * It creates the HWND (#m_HWND) to be used in the Widget. The only way
- * to customize this routine is overloading the Widget#createHWND
+ * It creates the HWND (#m_handle) to be used in the Widget. The only way
+ * to customize this routine is overloading the Widget#createHandle
  * method, calling Widget#Widget with WidgetClassName#None as @c className, and
  * finally calling Widget#create from the constructor of your own
  * widget class (for example as MdiClient#MdiClient does).
@@ -1918,14 +1918,14 @@ void Widget::removeChild(Widget* child, bool setParent)
  * in Widget's constructor).
  *
  * @throw CreateWidgetException
- *   If the window handler (HWND) couldn't be created through the #createHWND method.
+ *   If the window handler (HWND) couldn't be created through the #createHandle method.
  *
- * @see createHWND, @ref TN002
+ * @see createHandle, @ref TN002
  */
 void Widget::create(const WidgetClassName& className, Widget* parent, Style style)
 {
-  assert(m_HWND == NULL);
-  assert(parent == NULL || parent->m_HWND != NULL);
+  assert(m_handle == NULL);
+  assert(parent == NULL || parent->m_handle != NULL);
 
   // all parents must to have the WS_EX_CONTROLPARENT style to avoid
   // infinite loops in Win32's dialog boxes (for more information see
@@ -1940,7 +1940,7 @@ void Widget::create(const WidgetClassName& className, Widget* parent, Style styl
 //     assert(outsideWidget == NULL);
 
 //     outsideWidget = this;
-//     m_HWND = createHWND(className, parent, style);
+//     m_handle = createHandle(className, parent, style);
 //     outsideWidget = NULL;
 //   }
   {
@@ -1948,17 +1948,17 @@ void Widget::create(const WidgetClassName& className, Widget* parent, Style styl
 //     assert(data->outsideWidget == NULL);
 
 //     data->outsideWidget = this;
-//     m_HWND = createHWND(className, parent, style);
+//     m_handle = createHandle(className, parent, style);
 //     data->outsideWidget = NULL;
     Widget* outsideWidget = __vaca_get_outside_widget();
     assert(outsideWidget == NULL);
     
     __vaca_set_outside_widget(this);
-    m_HWND = createHWND(className.toLPCTSTR(), parent, style);
+    m_handle = createHandle(className.toLPCTSTR(), parent, style);
     __vaca_set_outside_widget(NULL);
   }
 
-  if (m_HWND == NULL || !::IsWindow(m_HWND))
+  if (m_handle == NULL || !::IsWindow(m_handle))
     throw CreateWidgetException("Error creating widget of class \"" +
 				String(className.toLPCTSTR()) + "\"");
 
@@ -1981,11 +1981,11 @@ void Widget::create(const WidgetClassName& className, Widget* parent, Style styl
  */
 void Widget::subClass()
 {
-  assert(::IsWindow(m_HWND));
+  assert(::IsWindow(m_handle));
 
   // set the GWL_WNDPROC to globalWndProc
   m_baseWndProc = reinterpret_cast<WNDPROC>
-    (SetWindowLongPtr(m_HWND,
+    (SetWindowLongPtr(m_handle,
 		      GWLP_WNDPROC,
 		      reinterpret_cast<LONG_PTR>(getGlobalWndProc())));
   if (m_baseWndProc == getGlobalWndProc())
@@ -1995,27 +1995,27 @@ void Widget::subClass()
 #ifdef USE_PROP
   {
     // ScopedLock hold(vacaAtomMutex);
-    SetProp(m_HWND, VACAATOM, reinterpret_cast<HANDLE>(this));
+    SetProp(m_handle, VACAATOM, reinterpret_cast<HANDLE>(this));
   }
 #else
-  LONG_PTR oldData = SetWindowLongPtr(m_HWND, GWL_USERDATA, reinterpret_cast<LONG_PTR>(this));
+  LONG_PTR oldData = SetWindowLongPtr(m_handle, GWL_USERDATA, reinterpret_cast<LONG_PTR>(this));
   assert(oldData == 0);
 #endif
 
   // TODO get the font from the hwnd
 
   // set the default font of the widget
-  setFont(Font::getDefault());
+  setFont(m_font);
 }
 
 /**
  * This method creates the HWND handler for the Widget.
  * 
  * It is called inside Widget#create, so if you overload
- * #createHWND, you must to call the Widget's constructor with
+ * #createHandle, you must to call the Widget's constructor with
  * WidgetClassName#None as @c className, and then use
  * Widget#create in your own class's constructor. An example
- * is the MdiChild class, which overwrites the #createHWND method, so it
+ * is the MdiChild class, which overwrites the #createHandle method, so it
  * does something like the following code:
  * @code
  * MdiChild::MdiChild(const String& title,
@@ -2030,20 +2030,20 @@ void Widget::subClass()
  * }
  * 
  * // it's invoked from "create" from the MdiChild's constructor
- * HWND MdiChild::createHWND(...) { ... }
+ * HWND MdiChild::createHandle(...) { ... }
  * @endcode
  *
  * @see create, @ref TN002
  */
-HWND Widget::createHWND(LPCTSTR className, Widget* parent, Style style)
+HWND Widget::createHandle(LPCTSTR className, Widget* parent, Style style)
 {
   return CreateWindowEx(style.extended, className, _T(""),
 			style.regular,
 			CW_USEDEFAULT, CW_USEDEFAULT,
 			CW_USEDEFAULT, CW_USEDEFAULT,
-			parent ? parent->getHWND(): (HWND)NULL,
+			parent ? parent->getHandle(): (HWND)NULL,
 			(HMENU)NULL,
-			Application::getHINSTANCE(),
+			Application::getHandle(),
 			reinterpret_cast<LPVOID>(this));
 }
 
@@ -2145,14 +2145,14 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
       if (m_baseWndProc == NULL) {
  	PAINTSTRUCT ps;
 	bool painted = false;
-	HDC hdc = ::BeginPaint(m_HWND, &ps);
+	HDC hdc = ::BeginPaint(m_handle, &ps);
 
 	if (!::IsRectEmpty(&ps.rcPaint)) {
 	  Graphics g(hdc);
 	  painted = doPaint(g);
 	}
 	
-	::EndPaint(m_HWND, &ps);
+	::EndPaint(m_handle, &ps);
 
 	if (painted) {
 	  lResult = TRUE;
@@ -2163,7 +2163,7 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
 
     case WM_DRAWITEM: {
       LPDRAWITEMSTRUCT lpDrawItem = (LPDRAWITEMSTRUCT)lParam;
-      Widget* child = Widget::fromHWND(lpDrawItem->hwndItem);
+      Widget* child = Widget::fromHandle(lpDrawItem->hwndItem);
       HDC hdc = lpDrawItem->hDC;
       bool painted = false;
 
@@ -2298,7 +2298,7 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
 	TRACKMOUSEEVENT tme;
 	tme.cbSize = sizeof(TRACKMOUSEEVENT);
 	tme.dwFlags = TME_LEAVE;// | TME_HOVER
-	tme.hwndTrack = m_HWND;
+	tme.hwndTrack = m_handle;
 	_TrackMouseEvent(&tme);
       }
 
@@ -2379,7 +2379,7 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
     case WM_COMMAND:
       if (reinterpret_cast<HWND>(lParam) != NULL) {
 	HWND hwndCtrl = reinterpret_cast<HWND>(lParam);
-	Widget* child = Widget::fromHWND(hwndCtrl);
+	Widget* child = Widget::fromHandle(hwndCtrl);
 	if (child != NULL) {
 	  MakeWidgetRef ref(child);
 	  ret = child->onReflectedCommand(LOWORD(wParam), // id
@@ -2400,7 +2400,7 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
 
     case WM_NOTIFY: {
       LPNMHDR lpnmhdr = reinterpret_cast<LPNMHDR>(lParam);
-      Widget* child = Widget::fromHWND(lpnmhdr->hwndFrom);
+      Widget* child = Widget::fromHandle(lpnmhdr->hwndFrom);
       if (child != NULL) {
 	MakeWidgetRef ref(child);
 	ret = child->onReflectedNotify(lpnmhdr, lResult);
@@ -2454,7 +2454,7 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
     case WM_CTLCOLORSTATIC: {
       HDC hdc = reinterpret_cast<HDC>(wParam);
       HWND hwndCtrl = reinterpret_cast<HWND>(lParam);
-      Widget* child = Widget::fromHWND(hwndCtrl);
+      Widget* child = Widget::fromHandle(hwndCtrl);
       if (child != NULL) {
 	COLORREF fgColor = child->getFgColor().getColorRef();
 	COLORREF bgColor = child->getBgColor().getColorRef();
@@ -2462,11 +2462,24 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
 	SetTextColor(hdc, fgColor);
 	SetBkColor(hdc, bgColor);
 
-	HBRUSH hBrush = Graphics::findHBRUSH(BS_SOLID, 0, bgColor);
-	lResult = reinterpret_cast<LRESULT>(hBrush);
+	if (m_hbrush)
+	  DeleteObject(m_hbrush);
+
+	{
+	  LOGBRUSH lb;
+
+	  lb.lbStyle = BS_SOLID;
+	  lb.lbColor = bgColor;
+	  lb.lbHatch = 0;
+
+	  m_hbrush = CreateBrushIndirect(&lb);
+	}
+
+	lResult = reinterpret_cast<LRESULT>(m_hbrush);
 	ret = true;
       }
-      break;    }
+      break;
+    }
 
     case WM_WINDOWPOSCHANGING:
       onBeforePosChange();
@@ -2489,7 +2502,7 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
 	
 	// reflect the message? (it's useful for the "Slider" widget)
 	if (lParam != 0) {
-	  Widget* child = Widget::fromHWND(reinterpret_cast<HWND>(lParam));
+	  Widget* child = Widget::fromHandle(reinterpret_cast<HWND>(lParam));
 	  if (child != NULL) {
 	    MakeWidgetRef ref(child);
 	    child->onScroll(orient, LOWORD(wParam));
@@ -2545,9 +2558,9 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
 LRESULT Widget::defWndProc(UINT message, WPARAM wParam, LPARAM lParam)
 {
   if (m_baseWndProc != NULL)
-    return CallWindowProc(m_baseWndProc, m_HWND, message, wParam, lParam);
+    return CallWindowProc(m_baseWndProc, m_handle, message, wParam, lParam);
   else
-    return m_defWndProc(m_HWND, message, wParam, lParam);
+    return m_defWndProc(m_handle, message, wParam, lParam);
 }
 
 /**
@@ -2587,7 +2600,7 @@ bool Widget::doPaint(Graphics& g)
 
       // special coordinates transformation (to make
       // transparent the "imageG" to onPaint)
-      SetViewportOrgEx(imageG->getHDC(), -clipBounds.x, -clipBounds.y, NULL);
+      SetViewportOrgEx(imageG->getHandle(), -clipBounds.x, -clipBounds.y, NULL);
       
       // clear the background of the image
       imageG->fillRect(bgBrush, clipBounds);
@@ -2601,7 +2614,7 @@ bool Widget::doPaint(Graphics& g)
       painted = imageG->wasPainted();
 
       // restore the viewport origin (so drawImage works fine)
-      SetViewportOrgEx(imageG->getHDC(), 0, 0, NULL);
+      SetViewportOrgEx(imageG->getHandle(), 0, 0, NULL);
 
       // bit transfer from image to graphics device
       g.drawImage(image, clipBounds.getOrigin());
@@ -2670,18 +2683,18 @@ bool Widget::preTranslateMessage(MSG& msg)
  */
 LRESULT Widget::sendMessage(UINT message, WPARAM wParam, LPARAM lParam)
 {
-  assert(::IsWindow(m_HWND));
-  return ::SendMessage(m_HWND, message, wParam, lParam);
+  assert(::IsWindow(m_handle));
+  return ::SendMessage(m_handle, message, wParam, lParam);
 }
 
 /**
  * The global procedure for Win32 used in all registered WNDCLASSes.
  * It's unique goal is to get the Widget pointer from HWND
- * using #fromHWND, and to call its #wndProc method.
+ * using #fromHandle, and to call its #wndProc method.
  */
 LRESULT CALLBACK Widget::globalWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-  Widget* widget = Widget::fromHWND(hwnd);
+  Widget* widget = Widget::fromHandle(hwnd);
 
 #ifdef REPORT_MESSAGES
   String preString =
@@ -2909,7 +2922,7 @@ LRESULT CALLBACK Widget::globalWndProc(HWND hwnd, UINT message, WPARAM wParam, L
     widget = __vaca_get_outside_widget();
     if (widget != NULL) {
       assert(hwnd != NULL);
-      widget->m_HWND = hwnd;
+      widget->m_handle = hwnd;
       return widget->defWndProc(message, wParam, lParam);
     }
   }
@@ -2985,7 +2998,7 @@ void Vaca::delete_widget(Widget* widget)
     assert(widget->getRefCount() > 0);
 
     // hide the window
-    ShowWindow(widget->m_HWND, SW_HIDE);
+    ShowWindow(widget->m_handle, SW_HIDE);
 
     // delete after event flag
     widget->m_deleteAfterEvent = true;

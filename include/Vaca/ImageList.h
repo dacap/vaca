@@ -35,42 +35,40 @@
 #include "Vaca/base.h"
 #include "Vaca/Image.h"
 #include "Vaca/Color.h"
-#include "Vaca/NonCopyable.h"
 #include "Vaca/ResourceId.h"
-#include "Vaca/SelfDestruction.h"
+#include "Vaca/GdiObject.h"
+#include "Vaca/SmartPtr.h"
 
 namespace Vaca {
 
 class String;
+class Size;
+
+struct Win32DestroyImageList
+{
+  static void destroy(HIMAGELIST handle)
+  {
+    ::ImageList_Destroy(handle);
+  }
+};
 
 /**
  * A list of images (Win32's HIMAGELIST wrapper).
  */
-class VACA_DLL ImageList : private NonCopyable
+class VACA_DLL ImageList : private SmartPtr<GdiObject<HIMAGELIST, Win32DestroyImageList> >
 {
-  HIMAGELIST m_HIMAGELIST;
-  bool m_selfDestruction;
-
 public:
 
   ImageList();
-  ImageList(HIMAGELIST hImageList, SelfDestruction selfDestruction);
-//   ImageList(Size sz);
+  explicit ImageList(const Size& sz);
+  explicit ImageList(HIMAGELIST hImageList);
   ImageList(ResourceId bitmapId, int widthPerIcon, Color maskColor);
   ImageList(const String& fileName, int widthPerIcon, Color maskColor);
   virtual ~ImageList();
 
-  bool isValid();
-
   int getImageCount();
   
-  void assign(HIMAGELIST hImageList, SelfDestruction selfDestruction);
-
-  HIMAGELIST getHIMAGELIST();
-
-private:
-
-  void destroy();
+  HIMAGELIST getHandle();
 
 };
 

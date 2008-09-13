@@ -224,7 +224,7 @@ String System::getShellFolderPath(int folderCsidl, bool create)
     return "";
 }
 
-void System::getImageList(ImageList& imageList, bool smallImage)
+ImageList System::getImageList(bool smallImage)
 {
   HIMAGELIST himl;
   SHFILEINFO shfi;
@@ -236,8 +236,7 @@ void System::getImageList(ImageList& imageList, bool smallImage)
 		   (smallImage ? SHGFI_SMALLICON:
 				 SHGFI_LARGEICON)));
 
-  if (himl != NULL)
-    imageList.assign(himl, SelfDestruction(false));
+  return ImageList(himl); // TODO this can't be delete!!!
 }
 
 int System::getFileImageIndex(const String& fileName, bool smallImage)

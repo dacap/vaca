@@ -35,11 +35,11 @@
 #include "Vaca/base.h"
 #include "Vaca/CommonDialog.h"
 #include "Vaca/String.h"
+#include "Vaca/Font.h"
 
 namespace Vaca {
 
 class Widget;
-class Font;
 
 /**
  * A common dialog box to select fonts.
@@ -48,16 +48,17 @@ class Font;
  */
 class VACA_DLL FontDialog : public CommonDialog
 {
-  Font* m_font;
+  Font m_font;
   LOGFONT m_logFont;
 
 public:
 
-  FontDialog(Font* font, Widget* parent);
+  FontDialog(const Font& font, Widget* parent);
   virtual ~FontDialog();
 
   virtual bool doModal();
 
+  Font getFont() const;
   bool getLogFont(LPLOGFONT lplf) const;
 
 };

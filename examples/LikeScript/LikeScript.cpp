@@ -86,7 +86,6 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
   return 0;
 }
 
-
 struct limit_frame_resizing
 {
   Frame* f;
@@ -102,21 +101,19 @@ void configure_frame(Frame &frame)
   frame.Resizing.connect(limit_frame_resizing(&frame));
 }
 
-
 void configure_editor(Edit &edit, Font &normalFont, Font &hotFont, int preferredWidth)
 {
-  edit.GotFocus.connect  (Bind(&Widget::setFont, &edit, &hotFont));
-  edit.LostFocus.connect (Bind(&Widget::setFont, &edit, &normalFont));
+  edit.GotFocus.connect(Bind(&Widget::setFont, &edit, hotFont));
+  edit.LostFocus.connect(Bind(&Widget::setFont, &edit, normalFont));
 
-  edit.MouseEnter.connect(Bind(&Widget::setBgColor, &edit, Color(255, 255, 240)));
-  edit.MouseLeave.connect(Bind(&Widget::setBgColor, &edit, Color::White));
-  edit.MouseEnter.connect(Bind(&Widget::invalidate, &edit, true));
-  edit.MouseLeave.connect(Bind(&Widget::invalidate, &edit, true));
+  // edit.MouseEnter.connect(Bind(&Widget::setBgColor, &edit, Color(255, 255, 240)));
+  // edit.MouseLeave.connect(Bind(&Widget::setBgColor, &edit, Color::White));
+  // edit.MouseEnter.connect(Bind(&Widget::invalidate, &edit, true));
+  // edit.MouseLeave.connect(Bind(&Widget::invalidate, &edit, true));
 
-  edit.setFont(&normalFont);
+  edit.setFont(normalFont);
   edit.setPreferredSize(Size(preferredWidth, edit.getPreferredSize().h));
 }
-
 
 void configure_num_editor(Edit &edit)
 {

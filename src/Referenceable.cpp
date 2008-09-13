@@ -29,46 +29,68 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_GRAPHICSPATH_H
-#define VACA_GRAPHICSPATH_H
+#include "Vaca/Referenceable.h"
+#include "Vaca/Debug.h"
 
-#include <vector>
+#ifndef NDEBUG
+#include "Vaca/ScopedLock.h"
+#include <typeinfo>
+#endif
 
-#include "Vaca/base.h"
+using namespace Vaca;
 
-namespace Vaca {
+#ifndef NDEBUG
+Mutex Referenceable::mutex;
+volatile int Referenceable::instanceCounter = 0;
+std::vector<Referenceable*> Referenceable::list;
+#endif
 
-class Graphics;
-class Point;
-
-class VACA_DLL GraphicsPath
+Referenceable::Referenceable()
 {
-  friend class Graphics;
+  m_refCount = 0;
+#ifndef NDEBUG
+  {
+    ScopedLock hold(mutex);
+    VACA_TRACE("new Referenceable (%d, %p)\n", ++instanceCounter, this);
+    list.push_back(this);
+  }
+#endif
+}
 
-  std::vector<BYTE> m_types;
-  std::vector<POINT> m_points;
+Referenceable::~Referenceable()
+{
+#ifndef NDEBUG
+  {
+    ScopedLock hold(mutex);
+    VACA_TRACE("delete Referenceable (%d, %p)\n", --instanceCounter, this);
+    remove_from_container(list, this);
+  }
+#endif
+  assert(m_refCount == 0);
+}
 
-public:
+void Referenceable::ref()
+{
+  ++m_refCount;
+}
 
-  GraphicsPath();
-  virtual ~GraphicsPath();
+unsigned Referenceable::unref()
+{
+  assert(m_refCount > 0);
+  return --m_refCount;
+}
 
-  void closeFigure();
+unsigned Referenceable::getRefCount()
+{
+  return m_refCount;
+}
 
-  void moveTo(const Point& pt);
-  void moveTo(int x, int y);
-
-  void lineTo(const Point& pt);
-  void lineTo(int x, int y);
-
-  void curveTo(const Point& pt1, const Point& pt2, const Point& pt3);
-  void curveTo(int x1, int y1, int x2, int y2, int x3, int y3);
-
-private:
-  void addPoint(BYTE type, int x, int y);
-
-};
-
-} // namespace Vaca
-
-#endif // VACA_GRAPHICSPATH_H
+#ifndef NDEBUG
+void Referenceable::showLeaks()
+{
+  for (std::vector<Referenceable*>::iterator
+	 it=list.begin(); it!=list.end(); ++it) {
+    VACA_TRACE("leak Referenceable %p\n", *it);
+  }
+}
+#endif

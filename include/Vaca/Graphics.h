@@ -35,18 +35,18 @@
 #include <list>
 #include <vector>
 
+#include "Vaca/base.h"
 #include "Vaca/Color.h"
 #include "Vaca/NonCopyable.h"
 #include "Vaca/Rect.h"
 #include "Vaca/String.h"
-#include "Vaca/base.h"
+#include "Vaca/Font.h"
 
 namespace Vaca {
 
 class Application;
 class Brush;
-class Font;
-class FontMetrics;
+class GraphicsPath;
 class Image;
 class ImageList;
 class Pen;
@@ -63,40 +63,14 @@ class VACA_DLL Graphics : private NonCopyable
 
   friend class Application;
 
-  struct _Pen
-  {
-    HPEN handle;
-    int style;
-    int width;
-    COLORREF color;
-
-    _Pen(int style, int width, COLORREF color);
-    ~_Pen();
-  };
-
-  struct _Brush
-  {
-    HBRUSH handle;
-    int style;
-    int hatch;
-    COLORREF color;
-
-    _Brush(int style, int hatch, COLORREF color);
-    ~_Brush();
-  };
-
-  static std::list<_Pen*> m_pens;
-  static std::list<_Brush*> m_brushes;
-
-  HDC   m_HDC;
-  bool  m_autoRelease : 1;
-  bool  m_autoDelete : 1;
-  bool  m_noPaint : 1;
+  HDC m_handle;
+  HPEN m_nullPen;
+  HBRUSH m_nullBrush;
+  bool m_autoRelease : 1;
+  bool m_autoDelete : 1;
+  bool m_noPaint : 1;
   Color m_color;
-  Font* m_font;
-  FontMetrics* m_fontMetrics;
-  int   m_penStyle;
-  int   m_penWidth;
+  Font m_font;
 
 protected:
   
@@ -125,18 +99,12 @@ public:
   bool isVisible(const Point& pt);
   bool isVisible(const Rect& rc);
 
-//   void setPaintMode();
-//   void setXORMode();
-
   Color getColor();
   void setColor(const Color& color);
 
-  Font* getFont();
-  void setFont(Font* font);
-  FontMetrics& getFontMetrics();
-
-  void setPenStyle(int penStyle);
-  void setPenWidth(int penWidth);
+  Font getFont() const;
+  void setFont(Font font);
+  void getFontMetrics(FontMetrics& fontMetrics);
 
   double getMiterLimit();
   void setMiterLimit(double limit);
@@ -146,21 +114,8 @@ public:
   void setPixel(const Point& pt, const Color& color);
   void setPixel(int x, int y, const Color& color);
 
-  void beginPath();
-  void endPath();
-  void strokePath(Pen& pen);
-  void fillPath(Brush& brush);
-
-  void moveTo(const Point& pt);
-  void moveTo(int x, int y);
-  void lineTo(Pen& pen, const Point& pt);
-  void lineTo(Pen& pen, int x, int y);
-  void curveTo(int x1, int y1, int x2, int y2, int x3, int y3);
-  void curveTo(const Point& pt1, const Point& pt2, const Point& pt3);
-  void curveTo(const std::vector<Point>& points);
-  void closeFigure();
-
-  void getRegionFromPath(Region& region);
+  void strokePath(GraphicsPath& path, Pen& pen, const Point& pt);
+  void fillPath(GraphicsPath& path, Brush& brush, const Point& pt);
 
   void drawString(const String& str, const Point& pt);
   void drawString(const String& str, int x, int y);
@@ -229,17 +184,16 @@ public:
   // SetROP2 wrapper
   void setRop2(int drawMode);
 
-  HDC getHDC();
-
-  static HPEN findHPEN(int style, int width, COLORREF color);
-  static HBRUSH findHBRUSH(int style, int hatch, COLORREF color);
+  HDC getHandle();
 
 private:
+
+  void initialize();
   
-  static void deleteHandles();
   void drawBezier(Pen& pen, CONST POINT* lppt, int numPoints);
-  void drawBezierTo(CONST POINT* lppt, int numPoints);
+  void drawBezierTo(Pen& pen, CONST POINT* lppt, int numPoints);
   void drawPolyline(Pen& pen, CONST POINT* lppt, int numPoints);
+  void renderPath(GraphicsPath& path, HPEN hpen, HBRUSH hbrush, const Point& pt, bool fill);
   
 };
 

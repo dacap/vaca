@@ -64,7 +64,7 @@ public:
   SciEditor(Widget* parent, Style style = SciEditorStyle);
   virtual ~SciEditor();
 
-  virtual void setFont(Font* font);
+  virtual void setFont(Font font);
 
   //////////////////////////////////////////////////////////////////////
   // Text retrieval and modification

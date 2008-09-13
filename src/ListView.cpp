@@ -53,40 +53,40 @@ ListView::~ListView()
 {
 }
 
-void ListView::setBgColor(Color color)
+void ListView::setBgColor(const Color& color)
 {
-  assert(::IsWindow(getHWND()));
+  assert(::IsWindow(getHandle()));
 
   Widget::setBgColor(color);
-  ListView_SetBkColor(getHWND(), color.getColorRef());
+  ListView_SetBkColor(getHandle(), color.getColorRef());
 }
 
 Color ListView::getTextColor()
 {
-  assert(::IsWindow(getHWND()));
+  assert(::IsWindow(getHandle()));
 
-  return Color(ListView_GetTextColor(getHWND()));
+  return Color(ListView_GetTextColor(getHandle()));
 }
 
-void ListView::setTextColor(Color color)
+void ListView::setTextColor(const Color& color)
 {
-  assert(::IsWindow(getHWND()));
+  assert(::IsWindow(getHandle()));
 
-  ListView_SetTextColor(getHWND(), color.getColorRef());
+  ListView_SetTextColor(getHandle(), color.getColorRef());
 }
 
 Color ListView::getTextBgColor()
 {
-  assert(::IsWindow(getHWND()));
+  assert(::IsWindow(getHandle()));
 
-  return Color(ListView_GetTextBkColor(getHWND()));
+  return Color(ListView_GetTextBkColor(getHandle()));
 }
 
-void ListView::setTextBgColor(Color color)
+void ListView::setTextBgColor(const Color& color)
 {
-  assert(::IsWindow(getHWND()));
+  assert(::IsWindow(getHandle()));
 
-  ListView_SetTextBkColor(getHWND(), color.getColorRef());
+  ListView_SetTextBkColor(getHandle(), color.getColorRef());
 }
 
 ListViewType ListView::getType()
@@ -121,27 +121,28 @@ void ListView::setType(ListViewType type)
 	   + Style(style, 0));
 }
 
-void ListView::setImageList(ImageList* imageList, int type)
+void ListView::setNormalImageList(const ImageList& imageList)
 {
-  assert(::IsWindow(getHWND()));
-  assert(imageList != NULL && imageList->isValid());
+  assert(::IsWindow(getHandle()));
 
-  ListView_SetImageList(getHWND(), imageList->getHIMAGELIST(), type);
+  m_normalImageList = imageList;
+  ListView_SetImageList(getHandle(), m_normalImageList.getHandle(), LVSIL_NORMAL);
 }
 
-void ListView::setNormalImageList(ImageList* imageList)
+void ListView::setSmallImageList(const ImageList& imageList)
 {
-  setImageList(imageList, LVSIL_NORMAL);
+  assert(::IsWindow(getHandle()));
+
+  m_smallImageList = imageList;
+  ListView_SetImageList(getHandle(), m_smallImageList.getHandle(), LVSIL_SMALL);
 }
 
-void ListView::setSmallImageList(ImageList* imageList)
+void ListView::setStateImageList(const ImageList& imageList)
 {
-  setImageList(imageList, LVSIL_SMALL);
-}
+  assert(::IsWindow(getHandle()));
 
-void ListView::setStateImageList(ImageList* imageList)
-{
-  setImageList(imageList, LVSIL_STATE);
+  m_stateImageList = imageList;
+  ListView_SetImageList(getHandle(), m_stateImageList.getHandle(), LVSIL_STATE);
 }
 
 int ListView::addColumn(const String& header, TextAlign textAlign)
@@ -151,7 +152,7 @@ int ListView::addColumn(const String& header, TextAlign textAlign)
 
 int ListView::insertColumn(int columnIndex, const String& header, TextAlign textAlign)
 {
-  assert(::IsWindow(getHWND()));
+  assert(::IsWindow(getHandle()));
 
   bool withDummyColumn = false;
   
@@ -174,7 +175,7 @@ int ListView::insertColumn(int columnIndex, const String& header, TextAlign text
     ;
   lvc.pszText = const_cast<LPTSTR>(header.c_str());
 
-  ListView_InsertColumn(getHWND(), columnIndex, &lvc);
+  ListView_InsertColumn(getHandle(), columnIndex, &lvc);
 
   if (withDummyColumn) {
     removeDummyColumn();
@@ -192,12 +193,12 @@ int ListView::insertColumn(int columnIndex, const String& header, TextAlign text
  */
 void ListView::removeColumn(int columnIndex)
 {
-  assert(::IsWindow(getHWND()));
+  assert(::IsWindow(getHandle()));
 
   // MSDN says that column with columnIndex == 0 can't be deleted, but
   // I tested it on Win2K and all work just fine
 
-  ListView_DeleteColumn(getHWND(), columnIndex);
+  ListView_DeleteColumn(getHandle(), columnIndex);
 }
 
 /**
@@ -206,9 +207,9 @@ void ListView::removeColumn(int columnIndex)
  */
 int ListView::getColumnCount()
 {
-  assert(::IsWindow(getHWND()));
+  assert(::IsWindow(getHandle()));
 
-  HWND hHeader = ListView_GetHeader(getHWND());
+  HWND hHeader = ListView_GetHeader(getHandle());
   if (hHeader != NULL)
     return Header_GetItemCount(hHeader);
   else
@@ -217,9 +218,9 @@ int ListView::getColumnCount()
 
 Rect ListView::getColumnBounds(int columnIndex)
 {
-  assert(::IsWindow(getHWND()));
+  assert(::IsWindow(getHandle()));
 
-  HWND hHeader = ListView_GetHeader(getHWND());
+  HWND hHeader = ListView_GetHeader(getHandle());
   if (hHeader != NULL) {
     RECT rc;
     if (Header_GetItemRect(hHeader, columnIndex, &rc))
@@ -237,9 +238,9 @@ Rect ListView::getColumnBounds(int columnIndex)
  */
 int ListView::getColumnWidth(int columnIndex)
 {
-  assert(::IsWindow(getHWND()));
+  assert(::IsWindow(getHandle()));
 
-  return ListView_GetColumnWidth(getHWND(), columnIndex);
+  return ListView_GetColumnWidth(getHandle(), columnIndex);
 }
 
 /**
@@ -249,9 +250,9 @@ int ListView::getColumnWidth(int columnIndex)
  */
 void ListView::setColumnWidth(int columnIndex, int width)
 {
-  assert(::IsWindow(getHWND()));
+  assert(::IsWindow(getHandle()));
 
-  ListView_SetColumnWidth(getHWND(), columnIndex, width);
+  ListView_SetColumnWidth(getHandle(), columnIndex, width);
 }
 
 /**
@@ -262,9 +263,9 @@ void ListView::setColumnWidth(int columnIndex, int width)
  */
 void ListView::setPreferredColumnWidth(int columnIndex, bool useHeader)
 {
-  assert(::IsWindow(getHWND()));
+  assert(::IsWindow(getHandle()));
 
-  ListView_SetColumnWidth(getHWND(),
+  ListView_SetColumnWidth(getHandle(),
 			  columnIndex,
 			  useHeader ? LVSCW_AUTOSIZE_USEHEADER:
 				      LVSCW_AUTOSIZE);
@@ -287,7 +288,7 @@ int ListView::addItem(const String& text, int imageIndex)
  */
 int ListView::insertItem(int itemIndex, const String& text, int imageIndex)
 {
-  assert(::IsWindow(getHWND()));
+  assert(::IsWindow(getHandle()));
 
   LVITEM lvi;
 
@@ -297,7 +298,7 @@ int ListView::insertItem(int itemIndex, const String& text, int imageIndex)
   lvi.pszText = const_cast<LPTSTR>(text.c_str());
   lvi.iImage = imageIndex;
 
-  return ListView_InsertItem(getHWND(), &lvi);
+  return ListView_InsertItem(getHandle(), &lvi);
 }
 
 /**
@@ -306,9 +307,9 @@ int ListView::insertItem(int itemIndex, const String& text, int imageIndex)
  */
 void ListView::removeItem(int itemIndex)
 {
-  assert(::IsWindow(getHWND()));
+  assert(::IsWindow(getHandle()));
 
-  ListView_DeleteItem(getHWND(), itemIndex);
+  ListView_DeleteItem(getHandle(), itemIndex);
 }
 
 /**
@@ -317,9 +318,9 @@ void ListView::removeItem(int itemIndex)
  */
 void ListView::removeAllItems()
 {
-  assert(::IsWindow(getHWND()));
+  assert(::IsWindow(getHandle()));
 
-  ListView_DeleteAllItems(getHWND());
+  ListView_DeleteAllItems(getHandle());
 }
 
 /**
@@ -328,9 +329,9 @@ void ListView::removeAllItems()
  */
 int ListView::getItemCount()
 {
-  assert(::IsWindow(getHWND()));
+  assert(::IsWindow(getHandle()));
   
-  return ListView_GetItemCount(getHWND());
+  return ListView_GetItemCount(getHandle());
 }
 
 /**
@@ -339,10 +340,10 @@ int ListView::getItemCount()
  */
 Rect ListView::getItemBounds(int itemIndex, int code)
 {
-  assert(::IsWindow(getHWND()));
+  assert(::IsWindow(getHandle()));
 
   RECT rc;
-  if (ListView_GetItemRect(getHWND(), itemIndex, &rc, code))
+  if (ListView_GetItemRect(getHandle(), itemIndex, &rc, code))
     return Rect(&rc);
 
   // empty rectangle
@@ -355,13 +356,13 @@ Rect ListView::getItemBounds(int itemIndex, int code)
  */
 String ListView::getItemText(int itemIndex, int columnIndex)
 {
-  assert(::IsWindow(getHWND()));
+  assert(::IsWindow(getHandle()));
 
   int size = 4096;		// TODO how to get the text length of
 				// the item?
   LPTSTR lpstr = new TCHAR[size];
 
-  ListView_GetItemText(getHWND(), itemIndex, columnIndex, lpstr, size);
+  ListView_GetItemText(getHandle(), itemIndex, columnIndex, lpstr, size);
 
   String res(lpstr);
   delete lpstr;
@@ -375,9 +376,9 @@ String ListView::getItemText(int itemIndex, int columnIndex)
  */
 void ListView::setItemText(int itemIndex, const String& text, int columnIndex)
 {
-  assert(::IsWindow(getHWND()));
+  assert(::IsWindow(getHandle()));
 
-  ListView_SetItemText(getHWND(),
+  ListView_SetItemText(getHandle(),
 		       itemIndex,
 		       columnIndex,
 		       const_cast<LPTSTR>(text.c_str()));
@@ -389,17 +390,17 @@ void ListView::setItemText(int itemIndex, const String& text, int columnIndex)
  */
 void ListView::editItemText(int itemIndex)
 {
-  assert(::IsWindow(getHWND()));
+  assert(::IsWindow(getHandle()));
 
   // TODO it returns an HWND for the Edit control
-  ListView_EditLabel(getHWND(), itemIndex);
+  ListView_EditLabel(getHandle(), itemIndex);
 }
 
 bool ListView::isItemSelected(int itemIndex)
 {
-  assert(::IsWindow(getHWND()));
+  assert(::IsWindow(getHandle()));
 
-  return ListView_GetItemState(getHWND(), itemIndex, LVIS_SELECTED);
+  return ListView_GetItemState(getHandle(), itemIndex, LVIS_SELECTED);
 }
 
 /**
@@ -408,9 +409,9 @@ bool ListView::isItemSelected(int itemIndex)
  */
 // int ListView::getCurrentItem()
 // {
-//   assert(::IsWindow(getHWND()));
+//   assert(::IsWindow(getHandle()));
 
-//   return ::ListView_GetSelectionMark(getHWND());
+//   return ::ListView_GetSelectionMark(getHandle());
 // }
 
 // static int CALLBACK CompareListViewItems(LPARAM lParam1,
@@ -427,9 +428,9 @@ bool ListView::isItemSelected(int itemIndex)
 
 // void ListView::sortItems(std::less<ListItem> functor)
 // {
-//   assert(::IsWindow(getHWND()));
+//   assert(::IsWindow(getHandle()));
 
-//   ListView_SortItems(getHWND(),
+//   ListView_SortItems(getHandle(),
 // 		     CompareListViewItems,
 // 		     reinterpret_cast<LPARAM>(&functor));
 // }
@@ -488,10 +489,10 @@ void ListView::insertDummyColumn()
   LVCOLUMN lvc;
   lvc.mask = LVCF_WIDTH;
   lvc.cx = 0;
-  ListView_InsertColumn(getHWND(), 0, &lvc);
+  ListView_InsertColumn(getHandle(), 0, &lvc);
 }
 
 void ListView::removeDummyColumn()
 {
-  ListView_DeleteColumn(getHWND(), 0);
+  ListView_DeleteColumn(getHandle(), 0);
 }

@@ -61,15 +61,15 @@ ProgressBar::~ProgressBar()
  * PBM_SETBKCOLOR
  * 
  */
-void ProgressBar::setBgColor(Color color)
+void ProgressBar::setBgColor(const Color& color)
 {
-  assert(::IsWindow(getHWND()));
+  assert(::IsWindow(getHandle()));
 
   Widget::setBgColor(color);
   sendMessage(PBM_SETBKCOLOR, 0, color.getColorRef());
 }
 
-// void ProgressBar::setBarColor(Color color)
+// void ProgressBar::setBarColor(const Color& color)
 // {
 // }
 

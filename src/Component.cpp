@@ -32,54 +32,14 @@
 #include "Vaca/Component.h"
 #include "Vaca/Debug.h"
 
-#ifndef NDEBUG
-#include <typeinfo>
-#include "Vaca/Mutex.h"
-#include "Vaca/ScopedLock.h"
-#endif
-
 using namespace Vaca;
-
-#ifndef NDEBUG
-static Mutex instanceCounterMutex; // used to access instanceCounter
-static volatile int instanceCounter = 0;
-#endif
 
 Component::Component()
 {
-#ifndef NDEBUG
-  {
-    ScopedLock hold(instanceCounterMutex);
-    VACA_TRACE("new Component (%d, %p)\n", ++instanceCounter, this);
-  }
-#endif
-
-  m_refCount = 0;
+  VACA_TRACE("new Component (%p)\n", this);
 }
 
 Component::~Component()
 {
-  assert(m_refCount == 0);
-
-#ifndef NDEBUG
-  {
-    ScopedLock hold(instanceCounterMutex);
-    VACA_TRACE("delete Component (%d, %p)\n", --instanceCounter, this);
-  }
-#endif
-}
-
-void Component::ref()
-{
-  m_refCount++;
-}
-
-void Component::unref()
-{
-  m_refCount--;
-}
-
-int Component::getRefCount()
-{
-  return m_refCount;
+  VACA_TRACE("delete Component (%p)\n", this);
 }

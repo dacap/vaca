@@ -280,7 +280,7 @@ public:
     m_timer.Action.connect(Bind(&FunctionsPage::nextFunction, this));
     m_timer.start();
 
-    setFont(&m_font);
+    setFont(m_font);
   }
 
 protected:
@@ -392,9 +392,10 @@ protected:
     
     // draw control lines
     if (n > 0) {
-      g.moveTo(modelToView(mPoints[0]));
       for (int i=1; i<n; ++i)
-	g.lineTo(dashPen, modelToView(mPoints[i]));
+	g.drawLine(dashPen,
+		   modelToView(mPoints[i-1]),
+		   modelToView(mPoints[i]));
     }
 
     // draw the spline

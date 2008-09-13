@@ -33,7 +33,8 @@
 #define VACA_REGION_H
 
 #include "Vaca/base.h"
-#include "Vaca/SelfDestruction.h"
+#include "Vaca/GdiObject.h"
+#include "Vaca/SmartPtr.h"
 
 namespace Vaca {
 
@@ -45,23 +46,14 @@ class Size;
  * A region, it can be simple as a rectangle, complex as any shape,
  * but also can be empty.
  */
-class VACA_DLL Region
+class VACA_DLL Region : private SmartPtr<GdiObject<HRGN> >
 {
-  /**
-   */
-  HRGN m_HRGN;
-
-  /**
-   * True if the HRGN handler must be deleted in the destructor.
-   */
-  bool m_selfDestruction;
-  
 public:
 
   Region();
-  Region(HRGN hrgn, SelfDestruction selfDestruction);
-  Region(const Rect& rc);
   Region(const Region& rgn);
+  explicit Region(HRGN hrgn);
+  explicit Region(const Rect& rc);
   virtual ~Region();
 
   bool isEmpty() const;
@@ -69,8 +61,7 @@ public:
   bool isComplex() const;
 
   Region& operator=(const Region& rgn);
-  void assign(const Region& rgn);
-  void assign(HRGN hrgn, SelfDestruction selfDestruction);
+  Region clone() const;
 
   Rect getBounds() const;
 
@@ -99,11 +90,7 @@ public:
   static Region fromEllipse(const Rect& rc);
   static Region fromRoundRect(const Rect& rc, const Size& ellipseSize);
 
-  HRGN getHRGN();
-
-private:
-
-  void destroy();
+  HRGN getHandle() const;
   
 };
 

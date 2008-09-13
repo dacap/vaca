@@ -79,7 +79,7 @@ void Frame::initialize(const String& title)
   // we can set the title of the window now if we have the HWND (for
   // example, HWND could be NULL here if we come from a Dialog's
   // contructor)
-  if (::IsWindow(getHWND()))
+  if (::IsWindow(getHandle()))
     setText(title);
 }
 
@@ -233,7 +233,7 @@ void Frame::onUpdateIndicators()
       updateMenuItem(menuItem);
     }
 
-    ::DrawMenuBar(getHWND());
+    ::DrawMenuBar(getHandle());
   }
 
   // // update tool-bars
@@ -271,7 +271,7 @@ bool Frame::isVisible()
  */
 void Frame::setVisible(bool visible)
 {
-  HWND hwnd = getHWND();
+  HWND hwnd = getHandle();
   assert(::IsWindow(hwnd));
 
 //   bool oldState = ::IsWindowVisible(hwnd) ? true: false;
@@ -325,7 +325,7 @@ void Frame::setVisible(bool visible)
   else {
     // activate the parent
     if (getParent() != NULL)
-      ::SetActiveWindow(getParent()->getHWND());
+      ::SetActiveWindow(getParent()->getHandle());
 
     // then hide this non-active window
     ::ShowWindow(hwnd, SW_HIDE);
@@ -379,8 +379,8 @@ MenuBar* Frame::getMenuBar()
  */
 MenuBar* Frame::setMenuBar(MenuBar* menuBar)
 {
-  HWND hwnd = getHWND();
-  HMENU hmenu = menuBar->getHMENU();
+  HWND hwnd = getHandle();
+  HMENU hmenu = menuBar->getHandle();
   
   assert(hwnd != NULL && hmenu != NULL);
 
@@ -396,31 +396,43 @@ MenuBar* Frame::setMenuBar(MenuBar* menuBar)
 }
 
 /**
- * Sets the Icon used in the title bar (if @a bigIcon is false) or in
- * the ALT+TAB dialog box (is @a bigIcon is true) (it's like the Win32
- * WM_SETICON message).
+ * Sets the Icon used in the title bar.
+ *
+ * @warning It's like the Win32 WM_SETICON message.
  * 
- * @see setIcon(int)
+ * @see #setBigIcon, #setIcon
  */
-void Frame::setIcon(Icon* icon, bool bigIcon)
+void Frame::setSmallIcon(const Icon& icon)
 {
-  sendMessage(WM_SETICON, bigIcon ? ICON_BIG: ICON_SMALL,
-	      reinterpret_cast<LPARAM>(icon->getHICON()));
+  m_smallIcon = icon;
+  sendMessage(WM_SETICON, ICON_SMALL,
+	      reinterpret_cast<LPARAM>(icon.getHandle()));
+}
+
+/**
+ * Sets the Icon used in the ALT+TAB dialog box.
+ *
+ * @warning It's like the Win32 WM_SETICON message.
+ * 
+ * @see #setSmallIcon, #setIcon
+ */
+void Frame::setBigIcon(const Icon& icon)
+{
+  m_bigIcon = icon;
+  sendMessage(WM_SETICON, ICON_BIG,
+	      reinterpret_cast<LPARAM>(icon.getHandle()));
 }
 
 /**
  * Set the big icon (32x32) and the small icon (16x16) of the Frame
  * using the ICON resource speficied by @a iconId.
  *
- * @see setIcon(Icon*, bool)
+ * @see #setSmallIcon, #setBigIcon
  */
-void Frame::setIcon(int iconId)
+void Frame::setIcon(ResourceId iconId)
 {
-  SharedIcon bigIcon(iconId, Size(32, 32));
-  SharedIcon smallIcon(iconId, Size(16, 16));
-
-  setIcon(&bigIcon, true);
-  setIcon(&smallIcon, false);
+  setSmallIcon(Icon(iconId, Size(32, 32)));
+  setBigIcon(Icon(iconId, Size(16, 16)));
 }
 
 /**
@@ -432,7 +444,7 @@ void Frame::setIcon(int iconId)
  */
 Size Frame::getNonClientSize()
 {
-  HWND hwnd = getHWND();
+  HWND hwnd = getHandle();
   assert(::IsWindow(hwnd));
 
   Rect clientRect(0, 0, 1, 1);
@@ -694,7 +706,7 @@ Widget::Container Frame::getSynchronizedGroup()
 
 //   while (!stack.empty()) {
 //     lastMenu = stack.top();
-//     if (lastMenu->getHMENU() == hmenu)
+//     if (lastMenu->getHandle() == hmenu)
 //       return lastMenu;
 
 //     stack.pop();
@@ -824,7 +836,7 @@ bool Frame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult
 	LPNCCALCSIZE_PARAMS lpncsp = (LPNCCALCSIZE_PARAMS)lParam;
 	int left, top, right, bottom;
 
-	lResult = DefWindowProc(getHWND(), message, wParam, lParam);
+	lResult = DefWindowProc(getHandle(), message, wParam, lParam);
 
 	left = top = right = bottom = 0;
 
@@ -857,7 +869,7 @@ bool Frame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult
 
       // synchronize all the group
       for (Container::iterator it=group.begin(); it!=group.end(); ++it) {
-	HWND hwndChild = (*it)->getHWND();
+	HWND hwndChild = (*it)->getHandle();
 
 	if (hwndChild != hParam)
 	  EnableWindow(hwndChild, static_cast<BOOL>(wParam));
@@ -893,7 +905,7 @@ bool Frame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult
 	// synchronize/repaint all the group
 	for (Container::iterator it=group.begin(); it!=group.end(); ++it) {
 	  Widget* child = *it;
-	  if (child->getHWND() == hParam) {
+	  if (child->getHandle() == hParam) {
 	    keepActive = true;
 	    syncGroup = false;
 	    break;
@@ -904,8 +916,8 @@ bool Frame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult
 	if (syncGroup) {
 	  for (Container::iterator it=group.begin(); it!=group.end(); ++it) {
 	    Widget* child = *it;
-	    if ((child->getHWND() != getHWND()) &&
-		(child->getHWND() != hParam))
+	    if ((child->getHandle() != getHandle()) &&
+		(child->getHandle() != hParam))
 	      child->sendMessage(WM_NCACTIVATE, keepActive, static_cast<LPARAM>(-1));
 	  }
 	}

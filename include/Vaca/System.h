@@ -63,7 +63,7 @@ public:
   static String getWindowsDirectory();
   static String getShellFolderPath(int folderCsidl, bool create);
 
-  static void getImageList(ImageList& imageList, bool smallImage);
+  static ImageList getImageList(bool smallImage);
   static int getFileImageIndex(const String& fileName, bool smallImage);
 
   static Size getScreenSize();

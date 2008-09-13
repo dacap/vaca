@@ -60,7 +60,7 @@ public:
   {
     setBgColor(Color::White);
     setDoubleBuffered(true);
-    setFont(&m_font);
+    setFont(m_font);
 
     m_carretFlicker.Action.connect(&Editor::toggleCarretVisibility, this);
     m_carretFlicker.start();

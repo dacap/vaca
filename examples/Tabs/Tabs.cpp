@@ -54,7 +54,6 @@ class MainFrame : public Frame
   LinkLabel m_label1;
   LinkLabel m_label2;
   LinkLabel m_label3;
-  Font m_tabFont;
 
   class SideMenuItem : public MenuItem
   {
@@ -90,7 +89,6 @@ public:
     , m_label1("Go to page1", &m_tab)
     , m_label2("Go to page2", &m_tab)
     , m_label3("Go to page3", &m_tab)
-    , m_tabFont(*Font::getDefault())
   {
     setMenuBar(createMenuBar());
     setLayout(new ClientLayout);
@@ -155,9 +153,9 @@ private:
 
   void onChangeFont()
   {
-    FontDialog dialog(&m_tabFont, this);
+    FontDialog dialog(m_tab.getFont(), this);
     if (dialog.doModal()) {
-      m_tab.setFont(&m_tabFont);
+      m_tab.setFont(dialog.getFont());
       m_tab.invalidate(true);
     }
   }

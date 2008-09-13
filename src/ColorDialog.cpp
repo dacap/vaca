@@ -34,7 +34,7 @@
 
 using namespace Vaca;
 
-ColorDialog::ColorDialog(Color color, Widget* parent)
+ColorDialog::ColorDialog(const Color& color, Widget* parent)
   : CommonDialog(parent)
   , m_color(color)
 {
@@ -51,7 +51,7 @@ bool ColorDialog::doModal()
   CHOOSECOLOR cc;
 
   cc.lStructSize = sizeof(CHOOSECOLOR);
-  cc.hwndOwner = getParentHWND();
+  cc.hwndOwner = getParentHandle();
   cc.hInstance = NULL;
   cc.rgbResult = m_color.getColorRef();
   cc.lpCustColors = m_customColors;

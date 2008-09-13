@@ -54,7 +54,7 @@ public:
   virtual ~CommonDialog();
 
   Widget* getParent();
-  HWND getParentHWND();
+  HWND getParentHandle();
 
   virtual bool doModal() = 0;
 

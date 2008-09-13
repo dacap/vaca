@@ -34,6 +34,8 @@
 
 #include "Vaca/base.h"
 #include "Vaca/String.h"
+#include "Vaca/SmartPtr.h"
+#include "Vaca/GdiObject.h"
 
 namespace Vaca {
 
@@ -68,6 +70,11 @@ typedef EnumSet<FontStyleEnumSet> FontStyle;
 
 //////////////////////////////////////////////////////////////////////
 
+/**
+ * Dimensions of a Font.
+ *
+ * @see Graphics#getFontMetrics
+ */
 class VACA_DLL FontMetrics
 {
   friend class Graphics;
@@ -86,18 +93,11 @@ public:
 };
 
 /**
- * A font to be used in Graphics context.
+ * A font that can be used in Graphics or Widget to draw text.
  */
-class VACA_DLL Font
+class VACA_DLL Font : private SmartPtr<GdiObject<HFONT> >
 {
   friend class Application;
-
-private:
-
-  static Font* defaultFont;
-
-  HFONT m_HFONT;
-  bool m_autoDelete;
 
 public:
 
@@ -109,27 +109,16 @@ public:
   Font(LPLOGFONT lplf);
   virtual ~Font();
 
-  bool isValid();
-
-  int getPointSize();
-  FontStyle getStyle();
+  int getPointSize() const;
+  FontStyle getStyle() const;
 
   Font& operator=(const Font& font);
-  void assign(const Font& font);
-  void assign(HFONT hfont);
-  void assign(LPLOGFONT lplf);
 
-  static Font* getDefault();
-
-//   FontMetrics getMetrics();
-
-  HFONT getHFONT();
+  HFONT getHandle() const;
   bool getLogFont(LPLOGFONT lplf) const;
 
 private:
-
-  static void deleteHandles();
-
+  void assign(LPLOGFONT lplf);
 };
 
 } // namespace Vaca

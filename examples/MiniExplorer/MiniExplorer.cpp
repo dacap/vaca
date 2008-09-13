@@ -240,7 +240,6 @@ private:
 class MainFrame : public Frame
 {
   TreeView m_treeView;
-  ImageList m_imageList;
 
 public:
 
@@ -252,8 +251,7 @@ public:
     setLayout(new ClientLayout);
 
     // set the small system image list for the TreeView
-    System::getImageList(m_imageList, true);
-    m_treeView.setNormalImageList(m_imageList);
+    m_treeView.setNormalImageList(System::getImageList(true));
 
     // get the desktop PIDL
     LPITEMIDLIST pidl = NULL;

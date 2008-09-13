@@ -99,7 +99,7 @@ protected:
 
   virtual void onMouseDown(MouseEvent &ev)
   {
-    Graphics &g = *m_vacaImage.getGraphics();
+    Graphics& g = *m_vacaImage.getGraphics();
     int d = 8+(rand()%13);
     Size sz = Size(d, d);
     Point pt = ev.getPoint() - m_vacaOrigin;
@@ -107,15 +107,13 @@ protected:
     Brush redBrush(Color::Red);
     g.fillEllipse(redBrush, Rect(pt - Point(sz/2), sz));
 
-    Pen redPen(Color::Red);	// TODO remove this, use GraphicsPath
-
     for (int c=0; c<5; c++) {
-      g.beginPath();
-      g.moveTo(pt);
-      g.lineTo(redPen, pt + Point((rand()%5)-2, (rand()%5)-2));
-      g.lineTo(redPen, pt + Point((rand()%65)-32, (rand()%65)-32));
-      g.endPath();
-      g.fillPath(redBrush);
+      GraphicsPath path;
+      path.lineTo((rand()%5)-2, (rand()%5)-2);
+      path.lineTo((rand()%65)-32, (rand()%65)-32);
+      path.closeFigure();
+
+      g.fillPath(path, redBrush, pt);
     }
 
     invalidate(false);
@@ -167,22 +165,14 @@ protected:
 
 //////////////////////////////////////////////////////////////////////
 
-class Example : public Application
-{
-  MainFrame m_mainFrame;
-
-public:
-  virtual void main() {
-    m_mainFrame.setVisible(true);
-  }
-};
-
 int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		   LPSTR lpCmdLine, int nCmdShow)
 {
   srand(static_cast<unsigned int>(time(NULL)));
 
-  Example app;
+  Application app;
+  MainFrame frm;
+  frm.setVisible(true);
   app.run();
   return 0;
 }

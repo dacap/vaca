@@ -85,9 +85,9 @@ Application::~Application()
   Application::m_HINSTANCE = NULL;
   Application::m_instance = NULL;
 
-  // delete brushes, pens and fonts
-  Graphics::deleteHandles();
-  Font::deleteHandles();
+#ifndef NDEBUG
+  Referenceable::showLeaks();
+#endif
 
   // close the log file
   __vaca_remove_all_thread_data();
@@ -116,7 +116,7 @@ Application* Application::getInstance()
  *
  * @internal
  */
-HINSTANCE Application::getHINSTANCE()
+HINSTANCE Application::getHandle()
 {
   return Application::m_HINSTANCE;
 }

@@ -55,15 +55,15 @@ LIB_SOURCES = Anchor AnchorLayout Application BandedDockArea		\
 	      CommonDialog Component ConditionVariable Constraint	\
 	      Cursor CustomButton CustomLabel Debug Dialog DockArea	\
 	      DockBar DockFrame DropFilesEvent Edit Event FileDialog	\
-	      FindTextDialog Font FontDialog Frame Graphics GroupBox	\
-	      HttpRequest Icon Image ImageList KeyEvent Keys Label	\
-	      Layout LinkLabel ListBox ListView Mdi Menu MenuItemEvent	\
-	      MouseEvent MsgBox Mutex Panel Pen Point ProgressBar	\
-	      RadioButton ReBar Rect Region ResourceId Scintilla	\
-	      Separator Size Slider SpinButton Spinner StatusBar	\
-	      String Style System Tab Thread TimePoint Timer		\
-	      ToggleButton ToolBar TreeNode TreeView TreeViewEvent	\
-	      Vaca Widget WidgetClass
+	      FindTextDialog Font FontDialog Frame Graphics		\
+	      GraphicsPath GroupBox HttpRequest Icon Image ImageList	\
+	      KeyEvent Keys Label Layout LinkLabel ListBox ListView	\
+	      Mdi Menu MenuItemEvent MouseEvent MsgBox Mutex Panel Pen	\
+	      Point ProgressBar RadioButton ReBar Rect Referenceable	\
+	      Region ResourceId Scintilla Separator Size Slider		\
+	      SpinButton Spinner StatusBar String Style System Tab	\
+	      Thread TimePoint Timer ToggleButton ToolBar TreeNode	\
+	      TreeView TreeViewEvent Vaca Widget WidgetClass
 
 EXAMPLES = AnchorLayouts AutoCompletion Bixes BouncingBalls BoxLayouts	\
 	   Buttons ColoredButton ComboBoxes Commands DataGrids		\
@@ -79,12 +79,14 @@ TESTS = \
 	test_menu \
 	test_point \
 	test_rect \
+	test_region \
 	test_signal \
 	test_size \
 	test_string \
+	test_tab \
 	test_thread
 
-# EXAMPLES = Sliders
+# EXAMPLES = Trees
 
 # ----------------------------------------------------------------------
 # Flags

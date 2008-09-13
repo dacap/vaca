@@ -174,7 +174,7 @@ private:
   void initialize()
   {
     // Set icon
-    setIcon(IDI_VACADOC);
+    setIcon(ResourceId(IDI_VACADOC));
 
     // the editor'll be arranged to client area bounds
     setLayout(new ClientLayout);
@@ -293,7 +293,7 @@ public:
     , m_viewEol(false)
   {
     setMenuBar(createMenuBar());
-    setIcon(IDI_VACA);
+    setIcon(ResourceId(IDI_VACA));
 
     createCommands();
   }
@@ -625,13 +625,15 @@ private:
 
   void onChangeFont()
   {
-    FontDialog dialog(&m_font, this);
+    FontDialog dialog(m_font, this);
     if (dialog.doModal()) {
-      Container editors = getMdiClient()->getChildren();
+      m_font = dialog.getFont();
 
       // set the font of all editors
-      for (Widget::Container::iterator it=editors.begin(); it!=editors.end(); ++it)
-	dynamic_cast<TextEditor*>(*it)->getEditor().setFont(&m_font);
+      Container editors = getMdiClient()->getChildren();
+      for (Widget::Container::iterator
+	     it=editors.begin(); it!=editors.end(); ++it)
+	dynamic_cast<TextEditor*>(*it)->getEditor().setFont(m_font);
     }
   }
 
@@ -743,7 +745,7 @@ private:
   void addTextEditor(TextEditor* textEditor)
   {
     // set the font of the editor to the current selected font
-    textEditor->getEditor().setFont(&m_font);
+    textEditor->getEditor().setFont(m_font);
 
     // set the ViewEol state
     textEditor->getEditor().setViewEol(m_viewEol);

@@ -77,13 +77,13 @@ public:
     LPCTSTR class_name = widget_class_name.toLPCTSTR();
     WNDCLASSEX wcex;
 
-    if (!GetClassInfoEx(Application::getHINSTANCE(), class_name, &wcex)) {
+    if (!GetClassInfoEx(Application::getHandle(), class_name, &wcex)) {
       wcex.cbSize        = sizeof(WNDCLASSEX); 
       wcex.style         = T::getStyle();
       wcex.lpfnWndProc   = Widget::getGlobalWndProc();
       wcex.cbClsExtra    = 0;
       wcex.cbWndExtra    = T::getWndExtra();
-      wcex.hInstance     = Application::getHINSTANCE();
+      wcex.hInstance     = Application::getHandle();
       wcex.hIcon         = (HICON)NULL;//LoadIcon(hInstance, IDI_GFC);
       wcex.hCursor       = (HCURSOR)NULL;//LoadCursor(NULL, IDC_ARROW);
       wcex.hbrBackground = reinterpret_cast<HBRUSH>(T::getColor()+1);

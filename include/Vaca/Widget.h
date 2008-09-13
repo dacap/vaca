@@ -36,6 +36,7 @@
 #include "Vaca/Color.h"
 #include "Vaca/Component.h"
 #include "Vaca/Exception.h"
+#include "Vaca/Font.h"
 #include "Vaca/Graphics.h"
 #include "Vaca/Rect.h"
 #include "Vaca/ScrollInfo.h"
@@ -323,7 +324,7 @@ typedef Enum<WidgetHitTestEnum> WidgetHitTest;
  * This exception should be thrown when the operating system or
  * window manager can't create the Window.
  *
- * In Win32, it's thrown when the Widget::createHWND method fails
+ * In Win32, it's thrown when the Widget::createHandle method fails
  * (returns NULL).
  */
 class CreateWidgetException : public Exception
@@ -362,7 +363,7 @@ private:
   /**
    * The window handler to use with the Windows API.
    */
-  HWND m_HWND;
+  HWND m_handle;
 
   /**
    * Sorted collection of children.
@@ -418,7 +419,7 @@ private:
    *
    * @see #setText, #setFont
    */
-  Font* m_font;
+  Font m_font;
 
   /**
    * Manually set preferred size. If it's equal to NULL (by default it
@@ -429,12 +430,12 @@ private:
    */
   Size* m_preferredSize;
 
-  // ============================================================
   // TODO Remove this (it's only needed for onSetCursor)
-  // ============================================================
-
   WPARAM m_wparam;
   LPARAM m_lparam;
+
+  // TODO Remove this (it's only needed for onSetCursor)
+  HBRUSH m_hbrush;
 
   // ============================================================
   // Special hooks...
@@ -501,8 +502,8 @@ public:
   virtual String getText();
   virtual void setText(const String& str);
 
-  virtual Font* getFont();
-  virtual void setFont(Font* font);
+  virtual Font getFont() const;
+  virtual void setFont(Font font);
 
   // ===============================================================
   // WIDGET STYLE
@@ -565,8 +566,8 @@ public:
 
   Color getFgColor();
   Color getBgColor();
-  virtual void setFgColor(Color color);
-  virtual void setBgColor(Color color);
+  virtual void setFgColor(const Color& color);
+  virtual void setBgColor(const Color& color);
 
   int getOpacity();
   void setOpacity(int opacity);
@@ -617,10 +618,10 @@ public:
   // WIN32 SPECIFIC
   // ===============================================================
 
-  HWND getHWND();
-  HWND getParentHWND();
+  HWND getHandle();
+  HWND getParentHandle();
 
-  static Widget* fromHWND(HWND hwnd);
+  static Widget* fromHandle(HWND hwnd);
   static WNDPROC getGlobalWndProc();
   
   virtual bool preTranslateMessage(MSG& msg);
@@ -703,7 +704,7 @@ protected:
 
 private:
 
-  virtual HWND createHWND(LPCTSTR className, Widget* parent, Style style);
+  virtual HWND createHandle(LPCTSTR className, Widget* parent, Style style);
 
   static LRESULT CALLBACK globalWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 

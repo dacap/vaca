@@ -46,7 +46,7 @@ public:
     : MultilineEdit("", parent, MultilineEditStyle + ScrollStyle)
     , m_font("Verdana", 10)
   {
-    setFont(&m_font);
+    setFont(m_font);
   }
 
   void println(const String &str)

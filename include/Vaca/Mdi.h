@@ -118,7 +118,7 @@ public:
   virtual bool preTranslateMessage(MSG& msg);
 
 private:
-  virtual HWND createHWND(LPCTSTR className, Widget* parent, Style style);
+  virtual HWND createHandle(LPCTSTR className, Widget* parent, Style style);
 };
 
 /**

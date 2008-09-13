@@ -57,7 +57,7 @@ protected:
     
     Image newImage(imageSize);
 
-    Graphics &g = *newImage.getGraphics();
+    Graphics& g = *newImage.getGraphics();
 
     // clear the new image with a white background
     Brush whiteBrush(Color::White);
@@ -68,8 +68,8 @@ protected:
       g.drawImage(m_image, Point(imageSize/2 - m_image.getSize()/2));
     }
 
-    // clone the image
-    m_image = newImage; // TODO I don't like this clone idiom (maybe m_image = newImage.clone() would be better)
+    // assign the new image
+    m_image = newImage;
 
     // redraw all the image
     invalidate(false);
@@ -116,14 +116,13 @@ protected:
       // we are drawing?
       if (!m_erasing) {
 	// this adds an extra style to the trace (more realistic)
-	g.beginPath();		// TODO remove this, use GraphicsPath
-	g.moveTo(m_point[0]);
-	g.lineTo(pen, m_point[1]);
-	g.lineTo(pen, m_point[2]);
-	g.endPath();
+	GraphicsPath path;
+	path.moveTo(m_point[0]);
+	path.lineTo(m_point[1]);
+	path.lineTo(m_point[2]);
 
 	Brush brush(color);
-	g.fillPath(brush);
+	g.fillPath(path, brush, Point(0, 0));
       }
 
       // invalidate the drawn area

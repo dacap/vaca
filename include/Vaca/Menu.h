@@ -187,7 +187,7 @@ public:
 
 //   Menu* getMenuByHMENU(HMENU hmenu);
 
-  HMENU getHMENU();
+  HMENU getHandle();
 
 private:
   void subClass();

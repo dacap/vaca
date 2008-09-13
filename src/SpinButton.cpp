@@ -138,14 +138,14 @@ Widget* SpinButton::getBuddy()
 {
   HWND hwndBuddy = reinterpret_cast<HWND>(sendMessage(UDM_GETBUDDY, 0, 0));
   if (hwndBuddy != NULL)
-    return Widget::fromHWND(hwndBuddy);
+    return Widget::fromHandle(hwndBuddy);
   else
     return NULL;
 }
 
 void SpinButton::setBuddy(Widget* buddy)
 {
-  sendMessage(UDM_SETBUDDY, reinterpret_cast<WPARAM>(buddy->getHWND()), 0);
+  sendMessage(UDM_SETBUDDY, reinterpret_cast<WPARAM>(buddy->getHandle()), 0);
 }
 
 void SpinButton::onPreferredSize(Size& sz)

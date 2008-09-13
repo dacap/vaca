@@ -76,7 +76,7 @@ protected:
     rc.shrink(1);
     g.drawRect(blackPen, rc);
 
-    g.setFont(&m_font);
+    g.setFont(m_font);
 
     // draw the text
 

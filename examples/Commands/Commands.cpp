@@ -47,7 +47,7 @@ public:
     : MultilineEdit("", parent, MultilineEditStyle + ScrollStyle)
     , m_font("Courier New", 10)
   {
-    setFont(&m_font);
+    setFont(m_font);
   }
 
   void println(const String &str)

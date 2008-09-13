@@ -37,85 +37,86 @@
 
 using namespace Vaca;
 
-Image::Image()
+//////////////////////////////////////////////////////////////////////
+
+ImageHandle::ImageHandle()
 {
-  m_fromHDC = NULL;
-  m_size = Size(0, 0);
-  m_HBITMAP = NULL;
+  m_hdc = NULL;
   m_graphics = NULL;
+}
+
+ImageHandle::ImageHandle(HBITMAP handle)
+  : GdiObject<HBITMAP>(handle)
+{
+  m_hdc = NULL;
+  m_graphics = NULL;
+}
+
+ImageHandle::~ImageHandle()
+{
+  delete m_graphics;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+Image::Image()
+  : SmartPtr<ImageHandle>(new ImageHandle())
+{
 }
 
 /**
  * Loads an image from the resource specified by @a imageId. This
  * constructor uses Win32 LoadBitmap.
- * 
  */
 Image::Image(ResourceId imageId)
+  : SmartPtr<ImageHandle>(new ImageHandle())
 {
-  m_fromHDC = GetDC(GetDesktopWindow());
-
   // HBITMAP
-  m_HBITMAP = LoadBitmap(Application::getHINSTANCE(), imageId.toLPTSTR());
-
-  if (m_HBITMAP == NULL)
+  HBITMAP hbmp = LoadBitmap(Application::getHandle(), imageId.toLPTSTR());
+  if (hbmp == NULL)
     throw ResourceException("Can't load the image resource " + imageId.toString());
 
-  // get the size from the m_HBITMAP
-  BITMAPCOREHEADER bc;
-  ZeroMemory(&bc, sizeof(bc));
-  bc.bcSize = sizeof(bc);
-  GetDIBits(m_fromHDC, m_HBITMAP, 0, 0, NULL,
-	    reinterpret_cast<BITMAPINFO*>(&bc), 0);
-  m_size = Size(bc.bcWidth, bc.bcHeight);
-
-  // graphics
-  m_graphics = NULL;
+  get()->m_hdc = GetDC(GetDesktopWindow());
+  get()->setHandle(hbmp);
 }
 
 Image::Image(const String& fileName)
+  : SmartPtr<ImageHandle>(new ImageHandle())
 {
-  m_fromHDC = GetDC(GetDesktopWindow());
-
   // file name size
   int size = fileName.size()+1;
   LPTSTR lpstr = new TCHAR[size];
   fileName.copyTo(lpstr, size);
 
   // HBITMAP
-  m_HBITMAP = reinterpret_cast<HBITMAP>
-    (LoadImage(Application::getHINSTANCE(),
+  HBITMAP hbmp = reinterpret_cast<HBITMAP>
+    (LoadImage(Application::getHandle(),
 	       lpstr,
 	       IMAGE_BITMAP,
 	       0, 0,
 	       LR_LOADFROMFILE));
   delete[] lpstr;
 
-  if (m_HBITMAP == NULL)
+  if (hbmp == NULL)
     throw ResourceException("Can't load the image from file " + fileName);
 
-  // get the size from the m_HBITMAP
-  BITMAPCOREHEADER bc;
-  ZeroMemory(&bc, sizeof(bc));
-  bc.bcSize = sizeof(bc);
-  GetDIBits(m_fromHDC, m_HBITMAP, 0, 0, NULL,
-	    reinterpret_cast<BITMAPINFO*>(&bc), 0);
-  m_size = Size(bc.bcWidth, bc.bcHeight);
-
-  // graphics
-  m_graphics = NULL;
+  get()->m_hdc = GetDC(GetDesktopWindow());
+  get()->setHandle(hbmp);
 }
 
 Image::Image(const Size& sz)
+  : SmartPtr<ImageHandle>(new ImageHandle())
 {
   assert(sz.w > 0 && sz.h > 0);
 
-  m_fromHDC = GetDC(GetDesktopWindow());
-  m_size = sz;
-  m_HBITMAP = CreateCompatibleBitmap(m_fromHDC, sz.w, sz.h);
-  m_graphics = NULL;
+  get()->m_hdc = GetDC(GetDesktopWindow());
+  get()->setHandle(CreateCompatibleBitmap(get()->m_hdc, sz.w, sz.h));
+
+  // TODO handle error
 }
 
-Image::Image(const Size& sz, int bpp)
+Image::Image(const Size& sz, int depth)
+  : SmartPtr<ImageHandle>(new ImageHandle())
 {
   assert(sz.w > 0 && sz.h > 0);
 
@@ -124,7 +125,7 @@ Image::Image(const Size& sz, int bpp)
   bhdr.biWidth = sz.w;
   bhdr.biHeight = -sz.h;
   bhdr.biPlanes = 1;
-  bhdr.biBitCount = bpp;
+  bhdr.biBitCount = depth;
   bhdr.biCompression = BI_RGB;
   bhdr.biSizeImage = 0;
   bhdr.biXPelsPerMeter = 0;
@@ -138,58 +139,63 @@ Image::Image(const Size& sz, int bpp)
   binf.bmiHeader = bhdr;
 
   char* bits = NULL;
-  m_fromHDC = GetDC(GetDesktopWindow());
-  m_size = sz;
-  m_HBITMAP = CreateDIBSection(m_fromHDC, &binf, DIB_RGB_COLORS,
-			       reinterpret_cast<void**>(&bits),
-			       NULL, 0);
-  m_graphics = NULL;
+
+  get()->m_hdc = GetDC(GetDesktopWindow());
+  get()->setHandle(CreateDIBSection(get()->m_hdc, &binf, DIB_RGB_COLORS,
+				    reinterpret_cast<void**>(&bits),
+				    NULL, 0));
+
+  // TODO handle error
 }
 
 Image::Image(const Size& sz, Graphics& g)
+  : SmartPtr<ImageHandle>(new ImageHandle())
 {
-  assert(g.getHDC() != NULL);
+  assert(g.getHandle());
   assert(sz.w > 0 && sz.h > 0);
 
-  m_fromHDC = g.getHDC();
-  m_size = sz;
-  m_HBITMAP = CreateCompatibleBitmap(m_fromHDC, m_size.w, m_size.h);
-  m_graphics = NULL;
+  get()->m_hdc = g.getHandle();
+  get()->setHandle(CreateCompatibleBitmap(get()->m_hdc, sz.w, sz.h));
+
 }
 
 Image::Image(const Image& image)
+  : SmartPtr<ImageHandle>(image)
 {
-  m_fromHDC = image.m_fromHDC;
-  m_size = image.getSize();
-  m_HBITMAP = CreateCompatibleBitmap(m_fromHDC, m_size.w, m_size.h);
-  m_graphics = NULL;
-
-  image.copyTo(*this);
 }
 
 Image::~Image()
 {
-  destroy();
 }  
-
-bool Image::isValid()
-{
-  return m_HBITMAP != NULL;
-}
 
 int Image::getWidth() const
 {
-  return m_size.w;
+  return getSize().w;
 }
 
 int Image::getHeight() const
 {
-  return m_size.h;
+  return getSize().h;
 }
 
 Size Image::getSize() const
 {
-  return m_size;
+  BITMAPCOREHEADER bc;
+  ZeroMemory(&bc, sizeof(bc));
+  bc.bcSize = sizeof(bc);
+  GetDIBits(get()->m_hdc, getHandle(), 0, 0, NULL,
+	    reinterpret_cast<BITMAPINFO*>(&bc), 0);
+  return Size(bc.bcWidth, bc.bcHeight);
+}
+
+int Image::getDepth() const
+{
+  BITMAPCOREHEADER bc;
+  ZeroMemory(&bc, sizeof(bc));
+  bc.bcSize = sizeof(bc);
+  GetDIBits(get()->m_hdc, getHandle(), 0, 0, NULL,
+	    reinterpret_cast<BITMAPINFO*>(&bc), 0);
+  return bc.bcBitCount;
 }
 
 /**
@@ -199,42 +205,31 @@ Size Image::getSize() const
  */
 Graphics* Image::getGraphics()
 {
-  if (m_graphics == NULL) {
-    assert(m_fromHDC != NULL);
-    m_graphics = new Graphics(m_fromHDC, *this);
+  ImageHandle* ptr = get();
+
+  if (ptr->m_graphics == NULL) {
+    assert(ptr->m_hdc != NULL);
+    ptr->m_graphics = new Graphics(ptr->m_hdc, *this);
   }
-  return m_graphics;
+  return ptr->m_graphics;
 }
 
-HBITMAP Image::getHBITMAP()
+HBITMAP Image::getHandle() const
 {
-  return m_HBITMAP;
+  return get()->getHandle();
 }
 
 Image& Image::operator=(const Image& image)
 {
-  destroy();
-
-  m_fromHDC = image.m_fromHDC;
-  m_size = image.getSize();
-  m_HBITMAP = CreateCompatibleBitmap(m_fromHDC, m_size.w, m_size.h);
-  m_graphics = NULL;
-
-  image.copyTo(*this);
+  SmartPtr<ImageHandle>::operator=(image);
   return *this;
 }
 
-void Image::destroy()
+Image Image::clone() const
 {
-  if (m_HBITMAP != NULL) {
-    DeleteObject(m_HBITMAP);
-    m_HBITMAP = NULL;
-  }
-
-  if (m_graphics != NULL) {
-    delete m_graphics;
-    m_graphics = NULL;
-  }
+  Image image(getSize(), getDepth());
+  this->copyTo(image);
+  return image;
 }
 
 void Image::copyTo(Image& image) const

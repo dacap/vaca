@@ -35,22 +35,25 @@
 
 using namespace Vaca;
 
-Font* Font::defaultFont = NULL;
-
 /**
- * Constructs an invalid font.
+ * Constructs the default font.
  */
 Font::Font()
-  : m_HFONT(NULL)
+  : SmartPtr<GdiObject<HFONT> >(new GdiObject<HFONT>(reinterpret_cast<HFONT>(GetStockObject(DEFAULT_GUI_FONT))))
 {
-  m_autoDelete = false;
 }
 
+/**
+ * Makes a reference to the specified font.
+ */
 Font::Font(const Font& font)
+  : SmartPtr<GdiObject<HFONT> >(font)
 {
-  assign(font);
 }
 
+/**
+ * Makes a copy of the font changing it's style.
+ */
 Font::Font(const Font& font, FontStyle style)
 {
   LOGFONT lf;
@@ -65,12 +68,11 @@ Font::Font(const Font& font, FontStyle style)
 }
 
 Font::Font(String familyName, int size, FontStyle style)
-  : m_HFONT(NULL)
 {
   ScreenGraphics g;
   LOGFONT lf;
 
-  lf.lfHeight = -MulDiv(size, GetDeviceCaps(g.getHDC(), LOGPIXELSY), 72);
+  lf.lfHeight = -MulDiv(size, GetDeviceCaps(g.getHandle(), LOGPIXELSY), 72);
   lf.lfWidth = 0;
   lf.lfEscapement = 0;
   lf.lfOrientation = 0;
@@ -93,44 +95,34 @@ Font::Font(String familyName, int size, FontStyle style)
  * Wrapper constructor for HFONT.
  */
 Font::Font(HFONT hfont)
-  : m_HFONT(NULL)
+  : SmartPtr<GdiObject<HFONT> >(new GdiObject<HFONT>(hfont))
 {
-  assign(hfont);
 }
 
 Font::Font(LPLOGFONT lplf)
-  : m_HFONT(NULL)
 {
   assign(lplf);
 }
 
 Font::~Font()
 {
-  if (m_HFONT != NULL && m_autoDelete)
-    DeleteObject(m_HFONT);
-
-  if (this == Font::defaultFont)
-    Font::defaultFont = NULL;
-}
-
-bool Font::isValid()
-{
-  return m_HFONT != NULL;
 }
 
 /**
  * Returns the size of the font in points.
+ *
+ * @return -1 if there is an error getting the point size.
  */
-int Font::getPointSize()
+int Font::getPointSize() const
 {
   LOGFONT lf;
   if (getLogFont(&lf))
-    return -lf.lfHeight * 72 / GetDeviceCaps(ScreenGraphics().getHDC(), LOGPIXELSY);
+    return -lf.lfHeight * 72 / GetDeviceCaps(ScreenGraphics().getHandle(), LOGPIXELSY);
   else
-    return -1;			// TODO error, document it
+    return -1;
 }
 
-FontStyle Font::getStyle()
+FontStyle Font::getStyle() const
 {
   LOGFONT lf;
   if (getLogFont(&lf)) {
@@ -142,21 +134,6 @@ FontStyle Font::getStyle()
   }
   else
     return FontStyle::Regular;			// TODO error, document it
-
-//   lf.lfHeight = -MulDiv(size, GetDeviceCaps(g.getHDC(), LOGPIXELSY), 72);
-//   lf.lfWidth = 0;
-//   lf.lfEscapement = 0;
-//   lf.lfOrientation = 0;
-//   lf.lfWeight = style & Font::Style::Bold ? FW_BOLD: FW_REGULAR;
-//   lf.lfItalic = style & Font::Style::Italic;
-//   lf.lfUnderline = style & Font::Style::Underline;
-//   lf.lfStrikeOut = style & Font::Style::Strikeout;
-//   lf.lfCharSet = DEFAULT_CHARSET;
-//   lf.lfOutPrecision = OUT_DEFAULT_PRECIS;
-//   lf.lfClipPrecision = CLIP_DEFAULT_PRECIS;
-//   lf.lfQuality = DEFAULT_QUALITY; //ANTIALIASED_QUALITY
-//   lf.lfPitchAndFamily = DEFAULT_PITCH;
-
 }
 
 /**
@@ -165,70 +142,24 @@ FontStyle Font::getStyle()
  */
 Font& Font::operator=(const Font& font)
 {
-  assign(font);
+  SmartPtr<GdiObject<HFONT> >::operator=(font);
   return *this;
-}
-
-void Font::assign(const Font& font)
-{
-  LOGFONT lf;
-  if (font.getLogFont(&lf))
-    assign(&lf);
-}
-
-void Font::assign(HFONT hfont)
-{
-  if (m_HFONT != NULL && m_autoDelete) {
-    DeleteObject(m_HFONT);
-    m_HFONT = NULL;
-  }
-
-  m_HFONT = hfont;
-  m_autoDelete = false;
 }
 
 void Font::assign(LPLOGFONT lplf)
 {
-  if (m_HFONT != NULL && m_autoDelete) {
-    DeleteObject(m_HFONT);
-    m_HFONT = NULL;
-  }
-
-  m_HFONT = CreateFontIndirect(lplf);
-  m_autoDelete = true;
+  SmartPtr<GdiObject<HFONT> >::operator=(Font(CreateFontIndirect(lplf)));
 }
 
-// FontMetrics Font::getMetrics()
-// {
-//   return FontMetrics(this);
-// }
-
-Font* Font::getDefault()
+HFONT Font::getHandle() const
 {
-  if (Font::defaultFont == NULL)
-    Font::defaultFont = new Font(reinterpret_cast<HFONT>(GetStockObject(DEFAULT_GUI_FONT)));
-
-  assert(Font::defaultFont != NULL);
-
-  return Font::defaultFont;
-}
-
-HFONT Font::getHFONT()
-{
-  return m_HFONT;
+  return get()->getHandle();
 }
 
 bool Font::getLogFont(LPLOGFONT lplf) const
 {
-  assert(m_HFONT != NULL);
-
-  return GetObject(m_HFONT,
+  assert(get()->isValid());
+  return GetObject(getHandle(),
 		   sizeof(LOGFONT),
 		   reinterpret_cast<LPVOID>(lplf)) != 0;
-}
-
-void Font::deleteHandles()
-{
-  delete Font::defaultFont;
-  Font::defaultFont = NULL;
 }

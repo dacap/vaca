@@ -33,10 +33,16 @@
 
 using namespace Vaca;
 
-Brush::Brush(Color color)
+Brush::Brush(const Color& color)
 {
   initialize();
   m_color = color;
+}
+
+Brush::Brush(const Brush& brush)
+{
+  initialize();
+  assign(brush);
 }
 
 Brush::~Brush()
@@ -44,12 +50,18 @@ Brush::~Brush()
   destroy();
 }
 
+Brush& Brush::operator=(const Brush& brush)
+{
+  assign(brush);
+  return *this;
+}
+
 Color Brush::getColor() const
 {
   return m_color;
 }
 
-void Brush::setColor(Color color)
+void Brush::setColor(const Color& color)
 {
   if (m_color != color) {
     m_color = color;
@@ -57,27 +69,36 @@ void Brush::setColor(Color color)
   }
 }
 
-HBRUSH Brush::getHBRUSH()
+HBRUSH Brush::getHandle()
 {
-  if (m_modified || m_HBRUSH == NULL) {
+  if (m_modified || m_handle == NULL) {
     m_modified = false;
     destroy();
 
-    m_HBRUSH = CreateSolidBrush(m_color.getColorRef());
+    m_handle = CreateSolidBrush(m_color.getColorRef());
   }
-  return m_HBRUSH;
+  return m_handle;
 }
 
 void Brush::initialize()
 {
-  m_HBRUSH = NULL;
+  m_handle = NULL;
   m_modified = false;
+}
+
+void Brush::assign(const Brush& brush)
+{
+  destroy();
+
+  m_handle = NULL;
+  m_modified = true;
+  m_color = brush.m_color;
 }
 
 void Brush::destroy()
 {
-  if (m_HBRUSH != NULL) {
-    DeleteObject(reinterpret_cast<HGDIOBJ>(m_HBRUSH));
-    m_HBRUSH = NULL;
+  if (m_handle) {
+    DeleteObject(reinterpret_cast<HGDIOBJ>(m_handle));
+    m_handle = NULL;
   }
 }

@@ -35,6 +35,7 @@
 #include "Vaca/base.h"
 #include "Vaca/Widget.h"
 #include "Vaca/CancelableEvent.h"
+#include "Vaca/ImageList.h"
 
 namespace Vaca {
 
@@ -44,7 +45,6 @@ namespace Vaca {
 
 #define SingleSelectionListViewStyle (Style(LVS_SINGLESEL, 0))
 
-class ImageList;
 class ListItem;
 class ListViewEvent;
 
@@ -75,26 +75,29 @@ typedef Enum<ListViewTypeEnum> ListViewType;
  */
 class VACA_DLL ListView : public Widget 
 {
+  ImageList m_normalImageList;
+  ImageList m_smallImageList;
+  ImageList m_stateImageList;
+
 public:
 
   ListView(Widget* parent, Style style = ListViewStyle);
   virtual ~ListView();
 
-  virtual void setBgColor(Color color);
+  virtual void setBgColor(const Color& color);
 
   Color getTextColor();
-  void setTextColor(Color color);
+  void setTextColor(const Color& color);
 
   Color getTextBgColor();
-  void setTextBgColor(Color color);
+  void setTextBgColor(const Color& color);
 
   ListViewType getType();
   void setType(ListViewType type);
 
-  void setImageList(ImageList* imageList, int type);
-  void setNormalImageList(ImageList* imageList);
-  void setSmallImageList(ImageList* imageList);
-  void setStateImageList(ImageList* imageList);
+  void setNormalImageList(const ImageList& imageList);
+  void setSmallImageList(const ImageList& imageList);
+  void setStateImageList(const ImageList& imageList);
 
   int addColumn(const String& header, TextAlign textAlign = TextAlign::Left);
   int insertColumn(int columnIndex, const String& header, TextAlign textAlign = TextAlign::Left);

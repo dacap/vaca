@@ -39,11 +39,11 @@
 #include "Vaca/WidgetClass.h"
 #include "Vaca/Register.h"
 #include "Vaca/DockArea.h"
+#include "Vaca/Icon.h"
 
 namespace Vaca {
 
 class CloseEvent;
-class Icon;
 class Menu;
 class MenuBar;
 class MenuItem;
@@ -92,6 +92,8 @@ class VACA_DLL Frame : public Register<FrameClass>, public Widget
   StatusBar* m_statusBar;	       // The status bar.
   std::vector<DockArea*> m_dockAreas;  // Areas where you can dock a tool-bar.
   bool m_counted;		       // true if this Frame is counted in the frames' list
+  Icon m_smallIcon;
+  Icon m_bigIcon;
 
 public:
 
@@ -104,8 +106,9 @@ public:
   MenuBar* getMenuBar();
   virtual MenuBar* setMenuBar(MenuBar* menuBar);
 
-  void setIcon(Icon* icon, bool bigIcon);
-  void setIcon(int iconId);
+  void setSmallIcon(const Icon& icon);
+  void setBigIcon(const Icon& icon);
+  void setIcon(ResourceId iconId);
 
   Size getNonClientSize();
   virtual Rect getLayoutBounds();

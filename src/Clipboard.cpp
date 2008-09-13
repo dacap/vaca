@@ -51,7 +51,7 @@ bool Clipboard::isText() const
 
 String Clipboard::getString() const
 {
-  HWND hwndOwner = m_owner ? m_owner->getHWND(): NULL;
+  HWND hwndOwner = m_owner ? m_owner->getHandle(): NULL;
   String str;
 
   if (!IsClipboardFormatAvailable(CF_TEXT))
@@ -76,7 +76,7 @@ String Clipboard::getString() const
 
 void Clipboard::setString(const String& str)
 {
-  HWND hwndOwner = m_owner ? m_owner->getHWND(): NULL;
+  HWND hwndOwner = m_owner ? m_owner->getHandle(): NULL;
 
   if (!OpenClipboard(hwndOwner))
     return;

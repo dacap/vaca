@@ -62,16 +62,16 @@ class TabPage;
  */
 class VACA_DLL TabBase : public Widget
 {
-  Font* m_userFont;
-  Font* m_tabFont;
+  Font m_userFont;
+  Font m_tabFont;
 
 public:
 
   TabBase(Widget* parent, Style style = TabBaseStyle);
   virtual ~TabBase();
 
-  virtual Font* getFont();
-  virtual void setFont(Font* font);
+  virtual Font getFont() const;
+  virtual void setFont(Font font);
 
   virtual Rect getLayoutBounds();
 
@@ -92,6 +92,7 @@ public:
   void setActivePage(int pageIndex);
 
   String getPageText(int pageIndex);
+  void setPageText(int pageIndex, const String& text);
 
 //   void setPadding(Size padding);
 
@@ -157,10 +158,17 @@ public:
  */
 class VACA_DLL TabPage : public Register<TabPageClass>, public Panel
 {
+  int m_index;
+
 public:
 
   TabPage(const String& text, Tab* parent, Style style = TabPageStyle);
   virtual ~TabPage();
+
+  virtual String getText();
+  virtual void setText(const String& str);
+
+  int getPageIndex();
   
 };
 

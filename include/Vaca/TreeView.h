@@ -37,11 +37,9 @@
 #include "Vaca/base.h"
 #include "Vaca/Widget.h"
 #include "Vaca/TreeNode.h"
+#include "Vaca/ImageList.h"
 
 namespace Vaca {
-
-#define ShowSelectionAlwaysTreeViewStyle	\
-  (Style(TVS_SHOWSELALWAYS, 0))
 
 #define TreeViewStyle				\
   (ChildStyle +					\
@@ -49,9 +47,15 @@ namespace Vaca {
    ClientEdgeStyle +				\
    Style(TVS_LINESATROOT | TVS_HASBUTTONS |	\
 	 TVS_HASLINES | TVS_SHOWSELALWAYS |	\
-	 TVS_EDITLABELS, 0))
+	 TVS_DISABLEDRAGDROP, 0))
 
+/**
+ * With this style in a TreeeView the label of each TreeNode can be edited.
+ */
 #define EditLabelTreeViewStyle	(Style(TVS_EDITLABELS, 0))
+
+#define ShowSelectionAlwaysTreeViewStyle	\
+  (Style(TVS_SHOWSELALWAYS, 0))
 
 class TreeViewEvent;
 class ImageList;
@@ -111,8 +115,12 @@ class VACA_DLL TreeView : public Widget
 
   TreeNode m_root;
   bool     m_deleted;
+  bool     m_isDragging;
   String   m_tmpBuffer; // to use LPSTR_TEXTCALLBACK we need some space
                         // to allocate text temporally
+  ImageList m_dragImage;
+  ImageList m_normalImageList;
+  ImageList m_stateImageList;
 
 public:
   /**
@@ -127,9 +135,11 @@ public:
   iterator begin();
   iterator end();
 
-  void setImageList(ImageList& imageList, int type);
-  void setNormalImageList(ImageList& imageList);
-  void setStateImageList(ImageList& imageList);
+  bool isDragAndDrop();
+  void setDragAndDrop(bool state);
+
+  void setNormalImageList(const ImageList& imageList);
+  void setStateImageList(const ImageList& imageList);
 
   TreeNode* getRootNode();
 
@@ -139,7 +149,7 @@ public:
   TreeNode* getSelectedNode();
   void setSelectedNode(TreeNode* node);
 
-  virtual void setBgColor(Color color);
+  virtual void setBgColor(const Color& color);
 
   // signals
   Signal1<void, TreeViewEvent&> BeforeExpand;
@@ -154,6 +164,10 @@ public:
 //   Signal1<void, TreeViewEvent&> EndDrag;
 
 protected:
+  // evets
+  virtual void onMouseMove(MouseEvent& ev);
+  virtual void onMouseUp(MouseEvent& ev);
+
   // new events
   virtual void onBeforeExpand(TreeViewEvent& ev);
   virtual void onBeforeCollapse(TreeViewEvent& ev);
@@ -168,6 +182,8 @@ protected:
 
   // reflection
   virtual bool onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult);
+
+  virtual bool wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult);
 
 };
 

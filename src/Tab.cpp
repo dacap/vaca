@@ -48,21 +48,20 @@ using namespace Vaca;
 TabBase::TabBase(Widget* parent, Style style)
   : Widget(WidgetClassName(WC_TABCONTROL), parent, style)
 {
-  m_userFont = NULL;
-  m_tabFont = NULL;
+  m_userFont = getFont();
+  m_tabFont = getFont();
 }
 
 TabBase::~TabBase()
 {
-  delete m_tabFont;
 }
 
-Font* TabBase::getFont()
+Font TabBase::getFont() const
 {
-  return m_userFont != NULL ? m_userFont: Widget::getFont();
+  return m_userFont;
 }
 
-void TabBase::setFont(Font* font)
+void TabBase::setFont(Font font)
 {
   m_userFont = font;
   updateFont();
@@ -75,17 +74,17 @@ void TabBase::setFont(Font* font)
 Rect TabBase::getLayoutBounds()
 {
   RECT rc;
-  assert(::IsWindow(getHWND()));
+  assert(::IsWindow(getHandle()));
 
   rc = getBounds();
-  TabCtrl_AdjustRect(getHWND(), FALSE, &rc);
+  TabCtrl_AdjustRect(getHandle(), FALSE, &rc);
   return Rect(&rc).offset(-getBounds().getOrigin());
 }
 
 void TabBase::updateFont()
 {
   LOGFONT lf;
-  if (getFont()->getLogFont(&lf)) {
+  if (getFont().getLogFont(&lf)) {
     int style = getStyle().regular;
 
     if ((style & TCS_VERTICAL) != 0) {
@@ -103,9 +102,7 @@ void TabBase::updateFont()
       lf.lfOrientation = 0;
     }
 
-    delete m_tabFont;
-    m_tabFont = new Font(&lf);
-
+    m_tabFont = Font(&lf);
     Widget::setFont(m_tabFont);
   }
 
@@ -138,7 +135,7 @@ Side TabBase::getSide()
  *          with isMultiline() == false. This routine will set the Tab
  *          in a multiline style automatically if you try this.
  * 
- * @see setMultiline()
+ * @see #setMultiline
  */
 void TabBase::setSide(Side side)
 {
@@ -192,7 +189,7 @@ int TabBase::addPage(const String& text)
 
 int TabBase::insertPage(int pageIndex, const String& text)
 {
-  assert(::IsWindow(getHWND()));
+  assert(::IsWindow(getHandle()));
 
   TCITEM tci;
 
@@ -203,42 +200,42 @@ int TabBase::insertPage(int pageIndex, const String& text)
   if (pageIndex < 0)
     pageIndex = getPageCount();
   
-  return TabCtrl_InsertItem(getHWND(), pageIndex, &tci);
+  return TabCtrl_InsertItem(getHandle(), pageIndex, &tci);
 }
 
 void TabBase::removePage(int pageIndex)
 {
-  assert(::IsWindow(getHWND()));
-  TabCtrl_DeleteItem(getHWND(), pageIndex);
+  assert(::IsWindow(getHandle()));
+  TabCtrl_DeleteItem(getHandle(), pageIndex);
 }
 
 int TabBase::getPageCount()
 {
-  assert(::IsWindow(getHWND()));
-  return TabCtrl_GetItemCount(getHWND());
+  assert(::IsWindow(getHandle()));
+  return TabCtrl_GetItemCount(getHandle());
 }
 
 int TabBase::getRowCount()
 {
-  assert(::IsWindow(getHWND()));
-  return TabCtrl_GetRowCount(getHWND());
+  assert(::IsWindow(getHandle()));
+  return TabCtrl_GetRowCount(getHandle());
 }
 
 int TabBase::getActivePage()
 {
-  assert(::IsWindow(getHWND()));
-  return TabCtrl_GetCurSel(getHWND());
+  assert(::IsWindow(getHandle()));
+  return TabCtrl_GetCurSel(getHandle());
 }
 
 void TabBase::setActivePage(int pageIndex)
 {
-  assert(::IsWindow(getHWND()));
-  TabCtrl_SetCurSel(getHWND(), pageIndex);
+  assert(::IsWindow(getHandle()));
+  TabCtrl_SetCurSel(getHandle(), pageIndex);
 }
 
 String TabBase::getPageText(int pageIndex)
 {
-  assert(::IsWindow(getHWND()));
+  assert(::IsWindow(getHandle()));
 
   TCITEM tci;
 
@@ -246,7 +243,7 @@ String TabBase::getPageText(int pageIndex)
   tci.pszText = new Character[1024];
   tci.cchTextMax = 1024;
 
-  if (TabCtrl_GetItem(getHWND(), pageIndex, &tci) != FALSE) {
+  if (TabCtrl_GetItem(getHandle(), pageIndex, &tci) != FALSE) {
     String text(tci.pszText);
     delete[] tci.pszText;
     return text;
@@ -257,10 +254,25 @@ String TabBase::getPageText(int pageIndex)
   }
 }
 
+void TabBase::setPageText(int pageIndex, const String& text)
+{
+  assert(::IsWindow(getHandle()));
+
+  TCITEM tci;
+
+  tci.mask = TCIF_TEXT;
+  tci.pszText = new Character[1024];
+  tci.cchTextMax = 1024;
+
+  text.copyTo(tci.pszText, tci.cchTextMax);
+
+  TabCtrl_SetItem(getHandle(), pageIndex, &tci);
+}
+
 // void TabBase::setPadding(Size padding)
 // {
-//   assert(::IsWindow(getHWND()));
-//   TabCtrl_SetPadding(getHWND(), padding.w, padding.h);
+//   assert(::IsWindow(getHandle()));
+//   TabCtrl_SetPadding(getHandle(), padding.w, padding.h);
 // }
 
 /**
@@ -268,12 +280,12 @@ String TabBase::getPageText(int pageIndex)
  */
 Size TabBase::getNonClientSize()
 {
-  assert(::IsWindow(getHWND()));
+  assert(::IsWindow(getHandle()));
 
   Rect clientRect(0, 0, 1, 1);
   RECT nonClientRect = clientRect;
 
-  TabCtrl_AdjustRect(getHWND(), TRUE, &nonClientRect);
+  TabCtrl_AdjustRect(getHandle(), TRUE, &nonClientRect);
 
   return Rect(&nonClientRect).getSize() - clientRect.getSize();
 }
@@ -382,13 +394,28 @@ TabPage::TabPage(const String& text, Tab* parent, Style style)
 {
   setText(text);
 
-  int pageIndex = parent->addPage(text);
+  m_index = parent->addPage(text);
 
   // only the first inserted page is visible
-  if (pageIndex > 0)
+  if (m_index > 0)
     setVisible(false);
 }
 
 TabPage::~TabPage()
 {
+}
+
+String TabPage::getText()
+{
+  return static_cast<Tab*>(getParent())->getPageText(m_index);
+}
+
+void TabPage::setText(const String& str)
+{
+  static_cast<Tab*>(getParent())->setPageText(m_index, str);
+}
+
+int TabPage::getPageIndex()
+{
+  return m_index;
 }

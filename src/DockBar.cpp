@@ -626,7 +626,7 @@ void DockBar::beginDrag()
   // install the keyboard hook (to hook the CONTROL key changes, and
   // the ESC key)
   assert(hwndDockWnd == NULL && dragHook == NULL);
-  hwndDockWnd = getHWND();
+  hwndDockWnd = getHandle();
   dragHook = SetWindowsHookEx(WH_KEYBOARD, dragHookProc, NULL, ::GetCurrentThreadId()); 
 
 //   if (m_dockArea != NULL)
@@ -703,7 +703,7 @@ void DockBar::endDrag()
     dragHook = NULL;
   }
 
-  assert(hwndDockWnd == getHWND());
+  assert(hwndDockWnd == getHandle());
   hwndDockWnd = NULL;
 
       // end dragging
@@ -720,8 +720,8 @@ void DockBar::endDrag()
 void DockBar::cleanUp()
 {
   // undock
-  if (m_dockArea != NULL) {
-    if (m_dockArea->getHWND() != NULL) {
+  if (m_dockArea) {
+    if (m_dockArea->getHandle()) {
       m_dockArea->removeDockBar(this);
       m_dockArea->getParent()->layout();
     }
@@ -739,7 +739,7 @@ void DockBar::cleanFrame()
 {
   assert(m_dockFrame != NULL);
 
-  if (m_dockFrame->getHWND() != NULL)
+  if (m_dockFrame->getHandle())
     m_dockFrame->removeChild(this, true);
 
   delete_widget(m_dockFrame);

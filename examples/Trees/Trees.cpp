@@ -80,6 +80,8 @@ public:
 
 class MainFrame : public Frame
 {
+  CheckBox m_dragAndDrop1;
+  CheckBox m_dragAndDrop2;
   TreeView m_treeView1;
   TreeView m_treeView2;
   Button m_addItem;
@@ -92,8 +94,10 @@ public:
 
   MainFrame()
     : Frame("Trees")
+    , m_dragAndDrop1("Drag && Drop", this)
+    , m_dragAndDrop2("Drag && Drop", this)
     , m_treeView1(this)
-    , m_treeView2(this)
+    , m_treeView2(this, TreeViewStyle + EditLabelTreeViewStyle)
     , m_addItem("+", this)
     , m_deleteItem("-", this)
     , m_from1to2(">", this)
@@ -101,11 +105,11 @@ public:
     , m_label("", this)
   {
     // layout
-    setLayout(Bix::parse("Y[fX[Y[%,%],f%,Y[%,%],f%],%]",
+    setLayout(Bix::parse("Y[fX[Y[%,%],fY[%,f%],Y[%,%],fY[%,f%]],%]",
 			 &m_addItem, &m_deleteItem,
-			 &m_treeView1,
+			 &m_dragAndDrop1, &m_treeView1,
 			 &m_from1to2, &m_from2to1,
-			 &m_treeView2,
+			 &m_dragAndDrop2, &m_treeView2,
 			 &m_label));
 
     m_addItem.setPreferredSize(Size(32, 16));
@@ -125,18 +129,25 @@ public:
     m_treeView1.addNode(new InfiniteTreeNode("Infinite Node"));
 
     // bind some events
-    m_treeView1.AfterExpand   .connect(&MainFrame::onAfterExpand,    this);
-    m_treeView1.AfterCollapse .connect(&MainFrame::onAfterCollapse,  this);
-    m_treeView1.AfterSelect   .connect(&MainFrame::onAfterSelect,    this);
+    m_dragAndDrop1.Action.connect(Bind(&MainFrame::onDragAndDrop, this, &m_dragAndDrop1, &m_treeView1));
+    m_dragAndDrop2.Action.connect(Bind(&MainFrame::onDragAndDrop, this, &m_dragAndDrop2, &m_treeView2));
+    m_treeView1.AfterExpand.connect(&MainFrame::onAfterExpand, this);
+    m_treeView1.AfterCollapse.connect(&MainFrame::onAfterCollapse, this);
+    m_treeView1.AfterSelect.connect(&MainFrame::onAfterSelect, this);
     m_treeView1.AfterLabelEdit.connect(&MainFrame::onAfterLabelEdit, this);
 
-    m_addItem.Action          .connect(Bind(&MainFrame::onAddItem, this));
-    m_deleteItem.Action       .connect(Bind(&MainFrame::onDeleteItem, this));
-    m_from1to2.Action         .connect(Bind(&MainFrame::onFromTo, this, &m_treeView1, &m_treeView2));
-    m_from2to1.Action         .connect(Bind(&MainFrame::onFromTo, this, &m_treeView2, &m_treeView1));
+    m_addItem.Action.connect(Bind(&MainFrame::onAddItem, this));
+    m_deleteItem.Action.connect(Bind(&MainFrame::onDeleteItem, this));
+    m_from1to2.Action.connect(Bind(&MainFrame::onFromTo, this, &m_treeView1, &m_treeView2));
+    m_from2to1.Action.connect(Bind(&MainFrame::onFromTo, this, &m_treeView2, &m_treeView1));
   }
 
 protected:
+
+  void onDragAndDrop(CheckBox* cb, TreeView* treeView)
+  {
+    treeView->setDragAndDrop(cb->isSelected());
+  }
 
   // onAfter some event (like onAfterExpand or onAfterCollapse)
   void onAfter(TreeViewEvent& ev, const String& action)
@@ -205,19 +216,12 @@ private:
 
 //////////////////////////////////////////////////////////////////////
 
-class Example : public Application
-{
-  MainFrame m_mainFrame;
-public:
-  virtual void main() {
-    m_mainFrame.setVisible(true);
-  }
-};
-
 int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		   LPSTR lpCmdLine, int nCmdShow)
 {
-  Example app;
+  Application app;
+  MainFrame frm;
+  frm.setVisible(true);
   app.run();
   return 0;
 }

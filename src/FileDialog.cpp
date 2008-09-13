@@ -145,8 +145,8 @@ bool FileDialog::doModal()
 #else
   ofn.lStructSize = sizeof(OPENFILENAME);
 #endif
-  ofn.hwndOwner = getParentHWND();
-  ofn.hInstance = Application::getHINSTANCE();
+  ofn.hwndOwner = getParentHandle();
+  ofn.hInstance = Application::getHandle();
   ofn.lpstrFilter = m_filtersString.c_str();
   ofn.lpstrCustomFilter = NULL;
   ofn.nMaxCustFilter = 0;

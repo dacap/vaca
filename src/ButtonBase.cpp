@@ -84,7 +84,7 @@ void ButtonBase::setSelected(bool state)
  */
 void ButtonBase::onPreferredSize(Size& sz)
 {
-  assert(::IsWindow(getHWND()));
+  assert(::IsWindow(getHandle()));
 
   int style = getStyle().regular;
 

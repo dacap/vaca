@@ -59,7 +59,7 @@ FindTextDialog::FindTextDialog(bool replace, Widget* parent)
   if (!m_findMsgId)
     m_findMsgId = RegisterWindowMessage(FINDMSGSTRING);
 
-  // now Widget::create calls FTDialog::createHWND
+  // now Widget::create calls FTDialog::createHandle
   create(WidgetClassName::None, parent, NoStyle);
 }
 
@@ -96,12 +96,12 @@ void FindTextDialog::setReplaceWith(const String& s)
 
 bool FindTextDialog::isWholeWord()
 {
-  return ::IsDlgButtonChecked(getHWND(), WIN32_ID_WHOLEWORD) == BST_CHECKED;
+  return ::IsDlgButtonChecked(getHandle(), WIN32_ID_WHOLEWORD) == BST_CHECKED;
 }
 
 bool FindTextDialog::isMatchCase()
 {
-  return ::IsDlgButtonChecked(getHWND(), WIN32_ID_MATCHCASE) == BST_CHECKED;
+  return ::IsDlgButtonChecked(getHandle(), WIN32_ID_MATCHCASE) == BST_CHECKED;
 }
 
 bool FindTextDialog::isBackward()
@@ -109,7 +109,7 @@ bool FindTextDialog::isBackward()
   if (m_replace)
     return false;
   else
-    return ::IsDlgButtonChecked(getHWND(), WIN32_ID_DIRBACKWARD) == BST_CHECKED;
+    return ::IsDlgButtonChecked(getHandle(), WIN32_ID_DIRBACKWARD) == BST_CHECKED;
 }
 
 bool FindTextDialog::isForward()
@@ -117,7 +117,7 @@ bool FindTextDialog::isForward()
   if (m_replace)
     return true;
   else
-    return ::IsDlgButtonChecked(getHWND(), WIN32_ID_DIRFORWARD) == BST_CHECKED;
+    return ::IsDlgButtonChecked(getHandle(), WIN32_ID_DIRFORWARD) == BST_CHECKED;
 }
 
 void FindTextDialog::onFindNext(Event& ev)
@@ -137,9 +137,9 @@ void FindTextDialog::onReplaceAll(Event& ev)
 
 void FindTextDialog::getTextFromDlgItem(int id, String& s)
 {
-  assert(::IsWindow(getHWND()));
+  assert(::IsWindow(getHandle()));
 
-  HWND hwnd = GetDlgItem(getHWND(), id);
+  HWND hwnd = GetDlgItem(getHandle(), id);
   if (::IsWindow(hwnd)) {
     int len = GetWindowTextLength(hwnd);
     if (len > 0) {
@@ -153,22 +153,22 @@ void FindTextDialog::getTextFromDlgItem(int id, String& s)
 
 void FindTextDialog::setTextFromDlgItem(int id, const String& s)
 {
-  assert(::IsWindow(getHWND()));
+  assert(::IsWindow(getHandle()));
 
-  HWND hwnd = GetDlgItem(getHWND(), id);
+  HWND hwnd = GetDlgItem(getHandle(), id);
   if (::IsWindow(hwnd))
     ::SetWindowText(hwnd, s.c_str());
 }
 
-HWND FindTextDialog::createHWND(LPCTSTR className, Widget* parent, Style style)
+HWND FindTextDialog::createHandle(LPCTSTR className, Widget* parent, Style style)
 {
   assert(parent != NULL);
 
   ZeroMemory(&m_findReplace, sizeof(m_findReplace));
 
   m_findReplace.lStructSize = sizeof(m_findReplace);
-  m_findReplace.hwndOwner = parent->getHWND();
-  m_findReplace.hInstance = Application::getHINSTANCE();
+  m_findReplace.hwndOwner = parent->getHandle();
+  m_findReplace.hInstance = Application::getHandle();
   m_findReplace.Flags = 0
     | FR_DOWN
     | FR_ENABLEHOOK
@@ -194,7 +194,7 @@ HWND FindTextDialog::createHWND(LPCTSTR className, Widget* parent, Style style)
 
 UINT_PTR CALLBACK FindTextDialog::hookProc(HWND hdlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
-  FindTextDialog* dlg = dynamic_cast<FindTextDialog*>(Widget::fromHWND(hdlg));
+  FindTextDialog* dlg = dynamic_cast<FindTextDialog*>(Widget::fromHandle(hdlg));
 
   switch (message) {
 

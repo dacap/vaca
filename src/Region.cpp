@@ -38,41 +38,33 @@
 using namespace Vaca;
 
 Region::Region()
+  : SmartPtr<GdiObject<HRGN> >(new GdiObject<HRGN>(CreateRectRgn(0, 0, 0, 0)))
 {
-  m_HRGN = CreateRectRgn(0, 0, 0, 0);
-  m_selfDestruction = true;
-  
-  assert(m_HRGN != NULL); // TODO exception
-}
-
-Region::Region(HRGN hrgn , SelfDestruction selfDestruction)
-{
-  assert(hrgn != NULL);
-  
-  m_HRGN = hrgn;
-  m_selfDestruction = selfDestruction.isEnabled();
-}
-
-Region::Region(const Rect &_rc)
-{
-  RECT rc = _rc;
-
-  m_HRGN = CreateRectRgnIndirect(&rc);
-  m_selfDestruction = true;
-
-  assert(m_HRGN != NULL); // TODO exception
+  assert(getHandle()); // TODO exception
 }
 
 Region::Region(const Region& rgn)
+  : SmartPtr<GdiObject<HRGN> >(rgn)
 {
-  m_HRGN = NULL;
-  assign(rgn);
+}
+
+Region::Region(HRGN hrgn)
+  : SmartPtr<GdiObject<HRGN> >(new GdiObject<HRGN>)
+{
+  assert(hrgn);
+  get()->setHandle(hrgn);
+}
+
+Region::Region(const Rect& rc)
+  : SmartPtr<GdiObject<HRGN> >(new GdiObject<HRGN>)
+{
+  RECT _rc = rc;
+  get()->setHandle(CreateRectRgnIndirect(&_rc));
+  assert(getHandle()); // TODO exception
 }
 
 Region::~Region()
 {
-  assert(m_HRGN != NULL);
-  destroy();
 }
 
 /** 
@@ -80,10 +72,10 @@ Region::~Region()
  */
 bool Region::isEmpty() const
 {
-  assert(m_HRGN != NULL);
+  assert(getHandle());
 
   RECT rc;
-  return GetRgnBox(m_HRGN, &rc) == NULLREGION;
+  return GetRgnBox(getHandle(), &rc) == NULLREGION;
 }
 
 /** 
@@ -93,10 +85,10 @@ bool Region::isEmpty() const
  */
 bool Region::isSimple() const
 {
-  assert(m_HRGN != NULL);
+  assert(getHandle());
 
   RECT rc;
-  return GetRgnBox(m_HRGN, &rc) == SIMPLEREGION;
+  return GetRgnBox(getHandle(), &rc) == SIMPLEREGION;
 }
 
 /** 
@@ -104,50 +96,30 @@ bool Region::isSimple() const
  */
 bool Region::isComplex() const
 {
-  assert(m_HRGN != NULL);
+  assert(getHandle());
 
   RECT rc;
-  return GetRgnBox(m_HRGN, &rc) == COMPLEXREGION;
+  return GetRgnBox(getHandle(), &rc) == COMPLEXREGION;
 }
 
 Region& Region::operator=(const Region& rgn)
 {
-  assign(rgn);
+  SmartPtr<GdiObject<HRGN> >::operator=(rgn);
   return *this;
 }
 
-void Region::assign(const Region& rgn)
+Region Region::clone() const
 {
-  assert(rgn.m_HRGN != NULL);
+  assert(getHandle());
 
-  // delete old region
-  destroy();
-
-  // create a new empty region
-  m_HRGN = CreateRectRgn(0, 0, 0, 0);
-  m_selfDestruction = true;
-  
-  assert(m_HRGN != NULL);	// TODO exception
-
-  // copy the "rgn" to this region
-  int res = CombineRgn(m_HRGN,
-		       rgn.m_HRGN,
-		       rgn.m_HRGN, RGN_COPY);
+  // copy the this region to "rgn"
+  Region copy;
+  int res = CombineRgn(copy->getHandle(), getHandle(), NULL, RGN_COPY);
   if (res == ERROR) {
     assert(false);	// TODO exception
   }
-}
 
-void Region::assign(HRGN hrgn, SelfDestruction selfDestruction)
-{
-  assert(hrgn != NULL);
-
-  // delete old region
-  destroy();
-
-  // assign the new one
-  m_HRGN = hrgn;
-  m_selfDestruction = selfDestruction.isEnabled();
+  return copy;
 }
 
 /** 
@@ -158,10 +130,10 @@ void Region::assign(HRGN hrgn, SelfDestruction selfDestruction)
  */
 Rect Region::getBounds() const
 {
-  assert(m_HRGN != NULL);
+  assert(getHandle());
 
   RECT rc;
-  int res = GetRgnBox(m_HRGN, &rc);
+  int res = GetRgnBox(getHandle(), &rc);
 
   if (res == NULLREGION)
     return Rect();		// empty rectangle
@@ -171,7 +143,7 @@ Rect Region::getBounds() const
 
 Region& Region::offset(int dx, int dy)
 {
-  OffsetRgn(getHRGN(), dx, dy);
+  OffsetRgn(getHandle(), dx, dy);
   return *this;
 }
 
@@ -182,22 +154,22 @@ Region& Region::offset(const Point& point)
 
 bool Region::contains(const Point& pt) const
 {
-  assert(m_HRGN != NULL);
-	  
-  return PtInRegion(const_cast<HRGN>(m_HRGN), pt.x, pt.y) != FALSE;
+  assert(getHandle());
+
+  return PtInRegion(getHandle(), pt.x, pt.y) != FALSE;
 }
 
 bool Region::contains(const Rect& rc) const
 {
-  assert(m_HRGN != NULL);
+  assert(getHandle());
 
   RECT rc2 = rc;
-  return RectInRegion(const_cast<HRGN>(m_HRGN), &rc2) != FALSE;
+  return RectInRegion(getHandle(), &rc2) != FALSE;
 }
 
 bool Region::operator==(const Region& rgn) const
 {
-  BOOL res = EqualRgn(m_HRGN, rgn.m_HRGN) != FALSE;
+  BOOL res = EqualRgn(getHandle(), rgn.getHandle()) != FALSE;
 
   if (res == ERROR)
     return false;
@@ -213,9 +185,9 @@ bool Region::operator!=(const Region& rgn) const
 Region Region::operator|(const Region& rgn) const
 {
   Region res;
-  CombineRgn(res.m_HRGN,
-	     this->m_HRGN,
-	     rgn.m_HRGN, RGN_OR);
+  CombineRgn(res.getHandle(),
+	     this->getHandle(),
+	     rgn.getHandle(), RGN_OR);
   return res;
 }
 
@@ -227,27 +199,27 @@ Region Region::operator+(const Region& rgn) const
 Region Region::operator&(const Region& rgn) const
 {
   Region res;
-  CombineRgn(res.m_HRGN,
-	     this->m_HRGN,
-	     rgn.m_HRGN, RGN_AND);
+  CombineRgn(res.getHandle(),
+	     this->getHandle(),
+	     rgn.getHandle(), RGN_AND);
   return res;
 }
 
 Region Region::operator-(const Region& rgn) const
 {
   Region res;
-  CombineRgn(res.m_HRGN,
-	     this->m_HRGN,
-	     rgn.m_HRGN, RGN_DIFF);
+  CombineRgn(res.getHandle(),
+	     this->getHandle(),
+	     rgn.getHandle(), RGN_DIFF);
   return res;
 }
 
 Region Region::operator^(const Region& rgn) const
 {
   Region res;
-  CombineRgn(res.m_HRGN,
-	     this->m_HRGN,
-	     rgn.m_HRGN, RGN_XOR);
+  CombineRgn(res.getHandle(),
+	     this->getHandle(),
+	     rgn.getHandle(), RGN_XOR);
   return res;
 }
 
@@ -257,9 +229,9 @@ Region Region::operator^(const Region& rgn) const
  */
 Region& Region::operator|=(const Region& rgn)
 {
-  CombineRgn(this->m_HRGN,
-	     this->m_HRGN,
-	     rgn.m_HRGN, RGN_OR);
+  CombineRgn(this->getHandle(),
+	     this->getHandle(),
+	     rgn.getHandle(), RGN_OR);
   return *this;
 }
 
@@ -278,9 +250,9 @@ Region& Region::operator+=(const Region& rgn)
  */
 Region& Region::operator&=(const Region& rgn)
 {
-  CombineRgn(this->m_HRGN,
-	     this->m_HRGN,
-	     rgn.m_HRGN, RGN_AND);
+  CombineRgn(this->getHandle(),
+	     this->getHandle(),
+	     rgn.getHandle(), RGN_AND);
   return *this;
 }
 
@@ -289,9 +261,9 @@ Region& Region::operator&=(const Region& rgn)
  */
 Region& Region::operator-=(const Region& rgn)
 {
-  CombineRgn(this->m_HRGN,
-	     this->m_HRGN,
-	     rgn.m_HRGN, RGN_DIFF);
+  CombineRgn(this->getHandle(),
+	     this->getHandle(),
+	     rgn.getHandle(), RGN_DIFF);
   return *this;
 }
 
@@ -301,9 +273,9 @@ Region& Region::operator-=(const Region& rgn)
  */
 Region& Region::operator^=(const Region& rgn)
 {
-  CombineRgn(this->m_HRGN,
-	     this->m_HRGN,
-	     rgn.m_HRGN, RGN_XOR);
+  CombineRgn(this->getHandle(),
+	     this->getHandle(),
+	     rgn.getHandle(), RGN_XOR);
   return *this;
 }
 
@@ -313,7 +285,7 @@ Region& Region::operator^=(const Region& rgn)
 Region Region::fromRect(const Rect &_rc)
 {
   RECT rc = _rc;
-  return Region(CreateRectRgnIndirect(&rc), SelfDestruction(true));
+  return Region(CreateRectRgnIndirect(&rc));
 }
 
 /**
@@ -322,7 +294,7 @@ Region Region::fromRect(const Rect &_rc)
 Region Region::fromEllipse(const Rect &_rc)
 {
   RECT rc = _rc;
-  return Region(CreateEllipticRgnIndirect(&rc), SelfDestruction(true));
+  return Region(CreateEllipticRgnIndirect(&rc));
 }
 
 /**
@@ -335,29 +307,13 @@ Region Region::fromRoundRect(const Rect& _rc, const Size& ellipseSize)
   RECT rc = _rc;
   return Region(CreateRoundRectRgn(rc.left, rc.top,
 				   rc.right, rc.bottom,
-				   ellipseSize.w, ellipseSize.h),
-		SelfDestruction(true));
+				   ellipseSize.w, ellipseSize.h));
 }
 
 /**
  * Returns the Win32 region handler.
  */
-HRGN Region::getHRGN()
+HRGN Region::getHandle() const
 {
-  return m_HRGN;
+  return get()->getHandle();
 }
-
-/**
- * Destroys the region, it's called by the destructor.
- *
- * In Win32 it uses the DeleteObject function.
- */
-void Region::destroy()
-{
-  if (m_HRGN != NULL && m_selfDestruction) {
-    DeleteObject(m_HRGN);
-
-    m_HRGN = NULL;
-  }
-}
-

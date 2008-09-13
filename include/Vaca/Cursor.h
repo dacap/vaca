@@ -33,8 +33,9 @@
 #define VACA_CURSOR_H
 
 #include "Vaca/base.h"
-#include "Vaca/Cursor.h"
 #include "Vaca/ResourceId.h"
+#include "Vaca/SmartPtr.h"
+#include "Vaca/GdiObject.h"
 
 namespace Vaca {
 
@@ -76,23 +77,31 @@ struct SysCursorEnum
  */
 typedef Enum<SysCursorEnum> SysCursor;
 
-/**
+struct Win32DestroyCursor
+{
+  static void destroy(HCURSOR handle)
+  {
+    ::DestroyCursor(handle);
+  }
+};
+
+  /**
  * A cursor (HCURSOR wrapper).
  */
-class VACA_DLL Cursor
+class VACA_DLL Cursor : private SmartPtr<GdiObject<HCURSOR, Win32DestroyCursor> >
 {
-  HCURSOR m_HCURSOR;
-  bool m_autoDelete;
-
 public:
-
+  Cursor();
+  Cursor(const Cursor& cursor);
   explicit Cursor(ResourceId cursorId);
   explicit Cursor(SysCursor cursor);
   explicit Cursor(const String& fileName);
-  Cursor(const Cursor& cursor);
+  explicit Cursor(HCURSOR handle);
   virtual ~Cursor();
 
-  HCURSOR getHCURSOR();
+  Cursor& operator=(const Cursor& cursor);
+
+  HCURSOR getHandle() const;
 
 };
 

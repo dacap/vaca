@@ -70,7 +70,7 @@ public:
   virtual ~Application();
 
   static Application* getInstance();
-  static HINSTANCE getHINSTANCE();
+  static HINSTANCE getHandle();
 
   virtual void run();
 

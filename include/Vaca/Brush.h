@@ -39,55 +39,6 @@
 namespace Vaca {
 
 //////////////////////////////////////////////////////////////////////
-// Brush Style
-
-// struct _BrushStyle
-// {
-//   enum enumeration {
-//     Solid,
-//     Dash,
-//     Dot,
-//     DashDot,
-//     DashDotDot,
-//     Null,
-//     InsideFrame
-//   };
-//   static const enumeration default_value = Solid;
-// };
-
-// typedef Enum<_BrushStyle> BrushStyle;
-
-//////////////////////////////////////////////////////////////////////
-// Brush End Cap
-
-// struct _BrushEndCap
-// {
-//   enum enumeration {
-//     Round,
-//     Square,
-//     Flat
-//   };
-//   static const enumeration default_value = Round;
-// };
-
-// typedef Enum<_BrushEndCap> BrushEndCap;
-
-//////////////////////////////////////////////////////////////////////
-// Brush Join
-
-// struct _BrushJoin
-// {
-//   enum enumeration {
-//     Round,
-//     Bevel,
-//     Miter
-//   };
-//   static const enumeration default_value = Round;
-// };
-
-// typedef Enum<_BrushJoin> BrushJoin;
-
-//////////////////////////////////////////////////////////////////////
 // Brush
 
 /**
@@ -95,43 +46,27 @@ namespace Vaca {
  */
 class VACA_DLL Brush
 {
-  HBRUSH m_HBRUSH;
+  HBRUSH m_handle;
   bool m_modified;
   Color m_color;
-//   int mWidth;
-//   BrushStyle mStyle;
-//   BrushEndCap mEndCap;
-//   BrushJoin mJoin;
   
 public:
 
-  // Cosmetic Brush
-  explicit Brush(Color color// , int width = 1
-		 );
-//   Brush(Brush& brush, int width = 1);
-//   Brush(const Brush& brush);
+  explicit Brush(const Color& color);
+  Brush(const Brush& brush);
   virtual ~Brush();
 
+  Brush& operator=(const Brush& brush);
+
   Color getColor() const;
-  void setColor(Color color);
+  void setColor(const Color& color);
 
-//   int getWidth() const;
-//   void setWidth(int width);
-
-//   BrushStyle getStyle() const;
-//   void setStyle(BrushStyle style);
-
-//   BrushEndCap getEndCap() const;
-//   void setEndCap(BrushEndCap endCap);
-
-//   BrushJoin getJoin() const;
-//   void setJoin(BrushJoin join);
-
-  HBRUSH getHBRUSH();
+  HBRUSH getHandle();
 
 private:
 
   void initialize();
+  void assign(const Brush& brush);
   void destroy();
   
 };

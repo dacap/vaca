@@ -452,7 +452,7 @@ private:
 
   void drawCell(Graphics &g, const String &text, const Rect &rc,
 		Color borderColor, Color backgroundColor, Color textColor, bool hot = false);
-  void drawArrow(Graphics &g, const Rect &rc, Color color);
+  void drawArrow(Graphics &g, const Rect &rc, const Color& color);
 
   int getHotResizingBorder(const Point &pt);
   void updateHorizontalScrollBarVisibility();
@@ -486,7 +486,7 @@ DataGrid::DataGrid(Widget* parent)
   m_crudColumn = true;
   m_crudColumnWidth = 32;
 
-  ::ShowScrollBar(getHWND(), SB_BOTH, FALSE);
+  ::ShowScrollBar(getHandle(), SB_BOTH, FALSE);
 }
 
 DataGrid::~DataGrid()
@@ -562,7 +562,7 @@ void DataGrid::onScroll(Orientation orientation, int code)
   si.pos = getScrollPos(orientation);
 
   if (si.pos != oldPos) {
-    ScrollWindowEx(getHWND(),
+    ScrollWindowEx(getHandle(),
 		   (orientation == Orientation::Horizontal) ? oldPos - si.pos: 0,
 		   (orientation == Orientation::Vertical  ) ? oldPos - si.pos: 0,
 		   NULL, NULL, NULL, NULL,
@@ -684,7 +684,7 @@ void DataGrid::onMouseWheel(MouseEvent &ev)
   //     SCROLLINFO si;
   //     si.cbSize = sizeof(si);
   //     si.fMask  = SIF_ALL;
-  //     GetScrollInfo(getHWND(), SB_HORZ, &si);
+  //     GetScrollInfo(getHandle(), SB_HORZ, &si);
 
   //     int oldPos = si.nPos;
   //     int newPos = si.nPos - ev.getDelta() * 32;
@@ -693,8 +693,8 @@ void DataGrid::onMouseWheel(MouseEvent &ev)
   //     si.nPos = VACA_MID(static_cast<int>(si.nMin),
   // 		       static_cast<int>(newPos),
   // 		       static_cast<int>(si.nMax - VACA_MAX(si.nPage, 0)));
-  //     SetScrollInfo(getHWND(), SB_HORZ, &si, TRUE);
-  //     GetScrollInfo(getHWND(), SB_HORZ, &si);
+  //     SetScrollInfo(getHandle(), SB_HORZ, &si, TRUE);
+  //     GetScrollInfo(getHandle(), SB_HORZ, &si);
 
   // Vertical
   //     if (getScrollInfo(Vertical).maxPos >= 0) {
@@ -703,7 +703,7 @@ void DataGrid::onMouseWheel(MouseEvent &ev)
   //       int newPos = getScrollPos(Vertical);
 
   //       if (oldPos != newPos) {
-  // 	ScrollWindowEx(getHWND(), 0, oldPos - newPos,
+  // 	ScrollWindowEx(getHandle(), 0, oldPos - newPos,
   // 		       NULL, NULL, NULL, NULL,
   // 		       SW_ERASE | SW_INVALIDATE);
 
@@ -718,7 +718,7 @@ void DataGrid::onMouseWheel(MouseEvent &ev)
     int newPos = getScrollPos(Orientation::Horizontal);
 
     if (oldPos != newPos) {
-      ScrollWindowEx(getHWND(), oldPos - newPos, 0,
+      ScrollWindowEx(getHandle(), oldPos - newPos, 0,
 		     NULL, NULL, NULL, NULL,
 		     SW_ERASE | SW_INVALIDATE);
 
@@ -1087,9 +1087,8 @@ void DataGrid::drawCell(Graphics &g, const String &text, const Rect &rc,
     g.drawRect(borderPen, Rect(rc.x-1, rc.y-1, rc.w+1, rc.h+1));
   }
   else {
-    g.moveTo(rc.x, rc.y+rc.h-1);
-    g.lineTo(borderPen, rc.x+rc.w-1, rc.y+rc.h-1);
-    g.lineTo(borderPen, rc.x+rc.w-1, rc.y-1);
+    g.drawLine(borderPen, rc.x, rc.y+rc.h-1, rc.x+rc.w-1, rc.y+rc.h-1);
+    g.drawLine(borderPen, rc.x+rc.w-1, rc.y+rc.h-1, rc.x+rc.w-1, rc.y-1);
   }
 
   g.fillRect(backgroundBrush, Rect(rc).inflate(-1, -1));
@@ -1100,18 +1099,17 @@ void DataGrid::drawCell(Graphics &g, const String &text, const Rect &rc,
   }
 }
 
-void DataGrid::drawArrow(Graphics &g, const Rect &rc, Color color)
+void DataGrid::drawArrow(Graphics &g, const Rect &rc, const Color& color)
 {
-  Pen pen(Color::Black);
-  Brush brush(Color::Black);
+  Brush brush(color);
 
-  g.beginPath();
-  g.moveTo(rc.x+rc.w/2-4, rc.y+rc.h/2-4);
-  g.lineTo(pen, rc.x+rc.w/2+4, rc.y+rc.h/2);
-  g.lineTo(pen, rc.x+rc.w/2-4, rc.y+rc.h/2+4);
-  g.endPath();
+  GraphicsPath path;
+  path.moveTo(-4, -4);
+  path.lineTo(+4, 0);
+  path.lineTo(-4, +4);
+  path.closeFigure();
 
-  g.fillPath(brush);
+  g.fillPath(path, brush, rc.getCenter());
 }
 
 int DataGrid::getHotResizingBorder(const Point &pt)

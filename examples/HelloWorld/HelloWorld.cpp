@@ -66,7 +66,7 @@ public:
     m_label.setTextAlign(TextAlign::Center);
 
     // set the link font to the loaded font
-    m_label.setFont(&m_linkFont);
+    m_label.setFont(m_linkFont);
 
     // finally we set the main frame's size to its preferred size
     setSize(getPreferredSize());

@@ -21,28 +21,30 @@ Widgets
 - ScrollBar?
 - FlatScrollBar?
 - Header?
-- MessageBox? (you can use Widget::msgBox at the moment)
 - PageSetupDialog
 - RichEdit?
+- SplashScreen
+- TaskBar
 
 
 ----------------------------------------------------------------------
 Examples
 ----------------------------------------------------------------------
 
-- BouncingBall (fix resize wait, and fix timer break)
 - FontMetrics (finish it)
 - PensBrushes (finish Brushes stuff)
 - DataGrids (complete)
 - Sudoku (double-buffered, with better hot-tracking, better cell
   handle, and fix the "infinite-loop" bug in the level generator)
 - Remove CommandsAlt, LikeDOS, ThreadKiller
-- Finish Xuls
+- Finish Xuls or GridLayout
 
 
 ----------------------------------------------------------------------
 API
 ----------------------------------------------------------------------
+
+- Add a method to execute PathToRegion
 
 - Accelerators <-> Commands
 
@@ -76,8 +78,6 @@ API
     Graphics::drawEdge
 
 - mouseHover should be? (there is already some code)
-
-- "Application::instance" or "Application::getInstance"?
 
 - a "MVC: Model View Controller" pattern (also known as Observer pattern).
 

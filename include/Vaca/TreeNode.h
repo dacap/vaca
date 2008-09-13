@@ -96,9 +96,9 @@ public:
 
   void ensureVisibility();
   
-  HTREEITEM getHTREEITEM();
+  HTREEITEM getHandle();
 
-  static TreeNode* fromHTREEITEM(HWND hwnd, HTREEITEM htreeitem);
+  static TreeNode* fromHandle(HWND hwnd, HTREEITEM htreeitem);
 
 protected:
   

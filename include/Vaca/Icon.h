@@ -33,49 +33,37 @@
 #define VACA_ICON_H
 
 #include "Vaca/base.h"
-#include "Vaca/NonCopyable.h"
 #include "Vaca/Size.h"
+#include "Vaca/ResourceId.h"
+#include "Vaca/SmartPtr.h"
+#include "Vaca/GdiObject.h"
 
 namespace Vaca {
 
 class String;
 
-/**
- * An icon (HICON wrapper).
- */
-class VACA_DLL Icon : private NonCopyable
+struct Win32DestroyIcon
 {
-  HICON m_HICON;
-
-protected:
-
-  Icon();
-
-public:
-
-  Icon(int iconId, const Size& sz = Size(0, 0));
-  Icon(const String& fileName, const Size& sz = Size(0, 0));
-  virtual ~Icon();
-
-  HICON getHICON();
-
-protected:
-
-  void setHICON(HICON hicon);
-
+  static void destroy(HICON handle)
+  {
+    ::DestroyIcon(handle);
+  }
 };
 
 /**
- * An icon that is shared (isn't destroyed).
+ * An icon (HICON wrapper).
  */
-class VACA_DLL SharedIcon : public Icon
+class VACA_DLL Icon : private SmartPtr<GdiObject<HICON, Win32DestroyIcon> >
 {
 public:
+  Icon();
+  Icon(const Icon& icon);
+  explicit Icon(ResourceId iconId, const Size& sz = Size(0, 0));
+  explicit Icon(const String& fileName, const Size& sz = Size(0, 0));
+  explicit Icon(HICON handle);
+  virtual ~Icon();
 
-  SharedIcon(int iconId, const Size& sz = Size(0, 0));
-  SharedIcon(const String& fileName, const Size& sz = Size(0, 0));
-  virtual ~SharedIcon();
-
+  HICON getHandle() const;
 };
 
 } // namespace Vaca

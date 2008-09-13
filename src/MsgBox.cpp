@@ -167,7 +167,7 @@ MsgBox::Result MsgBox::show(Widget* parent,
       break;
   }
 
-  int res = ::MessageBox(parent ? parent->getHWND(): NULL,
+  int res = ::MessageBox(parent ? parent->getHandle(): NULL,
 			 text.c_str(),
 			 title.c_str(),
 			 flags);

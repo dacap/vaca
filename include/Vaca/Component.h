@@ -33,27 +33,18 @@
 #define VACA_COMPONENT_H
 
 #include "Vaca/base.h"
-#include "Vaca/NonCopyable.h"
+#include "Vaca/Referenceable.h"
 
 namespace Vaca {
 
 /**
  * Base class for every component in Vaca.
  */
-class VACA_DLL Component : private NonCopyable
+class VACA_DLL Component : public Referenceable
 {
-  int m_refCount;
-  
 public:
-
   Component();
   virtual ~Component();
-
-  void ref();
-  void unref();
-
-  int getRefCount();
-
 };
 
 } // namespace Vaca

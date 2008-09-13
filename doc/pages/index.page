@@ -52,7 +52,7 @@ General behavior:
 - A global WndProc (@link Vaca::Widget#getGlobalWndProc getGlobalWndProc@endlink)
   extracts the @c GWL_USERDATA from the @c HWND that received the message. Note:
   New versions of Vaca stores the Widget pointer in the "VacaAtom" property, see
-  @link Vaca::Widget#fromHWND fromHWND@endlink for more information.
+  @link Vaca::Widget#fromHandle fromHandle@endlink for more information.
 - In the @c GWL_USERDATA is located a pointer to a @link Vaca::Widget Widget@endlink.
 - This instance is used to call the @link Vaca::Widget#wndProc wndProc@endlink
   method to process the message.

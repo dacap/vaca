@@ -35,6 +35,14 @@
 #include "Vaca/Debug.h"
 #include "Vaca/ImageList.h"
 #include "Vaca/WidgetClass.h"
+#include "Vaca/MouseEvent.h"
+#include "Vaca/Cursor.h"
+
+#include "Vaca/Brush.h"
+#include "Vaca/Pen.h"
+
+// Recommended by the MSDN
+#define M_AFTERDRAGANDDROP		(WM_APP+1)
 
 using namespace Vaca;
 
@@ -114,8 +122,9 @@ TreeView::TreeView(Widget* parent, Style style)
 {
   m_root.m_owner = this;
   m_deleted = false;
+  m_isDragging = false;
 
-//   Widget::setBgColor(Color(TreeView_GetBkColor(getHWND())));
+//   Widget::setBgColor(Color(TreeView_GetBkColor(getHandle())));
   setBgColor(System::getColor(COLOR_WINDOW));
 }
 
@@ -137,22 +146,39 @@ TreeView::iterator TreeView::end()
   return iterator(&m_root);
 }
 
-void TreeView::setImageList(ImageList& imageList, int type)
+bool TreeView::isDragAndDrop()
 {
-  assert(::IsWindow(getHWND()));
-  assert(imageList.isValid());
-
-  TreeView_SetImageList(getHWND(), imageList.getHIMAGELIST(), type);
+  return (getStyle().regular & TVS_DISABLEDRAGDROP) != 0;
 }
 
-void TreeView::setNormalImageList(ImageList& imageList)
+void TreeView::setDragAndDrop(bool state)
 {
-  setImageList(imageList, LVSIL_NORMAL);
+  if (!state)
+    addStyle(Style(TVS_DISABLEDRAGDROP, 0));
+  else
+    removeStyle(Style(TVS_DISABLEDRAGDROP, 0));
 }
 
-void TreeView::setStateImageList(ImageList& imageList)
+/**
+ * Sets the ImageList of icons to be used in the TreeNode.
+ *
+ * @param imageList
+ *   The ImageList to be used. It will not be deleted.
+ */
+void TreeView::setNormalImageList(const ImageList& imageList)
 {
-  setImageList(imageList, LVSIL_STATE);
+  assert(::IsWindow(getHandle()));
+
+  m_normalImageList = imageList;
+  TreeView_SetImageList(getHandle(), m_normalImageList.getHandle(), LVSIL_NORMAL);
+}
+
+void TreeView::setStateImageList(const ImageList& imageList)
+{
+  assert(::IsWindow(getHandle()));
+
+  m_stateImageList = imageList;
+  TreeView_SetImageList(getHandle(), m_stateImageList.getHandle(), LVSIL_STATE);
 }
 
 /**
@@ -226,11 +252,11 @@ void TreeView::removeNode(TreeNode* node)
  */
 TreeNode* TreeView::getSelectedNode()
 {
-  assert(::IsWindow(getHWND()));
+  assert(::IsWindow(getHandle()));
 
-  HTREEITEM htreeitem = TreeView_GetSelection(getHWND());
+  HTREEITEM htreeitem = TreeView_GetSelection(getHandle());
   if (htreeitem != NULL)
-    return TreeNode::fromHTREEITEM(getHWND(), htreeitem);
+    return TreeNode::fromHandle(getHandle(), htreeitem);
   else
     return NULL;
 }
@@ -241,18 +267,72 @@ TreeNode* TreeView::getSelectedNode()
  */
 void TreeView::setSelectedNode(TreeNode* node)
 {
-  assert(::IsWindow(getHWND()));
+  assert(::IsWindow(getHandle()));
   assert(node->m_owner == this);
 
-  TreeView_SelectItem(getHWND(), node->getHTREEITEM());
+  TreeView_SelectItem(getHandle(), node->getHandle());
 }
 
-void TreeView::setBgColor(Color color)
+void TreeView::setBgColor(const Color& color)
 {
-  assert(::IsWindow(getHWND()));
+  assert(::IsWindow(getHandle()));
 
   Widget::setBgColor(color);
-  TreeView_SetBkColor(getHWND(), color.getColorRef());
+  TreeView_SetBkColor(getHandle(), color.getColorRef());
+}
+
+void TreeView::onMouseMove(MouseEvent& ev)
+{
+  if (m_isDragging) {
+    ImageList_DragLeave(NULL);
+    
+    TVHITTESTINFO tvht;
+    ZeroMemory(&tvht, sizeof(TVHITTESTINFO));
+    tvht.flags = TVHT_ONITEM;
+    tvht.pt.x = ev.getX();
+    tvht.pt.y = ev.getY();
+    // ScreenToClient(getHandle(), &(tvht.pt));
+
+    HTREEITEM h_item = reinterpret_cast<HTREEITEM>
+      (sendMessage(TVM_HITTEST, 0, reinterpret_cast<LPARAM>(&tvht)));
+    if (h_item) {
+      TreeView_SelectDropTarget(getHandle(), h_item);
+      setCursor(Cursor(SysCursor::Arrow));
+    }
+    else {
+      TreeView_SelectDropTarget(getHandle(), NULL);
+      setCursor(Cursor(SysCursor::Forbidden));
+    }
+
+    Point pt = ev.getPoint() + getAbsoluteClientBounds().getOrigin();
+    ImageList_DragMove(pt.x, pt.y);
+    ImageList_DragEnter(NULL, pt.x, pt.y);
+  }
+}
+
+void TreeView::onMouseUp(MouseEvent& ev)
+{
+  if (m_isDragging) {
+    m_isDragging = false;
+    releaseMouse();
+    setCursor(Cursor(SysCursor::Arrow));
+    
+    HTREEITEM h_item = NULL;
+    TVHITTESTINFO tv_ht;
+    TVITEM tv;
+    ZeroMemory(&tv, sizeof(TVITEM));
+    ZeroMemory(&tv_ht, sizeof(TVHITTESTINFO));
+	
+    ImageList_DragLeave(NULL);
+    ImageList_EndDrag();
+    tv_ht.pt = ev.getPoint();
+    tv_ht.flags = TVHT_ONITEM;
+    h_item = (HTREEITEM)sendMessage(TVM_HITTEST, 0, (LPARAM)&tv_ht);
+    if (h_item)
+      PostMessage(getHandle(), M_AFTERDRAGANDDROP, (WPARAM)0, (LPARAM)h_item);
+    else
+      TreeView_SelectDropTarget(getHandle(), NULL);
+  }
 }
 
 /**
@@ -496,13 +576,53 @@ bool TreeView::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult)
       break;
     }
 
-//     case TVN_BEGINDRAG: {
-//       LPNMTVDISPINFO lptvdi = reinterpret_cast<LPNMTVDISPINFO>(lpnmhdr);
-//       TreeNode* node = reinterpret_cast<TreeNode*>(lptvdi->item.lParam);
+    case TVN_BEGINDRAG:
+    case TVN_BEGINRDRAG: {
+      LPNMTREEVIEW lppnmtv = reinterpret_cast<LPNMTREEVIEW>(lpnmhdr);
+      TreeNode* node = reinterpret_cast<TreeNode*>(lppnmtv->itemNew.lParam);
 
-// //       ItemEvent(tree->evBeginDrag, *ctrl, *node).fire();
-//       return true;
-//     }
+      captureMouse();
+      m_isDragging = true;
+
+#if 1
+      m_dragImage = ImageList(TreeView_CreateDragImage(getHandle(),
+						       lppnmtv->itemNew.hItem));
+#else
+      m_dragImage = ImageList(Size(64, 32));
+      Image img(Size(64, 32), 32);
+      Brush black(Color::Black);
+      img.getGraphics()->fillRect(black, 0, 0, 64, 32);
+      Pen white(Color::White);
+      img.getGraphics()->drawRect(white, 0, 0, 64, 32);
+      ImageList_Add(m_dragImage.getHandle(), img.getHandle(), NULL);
+#endif
+
+      ImageList_BeginDrag(m_dragImage.getHandle(), 0, 0, 0);
+      setCursor(Cursor(SysCursor::Forbidden));
+
+      ::ClientToScreen(getHandle(), &(lppnmtv->ptDrag));
+      ImageList_DragEnter(NULL, lppnmtv->ptDrag.x, lppnmtv->ptDrag.y);
+
+      return true;
+    }
+
+  }
+
+  return false;
+}
+
+bool TreeView::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult)
+{
+  if (Widget::wndProc(message, wParam, lParam, lResult))
+    return true;
+
+  switch (message) {
+
+    case M_AFTERDRAGANDDROP: {
+      TreeView_SelectDropTarget(getHandle(), NULL);
+      TreeView_SelectItem(getHandle(), (HTREEITEM)lParam);
+      break;
+    }
 
   }
 

@@ -65,8 +65,8 @@ public:
 //     Size textSize = g.measureString(m_sampleText);
 //     Point origin = rc.getCenter()-Point(textSize/2);
 
-//     CreateCaret(getHWND(), NULL, 1, g.measureString("tmp").h);
-//     ShowCaret(getHWND());
+//     CreateCaret(getHandle(), NULL, 1, g.measureString("tmp").h);
+//     ShowCaret(getHandle());
 //     SetCaretPos(origin.x, origin.y);
 //   }
 
@@ -74,7 +74,7 @@ public:
 //   {
 //     Frame::onLostFocus(ev);
 
-//     HideCaret(getHWND());
+//     HideCaret(getHandle());
 //     DestroyCaret();
 //   }
 
@@ -98,10 +98,12 @@ public:
     Size baseLineStrSize = g.measureString(baseLineStr);
     
     // Measure the sampleText string
-    g.setFont(&m_font);
+    FontMetrics fontMetrics;
+    g.setFont(m_font);
+    g.getFontMetrics(fontMetrics);
+
     Size textSize = g.measureString(m_sampleText);
     Point origin = rc.getCenter()-Point(textSize/2);
-    FontMetrics fontMetrics = g.getFontMetrics();
 
     // Draw the sampleText string:
     // (a) First with drawString we can draw a shadow
@@ -122,13 +124,15 @@ public:
 	       origin.y+textSize.h-fontMetrics.getDescent()); // (2)
     
     // Restore to the default widget font
+    FontMetrics fontMetrics2;
     g.setFont(getFont());
+    g.getFontMetrics(fontMetrics2);
 
     // Draw origin
     g.setColor(Color::Blue);
     g.drawString("Bounding box",
 		 origin.x,
-		 origin.y-g.getFontMetrics().getHeight());
+		 origin.y-fontMetrics2.getHeight());
 
     // Draw "Base line" text
     g.setColor(Color::Red);
@@ -171,15 +175,15 @@ private:
 
       case Orientation::Vertical: {
 	LOGFONT lf;
-	Font* currentFont = g.getFont();
+	Font currentFont = g.getFont();
 
-	if (currentFont->getLogFont(&lf)) {
+	if (currentFont.getLogFont(&lf)) {
 	  lf.lfEscapement = 900;
 	  lf.lfOrientation = 900;
 
 	  Font verticalFont(&lf);
 
-	  g.setFont(&verticalFont);
+	  g.setFont(verticalFont);
 
 	  Pen pen(g.getColor());
 	  Size textSize = g.measureString(text);
@@ -211,6 +215,9 @@ private:
     Size textSize = g.measureString(m_sampleText);
     Point origin = rc.getCenter()-Point(textSize/2);
     Rect output(origin, Size(0, 0));
+    FontMetrics fontMetrics;
+
+    g.getFontMetrics(fontMetrics);
 
     for (String::iterator
 	   it=m_sampleText.begin(); it!=m_sampleText.end(); ++it) {
@@ -227,7 +234,7 @@ private:
 	output.x = origin.x;
       }
       else if (*it == '\n') {
-	output.y += g.getFontMetrics().getHeight();
+	output.y += fontMetrics.getHeight();
       }
       else {
 	functor(g, chrText, output);

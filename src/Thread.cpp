@@ -74,7 +74,7 @@ struct ThreadData
   bool breakLoop : 1;
 
   /**
-   * Widget used to call createHWND.
+   * Widget used to call createHandle.
    */
   Widget* outsideWidget;
 
@@ -263,11 +263,11 @@ void Thread::doMessageLoop()
 void Thread::doMessageLoopFor(Widget* widget)
 {
   // get widget HWND
-  HWND hwnd = widget->getHWND();
+  HWND hwnd = widget->getHandle();
   assert(::IsWindow(hwnd));
 
   // get parent HWND
-  HWND hparent = widget->getParentHWND();
+  HWND hparent = widget->getParentHandle();
 
   // disable the parent HWND
   if (hparent != NULL)
@@ -372,7 +372,7 @@ void Thread::processMessage(Message& msg)
     // because it returns windows from other applications
     HWND hactive = GetActiveWindow();
     if (hactive != NULL && hactive != msg.hwnd) {
-      Widget* activeWidget = Widget::fromHWND(hactive);
+      Widget* activeWidget = Widget::fromHandle(hactive);
       if (activeWidget->preTranslateMessage(msg))
 	return;
     }
@@ -387,7 +387,7 @@ void Thread::processMessage(Message& msg)
 
 /**
  * Pretranslates the message. The main function is to retrieve the
- * Widget pointer (using Widget::fromHWND()) and then (if it isn't
+ * Widget pointer (using Widget::fromHandle()) and then (if it isn't
  * NULL), call its Widget::preTranslateMessage().
  */
 bool Thread::preTranslateMessage(Message& msg)
@@ -405,7 +405,7 @@ bool Thread::preTranslateMessage(Message& msg)
   }
 
   if (msg.hwnd != NULL) {
-    Widget* widget = Widget::fromHWND(msg.hwnd);
+    Widget* widget = Widget::fromHandle(msg.hwnd);
     if (widget && widget->preTranslateMessage(msg))
       return true;
   }

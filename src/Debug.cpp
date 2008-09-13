@@ -38,48 +38,51 @@
 using namespace Vaca;
 
 #ifndef NDEBUG
-static Mutex log_mutex;
-static FILE* log_file = NULL;
-static bool log_closed = false;
+class Debug;
+
+static bool closed;
+static Debug* dbg;
+
+struct Debug {
+  Mutex mutex;
+  FILE* file;
+  Debug() {
+    file = fopen("vaca.log", "w");
+    fprintf(file, "Log file created\n");
+  }
+  virtual ~Debug() {
+    fprintf(file, "Log file closed\n");
+    fclose(file);
+    file = NULL;
+    closed = true;
+  }
+};
 #endif
 
 void Vaca::__vaca_trace(LPCSTR filename, UINT line, LPCSTR fmt, ...)
 {
 #ifndef NDEBUG
-  ScopedLock hold(log_mutex);
+  if (closed) { return; }
+  if (!dbg) { dbg = new Debug; }
+
+  ScopedLock hold(dbg->mutex);
   char buf[1024];		// TODO: overflow
   va_list ap;
-
-  if (log_closed)
-    return;
 
   va_start(ap, fmt);
   vsprintf(buf, fmt, ap);
   va_end(ap);
 
-  if (log_file == NULL) {
-    log_file = fopen("vaca.log", "w");
-    fprintf(log_file, "Log file created\n");
-  }
-
-  if (log_file != NULL) {
-    fprintf(log_file, "%s:%d: [%d] %s", filename, line, ::GetCurrentThreadId(), buf);
-    fflush(log_file);
-  }
+  fprintf(dbg->file, "%s:%d: [%d] %s", filename, line,
+	  static_cast<unsigned>(::GetCurrentThreadId()), buf);
+  fflush(dbg->file);
 #endif
 }
 
 void Vaca::__vaca_close_log_file()
 {
 #ifndef NDEBUG
-  ScopedLock hold(log_mutex);
-
-  if (log_file != NULL) {
-    fprintf(log_file, "Log file closed\n");
-    fclose(log_file);
-    log_file = NULL;
-
-    log_closed = TRUE;
-  }
+  delete dbg;
+  dbg = NULL;
 #endif
 }

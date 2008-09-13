@@ -36,17 +36,33 @@
 
 using namespace Vaca;
 
+#define GdiObj GdiObject<HCURSOR, Win32DestroyCursor>
+
+/**
+ * Creates the null cursor (NoCursor).
+ */
+Cursor::Cursor()
+  : SmartPtr<GdiObj>(new GdiObj)
+{
+}
+
+Cursor::Cursor(const Cursor& cursor)
+  : SmartPtr<GdiObj>(cursor)
+{
+}
+
 /**
  * @throw ResourceException
  *   When the resource with ID @a cursorId wasn't found.
  */
 Cursor::Cursor(ResourceId cursorId)
+  : SmartPtr<GdiObj>(new GdiObj)
 {
-  m_HCURSOR = LoadCursor(Application::getHINSTANCE(), cursorId.toLPTSTR());
-  m_autoDelete = true;
-
-  if (m_HCURSOR == NULL)
+  HCURSOR handle = ::LoadCursor(Application::getHandle(), cursorId.toLPTSTR());
+  if (!handle)
     throw ResourceException("Can't load the cursor resource " + cursorId.toString());
+
+  get()->setHandle(handle);
 }
 
 /**
@@ -54,6 +70,7 @@ Cursor::Cursor(ResourceId cursorId)
  *   When the specified system @a cursor couldn't be loaded.
  */
 Cursor::Cursor(SysCursor cursor)
+  : SmartPtr<GdiObj>(new GdiObj)
 {
   LPCTSTR winCursor = IDC_ARROW;
 
@@ -61,15 +78,11 @@ Cursor::Cursor(SysCursor cursor)
 
     // special cursor that has HCURSOR = NULL
     case SysCursor::None:
-      m_HCURSOR = NULL;
-      m_autoDelete = false;
       return;
 
     case SysCursor::Arrow:     winCursor = IDC_ARROW; break;
     case SysCursor::Crosshair: winCursor = IDC_CROSS; break;
-// #ifdef IDC_HAND
     case SysCursor::Hand:      winCursor = IDC_HAND; break;
-// #endif
     case SysCursor::Help:      winCursor = IDC_HELP; break;
     case SysCursor::Text:      winCursor = IDC_IBEAM; break;
     case SysCursor::Forbidden: winCursor = IDC_NO; break;
@@ -84,16 +97,14 @@ Cursor::Cursor(SysCursor cursor)
     case SysCursor::SizeW:     winCursor = IDC_SIZEWE; break;
     case SysCursor::UpArrow:   winCursor = IDC_UPARROW; break;
     case SysCursor::Wait:      winCursor = IDC_WAIT; break;
-// #ifdef IDC_APPSTARTING
     case SysCursor::WaitBg:    winCursor = IDC_APPSTARTING; break;
-// #endif
   }
   
-  m_HCURSOR = LoadCursor(NULL, winCursor);
-  m_autoDelete = false;
-
-  if (m_HCURSOR == NULL)
+  HCURSOR handle = ::LoadCursor(NULL, winCursor);
+  if (handle == NULL)
     throw ResourceException("Can't load the SysCursor " + String::fromInt(cursor));
+
+  get()->setHandle(handle);
 }
 
 /**
@@ -101,45 +112,30 @@ Cursor::Cursor(SysCursor cursor)
  *   When the cursor couldn't be loaded from the specified @a fileName.
  */
 Cursor::Cursor(const String& fileName)
+  : SmartPtr<GdiObj>(new GdiObj)
 {
-  m_HCURSOR = reinterpret_cast<HCURSOR>
-    (LoadImage(Application::getHINSTANCE(),
-	       fileName.c_str(),
-	       IMAGE_CURSOR,
-	       0, 0, LR_LOADFROMFILE));
+  HCURSOR handle = reinterpret_cast<HCURSOR>
+    (::LoadImage(Application::getHandle(),
+		 fileName.c_str(),
+		 IMAGE_CURSOR,
+		 0, 0, LR_LOADFROMFILE));
 
-  m_autoDelete = true;
-
-  if (m_HCURSOR == NULL)
+  if (handle == NULL)
     throw ResourceException("Can't load cursor from file " + fileName);
+
+  get()->setHandle(handle);
 }
 
-/**
- * @throw ResourceException
- *   When the @a cursor couldn't be copied.
- */
-Cursor::Cursor(const Cursor& cursor)
+Cursor::Cursor(HCURSOR handle)
+  : SmartPtr<GdiObj>(new GdiObj(handle))
 {
-  if (cursor.m_autoDelete) {
-    m_HCURSOR = CopyCursor(cursor.m_HCURSOR);
-    m_autoDelete = true;
-  }
-  else {
-    m_HCURSOR = cursor.m_HCURSOR;
-    m_autoDelete = false;
-  }
-
-  if (m_HCURSOR == NULL)
-    throw ResourceException("Can't create a copy from the specified cursor");
 }
 
 Cursor::~Cursor()
 {
-  if (m_HCURSOR != NULL && m_autoDelete)
-    DestroyCursor(m_HCURSOR);
 }
 
-HCURSOR Cursor::getHCURSOR()
+HCURSOR Cursor::getHandle() const
 {
-  return m_HCURSOR;
+  return get()->getHandle();
 }

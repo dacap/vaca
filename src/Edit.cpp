@@ -262,14 +262,14 @@ MultilineEdit::~MultilineEdit()
 
 bool MultilineEdit::getWantReturnMode()
 {
-  HWND hwnd = getHWND();
+  HWND hwnd = getHandle();
   assert(::IsWindow(hwnd));
   return (GetWindowLong(hwnd, GWL_STYLE) & ES_WANTRETURN) != 0 ? true: false;
 }
 
 void MultilineEdit::setWantReturnMode(bool wantReturn)
 {
-  HWND hwnd = getHWND();
+  HWND hwnd = getHandle();
   assert(::IsWindow(hwnd));
   int style = GetWindowLong(hwnd, GWL_STYLE) & ~ES_WANTRETURN;
   SetWindowLong(hwnd, GWL_STYLE, style | (wantReturn ? ES_WANTRETURN: 0));

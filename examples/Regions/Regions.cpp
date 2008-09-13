@@ -37,7 +37,7 @@ using namespace Vaca;
 
 class Regions : public Panel
 {
-  Region* m_region;
+  Region m_region;
   Point m_startPoint;
   Point m_oldPoint;
   bool m_readOnly;
@@ -48,13 +48,12 @@ public:
 
   Regions(Widget* parent)
     : Panel(parent, PanelStyle + ClientEdgeStyle)
-    , m_region(NULL)
     , m_readOnly(true)
   {
     setBgColor(Color::White);
   }
 
-  void setRegion(Region* region, bool readOnly, bool ellipses = false)
+  void setRegion(Region& region, bool readOnly, bool ellipses = false)
   {
     m_region = region;
     m_readOnly = readOnly;
@@ -67,17 +66,13 @@ protected:
     
   virtual void onPaint(Graphics &g)
   {
-    if (m_region != NULL) {
-      Brush brush(m_readOnly ? Color::Gray: Color::Red);
-      g.fillRegion(brush, *m_region);
-    }
+    Brush brush(m_readOnly ? Color::Gray: Color::Red);
+    g.fillRegion(brush, m_region);
   }
 
   virtual void onMouseDown(MouseEvent &ev)
   {
-    if (m_region != NULL &&
-	!m_readOnly &&
-	!hasCapture()) {
+    if (!m_readOnly && !hasCapture()) {
       captureMouse();
 
       m_startPoint =
@@ -134,9 +129,9 @@ protected:
 
       // update the region
       if (m_erasing)
-	*m_region = (*m_region) - newRegion; // substract
+	m_region -= newRegion; // substract
       else
-	*m_region = (*m_region) | newRegion; // union
+	m_region |= newRegion; // union
 
       invalidate(true);
     }
@@ -212,36 +207,36 @@ private:
     switch (pageIndex) {
       // Region A
       case 0:
-	m_regions.setRegion(&m_regionA, false);
+	m_regions.setRegion(m_regionA, false);
 	break;
       // Region B
       case 1:
-	m_regions.setRegion(&m_regionB, false, true);
+	m_regions.setRegion(m_regionB, false, true);
 	break;
       // A | B
       case 2:
 	m_region = m_regionA | m_regionB;
-	m_regions.setRegion(&m_region, true);
+	m_regions.setRegion(m_region, true);
 	break;
       // A & B
       case 3: 
 	m_region = m_regionA & m_regionB;
-	m_regions.setRegion(&m_region, true);
+	m_regions.setRegion(m_region, true);
 	break;
       // A - B
       case 4: 
 	m_region = m_regionA - m_regionB;
-	m_regions.setRegion(&m_region, true);
+	m_regions.setRegion(m_region, true);
 	break;
       // B - A
       case 5: 
 	m_region = m_regionB - m_regionA;
-	m_regions.setRegion(&m_region, true);
+	m_regions.setRegion(m_region, true);
 	break;
       // A ^ B
       case 6:
 	m_region = m_regionA ^ m_regionB;
-	m_regions.setRegion(&m_region, true);
+	m_regions.setRegion(m_region, true);
 	break;
     }
   }
@@ -250,19 +245,12 @@ private:
 
 //////////////////////////////////////////////////////////////////////
 
-class Example : public Application
-{
-  MainFrame m_mainFrame;
-public:
-  virtual void main() {
-    m_mainFrame.setVisible(true);
-  }
-};
-
 int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		   LPSTR lpCmdLine, int nCmdShow)
 {
-  Example app;
+  Application app;
+  MainFrame frm;
+  frm.setVisible(true);
   app.run();
   return 0;
 }

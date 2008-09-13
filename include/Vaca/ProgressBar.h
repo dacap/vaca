@@ -50,7 +50,7 @@ public:
 	      Widget* parent, Style style = ProgressBarStyle);
   virtual ~ProgressBar();
 
-  virtual void setBgColor(Color color);
+  virtual void setBgColor(const Color& color);
 
   int getMinimum();
   int getMaximum();

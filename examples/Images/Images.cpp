@@ -165,8 +165,7 @@ protected:
 
 //////////////////////////////////////////////////////////////////////
 
-int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
-		   LPSTR lpCmdLine, int nCmdShow)
+int VACA_MAIN()
 {
   srand(static_cast<unsigned int>(time(NULL)));
 

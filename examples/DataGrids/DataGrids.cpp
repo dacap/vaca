@@ -1093,10 +1093,8 @@ void DataGrid::drawCell(Graphics &g, const String &text, const Rect &rc,
 
   g.fillRect(backgroundBrush, Rect(rc).inflate(-1, -1));
 
-  if (!text.empty()) {
-    g.setColor(textColor);
-    g.drawString(text, rc, DT_CENTER | DT_VCENTER);
-  }
+  if (!text.empty())
+    g.drawString(text, textColor, rc, DT_CENTER | DT_VCENTER);
 }
 
 void DataGrid::drawArrow(Graphics &g, const Rect &rc, const Color& color)
@@ -1468,8 +1466,7 @@ public:
   }
 };
 
-int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
-		   LPSTR lpCmdLine, int nCmdShow)
+int VACA_MAIN()
 {
   Example app;
   app.run();

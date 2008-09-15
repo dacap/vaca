@@ -107,11 +107,9 @@ public:
 
     // Draw the sampleText string:
     // (a) First with drawString we can draw a shadow
-    g.setColor(Color(100, 100, 100));
-    g.drawString(m_sampleText, origin+Point(1, 1));
+    g.drawString(m_sampleText, Color(100, 100, 100), origin+Point(1, 1));
     // (b) Draw the same string (in origin point) but with our code
-    g.setColor(Color(200, 200, 200));
-    forEachChar(g, drawChr());
+    forEachChar(g, Color(200, 200, 200), drawChr());
 
     // Bounding rectangle of the sampleText
     g.drawRect(blue, Rect(origin, textSize));
@@ -129,43 +127,43 @@ public:
     g.getFontMetrics(fontMetrics2);
 
     // Draw origin
-    g.setColor(Color::Blue);
-    g.drawString("Bounding box",
+    g.drawString("Bounding box", Color::Blue,
 		 origin.x,
 		 origin.y-fontMetrics2.getHeight());
 
     // Draw "Base line" text
-    g.setColor(Color::Red);
-    g.drawString(baseLineStr,
+    g.drawString(baseLineStr, Color::Red,
 		 origin.x-baseLineStrSize.w-4,
 		 origin.y+fontMetrics.getAscent()-baseLineStrSize.h);
 
     // Draw the sampleText width
-    g.setColor(Color::Black);
     drawMeasure(g, "width=" + String::fromInt(textSize.w),
+		Color::Black,
 		origin.x, origin.y+textSize.h,
 		textSize.w, Orientation::Horizontal);
 
     // Draw the sampleText height
     drawMeasure(g, "height=" + String::fromInt(textSize.h),
+		Color::Black,
 		origin.x+textSize.w, origin.y,
 		textSize.h, Orientation::Vertical);
   }
 
 private:
 
-  void drawMeasure(Graphics &g,
-		   const String &text,
+  void drawMeasure(Graphics& g,
+		   const String& text,
+		   const Color& color,
 		   int x, int y, int size,
 		   Orientation orientation)
   {
     switch (orientation) {
 
       case Orientation::Horizontal: {
-	Pen pen(g.getColor());
 	Size textSize = g.measureString(text);
-	g.drawString(text, x+size/2-textSize.w/2, y);
+	g.drawString(text, color, x+size/2-textSize.w/2, y);
 
+	Pen pen(color);
 	g.drawLine(pen, x, y, x, y+textSize.h);
 	g.drawLine(pen, x, y+textSize.h/2, x+size/2-textSize.w/2-2, y+textSize.h/2);
 	g.drawLine(pen, x+size/2+textSize.w/2+2, y+textSize.h/2, x+size, y+textSize.h/2);
@@ -185,10 +183,10 @@ private:
 
 	  g.setFont(verticalFont);
 
-	  Pen pen(g.getColor());
 	  Size textSize = g.measureString(text);
-	  g.drawString(text, x, y+size/2+textSize.w/2);
+	  g.drawString(text, color, x, y+size/2+textSize.w/2);
 
+	  Pen pen(color);
 	  g.drawLine(pen, x, y, x+textSize.h, y);
 	  g.drawLine(pen, x+textSize.h/2, y, x+textSize.h/2, y+size/2-textSize.w/2-2);
 	  g.drawLine(pen, x+textSize.h/2, y+size/2+textSize.w/2+2, x+textSize.h/2, y+size);
@@ -202,14 +200,14 @@ private:
   }
 
   struct drawChr {
-    void operator()(Graphics& g, const String& str, const Rect& rc)
+    void operator()(Graphics& g, const String& str, const Color& color, const Rect& rc)
     {
-      g.drawString(str, rc.getOrigin());
+      g.drawString(str, color, rc.getOrigin());
     }
   };
     
   template<typename Functor>
-  void forEachChar(Graphics& g, Functor functor)
+  void forEachChar(Graphics& g, const Color& color, Functor functor)
   {
     Rect rc = getClientBounds();
     Size textSize = g.measureString(m_sampleText);
@@ -237,7 +235,7 @@ private:
 	output.y += fontMetrics.getHeight();
       }
       else {
-	functor(g, chrText, output);
+	functor(g, chrText, color, output);
 
 	// int interChr = GetTextCharacterExtra(g.getHDC());
 	// output.x += output.w + interChr;
@@ -259,8 +257,7 @@ private:
 
 //////////////////////////////////////////////////////////////////////
 
-int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
-		   LPSTR lpCmdLine, int nCmdShow)
+int VACA_MAIN()
 {
   Application app;
   MainFrame frm;

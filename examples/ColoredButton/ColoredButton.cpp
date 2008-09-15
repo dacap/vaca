@@ -86,8 +86,7 @@ public:
 
     // draw the label
     Point point = bounds.getCenter() - Point(g.measureString(getText())/2);
-    g.setColor(Color::Black);
-    g.drawString(getText(), selected ? point+1: point);
+    g.drawString(getText(), Color::Black, selected ? point+1: point);
   }
   
 };
@@ -137,8 +136,7 @@ public:
   }
 };
 
-int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
-		   LPSTR lpCmdLine, int nCmdShow)
+int VACA_MAIN()
 {
   Example app;
   app.run();

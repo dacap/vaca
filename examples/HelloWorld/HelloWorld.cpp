@@ -99,8 +99,7 @@ public:
 };
 
 // the WinMain, every Windows application should have this function
-int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
-		   LPSTR lpCmdLine, int nCmdShow)
+int VACA_MAIN()
 {
   try {
     // create the example application

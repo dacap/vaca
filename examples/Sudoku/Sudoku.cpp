@@ -259,14 +259,16 @@ protected:
 
       // paint text inside the cell
       if (it->digit != 0 || !it->history.empty()) {
+	Color textColor;
+
 	// warning
 	if (it->warning) {
-	  g.setColor(Color::White);
+	  textColor = Color::White;
 	  g.setFont(m_fontBold);
 	}
 	// hot or normal
 	else {
-	  g.setColor(Color::Black);
+	  textColor = Color::Black;
 	  g.setFont(m_hotCell != m_puzzle.end() &&
 		    it->digit == m_hotCell->digit ? m_fontBold: // hot
 						    m_font); // normal
@@ -275,7 +277,7 @@ protected:
 	if (it->digit != 0) {
 	  String text = String::fromInt(it->digit);
 	  Size textSize = g.measureString(text);
-	  g.drawString(text,
+	  g.drawString(text, textColor,
 		       cellBounds.x + (cellBounds.w - textSize.w)/2,
 		       cellBounds.y + (cellBounds.h - textSize.h)/2);
 	}
@@ -285,14 +287,14 @@ protected:
 
 	  g.setFont(m_fontSmall);
 	  if (!it->warning)
-	    g.setColor(Color(190, 190, 190));
+	    textColor = Color(190, 190, 190);
 
 	  for (std::vector<int>::iterator it2=it->history.begin();
 	       it2!=it->history.end(); ++it2) {
 	    String text = String::fromInt(*it2);
 	    Size textSize = g.measureString(text);
 
-	    g.drawString(text,
+	    g.drawString(text, textColor,
 			 cellBounds.x + historyOffsets[c].x - textSize.w/2,
 			 cellBounds.y + historyOffsets[c].y - textSize.h/2);
 
@@ -806,8 +808,7 @@ public:
   }
 };
 
-int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
-		   LPSTR lpCmdLine, int nCmdShow)
+int VACA_MAIN()
 {
   srand(static_cast<unsigned int>(time(NULL)));
 

@@ -297,7 +297,7 @@ protected:
       g.setPixel(modelToView(Point_f(x, y)), Color(0, 192, 0));
     }
 
-    g.drawString(functions[m_currentFunction].expr, 0, 0);
+    g.drawString(functions[m_currentFunction].expr, getFgColor(), 0, 0);
   }
 
 private:
@@ -454,8 +454,7 @@ public:
   }
 };
 
-int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
-		   LPSTR lpCmdLine, int nCmdShow)
+int VACA_MAIN()
 {
   Example app;
   app.run();

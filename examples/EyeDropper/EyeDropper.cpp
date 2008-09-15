@@ -93,8 +93,8 @@ protected:
 	String::fromInt(bg.getG(), 10) + ", " +
 	String::fromInt(bg.getB(), 10) + ")";
 
-    g.setColor(bg.toBlackAndWhite().negative());
-    g.drawString(str, rc.getCenter() - Point(g.measureString(str)/2));
+    g.drawString(str, bg.toBlackAndWhite().negative(),
+		 rc.getCenter() - Point(g.measureString(str)/2));
 
     // copy the string to the clipboard
     Clipboard(this).setString(str);
@@ -156,8 +156,7 @@ protected:
 };
 
 // entry point of the program
-int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
-		   LPSTR lpCmdLine, int nCmdShow)
+int VACA_MAIN()
 {
   Application app;
   MainFrame mainFrame;

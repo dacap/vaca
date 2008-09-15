@@ -251,8 +251,7 @@ void Example::setCurrentDocument(Document* doc)
 
 //////////////////////////////////////////////////////////////////////
 
-int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
-		   LPSTR lpCmdLine, int nCmdShow)
+int VACA_MAIN()
 {
   Example app;
   app.run();

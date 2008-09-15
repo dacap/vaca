@@ -43,7 +43,7 @@ void hello_world(const String &title)
   Thread::doMessageLoop();
 }
 
-int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+int VACA_MAIN()
 {
   Application app;
   std::vector<Thread*> threads;	// group of threads

@@ -68,6 +68,9 @@ void Graphics::initialize()
 
   m_nullPen = ::CreatePen(PS_NULL, 0, 0);
   m_nullBrush = ::CreateBrushIndirect(&lb);
+
+  m_noPaint = false;
+  m_fillRule = FillRule::EvenOdd;
 }
     
 /**
@@ -78,7 +81,6 @@ Graphics::Graphics()
   m_handle      = ::GetDC(NULL);
   m_autoRelease = true;
   m_autoDelete  = false;
-  m_noPaint     = false;
 
   initialize();
 }
@@ -93,7 +95,6 @@ Graphics::Graphics(HDC hdc)
   m_handle         = hdc;
   m_autoRelease = false;
   m_autoDelete  = false;
-  m_noPaint     = false;
   m_font        = NULL;
 
   initialize();
@@ -106,7 +107,6 @@ Graphics::Graphics(HDC hdc, Image& image)
   m_handle         = CreateCompatibleDC(hdc);
   m_autoRelease = false;
   m_autoDelete  = true;
-  m_noPaint     = false;
   m_font        = NULL;
   
   SelectObject(m_handle, image.getHandle());
@@ -122,8 +122,6 @@ Graphics::Graphics(Widget* widget)
   m_handle      = ::GetDC(hwnd);
   m_autoRelease = true;
   m_autoDelete  = false;
-  m_noPaint     = false;
-  m_color       = widget->getFgColor();
   m_font        = widget->getFont();
 
   initialize();
@@ -156,7 +154,7 @@ bool Graphics::wasPainted()
 
 Rect Graphics::getClipBounds()
 {
-  assert(m_handle != NULL);
+  assert(m_handle);
 
   RECT rc;
   int res = ::GetClipBox(m_handle, &rc);
@@ -170,7 +168,7 @@ Rect Graphics::getClipBounds()
 
 void Graphics::getClipRegion(Region& rgn)
 {
-  assert(m_handle != NULL);
+  assert(m_handle);
   // TODO Region::assign(const Rect& rc)
   rgn = Region::fromRect(getClipBounds());
   GetClipRgn(m_handle, rgn.getHandle());
@@ -178,67 +176,57 @@ void Graphics::getClipRegion(Region& rgn)
 
 void Graphics::setClipRegion(Region& rgn)
 {
-  assert(m_handle != NULL);
+  assert(m_handle);
   ExtSelectClipRgn(m_handle, rgn.getHandle(), RGN_COPY);
 }
 
 void Graphics::excludeClipRect(const Rect& rc)
 {
-  assert(m_handle != NULL);
+  assert(m_handle);
   ExcludeClipRect(m_handle, rc.x, rc.y, rc.x+rc.w, rc.y+rc.h);
 }
 
 void Graphics::excludeClipRegion(Region& rgn)
 {
-  assert(m_handle != NULL);
+  assert(m_handle);
   ExtSelectClipRgn(m_handle, rgn.getHandle(), RGN_DIFF);
 }
 
 void Graphics::intersectClipRect(const Rect& rc)
 {
-  assert(m_handle != NULL);
+  assert(m_handle);
   IntersectClipRect(m_handle, rc.x, rc.y, rc.x+rc.w, rc.y+rc.h);
 }
 
 void Graphics::intersectClipRegion(Region& rgn)
 {
-  assert(m_handle != NULL);
+  assert(m_handle);
   ExtSelectClipRgn(m_handle, rgn.getHandle(), RGN_AND);
 }
 
 void Graphics::addClipRegion(Region& rgn)
 {
-  assert(m_handle != NULL);
+  assert(m_handle);
   ExtSelectClipRgn(m_handle, rgn.getHandle(), RGN_OR);
 }
 
 void Graphics::xorClipRegion(Region& rgn)
 {
-  assert(m_handle != NULL);
+  assert(m_handle);
   ExtSelectClipRgn(m_handle, rgn.getHandle(), RGN_XOR);
 }
 
 bool Graphics::isVisible(const Point& pt)
 {
-  assert(m_handle != NULL);
+  assert(m_handle);
   return PtVisible(m_handle, pt.x, pt.y) != FALSE;
 }
 
 bool Graphics::isVisible(const Rect& rc)
 {
-  assert(m_handle != NULL);
+  assert(m_handle);
   RECT rc2 = rc;
   return RectVisible(m_handle, &rc2) != FALSE;
-}
-
-Color Graphics::getColor()
-{
-  return m_color;
-}
-
-void Graphics::setColor(const Color& color)
-{
-  m_color = color;
 }
 
 Font Graphics::getFont() const
@@ -258,9 +246,37 @@ void Graphics::getFontMetrics(FontMetrics& fontMetrics)
   SelectObject(m_handle, oldFont);
 }
 
-double Graphics::getMiterLimit()
+Color Graphics::getPixel(const Point& pt)
 {
-  assert(m_handle != NULL);
+  assert(m_handle);
+
+  return Color(GetPixel(m_handle, pt.x, pt.y));
+}
+
+Color Graphics::getPixel(int x, int y)
+{
+  assert(m_handle);
+
+  return Color(GetPixel(m_handle, x, y));
+}
+
+void Graphics::setPixel(const Point& pt, const Color& color)
+{
+  assert(m_handle);
+
+  SetPixel(m_handle, pt.x, pt.y, color.getColorRef());
+}
+
+void Graphics::setPixel(int x, int y, const Color& color)
+{
+  assert(m_handle);
+
+  SetPixel(m_handle, x, y, color.getColorRef());
+}
+
+double Graphics::getMiterLimit() const
+{
+  assert(m_handle);
 
   float limit;
 
@@ -272,60 +288,181 @@ double Graphics::getMiterLimit()
 
 void Graphics::setMiterLimit(double limit)
 {
-  assert(m_handle != NULL);
+  assert(m_handle);
 
   SetMiterLimit(m_handle, static_cast<FLOAT>(limit), NULL);
 }
 
-Color Graphics::getPixel(const Point& pt)
+FillRule Graphics::getFillRule() const
 {
-  assert(m_handle != NULL);
-
-  return Color(GetPixel(m_handle, pt.x, pt.y));
+  return m_fillRule;
 }
 
-Color Graphics::getPixel(int x, int y)
+void Graphics::setFillRule(FillRule fillRule)
 {
-  assert(m_handle != NULL);
-
-  return Color(GetPixel(m_handle, x, y));
+  m_fillRule = fillRule;
 }
 
-void Graphics::setPixel(const Point& pt, const Color& color)
+void Graphics::tracePath(const GraphicsPath& path, const Point& pt)
 {
-  assert(m_handle != NULL);
+  GraphicsPath::const_iterator it = path.begin();
+  GraphicsPath::const_iterator end = path.end();
 
-  SetPixel(m_handle, pt.x, pt.y, color.getColorRef());
+  assert(m_handle);
+
+  BeginPath(m_handle);
+  MoveToEx(m_handle, pt.x, pt.y, NULL);
+  
+  for (; it != end; ++it) {
+    switch (it->getType()) {
+      case GraphicsPath::MoveTo:
+  	MoveToEx(m_handle,
+		 pt.x + it->getPoint().x,
+		 pt.y + it->getPoint().y, NULL);
+  	break;
+      case GraphicsPath::LineTo:
+  	LineTo(m_handle,
+	       pt.x + it->getPoint().x,
+	       pt.y + it->getPoint().y);
+  	break;
+      case GraphicsPath::BezierTo: {
+  	POINT pts[3];
+  	pts[0].x = pt.x + it->getPoint().x;
+  	pts[0].y = pt.y + it->getPoint().y; ++it;
+  	pts[1].x = pt.x + it->getPoint().x;
+  	pts[1].y = pt.y + it->getPoint().y; ++it;
+  	pts[2].x = pt.x + it->getPoint().x;
+  	pts[2].y = pt.y + it->getPoint().y;
+  	PolyBezierTo(m_handle, pts, 3);
+  	break;
+      }
+    }
+    if (it->isCloseFigure())
+      CloseFigure(m_handle);
+  }
+
+  EndPath(m_handle);
 }
 
-void Graphics::setPixel(int x, int y, const Color& color)
+void Graphics::getPath(GraphicsPath& path) const
 {
-  assert(m_handle != NULL);
+  assert(m_handle);
 
-  SetPixel(m_handle, x, y, color.getColorRef());
+  path.clear();
+
+  int npoints = GetPath(m_handle, NULL, NULL, 0);
+  if (npoints > 0) {
+    LPPOINT points = new POINT[npoints];
+    LPBYTE types = new BYTE[npoints];
+
+    npoints = GetPath(m_handle, points, types, npoints);
+
+    for (int c=0; c<npoints; ++c) {
+      switch (types[c] & 6) {
+	case PT_MOVETO:
+	  path.moveTo(points[c].x, points[c].y);
+	  break;
+	case PT_LINETO:
+	  path.lineTo(points[c].x, points[c].y);
+	  break;
+	case PT_BEZIERTO:
+	  path.curveTo(points[c  ].x, points[c  ].y,
+		       points[c+1].x, points[c+1].y,
+		       points[c+2].x, points[c+2].y);
+	  c += 2;
+	  break;
+      }
+      if (types[c] & PT_CLOSEFIGURE)
+	path.closeFigure();
+    }
+
+    delete types;
+    delete points;
+  }
 }
 
-void Graphics::strokePath(GraphicsPath& path, const Pen& pen, const Point& pt)
+Region Graphics::getRegionFromPath() const
 {
-  renderPath(path, pen.getHandle(), m_nullBrush, pt, false);
+  assert(m_handle);
+  if (HRGN hrgn = PathToRegion(m_handle))
+    return Region(hrgn);
+  else
+    return Region();
+}
+  
+void Graphics::strokePath(const Pen& pen)
+{
+  assert(m_handle);
+
+  HGDIOBJ oldPen   = SelectObject(m_handle, pen.getHandle());
+  HGDIOBJ oldBrush = SelectObject(m_handle, m_nullBrush);
+
+  StrokePath(m_handle);
+
+  SelectObject(m_handle, oldPen);
+  SelectObject(m_handle, oldBrush);
 }
 
-void Graphics::fillPath(GraphicsPath& path, const Brush& brush, const Point& pt)
+void Graphics::fillPath(const Brush& brush)
 {
-  renderPath(path, m_nullPen, brush.getHandle(), pt, true);
+  assert(m_handle);
+
+  HGDIOBJ oldPen   = SelectObject(m_handle, m_nullPen);
+  HGDIOBJ oldBrush = SelectObject(m_handle, brush.getHandle());
+
+  int oldPolyFillMode = SetPolyFillMode(m_handle,
+					m_fillRule == FillRule::EvenOdd ? ALTERNATE: WINDING);
+  FillPath(m_handle);
+  SetPolyFillMode(m_handle, oldPolyFillMode);
+
+  SelectObject(m_handle, oldPen);
+  SelectObject(m_handle, oldBrush);
 }
 
-void Graphics::drawString(const String& str, const Point& pt)
+void Graphics::strokeAndFillPath(const Pen& pen, const Brush& brush)
 {
-  drawString(str, pt.x, pt.y);
+  assert(m_handle);
+
+  HGDIOBJ oldPen   = SelectObject(m_handle, pen.getHandle());
+  HGDIOBJ oldBrush = SelectObject(m_handle, brush.getHandle());
+
+  int oldPolyFillMode = SetPolyFillMode(m_handle, ALTERNATE); // TODO ALTERNATE or WINDING
+  StrokeAndFillPath(m_handle);
+  SetPolyFillMode(m_handle, oldPolyFillMode);
+
+  SelectObject(m_handle, oldPen);
+  SelectObject(m_handle, oldBrush);
 }
 
-void Graphics::drawString(const String& str, int x, int y)
+void Graphics::strokePath(const GraphicsPath& path, const Pen& pen, const Point& pt)
 {
-  assert(m_handle != NULL);
+  tracePath(path, pt);
+  strokePath(pen);
+}
+
+void Graphics::fillPath(const GraphicsPath& path, const Brush& brush, const Point& pt)
+{
+  tracePath(path, pt);
+  fillPath(brush);
+}
+
+void Graphics::strokeAndFillPath(const GraphicsPath& path, const Pen& pen, const Brush& brush, const Point& pt)
+{
+  tracePath(path, pt);
+  strokeAndFillPath(pen, brush);
+}
+
+void Graphics::drawString(const String& str, const Color& color, const Point& pt)
+{
+  drawString(str, color, pt.x, pt.y);
+}
+
+void Graphics::drawString(const String& str, const Color& color, int x, int y)
+{
+  assert(m_handle);
 
   int oldMode = SetBkMode(m_handle, TRANSPARENT);
-  int oldColor = SetTextColor(m_handle, m_color.getColorRef());
+  int oldColor = SetTextColor(m_handle, color.getColorRef());
 
   HGDIOBJ oldFont = SelectObject(m_handle, reinterpret_cast<HGDIOBJ>(m_font.getHandle()));
   TextOut(m_handle, x, y, str.c_str(), static_cast<int>(str.size()));
@@ -335,12 +472,12 @@ void Graphics::drawString(const String& str, int x, int y)
   SetTextColor(m_handle, oldColor);
 }
 
-void Graphics::drawString(const String& str, const Rect& _rc, int flags)
+void Graphics::drawString(const String& str, const Color& color, const Rect& _rc, int flags)
 {
-  assert(m_handle != NULL);
+  assert(m_handle);
 
   int oldMode = SetBkMode(m_handle, TRANSPARENT);
-  int oldColor = SetTextColor(m_handle, m_color.getColorRef());
+  int oldColor = SetTextColor(m_handle, color.getColorRef());
 
   RECT rc = _rc;
 
@@ -354,15 +491,8 @@ void Graphics::drawString(const String& str, const Rect& _rc, int flags)
 
 void Graphics::drawDisabledString(const String& str, const Rect& rc, int flags)
 {
-  Color oldColor = m_color;
-
-  setColor(System::getColor(COLOR_3DHIGHLIGHT));
-  drawString(str, Rect(rc.x+1, rc.y+1, rc.w, rc.h), flags);
-
-  setColor(System::getColor(COLOR_GRAYTEXT));
-  drawString(str, rc, flags);
-
-  m_color = oldColor;
+  drawString(str, System::getColor(COLOR_3DHIGHLIGHT), Rect(rc.x+1, rc.y+1, rc.w, rc.h), flags);
+  drawString(str, System::getColor(COLOR_GRAYTEXT), rc, flags);
 }
 
 void Graphics::drawImage(Image& image, int x, int y)
@@ -372,7 +502,7 @@ void Graphics::drawImage(Image& image, int x, int y)
 
 void Graphics::drawImage(Image& image, int dstX, int dstY, int srcX, int srcY, int width, int height)
 {
-  assert(m_handle != NULL);
+  assert(m_handle);
 
   Graphics* source = image.getGraphics();
 
@@ -388,7 +518,7 @@ void Graphics::drawImage(Image& image, int x, int y, const Color& bgColor)
 
 void Graphics::drawImage(Image& image, int dstX, int dstY, int srcX, int srcY, int width, int height, const Color& bgColor)
 {
-  assert(m_handle != NULL);
+  assert(m_handle);
 
   Graphics* source = image.getGraphics();
 
@@ -469,7 +599,7 @@ void Graphics::drawImage(Image& image, const Point& pt, const Rect& rc, const Co
  */
 void Graphics::drawImageList(ImageList& imageList, int imageIndex, int x, int y, int style)
 {
-  assert(m_handle != NULL);
+  assert(m_handle);
   assert(imageList.getHandle());
 
   ImageList_Draw(imageList.getHandle(),
@@ -488,7 +618,7 @@ void Graphics::drawLine(const Pen& pen, const Point& pt1, const Point& pt2)
 
 void Graphics::drawLine(const Pen& pen, int x1, int y1, int x2, int y2)
 {
-  assert(m_handle != NULL);
+  assert(m_handle);
 
   POINT oldPos;
   HGDIOBJ oldPen = SelectObject(m_handle, pen.getHandle());
@@ -550,7 +680,7 @@ void Graphics::drawRect(const Pen& pen, const Rect& rc)
 
 void Graphics::drawRect(const Pen& pen, int x, int y, int w, int h)
 {
-  assert(m_handle != NULL);
+  assert(m_handle);
 
   HGDIOBJ oldPen   = SelectObject(m_handle, pen.getHandle());
   HGDIOBJ oldBrush = SelectObject(m_handle, m_nullBrush);
@@ -568,7 +698,7 @@ void Graphics::drawRoundRect(const Pen& pen, const Rect& rc, const Size& ellipse
 
 void Graphics::drawRoundRect(const Pen& pen, int x, int y, int w, int h, int ellipseWidth, int ellipseHeight)
 {
-  assert(m_handle != NULL);
+  assert(m_handle);
 
   HGDIOBJ oldPen   = SelectObject(m_handle, pen.getHandle());
   HGDIOBJ oldBrush = SelectObject(m_handle, m_nullBrush);
@@ -586,7 +716,7 @@ void Graphics::draw3dRect(const Rect& rc, const Color& topLeft, const Color& bot
 
 void Graphics::draw3dRect(int x, int y, int w, int h, const Color& topLeft, const Color& bottomRight)
 {
-  assert(m_handle != NULL);
+  assert(m_handle);
 
   HPEN pen1 = CreatePen(PS_SOLID, 1, topLeft.getColorRef());
   HPEN pen2 = CreatePen(PS_SOLID, 1, bottomRight.getColorRef());
@@ -619,7 +749,7 @@ void Graphics::drawEllipse(const Pen& pen, const Rect& rc)
 
 void Graphics::drawEllipse(const Pen& pen, int x, int y, int w, int h)
 {
-  assert(m_handle != NULL);
+  assert(m_handle);
 
   HGDIOBJ oldPen   = SelectObject(m_handle, pen.getHandle());
   HGDIOBJ oldBrush = SelectObject(m_handle, m_nullBrush);
@@ -643,7 +773,7 @@ void Graphics::drawArc(const Pen& pen, const Rect& rc, double startAngle, double
 
 void Graphics::drawArc(const Pen& pen, int x, int y, int w, int h, double startAngle, double sweepAngle)
 {
-  assert(m_handle != NULL);
+  assert(m_handle);
 
   HGDIOBJ oldPen = SelectObject(m_handle, pen.getHandle());
   int x1, y1, x2, y2;
@@ -665,7 +795,7 @@ void Graphics::drawPie(const Pen& pen, const Rect& rc, double startAngle, double
 
 void Graphics::drawPie(const Pen& pen, int x, int y, int w, int h, double startAngle, double sweepAngle)
 {
-  assert(m_handle != NULL);
+  assert(m_handle);
 
   HGDIOBJ oldPen   = SelectObject(m_handle, pen.getHandle());
   HGDIOBJ oldBrush = SelectObject(m_handle, m_nullBrush);
@@ -689,7 +819,7 @@ void Graphics::drawChord(const Pen& pen, const Rect& rc, double startAngle, doub
 
 void Graphics::drawChord(const Pen& pen, int x, int y, int w, int h, double startAngle, double sweepAngle)
 {
-  assert(m_handle != NULL);
+  assert(m_handle);
 
   HGDIOBJ oldPen   = SelectObject(m_handle, pen.getHandle());
   HGDIOBJ oldBrush = SelectObject(m_handle, m_nullBrush);
@@ -725,7 +855,7 @@ void Graphics::fillRect(const Brush& brush, const Rect& rc)
 
 void Graphics::fillRect(const Brush& brush, int x, int y, int w, int h)
 {
-  assert(m_handle != NULL);
+  assert(m_handle);
 
   HGDIOBJ oldPen   = SelectObject(m_handle, m_nullPen);
   HGDIOBJ oldBrush = SelectObject(m_handle, brush.getHandle());
@@ -743,7 +873,7 @@ void Graphics::fillRoundRect(const Brush& brush, const Rect& rc, const Size& ell
 
 void Graphics::fillRoundRect(const Brush& brush, int x, int y, int w, int h, int ellipseWidth, int ellipseHeight)
 {
-  assert(m_handle != NULL);
+  assert(m_handle);
 
   HGDIOBJ oldPen   = SelectObject(m_handle, m_nullPen);
   HGDIOBJ oldBrush = SelectObject(m_handle, brush.getHandle());
@@ -761,7 +891,7 @@ void Graphics::fillEllipse(const Brush& brush, const Rect& rc)
 
 void Graphics::fillEllipse(const Brush& brush, int x, int y, int w, int h)
 {
-  assert(m_handle != NULL);
+  assert(m_handle);
 
   HGDIOBJ oldPen   = SelectObject(m_handle, m_nullPen);
   HGDIOBJ oldBrush = SelectObject(m_handle, brush.getHandle());
@@ -779,7 +909,7 @@ void Graphics::fillPie(const Brush& brush, const Rect& rc, double startAngle, do
 
 void Graphics::fillPie(const Brush& brush, int x, int y, int w, int h, double startAngle, double sweepAngle)
 {
-  assert(m_handle != NULL);
+  assert(m_handle);
 
   HGDIOBJ oldPen   = SelectObject(m_handle, m_nullPen);
   HGDIOBJ oldBrush = SelectObject(m_handle, brush.getHandle());
@@ -803,7 +933,7 @@ void Graphics::fillChord(const Brush& brush, const Rect& rc, double startAngle, 
 
 void Graphics::fillChord(const Brush& brush, int x, int y, int w, int h, double startAngle, double sweepAngle)
 {
-  assert(m_handle != NULL);
+  assert(m_handle);
 
   HGDIOBJ oldPen   = SelectObject(m_handle, m_nullPen);
   HGDIOBJ oldBrush = SelectObject(m_handle, brush.getHandle());
@@ -822,7 +952,7 @@ void Graphics::fillChord(const Brush& brush, int x, int y, int w, int h, double 
 
 void Graphics::fillRegion(const Brush& brush, const Region& rgn)
 {
-  assert(m_handle != NULL);
+  assert(m_handle);
 
   FillRgn(m_handle,
 	  const_cast<Region*>(&rgn)->getHandle(),
@@ -842,7 +972,7 @@ void Graphics::fillGradientRect(int x, int y, int w, int h,
 				const Color& endColor,
 				Orientation orientation)
 {
-  assert(m_handle != NULL);
+  assert(m_handle);
   
   TRIVERTEX vert[2] ;
   GRADIENT_RECT gRect;
@@ -928,7 +1058,7 @@ void Graphics::drawXorFrame(int x, int y, int w, int h, int border)
 
 void Graphics::drawFocus(const Rect& rc)
 {
-  assert(m_handle != NULL);
+  assert(m_handle);
 
   RECT _rc = rc;
   ::DrawFocusRect(m_handle, &_rc);
@@ -940,7 +1070,7 @@ void Graphics::drawFocus(const Rect& rc)
  */
 Size Graphics::measureString(const String& str, int fitInWidth, int flags)
 {
-  assert(m_handle != NULL);
+  assert(m_handle);
 
   RECT rc = Rect(0, 0, fitInWidth, 0);
   HGDIOBJ oldFont = SelectObject(m_handle, reinterpret_cast<HGDIOBJ>(m_font.getHandle()));
@@ -985,19 +1115,19 @@ Size Graphics::measureString(const String& str, int fitInWidth, int flags)
  */
 void Graphics::setRop2(int drawMode)
 {
-  assert(m_handle != NULL);
+  assert(m_handle);
 
   SetROP2(m_handle, drawMode);
 }
 
-HDC Graphics::getHandle()
+HDC Graphics::getHandle() const
 {
   return m_handle;
 }
 
 void Graphics::drawBezier(const Pen& pen, CONST POINT* lppt, int numPoints)
 {
-  assert(m_handle != NULL);
+  assert(m_handle);
 
   HGDIOBJ oldPen = SelectObject(m_handle, pen.getHandle());
   PolyBezier(m_handle, lppt, numPoints);
@@ -1006,7 +1136,7 @@ void Graphics::drawBezier(const Pen& pen, CONST POINT* lppt, int numPoints)
 
 void Graphics::drawBezierTo(const Pen& pen, CONST POINT* lppt, int numPoints)
 {
-  assert(m_handle != NULL);
+  assert(m_handle);
 
   HGDIOBJ oldPen = SelectObject(m_handle, pen.getHandle());
   PolyBezierTo(m_handle, lppt, numPoints);
@@ -1015,79 +1145,11 @@ void Graphics::drawBezierTo(const Pen& pen, CONST POINT* lppt, int numPoints)
 
 void Graphics::drawPolyline(const Pen& pen, CONST POINT* lppt, int numPoints)
 {
-  assert(m_handle != NULL);
+  assert(m_handle);
 
   HGDIOBJ oldPen = SelectObject(m_handle, pen.getHandle());
   Polyline(m_handle, lppt, numPoints);
   SelectObject(m_handle, oldPen);
-}
-
-void Graphics::renderPath(GraphicsPath& path, HPEN hpen, HBRUSH hbrush, const Point& pt, bool fill)
-{
-  HGDIOBJ oldPen   = SelectObject(m_handle, hpen);
-  HGDIOBJ oldBrush = SelectObject(m_handle, hbrush);
-  // BYTE* type = &path.m_types.front();
-  // BYTE* end = &path.m_types.back() + 1;
-  // POINT* point = &path.m_points.front();
-  std::vector<BYTE>::iterator type = path.m_types.begin();
-  std::vector<BYTE>::iterator end = path.m_types.end();
-  std::vector<POINT>::iterator point = path.m_points.begin();
-
-  BeginPath(m_handle);
-  MoveToEx(m_handle, pt.x, pt.y, NULL);
-  
-  for (; type != end; ++type, ++point) {
-    switch ((*type) & 6) {
-      case PT_MOVETO:
-  	MoveToEx(m_handle, pt.x + point->x, pt.y + point->y, NULL);
-  	break;
-      case PT_LINETO:
-  	LineTo(m_handle, pt.x + point->x, pt.y + point->y);
-  	break;
-      case PT_BEZIERTO: {
-  	POINT pts[3];
-  	pts[0].x = pt.x + point->x;
-  	pts[0].y = pt.y + point->y; ++point;
-  	pts[1].x = pt.x + point->x;
-  	pts[1].y = pt.y + point->y; ++point;
-  	pts[2].x = pt.x + point->x;
-  	pts[2].y = pt.y + point->y;
-  	PolyBezierTo(m_handle, pts, 3);
-	type += 2;
-  	break;
-      }
-    }
-    if ((*type) & PT_CLOSEFIGURE)
-      CloseFigure(m_handle);
-  }
-
-  EndPath(m_handle);
-
-  if (fill) {
-    int oldPolyFillMode = SetPolyFillMode(m_handle, ALTERNATE); // TODO ALTERNATE or WINDING
-#if 0
-    PolyDraw(m_handle,
-	     &path.m_points.at(0),
-	     &path.m_types.at(0),
-	     path.m_types.size());
-#else
-    FillPath(m_handle);
-#endif
-    SetPolyFillMode(m_handle, oldPolyFillMode);
-  }
-  else {
-#if 0
-    PolyDraw(m_handle,
-    	     &path.m_points.at(0),
-    	     &path.m_types.at(0),
-    	     path.m_types.size());
-#else
-    StrokePath(m_handle);
-#endif
-  }
-
-  SelectObject(m_handle, oldPen);
-  SelectObject(m_handle, oldBrush);
 }
 
 //////////////////////////////////////////////////////////////////////

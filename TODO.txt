@@ -44,8 +44,6 @@ Examples
 API
 ----------------------------------------------------------------------
 
-- Add a method to execute PathToRegion
-
 - Accelerators <-> Commands
 
 - DL_BEGINDRAG, DL_CANCELDRAG, DL_DRAGGING, DL_DROPPED

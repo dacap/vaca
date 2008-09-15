@@ -35,37 +35,78 @@
 #include <vector>
 
 #include "Vaca/base.h"
+#include "Vaca/Point.h"
 
 namespace Vaca {
 
-class Graphics;
-class Point;
+class Pen;
+class Region;
 
 class VACA_DLL GraphicsPath
 {
-  friend class Graphics;
+public:
+  enum {
+    MoveTo = 1,
+    LineTo = 2,
+    BezierTo = 4,
+    TypeMask = 7,
+    CloseFigure = 8
+  };
 
-  std::vector<BYTE> m_types;
-  std::vector<POINT> m_points;
+  class Node
+  {
+    friend class GraphicsPath;
+    int type;
+    Point point;
+  public:
+    Node(int type, const Point& point)
+      : type(type), point(point) { }
+    int getType() const { return type & TypeMask; }
+    bool isCloseFigure() const { return type & CloseFigure ? true: false; }
+    Point& getPoint() { return point; }
+    const Point& getPoint() const { return point; }
+  };
+
+private:
+  std::vector<Node> m_nodes;
 
 public:
-
+  typedef std::vector<Node>::iterator iterator;
+  typedef std::vector<Node>::const_iterator const_iterator;
+  
   GraphicsPath();
   virtual ~GraphicsPath();
 
-  void closeFigure();
+  iterator begin();
+  iterator end();
 
-  void moveTo(const Point& pt);
-  void moveTo(int x, int y);
+  const_iterator begin() const;
+  const_iterator end() const;
 
-  void lineTo(const Point& pt);
-  void lineTo(int x, int y);
+  void clear();
+  unsigned size() const;
 
-  void curveTo(const Point& pt1, const Point& pt2, const Point& pt3);
-  void curveTo(int x1, int y1, int x2, int y2, int x3, int y3);
+  GraphicsPath& offset(int dx, int dy);
+  GraphicsPath& offset(const Point& point);
+
+  GraphicsPath& moveTo(const Point& pt);
+  GraphicsPath& moveTo(int x, int y);
+
+  GraphicsPath& lineTo(const Point& pt);
+  GraphicsPath& lineTo(int x, int y);
+
+  GraphicsPath& curveTo(const Point& pt1, const Point& pt2, const Point& pt3);
+  GraphicsPath& curveTo(int x1, int y1, int x2, int y2, int x3, int y3);
+
+  GraphicsPath& closeFigure();
+
+  GraphicsPath& flatten();
+  GraphicsPath& widen(const Pen& pen);
+
+  Region toRegion() const;
 
 private:
-  void addPoint(BYTE type, int x, int y);
+  void addNode(int type, const Point& pt);
 
 };
 

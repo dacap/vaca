@@ -51,6 +51,12 @@ namespace Vaca {
 #define VACA_SUB_VERSION 0
 #define VACA_WIP_VERSION 6
 
+#define VACA_MAIN()				\
+  PASCAL WinMain(HINSTANCE hInstance,		\
+		 HINSTANCE hPrevInstance,	\
+		 LPSTR lpCmdLine,		\
+		 int nCmdShow)
+  
 #ifdef VACA_STATIC
   #define VACA_DLL
 #else

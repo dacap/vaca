@@ -146,18 +146,20 @@ void LinkLabel::onPaint(Graphics& g)
       case TextAlign::Right:  flags |= DT_RIGHT;  break;
     }
 
+    Color color;
+
     if (m_state == Hover) {
       g.setFont(m_underlineFont);
-      g.setColor(getHoverColor());
+      color = getHoverColor();
     }
     else {
       g.setFont(getFont());
-      g.setColor(getLinkColor());
+      color = getLinkColor();
     }
 
     // draw text
     if (isEnabled())
-      g.drawString(getText(), bounds, flags);
+      g.drawString(getText(), color, bounds, flags);
     else
       g.drawDisabledString(getText(), bounds, flags);
   }

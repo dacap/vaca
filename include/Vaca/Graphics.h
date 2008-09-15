@@ -36,7 +36,6 @@
 #include <vector>
 
 #include "Vaca/base.h"
-#include "Vaca/Color.h"
 #include "Vaca/NonCopyable.h"
 #include "Vaca/Rect.h"
 #include "Vaca/String.h"
@@ -46,6 +45,7 @@ namespace Vaca {
 
 class Application;
 class Brush;
+class Color;
 class GraphicsPath;
 class Image;
 class ImageList;
@@ -54,9 +54,24 @@ class Point;
 class Region;
 class Widget;
 
+//////////////////////////////////////////////////////////////////////
+  
+struct FillRuleEnum
+{
+  enum enumeration {
+    EvenOdd,
+    Winding
+  };
+  static const enumeration default_value = EvenOdd;
+};
+
+typedef Enum<FillRuleEnum> FillRule;
+
 /**
- * Class to handle a graphics context.  It's used to handle the Win32
- * HDCs.
+ * Class to control a graphics context.
+ *
+ * @warning
+ *   This is a Win32's HDC wrapper.
  */
 class VACA_DLL Graphics : private NonCopyable
 {
@@ -69,8 +84,8 @@ class VACA_DLL Graphics : private NonCopyable
   bool m_autoRelease : 1;
   bool m_autoDelete : 1;
   bool m_noPaint : 1;
-  Color m_color;
   Font m_font;
+  FillRule m_fillRule;
 
 protected:
   
@@ -99,27 +114,50 @@ public:
   bool isVisible(const Point& pt);
   bool isVisible(const Rect& rc);
 
-  Color getColor();
-  void setColor(const Color& color);
+  //////////////////////////////////////////////////////////////////////
+  // Font
 
   Font getFont() const;
   void setFont(Font font);
   void getFontMetrics(FontMetrics& fontMetrics);
 
-  double getMiterLimit();
-  void setMiterLimit(double limit);
+  //////////////////////////////////////////////////////////////////////
+  // Pîxel
   
   Color getPixel(const Point& pt);
   Color getPixel(int x, int y);
   void setPixel(const Point& pt, const Color& color);
   void setPixel(int x, int y, const Color& color);
 
-  void strokePath(GraphicsPath& path, const Pen& pen, const Point& pt);
-  void fillPath(GraphicsPath& path, const Brush& brush, const Point& pt);
+  //////////////////////////////////////////////////////////////////////
+  // Low-level path routines
 
-  void drawString(const String& str, const Point& pt);
-  void drawString(const String& str, int x, int y);
-  void drawString(const String& str, const Rect& rc, int flags = DT_WORDBREAK);
+  double getMiterLimit() const;
+  void setMiterLimit(double limit);
+
+  FillRule getFillRule() const;
+  void setFillRule(FillRule fillRule);
+
+  void tracePath(const GraphicsPath& path, const Point& pt);
+  void getPath(GraphicsPath& path) const;
+  Region getRegionFromPath() const;
+
+  void strokePath(const Pen& pen);
+  void fillPath(const Brush& brush);
+  void strokeAndFillPath(const Pen& pen, const Brush& brush);
+
+  //////////////////////////////////////////////////////////////////////
+  // High-level path routines
+
+  void strokePath(const GraphicsPath& path, const Pen& pen, const Point& pt);
+  void fillPath(const GraphicsPath& path, const Brush& brush, const Point& pt);
+  void strokeAndFillPath(const GraphicsPath& path, const Pen& pen, const Brush& brush, const Point& pt);
+
+  //////////////////////////////////////////////////////////////////////
+
+  void drawString(const String& str, const Color& color, const Point& pt);
+  void drawString(const String& str, const Color& color, int x, int y);
+  void drawString(const String& str, const Color& color, const Rect& rc, int flags = DT_WORDBREAK);
   void drawDisabledString(const String& str, const Rect& rc, int flags = DT_WORDBREAK);
 
   void drawImage(Image& image, int x, int y);
@@ -184,7 +222,7 @@ public:
   // SetROP2 wrapper
   void setRop2(int drawMode);
 
-  HDC getHandle();
+  HDC getHandle() const;
 
 private:
 
@@ -193,7 +231,6 @@ private:
   void drawBezier(const Pen& pen, CONST POINT* lppt, int numPoints);
   void drawBezierTo(const Pen& pen, CONST POINT* lppt, int numPoints);
   void drawPolyline(const Pen& pen, CONST POINT* lppt, int numPoints);
-  void renderPath(GraphicsPath& path, HPEN hpen, HBRUSH hbrush, const Point& pt, bool fill);
   
 };
 

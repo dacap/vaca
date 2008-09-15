@@ -31,6 +31,10 @@
 
 #include "Vaca/GraphicsPath.h"
 #include "Vaca/Point.h"
+#include "Vaca/Region.h"
+#include "Vaca/Pen.h"
+#include "Vaca/Brush.h"
+#include "Vaca/Graphics.h"
 
 using namespace Vaca;
 
@@ -42,53 +46,129 @@ GraphicsPath::~GraphicsPath()
 {
 }
 
-void GraphicsPath::closeFigure()
+GraphicsPath::iterator GraphicsPath::begin()
 {
-  if (!m_types.empty())
-    m_types.back() |= PT_CLOSEFIGURE;
+  return m_nodes.begin();
 }
 
-void GraphicsPath::moveTo(const Point& pt)
+GraphicsPath::iterator GraphicsPath::end()
 {
-  moveTo(pt.x, pt.y);
+  return m_nodes.end();
 }
 
-void GraphicsPath::moveTo(int x, int y)
+GraphicsPath::const_iterator GraphicsPath::begin() const
 {
-  if (!m_types.empty() && m_types.back() == PT_MOVETO) {
-    m_points.back().x = x;
-    m_points.back().y = y;
+  return m_nodes.begin();
+}
+
+GraphicsPath::const_iterator GraphicsPath::end() const
+{
+  return m_nodes.end();
+}
+
+void GraphicsPath::clear()
+{
+  m_nodes.clear();
+}
+
+unsigned GraphicsPath::size() const
+{
+  return m_nodes.size();
+}
+
+GraphicsPath& GraphicsPath::offset(int dx, int dy)
+{
+  for (iterator it=begin(); it!=end(); ++it) {
+    it->getPoint().x += dx;
+    it->getPoint().y += dy;
   }
+  return *this;
+}
+
+GraphicsPath& GraphicsPath::offset(const Point& point)
+{
+  return offset(point.x, point.y);
+}
+
+GraphicsPath& GraphicsPath::moveTo(const Point& pt)
+{
+  if (!m_nodes.empty() && m_nodes.back().getType() == GraphicsPath::MoveTo)
+    m_nodes.back().point = pt;
   else
-    addPoint(PT_MOVETO, x, y);
+    addNode(GraphicsPath::MoveTo, pt);
+  return *this;
 }
 
-void GraphicsPath::lineTo(const Point& pt)
+GraphicsPath& GraphicsPath::moveTo(int x, int y)
 {
-  lineTo(pt.x, pt.y);
+  moveTo(Point(x, y));
+  return *this;
 }
 
-void GraphicsPath::lineTo(int x, int y)
+GraphicsPath& GraphicsPath::lineTo(const Point& pt)
 {
-  addPoint(PT_LINETO, x, y);
+  addNode(GraphicsPath::LineTo, pt);
+  return *this;
 }
 
-void GraphicsPath::curveTo(const Point& pt1, const Point& pt2, const Point& pt3)
+GraphicsPath& GraphicsPath::lineTo(int x, int y)
 {
-  curveTo(pt1.x, pt1.y, pt2.x, pt2.y, pt3.x, pt3.y);
+  lineTo(Point(x, y));
+  return *this;
 }
 
-void GraphicsPath::curveTo(int x1, int y1, int x2, int y2, int x3, int y3)
+GraphicsPath& GraphicsPath::curveTo(const Point& pt1, const Point& pt2, const Point& pt3)
 {
-  addPoint(PT_BEZIERTO, x1, y1);
-  addPoint(PT_BEZIERTO, x2, y2);
-  addPoint(PT_BEZIERTO, x3, y3);
+  addNode(GraphicsPath::BezierTo, pt1);
+  addNode(GraphicsPath::BezierTo, pt2);
+  addNode(GraphicsPath::BezierTo, pt3);
+  return *this;
 }
 
-void GraphicsPath::addPoint(BYTE type, int x, int y)
+GraphicsPath& GraphicsPath::curveTo(int x1, int y1, int x2, int y2, int x3, int y3)
 {
-  POINT point = { x, y };
+  curveTo(Point(x1, y1), Point(x2, y2), Point(x3, y3));
+  return *this;
+}
 
-  m_types.push_back(type);
-  m_points.push_back(point);
+GraphicsPath& GraphicsPath::closeFigure()
+{
+  if (!m_nodes.empty())
+    m_nodes.back().type |= GraphicsPath::CloseFigure;
+  return *this;
+}
+
+GraphicsPath& GraphicsPath::flatten()
+{
+  ScreenGraphics g;
+  g.tracePath(*this, Point(0, 0));
+  ::FlattenPath(g.getHandle());
+  g.getPath(*this);
+  return *this;
+}
+
+GraphicsPath& GraphicsPath::widen(const Pen& pen)
+{
+  ScreenGraphics g;
+
+  HGDIOBJ oldPen = SelectObject(g.getHandle(), pen.getHandle());
+
+  g.tracePath(*this, Point(0, 0));
+  ::WidenPath(g.getHandle());
+  g.getPath(*this);
+
+  SelectObject(g.getHandle(), oldPen);
+  return *this;
+}
+
+Region GraphicsPath::toRegion() const
+{
+  ScreenGraphics g;
+  g.tracePath(*this, Point(0, 0));
+  return g.getRegionFromPath();
+}
+
+void GraphicsPath::addNode(int type, const Point& pt)
+{
+  m_nodes.push_back(Node(type, pt));
 }

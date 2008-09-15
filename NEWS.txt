@@ -1,5 +1,6 @@
 Vaca 0.0.7
 
+- Added RefWrapper class and Ref() method to support references in Bind().
 - Added GraphicsPath.
 - All methods that return Win32 handles (HWND, HDC, HBRUSH,
   HRGN, etc.) now are called getHandle().
@@ -16,6 +17,7 @@ Vaca 0.0.7
 - Fixed Bix::getPreferredSize when EvenX or EvenY flags are activated.
 - Now MenuItem::setEnabled/Checked can be used although the item isn't
   in a parent Menu.
+- Removed SelfDestruction class.
 
 Vaca 0.0.6
 

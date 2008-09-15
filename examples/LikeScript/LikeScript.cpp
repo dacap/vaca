@@ -33,12 +33,14 @@
 
 using namespace Vaca;
 
-void configure_frame(Frame &frame);
-void configure_editor(Edit &edit, Font &normalFont, Font &hotFont, int preferredWidth);
-void configure_num_editor(Edit &edit);
-void filter_num_keys(KeyEvent &ev);
+void configure_frame(Frame& frame);
+void configure_editor(Edit& edit, Font& normalFont, Font& hotFont, int preferredWidth);
+void configure_num_editor(Edit& edit);
+void configure_buttons(Button& ok, Button& cancel);
+void filter_num_keys(KeyEvent& ev);
+void msg_ok(Widget* owner);
 
-int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+int VACA_MAIN()
 {
   Application application;
 
@@ -75,8 +77,8 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
   configure_editor(firstName, font1, font2, 256);
   configure_editor(lastName, font1, font2, 256);
   configure_editor(age, font1, font2, 64);
-
   configure_num_editor(age);
+  configure_buttons(ok, cancel);
 
   frame.setSize(frame.getPreferredSize());
   frame.center();
@@ -106,10 +108,10 @@ void configure_editor(Edit &edit, Font &normalFont, Font &hotFont, int preferred
   edit.GotFocus.connect(Bind(&Widget::setFont, &edit, hotFont));
   edit.LostFocus.connect(Bind(&Widget::setFont, &edit, normalFont));
 
-  // edit.MouseEnter.connect(Bind(&Widget::setBgColor, &edit, Color(255, 255, 240)));
-  // edit.MouseLeave.connect(Bind(&Widget::setBgColor, &edit, Color::White));
-  // edit.MouseEnter.connect(Bind(&Widget::invalidate, &edit, true));
-  // edit.MouseLeave.connect(Bind(&Widget::invalidate, &edit, true));
+  edit.MouseEnter.connect(Bind(&Widget::setBgColor, &edit, Color(255, 255, 190)));
+  edit.MouseLeave.connect(Bind(&Widget::setBgColor, &edit, Color::White));
+  edit.MouseEnter.connect(Bind(&Widget::invalidate, &edit, true));
+  edit.MouseLeave.connect(Bind(&Widget::invalidate, &edit, true));
 
   edit.setFont(normalFont);
   edit.setPreferredSize(Size(preferredWidth, edit.getPreferredSize().h));
@@ -120,6 +122,13 @@ void configure_num_editor(Edit &edit)
   edit.KeyDown.connect(&filter_num_keys);
 }
 
+void configure_buttons(Button& ok, Button& cancel)
+{
+  ok.Action.connect(Bind<void>(&msg_ok, ok.getParent()));
+  ok.Action.connect(Bind(&Widget::setVisible, ok.getParent(), false));
+  cancel.Action.connect(Bind(&Widget::setVisible, cancel.getParent(), false));
+}
+
 void filter_num_keys(KeyEvent &ev)
 {
   if ((ev.getCharCode() != 0) &&
@@ -127,4 +136,9 @@ void filter_num_keys(KeyEvent &ev)
       (ev.getCharCode() >= ' ')) {
     ev.consume();
   }
+}
+
+void msg_ok(Widget* owner)
+{
+  MsgBox::show(owner, "OK", "You press the OK button");
 }

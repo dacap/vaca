@@ -2607,7 +2607,6 @@ bool Widget::doPaint(Graphics& g)
 
       // configure defaults
       imageG->setFont(getFont());
-      imageG->setColor(getFgColor()); // TODO remove this
 
       // paint on imageG
       onPaint(*imageG);
@@ -2624,7 +2623,6 @@ bool Widget::doPaint(Graphics& g)
   else {
     // configure defaults
     g.setFont(getFont());
-    g.setColor(getFgColor());
 
     // paint on g
     onPaint(g);

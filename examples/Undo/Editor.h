@@ -140,8 +140,8 @@ protected:
 
 	tmp[0] = m_doc->at(i);
 
-	g.setColor(Color::Black);
-	g.drawString(tmp, Point(x, origPt.y) + Point(celBox)/2 - Point(g.measureString(tmp))/2);
+	g.drawString(tmp, Color::Black,
+		     Point(x, origPt.y) + Point(celBox)/2 - Point(g.measureString(tmp))/2);
       }
 
       // draw the carret
@@ -153,8 +153,7 @@ protected:
       }
     }
     else {
-      g.setColor(Color::Black);
-      g.drawString("No document", rc);
+      g.drawString("No document", Color::Black, rc);
     }
   }
 

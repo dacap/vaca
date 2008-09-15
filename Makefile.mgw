@@ -69,7 +69,7 @@ EXAMPLES = AnchorLayouts AutoCompletion Bixes BouncingBalls BoxLayouts	\
 	   Buttons ColoredButton ComboBoxes Commands DataGrids		\
 	   EditableListBox Edits EyeDropper FontMetrics FreeOfLayout	\
 	   Hashing HelloWorld Images Labels LikeScript Maths		\
-	   MenuResource MiniExplorer Minimal PensBrushes Primitives	\
+	   MenuResource MiniExplorer Minimal Paths Primitives		\
 	   ProgressBars Regions Scribble Sliders Spinners StdCommands	\
 	   Sudoku SystemImageList Tabs TextEditor Threads Timers	\
 	   ToolBars Trees Undo WebCam
@@ -85,8 +85,6 @@ TESTS = \
 	test_string \
 	test_tab \
 	test_thread
-
-# EXAMPLES = Trees
 
 # ----------------------------------------------------------------------
 # Flags
@@ -331,6 +329,7 @@ runtests: tests
 deps:
 	$(GXX) -MM $(CXXFLAGS) src/*.cpp | sed -e 's|^\([A-Za-z_0-9]\+\)|obj/Library.\1\$$\(SUFFIX\)|' > .deps
 	$(GXX) -MM $(CXXFLAGS) examples/*/*.cpp | sed -e 's|^\([A-Za-z_0-9]\+\)|obj/Example.\1\$$\(SUFFIX\)|' >> .deps
+	$(GXX) -MM $(CXXFLAGS) tests/*.cpp | sed -e 's|^\([A-Za-z_0-9]\+\)|obj/Test.\1\$$\(SUFFIX\)|' >> .deps
 
 clean:
 	-$(RM) -f bin/*.ilk bin/*.pdb obj/*.res obj/*.o obj/*.obj

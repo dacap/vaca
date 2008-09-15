@@ -402,7 +402,7 @@ protected:
     double a = static_cast<double>(rc.w) / static_cast<double>(900);
     double b = static_cast<double>(rc.h) / static_cast<double>(650);
 
-    g.drawString("Press 'A' key to add balls", 0, 0);
+    g.drawString("Press 'A' key to add balls", getFgColor(), 0, 0);
 
     simulation_model::draw_balls   (g, a, b);
     simulation_model::draw_segments(g, a, b);
@@ -444,8 +444,7 @@ private:
 
 //////////////////////////////////////////////////////////////////////
 
-int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
-		   LPSTR lpCmdLine, int nCmdShow)
+int VACA_MAIN()
 {
   std::srand(std::time(NULL));
 

@@ -56,7 +56,7 @@ ImageList::ImageList(HIMAGELIST hImageList)
 }
 
 /**
- * Loads a ImageList from a BITMAP resource.
+ * Loads a ImageList from a @msdn{BITMAP} resource.
  */
 ImageList::ImageList(ResourceId bitmapId, int widthPerIcon, Color maskColor)
   : SmartPtr<GdiObj>(new GdiObj())
@@ -104,7 +104,7 @@ ImageList::~ImageList()
  * Returns how many images has this image list.
  * 
  * @return
- *     A number from 0 to n that specified the size of the list.
+ *   A number from 0 to n that specified the size of the list.
  */
 int ImageList::getImageCount()
 {
@@ -112,6 +112,9 @@ int ImageList::getImageCount()
   return ImageList_GetImageCount(getHandle());
 }
 
+/**
+ * Returns the @msdn{HIMAGELIST} handle.
+ */
 HIMAGELIST ImageList::getHandle()
 {
   return get()->getHandle();

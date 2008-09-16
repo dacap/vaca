@@ -54,12 +54,16 @@ public:
 
 /**
  * Registers a window class to be used in Win32 routines (like
- * CreateWindow). T must be of WidgetClass type, or a derived class of
- * WidgetClass. @ref Register() "The constructor of Register" calls
- * the RegisterClassEx function of Win32, to register a class with
- * the specified parameters by T (see WidgetClass).
+ * @msdn{CreateWindow}).
  *
- * @see @ref TN001.
+ * @ref Register() "The constructor of Register" calls
+ * the Win32's @msdn{RegisterClassEx} function, to register a
+ * class with the specified parameters by T (see WidgetClass).
+ *
+ * @tparam T
+ *   Must be of WidgetClass type, or a derived class of it.
+ *
+ * @see @ref page_tn_001
  */
 template<class T>
 class Register
@@ -67,7 +71,7 @@ class Register
 public:
 
   /**
-   * Calls Win32 RegisterClassEx filling a WNDCLASSEX structure
+   * Calls @msdn{RegisterClassEx} filling a @msdn{WNDCLASSEX} structure
    * with the values returned by the T class (T must be derived from
    * WidgetClass).
    */

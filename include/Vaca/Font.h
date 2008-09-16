@@ -60,11 +60,11 @@ struct FontStyleEnumSet
 
 /**
  * A FontStyle can be one of the following values:
- * - Regular
- * - Bold
- * - Italic
- * - Underline
- * - Strikeout
+ * @li FontStyle::Regular
+ * @li FontStyle::Bold
+ * @li FontStyle::Italic
+ * @li FontStyle::Underline
+ * @li FontStyle::Strikeout
  */
 typedef EnumSet<FontStyleEnumSet> FontStyle;
 
@@ -93,7 +93,16 @@ public:
 };
 
 /**
- * A font that can be used in Graphics or Widget to draw text.
+ * A smart pointer to a font that can be used in Graphics or Widget to
+ * draw text.
+ * 
+ * This is a SmartPtr, so if you copy instances of fonts they will be
+ * referencing to the same place. You can't clone fonts because you
+ * can't modify them.
+ *
+ * @warning Win32: This is a @msdn{HFONT} wrapper.
+ *
+ * @see Graphics#setFont, Graphics#drawString
  */
 class VACA_DLL Font : private SmartPtr<GdiObject<HFONT> >
 {

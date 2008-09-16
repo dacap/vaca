@@ -92,8 +92,8 @@ private:
  * @image html RadioButton.png
  *
  * @warning
- *   It is not a BS_AUTORADIOBUTTON, it's only an
- *   BS_RADIOBUTTON (so you can't get Q261192 bug).
+ *   Win32: It is not a BS_AUTORADIOBUTTON, it's only an
+ *   BS_RADIOBUTTON (so you can't get @msdn{Q261192} bug).
  */
 class VACA_DLL RadioButton : public ButtonBase
 {

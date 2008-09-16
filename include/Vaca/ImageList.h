@@ -44,6 +44,11 @@ namespace Vaca {
 class String;
 class Size;
 
+/**
+ * Used to destroy the HIMAGELIST handle from GdiObject.
+ * 
+ * @internal
+ */
 struct Win32DestroyImageList
 {
   static void destroy(HIMAGELIST handle)
@@ -53,7 +58,17 @@ struct Win32DestroyImageList
 };
 
 /**
- * A list of images (Win32's HIMAGELIST wrapper).
+ * A smart pointer to a list of images.
+ *
+ * ImageLists are containers of images and icons that can be used in
+ * each item of a ListView or TreeView.
+ *
+ * This is a SmartPtr, so if you copy instances of ImageLists they will be
+ * referencing to the same place.
+ *
+ * @warning Win32: This is a HIMAGELIST wrapper.
+ *
+ * @see Vaca::ListView#setNormalImageList, Vaca::TreeView#setNormalImageList
  */
 class VACA_DLL ImageList : private SmartPtr<GdiObject<HIMAGELIST, Win32DestroyImageList> >
 {

@@ -504,11 +504,11 @@ void Graphics::drawImage(Image& image, int dstX, int dstY, int srcX, int srcY, i
 {
   assert(m_handle);
 
-  Graphics* source = image.getGraphics();
+  Graphics& source = image.getGraphics();
 
-  assert(source->getHandle());
+  assert(source.getHandle());
   
-  BitBlt(m_handle, dstX, dstY, width, height, source->getHandle(), srcX, srcY, SRCCOPY);
+  BitBlt(m_handle, dstX, dstY, width, height, source.getHandle(), srcX, srcY, SRCCOPY);
 }
 
 void Graphics::drawImage(Image& image, int x, int y, const Color& bgColor)
@@ -520,29 +520,29 @@ void Graphics::drawImage(Image& image, int dstX, int dstY, int srcX, int srcY, i
 {
   assert(m_handle);
 
-  Graphics* source = image.getGraphics();
+  Graphics& source = image.getGraphics();
 
-  assert(source->getHandle());
+  assert(source.getHandle());
 
 #if 0				// WinCE
   TransparentImage(m_handle, dstX, dstY, width, height,
-		   source->getHandle(), srcX, srcY, width, height,
+		   source.getHandle(), srcX, srcY, width, height,
 		   bgColor.getColorRef());
 #else
     
   HDC maskHDC = CreateCompatibleDC(m_handle);
   HBITMAP theMask = CreateBitmap(width, height, 1, 1, NULL);
   HGDIOBJ oldMask = SelectObject(maskHDC, theMask);
-  COLORREF oldBkColor = SetBkColor(source->getHandle(), bgColor.getColorRef());
+  COLORREF oldBkColor = SetBkColor(source.getHandle(), bgColor.getColorRef());
   
   BitBlt(maskHDC, 0, 0, width, height,
-	 source->getHandle(), srcX, srcY, SRCCOPY);
+	 source.getHandle(), srcX, srcY, SRCCOPY);
   
   MaskBlt(m_handle, dstX, dstY, width, height,
-	  source->getHandle(), srcX, srcY,
+	  source.getHandle(), srcX, srcY,
 	  theMask, 0, 0, MAKEROP4(0x00AA0029, SRCCOPY)); // 0x00AA0029 is NOP
 
-  SetBkColor(source->getHandle(), oldBkColor);
+  SetBkColor(source.getHandle(), oldBkColor);
   DeleteObject(SelectObject(maskHDC, oldMask));
   DeleteObject(maskHDC);
 

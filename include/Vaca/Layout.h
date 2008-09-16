@@ -51,7 +51,7 @@ namespace Vaca {
  *          specified, the children bounds aren't modified (see the
  *          @c FreeOfLayout example).
  *
- * @see @ref TN011
+ * @see @ref page_tn_011
  */
 class VACA_DLL Layout
 {

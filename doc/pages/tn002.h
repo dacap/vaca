@@ -1,12 +1,12 @@
-// -*- C++ -*-
+namespace Vaca {
 
 /**
 
-@page TN002 TN002: CreateWindow and DestroyWindow
+@page page_tn_002 TN002: CreateWindow and DestroyWindow
 
 @image html CreateDestroyWindows.png
 
-<h2>Where are HWNDs created?</h2>
+@section tn002_hwnd_creation Where are HWNDs created?
 
 All HWNDs are created inside
 @link Vaca::Widget#createHandle Widget::createHandle@endlink
@@ -26,7 +26,7 @@ baseWndProc = (WNDPROC)
 See @link Vaca::Widget#subClass() Widget::subClass()@endlink
 for more information.
 
-<h2>HWND life time</h2>
+@section tn002_hwnd_life_time HWND life time
 
 All windows/HWNDs have the same life time that its container
 Widget. That is if we create a button:
@@ -39,7 +39,7 @@ Widget. That is if we create a button:
   // here myButton (and its HWND) doesn't exist
 @endcode
 
-<h2>You can override createHandle</h2>
+@section tn002_override_create_handle You can override createHandle
 
 This shouldn't be your case, but if you want to make something like
 @link Vaca::MdiClient#createHandle MdiClient::createHandle@endlink, it is,
@@ -89,8 +89,10 @@ protected:
 };
 @endcode
 
-@see @ref TN001,
+@see @ref page_tn_001,
      @link Vaca::Widget#Widget Widget()@endlink,
      @link Vaca::Widget#~Widget ~Widget()@endlink.
 
 */
+
+}

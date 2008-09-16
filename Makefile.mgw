@@ -82,6 +82,7 @@ TESTS = \
 	test_region \
 	test_signal \
 	test_size \
+	test_smartptr \
 	test_string \
 	test_tab \
 	test_thread

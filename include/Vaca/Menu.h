@@ -32,20 +32,6 @@
 #ifndef VACA_MENU_H
 #define VACA_MENU_H
 
-/**
- * First automatic ID generated for a MenuItem when its ID isn't
- * specified.
- */
-#define VACA_FIRST_AUTOID 1000
-
-#ifndef MIM_MENUDATA
-#  define MIM_MENUDATA 8
-#endif
-
-#ifndef MIM_STYLE
-#  define MIM_STYLE 16
-#endif
-
 #include <vector>
 
 #include "Vaca/base.h"

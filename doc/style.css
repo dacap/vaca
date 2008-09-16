@@ -105,10 +105,10 @@ A.codeRef:visited {
 	font-weight: normal; 
 	color: #0000FF
 }
-A:hover { 
-	text-decoration: none; 	
-	background-color: #f2f2ff 
-}
+/* A:hover {  */
+/* 	text-decoration: none; 	 */
+/* 	background-color: #f2f2ff  */
+/* } */
 DL.el { 
 	margin-left: -1cm 
 }
@@ -488,6 +488,8 @@ DIV.footer {
 BODY,H1,H2,H3,H4,H5,H6,P,CENTER,TD,TH,UL,DL,DIV {
 	font-family: Verdana, Arial, Helvetica;
 }
+
+h2 a.anchor { color:#fff; }
 
 table { border-collapse: collapse; }
 

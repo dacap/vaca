@@ -1,8 +1,8 @@
-// -*- C++ -*-
+namespace Vaca {
 
 /**
 
-@page TN005 TN005: MdiChild limitations when construct it
+@page page_tn_005 TN005: MdiChild limitations when construct it
 
 Win32 makes visible all MdiChild when they are created. There are no
 way to fix this: Vaca uses @c CreateWindowEx with the @c WS_EX_MDICHILD
@@ -28,3 +28,5 @@ Win32 PostMessage():
 @li @c WM_SIZE to generate Frame::onResize (and layout children).
 
 */
+
+}

@@ -44,7 +44,9 @@
 using namespace Vaca;
 
 /**
- * Returns the parameters.
+ * Returns the parameters in the command line.
+ *
+ * @c System::getArgs()[0] is the name of the executable file.
  */
 std::vector<String> System::getArgs()
 {
@@ -261,9 +263,12 @@ Size System::getScreenSize()
 }
 
 /**
- * Returns the work-area of the screen that isn't overlapped with any
- * other thing (like the task-bar in Windows). It's like a call to
- * SystemParametersInfo using SPI_GETWORKAREA.
+ * Returns the work-area of the screen, it is like the desktop area,
+ * that is not overlapped by the task-bar.
+ *
+ * @warning
+ *   Win32: It is a call to @msdn{SystemParametersInfo} using
+ *   @msdn{SPI_GETWORKAREA}.
  */
 Rect System::getWorkAreaBounds()
 {

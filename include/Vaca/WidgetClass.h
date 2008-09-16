@@ -96,7 +96,7 @@ public:
  * };
  * @endcode
  *
- * @see @ref TN001.
+ * @see @ref page_tn_001
  */
 class WidgetClass
 {

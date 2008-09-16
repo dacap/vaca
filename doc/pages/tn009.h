@@ -1,8 +1,8 @@
-// -*- C++ -*-
+namespace Vaca {
 
 /**
 
-@page TN009 TN009: Reflection
+@page page_tn_009 TN009: Reflection
 
 Vaca supports reflection of @c WM_COMMAND, @c WM_NOTIFY and @c WM_DRAWITEM
 using the #Vaca::Widget methods:
@@ -22,3 +22,5 @@ to get the @c "Button*" pointer, and finally calls
      @link Vaca::Widget#fromHandle Widget::fromHandle@endlink.
 
 */
+
+}

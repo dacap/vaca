@@ -200,10 +200,8 @@ int Image::getDepth() const
 
 /**
  * Returns a Graphics context to draw inside the image.
- *
- * @warning You can't delete the returned pointer.
  */
-Graphics* Image::getGraphics()
+Graphics& Image::getGraphics()
 {
   ImageHandle* ptr = get();
 
@@ -211,7 +209,8 @@ Graphics* Image::getGraphics()
     assert(ptr->m_hdc != NULL);
     ptr->m_graphics = new Graphics(ptr->m_hdc, *this);
   }
-  return ptr->m_graphics;
+
+  return *ptr->m_graphics;
 }
 
 HBITMAP Image::getHandle() const
@@ -234,5 +233,5 @@ Image Image::clone() const
 
 void Image::copyTo(Image& image) const
 {
-  image.getGraphics()->drawImage(*const_cast<Image*>(this), 0, 0);
+  image.getGraphics().drawImage(*const_cast<Image*>(this), 0, 0);
 }

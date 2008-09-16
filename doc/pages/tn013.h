@@ -1,8 +1,8 @@
-// -*- C++ -*-
+namespace Vaca {
 
 /**
 
-@page TN013 TN013: All menu-items must have their own ID
+@page page_tn_013 TN013: All menu-items must have their own ID
 
 Every @link Vaca::MenuItem MenuItem@endlink that you create must have
 its own @link Vaca::CommandId CommandId@endlink. See the @c Undo example
@@ -14,3 +14,5 @@ override the @link Vaca::MenuItem#onAction MenuItem::onAction@endlink
 to control the actions.
 
 */
+
+}

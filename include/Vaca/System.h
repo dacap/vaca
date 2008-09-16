@@ -46,8 +46,7 @@ class Color;
 class ImageList;
 
 /**
- * System namespace to handle system related stuff (it is a class to
- * make more easy the DLL loading).
+ * System namespace to handle system related stuff.
  */
 class VACA_DLL System
 {

@@ -1,7 +1,15 @@
 DOXYGEN = "$(PROGRAMFILES)/doxygen/bin/doxygen.exe"
 
-all:
+all: html chm private
+
+html:
 	$(DOXYGEN) Doxyfile
+
+chm:
+	$(DOXYGEN) Doxyfile_chm
+
+private:
+	$(DOXYGEN) Doxyfile_private
 
 gen1:
 	$(DOXYGEN) -g new_Doxyfile

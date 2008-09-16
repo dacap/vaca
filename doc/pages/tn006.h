@@ -1,8 +1,8 @@
-// -*- C++ -*-
+namespace Vaca {
 
 /**
 
-@page TN006 TN006: Deleting a Widget inside its event
+@page page_tn_006 TN006: Deleting a Widget inside its event
 
 There are a big problem with signals: <b>YOU CAN'T DELETE A WIDGET
 INSIDE AN EVENT WHICH THE WIDGET BY ITSELF GENERATED</b>. The solution
@@ -19,3 +19,5 @@ button is pushed by the user.
      @link Vaca::delete_widget delete_widget@endlink
 
 */
+
+}

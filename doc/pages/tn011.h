@@ -1,8 +1,8 @@
-// -*- C++ -*-
+namespace Vaca {
 
 /**
 
-@page TN011 TN011: Layout Managers
+@page page_tn_011 TN011: Layout Managers
 
 When you use @link Vaca::Widget#setLayout setLayout@endlink or
 @link Vaca::Widget#setConstraint setConstraint@endlink, you must to specify a
@@ -50,3 +50,5 @@ Remember to use the following code if you make instances of
      @link Vaca::Widget#setConstraint Widget::setConstraint@endlink
 
 */
+
+}

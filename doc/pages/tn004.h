@@ -1,8 +1,8 @@
-// -*- C++ -*-
+namespace Vaca {
 
 /**
 
-@page TN004 TN004: Signals are public
+@page page_tn_004 TN004: Signals are public
 
 Maybe OOP fanatics'll explode of hungry when them see the @em public
 data members like @c Close or @c Action for every signal. But I think
@@ -49,7 +49,7 @@ one entry point: the Close member.
 
 What is the disadvantage? It's a public data member (is that a disadvantage? :)
 
-<h2>General rules</h2>
+@section tn004_general_rules General rules
 
 All data members must be private, only signals members must be public
 and must begin with a capital letter. Don't use
@@ -57,3 +57,5 @@ protected data members, instead use a protected interface to access to
 them.
 
 */
+
+}

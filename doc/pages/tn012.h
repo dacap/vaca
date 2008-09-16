@@ -1,8 +1,8 @@
-// -*- C++ -*-
+namespace Vaca {
 
 /**
 
-@page TN012 TN012: Using Parent's Signals in Children's Constructors
+@page page_tn_012 TN012: Using Parent's Signals in Children's Constructors
 
 You can't use signals that aren't constructed. This piece of code has
 a bug:
@@ -71,3 +71,5 @@ Frm::Frm() : Frame("...")
 @endcode
 
 */
+
+}

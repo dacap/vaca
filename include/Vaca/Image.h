@@ -44,6 +44,8 @@ class Graphics;
 class Image;
 
 /**
+ * Used to destroy the HBITMAP handle from GdiObject.
+ * 
  * @internal
  */
 class VACA_DLL ImageHandle : public GdiObject<HBITMAP>
@@ -58,7 +60,22 @@ public:
 };
 
 /**
- * An image (HBITMAP wrapper)
+ * A smart pointer to an image.
+ *
+ * This is a SmartPtr, so if you copy instances of images they will be
+ * referencing to the same place. You have to use Image#clone method
+ * to create real copies of the Image.
+ *
+ * Example
+ * @code
+ * Image img1(Size(32, 32));
+ * Image img2 = img1;		// img1 and img2 references the same Image
+ * Image img3 = img1.clone(); 
+ * assert(img == img2);
+ * assert(img != img2);
+ * @endcode
+ *
+ * @warning Win32: This is a @msdn{HBITMAP} wrapper.
  */
 class VACA_DLL Image : private SmartPtr<ImageHandle>
 {
@@ -79,7 +96,7 @@ public:
   Size getSize() const;
   int getDepth() const;
 
-  Graphics* getGraphics();
+  Graphics& getGraphics();
 
   HBITMAP getHandle() const;
 

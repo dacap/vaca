@@ -130,20 +130,17 @@ protected:
 
   virtual void onPaint(Graphics &g)
   {
-    Rect rc = getClientBounds();
-
-    // trace the path one time
     g.setMiterLimit(10000.0f);
+
+    // hot path
+    if (m_hot)
+      g.strokePath(m_path, Pen(Color::Blue, 10), Point(0, 0));
 
     // stroke and fill the current path in the "g" Graphics
     g.strokeAndFillPath(m_path, m_pen, m_brush, Point(0, 0));
 
     // convert the path to a region
     m_region = m_path.toRegion();
-
-    // hot path
-    if (m_hot)
-      g.strokePath(m_path, Pen(Color::Blue), Point(0, 0));
   }
 
   virtual void onResize(const Size &sz)

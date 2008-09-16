@@ -1,8 +1,12 @@
-// -*- C++ -*-
+namespace Vaca {
 
 /**
 
-@page license BSD License
+@page page_license License
+
+Vaca is licensed under the terms of the New BSD License.
+
+<hr/>
 
 Vaca - Visual Application Components Abstraction @n
 Copyright (c) 2005, 2006, 2007, 2008, David Capello @n
@@ -35,3 +39,5 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
+
+}

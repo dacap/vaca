@@ -1,3 +1,31 @@
+----------------------------------------------------------------------
+Overview
+----------------------------------------------------------------------
+
+  --- Compiler ---
+  Use "make -f Makefile.mgw" for MinGW
+  Use "nmake -f Makefile.msc" for Microsoft Visual C
+
+  --- Macros you can define ---
+  RELEASE=1 ... build for release, without assertions
+  DEBUG=1 ..... build for debug, with debug information
+  STATIC=1 .... build the static version, no DLL
+  PROFILE=1 ... build the version to do profiling, e.g. with gprof
+  UNICODE=1 ... build the library with Unicode support
+
+  --- Targets ---
+  all: ........ build everything
+  lib: ........ build the library
+  examples: ... build the examples
+  tests: ...... build the tests
+  runtests: ... run all tests
+  clean: ...... remove .o .obj .res files
+  distclean: .. remove .exe .lib .dll files
+
+  --- Example ---
+  make -f Makefile.mgw DEBUG=1 UNICODE=1
+  Builds the DLL with debug information and Unicode support.
+
 
 ----------------------------------------------------------------------
 Compiling with MinGW

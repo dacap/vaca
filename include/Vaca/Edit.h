@@ -73,7 +73,7 @@ namespace Vaca {
 /**
  * Widget to edit a line of text.
  *
- * @see @ref TN008
+ * @see @ref page_tn_008
  */
 class VACA_DLL Edit : public Widget
 {

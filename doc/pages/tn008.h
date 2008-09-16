@@ -1,8 +1,8 @@
-// -*- C++ -*-
+namespace Vaca {
 
 /**
 
-@page TN008 TN008: Unicode support
+@page page_tn_008 TN008: Unicode support
 
 Vaca can be compiled with Unicode support without problems for
 W2K/WinXP. If you want to add Unicode support for Win95/98/Me, you
@@ -12,3 +12,5 @@ To avoid the MSLU, don't compile Vaca with Unicode support when you
 want to use your application on Win95/98/Me.
 
 */
+
+}

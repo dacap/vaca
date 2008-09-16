@@ -49,7 +49,7 @@ public:
 
 protected:
 
-  virtual void onResize(const Size &size)
+  virtual void onResize(const Size& size)
   {
     Size imageSize = getClientBounds().getSize();
     if (imageSize.w == 0 || imageSize.h == 0)
@@ -57,7 +57,7 @@ protected:
     
     Image newImage(imageSize);
 
-    Graphics& g = *newImage.getGraphics();
+    Graphics& g = newImage.getGraphics();
 
     // clear the new image with a white background
     Brush whiteBrush(Color::White);
@@ -75,14 +75,14 @@ protected:
     invalidate(false);
   }
 
-  virtual void onPaint(Graphics &g)
+  virtual void onPaint(Graphics& g)
   {
     // draw only the clip area
     Rect rc = g.getClipBounds();
     g.drawImage(m_image, rc.getOrigin(), rc);
   }
 
-  virtual void onMouseDown(MouseEvent &ev)
+  virtual void onMouseDown(MouseEvent& ev)
   {
     if (!hasCapture()) {
       captureMouse();
@@ -95,11 +95,11 @@ protected:
     }
   }
 
-  virtual void onMouseMove(MouseEvent &ev)
+  virtual void onMouseMove(MouseEvent& ev)
   {
     if (hasCapture()) {
       // get the graphics from the to draw into the image
-      Graphics &g = *m_image.getGraphics();
+      Graphics& g = m_image.getGraphics();
 
       // rotate points
       m_point[0] = m_point[1];
@@ -139,7 +139,7 @@ protected:
     }
   }
 
-  virtual void onMouseUp(MouseEvent &ev)
+  virtual void onMouseUp(MouseEvent& ev)
   {
     if (hasCapture()) {
       // we can release the capture (remember to check hasCapture()

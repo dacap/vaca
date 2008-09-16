@@ -66,7 +66,8 @@ namespace Vaca {
  * 
  * Win32 notes:
  *   It is a BS_OWNERDRAW, the paint event is intercepted by
- *   the parent of CustomButton and them reflected to it (see @ref TN009).
+ *   the parent of the CustomButton and then reflected to it
+ *   (see @ref page_tn_009).
  */
 class VACA_DLL CustomButton : public Button
 {

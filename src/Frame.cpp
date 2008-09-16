@@ -375,7 +375,7 @@ MenuBar* Frame::getMenuBar()
  * @return The old MenuBar (you should delete it). All Frames start
  *         without a menu bar (=NULL).
  *
- * @see getMenuBar, MdiFrame::setMenuBar, MenuBar::isAutoDelete, @ref TN010
+ * @see getMenuBar, MdiFrame::setMenuBar, MenuBar::isAutoDelete, @ref page_tn_010
  */
 MenuBar* Frame::setMenuBar(MenuBar* menuBar)
 {
@@ -504,7 +504,7 @@ Rect Frame::getLayoutBounds()
  *                 destructor or deleteDockAreas. (if you don't
  *                 want it, you should use removeDockArea).
  *
- * @see @ref TN010
+ * @see @ref page_tn_010
  */
 void Frame::addDockArea(DockArea* dockArea)
 {

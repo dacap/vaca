@@ -41,6 +41,14 @@
 
 #include <stack>
 
+#ifndef MIM_MENUDATA
+#  define MIM_MENUDATA 8
+#endif
+
+#ifndef MIM_STYLE
+#  define MIM_STYLE 16
+#endif
+
 using namespace Vaca;
 
 //////////////////////////////////////////////////////////////////////

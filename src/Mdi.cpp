@@ -54,7 +54,7 @@ static void MdiChild_DestroyHWNDProc(HWND hwnd)
  * Creates a new MDI child window.
  *
  * @warning All MdiChilds are created visible and activated (and this
- *          can't be changed, see @ref TN005 for more information).
+ *          can't be changed, see @ref page_tn_005 for more information).
  */
 MdiChild::MdiChild(const String& title, MdiClient* parent, Style style)
   : Frame(WidgetClassName::None, "", NULL, NoStyle)
@@ -71,7 +71,7 @@ MdiChild::MdiChild(const String& title, MdiClient* parent, Style style)
  * Creates a new MDI child window.
  *
  * @warning All MdiChilds are created visible and activated (and this
- *          can't be changed, see @ref TN005 for more information).
+ *          can't be changed, see @ref page_tn_005 for more information).
  */
 MdiChild::MdiChild(const String& title, MdiFrame* parent, Style style)
   : Frame(WidgetClassName::None, "", NULL, NoStyle)
@@ -405,7 +405,7 @@ MdiClient* MdiFrame::getMdiClient()
  *                  MdiClient. To avoid this you should do a
  *                  setMdiClient(NULL) before.
  *
- * @see @ref TN010
+ * @see @ref page_tn_010
  */
 MdiClient* MdiFrame::setMdiClient(MdiClient *mdiClient)
 {

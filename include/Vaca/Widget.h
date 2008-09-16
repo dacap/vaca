@@ -62,83 +62,6 @@ class Widget;
 class WidgetClassName;
 
 //////////////////////////////////////////////////////////////////////
-// Win32 Regular Window Styles
-
-// #ifndef WS_BORDER
-// #define WS_BORDER		0x800000
-// #define WS_CAPTION		0xc00000
-// #define WS_CHILD		0x40000000
-// #define WS_CHILDWINDOW		0x40000000
-// #define WS_CLIPCHILDREN		0x2000000
-// #define WS_CLIPSIBLINGS		0x4000000
-// #define WS_DISABLED		0x8000000
-// #define WS_DLGFRAME		0x400000
-// #define WS_GROUP		0x20000
-// #define WS_HSCROLL		0x100000
-// #define WS_ICONIC		0x20000000
-// #define WS_MAXIMIZE		0x1000000
-// #define WS_MAXIMIZEBOX		0x10000
-// #define WS_MINIMIZE		0x20000000
-// #define WS_MINIMIZEBOX		0x20000
-// #define WS_OVERLAPPED		0
-// #define WS_OVERLAPPEDWINDOW	0xcf0000
-// #define WS_POPUP		0x80000000
-// #define WS_POPUPWINDOW		0x80880000
-// #define WS_SIZEBOX		0x40000
-// #define WS_SYSMENU		0x80000
-// #define WS_TABSTOP		0x10000
-// #define WS_THICKFRAME		0x40000
-// #define WS_TILED		0
-// #define WS_TILEDWINDOW		0xcf0000
-// #define WS_VISIBLE		0x10000000
-// #define WS_VSCROLL		0x200000
-// #endif
-
-//////////////////////////////////////////////////////////////////////
-// Win32 Extended Window Styles
-
-// #ifndef WS_EX_ACCEPTFILES
-// #define WS_EX_ACCEPTFILES	16
-// #define WS_EX_APPWINDOW		0x40000
-// #define WS_EX_CLIENTEDGE	512
-// #define WS_EX_CONTEXTHELP	0x400
-// #define WS_EX_CONTROLPARENT	0x10000
-// #define WS_EX_DLGMODALFRAME	1
-// #define WS_EX_LEFT		0
-// #define WS_EX_LEFTSCROLLBAR	0x4000
-// #define WS_EX_LTRREADING	0
-// #define WS_EX_MDICHILD		64
-// #define WS_EX_NOPARENTNOTIFY	4
-// #define WS_EX_OVERLAPPEDWINDOW	0x300
-// #define WS_EX_PALETTEWINDOW	0x188
-// #define WS_EX_RIGHT		0x1000
-// #define WS_EX_RIGHTSCROLLBAR	0
-// #define WS_EX_RTLREADING	0x2000
-// #define WS_EX_STATICEDGE	0x20000
-// #define WS_EX_TOOLWINDOW	128
-// #define WS_EX_TOPMOST		8
-// #define WS_EX_TRANSPARENT	32
-// #define WS_EX_WINDOWEDGE	256
-// #endif
-
-// #ifndef WS_EX_LAYOUTRTL
-// #define WS_EX_LAYOUTRTL		0x400000
-// #endif
-// #ifndef WS_EX_LAYERED
-// #define WS_EX_LAYERED		0x80000
-// #endif
-// #ifndef WS_EX_NOACTIVATE
-// #define WS_EX_NOACTIVATE	0x8000000
-// #endif
-// #ifndef WS_EX_NOINHERITLAYOUT
-// #define WS_EX_NOINHERITLAYOUT	0x100000
-// #endif
-
-// #ifndef WS_EX_COMPOSITED
-// #define WS_EX_COMPOSITED	0x2000000
-// #endif
-
-//////////////////////////////////////////////////////////////////////
 // Vaca Widget Styles
 
 /**
@@ -147,41 +70,41 @@ class WidgetClassName;
 #define NoStyle			(Style(0, 0))
 
 /**
- * When widget can be viewed by the user (WS_VISIBLE).
+ * When widget can be viewed by the user (@msdn{WS_VISIBLE}).
  */
 #define VisibleStyle            (Style(WS_VISIBLE, 0))
 
 /**
  * Basic style for every child that will be inside a container
- * (WS_CHILD | WS_VISIBLE).
+ * (@msdn{WS_CHILD} | @msdn{WS_VISIBLE}).
  */
 #define ChildStyle              (Style(WS_CHILD | WS_VISIBLE, 0))
 
 /**
  * Style to indicate that a Widget can receive the focus in Dialogs
- * (WS_TABSTOP).
+ * (@msdn{WS_TABSTOP}).
  */
 #define FocusableStyle		(Style(WS_TABSTOP, 0))
 
 /**
  * When the widget needs both scroll bars: horizontal and vertical
- * (WS_HSCROLL | WS_VSCROLL).
+ * (@msdn{WS_HSCROLL} | @msdn{WS_VSCROLL}).
  */
 #define ScrollStyle		(Style(WS_HSCROLL | WS_VSCROLL, 0))
 
 /**
- * When the widget needs the horizontal scroll bar (WS_HSCROLL).
+ * When the widget needs the horizontal scroll bar (@msdn{WS_HSCROLL}).
  */
 #define HorizontalScrollStyle	(Style(WS_HSCROLL, 0))
 
 /**
- * When the widget needs the veritcal scroll bar (WS_VSCROLL).
+ * When the widget needs the veritcal scroll bar (@msdn{WS_VSCROLL}).
  */
 #define VerticalScrollStyle	(Style(WS_VSCROLL, 0))
 
 /**
  * This style makes the widget to have an edge in its client area
- * (WS_EX_CLIENTEDGE). This style is used by text-fields (Edit) to
+ * (@msdn{WS_EX_CLIENTEDGE}). This style is used by text-fields (Edit) to
  * enclose the typed text for example.
  */
 #define ClientEdgeStyle         (Style(0, WS_EX_CLIENTEDGE))
@@ -195,7 +118,7 @@ class WidgetClassName;
 // #define ClipChildrenStyle	(Style(WS_CLIPCHILDREN, 0))
 
 /**
- * Use this style if you want to receive the onDropFiles() event.
+ * Use this style if you want to receive the Widget#onDropFiles event.
  */
 #define AcceptFilesStyle	(Style(0, WS_EX_ACCEPTFILES))
 
@@ -313,8 +236,34 @@ struct WidgetHitTestEnum
 };
 
 /**
- * It indicates a place where the mouse cursor could be above a
- * Widget.
+ * It indicates a place inside a Widget which the mouse cursor
+ * could be.
+ *
+ * One of the following values:
+ * @li WidgetHit::Error
+ * @li WidgetHit::Transparent
+ * @li WidgetHit::Nowhere
+ * @li WidgetHit::Client
+ * @li WidgetHit::Caption
+ * @li WidgetHit::SystemMenu
+ * @li WidgetHit::Size
+ * @li WidgetHit::Menu
+ * @li WidgetHit::HorizontalScroll
+ * @li WidgetHit::VerticalScroll
+ * @li WidgetHit::MinimizeButton
+ * @li WidgetHit::MaximizeButton
+ * @li WidgetHit::Left
+ * @li WidgetHit::Right
+ * @li WidgetHit::Top
+ * @li WidgetHit::TopLeft
+ * @li WidgetHit::TopRight
+ * @li WidgetHit::Bottom
+ * @li WidgetHit::BottomLeft
+ * @li WidgetHit::BottomRight
+ * @li WidgetHit::Border
+ * @li WidgetHit::Object
+ * @li WidgetHit::Close
+ * @li WidgetHit::Help
  */
 typedef Enum<WidgetHitTestEnum> WidgetHitTest;
 
@@ -338,7 +287,7 @@ public:
 /**
  * Base class for every control in an window.
  *
- * This is the core of Vaca. Calls CreateWindowEx and DestroyWindow,
+ * This is the core of Vaca. Calls @msdn{CreateWindowEx} and @msdn{DestroyWindow},
  * and its wndProc() converts the main messages (@c "WM_*") to events.
  */
 class VACA_DLL Widget : public Component
@@ -442,7 +391,7 @@ private:
   // ============================================================
 
   /**
-   * Procedure of the original Win32's control (like BUTTON or EDIT).
+   * Procedure of the original Win32's control (like @msdn{BUTTON} or @msdn{EDIT}).
    *
    * It's set in #subClass method.
    */
@@ -452,9 +401,9 @@ private:
    * The default Win32's window procedure to be called if a
    * @link Thread::Message message@endlink isn't used.
    * 
-   * By default it is Win32's DefWindowProc, but you can change it
+   * By default it is Win32's @msdn{DefWindowProc}, but you can change it
    * using #setDefWndProc to replace it with other procedure like
-   * Win32's DefFrameProc.
+   * Win32's @msdn{DefFrameProc}.
    *
    * @see #setDefWndProc, #defWndProc
    */

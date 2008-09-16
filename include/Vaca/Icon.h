@@ -42,6 +42,11 @@ namespace Vaca {
 
 class String;
 
+/**
+ * Used to destroy the HICON handle from GdiObject.
+ * 
+ * @internal
+ */
 struct Win32DestroyIcon
 {
   static void destroy(HICON handle)
@@ -51,7 +56,20 @@ struct Win32DestroyIcon
 };
 
 /**
- * An icon (HICON wrapper).
+ * A smart pointer to an icon.
+ *
+ * This is a SmartPtr, so if you copy instances of icons they will be
+ * referencing to the same place. You can't clone icons because you can't
+ * modify them.
+ *
+ * Example
+ * @code
+ * Icon icon1(Size(32, 32));
+ * Icon icon2 = icon1;       // icon1 and icon2 references to the same Icon
+ * assert(icon1 == icon2);
+ * @endcode
+ *
+ * @warning Win32: This is a @msdn{HICON} wrapper.
  */
 class VACA_DLL Icon : private SmartPtr<GdiObject<HICON, Win32DestroyIcon> >
 {

@@ -136,7 +136,7 @@ struct TextAlignEnum
 
 /**
  * Horizontal alignment. One of the following values:
- * @li TextAlign::Left
+ * @li TextAlign::Left (default)
  * @li TextAlign::Center
  * @li TextAlign::Right
  */

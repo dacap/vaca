@@ -80,7 +80,7 @@ static void Widget_DestroyHWNDProc(HWND hwnd)
  * Creates a new widget with the specified class name. You can specify
  * WidgetClassName#None as @a className if you want to call #create
  * method by your self
- * (see @ref TN002).
+ * (see @ref page_tn_002).
  *
  * You can't create widgets from a HWND, so you can't treat an
  * existent HWND like a Widget.
@@ -163,7 +163,7 @@ Widget::Widget(const WidgetClassName& className, Widget* parent, Style style)
  * }
  * @endcode
  *
- * @see @ref TN002, #setDestroyHWNDProc
+ * @see @ref page_tn_002, #setDestroyHWNDProc
  */
 Widget::~Widget()
 {
@@ -275,7 +275,7 @@ Widget::Container Widget::getChildren()
  *
  * @warning You can't delete the returned pointer (use "delete setLayout(NULL)" instead).
  *
- * @see setLayout, getConstraint, @ref TN010, @ref TN011
+ * @see setLayout, getConstraint, @ref page_tn_010, @ref page_tn_011
  */
 Layout* Widget::getLayout()
 {
@@ -317,7 +317,7 @@ Layout* Widget::getLayout()
  * @return
  *     The old Layout manager (you should delete it).
  *
- * @see getLayout, setConstraint, @ref TN010
+ * @see getLayout, setConstraint, @ref page_tn_010
  */
 Layout* Widget::setLayout(Layout* layout)
 {
@@ -334,7 +334,7 @@ Layout* Widget::setLayout(Layout* layout)
  *
  * @warning You can't delete the returned pointer.
  *
- * @see setConstraint, getLayout, @ref TN010
+ * @see setConstraint, getLayout, @ref page_tn_010
  */
 Constraint* Widget::getConstraint()
 {
@@ -350,9 +350,9 @@ Constraint* Widget::getConstraint()
  * that #setLayout()).
  *
  * @return
- *     The old constraint (you should delete it).
+ *   The old constraint (you should delete it).
  * 
- * @see getConstraint, setLayout, @ref TN010
+ * @see getConstraint, setLayout, @ref page_tn_010
  */
 Constraint* Widget::setConstraint(Constraint* constraint)
 {
@@ -510,9 +510,10 @@ void Widget::removeStyle(Style style)
 
 /**
  * Gets the dimensions of the entire bounding rectangle that enclose
- * the Widget. The bounds are relative to the upper-left corner of the
- * widget's bounds, or absolute to the screen if this Widget
- * hasn't parent.
+ * the Widget.
+ *
+ * The bounds are relative to the upper-left corner of the widget's
+ * bounds, or absolute to the screen if this Widget hasn't parent.
  *
  * @see getClientBounds, getAbsoluteBounds
  */
@@ -555,9 +556,10 @@ Rect Widget::getAbsoluteBounds()
 }
 
 /**
- * Gets the client bounds. It's like Win32's GetClientRect.
- * Remember that it's the area which you should use to draw
- * the widget.
+ * Gets the client bounds.
+ *
+ * It's like Win32's @msdn{GetClientRect}. Remember that it's the
+ * area which you should use to draw the widget.
  *
  * @see getBounds, getAbsoluteClientBounds
  */
@@ -1920,7 +1922,7 @@ void Widget::removeChild(Widget* child, bool setParent)
  * @throw CreateWidgetException
  *   If the window handler (HWND) couldn't be created through the #createHandle method.
  *
- * @see createHandle, @ref TN002
+ * @see createHandle, @ref page_tn_002
  */
 void Widget::create(const WidgetClassName& className, Widget* parent, Style style)
 {
@@ -1977,7 +1979,7 @@ void Widget::create(const WidgetClassName& className, Widget* parent, Style styl
  * message-queue. So this method changes that procedure by #globalWndProc
  * to hook all messages that come from Windows.
  *
- * @see getGlobalWndProc, wndProc, @ref TN002, #m_baseWndProc
+ * @see getGlobalWndProc, wndProc, @ref page_tn_002, #m_baseWndProc
  */
 void Widget::subClass()
 {
@@ -2033,7 +2035,7 @@ void Widget::subClass()
  * HWND MdiChild::createHandle(...) { ... }
  * @endcode
  *
- * @see create, @ref TN002
+ * @see create, @ref page_tn_002
  */
 HWND Widget::createHandle(LPCTSTR className, Widget* parent, Style style)
 {
@@ -2069,9 +2071,9 @@ HWND Widget::createHandle(LPCTSTR className, Widget* parent, Style style)
  *   <li><tt>WM_MOUSEWHEEL</tt> -&gt; onMouseWheel()</li>
  *   <li><tt>WM_MOUSELEAVE</tt> -&gt; onMouseLeave()</li>
  *   <li><tt>WM_CANCELMODE</tt> -&gt; onCancelMode()</li>
+ *   <li><tt>WM_CHAR</tt> -&gt; onKeyDown()</li>
  *   <li><tt>WM_KEYDOWN</tt> -&gt; onKeyDown()</li>
  *   <li><tt>WM_KEYUP</tt> -&gt; onKeyUp()</li>
- *   <li><tt>WM_CHAR</tt> -&gt; onKeyChar()</li>
  *   <li><tt>WM_SETFOCUS</tt> -&gt; onGotFocus()</li>
  *   <li><tt>WM_KILLFOCUS</tt> -&gt; onLostFocus()</li>
  * </ul>
@@ -2588,7 +2590,7 @@ bool Widget::doPaint(Graphics& g)
       // the clipping bounds)
       Image image(clipBounds.getSize(), g);
       // get the Graphics to draw in the image
-      Graphics* imageG = image.getGraphics();
+      Graphics& imageG = image.getGraphics();
       // background brush
       Brush bgBrush(getBgColor());
 
@@ -2596,24 +2598,24 @@ bool Widget::doPaint(Graphics& g)
       Region clipRegion;
       g.getClipRegion(clipRegion);
       clipRegion.offset(-clipBounds.x, -clipBounds.y);
-      imageG->setClipRegion(clipRegion);
+      imageG.setClipRegion(clipRegion);
 
       // special coordinates transformation (to make
       // transparent the "imageG" to onPaint)
-      SetViewportOrgEx(imageG->getHandle(), -clipBounds.x, -clipBounds.y, NULL);
+      SetViewportOrgEx(imageG.getHandle(), -clipBounds.x, -clipBounds.y, NULL);
       
       // clear the background of the image
-      imageG->fillRect(bgBrush, clipBounds);
+      imageG.fillRect(bgBrush, clipBounds);
 
       // configure defaults
-      imageG->setFont(getFont());
+      imageG.setFont(getFont());
 
       // paint on imageG
-      onPaint(*imageG);
-      painted = imageG->wasPainted();
+      onPaint(imageG);
+      painted = imageG.wasPainted();
 
       // restore the viewport origin (so drawImage works fine)
-      SetViewportOrgEx(imageG->getHandle(), 0, 0, NULL);
+      SetViewportOrgEx(imageG.getHandle(), 0, 0, NULL);
 
       // bit transfer from image to graphics device
       g.drawImage(image, clipBounds.getOrigin());
@@ -2984,7 +2986,7 @@ void MakeWidgetRef::safeDelete(Widget* widget)
  * point of deletion (e.g. when it's completelly unreferenced after an
  * event is processed).
  *
- * @see @ref TN006
+ * @see @ref page_tn006
  */
 void Vaca::delete_widget(Widget* widget)
 {

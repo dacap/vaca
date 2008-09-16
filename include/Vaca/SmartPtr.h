@@ -82,6 +82,18 @@ private:
   }
 };
 
+template<class T>
+bool operator==(const SmartPtr<T>& ptr1, const SmartPtr<T>& ptr2)
+{
+  return ptr1.get() == ptr2.get();
+}
+
+template<class T>
+bool operator!=(const SmartPtr<T>& ptr1, const SmartPtr<T>& ptr2)
+{
+  return ptr1.get() != ptr2.get();
+}
+
 } // namespace Vaca
 
 #endif // VACA_SMARTPTR_H

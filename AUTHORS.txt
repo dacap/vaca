@@ -21,8 +21,10 @@ THANKS TO
     Boost                http://www.boost.org/
     Doxygen              http://www.doxygen.org/
     GCC                  http://gcc.gnu.org/
+    GTK+                 http://www.gtk.org/
     MinGW                http://www.mingw.org/
     Scintilla            http://www.scintilla.org/
     Wine                 http://www.winehq.com/
+    wxWidgets            http://www.wxwidgets.org/
 
 ----------------------------------------------------------------------

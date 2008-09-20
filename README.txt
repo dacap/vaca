@@ -1,10 +1,17 @@
   Vaca - Visual Application Components Abstraction
-  Copyright (c) 2005, 2006, David A. Capello
+  Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
   All rights reserved.
 
   --
 
-  Vaca is a library to wrap the Win32 API with C++ classes. Also, it's
-  has some extra functionalities like dockable tool bars and layout
-  managers. This library uses templates (but not generic programming),
-  and Boost (the Boost.Signals library is just perfect).
+  Vaca is a library to develop GUI applications with C++.
+  It uses templates and STL, and has some special features like
+  dockable tool bars and layout managers.
+
+  Vaca is a wrapper for the Win32 API. What is the Win32 API? You don't
+  need to know about it, but it is the set of routines that Microsoft
+  gives you to program applications on Windows.
+
+  --
+
+  http://vaca.sourceforge.net/

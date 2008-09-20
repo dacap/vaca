@@ -38,6 +38,47 @@
 
 using namespace Vaca;
 
+//////////////////////////////////////////////////////////////////////
+//
+
+
+GraphicsPath::Node::Node(int type, const Point& point)
+  : m_flags(type & TypeMask)
+  , m_point(point)
+{
+}
+
+int GraphicsPath::Node::getType() const
+{
+  return m_flags & TypeMask;
+}
+
+bool GraphicsPath::Node::isCloseFigure() const
+{
+  return m_flags & CloseFigure ? true: false;
+}
+
+void GraphicsPath::Node::setCloseFigure(bool state)
+{
+  if (state)
+    m_flags |= CloseFigure;
+  else
+    m_flags &= ~CloseFigure;
+}
+
+Point& GraphicsPath::Node::getPoint()
+{
+  return m_point;
+}
+
+const Point& GraphicsPath::Node::getPoint() const
+{
+  return m_point;
+}
+
+//////////////////////////////////////////////////////////////////////
+// GraphicsPath
+
 GraphicsPath::GraphicsPath()
 {
 }

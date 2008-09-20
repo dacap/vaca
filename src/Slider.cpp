@@ -34,11 +34,12 @@
 #include "Vaca/Event.h"
 #include "Vaca/WidgetClass.h"
 #include <limits>
+#include <limits.h>
 
 using namespace Vaca;
 
-const int Slider::MinLimit = std::numeric_limits<short>::min();
-const int Slider::MaxLimit = std::numeric_limits<short>::max();
+const int Slider::MinLimit = SHRT_MIN; // std::numeric_limits<short>::min();
+const int Slider::MaxLimit = SHRT_MAX; // std::numeric_limits<short>::max();
 
 Slider::Slider(Widget* parent, Style style)
   : Widget(WidgetClassName(TRACKBAR_CLASS), parent, style)

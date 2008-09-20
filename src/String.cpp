@@ -33,6 +33,7 @@
 #include "Vaca/Debug.h"
 #include <cstdarg>
 #include <cstdlib>
+#include <cctype>
 
 #include <algorithm>
 #include <memory>
@@ -171,7 +172,7 @@ String String::format(const wchar_t* fmt, ...)
 
     va_list ap;
     va_start(ap, fmt);
-    int written = vsnwprintf(buf.get(), size, fmt, ap);
+    int written = _vsnwprintf(buf.get(), size, fmt, ap);
     va_end(ap);
 
     if (written == size) {

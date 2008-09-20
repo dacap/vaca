@@ -205,10 +205,12 @@ memory leaks (Image is a SmartPtr).
 
 @section page_examples_webcam WebCam Example
 
+@win32
 This example shows how to override the Widget#createHandle method to
 create your own HWND.
 
 It uses the Video for Windows (VfW) API.
+@endwin32
 
 */
 

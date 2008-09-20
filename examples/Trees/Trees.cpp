@@ -93,7 +93,7 @@ class MainFrame : public Frame
 public:
 
   MainFrame()
-    : Frame("Trees")
+    : Frame("Trees (WIP)")
     , m_dragAndDrop1("Drag && Drop", this)
     , m_dragAndDrop2("Drag && Drop", this)
     , m_treeView1(this)

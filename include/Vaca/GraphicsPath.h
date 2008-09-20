@@ -73,19 +73,19 @@ public:
    * @li a node of movement (MoveTo) to go to the line's start position, and
    * @li a node to draw a line (LineTo) that represent the end position of the line.
    */
-  class Node
+  class VACA_DLL Node
   {
     friend class GraphicsPath;
     int m_flags;
     Point m_point;
   public:
-    Node(int type, const Point& point)
-      : m_flags(type & TypeMask)
-      , m_point(point) { }
-    int getType() const { return m_flags & TypeMask; }
-    bool isCloseFigure() const { return m_flags & CloseFigure ? true: false; }
-    Point& getPoint() { return m_point; }
-    const Point& getPoint() const { return m_point; }
+    Node(int type, const Point& point);
+
+    int getType() const;
+    bool isCloseFigure() const;
+    void setCloseFigure(bool closeFigure);
+    Point& getPoint();
+    const Point& getPoint() const;
   };
 
 private:

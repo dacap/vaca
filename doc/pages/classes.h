@@ -7,8 +7,8 @@ namespace Vaca {
 @li @ref page_classes_base
 @li @ref page_classes_app
 @li @ref page_classes_graphics
-@li @ref page_classes_mess
 @li @ref page_classes_widgets
+@li @ref page_classes_mess
 @li @ref page_classes_cmds
 @li @ref page_classes_menus
 @li @ref page_classes_layout
@@ -65,35 +65,6 @@ namespace Vaca {
 @titleRow{Helpers}
   @itemRow{FontMetrics}
   @itemRow{GraphicsPath}
-@endTable
-
-
-@section page_classes_mess MESS
-
-@beginOverviewTable
-@titleRow{Messages}
-  @itemRow{Message}
-@titleRow{Events}
-  @itemRow{CancelableEvent}
-  @itemRow{CloseEvent}
-  @itemRow{DropFilesEvent}
-  @itemRow{Event}
-  @itemRow{KeyEvent}
-  @itemRow{ListViewEvent}
-  @itemRow{MenuItemEvent}
-  @itemRow{MouseEvent}
-  @itemRow{SpinButtonEvent}
-  @itemRow{TreeViewEvent}
-@titleRow{Signals}
-  @itemRow{Signal0}
-  @itemRow{Signal1}
-  @itemRow{Signal2}
-@titleRow{Slots}
-  @itemRow{Slot0}
-  @itemRow{Slot1}
-  @itemRow{Slot2}
-@titleRow{Other}
-  @itemRow{RefWrapper}
 @endTable
 
 
@@ -175,6 +146,35 @@ namespace Vaca {
   @itemRow{DataGridColumn}
   @itemRow{DataGridSource}
   @itemRow{DataGridValue}
+@endTable
+
+
+@section page_classes_mess MESS
+
+@beginOverviewTable
+@titleRow{Messages}
+  @itemRow{Message}
+@titleRow{Events}
+  @itemRow{CancelableEvent}
+  @itemRow{CloseEvent}
+  @itemRow{DropFilesEvent}
+  @itemRow{Event}
+  @itemRow{KeyEvent}
+  @itemRow{ListViewEvent}
+  @itemRow{MenuItemEvent}
+  @itemRow{MouseEvent}
+  @itemRow{SpinButtonEvent}
+  @itemRow{TreeViewEvent}
+@titleRow{Signals}
+  @itemRow{Signal0}
+  @itemRow{Signal1}
+  @itemRow{Signal2}
+@titleRow{Slots}
+  @itemRow{Slot0}
+  @itemRow{Slot1}
+  @itemRow{Slot2}
+@titleRow{Other}
+  @itemRow{RefWrapper}
 @endTable
 
 

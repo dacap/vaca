@@ -1,26 +1,25 @@
 Vaca 0.0.7
 
-- ~Widget now destroys automatically the widget's children.
 - Added MenuPopup.
-- Renamed MouseButtons to MouseButton.
 - Added RefWrapper class and Ref() method to support references in Bind().
 - Added GraphicsPath.
-- All methods that return Win32 handles (HWND, HDC, HBRUSH,
-  HRGN, etc.) now are called getHandle().
-- Brush, Cursor, Font, Icon, Image, ImageList, Pen, and
-  Region are SmartPtrs.
-- Added GdiObject and SmartPtr.
-- Widget destructor deletes children.
 - Added HttpRequest class.
 - Added FontMetrics class.
-- Renamed Borders to Sides.
 - Added StatusBar widget. Now Frame has an associated StatusBar.
 - Added Separator widget.
 - Added RadioGroup::onChange event/signal.
+- All methods that return Win32 handles (HWND, HDC, HBRUSH,
+  HRGN, etc.) now are called getHandle().
+- Added GdiObject and SmartPtr.
+- Brush, Cursor, Font, Icon, Image, ImageList, Pen, and
+  Region are SmartPtrs.
+- Widget destructor deletes children.
+- Renamed MouseButtons to MouseButton.
+- Renamed Borders to Sides.
 - Fixed Bix::getPreferredSize when EvenX or EvenY flags are activated.
 - Now MenuItem::setEnabled/Checked can be used although the item isn't
   in a parent Menu.
-- Removed SelfDestruction class.
+- Removed SelfDestruction class (with SmartPtrs isn't needed anymore).
 
 Vaca 0.0.6
 

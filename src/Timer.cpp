@@ -38,6 +38,7 @@
 #include "Vaca/ConditionVariable.h"
 
 #include <limits>
+#include <limits.h>		// because MSVC
 
 using namespace Vaca;
 
@@ -176,7 +177,7 @@ void Timer::run_timer_thread()
 {
   ScopedLock hold(timer_mutex);
   unsigned int start, end, period, delay;
-  unsigned int inf = std::numeric_limits<unsigned int>::max();
+  unsigned int inf = UINT_MAX; // std::numeric_limits<unsigned int>::max();
   std::vector<Timer*>::iterator it;
   Timer* timer;
 

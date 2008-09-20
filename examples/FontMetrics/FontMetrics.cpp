@@ -44,7 +44,6 @@ public:
 
   MainFrame()
     : Frame("FontMetrics")
-    // , m_sampleText("abgijqM\r\nAbc")
     , m_sampleText("abgijqM")
     , m_font("Times New Roman", 128)
   {
@@ -53,30 +52,6 @@ public:
 
     setDoubleBuffered(true);
   }
-
-//   virtual void onGotFocus(Event &ev)
-//   {
-//     Frame::onGotFocus(ev);
-
-//     // caret position
-//     Rect rc = getClientBounds();
-//     ScreenGraphics g;
-//     g.setFont(&m_font);
-//     Size textSize = g.measureString(m_sampleText);
-//     Point origin = rc.getCenter()-Point(textSize/2);
-
-//     CreateCaret(getHandle(), NULL, 1, g.measureString("tmp").h);
-//     ShowCaret(getHandle());
-//     SetCaretPos(origin.x, origin.y);
-//   }
-
-//   virtual void onLostFocus(Event &ev)
-//   {
-//     Frame::onLostFocus(ev);
-
-//     HideCaret(getHandle());
-//     DestroyCaret();
-//   }
 
   // after the size is changed
   virtual void onResize(const Size &sz)
@@ -224,10 +199,6 @@ private:
 
       output.setSize(g.measureString(chrText));
 
-//       ABC abc;
-//       GetCharABCWidths(g.getHDC(), *it, *it, &abc);
-//       output.w = (abc.abcA+abc.abcB+abc.abcC) * 72 / GetDeviceCaps(g.getHDC(), LOGPIXELSX);
-
       if (*it == '\r') {
 	output.x = origin.x;
       }
@@ -236,22 +207,10 @@ private:
       }
       else {
 	functor(g, chrText, color, output);
-
-	// int interChr = GetTextCharacterExtra(g.getHDC());
-	// output.x += output.w + interChr;
 	output.x += output.w;
       }
     }
   }
-
-//   void onChangeFont(Font &font)
-//   {
-//     FontDialog dialog(&font, this);
-//     if (dialog.doModal()) {
-//       layout();
-//       invalidate(false);
-//     }
-//   }
 
 };
 

@@ -49,19 +49,20 @@ OBJS = obj/Anchor.obj obj/AnchorLayout.obj obj/Application.obj		\
   obj/DockBar.obj obj/DockFrame.obj obj/DropFilesEvent.obj		\
   obj/Edit.obj obj/Event.obj obj/FileDialog.obj obj/FindTextDialog.obj	\
   obj/Font.obj obj/FontDialog.obj obj/Frame.obj obj/Graphics.obj	\
-  obj/GraphicsPath.obj obj/GroupBox.obj obj/Icon.obj obj/Image.obj	\
-  obj/ImageList.obj obj/KeyEvent.obj obj/Keys.obj obj/Label.obj		\
-  obj/Layout.obj obj/LinkLabel.obj obj/ListBox.obj obj/ListView.obj	\
-  obj/Mdi.obj obj/Menu.obj obj/MenuItemEvent.obj obj/MouseEvent.obj	\
-  obj/MsgBox.obj obj/Mutex.obj obj/Panel.obj obj/Pen.obj obj/Point.obj	\
+  obj/GraphicsPath.obj obj/GroupBox.obj obj/HttpRequest.obj		\
+  obj/Icon.obj obj/Image.obj obj/ImageList.obj obj/KeyEvent.obj		\
+  obj/Keys.obj obj/Label.obj obj/Layout.obj obj/LinkLabel.obj		\
+  obj/ListBox.obj obj/ListView.obj obj/Mdi.obj obj/Menu.obj		\
+  obj/MenuItemEvent.obj obj/MouseEvent.obj obj/MsgBox.obj		\
+  obj/Mutex.obj obj/Panel.obj obj/Pen.obj obj/Point.obj			\
   obj/ProgressBar.obj obj/RadioButton.obj obj/ReBar.obj obj/Rect.obj	\
-  obj/Region.obj obj/ResourceId.obj obj/Scintilla.obj			\
-  obj/Separator.obj obj/Size.obj obj/Slider.obj obj/SpinButton.obj	\
-  obj/Spinner.obj obj/String.obj obj/Style.obj obj/System.obj		\
-  obj/Tab.obj obj/Thread.obj obj/TimePoint.obj obj/Timer.obj		\
-  obj/ToggleButton.obj obj/ToolBar.obj obj/TreeNode.obj			\
-  obj/TreeView.obj obj/TreeViewEvent.obj obj/Vaca.obj obj/Widget.obj	\
-  obj/WidgetClass.obj
+  obj/Referenceable.obj obj/Region.obj obj/ResourceId.obj		\
+  obj/Scintilla.obj obj/Separator.obj obj/Size.obj obj/Slider.obj	\
+  obj/SpinButton.obj obj/Spinner.obj obj/StatusBar.obj obj/String.obj	\
+  obj/Style.obj obj/System.obj obj/Tab.obj obj/Thread.obj		\
+  obj/TimePoint.obj obj/Timer.obj obj/ToggleButton.obj obj/ToolBar.obj	\
+  obj/TreeNode.obj obj/TreeView.obj obj/TreeViewEvent.obj obj/Vaca.obj	\
+  obj/Widget.obj obj/WidgetClass.obj
 
 EXAMPLES_EXE = bin/AnchorLayouts.exe bin/AutoCompletion.exe		\
   bin/Bixes.exe bin/BouncingBalls.exe bin/BoxLayouts.exe		\
@@ -70,16 +71,25 @@ EXAMPLES_EXE = bin/AnchorLayouts.exe bin/AutoCompletion.exe		\
   bin/Edits.exe bin/EyeDropper.exe bin/FontMetrics.exe			\
   bin/FreeOfLayout.exe bin/Hashing.exe bin/HelloWorld.exe		\
   bin/Images.exe bin/Labels.exe bin/LikeScript.exe bin/Maths.exe	\
-  bin/MenuResource.exe bin/MiniExplorer.exe bin/PensBrushes.exe		\
-  bin/Primitives.exe bin/ProgressBars.exe bin/Regions.exe		\
-  bin/Scribble.exe bin/Sliders.exe bin/Spinners.exe			\
+  bin/MenuResource.exe bin/MiniExplorer.exe bin/Minimal.exe		\
+  bin/Paths.exe bin/Primitives.exe bin/ProgressBars.exe			\
+  bin/Regions.exe bin/Scribble.exe bin/Sliders.exe bin/Spinners.exe	\
   bin/StdCommands.exe bin/Sudoku.exe bin/SystemImageList.exe		\
   bin/Tabs.exe bin/TextEditor.exe bin/Threads.exe bin/Timers.exe	\
   bin/ToolBars.exe bin/Trees.exe bin/Undo.exe bin/WebCam.exe
 
-TESTS_EXE = bin/test_bind.exe bin/test_menu.exe bin/test_point.exe	\
-  bin/test_rect.exe bin/test_signal.exe bin/test_size.exe		\
-  bin/test_string.exe bin/test_thread.exe
+TESTS_EXE = \
+  bin/test_bind.exe \
+  bin/test_menu.exe \
+  bin/test_point.exe \
+  bin/test_rect.exe \
+  bin/test_region.exe \
+  bin/test_signal.exe \
+  bin/test_size.exe \
+  bin/test_smartptr.exe \
+  bin/test_string.exe \
+  bin/test_tab.exe \
+  bin/test_thread.exe
 
 # ----------------------------------------------------------------------
 # Rules
@@ -167,7 +177,8 @@ bin/LikeScript.exe: obj/LikeScript.obj obj/Example.res
 bin/Maths.exe: obj/Maths.obj obj/Example.res
 bin/MenuResource.exe: obj/MenuResource.obj obj/MenuResource.res
 bin/MiniExplorer.exe: obj/MiniExplorer.obj obj/Example.res
-bin/PensBrushes.exe: obj/PensBrushes.obj obj/Example.res
+bin/Minimal.exe: obj/Minimal.obj obj/Example.res
+bin/Paths.exe: obj/Paths.obj obj/Example.res
 bin/Primitives.exe: obj/Primitives.obj obj/Example.res
 bin/ProgressBars.exe: obj/ProgressBars.obj obj/Example.res
 bin/Regions.exe: obj/Regions.obj obj/Example.res
@@ -262,8 +273,10 @@ obj/MenuResource.obj: examples/MenuResource/MenuResource.cpp
 	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/MenuResource/MenuResource.cpp
 obj/MiniExplorer.obj: examples/MiniExplorer/MiniExplorer.cpp
 	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/MiniExplorer/MiniExplorer.cpp
-obj/PensBrushes.obj: examples/PensBrushes/PensBrushes.cpp
-	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/PensBrushes/PensBrushes.cpp
+obj/Minimal.obj: examples/Minimal/Minimal.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/Minimal/Minimal.cpp
+obj/Paths.obj: examples/Paths/Paths.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/Paths/Paths.cpp
 obj/Primitives.obj: examples/Primitives/Primitives.cpp
 	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/Primitives/Primitives.cpp
 obj/ProgressBars.obj: examples/ProgressBars/ProgressBars.cpp
@@ -305,13 +318,33 @@ obj/WebCam.obj: examples/WebCam/WebCam.cpp
 
 obj/test_bind.obj: tests/test_bind.cpp
 	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c tests/test_bind.cpp
+
+obj/test_menu.obj: tests/test_menu.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c tests/test_menu.cpp
+
 obj/test_point.obj: tests/test_point.cpp
 	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c tests/test_point.cpp
+
 obj/test_rect.obj: tests/test_rect.cpp
 	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c tests/test_rect.cpp
+
+obj/test_region.obj: tests/test_region.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c tests/test_region.cpp
+
 obj/test_signal.obj: tests/test_signal.cpp
 	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c tests/test_signal.cpp
+
 obj/test_size.obj: tests/test_size.cpp
 	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c tests/test_size.cpp
+
+obj/test_smartptr.obj: tests/test_smartptr.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c tests/test_smartptr.cpp
+
 obj/test_string.obj: tests/test_string.cpp
 	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c tests/test_string.cpp
+
+obj/test_tab.obj: tests/test_tab.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c tests/test_tab.cpp
+
+obj/test_thread.obj: tests/test_thread.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c tests/test_thread.cpp

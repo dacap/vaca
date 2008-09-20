@@ -49,7 +49,7 @@ namespace Vaca {
 
 #define VACA_VERSION     0
 #define VACA_SUB_VERSION 0
-#define VACA_WIP_VERSION 6
+#define VACA_WIP_VERSION 7
 
 /**
  * Defines the name and arguments that the main routine

@@ -2,7 +2,7 @@
 General
 ----------------------------------------------------------------------
 
-- Look at 'TODO' in source code
+- Look at 'TODO' or '@todo' in source code
 
 
 ----------------------------------------------------------------------
@@ -31,12 +31,9 @@ Widgets
 Examples
 ----------------------------------------------------------------------
 
-- FontMetrics (finish it)
-- PensBrushes (finish Brushes stuff)
 - DataGrids (complete)
 - Sudoku (double-buffered, with better hot-tracking, better cell
   handle, and fix the "infinite-loop" bug in the level generator)
-- Remove CommandsAlt, LikeDOS, ThreadKiller
 - Finish Xuls or GridLayout
 
 
@@ -65,8 +62,6 @@ API
 
 - Add support for FlashWindowEx.
 
-- See what to do with the Command class.
-
 - Remember the WM_MENUSELECT message for status-bars.
 
 - add support for DrawFrameControl, DrawState, DrawEdge
@@ -78,7 +73,3 @@ API
 - mouseHover should be? (there is already some code)
 
 - a "MVC: Model View Controller" pattern (also known as Observer pattern).
-
-- Graphics::widenPath()
-
-- finish GraphicsPath class

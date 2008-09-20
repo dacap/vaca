@@ -16,6 +16,8 @@ namespace Vaca {
 @titleRow{Bindings}
   @itemRow{page_bind, Adapts functions or methods to be connected to signals.}
   @itemRow{Ref}
+@titleRow{Debug}
+  @itemRow{VACA_TRACE}
 @endTable
 
 */

@@ -118,7 +118,8 @@ bool Dialog::preTranslateMessage(Message& msg)
 
 /**
  * Hides the dialog, but before changes the return state
- * (setReturnState) to true, so doModal() returns true too.
+ * (setReturnState) to true, so #doModal returns true.
+ * 
  * You can use this to bind the OK button action (Button::Action).
  * Example:
  * 

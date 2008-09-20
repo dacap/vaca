@@ -65,6 +65,205 @@ public:
 	 const Pen& pen,
 	 const Brush& brush)
     : path(path), pen(pen), brush(brush) { }
+
+  bool isClosed() const
+  {
+    // the last node in the path indicates if the path is closed or not
+    return (path.end()-1)->isCloseFigure();
+  }
+
+  void setClosed(bool state)
+  {
+    // the last node in the path indicates if the path is closed or not
+    (path.end()-1)->setCloseFigure(state);
+  }
+
+};
+
+//////////////////////////////////////////////////////////////////////
+// Dialog to edit figure properties
+
+class FigureProperties : public Dialog
+{
+  Figure& m_fig;
+  Figure m_figBackup;
+  // for Pen
+  Separator m_penInfo;
+  Label m_penLabel;
+  Label m_penWidthLabel;
+  Slider m_penWidthSlider;
+  Edit m_penWidthEdit;
+  Button m_penColor;
+  GroupBox m_endCapInfo;
+  RadioGroup m_endCapGroup;
+  RadioButton m_roundEndCap;
+  RadioButton m_squareEndCap;
+  RadioButton m_flatEndCap;
+  GroupBox m_joinInfo;
+  RadioGroup m_joinGroup;
+  RadioButton m_roundJoin;
+  RadioButton m_bevelJoin;
+  RadioButton m_miterJoin;
+  // for Brush
+  Separator m_brushInfo;
+  Label m_brushLabel;
+  Button m_brushColor;
+  // bottom
+  Separator m_separator;
+  CheckBox m_closeFigure;
+  Button m_ok;
+  Button m_cancel;
+
+public:
+
+  // signal fired when the figure's properties are modified
+  // in the dialog
+  Signal0<void> Change;
+
+  FigureProperties(Figure& fig, Widget* parent)
+    : Dialog("Figure Properties", parent)
+    , m_fig(fig)
+    , m_figBackup(fig)
+    , m_penInfo(this)
+    , m_penLabel("Pen configuration:", this)
+    , m_penWidthLabel("Width:", this)
+    , m_penWidthSlider(1, 64, 32, this)
+    , m_penWidthEdit("", this, EditStyle + ReadOnlyEditStyle)
+    , m_penColor("Color", this)
+    , m_endCapInfo("End Cap", this)
+    , m_roundEndCap("Round", m_endCapGroup, &m_endCapInfo)
+    , m_squareEndCap("Square", m_endCapGroup, &m_endCapInfo)
+    , m_flatEndCap("Flat", m_endCapGroup, &m_endCapInfo)
+    , m_joinInfo("Join", this)
+    , m_roundJoin("Round", m_joinGroup, &m_joinInfo)
+    , m_bevelJoin("Bevel", m_joinGroup, &m_joinInfo)
+    , m_miterJoin("Miter", m_joinGroup, &m_joinInfo)
+    , m_brushInfo(this)
+    , m_brushLabel("Brush configuration:", this)
+    , m_brushColor("Color", this)
+    , m_separator(this)
+    , m_closeFigure("Close Figure", this)
+    , m_ok("&OK", this)
+    , m_cancel("Cancel", this)
+  {
+    // preferred size for the Edit control of the pen-width
+    m_penWidthEdit.setPreferredSize(Size(32, m_penWidthEdit.getPreferredSize().h));
+
+    // this two labels will have boldface
+    m_penLabel.setFont(Font(getFont(), FontStyle::Italic));
+    m_brushLabel.setFont(Font(getFont(), FontStyle::Italic));
+
+    // layout managers
+    setLayout(Bix::parse("Y[%,%,Y[X[%,f%,%],X[f%,f%,Y[%]]],%,%,X[%],%,X[f%,eX[%,%]]]",
+			 &m_penInfo,
+			 &m_penLabel,
+			 &m_penWidthLabel, &m_penWidthSlider, &m_penWidthEdit,
+			 &m_endCapInfo, &m_joinInfo, &m_penColor,
+			 &m_brushInfo,
+			 &m_brushLabel,
+			 &m_brushColor,
+			 &m_separator,
+			 &m_closeFigure, &m_ok, &m_cancel));
+    m_endCapInfo.setLayout(new BoxLayout(Orientation::Vertical, false));
+    m_joinInfo.setLayout(new BoxLayout(Orientation::Vertical, false));
+
+    initValues();
+    
+    // signals/slots
+    m_ok.Action.connect(Bind(&FigureProperties::defaultOkAction, this));
+    m_cancel.Action.connect(Bind(&FigureProperties::onCancel, this));
+
+    m_penWidthSlider.Change.connect(Bind(&FigureProperties::onPenChange, this));
+    m_endCapGroup.Change.connect(Bind(&FigureProperties::onPenChange, this));
+    m_joinGroup.Change.connect(Bind(&FigureProperties::onPenChange, this));
+
+    m_penColor.Action.connect(Bind(&FigureProperties::onSelectPenColor, this));
+    m_brushColor.Action.connect(Bind(&FigureProperties::onSelectBrushColor, this));
+    m_closeFigure.Action.connect(Bind(&FigureProperties::onCloseFigure, this));
+    
+    // center the dialog
+    setSize(getPreferredSize());
+    center();
+  }
+
+private:
+
+  // fill the widgets through the current figure values
+  void initValues()
+  {
+    m_penWidthSlider.setValue(m_fig.pen.getWidth());
+    m_penWidthEdit.setText(String::fromInt(m_fig.pen.getWidth()));
+      
+    m_endCapGroup.setSelectedIndex(m_fig.pen.getEndCap());
+    m_joinGroup.setSelectedIndex(m_fig.pen.getJoin());
+
+    m_closeFigure.setSelected(m_fig.isClosed());
+  }
+
+  // If the user presses the Cancel button, then we have to restore to
+  // the old figure properties
+  void onCancel()
+  {
+    // restore the figure configuration
+    m_fig = m_figBackup;
+
+    // fire the Change signal to indicate that the figure has changed
+    Change();
+
+    // close the dialog
+    defaultCancelAction();
+  }
+
+  void onPenChange()
+  {
+    m_fig.pen = createPen(m_fig.pen.getColor());
+    Change();
+  }
+
+  void onSelectPenColor()
+  {
+    ColorDialog dlg(m_fig.pen.getColor(), this);
+    if (dlg.doModal()) {
+      m_fig.pen = createPen(dlg.getColor());
+      Change();
+    }
+  }
+
+  void onSelectBrushColor()
+  {
+    ColorDialog dlg(m_fig.brush.getColor(), this);
+    if (dlg.doModal()) {
+      m_fig.brush = Brush(dlg.getColor());
+      Change();
+    }
+  }
+
+  void onCloseFigure()
+  {
+    m_fig.setClosed(m_closeFigure.isSelected());
+    Change();
+  }
+
+  Pen createPen(const Color& color)
+  {
+    PenEndCap endCap;
+    PenJoin join;
+    switch (m_endCapGroup.getSelectedIndex()) {
+      case 0: endCap = PenEndCap::Round; break;
+      case 1: endCap = PenEndCap::Square; break;
+      case 2: endCap = PenEndCap::Flat; break;
+    }
+    switch (m_joinGroup.getSelectedIndex()) {
+      case 0: join = PenJoin::Round; break;
+      case 1: join = PenJoin::Bevel; break;
+      case 2: join = PenJoin::Miter; break;
+    }
+    return Pen(color,
+  	       m_penWidthSlider.getValue(),
+  	       PenStyle::Solid,
+  	       endCap, join);
+  }
+  
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -78,7 +277,7 @@ class FigsEditor : public Panel
   typedef std::list<Figure> Figs;
 
   Figs m_figs;		            // list of figures
-  Figs::iterator m_hotFigure;       // the figure that has the mouse above
+  Figs::iterator m_selFigure;       // selected figure
   GraphicsPath::iterator m_hotNode; // the path's node that has the mouse above
   GraphicsPath::iterator m_relNode; // related bezier control node to 'm_hotNode' node
   GraphicsPath m_newPath;	    // the temporary path that is being modified
@@ -97,7 +296,7 @@ public:
     // create a figure by default
     createNewFigure(Point(80, 80));
 
-    m_hotFigure = NULLFIGURE;
+    m_selFigure = NULLFIGURE;
     m_hotNode = NULLNODE;
   }
 
@@ -108,10 +307,15 @@ protected:
   {
     Panel::onMouseDown(ev);
 
-    // update which object (node/figure) is hot
-    updateHot(ev.getPoint());
+    // if we have the capture here is because the user pressed another
+    // button but without releasing the first one
+    if (hasCapture())
+      return;
+
     m_moved = false;
 
+    // first check if we are above a node of the current selected figure
+    updateHotNode(ev.getPoint());
     if (m_hotNode != NULLNODE) {
       m_oldPoint = ev.getPoint();
 
@@ -125,14 +329,18 @@ protected:
 
       captureMouse();
     }
-    else if (m_hotFigure != NULLFIGURE) {
-      m_newPath = m_hotFigure->path;
-      m_hotNode = NULLNODE;
-      m_oldPoint = ev.getPoint();
-      captureMouse();
-    }
-    else if (ev.getButton() == MouseButton::Right) {
-      showPopupMenuForBackground(ev.getPoint());
+    else {
+      // check if with this click we change the current selected figure
+      updateSelectedFigure(ev.getPoint());
+      if (m_selFigure != NULLFIGURE) {
+	m_oldPoint = ev.getPoint();
+	captureMouse();
+      }
+      // if the user select in the background we can show the menu to
+      // create new figures
+      else if (ev.getButton() == MouseButton::Right) {
+	showPopupMenuForBackground(ev.getPoint());
+      }
     }
   }
 
@@ -161,7 +369,7 @@ protected:
       m_oldPoint = ev.getPoint();
     }
     else {
-      updateHot(ev.getPoint());
+      updateHotNode(ev.getPoint());
     }
   }
   
@@ -173,14 +381,14 @@ protected:
 
       // when finish the node movement
       if (m_hotNode != NULLNODE) {
-	m_hotFigure->path = m_newPath;
+	m_selFigure->path = m_newPath;
       }
       // when finish the path movement
       else {
 	switch (ev.getButton()) {
 	  case MouseButton::Left:
 	  case MouseButton::Middle:
-	    m_hotFigure->path = m_newPath;
+	    m_selFigure->path = m_newPath;
 	    break;
 	  case MouseButton::Right: {
 	    if (m_moved)
@@ -195,7 +403,6 @@ protected:
 	}
       }
 
-      m_hotFigure = NULLFIGURE;
       m_hotNode = NULLNODE;
       m_relNode = NULLNODE;
       invalidate(true);
@@ -208,14 +415,18 @@ protected:
 
     // stroke and fill all figures
     for (Figs::reverse_iterator it=m_figs.rbegin(); it!=m_figs.rend(); ++it) {
-      // stroke & fill the path of this figure
-      g.strokeAndFillPath(it->path, it->pen, it->brush, Point(0, 0));
+      // stroke & fill the closed paths
+      if (it->isClosed())
+	g.strokeAndFillPath(it->path, it->pen, it->brush, Point(0, 0));
+      // only stroke opened paths
+      else
+	g.strokePath(it->path, it->pen, Point(0, 0));
     }
 
-    // there are a hot figure?
-    if (m_hotFigure != NULLFIGURE)
-      drawHotPath(g, hasCapture() ? m_newPath:
-				    m_hotFigure->path);
+    // there are a selected figure?
+    if (m_selFigure != NULLFIGURE)
+      drawSelectedPath(g, hasCapture() ? m_newPath:
+					 m_selFigure->path);
 
     // there are a hot node?
     if (m_hotNode != NULLNODE) {
@@ -234,10 +445,12 @@ private:
 
   void createNewFigure(const Point& putHere)
   {
-    Color color(rand()%200, rand()%200, rand()%200);
+    Color color(120+(rand()%80),
+		120+(rand()%80),
+		120+(rand()%80));
     Figure fig;
     fig.pen = Pen(color, 3);
-    fig.brush = Brush(color*1.5);
+    fig.brush = Brush(color*1.3);
 
     // fig.path is a GraphicsPath
     fig.path
@@ -251,40 +464,48 @@ private:
     m_figs.push_front(fig);
   }
 
-  void updateHot(const Point& hotSpot)
+  void updateSelectedFigure(const Point& hotSpot)
   {
-    // calculate the hot figure
-    Figs::iterator hotFig = NULLFIGURE;
+    Figs::iterator selFig = NULLFIGURE;
+
     for (Figs::iterator it=m_figs.begin(); it!=m_figs.end(); ++it) {
       if (it->path.toRegion().contains(hotSpot)) {
-	hotFig = it;
+	selFig = it;
 	break;
       }
     }
 
-    // calculate the hot node
-    GraphicsPath::iterator hotNode = NULLNODE;
-    for (Figs::iterator it=m_figs.begin(); it!=m_figs.end(); ++it) {
-      for (GraphicsPath::iterator it2=it->path.begin(); it2!=it->path.end(); ++it2) {
-	Point& pt = it2->getPoint();
-	if (Rect(pt-Point(4,4), pt+Point(4,4)).contains(hotSpot)) {
-	  m_newPath = it->path;
-	  hotNode = m_newPath.begin() + (it2 - it->path.begin());
-	  hotFig = it;
-	  break;
-	}
+    if (m_selFigure != selFig) {
+      m_selFigure = selFig;
+      invalidate(true);
+
+      if (m_selFigure != NULLFIGURE) {
+	m_newPath = m_selFigure->path;
       }
+      else {
+	m_newPath = GraphicsPath();
+      }
+      m_hotNode = NULLNODE;
+    }
+  }
+
+  void updateHotNode(const Point& hotSpot)
+  {
+    GraphicsPath::iterator it;
+
+    for (it=m_newPath.begin(); it!=m_newPath.end(); ++it) {
+      Point& pt = it->getPoint();
+      if (Rect(pt-Point(4,4), pt+Point(4,4)).contains(hotSpot))
+	break;
     }
 
-    if ((m_hotFigure != hotFig) ||
-	(m_hotNode != hotNode)) {
-      m_hotFigure = hotFig;
-      m_hotNode = hotNode;
+    if (m_hotNode != it) {
+      m_hotNode = it;
       invalidate(true);
     }
   }
-  
-  void drawHotPath(Graphics& g, const GraphicsPath& path)
+
+  void drawSelectedPath(Graphics& g, const GraphicsPath& path)
   {
     GraphicsPath::const_iterator it, end = path.end();
     Pen pen(Color::Blue);
@@ -342,12 +563,13 @@ private:
     if (CommandId id = menu.doModal(this, pt)) {
       switch (id) {
 	case ID_MOVE_HERE:
-	  m_hotFigure->path = m_newPath;
+	  m_selFigure->path = m_newPath;
 	  break;
 	case ID_COPY_HERE:
 	  m_figs.push_front(Figure(m_newPath,
-				   m_hotFigure->pen,
-				   m_hotFigure->brush));
+				   m_selFigure->pen,
+				   m_selFigure->brush));
+	  m_selFigure = m_figs.begin();
 	  break;
       }
     }
@@ -369,33 +591,48 @@ private:
       switch (id) {
 	case ID_CUT:
 	case ID_COPY: {
-	  m_clipboard = *m_hotFigure;
+	  m_clipboard = *m_selFigure;
 
 	  Rect bounds = m_clipboard.path.toRegion().getBounds();
 	  m_clipboard.path.offset(-bounds.getOrigin() - Point(bounds.getSize()/2));
 
-	  if (id == ID_CUT)
-	    m_figs.erase(m_hotFigure);
+	  if (id == ID_CUT) {
+	    m_figs.erase(m_selFigure);
+	    m_selFigure = NULLFIGURE;
+	  }
 	  break;
 	}
 	case ID_REMOVE:
-	  m_figs.erase(m_hotFigure);
+	  m_figs.erase(m_selFigure);
+	  m_selFigure = NULLFIGURE;
 	  break;
 	case ID_FRONT: {
-	  Figure copy = *m_hotFigure;
-	  m_figs.erase(m_hotFigure);
+	  Figure copy = *m_selFigure;
+	  m_figs.erase(m_selFigure);
 	  m_figs.push_front(copy);
+	  m_selFigure = m_figs.begin();
 	  break;
 	}
 	case ID_BACK: {
-	  Figure copy = *m_hotFigure;
-	  m_figs.erase(m_hotFigure);
+	  Figure copy = *m_selFigure;
+	  m_figs.erase(m_selFigure);
 	  m_figs.push_back(copy);
+	  m_selFigure = m_figs.end();
 	  break;
 	}
-	case ID_PROPERTIES:
-	  // TODO
+	case ID_PROPERTIES: {
+	  FigureProperties dlg(*m_selFigure, getParent());
+
+	  // if the properties in dialog are changed, then we have to
+	  // invalidate the editor so we can see the changes immediately
+	  dlg.Change.connect(Bind(&FigsEditor::invalidate, this, true));
+
+	  // show the dialog
+	  dlg.doModal();
+
+	  m_newPath = m_selFigure->path;
 	  break;
+	}
       }
     }
   }
@@ -408,115 +645,15 @@ private:
 class MainFrame : public Frame
 {
   FigsEditor m_editor;
-  // CheckBox m_closeFigure;
-  // GroupBox m_penPanel;
-  // GroupBox m_brushPanel;
-  // for Pen
-  // Panel m_penLeftPanel;
-  // Label m_penWidthLabel;
-  // Slider m_penWidth;
-  // Button m_penColor;
-  // GroupBox m_endCapPanel;
-  // RadioGroup m_endCapGroup;
-  // RadioButton m_roundEndCap;
-  // RadioButton m_squareEndCap;
-  // RadioButton m_flatEndCap;
-  // GroupBox m_joinPanel;
-  // RadioGroup m_joinGroup;
-  // RadioButton m_roundJoin;
-  // RadioButton m_bevelJoin;
-  // RadioButton m_miterJoin;
-  // // for Brush
-  // Button m_brushColor;
   
 public:
 
   MainFrame()
     : Frame("Paths")
     , m_editor(this)
-    // , m_closeFigure("Close Figure", this)
-    // , m_penPanel("Pen", this)
-    // , m_brushPanel("Brush", this)
-    // , m_penLeftPanel(&m_penPanel)
-    // , m_penWidthLabel("Width:", &m_penLeftPanel)
-    // , m_penWidth(1, 64, 32, &m_penLeftPanel)
-    // , m_penColor("Color", &m_penLeftPanel)
-    // , m_endCapPanel("End Cap", &m_penPanel)
-    // , m_roundEndCap("Round", m_endCapGroup, &m_endCapPanel)
-    // , m_squareEndCap("Square", m_endCapGroup, &m_endCapPanel)
-    // , m_flatEndCap("Flat", m_endCapGroup, &m_endCapPanel)
-    // , m_joinPanel("Join", &m_penPanel)
-    // , m_roundJoin("Round", m_joinGroup, &m_joinPanel)
-    // , m_bevelJoin("Bevel", m_joinGroup, &m_joinPanel)
-    // , m_miterJoin("Miter", m_joinGroup, &m_joinPanel)
-    // , m_brushColor("Color", &m_brushPanel)
   {
     setLayout(new ClientLayout);
-    // setLayout(new BoxLayout(Orientation::Vertical, false));
-    // m_editor.setConstraint(new BoxConstraint(true));
-    // m_penPanel.setLayout(new BoxLayout(Orientation::Horizontal, true, 0));
-    // m_penLeftPanel.setLayout(new BoxLayout(Orientation::Vertical, false, 0));
-    // m_endCapPanel.setLayout(new BoxLayout(Orientation::Vertical, true, 0));
-    // m_joinPanel.setLayout(new BoxLayout(Orientation::Vertical, true, 0));
-    // m_brushPanel.setLayout(new BoxLayout(Orientation::Horizontal, false, 0));
-
-    // m_roundEndCap.setSelected(true);
-    // m_roundJoin.setSelected(true);
-
-    // m_penWidth.Change.connect(Bind(&MainFrame::regenerate, this));
-    // m_endCapGroup.Change.connect(Bind(&MainFrame::regenerate, this));
-    // m_joinGroup.Change.connect(Bind(&MainFrame::regenerate, this));
-
-    // m_penColor.Action.connect(Bind(&MainFrame::onSelectPenColor, this));
-    // m_brushColor.Action.connect(Bind(&MainFrame::onSelectBrushColor, this));
-    // m_closeFigure.Action.connect(Bind(&MainFrame::onCloseFigure, this));
   }
-
-private:
-
-  // void onSelectPenColor()
-  // {
-  //   ColorDialog dlg(m_preview.getPen().getColor(), this);
-  //   if (dlg.doModal())
-  //     m_preview.setPen(createPen(dlg.getColor()));
-  // }
-
-  // void onSelectBrushColor()
-  // {
-  //   ColorDialog dlg(m_preview.getBrush().getColor(), this);
-  //   if (dlg.doModal())
-  //     m_preview.setBrush(Brush(dlg.getColor()));
-  // }
-
-  // void onCloseFigure()
-  // {
-  //   m_preview.setCloseFigure(m_closeFigure.isSelected());
-  // }
-
-  // void regenerate()
-  // {
-  //   m_preview.setPen(createPen(m_preview.getPen().getColor()));
-  // }
-
-  // Pen createPen(const Color& color)
-  // {
-  //   PenEndCap endCap;
-  //   PenJoin join;
-  //   switch (m_endCapGroup.getSelectedIndex()) {
-  //     case 0: endCap = PenEndCap::Round; break;
-  //     case 1: endCap = PenEndCap::Square; break;
-  //     case 2: endCap = PenEndCap::Flat; break;
-  //   }
-  //   switch (m_joinGroup.getSelectedIndex()) {
-  //     case 0: join = PenJoin::Round; break;
-  //     case 1: join = PenJoin::Bevel; break;
-  //     case 2: join = PenJoin::Miter; break;
-  //   }
-  //   return Pen(color,
-  // 	       m_penWidth.getValue(),
-  // 	       PenStyle::Solid,
-  // 	       endCap, join);
-  // }
 
 };
 

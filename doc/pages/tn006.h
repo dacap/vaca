@@ -4,19 +4,40 @@ namespace Vaca {
 
 @page page_tn_006 TN006: Deleting a Widget inside its event
 
-There are a big problem with signals: <b>YOU CAN'T DELETE A WIDGET
-INSIDE AN EVENT WHICH THE WIDGET BY ITSELF GENERATED</b>. The solution
-is quite simple: Use the @link Vaca::delete_widget delete_widget@endlink
-function.
+@li @ref page_tn_006_problem
+@li @ref page_tn_006_solution
+@li @ref page_tn_006_example
+
+
+@section page_tn_006_problem The Problem
+
+There are a problem with signals:
+@warning YOU CAN'T DELETE A WIDGET INSIDE AN EVENT WHICH THE WIDGET BY
+ITSELF GENERATED.
+
+It means that if a widget's event is activated
+(e.g. Widget#onKeyDown), then you can't delete that widget in your own
+event handler (or a slot connected to the Widget#KeyDown signal).
+The widget must be deleted after the original message is processed
+(it is when the widget is not referenced anymore).
+
+@see @ref page_mess
+
+
+@section page_tn_006_solution The Solution
+
+The solution is simple: Use the #delete_widget function.
 
 @image html DeleteInEvent.png
 
-See the @c TextEditor example, it uses the @c delete_widget to
-delete an @link Vaca::MdiChild MdiChild@endlink when its close
-button is pushed by the user.
+@see delete_widget
 
-@see @link Vaca::Frame#onClose Frame::onClose@endlink,
-     @link Vaca::delete_widget delete_widget@endlink
+
+@section page_tn_006_example An Example
+
+See the @ref page_examples_texteditor, it uses the #delete_widget to
+delete an #MdiChild when its close button is pushed by the user. I think
+that it's the only case where @ref delete_widget could be necessary to use.
 
 */
 

@@ -49,8 +49,8 @@ using namespace Vaca;
 
 // TODO
 // - replace with some C++0x's Thread-Local Storage
-// - or use __thread in GCC, and
-//   __declspec( thread ) in MSVC
+// - use __thread in GCC, and __declspec( thread ) in MSVC
+// - use TlsAlloc
 
 struct ThreadData
 {
@@ -193,8 +193,12 @@ Thread::~Thread()
 }
 
 /**
- * Returns the thread ID. This is equal to Win32's GetCurrentThreadId() for
- * the current thread or the ID returned by Win32's CreateThread().
+ * Returns the thread ID.
+ *
+ * @win32
+ *   This is equal to @msdn{GetCurrentThreadId} for the current
+ *   thread or the ID returned by @msdn{CreateThread}.
+ * @endwin32
  */
 ThreadId Thread::getId() const
 {
@@ -226,6 +230,8 @@ bool Thread::isJoinable() const
 
 /**
  * Sets the priority of the thread.
+ *
+ * @todo Remove this Win32 entry point!!!
  * 
  * @param priority Can be one of the following values:
  * @li THREAD_PRIORITY_ABOVE_NORMAL
@@ -244,8 +250,8 @@ void Thread::setPriority(int priority)
 }
 
 /**
- * Does the message loop while there are visible @link Vaca::Frame
- * Frame@endlink Frames.
+ * Does the message loop while there are
+ * visible @link Vaca::Frame frames@endlink.
  *
  * @see Frame::setVisible
  */
@@ -303,7 +309,7 @@ void Thread::yield()
 
 /**
  * Gets a message waiting for it: locks the execution of the program
- * until a message is received from the OS.
+ * until a message is received from the operating system.
  * 
  * @return 
  *   True if the @a msg parameter was filled (because a message was received)
@@ -388,7 +394,7 @@ void Thread::processMessage(Message& msg)
 /**
  * Pretranslates the message. The main function is to retrieve the
  * Widget pointer (using Widget::fromHandle()) and then (if it isn't
- * NULL), call its Widget::preTranslateMessage().
+ * NULL), call its Widget#preTranslateMessage.
  */
 bool Thread::preTranslateMessage(Message& msg)
 {

@@ -41,6 +41,10 @@
 
 namespace Vaca {
 
+/**
+ * This exception is thrown when HttpRequest generates an error due
+ * connectivity problems.
+ */
 class VACA_DLL HttpRequestException : public Exception
 {
 public:
@@ -50,7 +54,7 @@ public:
 };
 
 /**
- * Makes a HTTP request to invoke an object's method in a specified URL.
+ * Sends a HTTP request to the specified URL to get its content.
  */
 class VACA_DLL HttpRequest
 {

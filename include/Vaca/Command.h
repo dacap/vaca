@@ -66,8 +66,8 @@ public:
 
 /**
  * Specialization of Command class to handle the
- * @link Command#execute@endlink and @link Command#isEnabled@endlink
- * as @link Signal0 signals@endlink.
+ * Command#execute and Command#isEnabled
+ * as @link page_mess_signals signals@endlink.
  */
 class SignalCommand : public Command
 {

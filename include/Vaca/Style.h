@@ -37,19 +37,25 @@
 namespace Vaca {
 
 /**
- * A Widget style: it is a pair of values: regular style (a set of
- * Win32's @c WS_ values) and extended style (a set of Win32's @c WS_EX_
- * values).
+ * A widget style.
+ *
+ * Each widget has a style that can be configured to show little
+ * variations of its look and feel.
  *
  * You can add and substract styles with the + and - operators.
  *
  * @code
  * {
- *    Frame frame(..., FrameStyle + ClientEdgeStyle - MinimizableFrameStyle)
- *    Edit edit("", EditStyle + ClientEdgeStyle)
- *    ...
+ *   Frame frame(..., FrameStyle + ClientEdgeStyle - MinimizableFrameStyle)
+ *   Edit edit("", EditStyle + ClientEdgeStyle)
+ *   ...
  * }
  * @endcode
+ * 
+ * @win32 
+ *   It is a wrapper for regular and extended window styles
+ *   (@msdn{WS_} and @msdn{WS_EX_}).
+ * @endwin32
  */
 class VACA_DLL Style
 {

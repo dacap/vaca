@@ -391,7 +391,7 @@ void DockBar::onMouseDown(MouseEvent& ev)
   // we are dragging?
   if (m_drag != NULL) {
     // cancel drag
-    if (ev.getButton() == MouseButtons::Right) {
+    if (ev.getButton() == MouseButton::Right) {
       if (!m_fullDrag) {
 	ScreenGraphics g;
 	cleanTracker(g);
@@ -405,7 +405,7 @@ void DockBar::onMouseDown(MouseEvent& ev)
   }
 
   // start dragging?
-  if (ev.getButton() == MouseButtons::Left) {
+  if (ev.getButton() == MouseButton::Left) {
     captureMouse();
 
     if (hasCapture()) {

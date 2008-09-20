@@ -41,6 +41,9 @@
 
 namespace Vaca {
 
+/**
+ * Class that counts references and can be wrapped by a SmartPtr.
+ */
 class VACA_DLL Referenceable : private NonCopyable
 {
   unsigned m_refCount;

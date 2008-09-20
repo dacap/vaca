@@ -58,7 +58,7 @@ namespace Vaca {
 				 Style(WS_POPUP | DS_CONTROL, 0))
 
 /**
- * Win32 class used by the Dialog class.
+ * Represents the Win32 class used by Dialog.
  */
 class DialogClass : public WidgetClass
 {
@@ -73,11 +73,11 @@ public:
  *
  * There are some standard considerations for a dialog:
  *
- * - When the user press ESC, the onClose() event is generated.
- * - If the dialog has a "Cancel" button is a good idea to bind its
- *   Button::Action to defaultCancelAction().
- * - If the dialog has an "OK" button is a good idea to bind its
- *   Button::Action to defaultOkAction().
+ * @li When the user press ESC, the #onClose event is generated.
+ * @li If the dialog has a "Cancel" button is a good idea to bind its
+ *     Button#Action to #defaultCancelAction.
+ * @li If the dialog has an "OK" button is a good idea to bind its
+ *     Button#Action to #defaultOkAction.
  *
  * Example:
  * @code
@@ -117,7 +117,7 @@ public:
 
   virtual bool doModal();
 
-  virtual bool preTranslateMessage(MSG& msg);
+  virtual bool preTranslateMessage(Message& msg);
 
   void defaultOkAction();
   void defaultCancelAction();

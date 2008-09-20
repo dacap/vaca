@@ -71,6 +71,11 @@ void GraphicsPath::clear()
   m_nodes.clear();
 }
 
+bool GraphicsPath::empty() const
+{
+  return m_nodes.empty();
+}
+
 unsigned GraphicsPath::size() const
 {
   return m_nodes.size();
@@ -93,7 +98,7 @@ GraphicsPath& GraphicsPath::offset(const Point& point)
 GraphicsPath& GraphicsPath::moveTo(const Point& pt)
 {
   if (!m_nodes.empty() && m_nodes.back().getType() == GraphicsPath::MoveTo)
-    m_nodes.back().point = pt;
+    m_nodes.back().m_point = pt;
   else
     addNode(GraphicsPath::MoveTo, pt);
   return *this;
@@ -119,8 +124,8 @@ GraphicsPath& GraphicsPath::lineTo(int x, int y)
 
 GraphicsPath& GraphicsPath::curveTo(const Point& pt1, const Point& pt2, const Point& pt3)
 {
-  addNode(GraphicsPath::BezierTo, pt1);
-  addNode(GraphicsPath::BezierTo, pt2);
+  addNode(GraphicsPath::BezierControl1, pt1);
+  addNode(GraphicsPath::BezierControl2, pt2);
   addNode(GraphicsPath::BezierTo, pt3);
   return *this;
 }
@@ -134,7 +139,7 @@ GraphicsPath& GraphicsPath::curveTo(int x1, int y1, int x2, int y2, int x3, int 
 GraphicsPath& GraphicsPath::closeFigure()
 {
   if (!m_nodes.empty())
-    m_nodes.back().type |= GraphicsPath::CloseFigure;
+    m_nodes.back().m_flags |= GraphicsPath::CloseFigure;
   return *this;
 }
 

@@ -43,7 +43,7 @@ namespace Vaca {
 				 ContainerStyle)
 
 /**
- * Win32 class used by the Panel class.
+ * Represents the Win32 class used by PanelClass.
  */
 class PanelClass : public WidgetClass
 {

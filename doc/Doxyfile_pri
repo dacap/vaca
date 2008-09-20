@@ -1,0 +1,8 @@
+# Doxyfile 1.5.6
+
+@INCLUDE = Doxyfile
+
+EXTRACT_PRIVATE        = YES
+INTERNAL_DOCS          = YES
+GENERATE_HTMLHELP      = YES
+CHM_FILE               = ..\Vaca-private.chm

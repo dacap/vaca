@@ -1,3 +1,5 @@
+/* ====================================================================== */
+/* doxygen */
 BODY,H1,H2,H3,H4,H5,H6,P,CENTER,TD,TH,UL,DL,DIV {
 	font-family: Geneva, Arial, Helvetica, sans-serif;
 }
@@ -10,9 +12,6 @@ H1 {
 }
 H2 {
 	font-size: 120%;
-	color: #fff;
-	background-color: #0ac;
-	padding:2px 6px;
 }
 H3 {
 	font-size: 100%;
@@ -105,10 +104,10 @@ A.codeRef:visited {
 	font-weight: normal; 
 	color: #0000FF
 }
-/* A:hover {  */
-/* 	text-decoration: none; 	 */
-/* 	background-color: #f2f2ff  */
-/* } */
+A:hover { 
+	text-decoration: none; 	
+	background-color: #f2f2ff 
+}
 DL.el { 
 	margin-left: -1cm 
 }
@@ -474,24 +473,45 @@ HR {
 	vertical-align: -30%; 
 }
 
-DIV.footer {
-    font-size: 75%;
-    width: 100%;
-    border-top: 1px solid #ddf;
-    text-align: center;
-    margin-top: 8px;
-    padding-top: 8px;
+/* ====================================================================== */
+/* Vaca */
+
+body,h1,h2,h3,h4,h5,h6,p,center,td,th,ul,dl,div {
+	/* font-family: Geneva, Arial, Helvetica, sans-serif; */
+	/* font-size: 10pt; */
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 10pt;
 }
 
-/* dacap */
-
-BODY,H1,H2,H3,H4,H5,H6,P,CENTER,TD,TH,UL,DL,DIV {
-	font-family: Verdana, Arial, Helvetica;
+table {
+	border-collapse: collapse;
 }
 
-h2 a.anchor { color:#fff; }
+h1 {
+	text-align: center;
+	font-size: 150%;
+}
 
-table { border-collapse: collapse; }
+h1 a.anchor {
+	color:#000;
+}
+
+h2 {
+	font-size: 110%;
+	color: #fff;
+	background-color: #000;
+	padding:2px 6px;
+}
+
+a:hover {
+	color: #07f;
+	text-decoration: underline;
+	background-color: transparent; 
+}
+
+h2 a.anchor {
+	color:#fff;
+}
 
 .memItemLeft {
 	border: 1px solid #aaa;
@@ -546,7 +566,7 @@ table.memname tr td code {
 	color: #999;
 }
 
-PRE.fragment {
+pre.fragment {
 	border: 1px solid #fa0;
 	background-color: #ffe;
 	margin-top: 4px;
@@ -563,5 +583,40 @@ PRE.fragment {
 	background-color: #fee;
 	color: #f00;
 	border: 1px solid #f00;
+	padding: 4px;
+}
+
+div.footer {
+	font-size: 75%;
+	width: 100%;
+	border-top: 1px solid #ddf;
+	text-align: center;
+	margin-top: 8px;
+	padding-top: 8px;
+}
+
+a.w32 {
+	color: #777;
+	text-decoration: none;
+}
+
+table.overview  {
+	margin-left: 16px;
+	border: 1px solid #ddd;
+}
+
+table.overview tr.title {
+	background-color: #ddd;
+	font-weight: bold;
+}
+
+table.overview tr.title a {
+	color: #000;
+}
+
+.win32 {
+	background-color: #ddf;
+	color: #224;
+	border: 1px solid #aab;
 	padding: 4px;
 }

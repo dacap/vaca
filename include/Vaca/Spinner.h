@@ -45,7 +45,7 @@ namespace Vaca {
 				 ContainerStyle)
 
 /**
- * Win32 class used by the Spinner class.
+ * Represents the Win32 class used by Spinner.
  */
 class SpinnerClass : public WidgetClass
 {

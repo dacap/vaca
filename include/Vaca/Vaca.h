@@ -84,7 +84,6 @@
 #include "Vaca/Icon.h"
 #include "Vaca/Image.h"
 #include "Vaca/ImageList.h"
-#include "Vaca/Item.h"
 #include "Vaca/KeyEvent.h"
 #include "Vaca/Keys.h"
 #include "Vaca/Label.h"

@@ -325,15 +325,24 @@ void Graphics::tracePath(const GraphicsPath& path, const Point& pt)
 	       pt.x + it->getPoint().x,
 	       pt.y + it->getPoint().y);
   	break;
-      case GraphicsPath::BezierTo: {
+      case GraphicsPath::BezierControl1: {
   	POINT pts[3];
   	pts[0].x = pt.x + it->getPoint().x;
-  	pts[0].y = pt.y + it->getPoint().y; ++it;
-  	pts[1].x = pt.x + it->getPoint().x;
-  	pts[1].y = pt.y + it->getPoint().y; ++it;
-  	pts[2].x = pt.x + it->getPoint().x;
+  	pts[0].y = pt.y + it->getPoint().y;
+
+	++it;
+	assert(it->getType() == GraphicsPath::BezierControl2);
+
+	pts[1].x = pt.x + it->getPoint().x;
+  	pts[1].y = pt.y + it->getPoint().y;
+
+	++it;
+	assert(it->getType() == GraphicsPath::BezierTo);
+
+	pts[2].x = pt.x + it->getPoint().x;
   	pts[2].y = pt.y + it->getPoint().y;
-  	PolyBezierTo(m_handle, pts, 3);
+
+	PolyBezierTo(m_handle, pts, 3);
   	break;
       }
     }

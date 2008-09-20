@@ -35,6 +35,7 @@
 #include <cstdlib>
 
 #include <algorithm>
+#include <memory>
 
 using namespace Vaca;
 
@@ -118,8 +119,77 @@ String::~String()
 {
 }
 
+String& String::trim()
+{
+  while (!empty() && std::isspace(at(0)))
+    erase(begin());
+  while (!empty() && std::isspace(at(size()-1)))
+    erase(end()-1);
+  return *this;
+}
+
+String String::trim(const String& str)
+{
+  String ret(str);
+  return ret.trim();
+}
+
+String String::format(const char* fmt, ...)
+{
+  std::auto_ptr<char> buf;
+  int size = 512;
+
+  while (true) {
+    buf = std::auto_ptr<char>(new char[size <<= 1]);
+
+    va_list ap;
+    va_start(ap, fmt);
+    int written = vsnprintf(buf.get(), size, fmt, ap);
+    va_end(ap);
+
+    if (written == size) {
+      if (buf.get()[size] == 0)
+	break;
+    }
+    else if (written >= 0 && written < size) {
+      assert(buf.get()[written] == 0);
+      break;
+    }
+    // else continue growing the buffer...
+  }
+
+  return String(buf.get());
+}
+
+String String::format(const wchar_t* fmt, ...)
+{
+  std::auto_ptr<wchar_t> buf;
+  int size = 512;
+
+  while (true) {
+    buf = std::auto_ptr<wchar_t>(new wchar_t[size <<= 1]);
+
+    va_list ap;
+    va_start(ap, fmt);
+    int written = vsnwprintf(buf.get(), size, fmt, ap);
+    va_end(ap);
+
+    if (written == size) {
+      if (buf.get()[size] == 0)
+	break;
+    }
+    else if (written >= 0 && written < size) {
+      assert(buf.get()[written] == 0);
+      break;
+    }
+    // else continue growing the buffer...
+  }
+
+  return String(buf.get());
+}
+
 /**
- * TODO docme
+ * @todo docme
  */
 std::string String::to_string() const
 {
@@ -206,11 +276,11 @@ int String::parseInt(int base) const
 
 String String::fromDouble(double value, int precision)
 {
-  TCHAR buf[256];		// TODO buf overflow
-
-  _stprintf(buf, _T("%.*g"), precision, value);
-
-  return String(buf);
+#ifdef _UNICODE
+  return String::format(_T("%.*g"), precision, value);
+#else
+  return String::format("%.*g", precision, value);
+#endif
 }
 
 double String::parseDouble() const

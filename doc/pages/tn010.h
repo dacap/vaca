@@ -4,21 +4,25 @@ namespace Vaca {
 
 @page page_tn_010 TN010: Auto-deleted objects
 
-Vaca deletes (literally with C++ @c delete operator) some objects
-automatically that you create (with C++ @c new operator).
+Vaca deletes some objects automatically that you create. This means
+that there are cases where you create the object using the @c new
+operator, but you never deletes it because Vaca makes that job for you.
 
 Here is a list of some classes/methods with this behavior:
 
-- Vaca::Widget::setLayout
-- Vaca::Widget::setConstraint
-- Vaca::Frame::setMenuBar
-- Vaca::Menu::add(const String &, Keys::Type),
-  * Vaca::Menu::addSeparator(),
-  * Vaca::Menu::insert(const String &, int),
-  * Vaca::Menu::insertSeparator() deletes MenuItem's automatically.
-- Vaca::Frame::addCommand
-- Vaca::Frame::addDockArea
-- Vaca::MdiClient::setMdiClient
+- Widget#setLayout
+- Widget#setConstraint
+
+@todo the next of the list is deprecated, need an update
+
+- Frame#setMenuBar
+- Menu#add(const String&, Keys#Type),
+  * Menu#addSeparator(),
+  * Menu#insert(const String&, int),
+  * Menu#insertSeparator() deletes MenuItem's automatically.
+- Frame#addCommand
+- Frame#addDockArea
+- MdiClient#setMdiClient
 
 */
 

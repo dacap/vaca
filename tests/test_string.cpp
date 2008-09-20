@@ -4,6 +4,11 @@
 
 using namespace Vaca;
 
+void test_basic()
+{
+  assert(String() == _T(""));
+}
+  
 void test_equal()
 {
   assert(String("Hello") == _T("Hello"));
@@ -103,11 +108,67 @@ void test_filename()
   assert(path == _T("C:\\foo\\src\\headers\\main.h"));
 }
 
+void test_trim()
+{
+  assert(String().trim() == _T(""));
+  assert(String("No trim").trim() == _T("No trim"));
+  assert(String("Front    ").trim() == _T("Front"));
+  assert(String("   End").trim() == _T("End"));
+  assert(String("       ").trim() == _T(""));
+  assert(String(" \n \r  \t \r \n \r\n \t   ").trim() == _T(""));
+  assert(String(" \n \r Word \t   ").trim() == _T("Word"));
+  assert(String("\tNo \n \r \ttrim \n ").trim() == _T("No \n \r \ttrim"));
+}
+
+void test_format()
+{
+  assert(String::format(  ("")) == _T(""));
+  assert(String::format(_T("")) == _T(""));
+
+  assert(String::format(  ("Hello")) == _T("Hello"));
+  assert(String::format(_T("Hello")) == _T("Hello"));
+
+  assert(String::format(  ("%d"), 2) == _T("2"));
+  assert(String::format(_T("%d"), 2) == _T("2"));
+
+  assert(String::format(  ("%.02f"), 20.3248) == _T("20.32"));
+  assert(String::format(_T("%.02f"), 20.3248) == _T("20.32"));
+
+  assert(String::format(  ("%5d"), 202) == _T("  202"));
+  assert(String::format(_T("%5d"), 202) == _T("  202"));
+
+  assert(String::format(  ("%05d"), 202) == _T("00202"));
+  assert(String::format(_T("%05d"), 202) == _T("00202"));
+}
+
+void test_format_overflow()
+{
+  for (int n=1024; n<1026; ++n) {
+    char* buf(new char[n]);
+
+    for (int d=10; d<1000; d*=10) {
+      for (int c=0; c<n-3; ++c)
+	buf[c] = 'x';
+      buf[n-3] = '%';
+      buf[n-2] = 'd';
+      buf[n-1] = 0;
+
+      assert(String::format(buf, d) == std::string(n-3, 'x') + String::fromInt(d));
+    }
+
+    delete buf;
+  }
+}
+
 int main()
 {
+  test_basic();
   test_equal();
   test_from();
   test_parse();
   test_filename();
+  test_trim();
+  test_format();
+  test_format_overflow();
   return 0;
 }

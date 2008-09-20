@@ -38,7 +38,12 @@
 namespace Vaca {
 
 /**
- * Base class for every component in Vaca.
+ * A component is a visual object, such as widgets or menus.
+ *
+ * Components are non-copyable but are referenceable (e.g. you can
+ * use them inside a SmartPtr).
+ *
+ * @see NonCopyable, Referenceable, SmartPtr
  */
 class VACA_DLL Component : public Referenceable
 {

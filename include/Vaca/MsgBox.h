@@ -48,6 +48,9 @@
 
 namespace Vaca {
 
+/**
+ * Class to show a message box.
+ */
 class VACA_DLL MsgBox
 {
 public:

@@ -43,16 +43,18 @@ namespace Vaca {
 #endif
 
 /**
- * A character string used in Vaca namespace. It's like a
- * std::basic_string<Character> with some extra functionalities. This
- * class doesn't have extra data members.
+ * A string of characters.
+ *
+ * It is a @c std::basic_string<Character> with some extra
+ * methods, but this class doesn't have extra data members.
  */
 class VACA_DLL String : public VACA_STRING_BASE
 {
 public:
 
-  //////////////////////////////////////////////////////////////////////
-  // Ctors & Dtor
+  // ============================================================
+  // CTOR & DTOR
+  // ============================================================
 
   String();
   explicit String(int length);
@@ -63,10 +65,19 @@ public:
   String(const wchar_t* str);
   virtual ~String();
 
-  // String& format(LPCTSTR fmt, ...);
+  // ============================================================
+  // UTILITARY
+  // ============================================================
 
-  //////////////////////////////////////////////////////////////////////
-  // Conversion
+  String& trim();
+  static String trim(const String& str);
+
+  static String format(const char* fmt, ...);
+  static String format(const wchar_t* fmt, ...);
+
+  // ============================================================
+  // CONVERSION
+  // ============================================================
 
   // Method to convert the string to the standard
   std::string to_string() const;
@@ -83,8 +94,9 @@ public:
   static String fromDouble(double value, int precision);
   double parseDouble() const;
 
-  //////////////////////////////////////////////////////////////////////
-  // File names, paths and URLs
+  // ============================================================
+  // FILE NAMES, PATHS AND URLS
+  // ============================================================
   
   String getFilePath() const;
   String getFileName() const;

@@ -1,0 +1,6 @@
+# Doxyfile 1.5.6
+
+@INCLUDE = Doxyfile
+
+GENERATE_HTMLHELP      = YES
+CHM_FILE               = ..\Vaca.chm

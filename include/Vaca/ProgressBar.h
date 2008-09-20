@@ -41,6 +41,9 @@ namespace Vaca {
 #define SmoothProgressBarStyle		(Style(PBS_SMOOTH, 0))
 #define VerticalProgressBarStyle	(Style(PBS_VERTICAL, 0))
 
+/**
+ * Shows progress for a task that is running in background.
+ */
 class VACA_DLL ProgressBar : public Widget
 {
 public:

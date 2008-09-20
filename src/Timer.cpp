@@ -66,6 +66,11 @@ Timer::~Timer()
   stop();
 }
 
+/**
+ * Returns the period of time which is waited to generate tick events.
+ *
+ * @see #onTick
+ */
 int Timer::getInterval()
 {
   return m_interval;
@@ -73,7 +78,6 @@ int Timer::getInterval()
 
 /**
  * Sets the period of time to wait to reach each tick.
- * 
  */
 void Timer::setInterval(int interval)
 {
@@ -89,7 +93,6 @@ void Timer::setInterval(int interval)
 
 /**
  * Returns true if the timer is running (generating ticks).
- * 
  */
 bool Timer::isRunning()
 {
@@ -97,8 +100,9 @@ bool Timer::isRunning()
 }
 
 /**
- * Starts the ticks generation. You can use this method even when
- * timer is running (to restart it).
+ * Starts the ticks generation.
+ *
+ * You can use this method even when timer is running (to restart it).
  */
 void Timer::start()
 {
@@ -138,25 +142,25 @@ void Timer::stop()
 }
 
 /**
- * Polls all timers for the current thread. Fires all actions for each
- * Timer that belong to the current thread.  It's used from
- * Thread::getMessage when process the WM_NULL message, but it's safe
- * to call this routine from anywhere (for example, in a do-while
- * block).
- * 
+ * Polls all timers for the current thread.
+ *
+ * Fires all events for each Timer that belong to the current thread.
+ * It's used from Thread#getMessage when process the WM_NULL message,
+ * but it's safe to call this routine from anywhere (for example, in a
+ * do-while block).
  */
 void Timer::pollTimers()
 {
-  Timer::fire_actions_for_thread();
+  Timer::fire_timers_for_thread();
 }
 
 /**
  * When the timer is running, this event is generated for each tick.
  */
-void Timer::onAction()
+void Timer::onTick()
 {
   // fire the signal
-  Action();
+  Tick();
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -235,7 +239,7 @@ void Timer::run_timer_thread()
 	delay = static_cast<unsigned int>(timer->m_timeCounter);
     }
       
-    // wait wake-up condition or the "delay" to process the next timer-action
+    // wait wake-up condition or the "delay" to process the next timer-event
     if (delay == inf)
       wakeup_condition.wait(hold);
     else
@@ -295,7 +299,7 @@ void Timer::remove_timer(Timer* t)
 /**
  * @internal
  */
-void Timer::fire_actions_for_thread()
+void Timer::fire_timers_for_thread()
 {
   ThreadId currentThreadId = ::GetCurrentThreadId();
   std::vector<Timer*> timers_for_thread;
@@ -327,8 +331,8 @@ void Timer::fire_actions_for_thread()
     while (timer->m_tickCounter > 0) {
       timer->m_tickCounter--;
 
-      // fire action
-      timer->onAction();
+      // fire event
+      timer->onTick();
 
       // warning! if this is taking to long, we have to force a break
       // of the loop discarding the rest of ticks (m_tickCounter)

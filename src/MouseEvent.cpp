@@ -45,7 +45,7 @@ using namespace Vaca;
  * @param delta The wheel delta (Z axis) counted in notches. @todo positive is up or down?
  */
 MouseEvent::MouseEvent(Widget* source, Point point, int clicks,
-		       int flags, MouseButtons trigger, int delta)
+		       int flags, MouseButton trigger, int delta)
   : Event(source)
   , m_point(point)
   , m_clicks(clicks)
@@ -108,7 +108,7 @@ int MouseEvent::getClicks() const
  * Returns the button that trigger the event (if the event is
  * Widget#onMouseUp or Widget#onMouseDown).
  */
-MouseButtons MouseEvent::getButton() const
+MouseButton MouseEvent::getButton() const
 {
   return m_trigger;
 }

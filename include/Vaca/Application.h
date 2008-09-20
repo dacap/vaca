@@ -52,7 +52,7 @@ class VACA_DLL Application : public Thread
 private:
 
   /**
-   * The Win32's @c HINSTANCE.
+   * The @msdn{HINSTANCE}.
    *
    * @internal
    */

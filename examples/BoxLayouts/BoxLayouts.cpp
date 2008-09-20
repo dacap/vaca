@@ -116,12 +116,8 @@ protected:
     bool isHomogeneous = m_homogeneous.isSelected();
     
     // setup the new layout manager, and hold the old layout
-    Layout* oldLayout =
-      m_top.setLayout(new BoxLayout(newOrientation,
-				    isHomogeneous));
-
-    // delete the old layout manager
-    delete oldLayout;
+    m_top.setLayout(new BoxLayout(newOrientation,
+				  isHomogeneous));
 
     // relayout the m_top panel
     m_top.layout();
@@ -135,11 +131,11 @@ protected:
 
   void onSetupConstraints(Event& ev)
   {
-    // when we set a constraint, we must to delete the old returned
-    // constraint...
-    delete m_label.setConstraint (new BoxConstraint(m_expandLabel .isSelected()));
-    delete m_edit.setConstraint  (new BoxConstraint(m_expandEdit  .isSelected()));
-    delete m_button.setConstraint(new BoxConstraint(m_expandButton.isSelected()));
+    // The old constraints are automatically deleted.
+    // You don't need to (and can't) do "delete widget->getConstraint()",
+    m_label.setConstraint (new BoxConstraint(m_expandLabel .isSelected()));
+    m_edit.setConstraint  (new BoxConstraint(m_expandEdit  .isSelected()));
+    m_button.setConstraint(new BoxConstraint(m_expandButton.isSelected()));
 
     // relayout the m_top panel
     m_top.layout();

@@ -36,6 +36,12 @@
 
 namespace Vaca {
 
+/**
+ * Event that can be canceled.
+ *
+ * For example, a CloseEvent can be canceled if you don't want to
+ * close the Frame (or the user cancel the event answering a MsgBox).
+ */
 class VACA_DLL CancelableEvent : public Event
 {
   bool m_canceled;		// the event was canceled

@@ -33,26 +33,74 @@
 
 using namespace Vaca;
 
+/**
+ * Creates a new mutex.
+ *
+ * @win32
+ *   It uses @msdn{InitializeCriticalSection}.
+ * @endwin32
+ */
 Mutex::Mutex()
 {
   InitializeCriticalSection(&m_cs);
 }
 
+/**
+ * Destroys the mutex.
+ * 
+ * @win32
+ *   It uses @msdn{DeleteCriticalSection}.
+ * @endwin32
+ */
 Mutex::~Mutex()
 {
   DeleteCriticalSection(&m_cs);
 }
 
+/**
+ * Locks the mutex to enter in a critical section.
+ *
+ * Locks the mutex if it is free (not locked by another thread) or
+ * waits the mutex to be unlocked.
+ *
+ * @see unlock, ScopedLock, Thread
+ * 
+ * @win32
+ *   It uses @msdn{EnterCriticalSection}.
+ * @endwin32
+ */
 void Mutex::lock()
 {
   EnterCriticalSection(&m_cs);
 }
 
+/**
+ * Tries to lock the mutex and returns true if it was locked.
+ *
+ * @see lock
+ *
+ * @win32
+ *   It uses @msdn{TryEnterCriticalSection}.
+ * @endwin32
+ */
 bool Mutex::tryLock()
 {
   return TryEnterCriticalSection(&m_cs);
 }
 
+/**
+ * Unlocks the mutex so another thread can lock it.
+ *
+ * You have to unlock a mutex to give access to another thread to
+ * enter in the critical section and use the shared resources that
+ * this mutex is guarding.
+ *
+ * @see lock, ScopedLock, Thread
+ * 
+ * @win32
+ *   It uses @msdn{LeaveCriticalSection}.
+ * @endwin32
+ */
 void Mutex::unlock()
 {
   LeaveCriticalSection(&m_cs);

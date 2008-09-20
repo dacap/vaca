@@ -33,90 +33,135 @@
 
 using namespace Vaca;
 
-//////////////////////////////////////////////////////////////////////
-// Preview
+// commands of the application
+enum {
+  // commands for popup-menu in the background
+  ID_NEW = 1,
+  ID_PASTE,
+  // commands for popup-menu in a path
+  ID_CUT,
+  ID_COPY,
+  ID_REMOVE,
+  ID_FRONT,
+  ID_BACK,
+  ID_PROPERTIES,
+  // commands for popup-menu in path movement
+  ID_MOVE_HERE,
+  ID_COPY_HERE,
+};
 
-class Preview : public Panel
+//////////////////////////////////////////////////////////////////////
+// A figure
+
+class Figure
 {
-  Pen m_pen;
-  Brush m_brush;
-  GraphicsPath m_path;
-  Region m_region;
-  bool m_hot;
+public:
+  GraphicsPath path;
+  Pen pen;
+  Brush brush;
+
+  Figure() { }
+  Figure(const GraphicsPath& path,
+	 const Pen& pen,
+	 const Brush& brush)
+    : path(path), pen(pen), brush(brush) { }
+};
+
+//////////////////////////////////////////////////////////////////////
+// A figures' editor
+
+class FigsEditor : public Panel
+{
+  #define NULLFIGURE	m_figs.end()
+  #define NULLNODE	m_newPath.end()
+
+  typedef std::list<Figure> Figs;
+
+  Figs m_figs;		            // list of figures
+  Figs::iterator m_hotFigure;       // the figure that has the mouse above
+  GraphicsPath::iterator m_hotNode; // the path's node that has the mouse above
+  GraphicsPath::iterator m_relNode; // related bezier control node to 'm_hotNode' node
+  GraphicsPath m_newPath;	    // the temporary path that is being modified
+  Figure m_clipboard;		    // the clipboard to save figures
+  bool m_moved;			    // true if the mouse moved when after it is captured
   Point m_oldPoint;
   
 public:
 
-  Preview(Widget* parent)
+  FigsEditor(Widget* parent)
     : Panel(parent, PanelStyle + ClientEdgeStyle)
-    , m_pen(Color(100, 200, 100), 3)
-    , m_brush(Color(200, 210, 200))
-    , m_hot(false)
   {
     setBgColor(Color::White);
     setDoubleBuffered(true);
 
-    m_path
-      .moveTo(64, 64)
-      .lineTo(512, 256)
-      .lineTo(256, 256)
-      .closeFigure();
+    // create a figure by default
+    createNewFigure(Point(80, 80));
+
+    m_hotFigure = NULLFIGURE;
+    m_hotNode = NULLNODE;
   }
 
-  // Pen getPen() const
-  // {
-  //   return m_pen;
-  // }
-
-  // void setPen(Pen pen)
-  // {
-  //   m_pen = pen;
-  //   invalidate(true);
-  // }
-
-  // Brush getBrush() const
-  // {
-  //   return m_brush;
-  // }
-
-  // void setBrush(Brush brush)
-  // {
-  //   m_brush = brush;
-  //   invalidate(true);
-  // }
-
-  // void setCloseFigure(bool closeFigure)
-  // {
-  //   m_closeFigure = closeFigure;
-  //   invalidate(true);
-  // }
-
 protected:
+
+  // when the user presses a mouse button over the widget this event is generated
+  virtual void onMouseDown(MouseEvent& ev)
+  {
+    Panel::onMouseDown(ev);
+
+    // update which object (node/figure) is hot
+    updateHot(ev.getPoint());
+    m_moved = false;
+
+    if (m_hotNode != NULLNODE) {
+      m_oldPoint = ev.getPoint();
+
+      if (m_hotNode->getType() == GraphicsPath::BezierTo) {
+	m_relNode = m_hotNode-1;
+      }
+      else if ((m_hotNode+1) != m_newPath.end() &&
+	       (m_hotNode+1)->getType() == GraphicsPath::BezierControl1) {
+	m_relNode = m_hotNode+1;
+      }
+
+      captureMouse();
+    }
+    else if (m_hotFigure != NULLFIGURE) {
+      m_newPath = m_hotFigure->path;
+      m_hotNode = NULLNODE;
+      m_oldPoint = ev.getPoint();
+      captureMouse();
+    }
+    else if (ev.getButton() == MouseButton::Right) {
+      showPopupMenuForBackground(ev.getPoint());
+    }
+  }
 
   virtual void onMouseMove(MouseEvent& ev)
   {
     Panel::onMouseMove(ev);
 
+    // is the user dragging a node or figure?
     if (hasCapture()) {
-      m_path.offset(ev.getPoint() - m_oldPoint);
-      m_oldPoint = ev.getPoint();
-      invalidate(true);
-    }
-    else {
-      bool hot = m_region.contains(ev.getPoint());
-      if (m_hot != hot) {
-	m_hot = hot;
+      if (m_oldPoint != ev.getPoint())
+	m_moved = true;
+
+      // moving a node?
+      if (m_hotNode != NULLNODE) {
+	m_hotNode->getPoint() += ev.getPoint() - m_oldPoint;
+	if (m_relNode != NULLNODE)
+	  m_relNode->getPoint() += ev.getPoint() - m_oldPoint;
 	invalidate(true);
       }
-    }
-  }
-  
-  virtual void onMouseDown(MouseEvent& ev)
-  {
-    Panel::onMouseDown(ev);
-    if (m_hot) {
+      // moving a whole figure/path...
+      else {
+	m_newPath.offset(ev.getPoint() - m_oldPoint);
+	invalidate(true);
+      }
+
       m_oldPoint = ev.getPoint();
-      captureMouse();
+    }
+    else {
+      updateHot(ev.getPoint());
     }
   }
   
@@ -125,6 +170,35 @@ protected:
     Panel::onMouseUp(ev);
     if (hasCapture()) {
       releaseMouse();
+
+      // when finish the node movement
+      if (m_hotNode != NULLNODE) {
+	m_hotFigure->path = m_newPath;
+      }
+      // when finish the path movement
+      else {
+	switch (ev.getButton()) {
+	  case MouseButton::Left:
+	  case MouseButton::Middle:
+	    m_hotFigure->path = m_newPath;
+	    break;
+	  case MouseButton::Right: {
+	    if (m_moved)
+	      showPopupMenuForMovePath(ev.getPoint());
+	    else
+	      showPopupMenuForPath(ev.getPoint());
+	    break;
+	  }
+	  default:
+	    // do nothing
+	    break;
+	}
+      }
+
+      m_hotFigure = NULLFIGURE;
+      m_hotNode = NULLNODE;
+      m_relNode = NULLNODE;
+      invalidate(true);
     }
   }
 
@@ -132,15 +206,22 @@ protected:
   {
     g.setMiterLimit(10000.0f);
 
-    // hot path
-    if (m_hot)
-      g.strokePath(m_path, Pen(Color::Blue, 10), Point(0, 0));
+    // stroke and fill all figures
+    for (Figs::reverse_iterator it=m_figs.rbegin(); it!=m_figs.rend(); ++it) {
+      // stroke & fill the path of this figure
+      g.strokeAndFillPath(it->path, it->pen, it->brush, Point(0, 0));
+    }
 
-    // stroke and fill the current path in the "g" Graphics
-    g.strokeAndFillPath(m_path, m_pen, m_brush, Point(0, 0));
+    // there are a hot figure?
+    if (m_hotFigure != NULLFIGURE)
+      drawHotPath(g, hasCapture() ? m_newPath:
+				    m_hotFigure->path);
 
-    // convert the path to a region
-    m_region = m_path.toRegion();
+    // there are a hot node?
+    if (m_hotNode != NULLNODE) {
+      Point& pt = m_hotNode->getPoint();
+      g.drawRect(Pen(Color::Blue, 2), Rect(pt-Point(4,4), pt+Point(4,4)));
+    }
   }
 
   virtual void onResize(const Size &sz)
@@ -148,7 +229,177 @@ protected:
     Panel::onResize(sz);
     invalidate(true);
   }
+
+private:
+
+  void createNewFigure(const Point& putHere)
+  {
+    Color color(rand()%200, rand()%200, rand()%200);
+    Figure fig;
+    fig.pen = Pen(color, 3);
+    fig.brush = Brush(color*1.5);
+
+    // fig.path is a GraphicsPath
+    fig.path
+      .moveTo(-64, -64)
+      .lineTo(64, -64)
+      .curveTo(128, -32, 128, 32, 64, 64)
+      .lineTo(-64, 64)
+      .closeFigure()
+      .offset(putHere);
+
+    m_figs.push_front(fig);
+  }
+
+  void updateHot(const Point& hotSpot)
+  {
+    // calculate the hot figure
+    Figs::iterator hotFig = NULLFIGURE;
+    for (Figs::iterator it=m_figs.begin(); it!=m_figs.end(); ++it) {
+      if (it->path.toRegion().contains(hotSpot)) {
+	hotFig = it;
+	break;
+      }
+    }
+
+    // calculate the hot node
+    GraphicsPath::iterator hotNode = NULLNODE;
+    for (Figs::iterator it=m_figs.begin(); it!=m_figs.end(); ++it) {
+      for (GraphicsPath::iterator it2=it->path.begin(); it2!=it->path.end(); ++it2) {
+	Point& pt = it2->getPoint();
+	if (Rect(pt-Point(4,4), pt+Point(4,4)).contains(hotSpot)) {
+	  m_newPath = it->path;
+	  hotNode = m_newPath.begin() + (it2 - it->path.begin());
+	  hotFig = it;
+	  break;
+	}
+      }
+    }
+
+    if ((m_hotFigure != hotFig) ||
+	(m_hotNode != hotNode)) {
+      m_hotFigure = hotFig;
+      m_hotNode = hotNode;
+      invalidate(true);
+    }
+  }
   
+  void drawHotPath(Graphics& g, const GraphicsPath& path)
+  {
+    GraphicsPath::const_iterator it, end = path.end();
+    Pen pen(Color::Blue);
+    Pen dot(Color::Blue, 1, PenStyle::Dot);
+
+    // stroke the path with a thick blue pen
+    g.strokePath(path, dot, Point(0, 0));
+
+    // draw nodes of the path
+    for (it=path.begin(); it!=end; ++it) {
+      const Point& pt = it->getPoint();
+      g.drawRect(pen, Rect(pt-Point(4,4), pt+Point(4,4)));
+    }
+
+    // draw control lines of bezier curves
+    for (it=path.begin(); it!=end; ++it) {
+      if (it->getType() == GraphicsPath::BezierControl1) {
+	Point p1 = (it-1)->getPoint();
+	Point p2 = (it  )->getPoint();
+	Point p3 = (it+1)->getPoint();
+	Point p4 = (it+2)->getPoint();
+	g.drawLine(dot, p1, p2);
+	g.drawLine(dot, p3, p4);
+	it += 2;
+      }
+    }
+  }
+
+  void showPopupMenuForBackground(const Point& pt)
+  {
+    PopupMenu menu;
+    menu.add("&New", CommandId(ID_NEW));
+    menu.add("&Paste", CommandId(ID_PASTE))->setEnabled(!m_clipboard.path.empty());
+    if (CommandId id = menu.doModal(this, pt)) {
+      switch (id) {
+	case ID_NEW:
+	  createNewFigure(pt);
+	  invalidate(true);
+	  break;
+	case ID_PASTE:
+	  m_figs.push_front(m_clipboard);
+	  m_figs.front().path.offset(pt);
+	  invalidate(true);
+	  break;
+      }
+    }
+  }
+
+  void showPopupMenuForMovePath(const Point& pt)
+  {
+    PopupMenu menu;
+    menu.add("&Move Here", CommandId(ID_MOVE_HERE));
+    menu.add("&Copy Here", CommandId(ID_COPY_HERE));
+
+    if (CommandId id = menu.doModal(this, pt)) {
+      switch (id) {
+	case ID_MOVE_HERE:
+	  m_hotFigure->path = m_newPath;
+	  break;
+	case ID_COPY_HERE:
+	  m_figs.push_front(Figure(m_newPath,
+				   m_hotFigure->pen,
+				   m_hotFigure->brush));
+	  break;
+      }
+    }
+  }
+
+  void showPopupMenuForPath(const Point& pt)
+  {
+    PopupMenu menu;
+    menu.add("Cu&t", CommandId(ID_CUT));
+    menu.add("&Copy", CommandId(ID_COPY));
+    menu.add("&Remove", CommandId(ID_REMOVE));
+    menu.addSeparator();
+    menu.add("Send to &Front", CommandId(ID_FRONT));
+    menu.add("Send to &Back", CommandId(ID_BACK));
+    menu.addSeparator();
+    menu.add("&Properties", CommandId(ID_PROPERTIES));
+
+    if (CommandId id = menu.doModal(this, pt)) {
+      switch (id) {
+	case ID_CUT:
+	case ID_COPY: {
+	  m_clipboard = *m_hotFigure;
+
+	  Rect bounds = m_clipboard.path.toRegion().getBounds();
+	  m_clipboard.path.offset(-bounds.getOrigin() - Point(bounds.getSize()/2));
+
+	  if (id == ID_CUT)
+	    m_figs.erase(m_hotFigure);
+	  break;
+	}
+	case ID_REMOVE:
+	  m_figs.erase(m_hotFigure);
+	  break;
+	case ID_FRONT: {
+	  Figure copy = *m_hotFigure;
+	  m_figs.erase(m_hotFigure);
+	  m_figs.push_front(copy);
+	  break;
+	}
+	case ID_BACK: {
+	  Figure copy = *m_hotFigure;
+	  m_figs.erase(m_hotFigure);
+	  m_figs.push_back(copy);
+	  break;
+	}
+	case ID_PROPERTIES:
+	  // TODO
+	  break;
+      }
+    }
+  }
+
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -156,7 +407,7 @@ protected:
 
 class MainFrame : public Frame
 {
-  Preview m_preview;
+  FigsEditor m_editor;
   // CheckBox m_closeFigure;
   // GroupBox m_penPanel;
   // GroupBox m_brushPanel;
@@ -182,7 +433,7 @@ public:
 
   MainFrame()
     : Frame("Paths")
-    , m_preview(this)
+    , m_editor(this)
     // , m_closeFigure("Close Figure", this)
     // , m_penPanel("Pen", this)
     // , m_brushPanel("Brush", this)
@@ -202,7 +453,7 @@ public:
   {
     setLayout(new ClientLayout);
     // setLayout(new BoxLayout(Orientation::Vertical, false));
-    // m_preview.setConstraint(new BoxConstraint(true));
+    // m_editor.setConstraint(new BoxConstraint(true));
     // m_penPanel.setLayout(new BoxLayout(Orientation::Horizontal, true, 0));
     // m_penLeftPanel.setLayout(new BoxLayout(Orientation::Vertical, false, 0));
     // m_endCapPanel.setLayout(new BoxLayout(Orientation::Vertical, true, 0));

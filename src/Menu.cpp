@@ -38,6 +38,7 @@
 #include "Vaca/Mutex.h"
 #include "Vaca/ScopedLock.h"
 #include "Vaca/Command.h"
+#include "Vaca/Point.h"
 
 #include <stack>
 
@@ -53,7 +54,7 @@ using namespace Vaca;
 
 //////////////////////////////////////////////////////////////////////
 // MenuItem
-
+
 MenuItem::MenuItem()
 {
   m_parent = NULL;
@@ -300,7 +301,7 @@ void MenuItem::onUpdate(MenuItemEvent& ev)
 
 //////////////////////////////////////////////////////////////////////
 // MenuSeparator
-
+
 MenuSeparator::MenuSeparator()
 {
 }
@@ -316,7 +317,7 @@ bool MenuSeparator::isSeparator() const
 
 //////////////////////////////////////////////////////////////////////
 // Menu
-
+
 Menu::Menu()
 {
   m_HMENU = ::CreateMenu();
@@ -734,7 +735,7 @@ HMENU Menu::getHandle()
 
 //////////////////////////////////////////////////////////////////////
 // MenuBar
-
+
 MenuBar::MenuBar()
   : Menu()
   , m_frame(NULL)
@@ -784,8 +785,67 @@ MdiListMenu* MenuBar::getMdiListMenu()
 }
 
 //////////////////////////////////////////////////////////////////////
-// MdiListMenu
+// PopupMenu
+
 
+PopupMenu::PopupMenu()
+  : Menu(String())		// creates a Menu with an empty label
+{
+}
+
+PopupMenu::~PopupMenu()
+{
+}
+
+/**
+ * Displays the popup-menu in the screen at the specified location.
+ *
+ * @param widget The widget to be locked by the menu, can be NULL.
+ * @param pt The location where to show the menu, it's relative to the
+ *   client area of the specified @a widget, or if @a widget is NULL, it
+ *   is absolute position in the screen.
+ * @param horzAlign Where to align the menu .
+ * @param vertAlign
+ *
+ * @return The ID of the selected MenuItem, or zero if no item was selected.
+ */
+CommandId PopupMenu::doModal(Widget* widget,
+			     const Point& pt,
+			     TextAlign horzAlign,
+			     VerticalAlign vertAlign)
+{
+  assert(getHandle());
+  
+  Point absPt = pt;
+  if (widget)
+    absPt += widget->getAbsoluteClientBounds().getOrigin();
+
+  UINT flags = TPM_RETURNCMD | TPM_NONOTIFY;
+
+  switch (horzAlign) {
+    case TextAlign::Left: flags |= TPM_LEFTALIGN; break;
+    case TextAlign::Center: flags |= TPM_CENTERALIGN; break;
+    case TextAlign::Right: flags |= TPM_RIGHTALIGN; break;
+  }
+
+  switch (vertAlign) {
+    case VerticalAlign::Top: flags |= TPM_TOPALIGN; break;
+    case VerticalAlign::Middle: flags |= TPM_VCENTERALIGN; break;
+    case VerticalAlign::Bottom: flags |= TPM_BOTTOMALIGN; break;
+  }
+
+  CommandId id = TrackPopupMenuEx(getHandle(),
+				  flags,
+				  absPt.x, absPt.y,
+				  widget ? widget->getHandle(): NULL,
+				  NULL);
+
+  return id;
+}
+
+//////////////////////////////////////////////////////////////////////
+// MdiListMenu
+
 MdiListMenu::MdiListMenu(const String& text)
  : Menu(text)
 {

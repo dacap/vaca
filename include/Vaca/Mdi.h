@@ -58,7 +58,7 @@ class MdiFrame;
 #define VACA_FIRST_MDICHILD 0xff00
 
 /**
- * Win32 class used by the MdiChild class.
+ * Represents the Win32 class used by MdiChild.
  */
 class MdiChildClass : public WidgetClass
 {
@@ -115,7 +115,7 @@ public:
   // void maximize(MdiChild* window);
   // void restore(MdiChild* window);
 
-  virtual bool preTranslateMessage(MSG& msg);
+  virtual bool preTranslateMessage(Message& msg);
 
 private:
   virtual HWND createHandle(LPCTSTR className, Widget* parent, Style style);

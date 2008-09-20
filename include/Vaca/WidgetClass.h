@@ -37,9 +37,21 @@
 
 namespace Vaca {
 
+/**
+ * Represents the name of a WidgetClass.
+ *
+ * @win32 
+ *   This is used internally to wrap the name of a Win32 class
+ *   in the registration process (Register).
+ * @endwin32
+ */
 class VACA_DLL WidgetClassName
 {
 public:
+  /**
+   * Represents the no-name class, which means that you don't want
+   * to register a WidgetClass at the moment.
+   */
   static const WidgetClassName None;
 
 private:
@@ -64,12 +76,13 @@ public:
  * registered using the @c Register class.
  *
  * Vaca needs this class to register a Windows class (through the
- * Win32 RegisterClassEx function) before to construct the widget
- * because Widget::Widget calls the Win32 CreateWindowEx function. The
+ * @msdn{RegisterClassEx} function) before to construct the widget
+ * because Widget::Widget calls the @msdn{CreateWindowEx} function. The
  * only way to register the class before and automatically, is using
  * multiple-inheritance.
  *
- * Here is an example that show how you can register your own widget
+ * @win32
+ * The next example shows how you can register your own widget
  * class before to create it:
  *
  * @code
@@ -95,6 +108,7 @@ public:
  *   ...
  * };
  * @endcode
+ * @endwin32
  *
  * @see @ref page_tn_001
  */
@@ -103,8 +117,12 @@ class WidgetClass
 public:
 
   /**
-   * Returns the class name to be used in the lpszClassName field of
-   * the WNDCLASSEX structure in the @link Vaca::Register#Register Register constructor@endlink.
+   * Returns the class name.
+   *
+   * @win32
+   *   The class name is used in the lpszClassName field of
+   *   the @msdn{WNDCLASSEX} structure inside the @link Register#Register Register constructor@endlink.
+   * @endwin32
    */
   static WidgetClassName getClassName()
   { return WidgetClassName("Vaca.Widget"); }

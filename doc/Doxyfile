@@ -55,7 +55,7 @@ HIDE_IN_BODY_DOCS      = NO
 INTERNAL_DOCS          = NO
 CASE_SENSE_NAMES       = NO
 HIDE_SCOPE_NAMES       = NO
-SHOW_INCLUDE_FILES     = NO
+SHOW_INCLUDE_FILES     = YES
 INLINE_INFO            = YES
 SORT_MEMBER_DOCS       = YES
 SORT_BRIEF_DOCS        = NO
@@ -284,4 +284,13 @@ SEARCHENGINE           = NO
 # Aliases
 #---------------------------------------------------------------------------
 
-ALIASES += msdn{1}="<a href=\"http://www.google.com/search?as_q=\1+&amp;as_sitesearch=msdn.microsoft.com\">\1</a>"
+ALIASES += win32="<dl class=\"win32\"><dt><b>Win32 Specific:</b></dt><dd>"
+ALIASES += endwin32="</dd></dl>"
+ALIASES += msdn{1}="<code>\1</code><sup>(<a class=\"w32\" href=\"http://www.google.com/search?as_q=\1+&amp;as_sitesearch=microsoft.com\">W32</a>)</sup>"
+ALIASES += wikipedia{2}="<a href=\"http://en.wikipedia.org/wiki/\1\">\2</a>"
+
+ALIASES += beginOverviewTable="<table class=\"overview\">"
+ALIASES += endTable="</table>"
+ALIASES += titleRow{1}="<tr class=\"title\"><td colspan=\"2\">\1</td></tr>"
+ALIASES += itemRow{1}="<tr><td>@ref \1</td><td>@copybrief \1</td></tr>"
+ALIASES += itemRow{2}="<tr><td>@subpage \1</td><td>\2</td></tr>"

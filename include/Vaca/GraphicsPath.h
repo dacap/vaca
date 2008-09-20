@@ -42,29 +42,50 @@ namespace Vaca {
 class Pen;
 class Region;
 
+/**
+ * Set of nodes to draw polygons and shapes in Graphics.
+ */
 class VACA_DLL GraphicsPath
 {
 public:
+  // values that are acceptable for Node#m_flags
   enum {
     MoveTo = 1,
     LineTo = 2,
-    BezierTo = 4,
+    BezierControl1 = 3,		// first bezier's control point
+    BezierControl2 = 4,		// second bezier's control point
+    BezierTo = 5,		// bezier's end point
     TypeMask = 7,
-    CloseFigure = 8
+    // flags
+    CloseFigure = 8,
   };
 
+  /**
+   * A node in a GraphicsPath.
+   *
+   * A node is an action to draw the GraphicsPath, it can be a node of
+   * movement (MoveTo), a node to draw a line (LineTo), or a curve
+   * (BezierTo).
+   *
+   * The nodes of movement don't draw lines, they just change the
+   * current position which we have to start to draw. For example,
+   * a GraphicsPath that represent just one line, has really two nodes:
+   * @li a node of movement (MoveTo) to go to the line's start position, and
+   * @li a node to draw a line (LineTo) that represent the end position of the line.
+   */
   class Node
   {
     friend class GraphicsPath;
-    int type;
-    Point point;
+    int m_flags;
+    Point m_point;
   public:
     Node(int type, const Point& point)
-      : type(type), point(point) { }
-    int getType() const { return type & TypeMask; }
-    bool isCloseFigure() const { return type & CloseFigure ? true: false; }
-    Point& getPoint() { return point; }
-    const Point& getPoint() const { return point; }
+      : m_flags(type & TypeMask)
+      , m_point(point) { }
+    int getType() const { return m_flags & TypeMask; }
+    bool isCloseFigure() const { return m_flags & CloseFigure ? true: false; }
+    Point& getPoint() { return m_point; }
+    const Point& getPoint() const { return m_point; }
   };
 
 private:
@@ -84,6 +105,7 @@ public:
   const_iterator end() const;
 
   void clear();
+  bool empty() const;
   unsigned size() const;
 
   GraphicsPath& offset(int dx, int dy);

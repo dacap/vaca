@@ -2,53 +2,62 @@ namespace Vaca {
 
 /**
 
-@page page_tn_002 TN002: CreateWindow and DestroyWindow
+@page page_tn_002 TN002: CreateWindow and DestroyWindow (Win32)
+
+@li @ref page_tn_002_hwnd_creation
+@li @ref page_tn_002_hwnd_life_time
+@li @ref page_tn_002_override_create_handle
+
+
+@section page_tn_002_hwnd_creation Where are HWND created?
+
+All @msdn{HWND} are created inside
+@ref Widget#createHandle method using the @msdn{CreateWindowEx} routine.
+But @c createHandle is privated, you can't use it (although you can
+override it), the only one that calls this method is
+@ref Widget#create. Its main task
+is to setup the @ref Widget#m_handle member
+and to do the common Win32 subclassing:
+@code
+m_baseWndProc = (WNDPROC)
+  SetWindowLongPtr(m_handle,
+		   GWLP_WNDPROC,
+		   (LONG_PTR)getGlobalWndProc());
+@endcode
+See @ref Widget#subClass for more information.
 
 @image html CreateDestroyWindows.png
 
-@section tn002_hwnd_creation Where are HWNDs created?
 
-All HWNDs are created inside
-@link Vaca::Widget#createHandle Widget::createHandle@endlink
-method using the Win32 API routine @c CreateWindowEx. But this
-method is privated, you can't call it (although you can
-override it), the only one that calls this method is
-@link Vaca::Widget#create Widget::create@endlink. Its main task
-is to setup the @a m_HWND member of @link Vaca::Widget Widget@endlink
-instances and to do the classic Win32 subclassing (setting the
-GWL_WNDPROC property):
+@section page_tn_002_hwnd_life_time HWND Life Time
+
+All HWND have the same life time that its container
+Widget. For example the next code shows you when a HWND
+is created and destroyed:
 @code
-baseWndProc = (WNDPROC)
-  SetWindowLongPtr(m_HWND,
-		   GWLP_WNDPROC,
-		   (LONG_PTR) getGlobalWndProc());
-@endcode
-See @link Vaca::Widget#subClass() Widget::subClass()@endlink
-for more information.
-
-@section tn002_hwnd_life_time HWND life time
-
-All windows/HWNDs have the same life time that its container
-Widget. That is if we create a button:
-@code
-  Frame frame(...)
+  Frame frame(...);
   {
     Button myButton("OK", frame); // the HWND is created
     ...
-  }
-  // here myButton (and its HWND) doesn't exist
+  } // the Button's destructor calls DestroyWindow
+  ...
+  // at this point myButton (and its HWND) doesn't exist anymore
 @endcode
 
-@section tn002_override_create_handle You can override createHandle
+
+@section page_tn_002_override_create_handle Overriding Widget::createHandle Method
 
 This shouldn't be your case, but if you want to make something like
-@link Vaca::MdiClient#createHandle MdiClient::createHandle@endlink, it is,
-to make your customized @c CreateWindowEx call, you can override @c createHandle,
-but remember that you must to call
-@link Vaca::Widget#create create@endlink inside the constructor of
+@ref MdiClient#createHandle, in other words,
+to make your customized @msdn{CreateWindowEx} call, you can override
+@ref Widget#createHandle method.
+
+Remember that you must to call
+@ref Widget#create inside the constructor of
 your own class, and give WidgetClassName#None as @a className in
-@link Vaca::Widget#Widget Widget's constructor@endlink.
-This is a little example:
+@link Widget#Widget Widget's constructor@endlink.
+
+Here is an example that shows you how to override @c createHandle:
 @code
 class MyWidgetClass : public WidgetClass
 {
@@ -89,9 +98,10 @@ protected:
 };
 @endcode
 
-@see @ref page_tn_001,
-     @link Vaca::Widget#Widget Widget()@endlink,
-     @link Vaca::Widget#~Widget ~Widget()@endlink.
+The @ref page_examples_webcam overrides the @c createHandle method
+to use a @msdn{HWND} created from other routine that is not @msdn{CreateWindowEx}.
+
+@see @ref page_tn_001, Widget#Widget, Widget#~Widget
 
 */
 

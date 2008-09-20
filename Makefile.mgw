@@ -335,6 +335,9 @@ deps:
 clean:
 	-$(RM) -f bin/*.ilk bin/*.pdb obj/*.res obj/*.o obj/*.obj
 
+cleanobj:
+	-$(RM) -f $(LIB_OBJS)
+
 distclean: clean
 	-$(RM) -f bin/Vaca*.dll bin/*.exe lib/*.a lib/*.lib
 

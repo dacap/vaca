@@ -5,7 +5,7 @@ namespace Vaca {
 @page page_tn Technical Notes
 
 This is a list of some technical notes about how some problems where
-solved in Vaca, and some implications to you about the Vaca implementation.
+solved in Vaca, and some implications about this implementation.
 
 @li @subpage page_tn_001
 @li @subpage page_tn_002

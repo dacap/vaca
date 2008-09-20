@@ -2,67 +2,79 @@ namespace Vaca {
 
 /**
 
-@page page_tn_001 TN001: RegisterClass process
+@page page_tn_001 TN001: RegisterClass process (Win32)
 
-Vaca creates HWNDs in C++ constructors, one implication of this is
-that the RegisterClass must be called before a
-@ref Vaca::Widget "Widget" constructor.
+Vaca creates HWNDs in C++ constructors. One implication of this is
+that the @msdn{RegisterClass} must be called before the @ref Widget
+constructor.
 
-Some libraries, uses a @c create method to really create the
-widget (call the CreateWindowEx). I don't like it, mainly because
-you can't do things like:
+Other libraries use a @c Create method to really create the widget, it
+is calling @msdn{CreateWindowEx}. I don't like it, mainly because you
+have to do something like this (in the worse scenario):
+
+@code
+class MyDialog : public FooDialog {
+  Label* label;
+  Button* ok;
+public:
+  MyDialog() {
+    label = NULL;
+    ok = NULL;
+    ...
+  }
+  ~MyDialog() {
+    delete label;
+    delete ok;
+    ...
+  }
+  void Create(...) {
+    label = new FooLabel();
+    label->Create(...);
+    ok = new FooButton();
+    ok->Create(...);
+    ...
+  }
+};
+@endcode
+
+With that API you have to create two times everything: the first time using the
+constructor (@c new @c Foo), and then using the @c Create method.
+But with Vaca you create all with constructors, there aren't a @c Create
+method or things like that. Also this is better for @wikipedia{Resource_acquisition_is_initialization,exception handling}.
+
+Using Vaca you can write code like this:
 
 @code
 class MyDialog : public Dialog {
-  Label m_label;
-  Button m_ok;
+  Label label;
+  Button ok;
 public:
   MyDialog() : Dialog(...)
-             , m_label(...) {
-             , m_ok(...) {
+             , label(...) {
+             , ok(...) {
     // done
   }
 };
 @endcode
 
-Generally, the most ugly case is this one:
-
-@code
-class MyDialog : public Dialog {
-  Label *m_label;
-  Button *m_ok;
-public:
-  MyDialog() {
-    m_label = NULL;
-    m_ok = NULL;
-    ...
-  }
-  void create(...) {
-    m_label = new Label();
-    m_label->create(...);
-    m_ok = new Button();
-    m_ok->create(...);
-    ...
-  }
-};
-@endcode
-
-Vaca avoid to do that, and try to make your life "easy" (like the
-first example).
-
-Anyway, this has serious implications for the internal Vaca
+It looks great. But this has serious implications for the internal Vaca
 implementation, making the process to register a Win32 class a
-"little" tricky. This is mainly because the
-@ref Vaca::Widget::Widget() "constructor of the Vaca::Widget" class creates
-the HWND (calls CreateWindowEx), so to create a HWND in the constructor of
-a C++ class, we must register the Win32 classes with RegisterClass or
-RegisterClassEx before that.
+"little" tricky.
 
-The only way to call RegisterClass @em automatically and before the
-C++ class constructor is to inherit first from other class where its
-constructor registers the Win32 class because it is called first.
-With Vaca::Register and a customized Vaca::WidgetClass, you can
-register your own widget class before to contruct it.
+The problem is this:
+@li @ref Widget#Widget "Constructor of Widget" creates
+the @msdn{HWND} calling @msdn{CreateWindowEx},
+@li to create a @msdn{HWND} we have to register the Win32 classes
+    with @msdn{RegisterClass} or @msdn{RegisterClassEx} before,
+@li but we are in a C++ class constructor!
+
+The only way to call @msdn{RegisterClass} automatically and before
+a constructor is to inherit first from another class which calls @msdn{RegisterClass}.
+This is the reason, for example, that a Frame has multiple inheritance:
+@li from Register<FrameClass>, and
+@li from Widget.
+
+Register class calls @msdn{RegisterClass} and Widget calls @msdn{CreateWindowEx}.
 
 @see @ref page_tn_002
 

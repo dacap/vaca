@@ -56,6 +56,7 @@ public:
  * Creates a new ConditionVariable.
  * 
  * @throw CreateConditionVariableException
+ *   If the creation of the ConditionVariable fails.
  */
 ConditionVariable::ConditionVariable()
   : m_gone(0)

@@ -62,7 +62,7 @@ public:
     setDoubleBuffered(true);
     setFont(m_font);
 
-    m_carretFlicker.Action.connect(&Editor::toggleCarretVisibility, this);
+    m_carretFlicker.Tick.connect(&Editor::toggleCarretVisibility, this);
     m_carretFlicker.start();
 
     setPreferredSize(Size(32*max_length, 32));

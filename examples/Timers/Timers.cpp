@@ -47,7 +47,7 @@ public:
   {
     setBgColor(color);
     setPreferredSize(Size(64, 64));
-    m_timer.Action.connect(&TimerViewer::onTick, this);
+    m_timer.Tick.connect(&TimerViewer::onTick, this);
     m_timer.start();
   }
 

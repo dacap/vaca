@@ -59,7 +59,7 @@ public:
 };
 
 /**
- * Registers the Win32 class used by the DockArea class.
+ * Represents the Win32 class used by DockArea.
  */
 class DockAreaClass : public WidgetClass
 {

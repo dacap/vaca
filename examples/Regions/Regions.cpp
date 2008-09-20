@@ -82,7 +82,7 @@ protected:
       xorRect(g, m_oldPoint);
 
       // with right mouse button we erase 
-      m_erasing = ev.getButton() == MouseButtons::Right;
+      m_erasing = ev.getButton() == MouseButton::Right;
     }
   }
 

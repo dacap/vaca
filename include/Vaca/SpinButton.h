@@ -72,7 +72,11 @@ public:
 };
 
 /**
- * SpinButton (Up-Down Win32 control wrapper)
+ * A couple of buttons to up or down a value.
+ *
+ * @win32
+ *   This is a wrapper for the @msdn{Up-Down} control.
+ * @endwin32
  */
 class VACA_DLL SpinButton : public Widget
 {

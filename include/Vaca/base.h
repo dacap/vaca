@@ -51,6 +51,15 @@ namespace Vaca {
 #define VACA_SUB_VERSION 0
 #define VACA_WIP_VERSION 6
 
+/**
+ * Defines the name and arguments that the main routine
+ * of the program should contain.
+ *
+ * @win32
+ *   It is the signature of @msdn{WinMain}. In other
+ *   operating systems this could be @c "main(int argc, char* argv[])".
+ * @endwin32
+ */
 #define VACA_MAIN()				\
   PASCAL WinMain(HINSTANCE hInstance,		\
 		 HINSTANCE hPrevInstance,	\
@@ -67,20 +76,38 @@ namespace Vaca {
   #endif
 #endif
 
-#if 1
-  // Visual C++ has "max" and "min" as macros... so there is some
-  // problems using "std::max" and "std::min"
-  #define VACA_MIN(x,y)		((x) < (y) ? (x): (y))
-  #define VACA_MAX(x,y)		((x) < (y) ? (y): (x))
-#else
-  #define VACA_MIN(x,y)		(std::min((x), (y)))
-  #define VACA_MAX(x,y)		(std::max((x), (y)))
-#endif
-#define VACA_MID(x,y,z)		(VACA_MAX(x, VACA_MIN(y, z)))
+/**
+ * Returns the minimum of @a x and @a y.
+ */
+#define VACA_MIN(x,y)		((x) < (y) ? (x): (y))
 
 /**
- * A character (TCHAR). It has 8-bits (char) if Unicode is disabled,
- * or 16-bits (short) if you compile with Unicode support.
+ * Returns the maximum of @a x and @a y.
+ */
+#define VACA_MAX(x,y)		((x) < (y) ? (y): (x))
+
+/**
+ * Limits the posible values of @a x to the speficied range.
+ *
+ * If @a x is great than @a high, then @a high is returned,
+ * if @a x is less than @a low, then @a low is returned.
+ * In other case, @a x is in the range, and @a x is returned.
+ */
+#define VACA_CLAMP(x,low,high)	(((x) > (high)) ? (high):		\
+				 (((x) < (low)) ? (low):		\
+						  (x)))
+
+/**
+ * A character.
+ *
+ * It has 8-bits (char) if Unicode is disabled, or 16-bits (short) if
+ * you compile with Unicode support.
+ *
+ * @win32
+ *   It is a TCHAR.
+ * @endwin32
+ *
+ * @see @ref page_tn_008
  */
 typedef TCHAR Character;
 
@@ -95,6 +122,18 @@ typedef unsigned int CommandId;
  * An identifier for a Thread.
  */
 typedef unsigned int ThreadId;
+
+/**
+ * A message that comes from the operating system.
+ *
+ * You should use a Message like a black-box, which means
+ * that you can't see and ask for any property about it.
+ *
+ * @win32
+ *   This is just a @msdn{MSG}.
+ * @endwin32
+ */
+typedef MSG Message;
 
 //////////////////////////////////////////////////////////////////////
 
@@ -113,7 +152,11 @@ struct OrientationEnum
 };
 
 /**
- * Horizontal or Vertical orientation.
+ * Horizontal or vertical orientation.
+ *
+ * One of the following values:
+ * @li Orientation::Horizontal (default)
+ * @li Orientation::Vertical
  */
 typedef Enum<OrientationEnum> Orientation;
 
@@ -135,7 +178,9 @@ struct TextAlignEnum
 };
 
 /**
- * Horizontal alignment. One of the following values:
+ * Horizontal alignment.
+ *
+ * One of the following values:
  * @li TextAlign::Left (default)
  * @li TextAlign::Center
  * @li TextAlign::Right
@@ -160,7 +205,9 @@ struct VerticalAlignEnum
 };
 
 /**
- * Vertical alignment. One of the following values:
+ * Vertical alignment.
+ *
+ * One of the following values:
  * @li VerticalAlign::Top
  * @li VerticalAlign::Middle
  * @li VerticalAlign::Bottom
@@ -186,8 +233,9 @@ struct SideEnum
 };
 
 /**
- * A side. One of the following values:
- * 
+ * A side.
+ *
+ * One of the following values:
  * @li Side::Left
  * @li Side::Top
  * @li Side::Right
@@ -215,7 +263,9 @@ struct SidesEnumSet
 };
 
 /**
- * A set of sides. Zero or more of the following values:
+ * A set of sides.
+ *
+ * Zero or more of the following values:
  * @li Sides::Left
  * @li Sides::Top
  * @li Sides::Right
@@ -246,7 +296,9 @@ struct CardinalDirectionEnum
 };
 
 /**
- * A cardinal direction. One of the following values:
+ * A cardinal direction.
+ *
+ * One of the following values:
  * @li CardinalDirection::North
  * @li CardinalDirection::Northeast
  * @li CardinalDirection::East
@@ -261,16 +313,21 @@ typedef Enum<CardinalDirectionEnum> CardinalDirection;
 //////////////////////////////////////////////////////////////////////
 
 /**
- * Removes an element from the container.
+ * Removes an @a element from the specified STL @a container.
  *
- * This is just a helper function to avoid cryptic code.
+ * This routine removes the first ocurrence of @a element in @a container. 
+ * It is just a helper function to avoid cryptic STL code.
+ *
+ * @tparam ContainerType A STL container type.
+ *
+ * @param container The container to be modified.
+ * @param element The element to be removed from the container.
  */
-template<typename _ContainerType,
-	 typename _ElementType>
-void remove_from_container(_ContainerType& container,
-			   const _ElementType& element)
+template<typename ContainerType>
+void remove_from_container(ContainerType& container,
+			   typename ContainerType::const_reference element)
 {
-  typename _ContainerType::iterator
+  typename ContainerType::iterator
     it = std::find(container.begin(),
 		   container.end(),
 		   element);

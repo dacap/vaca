@@ -399,7 +399,7 @@ Size Bix::getPreferredSize(Matrix& mat)
     int max_w = 0;
     for (int x=0; x<mat.cols; ++x) {
       int w = mat.size[0][x].w;
-      max_w = std::max(max_w, w);
+      max_w = VACA_MAX(max_w, w);
     }
     sz.w = max_w*mat.cols;
   }
@@ -413,7 +413,7 @@ Size Bix::getPreferredSize(Matrix& mat)
     int max_h = 0;
     for (int y=0; y<mat.rows; ++y) {
       int h = mat.size[0][y].h;
-      max_h = std::max(max_h, h);
+      max_h = VACA_MAX(max_h, h);
     }
     sz.h = max_h*mat.rows;
   }
@@ -691,21 +691,27 @@ void Bix::fillMatrix(Matrix& mat)
  *     have the same size.
  *
  * @throw ParseException
- *   Throw when the syntax of the string @a fmt is bad-formed.
+ *   Thrown when the syntax of the string @a fmt is ill-formed.
  */
 Bix* Bix::parse(const char* fmt, ...)
 {
-#define PARSE_ASSERT(condition, error)			\
-      if (!(condition)) throw ParseException(error);
-  
+#define PARSE_ASSERT(condition, error)				\
+  if (!(condition))						\
+    throw ParseException(error, n_line, n_column, fmt-p);
+
 #define NEW_BIX(flags)							\
-      if (mainBix == NULL)						\
-	mainBix = newBix = new Bix(NULL, flags | fill);			\
-      else								\
-	newBix = bixes.top()->add(flags | fill);			\
-      bixes.push(newBix);						\
-      columns.push(new int(0));
-    
+  if (mainBix == NULL)							\
+    mainBix = newBix = new Bix(NULL, flags | fill);			\
+  else									\
+    newBix = bixes.top()->add(flags | fill);				\
+  bixes.push(newBix);							\
+  columns.push(new int(0));
+
+#define ADVANCE()				\
+  ++n_column, ++p
+
+  // ----------------------------------------
+  
   Bix* mainBix = NULL;		// first Bix created
   Bix* newBix = NULL;		// current new Bix
   std::stack<Bix*> bixes;	// current stack of bixes
@@ -713,10 +719,12 @@ Bix* Bix::parse(const char* fmt, ...)
   int fill = 0;			// want to fill next widget/bix
   bool expectClose = false;	// true is the next token must be a comma or a closing-parenthesis
   va_list ap;
+  int n_line = 1, n_column = 0;
 
   va_start(ap, fmt);
   try {
-    for (const char* p=fmt; *p; ++p) {
+    const char* p;
+    for (p=fmt; *p; ADVANCE()) {
       // is not a space character...
       if (!isspace(*p)) {
 	// expect a close?
@@ -743,11 +751,11 @@ Bix* Bix::parse(const char* fmt, ...)
 	  case 'f':
 	    if (p[1] == 'x') {
 	      fill = BixFillX;
-	      p++;
+	      ADVANCE();
 	    }
 	    else if (p[1] == 'y') {
 	      fill = BixFillY;
-	      p++;
+	      ADVANCE();
 	    }
 	    else {
 	      fill = BixFill;
@@ -758,11 +766,11 @@ Bix* Bix::parse(const char* fmt, ...)
 	  case 'e':
 	    if (p[1] == 'x') {
 	      fill = BixEvenX;
-	      p++;
+	      ADVANCE();
 	    }
 	    else if (p[1] == 'y') {
 	      fill = BixEvenY;
-	      p++;
+	      ADVANCE();
 	    }
 	    else {
 	      fill = BixEven;
@@ -784,7 +792,7 @@ Bix* Bix::parse(const char* fmt, ...)
 	    else {
 	      PARSE_ASSERT(p[1] == '[', "'[' expected after 'X' to open the row");
 	      NEW_BIX(BixRow);
-	      p++;
+	      ADVANCE();
 	    }
 	    fill = 0;
 	    break;
@@ -796,7 +804,7 @@ Bix* Bix::parse(const char* fmt, ...)
 
 	    PARSE_ASSERT(p[1] == '[', "'[' expected after 'Y' to open the column");
 	    NEW_BIX(BixCol);
-	    p++;
+	    ADVANCE();
 
 	    fill = 0;
 	    break;
@@ -828,8 +836,11 @@ Bix* Bix::parse(const char* fmt, ...)
 	    break;
 	}
       }
+      else if (*p == '\n') {
+	++n_line;
+	n_column = 0;
+      }
     }
-
     PARSE_ASSERT(bixes.empty(), "']' expected to close Bixes before end of string");
   }
   catch (...) {

@@ -44,7 +44,7 @@ class Graphics;
 class Image;
 
 /**
- * Used to destroy the HBITMAP handle from GdiObject.
+ * Used to destroy the HBITMAP handle of a Image.
  * 
  * @internal
  */
@@ -75,7 +75,9 @@ public:
  * assert(img != img2);
  * @endcode
  *
- * @warning Win32: This is a @msdn{HBITMAP} wrapper.
+ * @win32
+ *   This is a @msdn{HBITMAP} wrapper.
+ * @endwin32
  */
 class VACA_DLL Image : private SmartPtr<ImageHandle>
 {

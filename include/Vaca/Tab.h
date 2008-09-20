@@ -143,9 +143,9 @@ protected:
 
 };
 
-//////////////////////////////////////////////////////////////////////
-// TabPage
-
+/**
+ * Represents the Win32 class used by TabPage.
+ */
 class TabPageClass : public WidgetClass
 {
 public:

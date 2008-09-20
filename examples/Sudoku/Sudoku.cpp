@@ -354,7 +354,7 @@ protected:
     if ((m_hotCell != m_puzzle.end()) &&
 	(!m_hotCell->given)) {
       // pop an element from history
-      if (ev.getButton() == MouseButtons::Right) {
+      if (ev.getButton() == MouseButton::Right) {
 	if (!m_hotCell->history.empty()) {
 	  m_hotCell->digit = m_hotCell->history.back();
 	  m_hotCell->history.pop_back();
@@ -363,7 +363,7 @@ protected:
 	  m_hotCell->digit = 0;
       }
       // remove all
-      else if (ev.getButton() == MouseButtons::Middle) {
+      else if (ev.getButton() == MouseButton::Middle) {
 	m_hotCell->history.clear();
       }
       // push a digit into history

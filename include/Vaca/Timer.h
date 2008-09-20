@@ -43,7 +43,16 @@ class Application;
 struct _Timer;
 
 /**
- * A class to schedule events every @e x milliseconds.
+ * Class to schedule events every @e x milliseconds.
+ *
+ * @warning
+ *   The Tick event is generated in the same thread which was
+ *   created the Timer.
+ *
+ * @win32
+ *   It doesn't use @msdn{WM_TIMER} message. In Vaca all timers
+ *   are controlled in a separated thread for this specific purpose.
+ * @endwin32
  */
 class VACA_DLL Timer : private NonCopyable
 {
@@ -73,12 +82,12 @@ public:
   static void pollTimers();
 
   // signals
-  Signal0<void> Action;   ///< @see onAction
+  Signal0<void> Tick;   ///< @see onTick
 
 protected:
 
   // events
-  virtual void onAction();
+  virtual void onTick();
 
 private:
 
@@ -86,7 +95,7 @@ private:
   static void start_timer_thread();
   static void stop_timer_thread();
   static void remove_timer(Timer* t);
-  static void fire_actions_for_thread();
+  static void fire_timers_for_thread();
   
 };
 

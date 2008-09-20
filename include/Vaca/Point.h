@@ -39,7 +39,7 @@ namespace Vaca {
 class Size;
 
 /**
- * A 2-D point.
+ * A 2D coordinate in the screen or client area of a widget.
  */
 class VACA_DLL Point
 {

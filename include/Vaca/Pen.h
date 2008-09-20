@@ -131,18 +131,18 @@ typedef Enum<PenJoinEnum> PenJoin;
 //////////////////////////////////////////////////////////////////////
 
 /**
- * A smart pointer to a pen.
- *
- * You can use pens to draw lines, edges of rectangles, ellipses, and
- * paths (GraphicsPath).
+ * A pen can be used to draw lines, edges of rectangles, ellipses, and
+ * paths.
  *
  * This is a SmartPtr, so if you copy instances of pens they will be
  * referencing to the same place. You can't clone pens because you can't
  * modify them.
  *
- * @warning Win32: This is a HPEN wrapper.
+ * @win32
+ *   This is a @msdn{HPEN} wrapper.
+ * @endwin32
  *
- * @see Vaca::Graphics, Vaca::Graphics#drawLine, Vaca::Graphics#drawRect, Vaca::Graphics#strokePath
+ * @see Graphics, Graphics#drawLine, Graphics#drawRect, Graphics#strokePath
  */
 class VACA_DLL Pen : private SmartPtr<GdiObject<HPEN> >
 {

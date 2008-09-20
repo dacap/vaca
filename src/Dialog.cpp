@@ -105,7 +105,7 @@ bool Dialog::doModal()
 /**
  * Calls Win32's IsDialogMessage.
  */
-bool Dialog::preTranslateMessage(MSG& msg)
+bool Dialog::preTranslateMessage(Message& msg)
 {
   if (Frame::preTranslateMessage(msg))
     return true;

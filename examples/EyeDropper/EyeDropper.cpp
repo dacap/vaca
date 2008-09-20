@@ -63,6 +63,8 @@ protected:
 
   virtual void onPaint(Graphics &g)
   {
+    // remember not to call the base implementation of onPaint (Panel::onPaint)
+    
     Rect rc = getClientBounds();
     Color bg = getBgColor();
     Pen blackPen(Color::Black);
@@ -102,12 +104,18 @@ protected:
 
   virtual void onMouseDown(MouseEvent &ev)
   {
+    // remember to call the base implementation to generated the MouseDown signal
+    Panel::onMouseDown(ev);
+
     captureMouse();
     setCursor(m_cursor);
   }
 
   virtual void onMouseMove(MouseEvent &ev)
   {
+    // remember to call the base implementation to generated the MouseMove signal
+    Panel::onMouseMove(ev);
+
     if (hasCapture()) {
       ScreenGraphics g;
       setBgColor(g.getPixel(System::getCursorPos()));
@@ -117,6 +125,9 @@ protected:
 
   virtual void onMouseUp(MouseEvent &ev)
   {
+    // remember to call the base implementation to generated the MouseUp signal
+    Panel::onMouseUp(ev);
+
     if (hasCapture())
       releaseMouse();
   }

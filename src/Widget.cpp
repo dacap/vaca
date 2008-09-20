@@ -135,35 +135,17 @@ Widget::Widget(const WidgetClassName& className, Widget* parent, Style style)
 }
 
 /**
- * Destroys the widget, literally calling Win32's DestroyWindow function.
+ * Destroys the widget.
  * 
- * At this point the widget shouldn't have any children, also there is
- * an assert to valid this. So you should care about to remove all
- * dynamic-allocated and added children to this Widget explicity
- * before to reach the Widget destructor (a good place is your own
- * customized widget destructor that is called before Widget
- * destructor). E.g.:
+ * @warning
+ *   If the widget contains children, they will be automatically
+ *   deleted.
  *
- * @code
- * class MyWidget : public Panel
- * {
- *   Widget* child;
- * public:
- *   MyWidget(Widget* parent)
- *     : Panel(parent)
- *   {
- *     child = new Button("Test", this);
- *   }
- *   virtual ~MyWidget()
- *   {
- *     // delete/remove the widget from the parent before to
- *     // reach the Widget dtor...
- *     delete child;
- *   }
- * }
- * @endcode
+ * @win32
+ *   It calls @msdn{DestroyWindow} function.
+ * @endwin32
  *
- * @see @ref page_tn_002, #setDestroyHWNDProc
+ * @see @ref page_tn_002, setDestroyHWNDProc
  */
 Widget::~Widget()
 {
@@ -227,8 +209,12 @@ Widget::~Widget()
 // ============================================================
 
 /**
- * Returns the parent of the widget. This method doesn't use the
- * Win32's GetParent.
+ * Returns the parent of the widget.
+ *
+ * @win32
+ *   This method doesn't use the @msdn{GetParent}. Widget has a m_parent
+ *   member to hold its parent.
+ * @endwin32
  */
 Widget* Widget::getParent()
 {
@@ -269,11 +255,12 @@ Widget::Container Widget::getChildren()
 // ===============================================================
 
 /**
- * Returns the current Layout that arranges the widget's children. For
- * most widgets, generally it'll NULL, but for a Frame you should use
- * setLayout to change the Layout manager.
+ * Returns the current Layout that arranges the widget's children.
  *
- * @warning You can't delete the returned pointer (use "delete setLayout(NULL)" instead).
+ * For most widgets, the Layout will be NULL. But for widgets like
+ * Frame you should use #setLayout to change the Layout manager.
+ *
+ * @warning You shouldn't delete the returned pointer.
  *
  * @see setLayout, getConstraint, @ref page_tn_010, @ref page_tn_011
  */
@@ -285,54 +272,56 @@ Layout* Widget::getLayout()
 /**
  * Changes the current layout manager to arrange widget's children.
  *
- * The @a layout pointer'll be deleted automatically in the #~Widget()
- * destructor. If you change the layout manager, you must to delete
- * the old pointer returned.
+ * The @a layout pointer'll be deleted automatically in the #~Widget
+ * destructor. If you change the layout manager, the old layout is
+ * automatically deleted too.
  *
+ * Example: 
  * @code
  * {
- *   Layout betterLayout = new MyBetterLayout()
+ *   Layout* layout1 = new MyLayout();
+ *   Layout* layout2 = new MyBetterLayout();
  *   ...
  *   {
  *     Frame frame(...);
- *     frame.setLayout(new MyLayout(...));
- *     delete frame.setLayout(betterLayout);
+ *     frame.setLayout(layout1);
+ *     frame.setLayout(layout2); // here layout1 is deleted automatically
  *   }
  *   ...
- *   // here betterLayout doesn't exist (was automatically deleted in the Frame destructor)
+ *   // here layout2 doesn't exist (was automatically deleted in the Frame destructor)
  * }
  * @endcode
  *
- * Another example:
- *
+ * Ilegal example:
  * @code
  * {
- *   Layout myLayout = new MyLayout(...);
+ *   MyLayout myLayout(...);
  *   Frame frame(...);
- *   frame.setLayout(&myLayout);
- *   frame.setLayout(NULL); // <-- very important!!! to avoid double deletion
+ *   frame.setLayout(&myLayout); // <- ilegal! the layout will be deleted two times!
+ *   ...
  * }
  * @endcode
  *
- * @return
- *     The old Layout manager (you should delete it).
+ * @warning As general rule: You must to use dynamic allocated Layouts
+ * with this routine. In other words, you shouldn't create instances of
+ * Layout allocated in the stack.
  *
  * @see getLayout, setConstraint, @ref page_tn_010
  */
-Layout* Widget::setLayout(Layout* layout)
+void Widget::setLayout(Layout* layout)
 {
-  Layout* oldLayout = m_layout;
+  delete m_layout;
   m_layout = layout;
-  return oldLayout;
 }
 
 /**
- * Returns the widget's constraint. This constraint is used by the
- * parent widget's Layout to known how to lay out the widget. For
- * example, the AnchorLayout uses a Anchor constraint to known what
- * side of a widget is anchored.
+ * Returns the widget's constraint.
  *
- * @warning You can't delete the returned pointer.
+ * This constraint is used by the parent widget's Layout to know how
+ * to lay the widget. For example, the AnchorLayout uses a Anchor
+ * constraint to know what side of a widget is anchored.
+ *
+ * @warning You shouldn't delete the returned pointer.
  *
  * @see setConstraint, getLayout, @ref page_tn_010
  */
@@ -345,20 +334,16 @@ Constraint* Widget::getConstraint()
  * Modifies the widget's constraint.
  *
  * The @a constraint pointer'll be deleted automatically by
- * the #~Widget() destructor. If you change the constraint,
- * you must to delete the old pointer returned (it's the same behavior
- * that #setLayout()).
+ * the #~Widget destructor. If you change the constraint,
+ * the old constraint will be deleted automatically (the same behavior
+ * as #setLayout).
  *
- * @return
- *   The old constraint (you should delete it).
- * 
  * @see getConstraint, setLayout, @ref page_tn_010
  */
-Constraint* Widget::setConstraint(Constraint* constraint)
+void Widget::setConstraint(Constraint* constraint)
 {
-  Constraint* oldConstraint = m_constraint;
+  delete m_constraint;
   m_constraint = constraint;
-  return oldConstraint;
 }
 
 /**
@@ -399,8 +384,11 @@ bool Widget::isLayoutFree()
 // ===============================================================
 
 /**
- * Returns the widget's text, label, or frame's title. It uses
- * Win32's GetWindowTextLength and GetWindowText.
+ * Returns the widget's text, label, or frame's title.
+ *
+ * @win32
+ *   It uses @msdn{GetWindowTextLength} and @msdn{GetWindowText}.
+ * @endwin32
  *
  * @see setText
  */
@@ -421,8 +409,11 @@ String Widget::getText()
 }
 
 /**
- * Changes the widget's text, label, or frame's title. It uses the
- * Win32's SetWindowText.
+ * Changes the widget's text, label, or frame's title.
+ *
+ * @win32
+ *   It uses the @msdn{SetWindowText}.
+ * @endwin32
  */
 void Widget::setText(const String& str)
 {
@@ -431,8 +422,7 @@ void Widget::setText(const String& str)
 }
 
 /**
- * Returns the current font used to paint the Widget. If you don't use
- * Widget::setFont, the default font is used (Font::getDefault).
+ * Returns the current font used to paint the Widget.
  */
 Font Widget::getFont() const
 {
@@ -440,12 +430,7 @@ Font Widget::getFont() const
 }
 
 /**
- * Sets the font of the widget. The font should have the same life cycle
- * of the Widget. The font'll not be automatically deleted. If you use
- * Font::assign or Font::operator= methods for @a font, remember to
- * recall this routine with the same @a font.
- *
- * @see Font::operator=
+ * Sets the font of the widget.
  */
 void Widget::setFont(Font font)
 {
@@ -471,6 +456,13 @@ Style Widget::getStyle()
 /**
  * Replaces all the styles of the Widget with the new ones specified
  * in @a style parameter.
+ *
+ * @win32
+ *   It uses @msdn{SetWindowLong} to setup the @msdn{GWL_STYLE} and
+ *   @msdn{GWL_EXSTYLE}.
+ * @endwin32
+ *
+ * @see addStyle, removeStyle
  */
 void Widget::setStyle(Style style)
 {
@@ -486,6 +478,8 @@ void Widget::setStyle(Style style)
 
 /**
  * Adds styles to the widget.
+ * 
+ * @see setStyle
  */
 void Widget::addStyle(Style style)
 {
@@ -496,6 +490,8 @@ void Widget::addStyle(Style style)
 
 /**
  * Removes styles from the widget.
+ *
+ * @see setStyle
  */
 void Widget::removeStyle(Style style)
 {
@@ -558,8 +554,11 @@ Rect Widget::getAbsoluteBounds()
 /**
  * Gets the client bounds.
  *
- * It's like Win32's @msdn{GetClientRect}. Remember that it's the
- * area which you should use to draw the widget.
+ * It is the area which you should use to draw the widget content.
+ *
+ * @win32 
+ *   It's like @msdn{GetClientRect}.
+ * @endwin32
  *
  * @see getBounds, getAbsoluteClientBounds
  */
@@ -726,7 +725,7 @@ Size Widget::getPreferredSize()
  *     or @link Vaca::Edit Edit@endlink controls in a specified width and
  *     calculate the height it could occupy).
  *
- * @see #getPreferredSize()
+ * @see getPreferredSize
  */
 Size Widget::getPreferredSize(const Size& fitIn)
 {
@@ -771,8 +770,9 @@ bool Widget::isDoubleBuffered()
 
 /**
  * Sets if you want or not to use a double-buffering technique to
- * draw the entire widget content. With double-buffering technique
- * you can avoid flickering.
+ * draw the entire widget content.
+ *
+ * With double-buffering technique you can avoid @wikipedia{Flicker_(screen),flickering effect}.
  * 
  * @see isDoubleBuffered
  */
@@ -782,11 +782,13 @@ void Widget::setDoubleBuffered(bool doubleBuffered)
 }
 
 /**
- * Validates the entire widget. It removes all paint messages
- * from the message queue, because a validated widget is like
- * a widget that doesn't need to be repainted.
+ * Validates the entire widget.
  *
- * @see invalidate()
+ * It removes all paint messages from the message queue, because a
+ * validated widget is like a widget that doesn't need to be
+ * repainted.
+ *
+ * @see invalidate
  */
 void Widget::validate()
 {
@@ -795,8 +797,10 @@ void Widget::validate()
 }
 
 /**
- * Validates a part of the widget. This means that the specified rectangle
- * doesn't need to be repainted.
+ * Validates a part of the widget.
+ *
+ * This means that the specified rectangle doesn't need to be
+ * repainted.
  *
  * @see invalidate(bool)
  */
@@ -809,14 +813,15 @@ void Widget::validate(const Rect& rc)
 }
 
 /**
- * Invalidates the entire client area. All the widget will be repainted
- * through an onPaint() event.
+ * Invalidates the entire client area.
+ *
+ * All the widget will be repainted through an #onPaint event.
  *
  * @param eraseBg
  *     true means that the background should be erased
  *     (with a WM_ERASEBKGND message).
  *
- * @see validate(), invalidate(const Rect &, bool), update()
+ * @see validate, invalidate(const Rect&, bool), update
  */
 void Widget::invalidate(bool eraseBg)
 {
@@ -830,7 +835,7 @@ void Widget::invalidate(bool eraseBg)
  * When the next round of <em>paint messages</em> is processed by the
  * operating system the specified area will be redrawn. This means
  * that the area will not be repainted immediately (you should call
- * #update() method to do this).
+ * #update method to do this).
  *
  * @param rc
  *     Area to repaint.
@@ -840,7 +845,7 @@ void Widget::invalidate(bool eraseBg)
  *     the background color specified by #getBgColor (with a
  *     WM_ERASEBKGND message for example).
  *
- * @see invalidate(bool), update()
+ * @see invalidate(bool), #update
  */
 void Widget::invalidate(const Rect& rc, bool eraseBg)
 {
@@ -851,11 +856,15 @@ void Widget::invalidate(const Rect& rc, bool eraseBg)
 }
 
 /**
- * Flushes the widget invalidated area to redraw it now. This routine
- * should be used if you want to show the changes of the widget immediately
- * without to wait for the message queue to be processed.
- * <p>
- * It's like Win32's UpdateWindow.
+ * Flushes the widget invalidated area to redraw it now.
+ *
+ * This routine should be used if you want to show the changes of the
+ * widget immediately without to wait for the message queue to be
+ * processed.
+ *
+ * @win32
+ *   It's like @msdn{UpdateWindow}.
+ * @endwin32
  */
 void Widget::update()
 {
@@ -886,11 +895,12 @@ void Widget::updateIndicators()
 // ===============================================================
 
 /**
- * Returns true if this widget is visible. If this widget or some of
- * its parents has the visibility state, this routine returns
- * true.
+ * Returns true if this widget is visible.
  *
- * @see Frame::setVisible
+ * If this widget or some of its parents has the visibility state,
+ * this routine returns true.
+ *
+ * @see Frame#setVisible
  */
 bool Widget::isVisible()
 {
@@ -900,8 +910,9 @@ bool Widget::isVisible()
 }
 
 /**
- * Changes the visibility of this widget. The children are hidden
- * too.
+ * Changes the visibility of this widget.
+ *
+ * The children are hidden too.
  */
 void Widget::setVisible(bool visible)
 {
@@ -918,9 +929,11 @@ void Widget::setVisible(bool visible)
 
 /**
  * Returns true if the widget is enabled.
- * <p>
- * It's like to ask if the widget hasn't the WS_DISABLED style.
- * Really, this method calls the Win32's IsWindowEnabled function.
+ *
+ * @win32
+ *   It's like to ask if the widget hasn't the @msdn{WS_DISABLED} style.
+ *   Really, this method calls the @msdn{IsWindowEnabled} function.
+ * @endwin32
  */
 bool Widget::isEnabled()
 {
@@ -930,9 +943,13 @@ bool Widget::isEnabled()
 }
 
 /**
- * Changes the enable-state of the widget. If @a state is true removes
- * the WS_DISABLED style, if @a state is false adds the WS_DISABLED
- * style. It's like to call the Win32's EnableWindow.
+ * Changes the enable-state of the widget.
+ *
+ * @win32
+ *   If @a state is true removes the @msdn{WS_DISABLED} style,
+ *   if @a state is false adds the @msdn{WS_DISABLED} style.
+ *   It's like to call the @msdn{EnableWindow}.
+ * @endwin32
  */
 void Widget::setEnabled(bool state)
 {
@@ -1359,9 +1376,9 @@ void Widget::setScrollPos(Orientation orientation, int pos)
   ::GetScrollInfo(m_handle, fnBar, &si);
 
   si.fMask = SIF_POS;
-  si.nPos = VACA_MID(si.nMin,
-		     pos,
-		     si.nMax - VACA_MAX(static_cast<int>(si.nPage) - 1, 0));
+  si.nPos = VACA_CLAMP(pos,
+		       si.nMin,
+		       si.nMax - VACA_MAX(static_cast<int>(si.nPage) - 1, 0));
   ::SetScrollInfo(m_handle, fnBar, &si, TRUE);
 }
   
@@ -1459,10 +1476,11 @@ HWND Widget::getParentHandle()
  * Vaca's Widget. In other words, you should use this only if you known
  * that the HWND was created inside Vaca bounds.
  * 
- * @warning
+ * @win32
  *   Old versions of Vaca uses the GWL_USERDATA field to get
  *   the Widget, now it uses a property called @em "VacaAtom"
- *   (through Win32's @c GetProp function).
+ *   (through @msdn{GetProp} function).
+ * @endwin32
  *
  * @see getHandle
  */
@@ -1549,8 +1567,11 @@ void Widget::onPaint(Graphics& g)
 }
 
 /**
- * Called when the user changes the size of the widget/frame (a
- * WM_SIZE message is received from Win32).
+ * Called when the user changes the size of the widget/frame.
+ *
+ * @win32
+ *   This event is generated when a @msdn{WM_SIZE} message is received.
+ * @endwin32
  */
 void Widget::onResize(const Size& sz)
 {
@@ -1563,6 +1584,10 @@ void Widget::onResize(const Size& sz)
 
 /**
  * The mouse enters in the Widget.
+ *
+ * @win32
+ *   This event is generated when the first @msdn{WM_MOUSEMOVE} message is received.
+ * @endwin32
  */
 void Widget::onMouseEnter(MouseEvent& ev)
 {
@@ -1571,6 +1596,10 @@ void Widget::onMouseEnter(MouseEvent& ev)
 
 /**
  * The mouse leaves the Widget.
+ *
+ * @win32
+ *   This event is generated when @msdn{WM_MOUSELEAVE} message is received.
+ * @endwin32
  */
 void Widget::onMouseLeave()
 {
@@ -1579,6 +1608,11 @@ void Widget::onMouseLeave()
 
 /**
  * The mouse is inside the Widget and the user press a mouse's button.
+ *
+ * @win32
+ *   This event is generated when @msdn{WM_LBUTTONDOWN},
+ *   @msdn{WM_MBUTTONDOWN}, or @msdn{WM_RBUTTONDOWN} message is received.
+ * @endwin32
  */
 void Widget::onMouseDown(MouseEvent& ev)
 {
@@ -1588,6 +1622,11 @@ void Widget::onMouseDown(MouseEvent& ev)
 /**
  * The mouse is inside the Widget and the user release a mouse's
  * button.
+ *
+ * @win32
+ *   This event is generated when @msdn{WM_LBUTTONUP},
+ *   @msdn{WM_MBUTTONUP}, or @msdn{WM_RBUTTONUP} message is received.
+ * @endwin32
  */
 void Widget::onMouseUp(MouseEvent& ev)
 {
@@ -1595,9 +1634,10 @@ void Widget::onMouseUp(MouseEvent& ev)
 }
 
 /**
- * The user made double click over the widget. The default
- * implementation calls onMouseDown(), so it's like a single click
- * (converts double-clicks to single-clicks).
+ * The user made double click over the widget.
+ *
+ * The default implementation calls #onMouseDown, so it is like a
+ * single click (converts double-clicks to single-clicks).
  *
  * @warning If you override this event, don't call the base implementation.
  *
@@ -1618,8 +1658,8 @@ void Widget::onDoubleClick(MouseEvent& ev)
 
 /**
  * The mouse is moving inside the Widget's client area.
- * <p>
- * If you capture the mouse, you should use the System::getCursorPos
+ *
+ * If you capture the mouse, you should use the System#getCursorPos
  * function to get the cursor position when it's outside the widget's
  * client area.
  */
@@ -1630,7 +1670,11 @@ void Widget::onMouseMove(MouseEvent& ev)
 
 /**
  * The mouse is inside the Widget and the user spin the mouse's
- * wheel. Event called when the WM_MOUSEWHEEL message is received.
+ * wheel.
+ *
+ * @win32
+ *   This event is generated when @msdn{WM_MOUSEWHEEL} message is received.
+ * @endwin32
  */
 void Widget::onMouseWheel(MouseEvent& ev)
 {
@@ -1639,7 +1683,11 @@ void Widget::onMouseWheel(MouseEvent& ev)
 
 /**
  * Event generated when the user press ESC in a drag-and-drop operation
- * for example (equivalent to the WM_CANCELMODE message of Win32).
+ * for example.
+ *
+ * @win32
+ *   This event is generated when @msdn{WM_CANCELMODE} message is received.
+ * @endwin32
  */
 void Widget::onCancelMode()
 {
@@ -1648,7 +1696,7 @@ void Widget::onCancelMode()
 
 /**
  * Set the mouse's cursor depending of its position. If you override
- * this method, you shouldn't call Widget::onSetCursor if you don't
+ * this method, you shouldn't call Widget#onSetCursor if you don't
  * want the default behaviour.
  *
  * @param hitTest Where the mouse is.
@@ -1671,13 +1719,15 @@ void Widget::onSetCursor(WidgetHitTest hitTest)
 }
 
 /**
- * The user presses a key. Event called when the WM_KEYDOWN or WM_CHAR
- * messages are received.
+ * The user presses a key.
  *
- * @param ev Has the information about the key pressed. If
- *   KeyEvent#getKeyCode isn't 0 the received message was WM_KEYDOWN,
- *   otherwise KeyEvent#getCharCode isn't 0 and the message was
- *   WM_CHAR.
+ * @param ev Has the information about the key pressed.
+ *
+ * @win32
+ *   If KeyEvent#getKeyCode is not 0 the received message was @msdn{WM_KEYDOWN},
+ *   otherwise KeyEvent#getCharCode is not 0 and the message was
+ *   @msdn{WM_CHAR}.
+ * @endwin32
  */
 void Widget::onKeyDown(KeyEvent& ev)
 {
@@ -1685,8 +1735,11 @@ void Widget::onKeyDown(KeyEvent& ev)
 }
 
 /**
- * The user releases a key. Event called when the WM_KEYUP message is
- * received.
+ * The user releases a key.
+ *
+ * @win32
+ *   This event is generated when @msdn{WM_KEYUP} message is received.
+ * @endwin32
  */
 void Widget::onKeyUp(KeyEvent& ev)
 {
@@ -1713,21 +1766,20 @@ void Widget::onLostFocus(Event& ev)
  * Called when a command by ID is activated by the user, this can be a
  * menu item or an accelerator.
  *
- * Win32: When a WM_COMMAND message is received by ID (like a menu or
- * accelerator command) this method is invoked.
- *
  * @param commandId
  *     Identifier of the command that was activated.
  *
  * @return
  *     It should returns true if the @a commandId was used.
  *
- * @warning Don't confuse with #onReflectedCommand: onCommand is used
- *          to handle command notifications that come directly from
- *          accelarators or menus, not from Win32's
- *          controls. Notifications by Win32's controls are handled
- *          via onReflectedCommand, onReflectedNotify, or
- *          onReflectedDrawItem.
+ * @win32
+ *   Don't confuse with #onReflectedCommand: onCommand is used
+ *   to handle command notifications that come directly from
+ *   accelarators or menus, not from Win32's
+ *   controls. Notifications by Win32's controls are handled
+ *   via onReflectedCommand, onReflectedNotify, or
+ *   onReflectedDrawItem.
+ * @endwin32
  *
  * @see Command
  */
@@ -1757,14 +1809,22 @@ void Widget::onUpdateIndicators()
 }
 
 /**
- * @todo docme (WM_WINDOWPOSCHANGING)
+ * @todo docme
+ *
+ * @win32
+ *   This event is generated when @msdn{WM_WINDOWPOSCHANGING} message is received.
+ * @endwin32
  */
 void Widget::onBeforePosChange()
 {
 }
 
 /**
- * @todo docme (WM_WINDOWPOSCHANGED)
+ * @todo docme ()
+ *
+ * @win32
+ *   This event is generated when @msdn{WM_WINDOWPOSCHANGED} message is received.
+ * @endwin32
  */
 void Widget::onAfterPosChange()
 {
@@ -1791,7 +1851,7 @@ void Widget::onRemoveChild(Widget* child)
 
 /**
  * This method can be used to handle command notifications
- * (WM_COMMAND) reflected from the parent.
+ * (@msdn{WM_COMMAND}) reflected from the parent.
  *
  * @param id
  *   Identifier of the control or menu item.
@@ -1802,11 +1862,12 @@ void Widget::onRemoveChild(Widget* child)
  * @param lResult
  *   Result to return by the #wndProc method.
  *
- * @warning
+ * @win32
  *   Don't confuse with #onCommand: onReflectedCommand is used to handle
  *   commands that this widget by self generated, were sent to the
  *   parent, and finally were reflected to this widget again by
  *   the parent.
+ * @endwin32
  */
 bool Widget::onReflectedCommand(int id, int code, LRESULT& lResult)
 {
@@ -1814,7 +1875,7 @@ bool Widget::onReflectedCommand(int id, int code, LRESULT& lResult)
 }
 
 /**
- * This method can be used to handle notifications (WM_NOTIFY)
+ * This method can be used to handle notifications (@msdn{WM_NOTIFY})
  * reflected from the parent.
  *
  * @param lpnmhdr
@@ -1832,8 +1893,7 @@ bool Widget::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult)
 }
 
 /**
- * Fired when the parent widget (#m_parent) received the WM_DRAWITEM
- * message.
+ * Fired when the parent widget received the @msdn{WM_DRAWITEM} message.
  *
  * @param g
  *   Graphics context to draw the item (you can obtain the HDC from
@@ -1909,8 +1969,9 @@ void Widget::removeChild(Widget* child, bool setParent)
 }
 
 /**
- * It creates the HWND (#m_handle) to be used in the Widget. The only way
- * to customize this routine is overloading the Widget#createHandle
+ * It creates the handle to be used in the Widget.
+ *
+ * The only way to customize this routine is overloading the Widget#createHandle
  * method, calling Widget#Widget with WidgetClassName#None as @c className, and
  * finally calling Widget#create from the constructor of your own
  * widget class (for example as MdiClient#MdiClient does).
@@ -1920,9 +1981,13 @@ void Widget::removeChild(Widget* child, bool setParent)
  * in Widget's constructor).
  *
  * @throw CreateWidgetException
- *   If the window handler (HWND) couldn't be created through the #createHandle method.
+ *   If the handle couldn't be created through the #createHandle method.
  *
- * @see createHandle, @ref page_tn_002
+ * @win32
+ *   The widget handle is the @msdn{HWND}.
+ * @endwin32
+ *
+ * @see createHandle, @ref page_tn_002, #m_handle
  */
 void Widget::create(const WidgetClassName& className, Widget* parent, Style style)
 {
@@ -1972,10 +2037,10 @@ void Widget::create(const WidgetClassName& className, Widget* parent, Style styl
 }
 
 /**
- * @brief Does the classic Win32's subclassing replacing GWLP_WNDPROC.
+ * @brief Does the classic Win32's subclassing replacing @msdn{GWLP_WNDPROC}.
  * 
- * In the GWLP_WNDPROC property of all HWND is the WNDPROC procedure
- * that is called each time a message is arrived/processed by the Win32's
+ * In the @msdn{GWLP_WNDPROC} property of all @msdn{HWND} is the @msdn{WNDPROC}
+ * procedure that is called each time a message is arrived/processed by the Win32's
  * message-queue. So this method changes that procedure by #globalWndProc
  * to hook all messages that come from Windows.
  *
@@ -2011,7 +2076,7 @@ void Widget::subClass()
 }
 
 /**
- * This method creates the HWND handler for the Widget.
+ * This method creates the @msdn{HWND} handler for the Widget.
  * 
  * It is called inside Widget#create, so if you overload
  * #createHandle, you must to call the Widget's constructor with
@@ -2050,9 +2115,11 @@ HWND Widget::createHandle(LPCTSTR className, Widget* parent, Style style)
 }
 
 /**
- * The customized window procedure for this particular widget.  This
- * is called from Widget::globalWndProc().  Should return true when
- * the defWndProc() doesn't need to be called.
+ * The customized window procedure for this particular widget.
+ *
+ * @win32 
+ * This is called from Widget#globalWndProc. It should returns true when
+ * the #defWndProc doesn't need to be called.
  *
  * This method is called to intercept any message after the creation
  * of the widget, and before the destruction. To intercept messages
@@ -2114,6 +2181,7 @@ HWND Widget::createHandle(LPCTSTR className, Widget* parent, Style style)
  *   returned by #globalWndProc.
  *
  * @see globalWndProc, getGlobalWndProc, defWndProc
+ * @endwin32 
  */
 bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult)
 {
@@ -2243,10 +2311,10 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
 	   Point(&MAKEPOINTS(lParam)),			   // pt
 	   1,						   // clicks
 	   wParam,					   // flags
-	   message == WM_LBUTTONDOWN ? MouseButtons::Left: // button
-	   message == WM_RBUTTONDOWN ? MouseButtons::Right:
-	   message == WM_MBUTTONDOWN ? MouseButtons::Middle:
-				       MouseButtons::None);
+	   message == WM_LBUTTONDOWN ? MouseButton::Left:  // button
+	   message == WM_RBUTTONDOWN ? MouseButton::Right:
+	   message == WM_MBUTTONDOWN ? MouseButton::Middle:
+				       MouseButton::None);
 
       onMouseDown(ev);
       break;
@@ -2260,10 +2328,10 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
 	   Point(&MAKEPOINTS(lParam)),			 // pt
 	   1,					         // clicks
 	   wParam,					 // flags
-	   message == WM_LBUTTONUP ? MouseButtons::Left: // button
-	   message == WM_RBUTTONUP ? MouseButtons::Right:
-	   message == WM_MBUTTONUP ? MouseButtons::Middle:
-				     MouseButtons::None);
+	   message == WM_LBUTTONUP ? MouseButton::Left:  // button
+	   message == WM_RBUTTONUP ? MouseButton::Right:
+	   message == WM_MBUTTONUP ? MouseButton::Middle:
+				     MouseButton::None);
 
       onMouseUp(ev);
       break;
@@ -2277,10 +2345,10 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
 	   Point(&MAKEPOINTS(lParam)),			     // pt
 	   2,					             // clicks
 	   wParam,				             // flags
-	   message == WM_LBUTTONDBLCLK ? MouseButtons::Left: // button
-	   message == WM_RBUTTONDBLCLK ? MouseButtons::Right:
-	   message == WM_MBUTTONDBLCLK ? MouseButtons::Middle:
-					 MouseButtons::None);
+	   message == WM_LBUTTONDBLCLK ? MouseButton::Left:  // button
+	   message == WM_RBUTTONDBLCLK ? MouseButton::Right:
+	   message == WM_MBUTTONDBLCLK ? MouseButton::Middle:
+					 MouseButton::None);
       onDoubleClick(ev);
       break;
     }
@@ -2291,7 +2359,7 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
 	   Point(&MAKEPOINTS(lParam)),		    // pt
 	   0,					    // clicks
 	   wParam,				    // flags
-	   MouseButtons::None);			    // button
+	   MouseButton::None);			    // button
 
       if (!m_hasMouse) {
 	onMouseEnter(ev);
@@ -2318,7 +2386,7 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
 	   Point(&MAKEPOINTS(lParam)) - clientOrigin, // pt
 	   0,					   // clicks
 	   LOWORD(wParam),			   // flags
-	   MouseButtons::None,			   // button
+	   MouseButton::None,			   // button
 	   ((short)HIWORD(wParam)) / WHEEL_DELTA); // delta
 
       onMouseWheel(ev);
@@ -2329,7 +2397,7 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
 //       // TODO think about this
 //     case WM_MOUSEHOVER: {
 //       MouseEvent ev(this, Point(&MAKEPOINTS(lParam)), 0,
-// 		    MouseButtons::None, wParam);
+// 		    MouseButton::None, wParam);
 //       onMouseHover(ev);
 //     }
 
@@ -2649,12 +2717,14 @@ void Widget::setDefWndProc(WNDPROC proc)
 
 /**
  * Sets the destroy-procedure associated with this widget.
- * 
- * Each widget has a procedure to be called when it's destroyed, it is
- * the last procedure to be called in #~Widget() destructor. By
- * default it's Win32's DestroyWindow.
  *
- * @see #~Widget()
+ * @win32
+ *   Each widget has a procedure to be called when it's destroyed, it is
+ *   the last procedure to be called in #~Widget() destructor. By
+ *   default it is @msdn{DestroyWindow}.
+ * @endwin32
+ *
+ * @see ~Widget
  */
 void Widget::setDestroyHWNDProc(void (*proc)(HWND))
 {
@@ -2664,13 +2734,15 @@ void Widget::setDestroyHWNDProc(void (*proc)(HWND))
 /**
  * This routine is called before to dispatch the message.
  *
- * In Win32, it's used by Dialog to call IsDialogMessage for example.
+ * @win32 
+ *   It's used by Dialog to call @msdn{IsDialogMessage} for example.
+ * @endwin32
  *
  * @return
- *    true if the message was translated and sent, so the GUI
+ *    True if the message was translated and sent, so the GUI
  *    thread doesn't need to dispatch it.
  */
-bool Widget::preTranslateMessage(MSG& msg)
+bool Widget::preTranslateMessage(Message& msg)
 {
   if (m_parent != NULL)
     return m_parent->preTranslateMessage(msg);
@@ -2679,7 +2751,12 @@ bool Widget::preTranslateMessage(MSG& msg)
 }
 
 /**
- * Sends a message to the HWND, like Win32's SendMessage.
+ * Sends a message to the widget.
+ *
+ * @win32
+ *   It uses the @msdn{SendMessage} routine to send a message
+ *   to the wrapped @msdn{HWND}.
+ * @endwin32
  */
 LRESULT Widget::sendMessage(UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -2689,6 +2766,7 @@ LRESULT Widget::sendMessage(UINT message, WPARAM wParam, LPARAM lParam)
 
 /**
  * The global procedure for Win32 used in all registered WNDCLASSes.
+ * 
  * It's unique goal is to get the Widget pointer from HWND
  * using #fromHandle, and to call its #wndProc method.
  */
@@ -2981,12 +3059,13 @@ void MakeWidgetRef::safeDelete(Widget* widget)
 }
 
 /**
- * Safe way to delete a widget from memory. It deletes the specified
- * widget if it isn't referenced, or defer its deletion for a secure
- * point of deletion (e.g. when it's completelly unreferenced after an
- * event is processed).
+ * Safe way to delete a widget from memory.
  *
- * @see @ref page_tn006
+ * It deletes the specified widget if it isn't referenced, or defer
+ * its deletion for a secure point of deletion (e.g. when it's
+ * completelly unreferenced after an event is processed).
+ *
+ * @see @ref page_tn_006
  */
 void Vaca::delete_widget(Widget* widget)
 {

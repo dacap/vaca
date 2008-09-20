@@ -634,7 +634,7 @@ public:
     for (int c=0; c<ColorNames_size; ++c)
       addItem(ColorNames[c].name);
 
-    m_timer.Action.connect(&AutoCompletionComboBox::complete, this);
+    m_timer.Tick.connect(&AutoCompletionComboBox::complete, this);
   }
 
   // signals

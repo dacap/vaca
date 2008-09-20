@@ -72,7 +72,7 @@ class Thread;
 					 ResizableFrameStyle)
 
 /**
- * Win32 class used by the Frame class.
+ * Represents the Win32 class used by Frame.
  */
 class FrameClass : public WidgetClass
 {
@@ -82,9 +82,7 @@ public:
 };
 
 /**
- * Controls a frame window that can be minimized, maximized, etc.
- * Every application should contain (at least) one frame window (or a
- * window derived from Frame like Dialog).
+ * A window with title-bar that can be minimized, maximized, etc.
  */
 class VACA_DLL Frame : public Register<FrameClass>, public Widget
 {
@@ -130,7 +128,7 @@ public:
   Signal1<void, CloseEvent&> Close;   ///< @see onClose
   Signal2<void, CardinalDirection, Rect&> Resizing; ///< @see onResizing
 
-  virtual bool preTranslateMessage(MSG& msg);
+  virtual bool preTranslateMessage(Message& msg);
 
 protected:
   // events

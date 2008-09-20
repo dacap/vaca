@@ -325,7 +325,7 @@ MdiChild* MdiClient::getChildById(int wID)
   return NULL;
 }
 
-bool MdiClient::preTranslateMessage(MSG& msg)
+bool MdiClient::preTranslateMessage(Message& msg)
 {
   if (Widget::preTranslateMessage(msg))
     return true;

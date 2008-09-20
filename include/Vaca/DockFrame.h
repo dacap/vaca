@@ -39,8 +39,11 @@
 namespace Vaca {
 
 /**
- * Default style for DockFrame: CaptionStyle, SizeBoxStyle,
- * SysMenuStyle, WS_POPUP, and WS_EX_TOOLWINDOW.
+ * Default style for DockFrame.
+ *
+ * @win32
+ *   Includes WS_POPUP and WS_EX_TOOLWINDOW.
+ * @endwin32
  */
 #define DockFrameStyle		(WithCaptionFrameStyle +		\
 				 WithSystemMenuFrameStyle +		\
@@ -50,7 +53,7 @@ namespace Vaca {
 class DockBar;
 
 /**
- * Win32 class used by the DockFrame class.
+ * Represents the Win32 class used by DockFrame.
  */
 class DockFrameClass : public WidgetClass
 {
@@ -60,11 +63,19 @@ public:
 };
 
 /**
- * A Frame for a DockBar, commondly called "Palette Window". A
- * DockFrame is the container for a floating DockBar, it's the window
- * with the WS_EX_TOOLWINDOW style.
+ * A Frame for a DockBar, commondly called "Palette Window".
  *
- * @internal You shouldn't use this class, it's used internally by DockBar.
+ * A DockFrame is the container for a floating DockBar, it's a
+ * window with a small title-bar.
+ *
+ * @warning This class is intended to be only
+ *          used internally by DockBar.
+ *
+ * @win32 
+ *   This kind of windows has the @msdn{WS_EX_TOOLWINDOW} style.
+ * @endwin32
+ *
+ * @internal 
  */
 class VACA_DLL DockFrame : public Register<DockFrameClass>, public Frame
 {

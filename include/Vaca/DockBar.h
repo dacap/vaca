@@ -49,7 +49,7 @@ class CloseEvent;
 #define DockBarStyle		ChildStyle
 
 /**
- * Win32 class used by the DockBar class.
+ * Represents the Win32 class used by DockBar.
  */
 class DockBarClass : public WidgetClass
 {

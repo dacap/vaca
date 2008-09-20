@@ -690,8 +690,8 @@ void DataGrid::onMouseWheel(MouseEvent &ev)
   //     int newPos = si.nPos - ev.getDelta() * 32;
 
   //     si.fMask = SIF_POS;
-  //     si.nPos = VACA_MID(static_cast<int>(si.nMin),
-  // 		       static_cast<int>(newPos),
+  //     si.nPos = VACA_CLAMP(static_cast<int>(newPos),
+  //		       static_cast<int>(si.nMin),
   // 		       static_cast<int>(si.nMax - VACA_MAX(si.nPage, 0)));
   //     SetScrollInfo(getHandle(), SB_HORZ, &si, TRUE);
   //     GetScrollInfo(getHandle(), SB_HORZ, &si);
@@ -1144,9 +1144,9 @@ void DataGrid::updateHorizontalScrollBarVisibility()
       si.minPos = si.maxPos = 0;
     }
 
-    si.pos = VACA_MID(si.minPos,
-		      si.pos,
-		      si.maxPos - VACA_MAX(si.pageSize - 1, 0));
+    si.pos = VACA_CLAMP(si.pos,
+			si.minPos,
+			si.maxPos - VACA_MAX(si.pageSize - 1, 0));
 
     setScrollInfo(Orientation::Horizontal, si);
   }
@@ -1176,9 +1176,9 @@ void DataGrid::updateVerticalScrollBarVisibility()
       si.minPos = si.maxPos = 0;
     }
 
-    si.pos = VACA_MID(si.minPos,
-		      si.pos,
-		      si.maxPos - VACA_MAX(si.pageSize - 1, 0));
+    si.pos = VACA_CLAMP(si.pos,
+			si.minPos,
+			si.maxPos - VACA_MAX(si.pageSize - 1, 0));
 
     setScrollInfo(Orientation::Vertical, si);
   }
@@ -1191,8 +1191,8 @@ void DataGrid::updateVerticalScrollBarVisibility()
   //     si.minPos = 0;
   //     si.maxPos = clientBounds.h*2;
 
-  //     si.pos = VACA_MID(si.minPos,
-  // 		      si.pos,
+  //     si.pos = VACA_MID(si.pos,
+  // 		      si.minPos,
   // 		      si.maxPos - VACA_MAX(si.pageSize - 1, 0));
 
   //     setScrollInfo(Vertical, si);

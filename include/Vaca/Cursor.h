@@ -73,7 +73,7 @@ struct SysCursorEnum
 /**
  * System mouse cursors.
  *
- * @see #Vaca::Cursor::Cursor(SysCursor)
+ * @see Cursor#Cursor(SysCursor)
  */
 typedef Enum<SysCursorEnum> SysCursor;
 
@@ -85,8 +85,16 @@ struct Win32DestroyCursor
   }
 };
 
-  /**
- * A cursor (HCURSOR wrapper).
+/**
+ * A mouse cursor.
+ *
+ * This is a SmartPtr, so if you copy instances of cursors they will be
+ * referencing to the same place. You can't clone cursors because you can't
+ * modify them.
+ *
+ * @win32
+ *   This is a @msdn{HCURSOR} wrapper.
+ * @endwin32
  */
 class VACA_DLL Cursor : private SmartPtr<GdiObject<HCURSOR, Win32DestroyCursor> >
 {

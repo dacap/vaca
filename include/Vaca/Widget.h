@@ -240,41 +240,42 @@ struct WidgetHitTestEnum
  * could be.
  *
  * One of the following values:
- * @li WidgetHit::Error
- * @li WidgetHit::Transparent
- * @li WidgetHit::Nowhere
- * @li WidgetHit::Client
- * @li WidgetHit::Caption
- * @li WidgetHit::SystemMenu
- * @li WidgetHit::Size
- * @li WidgetHit::Menu
- * @li WidgetHit::HorizontalScroll
- * @li WidgetHit::VerticalScroll
- * @li WidgetHit::MinimizeButton
- * @li WidgetHit::MaximizeButton
- * @li WidgetHit::Left
- * @li WidgetHit::Right
- * @li WidgetHit::Top
- * @li WidgetHit::TopLeft
- * @li WidgetHit::TopRight
- * @li WidgetHit::Bottom
- * @li WidgetHit::BottomLeft
- * @li WidgetHit::BottomRight
- * @li WidgetHit::Border
- * @li WidgetHit::Object
- * @li WidgetHit::Close
- * @li WidgetHit::Help
+ * @li WidgetHitTest::Error
+ * @li WidgetHitTest::Transparent
+ * @li WidgetHitTest::Nowhere
+ * @li WidgetHitTest::Client
+ * @li WidgetHitTest::Caption
+ * @li WidgetHitTest::SystemMenu
+ * @li WidgetHitTest::Size
+ * @li WidgetHitTest::Menu
+ * @li WidgetHitTest::HorizontalScroll
+ * @li WidgetHitTest::VerticalScroll
+ * @li WidgetHitTest::MinimizeButton
+ * @li WidgetHitTest::MaximizeButton
+ * @li WidgetHitTest::Left
+ * @li WidgetHitTest::Right
+ * @li WidgetHitTest::Top
+ * @li WidgetHitTest::TopLeft
+ * @li WidgetHitTest::TopRight
+ * @li WidgetHitTest::Bottom
+ * @li WidgetHitTest::BottomLeft
+ * @li WidgetHitTest::BottomRight
+ * @li WidgetHitTest::Border
+ * @li WidgetHitTest::Object
+ * @li WidgetHitTest::Close
+ * @li WidgetHitTest::Help
  */
 typedef Enum<WidgetHitTestEnum> WidgetHitTest;
 
 //////////////////////////////////////////////////////////////////////
 
 /**
- * This exception should be thrown when the operating system or
- * window manager can't create the Window.
+ * This exception is thrown when the operating system can't create the Widget.
  *
- * In Win32, it's thrown when the Widget::createHandle method fails
- * (returns NULL).
+ * @win32 
+ *   In Win32, it is thrown when the Widget#createHandle method fails,
+ *   generally because of @msdn{CreateWindowEx} that returns NULL.
+ * @endwin32
  */
 class CreateWidgetException : public Exception
 {
@@ -285,10 +286,18 @@ public:
 };
 
 /**
- * Base class for every control in an window.
+ * Base class for widgets.
  *
- * This is the core of Vaca. Calls @msdn{CreateWindowEx} and @msdn{DestroyWindow},
- * and its wndProc() converts the main messages (@c "WM_*") to events.
+ * What is a widget? Widgets are @link Frame windows@endlink,
+ * @link Button buttons@endlink, @link Edit text-fields@endlink,
+ * @link ComboBox combo-boxes@endlink, etc. Each element in a
+ * window is a widget.
+ *
+ * @win32
+ *   This is a wrapper for @msdn{HWND}. Calls @msdn{CreateWindowEx}
+ *   and @msdn{DestroyWindow}, and its #wndProc method converts the
+ *   messages (@c "WM_*") to events.
+ * @endwin32
  */
 class VACA_DLL Widget : public Component
 {
@@ -399,7 +408,7 @@ private:
 
   /**
    * The default Win32's window procedure to be called if a
-   * @link Thread::Message message@endlink isn't used.
+   * @link Message message@endlink isn't used.
    * 
    * By default it is Win32's @msdn{DefWindowProc}, but you can change it
    * using #setDefWndProc to replace it with other procedure like
@@ -436,10 +445,10 @@ public:
   // ===============================================================
 
   Layout* getLayout();
-  Layout* setLayout(Layout* layout);
+  void setLayout(Layout* layout);
 
   Constraint* getConstraint();
-  Constraint* setConstraint(Constraint* constraint);
+  void setConstraint(Constraint* constraint);
 
   virtual void layout();
   virtual bool isLayoutFree();
@@ -573,7 +582,7 @@ public:
   static Widget* fromHandle(HWND hwnd);
   static WNDPROC getGlobalWndProc();
   
-  virtual bool preTranslateMessage(MSG& msg);
+  virtual bool preTranslateMessage(Message& msg);
   LRESULT sendMessage(UINT message, WPARAM wParam, LPARAM lParam);
 
   // TODO public? I don't think so

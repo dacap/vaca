@@ -58,17 +58,17 @@ struct Win32DestroyImageList
 };
 
 /**
- * A smart pointer to a list of images.
- *
  * ImageLists are containers of images and icons that can be used in
- * each item of a ListView or TreeView.
+ * items of a ListView or a TreeView.
  *
  * This is a SmartPtr, so if you copy instances of ImageLists they will be
  * referencing to the same place.
  *
- * @warning Win32: This is a HIMAGELIST wrapper.
+ * @win32
+ *   This is a @msdn{HIMAGELIST} wrapper.
+ * @endwin32
  *
- * @see Vaca::ListView#setNormalImageList, Vaca::TreeView#setNormalImageList
+ * @see ListView#setNormalImageList, TreeView#setNormalImageList
  */
 class VACA_DLL ImageList : private SmartPtr<GdiObject<HIMAGELIST, Win32DestroyImageList> >
 {

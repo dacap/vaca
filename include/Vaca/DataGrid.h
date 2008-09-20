@@ -98,8 +98,10 @@ public:
 };
 
 //////////////////////////////////////////////////////////////////////
-// DataGridClass
 
+/**
+ * Represents the Win32 class used by DataGrid.
+ */
 class DataGridClass : public WidgetClass
 {
 public:

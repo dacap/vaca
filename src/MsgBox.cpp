@@ -36,26 +36,28 @@
 using namespace Vaca;
 
 /**
- * Shows a message box, locking the specified @a parent widget. It's
- * like call Win32's MessageBox.
- * <p>
+ * Shows a message box, locking the specified @a parent widget.
+ *
  * The next code is a typical example where is displayed a message box with
- * the "Yes" and "No" buttons (@c MsgBox::Type::YesNo),
- * an icon to indicate a warning (@c MsgBox::Icon::Warning), and
+ * the "Yes" and "No" buttons, an icon to indicate a warning, and
  * by default the "No" button will be focused:
  *
  * @code
- *   if (MsgBox::show(NULL,
- *                    "Warning",
- *                    "Are you sure?",
- *                    MsgBox::Type::YesNo,
- *                    MsgBox::Icon::Warning, -1) == MsgBox::Result::Yes) {
- *	// the user press Yes, do it!
- *   }
- *   else {
- *	// the user press No (or ESC, in which case MsgBox::Result::Cancel is returned)
- *   }
+ * if (MsgBox::show(NULL,
+ *                  "Warning",
+ *                  "Are you sure?",
+ *                  MsgBox::Type::YesNo,
+ *                  MsgBox::Icon::Warning, -1) == MsgBox::Result::Yes) {
+ *   // the user press Yes, do it!
+ * }
+ * else {
+ *   // the user press No (or ESC, in which case MsgBox::Result::Cancel is returned)
+ * }
  * @endcode
+ *
+ * @win32
+ *   It is @msdn{MessageBox} wrapper.
+ * @endwin32
  *
  * @param parent
  *     The widget to be locked by this message-box. When the message-box is shown
@@ -68,7 +70,7 @@ using namespace Vaca;
  *     Text shown in the center of the dialog box. It can contains "\n" to break lines.
  *	
  * @param type
- *     One of these values:
+ *     What set of buttons we have to show. One of these values:
  *     @li @c MsgBox::Type::Ok
  *     @li @c MsgBox::Type::OkCancel
  *     @li @c MsgBox::Type::YesNo
@@ -77,7 +79,7 @@ using namespace Vaca;
  *     @li @c MsgBox::Type::CancelRetryContinue
  *
  * @param icon
- *     One of these ones:
+ *     The icon to be shown. One of these ones:
  *     @li @c MsgBox::Icon::Error
  *     @li @c MsgBox::Icon::Warning
  *     @li @c MsgBox::Icon::Question
@@ -87,10 +89,11 @@ using namespace Vaca;
  *     The default button to be focused by default.
  *     @li 1 is the first button,
  *     @li 2 the second,
+ *     @li 3 the third,
  *     @li -1 the last one.
  *
  * @return
- *     It returns one of these values:
+ *     It returns the button that was clicked. One of these values:
  *     @li @c MsgBox::Result::Ok
  *     @li @c MsgBox::Result::Cancel (if the user pressed the Cancel button or press @c ESC key)
  *     @li @c MsgBox::Result::Yes
@@ -139,7 +142,7 @@ MsgBox::Result MsgBox::show(Widget* parent,
   }
 
   if (default_button != 0) {
-    default_button = VACA_MID(-buttons, default_button, buttons);
+    default_button = VACA_CLAMP(default_button, -buttons, buttons);
     if (default_button < 0)
       default_button = buttons + default_button + 1;
     switch (default_button) {

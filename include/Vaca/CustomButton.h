@@ -37,7 +37,11 @@
 namespace Vaca {
 
 /**
- * Default style for CustomButton: a ButtonStyle with BS_OWNERDRAW.
+ * Default style for CustomButton.
+ *
+ * @win32
+ *   A ButtonStyle with @msdn{BS_OWNERDRAW}.
+ * @endwin32
  */
 #define CustomButtonStyle	(ButtonStyle + Style(BS_OWNERDRAW, 0))
 
@@ -64,10 +68,11 @@ namespace Vaca {
  * }
  * @endcode
  * 
- * Win32 notes:
- *   It is a BS_OWNERDRAW, the paint event is intercepted by
- *   the parent of the CustomButton and then reflected to it
- *   (see @ref page_tn_009).
+ * @win32
+ *   It is a button with the @msdn{BS_OWNERDRAW} style, the paint event
+ *   is intercepted by the parent of the CustomButton and then reflected
+ *   to it (see @ref page_tn_009).
+ * @endwin32
  */
 class VACA_DLL CustomButton : public Button
 {

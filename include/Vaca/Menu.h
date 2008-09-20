@@ -48,6 +48,8 @@ class MenuItem;
 class Menu;
 class MenuBar;
 class MdiListMenu;
+class Point;
+class Widget;
 
 /**
  * A menu item.
@@ -201,6 +203,20 @@ private:
   void setFrame(Frame* frame);
 };
 
+class VACA_DLL PopupMenu : public Menu
+{
+public:
+
+  PopupMenu();
+  virtual ~PopupMenu();
+
+  CommandId doModal(Widget* widget,
+		    const Point& pt,
+		    TextAlign horzAlign = TextAlign::Left,
+		    VerticalAlign vertAlign = VerticalAlign::Top);
+
+};
+
 /** 
  * A menu that has the list of all MdiChild.
  */
@@ -213,24 +229,6 @@ public:
   virtual bool isMdiList() const;
 };
 
-/*
-// TODO PopupMenu
-class VACA_DLL PopupMenu
-{
-public:
-
-  PopupMenu();
-  virtual ~PopupMenu();
-
-  MenuItem* add(MenuItem* menuitem);
-  MenuItem* add(const String& text);
-  MenuItem* insert(MenuItem* menuitem, int index);
-  MenuItem* insert(const String& text, int index);
-  void remove(MenuItem* menuitem);
-  void remove(int index);
-
-};
-*/
 } // namespace Vaca
 
 #endif // VACA_MENU_H

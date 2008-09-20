@@ -1,5 +1,8 @@
 Vaca 0.0.7
 
+- ~Widget now destroys automatically the widget's children.
+- Added MenuPopup.
+- Renamed MouseButtons to MouseButton.
 - Added RefWrapper class and Ref() method to support references in Bind().
 - Added GraphicsPath.
 - All methods that return Win32 handles (HWND, HDC, HBRUSH,

@@ -320,7 +320,7 @@ void BandedDockArea::onAddDockBar(DockBar* dockBar)
   int bandCount = m_bandInfo.size();
 
   // in which band we must to dock this dockBar?
-  dockInfo->band = VACA_MID(0, dockInfo->band, bandCount);
+  dockInfo->band = VACA_CLAMP(dockInfo->band, 0, bandCount);
 
   // add a new band?
   if (dockInfo->band == bandCount)
@@ -436,7 +436,7 @@ Rect BandedDockArea::getBandBounds(int bandIndex)
 
   // Warning! we can obtain the bounds of the new band (the one that
   // has bandIndex == count)
-  bandIndex = VACA_MID(0, bandIndex, count);
+  bandIndex = VACA_CLAMP(bandIndex, 0, count);
 
   // get the entire client bounds (all bands size)
   Rect bounds = getClientBounds();

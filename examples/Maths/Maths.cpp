@@ -132,7 +132,7 @@ protected:
   {
     if (mHotPoint >= 0) {
       // drag the point with left button
-      if (ev.getButton() == MouseButtons::Left)
+      if (ev.getButton() == MouseButton::Left)
 	captureMouse();
       // ...or remove the point with the right one
       else {
@@ -275,7 +275,7 @@ public:
     , m_currentFunction(0)
     , m_font("Courier", 10)
   {
-    m_timer.Action.connect(Bind(&FunctionsPage::nextFunction, this));
+    m_timer.Tick.connect(Bind(&FunctionsPage::nextFunction, this));
     m_timer.start();
 
     setFont(m_font);

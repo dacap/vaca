@@ -36,7 +36,25 @@
 
 namespace Vaca {
 
-template<class T>		// T must be "Referenceable"
+/**
+ * A pointer which maintains reference counting and
+ * automatically deletes the pointed object when it is
+ * no longer referenced.
+ *
+ * What is a smart pointer? It is a class that wraps a pointer to a
+ * dynamically allocated object. Various smart pointers can share
+ * the same object counting references for that object. When the
+ * last smart pointer is destroyed, the object is automatically
+ * deleted.
+ *
+ * It's used internally by Vaca to wrap classes that can't be
+ * derivable and handle graphics resources (like Brush, Pen, Image,
+ * Icon, etc.).
+ *
+ * @tparam T Must be of Referenceable type, because Referenceable has
+ *           the reference counter.
+ */
+template<class T>
 class SmartPtr
 {
   T* m_ptr;
@@ -82,12 +100,22 @@ private:
   }
 };
 
+/**
+ * Compares if two smart-pointers points to the same place (object, memory address).
+ * 
+ * @see @ref SmartPtr
+ */
 template<class T>
 bool operator==(const SmartPtr<T>& ptr1, const SmartPtr<T>& ptr2)
 {
   return ptr1.get() == ptr2.get();
 }
 
+/**
+ * Compares if two smart-pointers points to different places (objects, memory addresses).
+ *
+ * @see @ref SmartPtr
+ */
 template<class T>
 bool operator!=(const SmartPtr<T>& ptr1, const SmartPtr<T>& ptr2)
 {

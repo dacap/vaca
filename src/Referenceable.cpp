@@ -45,6 +45,9 @@ volatile int Referenceable::instanceCounter = 0;
 std::vector<Referenceable*> Referenceable::list;
 #endif
 
+/**
+ * Constructs a new referenceable object starting with zero references.
+ */
 Referenceable::Referenceable()
 {
   m_refCount = 0;
@@ -57,6 +60,12 @@ Referenceable::Referenceable()
 #endif
 }
 
+/**
+ * Destroys a referenceable object.
+ *
+ * When compiling with assertions it checks that the references'
+ * counter is really zero.
+ */
 Referenceable::~Referenceable()
 {
 #ifndef NDEBUG
@@ -69,17 +78,40 @@ Referenceable::~Referenceable()
   assert(m_refCount == 0);
 }
 
+/**
+ * Makes a new reference to this object.
+ *
+ * You are responsible for removing references using the #unref
+ * method. Remember that for each call to #ref that you made,
+ * there should be a corresponding #unref.
+ *
+ * @see unref
+ */
 void Referenceable::ref()
 {
   ++m_refCount;
 }
 
+/**
+ * Deletes an old reference to this object.
+ *
+ * If assertions are activated this routine checks that the
+ * reference counter never get negative, because that implies
+ * an error of the programmer.
+ *
+ * @see ref
+ */
 unsigned Referenceable::unref()
 {
   assert(m_refCount > 0);
   return --m_refCount;
 }
 
+/**
+ * Returns the current number of references that this object has.
+ *
+ * If it's zero you can delete the object safely.
+ */
 unsigned Referenceable::getRefCount()
 {
   return m_refCount;

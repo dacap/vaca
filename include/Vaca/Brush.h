@@ -41,18 +41,17 @@ namespace Vaca {
 class Color;
 
 /**
- * A smart pointer to a brush.
- *
- * You can use brushes to fill rectangles, ellipses, and paths
- * (GraphicsPath).
+ * A brush can be used to fill rectangles, ellipses, and paths.
  *
  * This is a SmartPtr, so if you copy instances of brushes they will be
  * referencing to the same place. You can't clone brushes because you can't
  * modify them.
  *
- * @warning Win32: This is a HBRUSH wrapper.
+ * @win32
+ *   This is a @msdn{HBRUSH} wrapper.
+ * @endwin32
  *
- * @see Vaca::Graphics, Vaca::Graphics#fillRect, Vaca::Graphics#fillPath
+ * @see Graphics, Graphics#fillRect, Graphics#fillPath
  */
 class VACA_DLL Brush : private SmartPtr<GdiObject<HBRUSH> >
 {

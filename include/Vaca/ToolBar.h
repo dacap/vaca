@@ -75,6 +75,9 @@ typedef EnumSet<ToolButtonStateEnumSet> ToolButtonState;
 
 //////////////////////////////////////////////////////////////////////
 
+/**
+ * A button inside a ToolSet.
+ */
 class VACA_DLL ToolButton
 {
   // ToolSet* m_set;

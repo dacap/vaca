@@ -100,11 +100,11 @@ void test_filename()
   assert(String("").getFileTitle() == _T(""));
 
   String path("C:\\foo");
-  path = path.addPathComponent("src");
+  path.addPathComponent("src");
   assert(path == _T("C:\\foo\\src"));
-  path = path.addPathComponent("headers\\");
+  path.addPathComponent("headers\\");
   assert(path == _T("C:\\foo\\src\\headers\\"));
-  path = path.addPathComponent("main.h");
+  path.addPathComponent("main.h");
   assert(path == _T("C:\\foo\\src\\headers\\main.h"));
 }
 

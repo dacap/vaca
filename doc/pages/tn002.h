@@ -37,7 +37,7 @@ is created and destroyed:
 @code
   Frame frame(...);
   {
-    Button myButton("OK", frame); // the HWND is created
+    Button myButton("OK", &frame); // the HWND is created
     ...
   } // the Button's destructor calls DestroyWindow
   ...

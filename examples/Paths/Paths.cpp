@@ -217,6 +217,7 @@ private:
   void onPenChange()
   {
     m_fig.pen = createPen(m_fig.pen.getColor());
+    m_penWidthEdit.setText(String::fromInt(m_fig.pen.getWidth()));
     Change();
   }
 

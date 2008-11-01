@@ -108,6 +108,7 @@ public:
   static void breakMessageLoop();
 
   static void yield();
+  static void sleep(int msecs);
 
 protected:
 

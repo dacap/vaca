@@ -29,89 +29,73 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_IMAGE_H
-#define VACA_IMAGE_H
+#ifndef VACA_SCROLLEVENT_H
+#define VACA_SCROLLEVENT_H
 
 #include "Vaca/base.h"
-#include "Vaca/ResourceId.h"
-#include "Vaca/Size.h"
-#include "Vaca/GdiObject.h"
-#include "Vaca/SmartPtr.h"
+#include "Vaca/Enum.h"
+#include "Vaca/Event.h"
+#include "Vaca/Point.h"
 
 namespace Vaca {
 
-class Graphics;
-class Image;
+class Widget;
 
 /**
- * Used to destroy the HBITMAP handle of a Image.
+ * It's like a namespace for ScrollRequest.
  * 
- * @internal
+ * @see ScrollRequest
  */
-class VACA_DLL ImageHandle : public GdiObject<HBITMAP>
+struct ScrollRequestEnum
 {
-  friend class Image;
-  HDC m_hdc;
-  Graphics* m_graphics;
-public:
-  ImageHandle();
-  ImageHandle(HBITMAP handle);
-  virtual ~ImageHandle();
+  enum enumeration {
+    FullBackward,
+    FullForward,
+    PageBackward,
+    PageForward,
+    LineBackward,
+    LineForward,
+    BoxPosition,
+    BoxTracking,
+    EndScroll,
+  };
+
+  static const enumeration default_value = FullBackward;
 };
 
 /**
- * A smart pointer to an image.
+ * Defines how does the user want to scroll.
  *
- * This is a SmartPtr, so if you copy instances of images they will be
- * referencing to the same place. You have to use Image#clone method
- * to create real copies of the Image.
- *
- * Example
- * @code
- * Image img1(Size(32, 32));
- * Image img2 = img1;		// img1 and img2 references the same Image
- * Image img3 = img1.clone(); 
- * assert(img == img2);
- * assert(img != img3);
- * @endcode
- *
- * @win32
- *   This is a @msdn{HBITMAP} wrapper.
- * @endwin32
+ * One of the following values:
+ * @li ScrollRequest::FullBackward: go to the first page or beginning of line (Home).
+ * @li ScrollRequest::FullForward: go to the last page or end of line (End).
+ * @li ScrollRequest::LineBackward: go to to the previous line or character (Left/Up).
+ * @li ScrollRequest::LineForward: go to to the next line or character (Right/Down).
+ * @li ScrollRequest::PageBackward: go to the previous page (PageUp).
+ * @li ScrollRequest::PageForward: go to to the next page (PageDown).
+ * @li ScrollRequest::BoxPosition: the user moved the scroll box (also called "thumb").
+ * @li ScrollRequest::BoxTracking: the is moving the scroll box.
+ * @li ScrollRequest::EndScroll: the scroll request finished.
  */
-class VACA_DLL Image : private SmartPtr<ImageHandle>
+typedef Enum<ScrollRequestEnum> ScrollRequest;
+
+class VACA_DLL ScrollEvent : public Event
 {
+  Orientation m_orientation;
+  ScrollRequest m_request;
+  int m_position;
+
 public:
-  Image();
-  explicit Image(ResourceId imageId);
-  explicit Image(const String& fileName);
-  explicit Image(const Size& sz);
-  Image(const Size& sz, int depth);
-  Image(const Size& sz, Graphics& g);
-  Image(const Image& image);
-  virtual ~Image();
 
-  bool isValid() const { return get()->isValid(); }
+  ScrollEvent(Widget* source, Orientation orien, ScrollRequest req, int pos);
+  virtual ~ScrollEvent();
 
-  int getWidth() const;
-  int getHeight() const;
-  Size getSize() const;
-  int getDepth() const;
+  Orientation getOrientation() const;
+  ScrollRequest getRequest() const;
+  int getPosition() const;
 
-  Graphics& getGraphics();
-
-  HBITMAP getHandle() const;
-
-  Image& operator=(const Image& image);
-
-  Image clone() const;
-
-private:
-
-  void copyTo(Image& image) const;
-  
 };
 
 } // namespace Vaca
 
-#endif // VACA_IMAGE_H
+#endif // VACA_SCROLLEVENT_H

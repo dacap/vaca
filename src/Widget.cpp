@@ -49,6 +49,8 @@
 #include "Vaca/Mutex.h"
 #include "Vaca/ScopedLock.h"
 #include "Vaca/Command.h"
+#include "Vaca/ScrollInfo.h"
+#include "Vaca/ScrollEvent.h"
 
 // comment this to use the old behaviour (using GWL_USERDATA to store
 // the "Widget" pointer)
@@ -880,10 +882,13 @@ void Widget::update()
  * depending the current context of the Application. The current
  * context gives to you different states for every Command, so we have
  * to call Command#isEnabled for every visible indicator associated to
- * a Command. This means that updateIndicators updates the state of
- * visible ToolBar buttons and @link MenuItem MenuItems@endlink in the
- * MenuBar (@link MenuItem MenuItems@endlink in the @link Menu sub-menus@endlink
- * are updated when they are shown).
+ * a Command. This means that updateIndicators refresh the state of
+ * the visible ToolBar's buttons and MenuBar's menu items.
+ *
+ * Note: menu items in sub-menus or popup-menus are updated when they
+ * are shown.
+ *
+ * @see MenuBar, ToolBar, MenuItem, ToolButton
  */
 void Widget::updateIndicators()
 {
@@ -1166,8 +1171,11 @@ void Widget::releaseFocus()
 
 /**
  * Captures the mouse to receive its events even when it's outside the
- * widget (you must call Widget::releaseCapture when you are done with
- * the mouse).
+ * widget.
+ *
+ * You must call Widget#releaseMouse when you are done with the mouse.
+ *
+ * @see releaseMouse
  */
 void Widget::captureMouse()
 {
@@ -1177,14 +1185,16 @@ void Widget::captureMouse()
 }
 
 /**
- * Releases the previously captured mouse (Widget::acquireCapture).
+ * Releases the previously captured mouse.
+ *
+ * @see captureMouse
  */
 void Widget::releaseMouse()
 {
   assert(::IsWindow(m_handle));
-  assert(m_handle == ::GetCapture()); // you must to have the capture to use this method
 
-  ::ReleaseCapture();
+  if (m_handle == ::GetCapture())
+    ::ReleaseCapture();
 }
 
 /**
@@ -1197,8 +1207,10 @@ bool Widget::hasFocus()
 }
 
 /**
- * Returns true if the widget has the mouse. When you capture the
- * mouse, you continue having the .
+ * Returns true if the widget has the mouse.
+ *
+ * If a widget captured the mouse, then this routine will return true
+ * anyway until you release the mouse.
  *
  * @see hasCapture, hasMouseAbove
  */
@@ -1208,8 +1220,9 @@ bool Widget::hasMouse()
 }
 
 /**
- * Returns true if the widget has the mouse above (it doesn't matter
- * if the widget has the capture status).
+ * Returns true if the widget has the mouse above.
+ *
+ * It doesn't matter if the widget has the capture status.
  *
  * @see hasMouse
  */
@@ -1230,7 +1243,12 @@ bool Widget::hasCapture()
 }
 
 /**
- * You should use this method only inside onSetCursor() event.
+ * Changes the cursor to be shown when the mouse is above this widget.
+ * 
+ * You should use this method inside #onSetCursor event, or
+ * after capturing the mouse. When the mouse is captured you
+ * don't get #onSetCursor events, even for the same widget
+ * that has captured the mouse.
  */
 void Widget::setCursor(const Cursor& cursor)
 {
@@ -1295,37 +1313,42 @@ void Widget::moveBefore(Widget* brother)
 }
 
 /**
- * @todo docme
+ * Retrieves the scroll information in the specified @a orientation.
+ * 
+ * @param orientation
+ *   Gets the information of the scroll bar in this direction:
+ *   @li Orientation::Horizontal
+ *   @li Orientation::Vertical
+ *
+ * @see #setScrollInfo, #getScrollPos
  */
-ScrollInfo Widget::getScrollInfo(Orientation orientation)
+ScrollInfo Widget::getScrollInfo(Orientation orientation) const
 {
   assert(::IsWindow(m_handle));
-    
+
   int fnBar = (orientation == Orientation::Horizontal) ? SB_HORZ: SB_VERT;
 
   SCROLLINFO si;
   si.cbSize = sizeof(si);
-  si.fMask = SIF_ALL;
+  si.fMask = SIF_RANGE | SIF_PAGE;
 
-  GetScrollInfo(m_handle, fnBar, &si);
+  ::GetScrollInfo(m_handle, fnBar, &si);
 
-  ScrollInfo scrollInfo;
-  scrollInfo.minPos = si.nMin;
-  scrollInfo.maxPos = si.nMax;
-  scrollInfo.pageSize = si.nPage;
-  scrollInfo.pos = si.nPos;
-  scrollInfo.trackPos = si.nTrackPos;
-  return scrollInfo;
+  return ScrollInfo(si.nMin, si.nMax, si.nPage);
 }
 
 /** 
- * Changes the scroll information about this Widget.
- * 
+ * Sets the scroll information in the specified @a orientation.
+ *
  * @param orientation
- *     What scroll bar use (Horizontal or Vertical)
+ *   Sets the information for the scroll bar in this direction:
+ *   @li Orientation::Horizontal
+ *   @li Orientation::Vertical
  *	
  * @param scrollInfo
- *     New scroll information to be changed.
+ *   New scroll information.
+ *
+ * @see #getScrollInfo, #setScrollPos
  */
 void Widget::setScrollInfo(Orientation orientation, const ScrollInfo& scrollInfo)
 {
@@ -1335,20 +1358,25 @@ void Widget::setScrollInfo(Orientation orientation, const ScrollInfo& scrollInfo
 
   SCROLLINFO si;
   si.cbSize = sizeof(si);
-  si.fMask  = SIF_ALL;
-  si.nMin = scrollInfo.minPos;
-  si.nMax = scrollInfo.maxPos;
-  si.nPage = scrollInfo.pageSize;
-  si.nPos = scrollInfo.pos;
-  si.nTrackPos = scrollInfo.trackPos;
+  si.fMask  = SIF_RANGE | SIF_PAGE;
+  si.nMin = scrollInfo.getMinPos();
+  si.nMax = scrollInfo.getMaxPos();
+  si.nPage = scrollInfo.getPageSize();
 
   ::SetScrollInfo(m_handle, fnBar, &si, TRUE);
 }
   
 /**
- * @todo docme
+ * Retrieves the current scroll position in the specified @a orientation.
+ *
+ * @param orientation
+ *   Returns the information of the scroll bar in this direction:
+ *   @li Orientation::Horizontal
+ *   @li Orientation::Vertical
+ * 
+ * @see #setScrollPos, #getScrollInfo
  */
-int Widget::getScrollPos(Orientation orientation)
+int Widget::getScrollPos(Orientation orientation) const
 {
   assert(::IsWindow(m_handle));
     
@@ -1362,7 +1390,14 @@ int Widget::getScrollPos(Orientation orientation)
 }
 
 /**
- * @todo docme
+ * Sets the current scroll position in the specified @a orientation.
+ *
+ * @param orientation
+ *   Sets the position for the scroll bar in this direction:
+ *   @li Orientation::Horizontal
+ *   @li Orientation::Vertical
+ *
+ * @see #getScrollPos, #setScrollInfo
  */
 void Widget::setScrollPos(Orientation orientation, int pos)
 {
@@ -1383,16 +1418,32 @@ void Widget::setScrollPos(Orientation orientation, int pos)
 }
   
 /**
- * @todo docme
+ * Retrieves the current scroll point.
+ *
+ * It is like this:
+ * @code
+ * Point pt = Point(widget->getScrollPos(Orientation::Horizontal),
+ *                  widget->getScrollPos(Orientation::Vertical));
+ * @endcode
+ *
+ * @see #setScrollPoint, #getScrollPos
  */
-Point Widget::getScrollPoint()
+Point Widget::getScrollPoint() const
 {
   return Point(getScrollPos(Orientation::Horizontal),
 	       getScrollPos(Orientation::Vertical));
 }
 
 /**
- * @todo docme
+ * Sets the current scroll point.
+ *
+ * It is like this:
+ * @code
+ * widget->setScrollPos(Orientation::Horizontal, pt.x);
+ * widget->setScrollPos(Orientation::Vertical, pt.y);
+ * @endcode
+ *
+ * @see #getScrollPoint, #setScrollPos
  */
 void Widget::setScrollPoint(const Point& pt)
 {
@@ -1414,6 +1465,24 @@ void Widget::hideScrollBar(Orientation orientation)
   si.fMask  = SIF_RANGE;
   si.nMin = si.nMax = 0;
   ::SetScrollInfo(getHandle(), fnBar, &si, TRUE);
+}
+
+/**
+ * @todo docme
+ *
+ * @win32
+ *   ScrollWindowEx
+ * @endwin32
+ */
+void Widget::scrollRect(const Rect& rc, const Point& delta)
+{
+  assert(::IsWindow(m_handle));
+
+  RECT rc2 = rc;
+  ScrollWindowEx(m_handle,
+		 delta.x, delta.y,
+		 &rc2, &rc2, NULL, NULL,
+		 SW_ERASE | SW_INVALIDATE);
 }
 
 /**
@@ -1695,11 +1764,17 @@ void Widget::onCancelMode()
 }
 
 /**
- * Set the mouse's cursor depending of its position. If you override
- * this method, you shouldn't call Widget#onSetCursor if you don't
- * want the default behaviour.
+ * Requests the mouse cursor to be used in the area
+ * specified by @a hitTest.
+ * 
+ * This event is generated for everytime the mouse moves inside the
+ * widget. If the widget captured the mouse, this event is not
+ * generated anymore until the capture is not released.
  *
- * @param hitTest Where the mouse is.
+ * If you override this method, you shouldn't call the base
+ * implementation.
+ *
+ * @param hitTest Where the mouse is inside the widget.
  */
 void Widget::onSetCursor(WidgetHitTest hitTest)
 {
@@ -1719,9 +1794,10 @@ void Widget::onSetCursor(WidgetHitTest hitTest)
 }
 
 /**
- * The user presses a key.
+ * Event generated when the user presses a key.
  *
- * @param ev Has the information about the key pressed.
+ * @param ev
+ *   Information about the pressed key.
  *
  * @win32
  *   If KeyEvent#getKeyCode is not 0 the received message was @msdn{WM_KEYDOWN},
@@ -1735,7 +1811,10 @@ void Widget::onKeyDown(KeyEvent& ev)
 }
 
 /**
- * The user releases a key.
+ * Event generated when the user releases a key.
+ *
+ * @param ev
+ *   Information about the released key.
  *
  * @win32
  *   This event is generated when @msdn{WM_KEYUP} message is received.
@@ -1747,7 +1826,7 @@ void Widget::onKeyUp(KeyEvent& ev)
 }
 
 /**
- * @todo docme
+ * Event generated when the widget gets the keyboard-focus.
  */
 void Widget::onGotFocus(Event& ev)
 {
@@ -1755,7 +1834,7 @@ void Widget::onGotFocus(Event& ev)
 }
 
 /**
- * @todo docme
+ * Event generated when the widget losts the keyboard-focus.
  */
 void Widget::onLostFocus(Event& ev)
 {
@@ -1763,8 +1842,8 @@ void Widget::onLostFocus(Event& ev)
 }
 
 /**
- * Called when a command by ID is activated by the user, this can be a
- * menu item or an accelerator.
+ * Event generated when a command by ID is activated by the user, this
+ * can be a menu item or an accelerator.
  *
  * @param commandId
  *     Identifier of the command that was activated.
@@ -1795,9 +1874,9 @@ bool Widget::onCommand(CommandId id)
 }
 
 /**
- * Event called to update the state of indicators.
+ * Event generated to update the state of indicators.
  *
- * @see Widget#updateIndicators
+ * @see updateIndicators
  */
 void Widget::onUpdateIndicators()
 {
@@ -1817,6 +1896,7 @@ void Widget::onUpdateIndicators()
  */
 void Widget::onBeforePosChange()
 {
+  // do nothing
 }
 
 /**
@@ -1828,13 +1908,15 @@ void Widget::onBeforePosChange()
  */
 void Widget::onAfterPosChange()
 {
+  // do nothing
 }
 
 /**
- * @todo docme
+ * Generated when the user move the scroll of this widget.
  */
-void Widget::onScroll(Orientation orient, int code)
+void Widget::onScroll(ScrollEvent& ev)
 {
+  // do nothing
 }
 
 /**
@@ -1847,6 +1929,7 @@ void Widget::onDropFiles(DropFilesEvent& ev)
 
 void Widget::onRemoveChild(Widget* child)
 {
+  // do nothing
 }
 
 /**
@@ -2562,24 +2645,77 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
     case WM_VSCROLL:
     case WM_HSCROLL:
       {
-	Orientation orient = (message == WM_VSCROLL) ? Orientation::Vertical:
-						       Orientation::Horizontal;
-	  
+	Orientation orien = (message == WM_VSCROLL) ? Orientation::Vertical:
+						      Orientation::Horizontal;
+	ScrollRequest req;
+	int fnBar = (orien == Orientation::Horizontal) ? SB_HORZ: SB_VERT;
+	int pos;
+	SCROLLINFO si;
+
+	si.cbSize = sizeof(si);
+	si.fMask = SIF_ALL;
+	::GetScrollInfo(m_handle, fnBar, &si);
+      
+	// convert the scroll request code to ScrollRequest
+	switch (LOWORD(wParam)) {
+	  case SB_LINELEFT:
+	    req = ScrollRequest::LineBackward;
+	    pos = si.nPos - 1;
+	    break;
+	  case SB_LINERIGHT:
+	    req = ScrollRequest::LineForward;
+	    pos = si.nPos + 1;
+	    break;
+	  case SB_PAGELEFT:
+	    req = ScrollRequest::PageBackward;
+	    pos = si.nPos - si.nPage;
+	    break;
+	  case SB_PAGERIGHT:
+	    req = ScrollRequest::PageForward;
+	    pos = si.nPos + si.nPage;
+	    break;
+	  case SB_THUMBPOSITION:
+	    req = ScrollRequest::BoxPosition;
+	    pos = si.nPos;
+	    break;
+	  case SB_THUMBTRACK:
+	    req = ScrollRequest::BoxTracking;
+	    pos = si.nTrackPos;
+	    break;
+	  case SB_LEFT:
+	    req = ScrollRequest::FullBackward;
+	    pos = si.nMin;
+	    break;
+	  case SB_RIGHT:
+	    req = ScrollRequest::FullForward;
+	    pos = si.nMax;
+	    break;
+	  case SB_ENDSCROLL:
+	    req = ScrollRequest::EndScroll;
+	    pos = si.nPos;
+	    break;
+	}
+
+	pos = VACA_CLAMP(pos,
+			 si.nMin,
+			 si.nMax - VACA_MAX(static_cast<int>(si.nPage) - 1, 0));
+
 	// Note: onScroll() doesn't receive the nPos=HIWORD(wParam)
 	// because it has a limit of 16-bits.  Instead you should use
 	// GetScrollInfo to get the position of the scroll-bar, it has
 	// the full 32 bits
+	ScrollEvent ev(this, orien, req, pos);
 	
 	// reflect the message? (it's useful for the "Slider" widget)
 	if (lParam != 0) {
 	  Widget* child = Widget::fromHandle(reinterpret_cast<HWND>(lParam));
 	  if (child != NULL) {
 	    MakeWidgetRef ref(child);
-	    child->onScroll(orient, LOWORD(wParam));
+	    child->onScroll(ev);
 	  }
 	}
 
-	onScroll(orient, LOWORD(wParam));
+	onScroll(ev);
       }
       break;
 

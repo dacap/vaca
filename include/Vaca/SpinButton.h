@@ -118,7 +118,7 @@ protected:
 //   virtual void onBeforeChange(SpinButtonEvent& ev);
 //   virtual void onAfterChange(SpinButtonEvent& ev);
   // events
-//   virtual void onScroll(Orientation orientation, int code);
+//   virtual void onScroll(ScrollEvent& ev);
   // reflection
   virtual bool onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult);
 

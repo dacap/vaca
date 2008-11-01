@@ -97,16 +97,19 @@ public:
   // ============================================================
   // FILE NAMES, PATHS AND URLS
   // ============================================================
+
+  String& addPathComponent(const String& component);
   
   String getFilePath() const;
   String getFileName() const;
   String getFileExtension() const;
   String getFileTitle() const;
 
-  String addPathComponent(const String& component) const;
-
   String getUrlHost() const;
   String getUrlObject() const;
+
+  String encodeUrl() const;
+  String decodeUrl() const;
 
 //   String removeExtension() const;
 //   String replaceExtension(const String& newExtension) const;

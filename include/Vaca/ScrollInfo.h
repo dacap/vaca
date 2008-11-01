@@ -35,19 +35,33 @@
 #include "Vaca/base.h"
 
 namespace Vaca {
-
+  
 /**
  * Auxiliary structure to get and set scroll information.
+ * 
+ * Scroll information includes: the valid range where the scroll
+ * position can be, and the page size.
+ *
+ * @see Widget#getScrollInfo, Widget#getScrollPos
  */
 class VACA_DLL ScrollInfo
 {
-public:
+  int m_minPos;
+  int m_maxPos;
+  int m_pageSize;
 
-  int minPos;
-  int maxPos;
-  int pageSize;
-  int pos;
-  int trackPos;
+public:
+  ScrollInfo();
+  ScrollInfo(int minPos, int maxPos, int pageSize);
+  virtual ~ScrollInfo();
+
+  int getMinPos() const;
+  int getMaxPos() const;
+  int getPageSize() const;
+
+  void setMinPos(int minPos);
+  void setMaxPos(int maxPos);
+  void setPageSize(int pageSize);
 
 };
 

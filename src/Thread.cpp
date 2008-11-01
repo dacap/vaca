@@ -307,6 +307,11 @@ void Thread::yield()
   ::Sleep(0);
 }
 
+void Thread::sleep(int msecs)
+{
+  ::Sleep(msecs);
+}
+
 /**
  * Gets a message waiting for it: locks the execution of the program
  * until a message is received from the operating system.

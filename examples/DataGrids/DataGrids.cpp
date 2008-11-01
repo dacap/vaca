@@ -424,7 +424,7 @@ public:
 
 protected:
 
-  virtual void onScroll(Orientation orientation, int code);
+  virtual void onScroll(ScrollEvent& ev);
   virtual void onDoubleClick(MouseEvent &ev);
   virtual void onMouseDown(MouseEvent &ev);
   virtual void onMouseUp(MouseEvent &ev);
@@ -531,40 +531,37 @@ void DataGrid::setCrudColumnWidth(int width)
   m_crudColumnWidth = width;
 }
 
-void DataGrid::onScroll(Orientation orientation, int code)
+void DataGrid::onScroll(ScrollEvent& ev)
 {
-  Panel::onScroll(orientation, code);
+  Panel::onScroll(ev);
 
-  ScrollInfo si = getScrollInfo(orientation);
-  int oldPos = si.pos;
+  Orientation orien = ev.getOrientation();
+  int pos = getScrollPos(orien);
+  int oldPos = pos;
 
-  switch (code) {
-    case SB_LINELEFT: 
-      si.pos -= 32;
+  switch (ev.getRequest()) {
+    case ScrollRequest::LineBackward:
+      pos -= 32;
       break;
-    case SB_LINERIGHT: 
-      si.pos += 32;
+    case ScrollRequest::LineForward: 
+      pos += 32;
       break;
-    case SB_PAGELEFT:
-      si.pos -= si.pageSize;
-      break;
-    case SB_PAGERIGHT:
-      si.pos += si.pageSize;
-      break;
-    case SB_THUMBTRACK: 
-      si.pos = si.trackPos;
+    case ScrollRequest::PageBackward:
+    case ScrollRequest::PageForward:
+    case ScrollRequest::BoxTracking:
+      pos = ev.getPosition();
       break;
     default:
       break;
   }
 
-  setScrollPos(orientation, si.pos);
-  si.pos = getScrollPos(orientation);
+  setScrollPos(orien, pos);
+  pos = getScrollPos(orien);
 
-  if (si.pos != oldPos) {
+  if (pos != oldPos) {
     ScrollWindowEx(getHandle(),
-		   (orientation == Orientation::Horizontal) ? oldPos - si.pos: 0,
-		   (orientation == Orientation::Vertical  ) ? oldPos - si.pos: 0,
+		   (orien == Orientation::Horizontal) ? oldPos - pos: 0,
+		   (orien == Orientation::Vertical  ) ? oldPos - pos: 0,
 		   NULL, NULL, NULL, NULL,
 		   SW_ERASE | SW_INVALIDATE);
   }
@@ -1132,21 +1129,14 @@ void DataGrid::updateHorizontalScrollBarVisibility()
     Rect clientBounds = getClientBounds().offset(-getScrollPoint());
     Rect lastColumnBounds = getColumnBounds(colCount-1);
 
-    ScrollInfo si = getScrollInfo(Orientation::Horizontal);
+    ScrollInfo si(0, 0, clientBounds.w);
 
-    si.pageSize = clientBounds.w;
+    if ((lastColumnBounds.x-clientBounds.x)+lastColumnBounds.w > clientBounds.w)
+      si.setMaxPos((lastColumnBounds.x-clientBounds.x) + lastColumnBounds.w - 1);
 
-    if ((lastColumnBounds.x-clientBounds.x)+lastColumnBounds.w > clientBounds.w) {
-      si.minPos = 0;
-      si.maxPos = (lastColumnBounds.x-clientBounds.x) + lastColumnBounds.w - 1;
-    }
-    else {
-      si.minPos = si.maxPos = 0;
-    }
-
-    si.pos = VACA_CLAMP(si.pos,
-			si.minPos,
-			si.maxPos - VACA_MAX(si.pageSize - 1, 0));
+    // si.pos = VACA_CLAMP(si.pos,
+    // 			si.minPos,
+    // 			si.maxPos - VACA_MAX(si.pageSize - 1, 0));
 
     setScrollInfo(Orientation::Horizontal, si);
   }
@@ -1164,21 +1154,14 @@ void DataGrid::updateVerticalScrollBarVisibility()
     Rect clientBounds = getClientBounds().offset(-getScrollPoint());
     Rect lastRowBounds = getRowBounds(rowCount-1);
 
-    ScrollInfo si = getScrollInfo(Orientation::Vertical);
+    ScrollInfo si(0, 0, clientBounds.h);
 
-    si.pageSize = clientBounds.h;
+    if ((lastRowBounds.y-clientBounds.y)+lastRowBounds.h > clientBounds.h)
+      si.setMaxPos((lastRowBounds.y-clientBounds.y) + lastRowBounds.h - 1);
 
-    if ((lastRowBounds.y-clientBounds.y)+lastRowBounds.h > clientBounds.h) {
-      si.minPos = 0;
-      si.maxPos = (lastRowBounds.y-clientBounds.y) + lastRowBounds.h - 1;
-    }
-    else {
-      si.minPos = si.maxPos = 0;
-    }
-
-    si.pos = VACA_CLAMP(si.pos,
-			si.minPos,
-			si.maxPos - VACA_MAX(si.pageSize - 1, 0));
+    // si.pos = VACA_CLAMP(si.pos,
+    // 			si.minPos,
+    // 			si.maxPos - VACA_MAX(si.pageSize - 1, 0));
 
     setScrollInfo(Orientation::Vertical, si);
   }

@@ -39,7 +39,6 @@
 #include "Vaca/Font.h"
 #include "Vaca/Graphics.h"
 #include "Vaca/Rect.h"
-#include "Vaca/ScrollInfo.h"
 #include "Vaca/Signal.h"
 #include "Vaca/Size.h"
 #include "Vaca/String.h"
@@ -58,6 +57,8 @@ class KeyEvent;
 class Layout;
 class MakeWidgetRef;
 class MouseEvent;
+class ScrollEvent;
+class ScrollInfo;
 class Widget;
 class WidgetClassName;
 
@@ -558,13 +559,18 @@ public:
   // SCROLL
   // ===============================================================
 
-  ScrollInfo getScrollInfo(Orientation orientation);
+  ScrollInfo getScrollInfo(Orientation orientation) const;
   void setScrollInfo(Orientation orientation, const ScrollInfo& scrollInfo);
-  int getScrollPos(Orientation orientation);
+
+  int getScrollPos(Orientation orientation) const;
   void setScrollPos(Orientation orientation, int pos);
-  Point getScrollPoint();
+
+  Point getScrollPoint() const;
   void setScrollPoint(const Point& pt);
+
   void hideScrollBar(Orientation orientation);
+
+  void scrollRect(const Rect& rect, const Point& delta);
 
   // ===============================================================
   // COMMANDS
@@ -634,7 +640,7 @@ protected:
   virtual void onUpdateIndicators();
   virtual void onBeforePosChange();
   virtual void onAfterPosChange();
-  virtual void onScroll(Orientation orientation, int code);
+  virtual void onScroll(ScrollEvent& ev);
   virtual void onDropFiles(DropFilesEvent& ev);
   virtual void onRemoveChild(Widget* child);
 

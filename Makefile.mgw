@@ -54,26 +54,30 @@ LIB_SOURCES = Anchor AnchorLayout Application BandedDockArea		\
 	      Clipboard CloseEvent Color ColorDialog ComboBox Command	\
 	      CommonDialog Component ConditionVariable Constraint	\
 	      Cursor CustomButton CustomLabel Debug Dialog DockArea	\
-	      DockBar DockFrame DropFilesEvent Edit Event FileDialog	\
-	      FindTextDialog Font FontDialog Frame Graphics		\
+	      DockBar DockFrame DropFilesEvent Edit Event Exception	\
+	      FileDialog FindTextDialog Font FontDialog Frame Graphics	\
 	      GraphicsPath GroupBox HttpRequest Icon Image ImageList	\
 	      KeyEvent Keys Label Layout LinkLabel ListBox ListView	\
 	      Mdi Menu MenuItemEvent MouseEvent MsgBox Mutex Panel Pen	\
 	      Point ProgressBar RadioButton ReBar Rect Referenceable	\
-	      Region ResourceId Scintilla Separator Size Slider		\
-	      SpinButton Spinner StatusBar String Style System Tab	\
-	      Thread TimePoint Timer ToggleButton ToolBar TreeNode	\
-	      TreeView TreeViewEvent Vaca Widget WidgetClass
+	      Region ResourceId Scintilla ScrollEvent ScrollInfo	\
+	      Separator Size Slider SpinButton Spinner StatusBar	\
+	      String Style System Tab Thread TimePoint Timer		\
+	      ToggleButton ToolBar TreeNode TreeView TreeViewEvent	\
+	      Vaca Widget WidgetClass
 
+ifndef EXAMPLES
 EXAMPLES = AnchorLayouts AutoCompletion Bixes BouncingBalls BoxLayouts	\
 	   Buttons ColoredButton ComboBoxes Commands DataGrids		\
 	   EditableListBox Edits EyeDropper FontMetrics FreeOfLayout	\
 	   Hashing HelloWorld Images Labels LikeScript Maths		\
 	   MenuResource MiniExplorer Minimal Paths Primitives		\
-	   ProgressBars Regions Scribble Sliders Spinners StdCommands	\
-	   Sudoku SystemImageList Tabs TextEditor Threads Timers	\
-	   ToolBars Trees Undo WebCam
+	   ProgressBars Regions Scribble Scrolling Sliders Spinners	\
+	   StdCommands Sudoku SystemImageList Tabs TextEditor Threads	\
+	   Timers ToolBars Trees Undo WebCam
+endif
 
+ifndef TESTS
 TESTS = \
 	test_bind \
 	test_menu \
@@ -86,6 +90,7 @@ TESTS = \
 	test_string \
 	test_tab \
 	test_thread
+endif
 
 # ----------------------------------------------------------------------
 # Flags

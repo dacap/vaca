@@ -29,67 +29,34 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_SLIDER_H
-#define VACA_SLIDER_H
-
-#include "Vaca/base.h"
+#include "Vaca/ScrollEvent.h"
 #include "Vaca/Widget.h"
 
-namespace Vaca {
+using namespace Vaca;
 
-#define SliderStyle		(ChildStyle +				\
-				 FocusableStyle +			\
-				 Style(TBS_HORZ | TBS_BOTH |		\
-				       TBS_NOTICKS | TBS_AUTOTICKS, 0))
-
-class VACA_DLL Slider : public Widget
+ScrollEvent::ScrollEvent(Widget* source, Orientation orien, ScrollRequest req, int pos)
+  : Event(source)
+  , m_orientation(orien)
+  , m_request(req)
+  , m_position(pos)
 {
-public:
+}
 
-  static const int MinLimit;
-  static const int MaxLimit;
+ScrollEvent::~ScrollEvent()
+{
+}
 
-  Slider(Widget* parent, Style style = SliderStyle);
-  Slider(int minValue, int maxValue, int value,
-	 Widget* parent, Style style = SliderStyle);
-  virtual ~Slider();
+Orientation ScrollEvent::getOrientation() const
+{
+  return m_orientation;
+}
 
-  Orientation getOrientation();
-  void setOrientation(Orientation orientation);
+ScrollRequest ScrollEvent::getRequest() const
+{
+  return m_request;
+}
 
-  Sides getSides();
-  void setSides(Sides sides);
-
-  void setTickVisible(bool state);
-  void setTickFreq(int freq);
-
-  int getMinValue();
-  int getMaxValue();
-  void getRange(int& minValue, int& maxValue);
-  void setRange(int minValue, int maxValue);
-
-  int getValue();
-  void setValue(int posValue);
-
-  int getLineSize();
-  void setLineSize(int lineSize);
-
-  int getPageSize();
-  void setPageSize(int pageSize);
-
-  // signals
-  Signal1<void, Event&> Change; ///< @see onChange
-
-protected:
-  // events
-  virtual void onPreferredSize(Size& sz);
-  virtual void onScroll(ScrollEvent& ev);
-  
-  // new events
-  virtual void onChange(Event& ev);
-  
-};
-
-} // namespace Vaca
-
-#endif // VACA_SLIDER_H
+int ScrollEvent::getPosition() const
+{
+  return m_position;
+}

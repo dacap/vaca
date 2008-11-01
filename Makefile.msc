@@ -57,12 +57,13 @@ OBJS = obj/Anchor.obj obj/AnchorLayout.obj obj/Application.obj		\
   obj/Mutex.obj obj/Panel.obj obj/Pen.obj obj/Point.obj			\
   obj/ProgressBar.obj obj/RadioButton.obj obj/ReBar.obj obj/Rect.obj	\
   obj/Referenceable.obj obj/Region.obj obj/ResourceId.obj		\
-  obj/Scintilla.obj obj/Separator.obj obj/Size.obj obj/Slider.obj	\
-  obj/SpinButton.obj obj/Spinner.obj obj/StatusBar.obj obj/String.obj	\
-  obj/Style.obj obj/System.obj obj/Tab.obj obj/Thread.obj		\
-  obj/TimePoint.obj obj/Timer.obj obj/ToggleButton.obj obj/ToolBar.obj	\
-  obj/TreeNode.obj obj/TreeView.obj obj/TreeViewEvent.obj obj/Vaca.obj	\
-  obj/Widget.obj obj/WidgetClass.obj
+  obj/Scintilla.obj obj/ScrollEvent.obj obj/ScrollInfo.obj		\
+  obj/Separator.obj obj/Size.obj obj/Slider.obj obj/SpinButton.obj	\
+  obj/Spinner.obj obj/StatusBar.obj obj/String.obj obj/Style.obj	\
+  obj/System.obj obj/Tab.obj obj/Thread.obj obj/TimePoint.obj		\
+  obj/Timer.obj obj/ToggleButton.obj obj/ToolBar.obj obj/TreeNode.obj	\
+  obj/TreeView.obj obj/TreeViewEvent.obj obj/Vaca.obj obj/Widget.obj	\
+  obj/WidgetClass.obj
 
 EXAMPLES_EXE = bin/AnchorLayouts.exe bin/AutoCompletion.exe		\
   bin/Bixes.exe bin/BouncingBalls.exe bin/BoxLayouts.exe		\
@@ -73,10 +74,11 @@ EXAMPLES_EXE = bin/AnchorLayouts.exe bin/AutoCompletion.exe		\
   bin/Images.exe bin/Labels.exe bin/LikeScript.exe bin/Maths.exe	\
   bin/MenuResource.exe bin/MiniExplorer.exe bin/Minimal.exe		\
   bin/Paths.exe bin/Primitives.exe bin/ProgressBars.exe			\
-  bin/Regions.exe bin/Scribble.exe bin/Sliders.exe bin/Spinners.exe	\
-  bin/StdCommands.exe bin/Sudoku.exe bin/SystemImageList.exe		\
-  bin/Tabs.exe bin/TextEditor.exe bin/Threads.exe bin/Timers.exe	\
-  bin/ToolBars.exe bin/Trees.exe bin/Undo.exe bin/WebCam.exe
+  bin/Regions.exe bin/Scribble.exe bin/Scrolling.exe bin/Sliders.exe	\
+  bin/Spinners.exe bin/StdCommands.exe bin/Sudoku.exe			\
+  bin/SystemImageList.exe bin/Tabs.exe bin/TextEditor.exe		\
+  bin/Threads.exe bin/Timers.exe bin/ToolBars.exe bin/Trees.exe		\
+  bin/Undo.exe bin/WebCam.exe
 
 TESTS_EXE = \
   bin/test_bind.exe \
@@ -183,6 +185,7 @@ bin/Primitives.exe: obj/Primitives.obj obj/Example.res
 bin/ProgressBars.exe: obj/ProgressBars.obj obj/Example.res
 bin/Regions.exe: obj/Regions.obj obj/Example.res
 bin/Scribble.exe: obj/Scribble.obj obj/Example.res
+bin/Scrolling.exe: obj/Scrolling.obj obj/Example.res
 bin/Sliders.exe: obj/Sliders.obj obj/Example.res
 bin/Spinners.exe: obj/Spinners.obj obj/Example.res
 bin/StdCommands.exe: obj/StdCommands.obj obj/Example.res
@@ -285,6 +288,8 @@ obj/Regions.obj: examples/Regions/Regions.cpp
 	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/Regions/Regions.cpp
 obj/Scribble.obj: examples/Scribble/Scribble.cpp
 	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/Scribble/Scribble.cpp
+obj/Scrolling.obj: examples/Scrolling/Scrolling.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/Scrolling/Scrolling.cpp
 obj/Sliders.obj: examples/Sliders/Sliders.cpp
 	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/Sliders/Sliders.cpp
 obj/Spinners.obj: examples/Spinners/Spinners.cpp

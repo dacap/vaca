@@ -24,7 +24,7 @@ MESS stands for Message-Event-Signal/Slot:
     use functions like @link Signal0_base#connect Signal::connect@endlink.
 
 Basically when a @em message came from the operating system, it means
-that the user input a value or is waiting for an output. The @em message
+that the user inputs a value or is waiting for an output. The @em message
 produces an @em event that is received by a specific Widget.
 Default implementations of the events fire a @em signal
 related to that event.

@@ -1,3 +1,10 @@
+Vaca 0.0.8
+
+- Added Scrolling example.
+- Added Thread::sleep. 
+- Added ScrollEvent and ScrollRequest. Modified onScroll to
+  receive a ScrollEvent.
+
 Vaca 0.0.7
 
 - Added MenuPopup.
@@ -19,7 +26,7 @@ Vaca 0.0.7
 - Fixed Bix::getPreferredSize when EvenX or EvenY flags are activated.
 - Now MenuItem::setEnabled/Checked can be used although the item isn't
   in a parent Menu.
-- Removed SelfDestruction class (with SmartPtrs isn't needed anymore).
+- Removed SelfDestruction class (with SmartPtrs it isn't needed anymore).
 
 Vaca 0.0.6
 

@@ -110,6 +110,7 @@
 #include "Vaca/Register.h"
 #include "Vaca/Scintilla.h"
 #include "Vaca/ScopedLock.h"
+#include "Vaca/ScrollEvent.h"
 #include "Vaca/ScrollInfo.h"
 #include "Vaca/Separator.h"
 #include "Vaca/Signal.h"

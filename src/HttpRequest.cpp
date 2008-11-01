@@ -89,7 +89,8 @@ HttpRequest::InetRequest::InetRequest(InetSession& ses,
   : InetHandle(HttpOpenRequest(ses.handle,
 			       method.c_str(),
 			       object.c_str(),
-			       NULL, NULL, NULL, 0, 0),
+			       NULL, NULL, NULL,
+			       INTERNET_FLAG_NO_UI, 0),
 	       "Can't send a " + method + " request to " + object)
 {
 }
@@ -207,7 +208,14 @@ bool HttpRequest::hasHeader(const String& headerName)
 }
 
 /**
+ * Returns the value of the specified header.
+ * 
+ * @return
+ *   The value of the specified header, or an empty string if the
+ *   header is not found.
+ *
  * @throw HttpRequestException
+ *   If there are an error getting the header.
  */
 String HttpRequest::getHeader(const String& headerName)
 {
@@ -230,7 +238,9 @@ String HttpRequest::getHeader(const String& headerName)
       buf = auto_ptr<char>(new char[bufLength]);
       continue;
     }
+    else if (GetLastError() == ERROR_HTTP_HEADER_NOT_FOUND)
+      return String();
     else
-      throw HttpRequestException("Error retrieving bytes");
+      throw HttpRequestException("Error retrieving header");
   }
 }

@@ -18,6 +18,10 @@ private:
 	-mkdir html
 	$(DOXYGEN) Doxyfile_pri
 
+web:
+	-mkdir html
+	$(DOXYGEN) Doxyfile_web
+
 gen1:
 	$(DOXYGEN) -g new_Doxyfile
 

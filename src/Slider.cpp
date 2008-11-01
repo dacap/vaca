@@ -32,6 +32,7 @@
 #include "Vaca/Slider.h"
 #include "Vaca/Debug.h"
 #include "Vaca/Event.h"
+#include "Vaca/ScrollEvent.h"
 #include "Vaca/WidgetClass.h"
 #include <limits>
 #include <limits.h>
@@ -284,30 +285,12 @@ void Slider::onPreferredSize(Size& sz)
     sz = Size(30, 30);
 }
 
-void Slider::onScroll(Orientation orientation, int code)
+void Slider::onScroll(ScrollEvent& ev)
 {
-  assert(getOrientation() == orientation);
-  
-  switch (code) {
+  assert(getOrientation() == ev.getOrientation());
 
-    case TB_BOTTOM:
-    case TB_ENDTRACK:
-    case TB_LINEDOWN:
-    case TB_LINEUP:
-    case TB_PAGEDOWN:
-    case TB_PAGEUP:
-    case TB_THUMBPOSITION:
-    case TB_THUMBTRACK:
-    case TB_TOP: {
-      Event ev(this);
-      onChange(ev);
-      return;
-    }
-
-  }
-
-  // impossible
-  assert(false);
+  Event subEvent(this);
+  onChange(subEvent);
 }
 
 void Slider::onChange(Event& ev)

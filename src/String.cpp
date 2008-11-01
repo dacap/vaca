@@ -31,9 +31,11 @@
 
 #include "Vaca/String.h"
 #include "Vaca/Debug.h"
+#include "Vaca/Exception.h"
 #include <cstdarg>
 #include <cstdlib>
 #include <cctype>
+#include <wininet.h>
 
 #include <algorithm>
 #include <memory>
@@ -290,6 +292,34 @@ double String::parseDouble() const
 }
 
 /**
+ * Adds a path component to this string.
+ *
+ * It is useful if the string represent a path and we have to add a
+ * file name. For example:
+ * @code
+ * String path("C:\\myproject\\src");
+ * path.addPathComponent("main.h");
+ *
+ * assert(path == "C:\\myproject\\src\\main.h");
+ * @endcode
+ *
+ * @param component
+ *   The string to be added at the end of the string
+ *   (separated by a slash).
+ *
+ * @return
+ *   A reference to the same instance used to call this method.
+ */
+String& String::addPathComponent(const String& component)
+{
+  if (!empty() && *(end()-1) != '/' && *(end()-1) != '\\')
+    push_back('\\');
+
+  operator+=(component);
+  return *this;
+}
+
+/**
  * Returns the file path (the path of "C:\foo\main.cpp" is "C:\foo"
  * without the file name).
  *
@@ -396,27 +426,6 @@ String String::getFileTitle() const
   return res;
 }
 
-String String::addPathComponent(const String& component) const
-{
-#if 0
-  TCHAR buf[MAX_PATH];
-  copyTo(buf, MAX_PATH);
-    
-  if (PathAppend(buf, component.c_str()))
-    return String(buf);
-  else
-    return *this;
-#else  
-  String res(*this);
-  
-  if (!empty() && *(end()-1) != '/' && *(end()-1) != '\\')
-    res.push_back('\\');
-
-  res += component;
-  return res;
-#endif
-}
-
 String String::getUrlHost() const
 {
   String host;
@@ -443,6 +452,47 @@ String String::getUrlObject() const
     }
   }
   return object;
+}
+
+String String::encodeUrl() const
+{
+  std::auto_ptr<Character> buf;
+  DWORD size = 1024;
+
+  while (true) {
+    buf = std::auto_ptr<Character>(new Character[size]);
+
+    if (::InternetCanonicalizeUrl(c_str(), buf.get(), &size, 0))
+      break;
+
+    if (GetLastError() != ERROR_INSUFFICIENT_BUFFER)
+      throw Exception();
+
+    // else continue growing the buffer...
+  }
+
+  return String(buf.get());
+}
+
+String String::decodeUrl() const
+{
+  std::auto_ptr<Character> buf;
+  DWORD size = 1024;
+
+  while (true) {
+    buf = std::auto_ptr<Character>(new Character[size]);
+
+    if (::InternetCanonicalizeUrl(c_str(), buf.get(), &size,
+				  ICU_DECODE | ICU_NO_ENCODE))
+      break;
+
+    if (GetLastError() != ERROR_INSUFFICIENT_BUFFER)
+      throw Exception();
+
+    // else continue growing the buffer...
+  }
+
+  return String(buf.get());
 }
 
 #if 0

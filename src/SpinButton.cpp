@@ -173,9 +173,9 @@ void SpinButton::onChange(SpinButtonEvent& ev)
 //   AfterChange(ev);
 // }
 
-// void SpinButton::onScroll(Orientation orientation, int code)
+// void SpinButton::onScroll(ScrollEvent& ev)
 // {
-//   if (code == TB_THUMBPOSITION) {
+//   if (ev.getRequest() == ScrollRequest::BoxPosition) {
 //     SpinButtonEvent ev(this, pos, 0, TopSide);
 //     onAfterChange(ev);
 //   }

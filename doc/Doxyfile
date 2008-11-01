@@ -294,3 +294,8 @@ ALIASES += endTable="</table>"
 ALIASES += titleRow{1}="<tr class=\"title\"><td colspan=\"2\">\1</td></tr>"
 ALIASES += itemRow{1}="<tr><td>@ref \1</td><td>@copybrief \1</td></tr>"
 ALIASES += itemRow{2}="<tr><td>@subpage \1</td><td>\2</td></tr>"
+
+ALIASES += beginChanges="<table class=\"overview\">"
+ALIASES += endChanges="</table>"
+ALIASES += beginChange{1}="<tr class=\"title\"><td>\1</td></tr><tr><td>"
+ALIASES += endChange="</td></tr>"

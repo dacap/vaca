@@ -72,9 +72,9 @@ protected:
     endEdit();
   }
 
-  virtual void onScroll(Orientation orientation, int code)
+  virtual void onScroll(ScrollEvent& ev)
   {
-    ListBox::onScroll(orientation, code);
+    ListBox::onScroll(ev);
     endEdit();
   }
 

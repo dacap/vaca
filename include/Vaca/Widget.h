@@ -302,8 +302,8 @@ public:
  */
 class VACA_DLL Widget : public Component
 {
-  friend class MakeWidgetRef;
-  friend void delete_widget(Widget* widget);
+  friend class VACA_DLL MakeWidgetRef;
+  friend VACA_DLL void delete_widget(Widget* widget);
   
 public:
 
@@ -690,7 +690,7 @@ private:
   void safeDelete(Widget* widget);
 };
 
-void VACA_DLL delete_widget(Widget* widget);
+VACA_DLL void delete_widget(Widget* widget);
 
 } // namespace Vaca
 

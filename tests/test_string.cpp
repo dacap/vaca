@@ -144,7 +144,7 @@ void test_format()
 void test_format_overflow()
 {
   for (int n=1024; n<1026; ++n) {
-    char* buf(new char[n]);
+    Character* buf(new Character[n]);
 
     for (int d=10; d<1000; d*=10) {
       for (int c=0; c<n-3; ++c)
@@ -153,7 +153,7 @@ void test_format_overflow()
       buf[n-2] = 'd';
       buf[n-1] = 0;
 
-      assert(String::format(buf, d) == std::string(n-3, 'x') + String::fromInt(d));
+      assert(String::format(buf, d) == (String(std::string(n-3, 'x').c_str())+String::fromInt(d)));
     }
 
     delete buf;

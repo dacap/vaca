@@ -29,6 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
+#define VACA_STRING_CPP
+
 #include "Vaca/String.h"
 #include "Vaca/Debug.h"
 #include "Vaca/Exception.h"
@@ -41,6 +43,11 @@
 #include <memory>
 
 using namespace Vaca;
+
+// work-arround for the dynamic version of Vaca on MSC compiler (Q168958)
+// #if !defined VACA_STATIC && defined _MSC_VER
+//   VACA_STRING_BASE __vaca_empty_string__;
+// #endif
 
 String::String()
   : VACA_STRING_BASE(_T(""))

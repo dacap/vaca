@@ -143,11 +143,11 @@ void Exception::initialize()
   if (hmodule)
     FreeLibrary(hmodule);
 
-  m_what += String::fromInt(m_errorCode);
-  m_what += _T(" - ");
+  m_what += String::fromInt(m_errorCode).to_string();
+  m_what += " - ";
   if (msgbuf) {
     m_what += msgbuf;
     LocalFree(msgbuf);
   }
-  m_what += m_message;
+  m_what += m_message.to_string();
 }

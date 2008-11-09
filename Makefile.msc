@@ -6,8 +6,11 @@
 # Configuration
 # ----------------------------------------------------------------------
 
-STATIC = 1
-DEBUG = 1
+# RELEASE = 1
+# DEBUG = 1
+# STATIC = 1
+# PROFILE = 1
+# UNICODE = 1
 
 # ----------------------------------------------------------------------
 # Flags
@@ -17,20 +20,76 @@ CPPFLAGS = -Iinclude -Iscintilla/include -wd4355 -Ob1 -EHa	\
 	   -DVACA_WIN32_IMPL -DWINVER=0x0500 -D_WIN32_IE=0x0500	\
 	   -D_WIN32_WINNT=0x0500
 
+LFLAGS =
+
 LIBS = User32.lib Shell32.lib ComCtl32.lib ComDlg32.lib Gdi32.lib	\
-       Msimg32.lib WinMM.lib AdvAPI32.lib Ole32.lib ShLwApi.lib Vfw32.Lib
+       Msimg32.lib WinMM.lib AdvAPI32.lib Ole32.lib ShLwApi.lib		\
+       Vfw32.Lib WinInet.lib
+
+# ----------------------------------------------------------------------
+# STATIC or SHARED?
+# ----------------------------------------------------------------------
+
+!if "$(STATIC)" == "1"
+
+CPPFLAGS = $(CPPFLAGS) -DVACA_STATIC=1
+
+# !if "$(DEBUG)" == "1"
+# SUFFIX = _ds
+# !else
+# SUFFIX = _s
+# !endif
+
+!else
+
+VACA_LIB_FLAGS = -DVACA_SRC=1
+
+# !if "$(DEBUG)" == ""
+# SUFFIX = _d
+# !endif
+
+!endif
+
+# ----------------------------------------------------------------------
+# PROFILE?
+# ----------------------------------------------------------------------
+
+# TODO
+
+# ----------------------------------------------------------------------
+# UNICODE
+# ----------------------------------------------------------------------
+
+!if "$(UNICODE)" == "1"
+
+CPPFLAGS = $(CPPFLAGS) -DUNICODE -D_UNICODE
+
+# !if "$(SUFFIX)" == ""
+# SUFFIX = $(SUFFIX)u
+# !else
+# SUFFIX = _u
+# !endif
+
+!endif
+
+# ----------------------------------------------------------------------
+# DEBUG or NDEBUG?
+# ----------------------------------------------------------------------
 
 !if "$(DEBUG)" == "1"
 CPPFLAGS = $(CPPFLAGS) -Zi
-# TARGOPTS=$(TARGOPTS) /MTd
-# CRTLIB=libcmtd.lib
-# !else
-# TARGOPTS=$(TARGOPTS) /MT
-# CRTLIB=libcmt.lib
+#LFLAGS = -DEBUG -MTd
+LFLAGS = -DEBUG
 !endif
 
-!if "$(STATIC)" == "1"
-CPPFLAGS = $(CPPFLAGS) -DVACA_STATIC=1
+# ----------------------------------------------------------------------
+# RELEASE (optimized and without-asserts)
+# ----------------------------------------------------------------------
+
+!if "$(RELEASE)" == "1"
+CPPFLAGS = $(CPPFLAGS) -DNDEBUG -O2
+#LFLAGS = -RELEASE -MT
+LFLAGS = -RELEASE
 !endif
 
 # ----------------------------------------------------------------------
@@ -47,13 +106,13 @@ OBJS = obj/Anchor.obj obj/AnchorLayout.obj obj/Application.obj		\
   obj/Constraint.obj obj/Cursor.obj obj/CustomButton.obj		\
   obj/CustomLabel.obj obj/Debug.obj obj/Dialog.obj obj/DockArea.obj	\
   obj/DockBar.obj obj/DockFrame.obj obj/DropFilesEvent.obj		\
-  obj/Edit.obj obj/Event.obj obj/FileDialog.obj obj/FindTextDialog.obj	\
-  obj/Font.obj obj/FontDialog.obj obj/Frame.obj obj/Graphics.obj	\
-  obj/GraphicsPath.obj obj/GroupBox.obj obj/HttpRequest.obj		\
-  obj/Icon.obj obj/Image.obj obj/ImageList.obj obj/KeyEvent.obj		\
-  obj/Keys.obj obj/Label.obj obj/Layout.obj obj/LinkLabel.obj		\
-  obj/ListBox.obj obj/ListView.obj obj/Mdi.obj obj/Menu.obj		\
-  obj/MenuItemEvent.obj obj/MouseEvent.obj obj/MsgBox.obj		\
+  obj/Edit.obj obj/Event.obj obj/Exception.obj obj/FileDialog.obj	\
+  obj/FindTextDialog.obj obj/Font.obj obj/FontDialog.obj obj/Frame.obj	\
+  obj/Graphics.obj obj/GraphicsPath.obj obj/GroupBox.obj		\
+  obj/HttpRequest.obj obj/Icon.obj obj/Image.obj obj/ImageList.obj	\
+  obj/KeyEvent.obj obj/Keys.obj obj/Label.obj obj/Layout.obj		\
+  obj/LinkLabel.obj obj/ListBox.obj obj/ListView.obj obj/Mdi.obj	\
+  obj/Menu.obj obj/MenuItemEvent.obj obj/MouseEvent.obj obj/MsgBox.obj	\
   obj/Mutex.obj obj/Panel.obj obj/Pen.obj obj/Point.obj			\
   obj/ProgressBar.obj obj/RadioButton.obj obj/ReBar.obj obj/Rect.obj	\
   obj/Referenceable.obj obj/Region.obj obj/ResourceId.obj		\
@@ -104,11 +163,11 @@ SUBSYSTEM = WINDOWS
 !endif
 
 {obj}.obj{bin}.exe:
-	link -NOLOGO -SUBSYSTEM:$(SUBSYSTEM) -MACHINE:X86 -DEBUG \
+	link -NOLOGO -SUBSYSTEM:$(SUBSYSTEM) -MACHINE:X86 $(LFLAGS) \
 		$** lib/Vaca.lib $(LIBS) -OUT:$@
 
 {src}.cpp{obj}.obj:
-	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c $<
+	$(CPP) -nologo $(CPPFLAGS) $(VACA_LIB_FLAGS) -Foobj/ -c $<
 
 all: lib examples tests
 
@@ -147,8 +206,13 @@ distclean: clean
 	-del lib\*.a
 	-del lib\*.lib
 
+!ifdef STATIC
 lib/Vaca.lib: $(OBJS)
-	lib -NOLOGO /OUT:lib/Vaca.lib $(OBJS)
+	lib $(LFLAGS) -NOLOGO -OUT:lib/Vaca.lib $(OBJS)
+!else
+lib/Vaca.lib: $(OBJS)
+	link $(LFLAGS) -NOLOGO -DLL -IMPLIB:lib/Vaca.lib $(OBJS) $(LIBS) -OUT:bin/Vaca.dll
+!endif
 
 # ----------------------------------------------------------------------
 # Examples

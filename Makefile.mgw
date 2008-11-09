@@ -104,9 +104,6 @@ LIBS =
 # Win32
 ifdef WIN32_IMPL
   CXXFLAGS += -DVACA_WIN32_IMPL -DWINVER=0x0500 -D_WIN32_IE=0x0500 -D_WIN32_WINNT=0x0500
-  ifdef UNICODE
-    CXXFLAGS += -DUNICODE -D_UNICODE
-  endif
 
   LIBS += -lkernel32 -luser32 -lgdi32 -lcomdlg32 -lwinspool \
 	  -lwinmm -lshell32 -lshlwapi -lcomctl32 -lole32 \
@@ -169,6 +166,8 @@ endif
 # ----------------------------------------------------------------------
 
 ifdef UNICODE
+  CXXFLAGS += -DUNICODE -D_UNICODE
+
   ifdef SUFFIX
     SUFFIX := $(SUFFIX)u
   else

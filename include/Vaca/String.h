@@ -36,11 +36,20 @@
 
 #include "Vaca/base.h"
 
-namespace Vaca {
-
 #ifndef VACA_STRING_BASE
-#  define VACA_STRING_BASE std::basic_string<Character>
+#  define VACA_STRING_BASE std::basic_string<Vaca::Character>
 #endif
+
+// // work-arround for the dynamic version of Vaca on MSC compiler (Q168958)
+// #if !defined VACA_STATIC && defined _MSC_VER
+//   #ifdef VACA_STRING_CPP
+//     template class VACA_DLL VACA_STRING_BASE;
+//   #elif !defined VACA_SRC
+//     extern template class VACA_STRING_BASE;
+//   #endif
+// #endif
+
+namespace Vaca {
 
 /**
  * A string of characters.

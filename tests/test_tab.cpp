@@ -31,9 +31,9 @@ void test_base()
   tab.removePage(3);
 
   assert(tab.getPageCount() == 3);
-  assert(tab.getPageText(0) == "A");
-  assert(tab.getPageText(1) == "B");
-  assert(tab.getPageText(2) == "C");
+  assert(tab.getPageText(0) == _T("A"));
+  assert(tab.getPageText(1) == _T("B"));
+  assert(tab.getPageText(2) == _T("C"));
 }
 
 int main()

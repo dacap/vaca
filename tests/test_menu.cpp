@@ -7,10 +7,10 @@ using namespace Vaca;
 void test_label()
 {
   MenuItem mi("MenuItem label", 1);
-  assert(mi.getText() == "MenuItem label");
+  assert(mi.getText() == _T("MenuItem label"));
 
   Menu m("Menu label");
-  assert(m.getText() == "Menu label");
+  assert(m.getText() == _T("Menu label"));
 }
 
 void test_enabled()

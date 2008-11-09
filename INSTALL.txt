@@ -70,6 +70,11 @@ Compiling with Microsoft Visual C
 
      C:\Vaca>nmake -f Makefile.msc [RELEASE=1] [DEBUG=1] [STATIC=1] [PROFILE=1] [UNICODE=1]
 
+4) In case that you want to recompile Vaca with another configuration,
+   you should do a "clean" before:
+
+     C:\Vaca>nmake -f Makefile.msc clean
+
 
 ----------------------------------------------------------------------
 Compiling manually without Makefiles

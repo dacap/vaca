@@ -78,7 +78,6 @@ CPPFLAGS = $(CPPFLAGS) -DUNICODE -D_UNICODE
 
 !if "$(DEBUG)" == "1"
 CPPFLAGS = $(CPPFLAGS) -Zi -MTd
-#LFLAGS = -DEBUG -MTd
 LFLAGS = -DEBUG
 !endif
 
@@ -87,8 +86,7 @@ LFLAGS = -DEBUG
 # ----------------------------------------------------------------------
 
 !if "$(RELEASE)" == "1"
-CPPFLAGS = $(CPPFLAGS) -DNDEBUG -O2
-#LFLAGS = -RELEASE -MT
+CPPFLAGS = $(CPPFLAGS) -DNDEBUG -O2 -MT
 LFLAGS = -RELEASE
 !endif
 
@@ -202,9 +200,11 @@ clean:
 
 distclean: clean
 	-del bin\Vaca*.dll
+	-del bin\Vaca*.dll.manifest
 	-del bin\*.exe
 	-del lib\*.a
 	-del lib\*.lib
+	-del lib\*.exp
 
 !ifdef STATIC
 lib/Vaca.lib: $(OBJS)

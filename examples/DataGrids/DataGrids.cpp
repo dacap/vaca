@@ -361,6 +361,7 @@ DataTable* DataSet::operator[](const String &tableName)
   }
   assert(false);
   // throw std::out_of_range(String("Invalid table name"));
+  return NULL;
 }
 
 //////////////////////////////////////////////////////////////////////

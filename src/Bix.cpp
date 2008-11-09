@@ -191,15 +191,11 @@ struct Bix::Matrix
 //////////////////////////////////////////////////////////////////////
 // Bix
 
-Bix::Bix(Widget* container, int flags, int matrixColumns)
+Bix::Bix(int flags, int matrixColumns)
 {
-  if (container != NULL)
-    container->setLayout(this);
-  
   m_flags = flags;
   m_cols = matrixColumns;
-  m_border = container != NULL ? MAIN_BIX_DEFAULT_BORDER:
-				 BIX_DEFAULT_BORDER;
+  m_border = BIX_DEFAULT_BORDER;
   m_childSpacing = BIX_DEFAULT_CHILD_SPACING;
 }
 
@@ -319,7 +315,7 @@ void Bix::setMatrixColumns(int matrixColumns)
  */
 Bix* Bix::add(int flags, int matrixColumns)
 {
-  Bix* subbix = new Bix(NULL, flags, matrixColumns);
+  Bix* subbix = new Bix(flags, matrixColumns);
   m_elements.push_back(new SubBixElement(subbix));
   return subbix;
 }
@@ -701,7 +697,7 @@ Bix* Bix::parse(const char* fmt, ...)
 
 #define NEW_BIX(flags)							\
   if (mainBix == NULL)							\
-    mainBix = newBix = new Bix(NULL, flags | fill);			\
+    mainBix = newBix = new Bix(flags | fill);				\
   else									\
     newBix = bixes.top()->add(flags | fill);				\
   bixes.push(newBix);							\

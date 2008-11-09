@@ -26,6 +26,16 @@ string instance used to call the method. The returned reference is a
 "return *this".
 
 @endChange
+@beginChange{Bix() - Signature Changed}
+Old signature:
+@code
+Bix::Bix(Widget* container, int flags, int matrixColumns)
+@endcode
+New signature:
+@code
+Bix::Bix(int flags, int matrixColumns)
+@endcode
+@endChange
 @beginChange{onScroll - Signature Changed}
 
 Old signature:

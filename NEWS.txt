@@ -4,6 +4,8 @@ Vaca 0.0.8
 - Added Thread::sleep. 
 - Added ScrollEvent and ScrollRequest. Modified onScroll to
   receive a ScrollEvent.
+- Fixed a problem in BandedDockArea::onRemoveDockBar with a
+  call to std::vector<>::erase() and invalid iterators.
 
 Vaca 0.0.7
 

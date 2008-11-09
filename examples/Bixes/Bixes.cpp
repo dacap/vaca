@@ -214,6 +214,8 @@ public:
 
     for (it = begin(); it != end(); ++it) {
       ElementViewAsTreeNode* node = dynamic_cast<ElementViewAsTreeNode*>(*it);
+      assert(node != NULL);
+
       if (node->getElement() == element) {
 	setSelectedNode(node);
 	break;
@@ -232,6 +234,8 @@ protected:
       TreeNode* node = ev.getTreeNode();
       if (node != NULL) {
 	ElementViewAsTreeNode* elemNode = dynamic_cast<ElementViewAsTreeNode*>(node);
+	assert(elemNode != NULL);
+
 	ElementSelected(elemNode->getElement());
       }
       else
@@ -283,8 +287,11 @@ private:
   {
     TreeView::iterator it;
 
+    // iterate all the TreeView to find the TreeNode that has the specified "element"
     for (it = begin(); it != end(); ++it) {
       ElementViewAsTreeNode* node = dynamic_cast<ElementViewAsTreeNode*>(*it);
+      assert(node != NULL);
+
       if (node->getElement() == element)
 	return node;
     }
@@ -347,12 +354,24 @@ protected:
 
   void onChange(Event& ev)
   {
+    // when the user writes text we have to relayout the parent
     getParent()->layout();
   }
 
 };
 
 //////////////////////////////////////////////////////////////////////
+
+template<class Map>
+typename Map::mapped_type find_element(const Map& map,
+				       typename const Map::key_type& key)
+{
+  typename Map::const_iterator it = map.find(key);
+  if (it != map.end())
+    return it->second;
+  else
+    return Map::mapped_type(0);		// NULL
+}
 
 class ModelViewAsWidgets : public Panel
 {
@@ -389,6 +408,7 @@ public:
     Container::iterator it;
     for (it = children.begin(); it != children.end(); ++it) {
       ElementViewAsWidgets* w = dynamic_cast<ElementViewAsWidgets*>(*it);
+      assert(w != NULL);
 
       if (w->getElement() == element ||
 	  w->getElement()->isAncestor(element)) {
@@ -417,6 +437,7 @@ private:
   {
     int flags = convertElementTypeToBixFlags(element);
 
+    // put "element" as the root
     if (parent == NULL) {
       assert(m_bix == NULL);
 
@@ -424,13 +445,17 @@ private:
 	// avoid
       }
       else {
-	m_bix = new Bix(this, flags, element->getColumns());
+	m_bix = new Bix(flags, element->getColumns());
+	m_bix->setChildSpacing(4);
+
 	m_mapElemBix[element] = m_bix;
 	setLayout(m_bix);
       }
     }
+    // insert a child in "parent" element
     else {
-      Bix* parentBix = m_mapElemBix[parent];
+      Bix* parentBix = find_element(m_mapElemBix, parent);
+      assert(parentBix);
       
       if (flags == 0) {
 	ElementViewAsWidgets* elementWidget = new ElementViewAsWidgets(element, this);
@@ -443,21 +468,6 @@ private:
 
       layout();
     }
-
-//     if (parentNode != NULL) {
-//       parentNode->addNode(elementNode);	// add the new node in the parent
-
-//       // ...expand the parent
-//       if (!parentNode->isExpanded())
-// 	parentNode->setExpanded(true);
-
-//       setSelectedNode(parentNode);	// ...selected the parent node
-//       elementNode->ensureVisibility();	// ...but ensure visibility of the new node
-//     }
-//     else
-//       addNode(elementNode);
-
-//     invalidate(false);
   }
 
   void onAfterAddElement(Element* element)
@@ -471,10 +481,12 @@ private:
       Container::iterator it;
       for (it = children.begin(); it != children.end(); ++it) {
 	ElementViewAsWidgets* w = dynamic_cast<ElementViewAsWidgets*>(*it);
+	assert(w != NULL);
 
 	if (w->getElement() == element) {
 	  Element* parentElement = element->getParent();
-	  Bix* parentBix = m_mapElemBix[parentElement];
+	  Bix* parentBix = find_element(m_mapElemBix, parentElement);
+	  assert(parentBix);
 
 	  parentBix->remove(w);
 	  w->getParent()->removeChild(w, true);
@@ -488,6 +500,7 @@ private:
       Container::iterator it;
       for (it = children.begin(); it != children.end(); ++it) {
 	ElementViewAsWidgets* w = dynamic_cast<ElementViewAsWidgets*>(*it);
+	assert(w != NULL);
 
 	if (w->getElement()->isAncestor(element)) {
 	  w->getParent()->removeChild(w, true);
@@ -496,13 +509,17 @@ private:
       }
 
       if (element->getParent() != NULL) {
-	Bix* parentBix = m_mapElemBix[element->getParent()];
-	if (parentBix != NULL)
-	  parentBix->remove(m_mapElemBix[element]);
+	Bix* parentBix = find_element(m_mapElemBix, element->getParent());
+	if (parentBix)
+	  parentBix->remove(find_element(m_mapElemBix, element));
+
+	m_mapElemBix.erase(element);
       }
       else {
-	m_bix = NULL;
+	m_bix = NULL;	     // the Bix* is deleted inside setLayout()
 	setLayout(NULL);
+
+	m_mapElemBix.clear();
       }
     }
 

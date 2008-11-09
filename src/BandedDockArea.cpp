@@ -365,7 +365,7 @@ void BandedDockArea::onRemoveDockBar(DockBar* dockBar)
   if (m_bandInfo[bandIndex].bars.empty()) {
     std::vector<BandInfo>::iterator it = m_bandInfo.begin() + bandIndex;
 
-    m_bandInfo.erase(it);
+    it = m_bandInfo.erase(it);
 
     // update dock bars band indexes
     for (; it!=m_bandInfo.end(); ++it) {

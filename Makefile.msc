@@ -77,7 +77,7 @@ CPPFLAGS = $(CPPFLAGS) -DUNICODE -D_UNICODE
 # ----------------------------------------------------------------------
 
 !if "$(DEBUG)" == "1"
-CPPFLAGS = $(CPPFLAGS) -Zi
+CPPFLAGS = $(CPPFLAGS) -Zi -MTd
 #LFLAGS = -DEBUG -MTd
 LFLAGS = -DEBUG
 !endif
@@ -208,7 +208,7 @@ distclean: clean
 
 !ifdef STATIC
 lib/Vaca.lib: $(OBJS)
-	lib $(LFLAGS) -NOLOGO -OUT:lib/Vaca.lib $(OBJS)
+	lib -NOLOGO -OUT:lib/Vaca.lib $(OBJS)
 !else
 lib/Vaca.lib: $(OBJS)
 	link $(LFLAGS) -NOLOGO -DLL -IMPLIB:lib/Vaca.lib $(OBJS) $(LIBS) -OUT:bin/Vaca.dll

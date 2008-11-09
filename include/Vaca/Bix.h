@@ -77,7 +77,7 @@ class VACA_DLL Bix : public Layout
   
 public:
 
-  Bix(Widget* container, int flags, int matrixColumns = 0);
+  Bix(int flags, int matrixColumns = 0);
   virtual ~Bix();
 
   bool isRow();

@@ -44,24 +44,20 @@ static Sides sides[4] = { Sides::Left,
 
 class AnchoredWidget : public Panel
 {
-  Anchor m_anchor;
+  Anchor* m_anchor;
   Sides m_hotSides;
   
 public:
 
-  AnchoredWidget(const Anchor &anchor, Widget* parent)
+  AnchoredWidget(Anchor* anchor, Widget* parent)
     : Panel(parent)
     , m_anchor(anchor)
   {
     setBgColor(Color::White);
     setFgColor(Color::Black);
 
-    setConstraint(&m_anchor);
-  }
-
-  virtual ~AnchoredWidget()
-  {
-    setConstraint(NULL);
+    setConstraint(m_anchor);
+    setDoubleBuffered(true);
   }
 
 protected:
@@ -87,7 +83,7 @@ protected:
   {
     for (int c=0; c<4; ++c)
       if (getSideRect(side[c]).contains(ev.getPoint())) {
-	m_anchor.setSides(m_anchor.getSides() ^ sides[c]);
+	m_anchor->setSides(m_anchor->getSides() ^ sides[c]);
 	getParent()->layout();
 	invalidate(true);
       }
@@ -124,7 +120,7 @@ private:
     Color color((m_hotSides & b) == b ? Color::Yellow:
 					  getFgColor());
     
-    if ((m_anchor.getSides() & b) == b) {
+    if ((m_anchor->getSides() & b) == b) {
       Brush brush(color);
       g.fillRect(brush, rc);
     }
@@ -164,11 +160,11 @@ public:
 
   MainFrame()
     : Frame("AnchorLayouts")
-    , m_allWidget   (Anchor(Rect( 48,  48, 160, 160), Sides::All), this)
-    , m_leftWidget  (Anchor(Rect(  8,  48,  32, 160), Sides::Left   | Sides::Top  | Sides::Bottom), this)
-    , m_topWidget   (Anchor(Rect( 48,   8, 160,  32), Sides::Top    | Sides::Left | Sides::Right), this)
-    , m_rightWidget (Anchor(Rect(216,  48,  32, 160), Sides::Right  | Sides::Top  | Sides::Bottom), this)
-    , m_bottomWidget(Anchor(Rect( 48, 216, 160,  32), Sides::Bottom | Sides::Left | Sides::Right), this)
+    , m_allWidget   (new Anchor(Rect( 48,  48, 160, 160), Sides::All), this)
+    , m_leftWidget  (new Anchor(Rect(  8,  48,  32, 160), Sides::Left   | Sides::Top  | Sides::Bottom), this)
+    , m_topWidget   (new Anchor(Rect( 48,   8, 160,  32), Sides::Top    | Sides::Left | Sides::Right), this)
+    , m_rightWidget (new Anchor(Rect(216,  48,  32, 160), Sides::Right  | Sides::Top  | Sides::Bottom), this)
+    , m_bottomWidget(new Anchor(Rect( 48, 216, 160,  32), Sides::Bottom | Sides::Left | Sides::Right), this)
   {
     m_refSize = Size(256, 256);
     setLayout(new AnchorLayout(m_refSize));

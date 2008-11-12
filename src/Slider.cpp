@@ -107,8 +107,8 @@ void Slider::setSides(Sides sides)
   style.regular &= ~(TBS_BOTH | TBS_TOP);
 
   if (style.regular & TBS_VERT) {
-    bool left = (sides & Sides::Left);
-    bool right = (sides & Sides::Right);
+    bool left = (sides & Sides::Left) != 0;
+    bool right = (sides & Sides::Right) != 0;
 
     if (left && !right)
       style.regular |= TBS_LEFT;
@@ -118,8 +118,8 @@ void Slider::setSides(Sides sides)
       style.regular |= TBS_BOTH;
   }
   else {
-    bool top = (sides & Sides::Top);
-    bool bottom = (sides & Sides::Bottom);
+    bool top = (sides & Sides::Top) != 0;
+    bool bottom = (sides & Sides::Bottom) != 0;
 
     if (top && !bottom)
       style.regular |= TBS_TOP;

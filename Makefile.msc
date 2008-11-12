@@ -9,6 +9,7 @@
 # RELEASE = 1
 # DEBUG = 1
 # STATIC = 1
+# STATIC_LIBC = 1
 # PROFILE = 1
 # UNICODE = 1
 
@@ -16,8 +17,8 @@
 # Flags
 # ----------------------------------------------------------------------
 
-CPPFLAGS = -Iinclude -Iscintilla/include -wd4355 -Ob1 -EHa	\
-	   -DVACA_WIN32_IMPL -DWINVER=0x0500 -D_WIN32_IE=0x0500	\
+CPPFLAGS = -Iinclude -Iscintilla/include -wd4355 -wd4996 -Ob1 -EHa	\
+	   -DVACA_WIN32_IMPL -DWINVER=0x0500 -D_WIN32_IE=0x0500		\
 	   -D_WIN32_WINNT=0x0500
 
 LFLAGS =
@@ -77,8 +78,14 @@ CPPFLAGS = $(CPPFLAGS) -DUNICODE -D_UNICODE
 # ----------------------------------------------------------------------
 
 !if "$(DEBUG)" == "1"
-CPPFLAGS = $(CPPFLAGS) -Zi -MTd
+CPPFLAGS = $(CPPFLAGS) -Zi
 LFLAGS = -DEBUG
+
+!if "$(STATIC_LIBC)" == "1"
+CPPFLAGS = $(CPPFLAGS) -MTd
+!else
+CPPFLAGS = $(CPPFLAGS) -MDd
+!endif
 !endif
 
 # ----------------------------------------------------------------------
@@ -86,8 +93,14 @@ LFLAGS = -DEBUG
 # ----------------------------------------------------------------------
 
 !if "$(RELEASE)" == "1"
-CPPFLAGS = $(CPPFLAGS) -DNDEBUG -O2 -MT
+CPPFLAGS = $(CPPFLAGS) -DNDEBUG -O2
 LFLAGS = -RELEASE
+
+!if "$(STATIC_LIBC)" == "1"
+CPPFLAGS = $(CPPFLAGS) -MT
+!else
+CPPFLAGS = $(CPPFLAGS) -MD
+!endif
 !endif
 
 # ----------------------------------------------------------------------

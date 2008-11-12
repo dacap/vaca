@@ -400,7 +400,7 @@ bool ListView::isItemSelected(int itemIndex)
 {
   assert(::IsWindow(getHandle()));
 
-  return ListView_GetItemState(getHandle(), itemIndex, LVIS_SELECTED);
+  return ListView_GetItemState(getHandle(), itemIndex, LVIS_SELECTED) ? true: false;
 }
 
 /**

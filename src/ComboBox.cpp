@@ -161,7 +161,7 @@ void ComboBox::setDropDownVisibile(bool visible)
 
 bool ComboBox::isDropDownVisible()
 {
-  return sendMessage(CB_GETDROPPEDSTATE, 0, 0);
+  return sendMessage(CB_GETDROPPEDSTATE, 0, 0) ? true: false;
 }
 
 Rect ComboBox::getDropDownBounds()

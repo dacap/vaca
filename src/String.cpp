@@ -248,6 +248,7 @@ std::wstring String::to_wstring() const
 void String::copyTo(LPTSTR dest, int size) const
 {
   _tcsncpy(dest, c_str(), size);
+  dest[size-1] = 0;
 }
 
 String String::fromInt(int value, int base, int precision)

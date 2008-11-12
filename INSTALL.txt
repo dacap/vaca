@@ -13,6 +13,9 @@ Overview
   PROFILE=1 ... build the version to do profiling, e.g. with gprof
   UNICODE=1 ... build the library with Unicode support
 
+  --- Macros for Microsoft Visual C ---
+  STATIC_LIBC=1 build using /MT[d] (instead of /MD[d])
+
   --- Targets ---
   all: ........ build everything
   lib: ........ build the library
@@ -68,7 +71,8 @@ Compiling with Microsoft Visual C
 
 3) Run nmake in the Vaca directory:
 
-     C:\Vaca>nmake -f Makefile.msc [RELEASE=1] [DEBUG=1] [STATIC=1] [PROFILE=1] [UNICODE=1]
+     C:\Vaca>nmake -f Makefile.msc [RELEASE=1] [DEBUG=1] [STATIC=1]
+                                   [STATIC_LIBC=1] [PROFILE=1] [UNICODE=1]
 
 4) In case that you want to recompile Vaca with another configuration,
    you should do a "clean" before:

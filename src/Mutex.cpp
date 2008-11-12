@@ -85,7 +85,7 @@ void Mutex::lock()
  */
 bool Mutex::tryLock()
 {
-  return TryEnterCriticalSection(&m_cs);
+  return TryEnterCriticalSection(&m_cs) ? true: false;
 }
 
 /**

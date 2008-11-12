@@ -201,7 +201,7 @@ void SciEditor::clearAll()
 
 Character SciEditor::getCharAt(int pos)
 {
-  return sendMessage(SCI_GETCHARAT, pos, 0);
+  return (Character)sendMessage(SCI_GETCHARAT, pos, 0);
 }
 
 //////////////////////////////////////////////////////////////////////

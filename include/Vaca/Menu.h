@@ -42,6 +42,7 @@
 
 namespace Vaca {
 
+class Command;
 class Frame;
 class MenuItemEvent;
 class MenuItem;
@@ -100,6 +101,9 @@ protected:
   // events
   virtual void onAction(MenuItemEvent& ev);
   virtual void onUpdate(MenuItemEvent& ev);
+
+private:
+  void updateFromCommand(Command* cmd);
 };
 
 /**

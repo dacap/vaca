@@ -284,19 +284,24 @@ void MenuItem::onUpdate(MenuItemEvent& ev)
     // search the command in the frame where is the menu-bar
     if (MenuBar* menuBar = dynamic_cast<MenuBar*>(getRoot())) {
       if (Frame* frame = menuBar->getFrame()) {
-	if (Command* cmd = frame->findCommandById(m_id)) {
-	  setEnabled(cmd->isEnabled());
-	  return;
-	}
+	if (Command* cmd = frame->findCommandById(m_id))
+	  updateFromCommand(cmd);
       }
     }
 
     // check if the application is a CommandsClient
     if (CommandsClient* cc = dynamic_cast<CommandsClient*>(Application::getInstance())) {
       if (Command* cmd = cc->getCommandById(m_id))
-	setEnabled(cmd->isEnabled());
+	updateFromCommand(cmd);
     }
   }
+}
+
+void MenuItem::updateFromCommand(Command* cmd)
+{
+  assert(cmd);
+  setEnabled(cmd->isEnabled());
+  setChecked(cmd->isChecked());
 }
 
 //////////////////////////////////////////////////////////////////////

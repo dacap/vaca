@@ -4,7 +4,7 @@ Overview
 
   --- Compiler ---
   Use "make -f Makefile.mgw" for MinGW
-  Use "nmake -f Makefile.msc" for Microsoft Visual C
+  Use "nmake -f Makefile.vc" for Microsoft Visual C++
 
   --- Macros you can define ---
   RELEASE=1 ... build for release, without assertions
@@ -71,13 +71,13 @@ Compiling with Microsoft Visual C
 
 3) Run nmake in the Vaca directory:
 
-     C:\Vaca>nmake -f Makefile.msc [RELEASE=1] [DEBUG=1] [STATIC=1]
-                                   [STATIC_LIBC=1] [PROFILE=1] [UNICODE=1]
+     C:\Vaca>nmake -f Makefile.vc [RELEASE=1] [DEBUG=1] [STATIC=1]
+                                  [STATIC_LIBC=1] [PROFILE=1] [UNICODE=1]
 
 4) In case that you want to recompile Vaca with another configuration,
    you should do a "clean" before:
 
-     C:\Vaca>nmake -f Makefile.msc clean
+     C:\Vaca>nmake -f Makefile.vc clean
 
 
 ----------------------------------------------------------------------

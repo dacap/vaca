@@ -1047,12 +1047,12 @@ void Graphics::drawXorFrame(const Rect& rc, int border)
   drawXorFrame(rc.x, rc.y, rc.w, rc.h, border);
 }
 
-void Graphics::drawXorFrame(int x, int y, int w, int h, int border)
-{
-  static WORD pattern[] = { 0x00aa, 0x0055, 0x00aa, 0x0055,
+static WORD s_pattern[] = { 0x00aa, 0x0055, 0x00aa, 0x0055,
 			    0x00aa, 0x0055, 0x00aa, 0x0055 };
 
-  HBITMAP hbitmap = CreateBitmap(8, 8, 1, 1, pattern);
+void Graphics::drawXorFrame(int x, int y, int w, int h, int border)
+{
+  HBITMAP hbitmap = CreateBitmap(8, 8, 1, 1, s_pattern);
   HBRUSH newBrush = CreatePatternBrush(hbitmap);
   HANDLE oldBrush = SelectObject(m_handle, newBrush);
 
@@ -1060,6 +1060,23 @@ void Graphics::drawXorFrame(int x, int y, int w, int h, int border)
   PatBlt(m_handle, x+w-border, y+border,   border,    h-border, PATINVERT);
   PatBlt(m_handle, x,          y+h-border, w-border,  border,   PATINVERT);
   PatBlt(m_handle, x,          y,          border,    h-border, PATINVERT);
+
+  DeleteObject(SelectObject(m_handle, oldBrush));
+  DeleteObject(hbitmap);
+}
+
+void Graphics::fillXorFrame(const Rect& rc)
+{
+  fillXorFrame(rc.x, rc.y, rc.w, rc.h);
+}
+
+void Graphics::fillXorFrame(int x, int y, int w, int h)
+{
+  HBITMAP hbitmap = CreateBitmap(8, 8, 1, 1, s_pattern);
+  HBRUSH newBrush = CreatePatternBrush(hbitmap);
+  HANDLE oldBrush = SelectObject(m_handle, newBrush);
+
+  PatBlt(m_handle, x, y, w, h, PATINVERT);
 
   DeleteObject(SelectObject(m_handle, oldBrush));
   DeleteObject(hbitmap);

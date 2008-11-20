@@ -60,14 +60,14 @@ Size::Size(const Point& point)
 
 Size Size::createUnion(const Size& sz) const
 {
-  return Size(VACA_MAX(w, sz.w),
-	      VACA_MAX(h, sz.h));
+  return Size(max_value(w, sz.w),
+	      max_value(h, sz.h));
 }
 
 Size Size::createIntersect(const Size& sz) const
 {
-  return Size(VACA_MIN(w, sz.w),
-	      VACA_MIN(h, sz.h));
+  return Size(min_value(w, sz.w),
+	      min_value(h, sz.h));
 }
 
 const Size& Size::operator=(const Size& sz)

@@ -59,7 +59,7 @@ Label::~Label()
  *
  * @return TextAlign#Center, TextAlign#RightAlign, TextAlign#LeftAlign
  */
-TextAlign Label::getTextAlign()
+TextAlign Label::getTextAlign() const
 {
   int style = getStyle().regular;
 

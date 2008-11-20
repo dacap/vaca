@@ -177,7 +177,7 @@ void ListBox::onPreferredSize(Size& sz)
 
   for (i=0; i<n; ++i) {
     rc = getItemBounds(i);
-    sz = Size(VACA_MAX(sz.w, rc.w), sz.h+rc.h);
+    sz = Size(max_value(sz.w, rc.w), sz.h+rc.h);
   }
 }
 

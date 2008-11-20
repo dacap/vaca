@@ -87,7 +87,7 @@ public:
   Label(const String& text, Widget* parent, Style style = LabelStyle);
   virtual ~Label();
 
-  virtual TextAlign getTextAlign();
+  virtual TextAlign getTextAlign() const;
   virtual void setTextAlign(TextAlign align);
 
 protected:

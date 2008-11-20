@@ -103,10 +103,10 @@ Size BoxLayout::getPreferredSize(Widget* parent, Widget::Container& widgets, con
 #define GET_CHILD_SIZE(w, h)			\
   {						\
     if (isHomogeneous())			\
-      sz.w = VACA_MAX(sz.w, pref.w);		\
+      sz.w = max_value(sz.w, pref.w);		\
     else					\
       sz.w += pref.w;				\
-    sz.h = VACA_MAX(sz.h, pref.h);		\
+    sz.h = max_value(sz.h, pref.h);		\
   }
 
 #define FINAL_SIZE(w)				\
@@ -124,8 +124,8 @@ Size BoxLayout::getPreferredSize(Widget* parent, Widget::Container& widgets, con
   }
 
   Size sz(0, 0);
-  Size _fitIn(VACA_MAX(0, fitIn.w-m_border*2),
-	      VACA_MAX(0, fitIn.h-m_border*2));
+  Size _fitIn(max_value(0, fitIn.w-m_border*2),
+	      max_value(0, fitIn.h-m_border*2));
 
   for (Widget::Container::iterator it=widgets.begin(); it!=widgets.end(); ++it) {
     Widget* widget = *it;
@@ -165,9 +165,9 @@ void BoxLayout::layout(Widget* parent, Widget::Container& widgets, const Rect& r
 #define FIXUP(x, y, w, h)						\
   {									\
     if (childCount > 0) {						\
-      x = rc.x+m_border;							\
-      y = rc.y+m_border;							\
-      h = VACA_MAX(1, rc.h - m_border*2);				\
+      x = rc.x+m_border;						\
+      y = rc.y+m_border;						\
+      h = max_value(1, rc.h - m_border*2);				\
 									\
       if (isHomogeneous()) {						\
 	width = (rc.w							\
@@ -237,7 +237,7 @@ void BoxLayout::layout(Widget* parent, Widget::Container& widgets, const Rect& r
 	  }								\
 	}								\
 									\
-	w = VACA_MAX(1, child_width);					\
+	w = max_value(1, child_width);					\
 									\
 	if (isHorizontal())						\
 	  cpos = Rect(x, y, w, h);					\
@@ -271,8 +271,8 @@ void BoxLayout::layout(Widget* parent, Widget::Container& widgets, const Rect& r
 
   pref = getPreferredSize(parent, widgets, Size(0, 0)); // fitIn doesn't matter
 //   pref = preferredSize(parent, widgets,
-// 		       isHorizontal() ? Size(0, VACA_MAX(0, rc.h-m_border)):
-// 					Size(VACA_MAX(0, rc.w-m_border), 0));
+// 		       isHorizontal() ? Size(0, max_value(0, rc.h-m_border)):
+// 					Size(max_value(0, rc.w-m_border), 0));
 
   if (isHorizontal()) {
     FIXUP(x, y, w, h);

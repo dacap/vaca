@@ -314,17 +314,13 @@ double String::parseDouble() const
  * @param component
  *   The string to be added at the end of the string
  *   (separated by a slash).
- *
- * @return
- *   A reference to the same instance used to call this method.
  */
-String& String::addPathComponent(const String& component)
+void String::addPathComponent(const String& component)
 {
   if (!empty() && *(end()-1) != '/' && *(end()-1) != '\\')
     push_back('\\');
 
   operator+=(component);
-  return *this;
 }
 
 /**

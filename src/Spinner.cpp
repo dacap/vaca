@@ -141,5 +141,5 @@ void Spinner::onPreferredSize(Size& sz)
   Size spin(m_spin.getPreferredSize());
 
   sz = Size(edit.w - 2 + spin.w,
-	    VACA_MAX(edit.h, spin.h));
+	    max_value(edit.h, spin.h));
 }

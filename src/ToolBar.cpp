@@ -110,7 +110,6 @@ int ToolButton::getTBSTATE() const
 ToolSet::ToolSet(Widget* parent, Style style)
   : Widget(WidgetClassName(TOOLBARCLASSNAME), parent, style)
 {
-  m_loadedImageList = NULL;
 }
 
 ToolSet::~ToolSet()
@@ -120,29 +119,24 @@ ToolSet::~ToolSet()
     if (ToolButton* button = getButtonByIndex(i))
       delete button;
   }
-
-  if (m_loadedImageList != NULL) {
-    ImageList_Destroy(m_loadedImageList);
-    m_loadedImageList = NULL;
-  }
 }
 
 /**
  * (TB_BUTTONCOUNT).
  * 
  */
-int ToolSet::getButtonCount()
+int ToolSet::getButtonCount() const
 {
-  return sendMessage(TB_BUTTONCOUNT, 0, 0);
+  return const_cast<ToolSet*>(this)->sendMessage(TB_BUTTONCOUNT, 0, 0);
 }
 
 /**
  * (TB_GETROWS)
  * 
  */
-int ToolSet::getRows()
+int ToolSet::getRows() const
 {
-  return sendMessage(TB_GETROWS, 0, 0);
+  return const_cast<ToolSet*>(this)->sendMessage(TB_GETROWS, 0, 0);
 }
 
 /**
@@ -166,37 +160,11 @@ Rect ToolSet::setRows(int rows, bool expand)
 void ToolSet::setImageList(ImageList& imageList)
 {
   sendMessage(TB_SETIMAGELIST, 0, reinterpret_cast<LPARAM>(imageList.getHandle()));
+  m_imageList = imageList;
 
   // TODO
 //   sendMessage(TB_SETHOTIMAGELIST, 0,
 // 	      reinterpret_cast<LPARAM>(imageList.getHandle()));
-}
-
-/**
- * @param imageListId
- * @li @c IDB_HIST_LARGE_COLOR
- * @li @c IDB_HIST_SMALL_COLOR
- * @li @c IDB_STD_LARGE_COLOR
- * @li @c IDB_STD_SMALL_COLOR (default value).
- * @li @c IDB_VIEW_LARGE_COLOR
- * @li @c IDB_VIEW_SMALL_COLOR
- */
-void ToolSet::loadStandardImageList(int imageListId)
-{
-  if (m_loadedImageList != NULL)
-    ImageList_Destroy(m_loadedImageList);
-
-  m_loadedImageList =
-    ImageList_Create(16, 16, ILC_COLOR16 | ILC_MASK, 0, 1);
-
-  if (m_loadedImageList != NULL) {
-    sendMessage(TB_SETIMAGELIST, 0,
-		reinterpret_cast<LPARAM>(m_loadedImageList));
-  
-    sendMessage(TB_LOADIMAGES,
-		IDB_STD_SMALL_COLOR,
-		reinterpret_cast<LPARAM>(HINST_COMMCTRL));
-  }
 }
 
 /**
@@ -276,14 +244,15 @@ void ToolSet::updateButton(ToolButton* button)
   updatePreferredSizes();
 }
 
-ToolButton* ToolSet::getButtonById(CommandId id)
+ToolButton* ToolSet::getButtonById(CommandId id) const
 {
   TBBUTTONINFO tbbi;
 
   tbbi.cbSize = sizeof(TBBUTTONINFO);
   tbbi.dwMask = TBIF_LPARAM;
 
-  if (sendMessage(TB_GETBUTTONINFO,
+  if (const_cast<ToolSet*>(this)->
+      sendMessage(TB_GETBUTTONINFO,
 		  id,
 		  reinterpret_cast<LPARAM>(&tbbi)) >= 0 &&
       tbbi.lParam) {
@@ -293,14 +262,15 @@ ToolButton* ToolSet::getButtonById(CommandId id)
     return NULL;
 }
 
-ToolButton* ToolSet::getButtonByIndex(int index)
+ToolButton* ToolSet::getButtonByIndex(int index) const
 {
   TBBUTTONINFO tbbi;
 
   tbbi.cbSize = sizeof(TBBUTTONINFO);
   tbbi.dwMask = TBIF_LPARAM | TBIF_BYINDEX;
 
-  if (sendMessage(TB_GETBUTTONINFO,
+  if (const_cast<ToolSet*>(this)->
+      sendMessage(TB_GETBUTTONINFO,
 		  index,
 		  reinterpret_cast<LPARAM>(&tbbi)) >= 0 &&
       tbbi.lParam) {
@@ -317,14 +287,15 @@ ToolButton* ToolSet::getButtonByIndex(int index)
  *
  * It uses Win32's TB_HITTEST.
  */
-int ToolSet::hitTest(const Point& pt)
+int ToolSet::hitTest(const Point& pt) const
 {
   POINT point = pt;
-  return sendMessage(TB_HITTEST, 0,
-		     reinterpret_cast<LPARAM>(&point));
+  return
+    const_cast<ToolSet*>(this)->
+    sendMessage(TB_HITTEST, 0, reinterpret_cast<LPARAM>(&point));
 }
 
-std::vector<Size> ToolSet::getPreferredSizes()
+std::vector<Size> ToolSet::getPreferredSizes() const
 { 
   return m_preferredSizes;
 }
@@ -467,7 +438,7 @@ ToolBar::~ToolBar()
  * specified @a side.
  * 
  */
-Size ToolBar::getDockedSize(Side side)
+Size ToolBar::getDockedSize(Side side) const
 {
   Size size(0, 0);
   std::vector<Size> preferredSizes = m_set.getPreferredSizes();
@@ -480,7 +451,7 @@ Size ToolBar::getDockedSize(Side side)
   return size + measureGripper(true, side);
 }
 
-Size ToolBar::getFloatingSize()
+Size ToolBar::getFloatingSize() const
 {
   std::vector<Size> preferredSizes = m_set.getPreferredSizes();
 

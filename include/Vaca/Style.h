@@ -57,22 +57,43 @@ namespace Vaca {
  *   (@msdn{WS_} and @msdn{WS_EX_}).
  * @endwin32
  */
-class VACA_DLL Style
+class Style
 {
 public:
 
   int regular;
   int extended;
 
-  Style(int regular, int extended);
+  Style(int regular, int extended)
+    : regular(regular),
+      extended(extended) { }
 
-  Style operator+(const Style& style) const;
-  Style operator-(const Style& style) const;
-//   Style operator|(const Style& style) const;
-  Style operator&(const Style& style) const;
+  inline Style operator+(const Style& style) const {
+    return Style(regular | style.regular,
+		 extended | style.extended);
+  }
 
-  bool operator==(const Style& style) const;
-  bool operator!=(const Style& style) const;
+  inline Style operator-(const Style& style) const {
+    return Style(regular & ~style.regular,
+		 extended & ~style.extended);
+  }
+
+  inline Style operator&(const Style& style) const {
+    return Style(regular & style.regular,
+		 extended & style.extended);
+  }
+
+  inline bool operator==(const Style& style) const {
+    return
+      regular == style.regular &&
+      extended == style.extended;
+  }
+
+  inline bool operator!=(const Style& style) const {
+    return
+      regular != style.regular ||
+      extended != style.extended;
+  }
 
 };
 

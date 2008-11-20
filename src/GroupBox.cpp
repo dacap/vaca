@@ -46,7 +46,7 @@ GroupBox::~GroupBox()
 {
 }
 
-Rect GroupBox::getLayoutBounds()
+Rect GroupBox::getLayoutBounds() const
 {
   ScreenGraphics g;
 
@@ -75,8 +75,8 @@ void GroupBox::onPreferredSize(Size& sz)
   Size ncSize = getNonClientSize();
   
   if (sz.w > 0 || sz.h > 0) {
-    sz = Size(VACA_MAX(0, sz.w - ncSize.w),
-	      VACA_MAX(0, sz.h - ncSize.h));
+    sz = Size(max_value(0, sz.w - ncSize.w),
+	      max_value(0, sz.h - ncSize.h));
   }
 
   Widget::onPreferredSize(sz);

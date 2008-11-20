@@ -57,7 +57,7 @@ public:
   CustomLabel(const String& text, Widget* parent, Style style = CustomLabelStyle);
   virtual ~CustomLabel();
 
-  virtual TextAlign getTextAlign();
+  virtual TextAlign getTextAlign() const;
   virtual void setTextAlign(TextAlign align);
 
 protected:

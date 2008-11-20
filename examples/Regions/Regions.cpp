@@ -115,8 +115,8 @@ protected:
       xorRect(g, m_oldPoint);
 
       // new rectangle (absolute coordinates)
-      Rect newRect(VACA_MIN(m_startPoint.x, m_oldPoint.x),
-		   VACA_MIN(m_startPoint.y, m_oldPoint.y),
+      Rect newRect(min_value(m_startPoint.x, m_oldPoint.x),
+		   min_value(m_startPoint.y, m_oldPoint.y),
 		   abs(m_startPoint.x-m_oldPoint.x)+1,
 		   abs(m_startPoint.y-m_oldPoint.y)+1);
 
@@ -141,8 +141,8 @@ private:
 
   void xorRect(Graphics &g, const Point &pt)
   {
-    Rect rc(VACA_MIN(m_startPoint.x, pt.x),
-	    VACA_MIN(m_startPoint.y, pt.y),
+    Rect rc(min_value(m_startPoint.x, pt.x),
+	    min_value(m_startPoint.y, pt.y),
 	    abs(m_startPoint.x-pt.x)+1,
 	    abs(m_startPoint.y-pt.y)+1);
     

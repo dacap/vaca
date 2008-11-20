@@ -82,15 +82,15 @@ public:
   Edit(const String& text, Widget* parent, Style style = EditStyle);
   virtual ~Edit();
 
-  int getTextLength();
+  int getTextLength() const;
 
-  int getTextLimit();
+  int getTextLimit() const;
   void setTextLimit(int textLimit);
 
-  bool isReadOnly();
+  bool isReadOnly() const;
   void setReadOnly(bool readOnly);
 
-  bool canUndo();
+  bool canUndo() const;
   void undo();
 
   void cut();

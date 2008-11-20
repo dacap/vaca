@@ -218,7 +218,7 @@ Widget::~Widget()
  *   member to hold its parent.
  * @endwin32
  */
-Widget* Widget::getParent()
+Widget* Widget::getParent() const
 {
   return m_parent;
 }
@@ -229,7 +229,7 @@ Widget* Widget::getParent()
  * in other words, doesn't matter if you add or remove elements
  * from them, the original list of children will not be modified.
  */
-Widget::Container Widget::getChildren()
+Widget::Container Widget::getChildren() const
 {
 #if 0				// don't use this alternative (it
 				// doesn't work to synchronize Frame)
@@ -394,7 +394,7 @@ bool Widget::isLayoutFree()
  *
  * @see setText
  */
-String Widget::getText()
+String Widget::getText() const
 {
   assert(::IsWindow(m_handle));
 
@@ -447,7 +447,7 @@ void Widget::setFont(Font font)
 /**
  * Returns the current Widget style.
  */
-Style Widget::getStyle()
+Style Widget::getStyle() const
 {
   assert(::IsWindow(m_handle));
 
@@ -515,7 +515,7 @@ void Widget::removeStyle(Style style)
  *
  * @see getClientBounds, getAbsoluteBounds
  */
-Rect Widget::getBounds()
+Rect Widget::getBounds() const
 {
   assert(::IsWindow(m_handle));
 
@@ -543,7 +543,7 @@ Rect Widget::getBounds()
  *
  * @see getAbsoluteClientBounds, getBounds
  */
-Rect Widget::getAbsoluteBounds()
+Rect Widget::getAbsoluteBounds() const
 {
   assert(::IsWindow(m_handle));
 
@@ -564,7 +564,7 @@ Rect Widget::getAbsoluteBounds()
  *
  * @see getBounds, getAbsoluteClientBounds
  */
-Rect Widget::getClientBounds()
+Rect Widget::getClientBounds() const
 {
   RECT rc;
   assert(::IsWindow(m_handle));
@@ -578,7 +578,7 @@ Rect Widget::getClientBounds()
  *
  * @see getAbsoluteBounds, getClientBounds
  */
-Rect Widget::getAbsoluteClientBounds()
+Rect Widget::getAbsoluteClientBounds() const
 {
   RECT rc = getClientBounds();
   ::MapWindowPoints(m_handle, NULL, (POINT*)&rc, 2);
@@ -592,7 +592,7 @@ Rect Widget::getAbsoluteClientBounds()
  *
  * @see getClientBounds
  */
-Rect Widget::getLayoutBounds()
+Rect Widget::getLayoutBounds() const
 {
   return getClientBounds();
 }
@@ -1411,9 +1411,9 @@ void Widget::setScrollPos(Orientation orientation, int pos)
   ::GetScrollInfo(m_handle, fnBar, &si);
 
   si.fMask = SIF_POS;
-  si.nPos = VACA_CLAMP(pos,
-		       si.nMin,
-		       si.nMax - VACA_MAX(static_cast<int>(si.nPage) - 1, 0));
+  si.nPos = clamp_value(pos,
+			si.nMin,
+			si.nMax - max_value(static_cast<int>(si.nPage) - 1, 0));
   ::SetScrollInfo(m_handle, fnBar, &si, TRUE);
 }
   
@@ -1523,8 +1523,9 @@ Command* Widget::findCommandById(CommandId id)
  *
  * @see fromHandle, getParentHandle
  */
-HWND Widget::getHandle()
+HWND Widget::getHandle() const
 {
+  assert(!m_handle || ::IsWindow(m_handle));
   return m_handle;
 }
 
@@ -1533,7 +1534,7 @@ HWND Widget::getHandle()
  *
  * @see getHandle
  */
-HWND Widget::getParentHandle()
+HWND Widget::getParentHandle() const
 {
   Widget* parent = getParent();
   return parent != NULL ? parent->getHandle(): NULL;
@@ -1927,6 +1928,11 @@ void Widget::onDropFiles(DropFilesEvent& ev)
   DropFiles(ev);
 }
 
+void Widget::onAddChild(Widget* child)
+{
+  // do nothing
+}
+
 void Widget::onRemoveChild(Widget* child)
 {
   // do nothing
@@ -2019,6 +2025,8 @@ void Widget::addChild(Widget* child, bool setParent)
     ::SetParent(child->m_handle, m_handle);
     // sendMessage(WM_UPDATEUISTATE, UIS_SET..., 0);
   }
+
+  onAddChild(child);
 }
 
 /**
@@ -2696,9 +2704,9 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
 	    break;
 	}
 
-	pos = VACA_CLAMP(pos,
-			 si.nMin,
-			 si.nMax - VACA_MAX(static_cast<int>(si.nPage) - 1, 0));
+	pos = clamp_value(pos,
+			  si.nMin,
+			  si.nMax - max_value(static_cast<int>(si.nPage) - 1, 0));
 
 	// Note: onScroll() doesn't receive the nPos=HIWORD(wParam)
 	// because it has a limit of 16-bits.  Instead you should use

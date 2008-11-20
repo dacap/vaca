@@ -395,7 +395,7 @@ Size Bix::getPreferredSize(Matrix& mat)
     int max_w = 0;
     for (int x=0; x<mat.cols; ++x) {
       int w = mat.size[0][x].w;
-      max_w = VACA_MAX(max_w, w);
+      max_w = max_value(max_w, w);
     }
     sz.w = max_w*mat.cols;
   }
@@ -409,7 +409,7 @@ Size Bix::getPreferredSize(Matrix& mat)
     int max_h = 0;
     for (int y=0; y<mat.rows; ++y) {
       int h = mat.size[0][y].h;
-      max_h = VACA_MAX(max_h, h);
+      max_h = max_value(max_h, h);
     }
     sz.h = max_h*mat.rows;
   }

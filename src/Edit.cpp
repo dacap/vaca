@@ -54,9 +54,9 @@ Edit::~Edit()
 /**
  * Returns the current text limit (EM_GETLIMITTEXT).
  */
-int Edit::getTextLimit()
+int Edit::getTextLimit() const
 {
-  return static_cast<int>(sendMessage(EM_GETLIMITTEXT, 0, 0));
+  return static_cast<int>(const_cast<Edit*>(this)->sendMessage(EM_GETLIMITTEXT, 0, 0));
 }
 
 /**
@@ -74,7 +74,7 @@ void Edit::setTextLimit(int textLimit)
  * Returns true if this Edit widget has read-only mode activated.
  * 
  */
-bool Edit::isReadOnly()
+bool Edit::isReadOnly() const
 {
   return (getStyle().regular & ES_READONLY) != 0 ? true: false;
 }
@@ -92,9 +92,9 @@ void Edit::setReadOnly(bool readOnly)
  * Returns true if the user can undo the last operation (EM_CANUNDO).
  * 
  */
-bool Edit::canUndo()
+bool Edit::canUndo() const
 {
-  return sendMessage(EM_CANUNDO, 0, 0) ? true: false;
+  return const_cast<Edit*>(this)->sendMessage(EM_CANUNDO, 0, 0) ? true: false;
 }
 
 /**

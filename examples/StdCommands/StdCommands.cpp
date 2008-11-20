@@ -93,7 +93,7 @@ public:
     setLayout(new ClientLayout);
 
     // load the standard buttons
-    m_toolBar.loadStandardImageList();
+    //m_toolBar.loadStandardImageList();
 
     m_toolBar.addButton(new ToolButton(ID_FILENEW, STD_FILENEW));
     m_toolBar.addButton(new ToolButton(ID_FILEOPEN, STD_FILEOPEN));

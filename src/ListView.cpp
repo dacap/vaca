@@ -61,7 +61,7 @@ void ListView::setBgColor(const Color& color)
   ListView_SetBkColor(getHandle(), color.getColorRef());
 }
 
-Color ListView::getTextColor()
+Color ListView::getTextColor() const
 {
   assert(::IsWindow(getHandle()));
 
@@ -75,7 +75,7 @@ void ListView::setTextColor(const Color& color)
   ListView_SetTextColor(getHandle(), color.getColorRef());
 }
 
-Color ListView::getTextBgColor()
+Color ListView::getTextBgColor() const
 {
   assert(::IsWindow(getHandle()));
 
@@ -89,7 +89,7 @@ void ListView::setTextBgColor(const Color& color)
   ListView_SetTextBkColor(getHandle(), color.getColorRef());
 }
 
-ListViewType ListView::getType()
+ListViewType ListView::getType() const
 {
   int style = getStyle().regular & LVS_TYPEMASK;
 

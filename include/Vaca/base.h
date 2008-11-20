@@ -78,13 +78,25 @@ namespace Vaca {
 
 /**
  * Returns the minimum of @a x and @a y.
+ *
+ * @note It's just like @b std::min
  */
-#define VACA_MIN(x,y)		((x) < (y) ? (x): (y))
+template<typename T>
+inline T min_value(T x, T y)
+{
+  return x < y ? x: y;
+}
 
 /**
  * Returns the maximum of @a x and @a y.
+ *
+ * @note It's just like @b std::max
  */
-#define VACA_MAX(x,y)		((x) < (y) ? (y): (x))
+template<typename T>
+inline T max_value(T x, T y)
+{
+  return x > y ? x: y;
+}
 
 /**
  * Limits the posible values of @a x to the speficied range.
@@ -93,9 +105,11 @@ namespace Vaca {
  * if @a x is less than @a low, then @a low is returned.
  * In other case, @a x is in the range, and @a x is returned.
  */
-#define VACA_CLAMP(x,low,high)	(((x) > (high)) ? (high):		\
-				 (((x) < (low)) ? (low):		\
-						  (x)))
+template<typename T>
+inline T clamp_value(T x, T low, T high)
+{
+  return x > high ? high: (x < low ? low: x);
+}
 
 /**
  * A character.

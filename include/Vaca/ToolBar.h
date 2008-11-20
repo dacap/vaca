@@ -36,6 +36,7 @@
 
 #include "Vaca/base.h"
 #include "Vaca/DockBar.h"
+#include "Vaca/ImageList.h"
 
 namespace Vaca {
 
@@ -124,31 +125,30 @@ public:
 class VACA_DLL ToolSet : public Widget
 {
   std::vector<Size> m_preferredSizes;
-  HIMAGELIST m_loadedImageList;
+  ImageList m_imageList;
 
 public:
 
   ToolSet(Widget* parent, Style style = ToolSetStyle);
   virtual ~ToolSet();
 
-  int getButtonCount();
-  int getRows();
+  int getButtonCount() const;
+  int getRows() const;
   Rect setRows(int rows, bool expand);
 
   void setImageList(ImageList& imageList);
-  void loadStandardImageList(int imageListId = IDB_STD_SMALL_COLOR);
 
   void addButton(ToolButton* button);
   void addSeparator(int width = 6);
 
   void updateButton(ToolButton* button);
 
-  ToolButton* getButtonById(CommandId id);
-  ToolButton* getButtonByIndex(int index);
+  ToolButton* getButtonById(CommandId id) const;
+  ToolButton* getButtonByIndex(int index) const;
 
-  int hitTest(const Point& pt);
+  int hitTest(const Point& pt) const;
 
-  std::vector<Size> getPreferredSizes();
+  std::vector<Size> getPreferredSizes() const;
   void updatePreferredSizes();
 
 protected:
@@ -183,8 +183,8 @@ public:
 	  Style style = ToolBarStyle);
   virtual ~ToolBar();
 
-  virtual Size getDockedSize(Side side);
-  virtual Size getFloatingSize();
+  virtual Size getDockedSize(Side side) const;
+  virtual Size getFloatingSize() const;
 
 protected:
   // events
@@ -216,11 +216,6 @@ public:
   /** @see ToolSet#setImageList */
   void setImageList(ImageList& imageList) {
     return m_set.setImageList(imageList);
-  }
-
-  /** @see ToolSet#loadStandardImageList */
-  void loadStandardImageList(int imageListId = IDB_STD_SMALL_COLOR) {
-    m_set.loadStandardImageList(imageListId);
   }
 
   /** @see ToolSet#addButton */

@@ -51,7 +51,7 @@ public:
   GroupBox(const String& text, Widget* parent, Style style = GroupBoxStyle);
   virtual ~GroupBox();
 
-  virtual Rect getLayoutBounds();
+  virtual Rect getLayoutBounds() const;
 
   Size getNonClientSize();
 

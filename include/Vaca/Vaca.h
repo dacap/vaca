@@ -120,6 +120,7 @@
 #include "Vaca/SmartPtr.h"
 #include "Vaca/SpinButton.h"
 #include "Vaca/Spinner.h"
+#include "Vaca/SplitBar.h"
 #include "Vaca/StatusBar.h"
 #include "Vaca/String.h"
 #include "Vaca/Style.h"

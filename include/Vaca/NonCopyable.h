@@ -59,7 +59,7 @@ namespace Vaca {
  * }
  * @endcode
  */
-class NonCopyable
+class VACA_DLL NonCopyable
 {
 public:
   NonCopyable() { }

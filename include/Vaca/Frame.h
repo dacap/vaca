@@ -109,7 +109,7 @@ public:
   void setIcon(ResourceId iconId);
 
   Size getNonClientSize();
-  virtual Rect getLayoutBounds();
+  virtual Rect getLayoutBounds() const;
   
   void addDockArea(DockArea* dockArea);
   void removeDockArea(DockArea* dockArea);

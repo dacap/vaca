@@ -109,7 +109,7 @@ CommandId MenuItem::getId()
   return m_id;
 }
 
-const String& MenuItem::getText()
+const String& MenuItem::getText() const
 {
   return m_text;
 }

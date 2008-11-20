@@ -107,7 +107,7 @@ public:
   // FILE NAMES, PATHS AND URLS
   // ============================================================
 
-  String& addPathComponent(const String& component);
+  void addPathComponent(const String& component);
   
   String getFilePath() const;
   String getFileName() const;

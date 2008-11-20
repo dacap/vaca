@@ -213,6 +213,8 @@ public:
 
   void drawXorFrame(const Rect& rc, int border = 3);
   void drawXorFrame(int x, int y, int w, int h, int border = 3);
+  void fillXorFrame(const Rect& rc);
+  void fillXorFrame(int x, int y, int w, int h);
 
   void drawFocus(const Rect& rc);
 

@@ -68,13 +68,13 @@ public:
 
   //////////////////////////////////////////////////////////////////////
   // Text retrieval and modification
-  virtual String getText();
+  virtual String getText() const;
   virtual void setText(const String& str);
   void setSavePoint();
-  String getLine(int line);
+  String getLine(int line) const;
   void replaceSel(const String& str);
   void setReadOnly(bool readOnly);
-  bool getReadOnly();
+  bool getReadOnly() const;
 // SCI_GETTEXTRANGE(<unused>, TextRange* tr)
 // SCI_GETSTYLEDTEXT(<unused>, TextRange* tr)
 // SCI_ALLOCATE(int bytes, <unused>)
@@ -86,7 +86,7 @@ public:
   void insertText(int pos, const String& str);
   void clearAll();
 // SCI_CLEARDOCUMENTSTYLE
-  Character getCharAt(int pos);
+  Character getCharAt(int pos) const;
 // SCI_GETSTYLEAT(int pos)
 // SCI_SETSTYLEBITS(int bits)
 // SCI_GETSTYLEBITS
@@ -114,7 +114,7 @@ public:
   //////////////////////////////////////////////////////////////////////
   // Overtype (overwrite-mode)
   void setOverwriteMode(bool state);
-  bool getOverwriteMode();
+  bool getOverwriteMode() const;
 
   //////////////////////////////////////////////////////////////////////
   // Cut, copy and paste
@@ -136,9 +136,9 @@ public:
   //////////////////////////////////////////////////////////////////////
   // Undo and Redo
   void undo();
-  bool canUndo();
+  bool canUndo() const;
   void redo();
-  bool canRedo();
+  bool canRedo() const;
   void emptyUndoBuffer();
 // SCI_SETUNDOCOLLECTION(bool collectUndo)
 // SCI_GETUNDOCOLLECTION
@@ -147,28 +147,28 @@ public:
 
   //////////////////////////////////////////////////////////////////////
   // Selection and information
-  int getTextLength();
-  int getLineCount();
-  int getFirstVisibleLine();
-  int getLinesOnScreen();
-  bool isModified();
+  int getTextLength() const;
+  int getLineCount() const;
+  int getFirstVisibleLine() const;
+  int getLinesOnScreen() const;
+  bool isModified() const;
 // SCI_SETSEL(int anchorPos, int currentPos)
   void goToPos(int pos);
   void goToLine(int line);
   void setCurrentPos(int pos);
-  int getCurrentPos();
+  int getCurrentPos() const;
   void setAnchor(int pos);
-  int getAnchor();
+  int getAnchor() const;
 // SCI_SETSELECTIONSTART(int position)
 // SCI_SETSELECTIONEND(int position)
-  int getSelectionStart();
-  int getSelectionEnd();
+  int getSelectionStart() const;
+  int getSelectionEnd() const;
 // SCI_SELECTALL
 // SCI_LINEFROMPOSITION(int position)
 // SCI_POSITIONFROMLINE(int line)
 // SCI_GETLINEENDPOSITION(int line)
-  int getLineLength(int line);
-  String getSelText();
+  int getLineLength(int line) const;
+  String getSelText() const;
 // SCI_GETCURLINE(int textLen, char* text)
 // SCI_SELECTIONISRECTANGLE
 // SCI_SETSELECTIONMODE(int mode)
@@ -229,10 +229,10 @@ public:
   //////////////////////////////////////////////////////////////////////
   // Line endings
   void setEolMode(int eolMode);
-  int getEolMode();
+  int getEolMode() const;
   void convertEols(int eolMode);
   void setViewEol(bool visible);
-  bool getViewEol();
+  bool getViewEol() const;
 
   //////////////////////////////////////////////////////////////////////
   // Styling

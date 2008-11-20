@@ -155,18 +155,18 @@ void BandedDockArea::drawXorTracker(Graphics& g, DockInfo* _dockInfo)
   if (isHorizontal()) {
     // size of the last band
     if (getSide() == Side::Bottom)
-      externRect.y -= VACA_MAX(externRect.h, dockInfo->size.h) - externRect.h;
+      externRect.y -= max_value(externRect.h, dockInfo->size.h) - externRect.h;
 
-    externRect.h = VACA_MAX(externRect.h, dockInfo->size.h);
+    externRect.h = max_value(externRect.h, dockInfo->size.h);
     internRect = Rect(Point(externRect.x + dockInfo->offset, externRect.y),
 		      dockInfo->size);
   }
   else {
     // size of the last band
     if (getSide() == Side::Right)
-      externRect.x -= VACA_MAX(externRect.w, dockInfo->size.w) - externRect.w;
+      externRect.x -= max_value(externRect.w, dockInfo->size.w) - externRect.w;
 
-    externRect.w = VACA_MAX(externRect.w, dockInfo->size.w);
+    externRect.w = max_value(externRect.w, dockInfo->size.w);
     internRect = Rect(Point(externRect.x, externRect.y + dockInfo->offset),
 		      dockInfo->size);
   }
@@ -278,7 +278,7 @@ void BandedDockArea::onPreferredSize(Size& sz)
 //     count++;
   }
 
-//   return sz//  + (2*VACA_MAX(count-1, 0))
+//   return sz//  + (2*max_value(count-1, 0))
 //     ;
 }
 
@@ -320,7 +320,7 @@ void BandedDockArea::onAddDockBar(DockBar* dockBar)
   int bandCount = m_bandInfo.size();
 
   // in which band we must to dock this dockBar?
-  dockInfo->band = VACA_CLAMP(dockInfo->band, 0, bandCount);
+  dockInfo->band = clamp_value(dockInfo->band, 0, bandCount);
 
   // add a new band?
   if (dockInfo->band == bandCount)
@@ -422,9 +422,9 @@ void BandedDockArea::updateBandSize(int bandIndex)
     assert(dockInfo != NULL);
 
     if (isHorizontal())
-      size = VACA_MAX(size, dockInfo->size.h);
+      size = max_value(size, dockInfo->size.h);
     else
-      size = VACA_MAX(size, dockInfo->size.w);
+      size = max_value(size, dockInfo->size.w);
   }
 
   m_bandInfo[bandIndex].size = size;
@@ -436,7 +436,7 @@ Rect BandedDockArea::getBandBounds(int bandIndex)
 
   // Warning! we can obtain the bounds of the new band (the one that
   // has bandIndex == count)
-  bandIndex = VACA_CLAMP(bandIndex, 0, count);
+  bandIndex = clamp_value(bandIndex, 0, count);
 
   // get the entire client bounds (all bands size)
   Rect bounds = getClientBounds();

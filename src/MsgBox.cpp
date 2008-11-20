@@ -142,7 +142,7 @@ MsgBox::Result MsgBox::show(Widget* parent,
   }
 
   if (default_button != 0) {
-    default_button = VACA_CLAMP(default_button, -buttons, buttons);
+    default_button = clamp_value(default_button, -buttons, buttons);
     if (default_button < 0)
       default_button = buttons + default_button + 1;
     switch (default_button) {

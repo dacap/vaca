@@ -186,9 +186,9 @@ void ComboBox::layout()
     int maxHeightBottom = wa.h-(arc.y-wa.y+arc.h);
   
     setBounds(rc.x, rc.y, rc.w,
-	      VACA_MIN(rc.h + getHeightForAllItems(),
-		       VACA_MAX(maxHeightTop,
-				maxHeightBottom)));
+	      min_value(rc.h + getHeightForAllItems(),
+			max_value(maxHeightTop,
+				  maxHeightBottom)));
   }
 }
 
@@ -207,7 +207,7 @@ void ComboBox::onPreferredSize(Size& sz)
 
 //   for (i=0; i<n; ++i) {
 //     rc = getItemBounds(i);
-//     sz = Size(VACA_MAX(sz.w, rc.w), sz.h+rc.h);
+//     sz = Size(max_value(sz.w, rc.w), sz.h+rc.h);
 //   }
 
   if ((getStyle().regular & 3) <= 1) { // CBS_SIMPLE = 1

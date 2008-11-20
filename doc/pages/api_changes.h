@@ -18,12 +18,24 @@ String String::addPathComponent(const String& component) const;
 @endcode
 Now:
 @code
-String& String::addPathComponent(const String& component);
+void String::addPathComponent(const String& component);
 @endcode
 
 Now String::addPathComponent adds the specified path-component to the
 string instance used to call the method. The returned reference is a
 "return *this".
+
+@endChange
+@beginChange{VACA_MIN/MAX/CLAMP - Renamed}
+
+Now the three macros VACA_MIN, VACA_MAX, and VACA_CLAMP where replaced
+by Vaca::min_value, Vaca::max_value and Vaca::clamp_value inline functions.
+
+@endChange
+@beginChange{ToolSet::loadStandardImageList - Removed}
+
+This method was removed (it was too much Win32 specific). Also
+ToolBar::loadStandardImageList was removed.
 
 @endChange
 @beginChange{Bix() - Signature Changed}
@@ -60,6 +72,7 @@ ScrollRequest code = ev.getRequest();
 @li String::decodeUrl
 @li Thread::sleep
 @li Added new header file "Vaca/ScrollEvent.h"
+@li New widgets: SplitBar
 
 @endChange
 @endChanges

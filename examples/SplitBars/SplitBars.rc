@@ -1,0 +1,23 @@
+#include "resource.h"
+#include "windows.h"
+
+IDI_VACA	ICON	"../Vaca.ico"
+
+IDR_MAINMENU MENU 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "E&xit",                       ID_FILE_EXIT
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "Vertical SplitBar1",          ID_VIEW_S_SP1, CHECKED
+        MENUITEM "Vertical SplitBar2",          ID_VIEW_S_SP2, CHECKED
+        MENUITEM SEPARATOR
+        MENUITEM "Full Drag",                   ID_FULLDRAG
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "&About...",                   ID_HELP_ABOUT
+    END
+END

@@ -71,7 +71,7 @@ void TabBase::setFont(Font font)
  * Returns the area where the pages should be positioned. It's like
  * Win32 TabCtrl_AdjustRect.
  */
-Rect TabBase::getLayoutBounds()
+Rect TabBase::getLayoutBounds() const
 {
   RECT rc;
   assert(::IsWindow(getHandle()));
@@ -319,8 +319,8 @@ void TabBase::onPreferredSize(Size& sz)
   Size ncSize = getNonClientSize();
 
   if (sz.w > 0 || sz.h > 0) {
-    sz = Size(VACA_MAX(0, sz.w - ncSize.w),
-	      VACA_MAX(0, sz.h - ncSize.h));
+    sz = Size(max_value(0, sz.w - ncSize.w),
+	      max_value(0, sz.h - ncSize.h));
   }
 
   Widget::onPreferredSize(sz);
@@ -405,7 +405,7 @@ TabPage::~TabPage()
 {
 }
 
-String TabPage::getText()
+String TabPage::getText() const
 {
   return static_cast<Tab*>(getParent())->getPageText(m_index);
 }

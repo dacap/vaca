@@ -35,6 +35,7 @@
 #include "Vaca/base.h"
 #include "Vaca/Application.h"
 #include "Vaca/Widget.h"
+#include "Vaca/WidgetClass.h"
 #include "Vaca/Exception.h"
 
 namespace Vaca {

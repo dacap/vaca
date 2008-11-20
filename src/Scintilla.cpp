@@ -97,12 +97,12 @@ void SciEditor::setFont(Font font)
 //////////////////////////////////////////////////////////////////////
 // Text retrieval and modification
 
-String SciEditor::getText()
+String SciEditor::getText() const
 {
-  int length = sendMessage(SCI_GETLENGTH, 0, 0);
+  int length = const_cast<SciEditor*>(this)->sendMessage(SCI_GETLENGTH, 0, 0);
   if (length > 0) {
     char* text = new char[length+1];
-    sendMessage(SCI_GETTEXT, length+1, reinterpret_cast<LPARAM>(text));
+    const_cast<SciEditor*>(this)->sendMessage(SCI_GETTEXT, length+1, reinterpret_cast<LPARAM>(text));
     String str(text);
     delete text;
     return str;
@@ -125,13 +125,13 @@ void SciEditor::setSavePoint()
  * Returns a lien of text. Line 0 is the first line. The text returned
  * includes the new line character.
  */
-String SciEditor::getLine(int line)
+String SciEditor::getLine(int line) const
 {
   int length = getLineLength(line);
   if (length > 0) {
     char* text = new char[length+1];
     ZeroMemory(text, length+1);
-    sendMessage(SCI_GETLINE, line, reinterpret_cast<LPARAM>(text));
+    const_cast<SciEditor*>(this)->sendMessage(SCI_GETLINE, line, reinterpret_cast<LPARAM>(text));
     String str(text, length);
     delete text;
     return str;
@@ -150,9 +150,9 @@ void SciEditor::setReadOnly(bool readOnly)
   sendMessage(SCI_SETREADONLY, readOnly, 0);
 }
 
-bool SciEditor::getReadOnly()
+bool SciEditor::getReadOnly() const
 {
-  return sendMessage(SCI_GETREADONLY, 0, 0) != 0;
+  return const_cast<SciEditor*>(this)->sendMessage(SCI_GETREADONLY, 0, 0) != 0;
 }
 
 /**
@@ -199,9 +199,11 @@ void SciEditor::clearAll()
   sendMessage(SCI_CLEARALL, 0, 0);
 }
 
-Character SciEditor::getCharAt(int pos)
+Character SciEditor::getCharAt(int pos) const
 {
-  return (Character)sendMessage(SCI_GETCHARAT, pos, 0);
+  return (Character)
+    const_cast<SciEditor*>(this)->
+    sendMessage(SCI_GETCHARAT, pos, 0);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -267,9 +269,9 @@ void SciEditor::setOverwriteMode(bool state)
   sendMessage(SCI_SETOVERTYPE, state, 0);
 }
 
-bool SciEditor::getOverwriteMode()
+bool SciEditor::getOverwriteMode() const
 {
-  return sendMessage(SCI_GETOVERTYPE, 0, 0) != 0;
+  return const_cast<SciEditor*>(this)->sendMessage(SCI_GETOVERTYPE, 0, 0) != 0;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -309,9 +311,9 @@ void SciEditor::undo()
   sendMessage(SCI_UNDO, 0, 0);
 }
 
-bool SciEditor::canUndo()
+bool SciEditor::canUndo() const
 {
-  return sendMessage(SCI_CANUNDO, 0, 0) != 0;
+  return const_cast<SciEditor*>(this)->sendMessage(SCI_CANUNDO, 0, 0) != 0;
 }
 
 void SciEditor::redo()
@@ -319,9 +321,9 @@ void SciEditor::redo()
   sendMessage(SCI_REDO, 0, 0);
 }
 
-bool SciEditor::canRedo()
+bool SciEditor::canRedo() const
 {
-  return sendMessage(SCI_CANREDO, 0, 0) != 0;
+  return const_cast<SciEditor*>(this)->sendMessage(SCI_CANREDO, 0, 0) != 0;
 }
 
 void SciEditor::emptyUndoBuffer()
@@ -343,9 +345,9 @@ void SciEditor::endUndoAction()
 // Selection and information
 
 
-int SciEditor::getTextLength()
+int SciEditor::getTextLength() const
 {
-  return sendMessage(SCI_GETTEXTLENGTH, 0, 0);
+  return const_cast<SciEditor*>(this)->sendMessage(SCI_GETTEXTLENGTH, 0, 0);
 }
 
 /**
@@ -353,25 +355,25 @@ int SciEditor::getTextLength()
  *
  * @warning The last line doesn't have a end of line (\\n) character.
  */
-int SciEditor::getLineCount()
+int SciEditor::getLineCount() const
 {
-  return sendMessage(SCI_GETLINECOUNT, 0, 0);
+  return const_cast<SciEditor*>(this)->sendMessage(SCI_GETLINECOUNT, 0, 0);
 }
 
-int SciEditor::getFirstVisibleLine()
+int SciEditor::getFirstVisibleLine() const
 {
-  return sendMessage(SCI_GETFIRSTVISIBLELINE, 0, 0);
+  return const_cast<SciEditor*>(this)->sendMessage(SCI_GETFIRSTVISIBLELINE, 0, 0);
 }
 
 // int SciEditor::getVisibleLineCount()
-int SciEditor::getLinesOnScreen()
+int SciEditor::getLinesOnScreen() const
 {
-  return sendMessage(SCI_LINESONSCREEN, 0, 0);
+  return const_cast<SciEditor*>(this)->sendMessage(SCI_LINESONSCREEN, 0, 0);
 }
 
-bool SciEditor::isModified()
+bool SciEditor::isModified() const
 {
-  return sendMessage(SCI_GETMODIFY, 0, 0) != 0;
+  return const_cast<SciEditor*>(this)->sendMessage(SCI_GETMODIFY, 0, 0) != 0;
 }
 
 void SciEditor::goToPos(int pos)
@@ -389,9 +391,9 @@ void SciEditor::setCurrentPos(int pos)
   sendMessage(SCI_SETCURRENTPOS, pos, 0);
 }
 
-int SciEditor::getCurrentPos()
+int SciEditor::getCurrentPos() const
 {
-  return sendMessage(SCI_GETCURRENTPOS, 0, 0);
+  return const_cast<SciEditor*>(this)->sendMessage(SCI_GETCURRENTPOS, 0, 0);
 }
 
 void SciEditor::setAnchor(int pos)
@@ -399,35 +401,35 @@ void SciEditor::setAnchor(int pos)
   sendMessage(SCI_SETANCHOR, pos, 0);
 }
 
-int SciEditor::getAnchor()
+int SciEditor::getAnchor() const
 {
-  return sendMessage(SCI_GETANCHOR, 0, 0);
+  return const_cast<SciEditor*>(this)->sendMessage(SCI_GETANCHOR, 0, 0);
 }
 
-int SciEditor::getSelectionStart()
+int SciEditor::getSelectionStart() const
 {
-  return sendMessage(SCI_GETSELECTIONSTART, 0, 0);
+  return const_cast<SciEditor*>(this)->sendMessage(SCI_GETSELECTIONSTART, 0, 0);
 }
 
-int SciEditor::getSelectionEnd()
+int SciEditor::getSelectionEnd() const
 {
-  return sendMessage(SCI_GETSELECTIONEND, 0, 0);
+  return const_cast<SciEditor*>(this)->sendMessage(SCI_GETSELECTIONEND, 0, 0);
 }
 
 /**
  * Returns the length of the line (including the end of line). The
  * first line is 0.
  */
-int SciEditor::getLineLength(int line)
+int SciEditor::getLineLength(int line) const
 {
-  return sendMessage(SCI_LINELENGTH, line, 0);
+  return const_cast<SciEditor*>(this)->sendMessage(SCI_LINELENGTH, line, 0);
 }
 
-String SciEditor::getSelText()
+String SciEditor::getSelText() const
 {
   int length = getSelectionEnd() - getSelectionStart() + 1;
   char* text = new char[length+1];
-  sendMessage(SCI_GETSELTEXT, 0, reinterpret_cast<LPARAM>(text));
+  const_cast<SciEditor*>(this)->sendMessage(SCI_GETSELTEXT, 0, reinterpret_cast<LPARAM>(text));
   String str(text);
   delete text;
   return str;
@@ -464,9 +466,9 @@ void SciEditor::setEolMode(int eolMode)
   sendMessage(SCI_SETEOLMODE, eolMode, 0);
 }
 
-int SciEditor::getEolMode()
+int SciEditor::getEolMode() const
 {
-  return sendMessage(SCI_GETEOLMODE, 0, 0);
+  return const_cast<SciEditor*>(this)->sendMessage(SCI_GETEOLMODE, 0, 0);
 }
 
 void SciEditor::convertEols(int eolMode)
@@ -479,9 +481,9 @@ void SciEditor::setViewEol(bool visible)
   sendMessage(SCI_SETVIEWEOL, visible, 0);
 }
 
-bool SciEditor::getViewEol()
+bool SciEditor::getViewEol() const
 {
-  return sendMessage(SCI_GETVIEWEOL, 0, 0) != 0;
+  return const_cast<SciEditor*>(this)->sendMessage(SCI_GETVIEWEOL, 0, 0) != 0;
 }
 
 //////////////////////////////////////////////////////////////////////

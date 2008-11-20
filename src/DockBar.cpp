@@ -146,7 +146,7 @@ void DockBar::setVisible(bool visible)
 /**
  * Leaves some space for the gripper (using measureGripper()).
  */
-Rect DockBar::getLayoutBounds()
+Rect DockBar::getLayoutBounds() const
 {
   Rect rc = Widget::getLayoutBounds();
 
@@ -188,7 +188,7 @@ void DockBar::setFullDrag(bool state)
   m_fullDrag = state;
 }
 
-bool DockBar::isFullDrag()
+bool DockBar::isFullDrag() const
 {
   return m_fullDrag;
 }
@@ -210,7 +210,7 @@ void DockBar::setFloatingGripper(bool state)
 /**
  * Default value: false.
  */
-bool DockBar::isFloatingGripper()
+bool DockBar::isFloatingGripper() const
 {
   return m_floatingGripper;
 }
@@ -218,7 +218,7 @@ bool DockBar::isFloatingGripper()
 /**
  * Returns true if the bar is docked in a DockArea.
  */
-bool DockBar::isDocked()
+bool DockBar::isDocked() const
 {
   return m_dockArea != NULL;
 }
@@ -226,7 +226,7 @@ bool DockBar::isDocked()
 /**
  * Returns true if the bar is floating in a DockFrame.
  */
-bool DockBar::isFloating()
+bool DockBar::isFloating() const
 {
   return m_dockFrame != NULL;
 }
@@ -269,12 +269,12 @@ DockInfo* DockBar::getDockInfo()
   return m_dockInfo;
 }
 
-Size DockBar::getDockedSize(Side side)
+Size DockBar::getDockedSize(Side side) const
 {
   return getBounds().getSize();
 }
 
-Size DockBar::getFloatingSize()
+Size DockBar::getFloatingSize() const
 {
   return getBounds().getSize();
 }
@@ -579,7 +579,7 @@ void DockBar::paintGripper(Graphics& g)
  *         Size(0, gripperHeight), or Size(0, 0) if the gripper is hidden
  *         (use isGripperVisible() to know that).
  */
-Size DockBar::measureGripper(bool docked, Side dockSide)
+Size DockBar::measureGripper(bool docked, Side dockSide) const
 {
   if (isGripperVisible(docked, dockSide)) {
     Side gripperSide = getGripperSide(docked, dockSide);
@@ -593,7 +593,7 @@ Size DockBar::measureGripper(bool docked, Side dockSide)
   return Size(0, 0);
 }
 
-Side DockBar::getGripperSide(bool docked, Side dockSide)
+Side DockBar::getGripperSide(bool docked, Side dockSide) const
 {
   if (docked) {
     if (dockSide == Side::Left ||
@@ -608,7 +608,7 @@ Side DockBar::getGripperSide(bool docked, Side dockSide)
   return Side::Left;
 }
 
-bool DockBar::isGripperVisible(bool docked, Side dockSide)
+bool DockBar::isGripperVisible(bool docked, Side dockSide) const
 {
   if (docked || isFloatingGripper())
     return true;

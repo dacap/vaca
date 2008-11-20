@@ -77,7 +77,7 @@ public:
   Menu* getRoot();
   CommandId getId();
 
-  const String& getText();
+  const String& getText() const;
   void setText(const String& text);
   void setId(CommandId id);
 

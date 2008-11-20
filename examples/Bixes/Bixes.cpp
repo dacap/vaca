@@ -364,13 +364,13 @@ protected:
 
 template<class Map>
 typename Map::mapped_type find_element(const Map& map,
-				       typename const Map::key_type& key)
+				       const typename Map::key_type& key)
 {
   typename Map::const_iterator it = map.find(key);
   if (it != map.end())
     return it->second;
   else
-    return Map::mapped_type(0);		// NULL
+    return typename Map::mapped_type(0); // NULL
 }
 
 class ModelViewAsWidgets : public Panel

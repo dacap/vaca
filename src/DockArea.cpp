@@ -141,7 +141,7 @@ void DockArea::onRemoveDockBar(DockBar* dockBar)
   // do nothing
 }
 
-/**
+/*
  * Event generated when the user start dragging the @a dockBar from
  * this DockArea.
  */
@@ -149,7 +149,7 @@ void DockArea::onRemoveDockBar(DockBar* dockBar)
 // {
 // }
 
-/**
+/*
  * Event generated when the user finish the dragging of the @a dockBar
  * that start from this DockArea.
  *

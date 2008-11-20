@@ -61,8 +61,8 @@ LIB_SOURCES = Anchor AnchorLayout Application BandedDockArea		\
 	      Mdi Menu MenuItemEvent MouseEvent MsgBox Mutex Panel Pen	\
 	      Point ProgressBar RadioButton ReBar Rect Referenceable	\
 	      Region ResourceId Scintilla ScrollEvent ScrollInfo	\
-	      Separator Size Slider SpinButton Spinner StatusBar	\
-	      String Style System Tab Thread TimePoint Timer		\
+	      Separator Size Slider SpinButton Spinner SplitBar		\
+	      StatusBar String System Tab Thread TimePoint Timer	\
 	      ToggleButton ToolBar TreeNode TreeView TreeViewEvent	\
 	      Vaca Widget WidgetClass
 
@@ -73,8 +73,8 @@ EXAMPLES = AnchorLayouts AutoCompletion Bixes BouncingBalls BoxLayouts	\
 	   Hashing HelloWorld Images Labels LikeScript Maths		\
 	   MenuResource MiniExplorer Minimal Paths Primitives		\
 	   ProgressBars Regions Scribble Scrolling Sliders Spinners	\
-	   StdCommands Sudoku SystemImageList Tabs TextEditor Threads	\
-	   Timers ToolBars Trees Undo WebCam
+	   SplitBars StdCommands Sudoku SystemImageList Tabs		\
+	   TextEditor Threads Timers ToolBars Trees Undo WebCam
 endif
 
 ifndef TESTS
@@ -289,6 +289,9 @@ bin/Images$(SUFFIX)$(EXE): obj/Example.Images$(SUFFIX)$(OBJ) obj/Example.Images.
 	$(GXX) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
 
 bin/MenuResource$(SUFFIX)$(EXE): obj/Example.MenuResource$(SUFFIX)$(OBJ) obj/Example.MenuResource.res $(VACA_LIB)
+	$(GXX) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
+
+bin/SplitBars$(SUFFIX)$(EXE): obj/Example.SplitBars$(SUFFIX)$(OBJ) obj/Example.SplitBars.res $(VACA_LIB)
 	$(GXX) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
 
 bin/TextEditor$(SUFFIX)$(EXE): obj/Example.TextEditor$(SUFFIX)$(OBJ) obj/Example.TextEditor.res $(VACA_LIB)

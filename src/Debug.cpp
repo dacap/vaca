@@ -38,7 +38,7 @@
 using namespace Vaca;
 
 #ifndef NDEBUG
-class Debug;
+struct Debug;
 
 static bool closed;
 static Debug* dbg;

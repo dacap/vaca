@@ -44,7 +44,7 @@ CustomLabel::~CustomLabel()
 {
 }
 
-TextAlign CustomLabel::getTextAlign()
+TextAlign CustomLabel::getTextAlign() const
 {
   return m_textAlign;
 }

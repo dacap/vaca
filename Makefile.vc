@@ -129,7 +129,7 @@ OBJS = obj/Anchor.obj obj/AnchorLayout.obj obj/Application.obj		\
   obj/Referenceable.obj obj/Region.obj obj/ResourceId.obj		\
   obj/Scintilla.obj obj/ScrollEvent.obj obj/ScrollInfo.obj		\
   obj/Separator.obj obj/Size.obj obj/Slider.obj obj/SpinButton.obj	\
-  obj/Spinner.obj obj/StatusBar.obj obj/String.obj obj/Style.obj	\
+  obj/Spinner.obj obj/SplitBar.obj obj/StatusBar.obj obj/String.obj	\
   obj/System.obj obj/Tab.obj obj/Thread.obj obj/TimePoint.obj		\
   obj/Timer.obj obj/ToggleButton.obj obj/ToolBar.obj obj/TreeNode.obj	\
   obj/TreeView.obj obj/TreeViewEvent.obj obj/Vaca.obj obj/Widget.obj	\
@@ -145,10 +145,10 @@ EXAMPLES_EXE = bin/AnchorLayouts.exe bin/AutoCompletion.exe		\
   bin/MenuResource.exe bin/MiniExplorer.exe bin/Minimal.exe		\
   bin/Paths.exe bin/Primitives.exe bin/ProgressBars.exe			\
   bin/Regions.exe bin/Scribble.exe bin/Scrolling.exe bin/Sliders.exe	\
-  bin/Spinners.exe bin/StdCommands.exe bin/Sudoku.exe			\
-  bin/SystemImageList.exe bin/Tabs.exe bin/TextEditor.exe		\
-  bin/Threads.exe bin/Timers.exe bin/ToolBars.exe bin/Trees.exe		\
-  bin/Undo.exe bin/WebCam.exe
+  bin/Spinners.exe bin/SplitBars.exe bin/StdCommands.exe		\
+  bin/Sudoku.exe bin/SystemImageList.exe bin/Tabs.exe			\
+  bin/TextEditor.exe bin/Threads.exe bin/Timers.exe bin/ToolBars.exe	\
+  bin/Trees.exe bin/Undo.exe bin/WebCam.exe
 
 TESTS_EXE = \
   bin/test_bind.exe \
@@ -265,6 +265,7 @@ bin/Scribble.exe: obj/Scribble.obj obj/Example.res
 bin/Scrolling.exe: obj/Scrolling.obj obj/Example.res
 bin/Sliders.exe: obj/Sliders.obj obj/Example.res
 bin/Spinners.exe: obj/Spinners.obj obj/Example.res
+bin/SplitBars.exe: obj/SplitBars.obj obj/SplitBars.res
 bin/StdCommands.exe: obj/StdCommands.obj obj/Example.res
 bin/Sudoku.exe: obj/Sudoku.obj obj/Example.res
 bin/SystemImageList.exe: obj/SystemImageList.obj obj/Example.res
@@ -296,6 +297,9 @@ obj/Images.res: examples/Images/Images.rc
 obj/MenuResource.res: examples/MenuResource/MenuResource.rc
 	$(RC) examples/MenuResource/MenuResource.rc
 	move examples\\MenuResource\\MenuResource.res obj\\MenuResource.res
+obj/SplitBars.res: examples/SplitBars/SplitBars.rc
+	$(RC) examples/SplitBars/SplitBars.rc
+	move examples\\SplitBars\\SplitBars.res obj\\SplitBars.res
 obj/TextEditor.res: examples/TextEditor/TextEditor.rc
 	$(RC) examples/TextEditor/TextEditor.rc
 	move examples\\TextEditor\\TextEditor.res obj\\TextEditor.res
@@ -371,6 +375,8 @@ obj/Sliders.obj: examples/Sliders/Sliders.cpp
 	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/Sliders/Sliders.cpp
 obj/Spinners.obj: examples/Spinners/Spinners.cpp
 	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/Spinners/Spinners.cpp
+obj/SplitBars.obj: examples/SplitBars/SplitBars.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/SplitBars/SplitBars.cpp
 obj/StdCommands.obj: examples/StdCommands/StdCommands.cpp
 	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/StdCommands/StdCommands.cpp
 obj/Sudoku.obj: examples/Sudoku/Sudoku.cpp

@@ -132,8 +132,8 @@ void Frame::onPreferredSize(Size& sz)
   Size ncSize = getNonClientSize();
 
   if (sz.w > 0 || sz.h > 0) {
-    sz = Size(VACA_MAX(0, sz.w - ncSize.w),
-	      VACA_MAX(0, sz.h - ncSize.h));
+    sz = Size(max_value(0, sz.w - ncSize.w),
+	      max_value(0, sz.h - ncSize.h));
   }
 
   Widget::onPreferredSize(sz);
@@ -467,7 +467,7 @@ Size Frame::getNonClientSize()
  *
  * @see Widget::getLayoutBounds
  */
-Rect Frame::getLayoutBounds()
+Rect Frame::getLayoutBounds() const
 {
   Rect rc = Widget::getLayoutBounds();
 
@@ -475,7 +475,8 @@ Rect Frame::getLayoutBounds()
   if (m_statusBar)
     rc.h -= m_statusBar->getPreferredSize().h;
 
-  for (std::vector<DockArea*>::iterator it=m_dockAreas.begin(); it!=m_dockAreas.end(); ++it) {
+  for (std::vector<DockArea*>::const_iterator
+	 it=m_dockAreas.begin(); it!=m_dockAreas.end(); ++it) {
     DockArea* dockArea = *it;
     Size dockSize = dockArea->getPreferredSize();
 
@@ -617,7 +618,8 @@ void Frame::layout()
   }
 
   // put the dock areas arround the layout bounds
-  for (std::vector<DockArea*>::iterator it=m_dockAreas.begin(); it!=m_dockAreas.end(); ++it) {
+  for (std::vector<DockArea*>::const_iterator
+	 it=m_dockAreas.begin(); it!=m_dockAreas.end(); ++it) {
     DockArea* dockArea = *it;
     // Size dockSize = dockArea->getBounds().getSize();
     Size dockSize = dockArea->getPreferredSize();

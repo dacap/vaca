@@ -438,8 +438,8 @@ public:
   // PARENT & CHILDREN RELATIONSHIP
   // ============================================================
 
-  Widget* getParent();
-  Container getChildren();
+  Widget* getParent() const;
+  Container getChildren() const;
 
   // ===============================================================
   // LAYOUT & CONSTRAINT
@@ -458,7 +458,7 @@ public:
   // TEXT & FONT
   // ===============================================================
 
-  virtual String getText();
+  virtual String getText() const;
   virtual void setText(const String& str);
 
   virtual Font getFont() const;
@@ -468,7 +468,7 @@ public:
   // WIDGET STYLE
   // ===============================================================
 
-  Style getStyle();
+  Style getStyle() const;
   void setStyle(Style style);
   void addStyle(Style style);
   void removeStyle(Style style);
@@ -477,13 +477,13 @@ public:
   // SIZE & POSITION
   // ===============================================================
 
-  Rect getBounds();
-  Rect getAbsoluteBounds();
-  Rect getClientBounds();
-  Rect getAbsoluteClientBounds();
+  Rect getBounds() const;
+  Rect getAbsoluteBounds() const;
+  Rect getClientBounds() const;
+  Rect getAbsoluteClientBounds() const;
 
   // TODO public virtual
-  virtual Rect getLayoutBounds();
+  virtual Rect getLayoutBounds() const;
 
   void setBounds(const Rect& rc);
   void setBounds(int x, int y, int w, int h);
@@ -582,8 +582,8 @@ public:
   // WIN32 SPECIFIC
   // ===============================================================
 
-  HWND getHandle();
-  HWND getParentHandle();
+  HWND getHandle() const;
+  HWND getParentHandle() const;
 
   static Widget* fromHandle(HWND hwnd);
   static WNDPROC getGlobalWndProc();
@@ -642,6 +642,7 @@ protected:
   virtual void onAfterPosChange();
   virtual void onScroll(ScrollEvent& ev);
   virtual void onDropFiles(DropFilesEvent& ev);
+  virtual void onAddChild(Widget* child);
   virtual void onRemoveChild(Widget* child);
 
   // ===============================================================

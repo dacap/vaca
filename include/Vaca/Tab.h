@@ -73,7 +73,7 @@ public:
   virtual Font getFont() const;
   virtual void setFont(Font font);
 
-  virtual Rect getLayoutBounds();
+  virtual Rect getLayoutBounds() const;
 
   Side getSide();
   void setSide(Side side);
@@ -165,7 +165,7 @@ public:
   TabPage(const String& text, Tab* parent, Style style = TabPageStyle);
   virtual ~TabPage();
 
-  virtual String getText();
+  virtual String getText() const;
   virtual void setText(const String& str);
 
   int getPageIndex();

@@ -112,16 +112,16 @@ public:
   virtual ~DockBar();
 
   virtual void setVisible(bool visible);
-  virtual Rect getLayoutBounds();
+  virtual Rect getLayoutBounds() const;
 
   void setFullDrag(bool state);
-  bool isFullDrag();
+  bool isFullDrag() const;
 
   void setFloatingGripper(bool state);
-  bool isFloatingGripper();
+  bool isFloatingGripper() const;
 
-  bool isDocked();
-  bool isFloating();
+  bool isDocked() const;
+  bool isFloating() const;
 
   void dockIn(DockArea* dockArea);
   void floatOut();
@@ -131,8 +131,8 @@ public:
   DockFrame* getDockFrame();
   DockInfo* getDockInfo();
 
-  virtual Size getDockedSize(Side side);
-  virtual Size getFloatingSize();
+  virtual Size getDockedSize(Side side) const;
+  virtual Size getFloatingSize() const;
 
 protected:
 
@@ -152,9 +152,9 @@ protected:
   virtual void onResizingFrame(DockFrame* frame, CardinalDirection dir, Rect& rc);
 
   virtual void paintGripper(Graphics& g);
-  virtual Size measureGripper(bool docked, Side dockSide);
-  virtual Side getGripperSide(bool docked, Side dockSide);
-  virtual bool isGripperVisible(bool docked, Side dockSide);
+  virtual Size measureGripper(bool docked, Side dockSide) const;
+  virtual Side getGripperSide(bool docked, Side dockSide) const;
+  virtual bool isGripperVisible(bool docked, Side dockSide) const;
 
 private:
 

@@ -86,13 +86,13 @@ public:
 
   virtual void setBgColor(const Color& color);
 
-  Color getTextColor();
+  Color getTextColor() const;
   void setTextColor(const Color& color);
 
-  Color getTextBgColor();
+  Color getTextBgColor() const;
   void setTextBgColor(const Color& color);
 
-  ListViewType getType();
+  ListViewType getType() const;
   void setType(ListViewType type);
 
   void setNormalImageList(const ImageList& imageList);

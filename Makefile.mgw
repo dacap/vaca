@@ -73,8 +73,8 @@ EXAMPLES = AnchorLayouts AutoCompletion Bixes BouncingBalls BoxLayouts	\
 	   Hashing HelloWorld Images Labels LikeScript Maths		\
 	   MenuResource MiniExplorer Minimal Paths Primitives		\
 	   ProgressBars Regions Scribble Scrolling Sliders Spinners	\
-	   SplitBars StdCommands Sudoku SystemImageList Tabs		\
-	   TextEditor Threads Timers ToolBars Trees Undo WebCam
+	   SplitBars Sudoku SystemImageList Tabs TextEditor Threads	\
+	   Timers ToolBars Trees Undo WebCam
 endif
 
 ifndef TESTS

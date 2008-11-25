@@ -189,7 +189,7 @@ examples: lib obj/Example.res $(EXAMPLES_EXE)
 tests: lib tests2
 
 tests2:
-	@$(MAKE) -NOLOGO -F Makefile.msc tests3 _CONSOLE_=1
+	@$(MAKE) -NOLOGO -F Makefile.vc tests3 _CONSOLE_=1
 
 tests3: $(TESTS_EXE)
 

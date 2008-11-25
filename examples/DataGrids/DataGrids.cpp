@@ -30,92 +30,497 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <Vaca/Vaca.h>
+#include <cmath>
 
 using namespace Vaca;
 
-class DataValue;
-class DataColumn;
-class DataRow;
-class DataTable;
-class DataSet;
+class GridValue;
+class GridColumn;
+class GridRow;
+class GridTable;
+class GridSet;
 
 //////////////////////////////////////////////////////////////////////
-// DataValue
+// GridValue
 
-class DataValue
+class GridValue
 {
 public:
-  virtual ~DataValue() { }
-  virtual String getString() const = 0;
-  virtual void beginEdit(const Rect &cellBounds) = 0;
-  virtual void endEdit() = 0;
-  virtual DataValue* clone() = 0;
-};
-
-//////////////////////////////////////////////////////////////////////
-// DataIntValue
-
-class DataIntValue : public DataValue
-{
-  int m_value;
+  enum Type {
+    Empty,
+    Bool,
+    Int,
+    UInt,
+    Long,
+    ULong,
+    Double,
+    String,
+  };
+private:
+  Type m_type;
+  void* m_data;
 public:
-  DataIntValue(int value);
-  virtual ~DataIntValue();
-  virtual String getString() const;
-  virtual void beginEdit(const Rect &cellBounds);
-  virtual void endEdit();
-  virtual DataValue* clone();
+  GridValue();
+  GridValue(const GridValue& value);
+  explicit GridValue(bool value);
+  explicit GridValue(int value);
+  explicit GridValue(unsigned int value);
+  explicit GridValue(long value);
+  explicit GridValue(unsigned long value);
+  explicit GridValue(double value);
+  explicit GridValue(const Vaca::String& value);
+  ~GridValue();
+
+  void clear();
+  void assign(const GridValue& value);
+  void assign(bool value);
+  void assign(int value);
+  void assign(unsigned int value);
+  void assign(long value);
+  void assign(unsigned long value);
+  void assign(double value);
+  void assign(const Vaca::String& value);
+
+  bool isEmpty() const;
+  bool getBool() const;
+  int getInt() const;
+  unsigned int getUInt() const;
+  long getLong() const;
+  unsigned long getULong() const;
+  double getDouble() const;
+  Vaca::String getString() const;
+
+private:
+  template<typename T>
+  void assign(Type type, const T& value)
+  {
+    clear();
+    m_type = type;
+    m_data = (void*)new T(value);
+  }
 };
 
-//////////////////////////////////////////////////////////////////////
-// DataStringValue
-
-class DataStringValue : public DataValue
+GridValue::GridValue()
+  : m_type(Empty)
+  , m_data(NULL)
 {
-  String m_value;
-public:
-  DataStringValue(const String &value);
-  virtual ~DataStringValue();
-  virtual String getString() const;
-  virtual void beginEdit(const Rect &cellBounds);
-  virtual void endEdit();
-  virtual DataValue* clone();
-};
+}
 
-//////////////////////////////////////////////////////////////////////
-// DataBoolValue
-
-class DataBoolValue : public DataValue
+GridValue::GridValue(const GridValue& value)
+  : m_type(Empty)
+  , m_data(NULL)
 {
-  bool m_value;
-public:
-  DataBoolValue(bool value);
-  virtual ~DataBoolValue();
-  virtual String getString() const;
-  virtual void beginEdit(const Rect &cellBounds);
-  virtual void endEdit();
-  virtual DataValue* clone();
-};
+  assign(value);
+}
 
-//////////////////////////////////////////////////////////////////////
-// DataDoubleValue
-
-class DataDoubleValue : public DataValue
+GridValue::GridValue(bool value)
+  : m_type(Empty)
+  , m_data(NULL)
 {
-  double m_value;
-public:
-  DataDoubleValue(double value);
-  virtual ~DataDoubleValue();
-  virtual String getString() const;
-  virtual void beginEdit(const Rect &cellBounds);
-  virtual void endEdit();
-  virtual DataValue* clone();
-};
+  assign(value);
+}
+
+GridValue::GridValue(int value)
+  : m_type(Empty)
+  , m_data(NULL)
+{
+  assign(value);
+}
+
+GridValue::GridValue(unsigned int value)
+  : m_type(Empty)
+  , m_data(NULL)
+{
+  assign(value);
+}
+
+GridValue::GridValue(long value)
+  : m_type(Empty)
+  , m_data(NULL)
+{
+  assign(value);
+}
+
+GridValue::GridValue(unsigned long value)
+  : m_type(Empty)
+  , m_data(NULL)
+{
+  assign(value);
+}
+
+GridValue::GridValue(double value)
+  : m_type(Empty)
+  , m_data(NULL)
+{
+  assign(value);
+}
+
+GridValue::GridValue(const Vaca::String& value)
+  : m_type(Empty)
+  , m_data(NULL)
+{
+  assign(value);
+}
+
+GridValue::~GridValue()
+{
+  clear();
+}
+
+void GridValue::clear()
+{
+  switch (m_type) {
+    case Empty:
+      // do nothing
+      break;
+    case Bool:
+      delete (bool*)m_data;
+      break;
+    case Int:
+      delete (int*)m_data;
+      break;
+    case UInt:
+      delete (unsigned int*)m_data;
+      break;
+    case Long:
+      delete (long*)m_data;
+      break;
+    case ULong:
+      delete (unsigned long*)m_data;
+      break;
+    case Double:
+      delete (double*)m_data;
+      break;
+    case String:
+      delete (Vaca::String*)m_data;
+      break;
+  }
+  m_type = Empty;
+  m_data = NULL;
+}
+
+void GridValue::assign(const GridValue& value)
+{
+  m_type = value.m_type;
+
+  switch (m_type) {
+    case Empty: m_data = NULL; break;
+    case Bool: assign(*(bool*)value.m_data); break;
+    case Int: assign(*(int*)value.m_data); break;
+    case UInt: assign(*(unsigned int*)value.m_data); break;
+    case Long: assign(*(long*)value.m_data); break;
+    case ULong: assign(*(unsigned long*)value.m_data); break;
+    case Double: assign(*(double*)value.m_data); break;
+    case String: assign(*(Vaca::String*)value.m_data); break;
+  }
+}
+
+void GridValue::assign(bool value)
+{
+  assign<bool>(Bool, value);
+}
+
+void GridValue::assign(int value)
+{
+  assign<int>(Int, value);
+}
+
+void GridValue::assign(unsigned int value)
+{
+  assign<unsigned int>(UInt, value);
+}
+
+void GridValue::assign(long value)
+{
+  assign<long>(Long, value);
+}
+
+void GridValue::assign(unsigned long value)
+{
+  assign<unsigned long>(ULong, value);
+}
+
+void GridValue::assign(double value)
+{
+  assign<double>(Double, value);
+}
+
+void GridValue::assign(const Vaca::String& value)
+{
+  assign<Vaca::String>(String, value);
+}
+
+bool GridValue::isEmpty() const
+{
+  return m_type == Empty;
+}
+
+bool GridValue::getBool() const
+{
+  switch (m_type) {
+    case Empty:
+      return false;
+    case Bool: {
+      bool value = *(bool*)m_data;
+      return value;
+    }
+    case Int: {
+      int value = *(int*)m_data;
+      return value != 0;
+    }
+    case UInt: {
+      unsigned int value = *(unsigned int*)m_data;
+      return value != 0;
+    }
+    case Long: {
+      long value = *(long*)m_data;
+      return value != 0;
+    }
+    case ULong: {
+      unsigned long value = *(unsigned long*)m_data;
+      return value != 0;
+    }
+    case Double: {
+      double value = *(double*)m_data;
+      return std::floor(value) != 0.0;
+    }
+    case String: {
+      const Vaca::String& value(*(Vaca::String*)m_data);
+      return
+	!value.empty() &&
+	value != _T("0") &&
+	value != _T("false");
+    }
+  }
+  return false;
+}
+
+int GridValue::getInt() const
+{
+  switch (m_type) {
+    case Empty:
+      return 0;
+    case Bool: {
+      bool value = *(bool*)m_data;
+      return value ? 1: 0;
+    }
+    case Int: {
+      int value = *(int*)m_data;
+      return value;
+    }
+    case UInt: {
+      unsigned int value = *(unsigned int*)m_data;
+      return (int)value;
+    }
+    case Long: {
+      long value = *(long*)m_data;
+      return (int)value;
+    }
+    case ULong: {
+      unsigned long value = *(unsigned long*)m_data;
+      return (int)value;
+    }
+    case Double: {
+      double value = *(double*)m_data;
+      return (int)value;
+    }
+    case String: {
+      Vaca::String& value(*(Vaca::String*)m_data);
+      return value.parseInt(10);
+    }
+  }
+  return 0;
+}
+
+unsigned int GridValue::getUInt() const
+{
+  switch (m_type) {
+    case Empty:
+      return 0;
+    case Bool: {
+      bool value = *(bool*)m_data;
+      return value ? 1: 0;
+    }
+    case Int: {
+      int value = *(int*)m_data;
+      return (unsigned int)value;
+    }
+    case UInt: {
+      unsigned int value = *(unsigned int*)m_data;
+      return value;
+    }
+    case Long: {
+      long value = *(long*)m_data;
+      return (unsigned int)value;
+    }
+    case ULong: {
+      unsigned long value = *(unsigned long*)m_data;
+      return (unsigned int)value;
+    }
+    case Double: {
+      double value = *(double*)m_data;
+      return (unsigned int)value;
+    }
+    case String: {
+      Vaca::String& value(*(Vaca::String*)m_data);
+      return (unsigned long)value.parseInt(10);
+    }
+  }
+  return 0;
+}
+
+long GridValue::getLong() const
+{
+  switch (m_type) {
+    case Empty:
+      return 0;
+    case Bool: {
+      bool value = *(bool*)m_data;
+      return value ? 1: 0;
+    }
+    case Int: {
+      int value = *(int*)m_data;
+      return (long)value;
+    }
+    case UInt: {
+      unsigned int value = *(unsigned int*)m_data;
+      return (long)value;
+    }
+    case Long: {
+      long value = *(long*)m_data;
+      return value;
+    }
+    case ULong: {
+      unsigned long value = *(unsigned long*)m_data;
+      return (long)value;
+    }
+    case Double: {
+      double value = *(double*)m_data;
+      return (long)value;
+    }
+    case String: {
+      Vaca::String& value(*(Vaca::String*)m_data);
+      return (long)value.parseInt(10);
+    }
+  }
+  return 0;
+}
+
+unsigned long GridValue::getULong() const
+{
+  switch (m_type) {
+    case Empty:
+      return 0;
+    case Bool: {
+      bool value = *(bool*)m_data;
+      return value ? 1: 0;
+    }
+    case Int: {
+      int value = *(int*)m_data;
+      return (unsigned long)value;
+    }
+    case UInt: {
+      unsigned int value = *(unsigned int*)m_data;
+      return (unsigned long)value;
+    }
+    case Long: {
+      long value = *(long*)m_data;
+      return (unsigned long)value;
+    }
+    case ULong: {
+      unsigned long value = *(unsigned long*)m_data;
+      return value;
+    }
+    case Double: {
+      double value = *(double*)m_data;
+      return (unsigned long)value;
+    }
+    case String: {
+      Vaca::String& value(*(Vaca::String*)m_data);
+      return (unsigned long)value.parseInt(10);
+    }
+  }
+  return 0;
+}
+
+double GridValue::getDouble() const
+{
+  switch (m_type) {
+    case Empty:
+      return 0.0;
+    case Bool: {
+      bool value = *(bool*)m_data;
+      return value ? 1.0: 0.0;
+    }
+    case Int: {
+      int value = *(int*)m_data;
+      return (double)value;
+    }
+    case UInt: {
+      unsigned int value = *(unsigned int*)m_data;
+      return (double)value;
+    }
+    case Long: {
+      long value = *(long*)m_data;
+      return (double)value;
+    }
+    case ULong: {
+      unsigned long value = *(unsigned long*)m_data;
+      return (double)value;
+    }
+    case Double: {
+      double value = *(double*)m_data;
+      return value;
+    }
+    case String: {
+      Vaca::String& value(*(Vaca::String*)m_data);
+      return value.parseDouble();
+    }
+  }
+  return 0;
+}
+
+Vaca::String GridValue::getString() const
+{
+  switch (m_type) {
+    case Empty:
+      return Vaca::String();
+    case Bool: {
+      bool value = *(bool*)m_data;
+      return value ? _T("1"): _T("0");
+    }
+    case Int: {
+      int value = *(int*)m_data;
+      return String::format("%d", value);
+    }
+    case UInt: {
+      unsigned int value = *(unsigned int*)m_data;
+      return String::format("%u", value);
+    }
+    case Long: {
+      long value = *(long*)m_data;
+      return String::format("%l", value);
+    }
+    case ULong: {
+      unsigned long value = *(unsigned long*)m_data;
+      return String::format("%ul", value);
+    }
+    case Double: {
+      double value = *(double*)m_data;
+      return String::format("%.16g", value);
+    }
+    case String: {
+      Vaca::String& value(*(Vaca::String*)m_data);
+      return value;
+    }
+  }
+  return Vaca::String();
+}
 
 //////////////////////////////////////////////////////////////////////
-// DataColumnStyle
+// GridColumnStyle
 
-// struct _DataColumnStyle
+// struct _GridColumnStyle
 // {
 //   enum enumeration {
 //     Null,
@@ -123,28 +528,32 @@ public:
 //   static const enumeration default_value = Solid;
 // };
 
-// typedef Enum<_DataColumnStyle> DataColumnStyle;
+// typedef Enum<_GridColumnStyle> GridColumnStyle;
 
 //////////////////////////////////////////////////////////////////////
-// DataColumn
+// GridColumn
 
-class DataColumn
+class GridColumn
 {
-  friend class DataTable;
-  
+  friend class GridTable;
+  friend class GridView;
+
   String m_name;
   String m_header;
-  DataTable* m_table;
-  DataValue* m_defaultValue;
-//   int m_headerHeight;
-//   int m_columnWidth;
-//   int m_preferredColumnWidth;
+  GridTable* m_table;
+  GridValue* m_defaultValue;
   bool m_allowNull;
+
+  TextAlign m_headerAlign;
+  TextAlign m_dataAlign;
+  // int m_headerHeight;
+  int m_columnWidth;
+  int m_preferredColumnWidth;
   
 public:
 
-  DataColumn(const String& name, DataValue* defaultValue);
-  virtual ~DataColumn();
+  GridColumn(const String& name, GridValue* defaultValue);
+  virtual ~GridColumn();
 
   String getName() const;
   void setName(const String& name);
@@ -155,83 +564,83 @@ public:
   bool getAllowNull() const;
   void setAllowNull(bool state);
   
-  DataTable* getTable();
-  DataValue* getDefaultValue();
+  GridTable* getTable();
+  GridValue* getDefaultValue();
 
-  DataRow* operator[](int index);
+  GridRow* operator[](int index);
 
 private:
   
-  void setTable(DataTable* table);
+  void setTable(GridTable* table);
 
 };
 
 //////////////////////////////////////////////////////////////////////
-// DataRow
+// GridRow
 
-class DataRow
+class GridRow
 {
-  friend class DataTable;
+  friend class GridTable;
 
-  DataTable* m_table;
-  std::vector<DataValue*> m_values;
+  GridTable* m_table;
+  std::vector<GridValue*> m_values;
 //   int m_rowHeight;
   
 private:
 
-  DataRow(DataTable*table);
+  GridRow(GridTable*table);
 
 public:
 
-  virtual ~DataRow();
+  virtual ~GridRow();
 
-  DataTable* getTable();
+  GridTable* getTable();
 
-  DataValue* getValue(int columntIndex);
-  void setValue(int columntIndex, DataValue *value);
+  GridValue* getValue(int columntIndex);
+  void setValue(int columntIndex, GridValue *value);
 
-//   DataColumn* operator[](int index);
-//   DataColumn* operator[](const String &columnName);
+//   GridColumn* operator[](int index);
+//   GridColumn* operator[](const String &columnName);
 
 };
 
 //////////////////////////////////////////////////////////////////////
-// DataTable
+// GridTable
 
-class DataTable
+class GridTable
 {
   String m_name;
-  std::vector<DataColumn*> m_columns;
-  std::vector<DataRow*> m_rows;
+  std::vector<GridColumn*> m_columns;
+  std::vector<GridRow*> m_rows;
   
 public:
 
-  DataTable()
+  GridTable()
   {
-    VACA_TRACE("DataTable()\n");
+    VACA_TRACE("GridTable()\n");
   }
 
-  DataTable(const String &name)
+  GridTable(const String &name)
   {
-    VACA_TRACE("DataTable()\n");
+    VACA_TRACE("GridTable()\n");
     m_name = name;
   }
 
-  virtual ~DataTable()
+  virtual ~GridTable()
   {
-    for (std::vector<DataColumn*>::iterator
+    for (std::vector<GridColumn*>::iterator
 	   it = m_columns.begin(); it != m_columns.end(); ++it) {
       delete *it;
     }
-    VACA_TRACE("~DataTable()\n");
+    VACA_TRACE("~GridTable()\n");
   }
 
-  DataRow* createRow()
+  GridRow* createRow()
   {
-    return new DataRow(this);
+    return new GridRow(this);
   }
 
-  void addColumn(DataColumn* column)
+  void addColumn(GridColumn* column)
   {
     // a column without owner
     assert(column->getTable() == NULL);
@@ -240,7 +649,7 @@ public:
     m_columns.push_back(column);
   }
 
-  void addRow(DataRow* row)
+  void addRow(GridRow* row)
   {
     // a row created by this table
     assert(row->getTable() == this);
@@ -268,26 +677,26 @@ public:
     return m_rows.size();
   }
 
-  DataColumn* getColumn(int index)
+  GridColumn* getColumn(int index)
   {
     assert(index >= 0 && index < getColumnCount());
     return m_columns[index];
   }
 
-  DataRow* getRow(int index)
+  GridRow* getRow(int index)
   {
     assert(index >= 0 && index < getRowCount());
     return m_rows[index];
   }
 
-  DataColumn* operator[](int index)
+  GridColumn* operator[](int index)
   {
     return getColumn(index);
   }
 
-  DataColumn* operator[](const String &columnName)
+  GridColumn* operator[](const String &columnName)
   {
-    for (std::vector<DataColumn*>::iterator
+    for (std::vector<GridColumn*>::iterator
 	   it = m_columns.begin(); it != m_columns.end(); ++it) {
       if ((*it)->getName() == columnName)
 	return *it;
@@ -298,63 +707,63 @@ public:
 };
 
 //////////////////////////////////////////////////////////////////////
-// DataSet
+// GridSet
 
-class DataSet
+class GridSet
 {
-  std::vector<DataTable*> m_tables;
+  std::vector<GridTable*> m_tables;
 
 public:
 
-  DataSet();
-  virtual ~DataSet();
+  GridSet();
+  virtual ~GridSet();
 
-  void addTable(DataTable* table);
-  std::vector<DataTable*> getTables();
+  void addTable(GridTable* table);
+  std::vector<GridTable*> getTables();
   int getTableCount();
-  DataTable* operator[](int index);
-  DataTable* operator[](const String &tableName);
+  GridTable* operator[](int index);
+  GridTable* operator[](const String &tableName);
   
 };
 
-DataSet::DataSet()
+GridSet::GridSet()
 {
-  VACA_TRACE("DataSet()\n");
+  VACA_TRACE("GridSet()\n");
 }
 
-DataSet::~DataSet()
+GridSet::~GridSet()
 {
-  for (std::vector<DataTable*>::iterator
+  for (std::vector<GridTable*>::iterator
 	 it = m_tables.begin(); it != m_tables.end(); ++it) {
     delete *it;
   }
-  VACA_TRACE("~DataSet()\n");
+  VACA_TRACE("~GridSet()\n");
 }
 
-void DataSet::addTable(DataTable* table)
+void GridSet::addTable(GridTable* table)
 {
   m_tables.push_back(table);
 }
 
-std::vector<DataTable*> DataSet::getTables()
+std::vector<GridTable*> GridSet::getTables()
 {
   return m_tables;
 }
 
-int DataSet::getTableCount()
+int GridSet::getTableCount()
 {
   return m_tables.size();
 }
 
-DataTable* DataSet::operator[](int index)
+GridTable* GridSet::operator[](int index)
 {
   assert(index >= 0 && index < getTableCount());
   return m_tables[index];
 }
 
-DataTable* DataSet::operator[](const String &tableName)
+GridTable* GridSet::operator[](const String &tableName)
 {
-  for (std::vector<DataTable*>::iterator
+  for (std::vector<GridTable*>::iterator
 	 it = m_tables.begin(); it != m_tables.end(); ++it) {
     if ((*it)->getName() == tableName)
       return *it;
@@ -365,23 +774,15 @@ DataTable* DataSet::operator[](const String &tableName)
 }
 
 //////////////////////////////////////////////////////////////////////
-// DataGrid
+// GridView
 
-class DataGrid : public Panel
+class GridView : public Panel
 {
-  struct Column {
-    DataColumn* columnData;
-    TextAlign headerAlign;
-    TextAlign dataAlign;
-    // int headerHeight;
-    int columnWidth;
-    int preferredColumnWidth;
-  };
   struct Row {
-    DataRow* rowData;
+    GridRow* rowData;
     int rowHeight;
   };
-  std::vector<Column*> m_columns;
+  std::vector<GridColumn*> m_columns;
   std::vector<Row*> m_rows;
   int m_currentRow;
   int m_hotRow;
@@ -404,15 +805,15 @@ class DataGrid : public Panel
   bool m_crudColumn;
   int m_crudColumnWidth;
 
-  DataSet* m_dataSet;
-  DataTable* m_dataTable;
+  GridSet* m_dataSet;
+  GridTable* m_dataTable;
 
 public:
 
-  DataGrid(Widget* parent);
-  virtual ~DataGrid();
+  GridView(Widget* parent);
+  virtual ~GridView();
 
-  void setDataSet(DataSet* set);
+  void setGridSet(GridSet* set);
 
   bool getFlatMode() const;
   void setFlatMode(bool state);
@@ -440,9 +841,9 @@ protected:
 private:
 
   void clearGrid();
-  void setDataTable(DataTable* table);
-  void addColumn(DataColumn* column);
-  void addRow(DataRow* row);
+  void setGridTable(GridTable* table);
+  void addColumn(GridColumn* column);
+  void addRow(GridRow* row);
   int getColumnCount();
   int getRowCount();
   int getColumnByPoint(const Point &pt, bool useRows);
@@ -466,7 +867,7 @@ private:
 #define NULL_COLUMN_INDEX (-2)
 #define CRUD_COLUMN_INDEX (-1)
 
-DataGrid::DataGrid(Widget* parent)
+GridView::GridView(Widget* parent)
   : Panel(parent, PanelStyle +
 		  ScrollStyle +
 		  ClientEdgeStyle +
@@ -490,49 +891,49 @@ DataGrid::DataGrid(Widget* parent)
   ::ShowScrollBar(getHandle(), SB_BOTH, FALSE);
 }
 
-DataGrid::~DataGrid()
+GridView::~GridView()
 {
   clearGrid();
 }
 
-void DataGrid::setDataSet(DataSet* set)
+void GridView::setGridSet(GridSet* set)
 {
   m_dataSet = set;
   if (set->getTableCount() > 0)
-    setDataTable(set->getTables().front());
+    setGridTable(set->getTables().front());
 }
 
-bool DataGrid::getFlatMode() const
+bool GridView::getFlatMode() const
 {
   return m_flatMode;
 }
 
-void DataGrid::setFlatMode(bool state)
+void GridView::setFlatMode(bool state)
 {
   m_flatMode = state;
 }
 
-bool DataGrid::getCrudColumn() const
+bool GridView::getCrudColumn() const
 {
   return m_crudColumn;
 }
 
-void DataGrid::setCrudColumn(bool state)
+void GridView::setCrudColumn(bool state)
 {
   m_crudColumn = state;
 }
 
-int DataGrid::getCrudColumnWidth() const
+int GridView::getCrudColumnWidth() const
 {
   return m_crudColumnWidth;
 }
 
-void DataGrid::setCrudColumnWidth(int width)
+void GridView::setCrudColumnWidth(int width)
 {
   m_crudColumnWidth = width;
 }
 
-void DataGrid::onScroll(ScrollEvent& ev)
+void GridView::onScroll(ScrollEvent& ev)
 {
   Panel::onScroll(ev);
 
@@ -568,7 +969,7 @@ void DataGrid::onScroll(ScrollEvent& ev)
   }
 }
 
-void DataGrid::onDoubleClick(MouseEvent &ev)
+void GridView::onDoubleClick(MouseEvent &ev)
 {
   Panel::onDoubleClick(ev);
 
@@ -577,8 +978,8 @@ void DataGrid::onDoubleClick(MouseEvent &ev)
   if (column >= 0) {
     ScreenGraphics g;
     g.setFont(getFont());
-    m_columns[column]->columnWidth =
-      m_columns[column]->preferredColumnWidth;
+    m_columns[column]->m_columnWidth =
+      m_columns[column]->m_preferredColumnWidth;
 
     updateHorizontalScrollBarVisibility();
     invalidate(false);
@@ -586,7 +987,7 @@ void DataGrid::onDoubleClick(MouseEvent &ev)
 }
 
 // when a mouse's button is pressed
-void DataGrid::onMouseDown(MouseEvent &ev)
+void GridView::onMouseDown(MouseEvent &ev)
 {
   Panel::onMouseDown(ev);
 
@@ -611,7 +1012,7 @@ void DataGrid::onMouseDown(MouseEvent &ev)
 }
 
 // when a mouse's button is unpressed
-void DataGrid::onMouseUp(MouseEvent &ev)
+void GridView::onMouseUp(MouseEvent &ev)
 {
   Panel::onMouseUp(ev);
 
@@ -628,7 +1029,7 @@ void DataGrid::onMouseUp(MouseEvent &ev)
 }
 
 // when the mouse is moved
-void DataGrid::onMouseMove(MouseEvent &ev)
+void GridView::onMouseMove(MouseEvent &ev)
 {
   Panel::onMouseMove(ev);
 
@@ -639,8 +1040,8 @@ void DataGrid::onMouseMove(MouseEvent &ev)
       Point cursor = System::getCursorPos();
       Point clientCursor = (cursor - client.getOrigin());
 
-      clientCursor.x = VACA_MAX(0, clientCursor.x);
-      clientCursor.y = VACA_MAX(0, clientCursor.y);
+      clientCursor.x = max_value(0, clientCursor.x);
+      clientCursor.y = max_value(0, clientCursor.y);
 
       // amount of scroll
       Point delta =
@@ -649,9 +1050,9 @@ void DataGrid::onMouseMove(MouseEvent &ev)
 	- m_resizing.startPoint;
 
       // change column size
-      m_columns[m_resizing.column]->columnWidth =
-	VACA_MAX(m_columns[m_resizing.column]->preferredColumnWidth,
-		 m_resizing.startBounds.w + delta.x);
+      m_columns[m_resizing.column]->m_columnWidth =
+	max_value(m_columns[m_resizing.column]->m_preferredColumnWidth,
+		  m_resizing.startBounds.w + delta.x);
 
       // update scroll bars
       updateHorizontalScrollBarVisibility();
@@ -674,7 +1075,7 @@ void DataGrid::onMouseMove(MouseEvent &ev)
   }
 }
 
-void DataGrid::onMouseWheel(MouseEvent &ev)
+void GridView::onMouseWheel(MouseEvent &ev)
 {
   Panel::onMouseWheel(ev);
   //     int columnIndex = getColumnByPoint(ev.getPoint());
@@ -725,7 +1126,7 @@ void DataGrid::onMouseWheel(MouseEvent &ev)
   }
 }
 
-void DataGrid::onMouseLeave()
+void GridView::onMouseLeave()
 {
   Panel::onMouseLeave();
 
@@ -735,7 +1136,7 @@ void DataGrid::onMouseLeave()
   }
 }
 
-void DataGrid::onKeyDown(KeyEvent &ev)
+void GridView::onKeyDown(KeyEvent &ev)
 {
   Panel::onKeyDown(ev);
 
@@ -773,7 +1174,7 @@ void DataGrid::onKeyDown(KeyEvent &ev)
   }
 }
 
-void DataGrid::onSetCursor(WidgetHitTest hitTest)
+void GridView::onSetCursor(WidgetHitTest hitTest)
 {
   if (hitTest == WidgetHitTest::Client) {
     Point pt = System::getCursorPos() - getAbsoluteClientBounds().getOrigin();
@@ -786,7 +1187,7 @@ void DataGrid::onSetCursor(WidgetHitTest hitTest)
   setCursor(Cursor(SysCursor::Arrow));
 }
   
-void DataGrid::onResize(const Size &sz)
+void GridView::onResize(const Size &sz)
 {
   Panel::onResize(sz);
   //       invalidate(true);
@@ -794,7 +1195,7 @@ void DataGrid::onResize(const Size &sz)
   //       updateVerticalScrollBarVisibility();
 }
 
-void DataGrid::onPaint(Graphics &g)
+void GridView::onPaint(Graphics &g)
 {
   Color headerFaceColor = Color(212, 208, 200);//System::getColor(COLOR_3DFACE);
   Color headerBorderColor = Color(128, 128, 128);
@@ -813,7 +1214,7 @@ void DataGrid::onPaint(Graphics &g)
       if (j != m_hotCol)
 	drawCell(g,
 		 j != CRUD_COLUMN_INDEX ?
-		    m_columns[j]->columnData->getHeader():
+		    m_columns[j]->getHeader():
 		    "",
 		 getColumnBounds(j),
 		 headerBorderColor,
@@ -825,7 +1226,7 @@ void DataGrid::onPaint(Graphics &g)
     if (m_hotCol != NULL_COLUMN_INDEX) {
       drawCell(g,
 	       m_hotCol != CRUD_COLUMN_INDEX ?
-	          m_columns[m_hotCol]->columnData->getHeader():
+	          m_columns[m_hotCol]->getHeader():
 		  "",
 	       getColumnBounds(m_hotCol),
 	       hotHeaderBorderColor,
@@ -867,7 +1268,7 @@ void DataGrid::onPaint(Graphics &g)
 	  Color textColor;
 
 	  if (j != CRUD_COLUMN_INDEX) {
-	    DataValue* value = m_rows[i]->rowData->getValue(j);
+	    GridValue* value = m_rows[i]->rowData->getValue(j);
 	    if (value != NULL)
 	      text = value->getString();
 	    else
@@ -925,7 +1326,7 @@ void DataGrid::onPaint(Graphics &g)
   }
 }
 
-void DataGrid::clearGrid()
+void GridView::clearGrid()
 {
   int colCount = getColumnCount();
   int rowCount = getRowCount();
@@ -940,7 +1341,7 @@ void DataGrid::clearGrid()
   m_columns.clear();
 }
 
-void DataGrid::setDataTable(DataTable* table)
+void GridView::setGridTable(GridTable* table)
 {
   m_dataTable = table;
   int cols = m_dataTable->getColumnCount();
@@ -953,28 +1354,22 @@ void DataGrid::setDataTable(DataTable* table)
     addRow(m_dataTable->getRow(i));
 }
   
-void DataGrid::addColumn(DataColumn* column)
+void GridView::addColumn(GridColumn* column)
 {
-  Column* col = new Column;
-
-  col->columnData = column;
-  col->headerAlign = TextAlign::Left;
-  col->dataAlign = TextAlign::Left;
-
   ScreenGraphics g;
   g.setFont(getFont());
   Size headerSize = g.measureString(column->getHeader()) + Size(16, 2);
 
-//   col->headerHeight = headerSize.h;
-  col->columnWidth = headerSize.w;
-  col->preferredColumnWidth = headerSize.w;
+  // column->m_headerHeight = headerSize.h;
+  column->m_columnWidth = headerSize.w;
+  column->m_preferredColumnWidth = headerSize.w;
 
-  this->m_headerHeight = VACA_MAX(m_headerHeight, headerSize.h);
+  this->m_headerHeight = max_value(m_headerHeight, headerSize.h);
 
-  m_columns.push_back(col);
+  m_columns.push_back(column);
 }
 
-void DataGrid::addRow(DataRow* row)
+void GridView::addRow(GridRow* row)
 {
   Row* r = new Row;
   r->rowData = row;
@@ -983,17 +1378,17 @@ void DataGrid::addRow(DataRow* row)
   m_rows.push_back(r);
 }
   
-int DataGrid::getColumnCount()
+int GridView::getColumnCount()
 {
   return m_columns.size();
 }
 
-int DataGrid::getRowCount()
+int GridView::getRowCount()
 {
   return m_rows.size();
 }
 
-int DataGrid::getColumnByPoint(const Point &pt, bool useRows)
+int GridView::getColumnByPoint(const Point &pt, bool useRows)
 {
   Rect bounds = getClientBounds();
   int startColIndex = m_crudColumn ? CRUD_COLUMN_INDEX: 0;
@@ -1014,7 +1409,7 @@ int DataGrid::getColumnByPoint(const Point &pt, bool useRows)
   return NULL_COLUMN_INDEX;
 }
 
-int DataGrid::getRowByPoint(const Point &pt)
+int GridView::getRowByPoint(const Point &pt)
 {
   Rect bounds = getClientBounds();
   int rowCount = getRowCount();
@@ -1026,7 +1421,7 @@ int DataGrid::getRowByPoint(const Point &pt)
   return NULL_ROW_INDEX;
 }
 
-Rect DataGrid::getColumnBounds(int columnIndex)
+Rect GridView::getColumnBounds(int columnIndex)
 {
   if (columnIndex == CRUD_COLUMN_INDEX)
     return getCrudColumnBounds();
@@ -1039,14 +1434,14 @@ Rect DataGrid::getColumnBounds(int columnIndex)
     pt.x += m_crudColumnWidth;
 
   for (i=0; i<columnIndex; ++i)
-    pt.x += m_columns[i]->columnWidth;
+    pt.x += m_columns[i]->m_columnWidth;
 
-  return Rect(pt, Size(m_columns[i]->columnWidth,
+  return Rect(pt, Size(m_columns[i]->m_columnWidth,
 		       m_headerHeight));
 // 		       m_columns[i]->headerHeight));
 }
 
-Rect DataGrid::getCrudColumnBounds()
+Rect GridView::getCrudColumnBounds()
 {
   assert(m_crudColumn);
   Point pt = getClientBounds().getOrigin() - getScrollPoint();
@@ -1054,7 +1449,7 @@ Rect DataGrid::getCrudColumnBounds()
   return Rect(pt, Size(m_crudColumnWidth, m_headerHeight));
 }
 
-Rect DataGrid::getRowBounds(int rowIndex)
+Rect GridView::getRowBounds(int rowIndex)
 {
   assert(rowIndex >= 0 && rowIndex < getRowCount());
   Point pt = getClientBounds().getOrigin() - getScrollPoint();
@@ -1075,7 +1470,7 @@ Rect DataGrid::getRowBounds(int rowIndex)
   return Rect(rc.x, pt.y, rc.w, m_rows[rowIndex]->rowHeight);
 }
 
-void DataGrid::drawCell(Graphics &g, const String &text, const Rect &rc,
+void GridView::drawCell(Graphics &g, const String &text, const Rect &rc,
 			Color borderColor, Color backgroundColor, Color textColor, bool hot)
 {
   Pen borderPen(borderColor);
@@ -1095,7 +1490,7 @@ void DataGrid::drawCell(Graphics &g, const String &text, const Rect &rc,
     g.drawString(text, textColor, rc, DT_CENTER | DT_VCENTER);
 }
 
-void DataGrid::drawArrow(Graphics &g, const Rect &rc, const Color& color)
+void GridView::drawArrow(Graphics &g, const Rect &rc, const Color& color)
 {
   Brush brush(color);
 
@@ -1108,7 +1503,7 @@ void DataGrid::drawArrow(Graphics &g, const Rect &rc, const Color& color)
   g.fillPath(path, brush, rc.getCenter());
 }
 
-int DataGrid::getHotResizingBorder(const Point &pt)
+int GridView::getHotResizingBorder(const Point &pt)
 {
   if (m_headerResizingEnabled) {
     int count = getColumnCount();
@@ -1123,7 +1518,7 @@ int DataGrid::getHotResizingBorder(const Point &pt)
   return NULL_ROW_INDEX;
 }
 
-void DataGrid::updateHorizontalScrollBarVisibility()
+void GridView::updateHorizontalScrollBarVisibility()
 {
   int colCount = getColumnCount();
   if (colCount > 0) {
@@ -1148,7 +1543,7 @@ void DataGrid::updateHorizontalScrollBarVisibility()
   //     updateVerticalScrollBarVisibility();
 }
 
-void DataGrid::updateVerticalScrollBarVisibility()
+void GridView::updateVerticalScrollBarVisibility()
 {
   int rowCount = getRowCount();
   if (rowCount > 0) {
@@ -1182,7 +1577,7 @@ void DataGrid::updateVerticalScrollBarVisibility()
   //     setScrollInfo(Vertical, si);
 }
 
-void DataGrid::updateHotTracking(const Point &pt)
+void GridView::updateHotTracking(const Point &pt)
 {
   int columnIndex = getColumnByPoint(pt, false);
   if (columnIndex != m_hotCol) {
@@ -1206,170 +1601,135 @@ void DataGrid::updateHotTracking(const Point &pt)
       invalidate(getRowBounds(m_hotRow), false);
   }
 }
-  
-//////////////////////////////////////////////////////////////////////
-// DataIntValue
-
-DataIntValue::DataIntValue(int value) : m_value(value) { }
-DataIntValue::~DataIntValue() { }
-String DataIntValue::getString() const { return String::fromInt(m_value); }
-void DataIntValue::beginEdit(const Rect &cellBounds) { }
-void DataIntValue::endEdit() { }
-DataValue* DataIntValue::clone() { return new DataIntValue(m_value); }
 
 //////////////////////////////////////////////////////////////////////
-// DataStringValue
+// GridColumn
 
-DataStringValue::DataStringValue(const String &value) : m_value(value) { }
-DataStringValue::~DataStringValue() { }
-String DataStringValue::getString() const { return m_value; }
-void DataStringValue::beginEdit(const Rect &cellBounds) { }
-void DataStringValue::endEdit() { }
-DataValue* DataStringValue::clone() { return new DataStringValue(m_value); }
-
-//////////////////////////////////////////////////////////////////////
-// DataBoolValue
-
-DataBoolValue::DataBoolValue(bool value) : m_value(value) { }
-DataBoolValue::~DataBoolValue() { }
-String DataBoolValue::getString() const { return m_value ? "1": "0"; }
-void DataBoolValue::beginEdit(const Rect &cellBounds) { }
-void DataBoolValue::endEdit() { }
-DataValue* DataBoolValue::clone() { return new DataBoolValue(m_value); }
-
-//////////////////////////////////////////////////////////////////////
-// DataDoubleValue
-
-DataDoubleValue::DataDoubleValue(double value) : m_value(value) { }
-DataDoubleValue::~DataDoubleValue() { }
-String DataDoubleValue::getString() const { return String::fromDouble(m_value, 16); }
-void DataDoubleValue::beginEdit(const Rect &cellBounds) { }
-void DataDoubleValue::endEdit() { }
-DataValue* DataDoubleValue::clone() { return new DataDoubleValue(m_value); }
-
-//////////////////////////////////////////////////////////////////////
-// DataColumn
-
-DataColumn::DataColumn(const String& name, DataValue* defaultValue)
+GridColumn::GridColumn(const String& name, GridValue* defaultValue)
 {
-  VACA_TRACE("DataColumn()\n");
+  VACA_TRACE("GridColumn()\n");
   m_name = name;
   m_header = name;
   m_table = NULL;
   m_defaultValue = defaultValue;
+  m_headerAlign = TextAlign::Left;
+  m_dataAlign = TextAlign::Left;
+  // m_headerHeight = 0;
+  m_columnWidth = 0;
+  m_preferredColumnWidth = 0;
 }
 
-DataColumn::~DataColumn()
+GridColumn::~GridColumn()
 {
-  VACA_TRACE("~DataColumn()\n");
+  VACA_TRACE("~GridColumn()\n");
 
   if (m_defaultValue != NULL)
     delete m_defaultValue;
 }
 
-String DataColumn::getName() const
+String GridColumn::getName() const
 {
   return m_name;
 }
 
-void DataColumn::setName(const String &name)
+void GridColumn::setName(const String &name)
 {
   m_name = name;
 }
 
-String DataColumn::getHeader() const
+String GridColumn::getHeader() const
 {
   return m_header;
 }
 
-void DataColumn::setHeader(const String &header)
+void GridColumn::setHeader(const String &header)
 {
   m_header = header;
 }
 
-bool DataColumn::getAllowNull() const
+bool GridColumn::getAllowNull() const
 {
   return m_allowNull;
 }
 
-void DataColumn::setAllowNull(bool state)
+void GridColumn::setAllowNull(bool state)
 {
   m_allowNull = state;
 }
 
-DataTable* DataColumn::getTable()
+GridTable* GridColumn::getTable()
 {
   return m_table;
 }
 
-DataValue* DataColumn::getDefaultValue()
+GridValue* GridColumn::getDefaultValue()
 {
   return m_defaultValue;
 }
 
-void DataColumn::setTable(DataTable* table)
+void GridColumn::setTable(GridTable* table)
 {
   m_table = table;
 }
 
-DataRow* DataColumn::operator[](int index)
+GridRow* GridColumn::operator[](int index)
 {
   assert(m_table != NULL);
   return m_table->getRow(index);
 }
 
 //////////////////////////////////////////////////////////////////////
-// DataRow
+// GridRow
 
-DataRow::DataRow(DataTable* table)
+GridRow::GridRow(GridTable* table)
 {
   assert(table != NULL);
 
-  VACA_TRACE("DataRow()\n");
+  VACA_TRACE("GridRow()\n");
   m_table = table;
 
   // default values for each column
   int j, cols = m_table->getColumnCount();
 
   for (j=0; j<cols; ++j) {
-    DataValue* value = m_table->getColumn(j)->getDefaultValue();
-    m_values.push_back(value != NULL ? value->clone(): NULL);
+    GridValue* value = m_table->getColumn(j)->getDefaultValue();
+    m_values.push_back(value != NULL ? new GridValue(*value): NULL);
   }
 }
 
-DataRow::~DataRow()
+GridRow::~GridRow()
 {
-  VACA_TRACE("~DataRow()\n");
+  VACA_TRACE("~GridRow()\n");
 
   // remove values for each column
-  for (std::vector<DataValue*>::iterator
+  for (std::vector<GridValue*>::iterator
 	 it = m_values.begin(); it != m_values.end(); ++it)
     delete *it;
 }
 
-DataTable* DataRow::getTable()
+GridTable* GridRow::getTable()
 {
   return m_table;
 }
 
-DataValue* DataRow::getValue(int columntIndex)
+GridValue* GridRow::getValue(int columntIndex)
 {
   return m_values[columntIndex];
 }
 
-void DataRow::setValue(int columntIndex, DataValue* value)
+void GridRow::setValue(int columntIndex, GridValue* value)
 {
   delete m_values[columntIndex];
   m_values[columntIndex] = value;
 }
 
-// DataColumn* DataRow::operator[](int index)
+// GridColumn* GridRow::operator[](int index)
 // {
 //   assert(m_table != NULL);
 //   return (*m_table)[index];
 // }
 
-// DataColumn* DataRow::operator[](const String& columnName)
+// GridColumn* GridRow::operator[](const String& columnName)
 // {
 //   assert(m_table != NULL);
 //   return (*m_table)[columnName];
@@ -1379,58 +1739,52 @@ void DataRow::setValue(int columntIndex, DataValue* value)
 
 class MainFrame : public Frame
 {
-  DataGrid m_dataGrid;
+  GridView m_gridView;
 
 public:
 
   MainFrame()
-    : Frame("DataGrids (WIP)")
-    , m_dataGrid(this)
+    : Frame("GridViews (WIP)")
+    , m_gridView(this)
   {
     setLayout(new ClientLayout);
 
-    m_dataGrid.setDataSet(createDataSet());
+    m_gridView.setGridSet(createGridSet());
   }
 
 private:
 
-  struct Student {
-    int id;
-    const char* name;
-    int age;
-    String clas;
-    bool subscribed;
-    double average;
+  struct DummyData {
+    int aint;
+    const char* astring;
+    double adouble;
+    bool abool;
   };
-  
-  DataSet* createDataSet()
+
+  GridSet* createGridSet()
   {
-    DataSet* set(new DataSet());
-    DataTable* table(new DataTable());
+    GridSet* set(new GridSet());
+    GridTable* table(new GridTable());
     set->addTable(table);
 
-    table->addColumn(new DataColumn("ID", new DataIntValue(0)));
-    table->addColumn(new DataColumn("Name", new DataStringValue("")));
-    table->addColumn(new DataColumn("Age", new DataIntValue(0)));
-    table->addColumn(new DataColumn("Class", new DataIntValue(0)));
-    table->addColumn(new DataColumn("Subscribed", new DataIntValue(0)));
-    table->addColumn(new DataColumn("Average", new DataIntValue(0)));
+    table->addColumn(new GridColumn("Integer", new GridValue(int(0))));
+    table->addColumn(new GridColumn("String", new GridValue(String(""))));
+    table->addColumn(new GridColumn("Double", new GridValue(double(0.0))));
+    table->addColumn(new GridColumn("Boolean", new GridValue(bool(false))));
 
-    Student students[4] = {
-      { 1, "David", 22, "Mathematics", true,  6.7 },
-      { 2, "John",  21, "Physics",     true,  7.5 },
-      { 3, "Peter", 23, "Chemistry",   true,  9.0 },
-      { 4, "Mark",  22, "Philosophy",  false, 3.5 },
+    DummyData data[4] = {
+      { 1, "aaa", 0.2, true },
+      { 2, "bbb", 2.3, true },
+      { 3, "ccc", 42.32, false },
+      { 4, "ddd", 392.329, false },
     };
 
     for (int i=0; i<4; ++i) {
-      DataRow* row = table->createRow();
-      row->setValue(0, new DataIntValue   (students[i].id));
-      row->setValue(1, new DataStringValue(students[i].name));
-      row->setValue(2, new DataIntValue   (students[i].age));
-      row->setValue(3, new DataStringValue(students[i].clas));
-      row->setValue(4, new DataBoolValue  (students[i].subscribed));
-      row->setValue(5, new DataDoubleValue(students[i].average));
+      GridRow* row = table->createRow();
+      row->setValue(0, new GridValue(data[i].aint));
+      row->setValue(1, new GridValue(data[i].astring));
+      row->setValue(2, new GridValue(data[i].adouble));
+      row->setValue(3, new GridValue(data[i].abool));
       table->addRow(row);
     }
 

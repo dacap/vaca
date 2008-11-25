@@ -36,7 +36,7 @@ namespace Vaca {
 @li @ref page_examples_scribble
 @li @ref page_examples_sliders
 @li @ref page_examples_spinners
-@li @ref page_examples_stdcommands
+@li @ref page_examples_splitbars
 @li @ref page_examples_sudoku
 @li @ref page_examples_systemimagelist
 @li @ref page_examples_tabs
@@ -173,7 +173,7 @@ memory leaks (Image is a SmartPtr).
 @section page_examples_spinners Spinners Example
 
 
-@section page_examples_stdcommands StdCommands Example
+@section page_examples_splitbars SplitBars Example
 
 
 @section page_examples_sudoku Sudoku Example

@@ -139,7 +139,7 @@ void SplitBar::setBarWidth(int width)
   }
 }
 
-bool SplitBar::getBarWidth() const
+int SplitBar::getBarWidth() const
 {
   return m_barWidth;
 }

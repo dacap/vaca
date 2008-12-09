@@ -90,7 +90,7 @@ public:
   bool isGripperVisible() const;
 
   void setBarWidth(int width);
-  bool getBarWidth() const;
+  int getBarWidth() const;
 
 protected:
   virtual void onResize(const Size& sz);

@@ -9,6 +9,7 @@ namespace Vaca {
 @li @ref page_devel_dynamic
 @li @subpage page_debug
 @li @ref page_devel_svn
+@li @subpage page_hacking
 
 
 @section page_devel_headers Header Files

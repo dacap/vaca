@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -36,13 +36,10 @@
 #include "Vaca/Widget.h"
 #include "Vaca/WidgetClass.h"
 #include "Vaca/Register.h"
-#include "Vaca/Edit.h"
+#include "Vaca/TextEdit.h"
 #include "Vaca/SpinButton.h"
 
 namespace Vaca {
-
-#define SpinnerStyle		(ChildStyle +		\
-				 ContainerStyle)
 
 /**
  * Represents the Win32 class used by Spinner.
@@ -62,21 +59,25 @@ public:
  */
 class VACA_DLL Spinner : public Register<SpinnerClass>, public Widget
 {
-  Edit m_edit;
+  TextEdit m_edit;
   SpinButton m_spin;
   
 public:
 
+  struct VACA_DLL Styles {
+    static const Style Default;
+  };
+
   Spinner(Widget* parent,
-	  Style spinStyle = SpinButtonStyle,
-	  Style style = SpinnerStyle);
+	  Style spinStyle = SpinButton::Styles::Default,
+	  Style style = Spinner::Styles::Default);
   Spinner(int minValue, int maxValue, int value,
 	  Widget* parent,
-	  Style spinStyle = SpinButtonStyle,
-	  Style style = SpinnerStyle);
+	  Style spinStyle = SpinButton::Styles::Default,
+	  Style style = Spinner::Styles::Default);
   virtual ~Spinner();
 
-  Edit& getEdit();
+  TextEdit& getTextEdit();
   SpinButton& getSpinButton();
 
   int getMinimum();

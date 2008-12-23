@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -123,14 +123,15 @@ public:
 
 class TextEditor : public MdiChild, public View
 {
-  SciEditor m_editor; // text editor inside this MdiChild frame
+  SciEdit m_editor; // text editor inside this MdiChild frame
 
 public:
 
   // creates a new TextEditor
   TextEditor(const String& fileName, bool hasFileName, MdiFrame* parent)
     : MdiChild(fileName.getFileName(), parent,
-	       MdiChildStyle + ClientEdgeStyle)
+	       MdiChild::Styles::Default +
+	       Widget::Styles::ClientEdge)
     , m_editor(this)
   {
     // creates a new document
@@ -144,7 +145,8 @@ public:
   TextEditor(TextEditor &textEditor)
     : MdiChild(textEditor.getText(),
 	       dynamic_cast<MdiClient*>(textEditor.getParent()),
-	       MdiChildStyle + ClientEdgeStyle)
+	       MdiChild::Styles::Default +
+	       Widget::Styles::ClientEdge)
     , View()
     , m_editor(this)
   {
@@ -181,7 +183,7 @@ private:
 
     // on GotFocus or Activate signals, put the focus to the m_editor
     // (so the user can start writting)
-    GotFocus.connect(Bind(&SciEditor::requestFocus, &m_editor));
+    GotFocus.connect(Bind(&SciEdit::requestFocus, &m_editor));
     // Activate.connect(Bind(&SciEditor::requestFocus, &m_editor));
 
     // add this view to the document
@@ -218,7 +220,7 @@ public:
   // opens a file and put its text into the editor
   bool openFile()
   {
-    FILE *file = _tfopen(getFileName().c_str(), _T("rb"));
+    FILE* file = _tfopen(getFileName().c_str(), _T("rb"));
     if (file != NULL) {
       char buf[4096];
       int bytesReaded;
@@ -264,10 +266,10 @@ public:
   
   bool hasFileName() { return m_document->hasFileName(); }
   String getFileName() { return m_document->getFileName(); }
-  SciEditor &getEditor() { return m_editor; }
-  bool isLastView() { return m_document->getViewCount() == 1; }
+  SciEdit& getEditor() { return m_editor; }
+  bool isLastView() const { return m_document->getViewCount() == 1; }
 
-  void setFileName(const String &fileName)
+  void setFileName(const String& fileName)
   {
     m_document->setFileName(fileName);
   }
@@ -560,7 +562,7 @@ private:
 
   void onFindNext(FindTextDialog* dlg)
   {
-    SciEditor &sciEditor(getTextEditor()->getEditor());
+    SciEdit &sciEdit(getTextEditor()->getEditor());
     String findWhat = dlg->getFindWhat();
     int flags =
       (dlg->isMatchCase() ? SCFIND_MATCHCASE: 0) |
@@ -568,56 +570,56 @@ private:
 
     // forward search
     if (dlg->isForward()) {
-      sciEditor.goToPos(sciEditor.getSelectionEnd());
-      sciEditor.searchAnchor();
+      sciEdit.goToPos(sciEdit.getSelectionEnd());
+      sciEdit.searchAnchor();
 
-      if (!sciEditor.searchNext(flags, findWhat))
+      if (!sciEdit.searchNext(flags, findWhat))
 	Beep(100, 10);
 
-      int start = sciEditor.getSelectionStart();
-      int end = sciEditor.getSelectionEnd();
-      sciEditor.goToPos(end);
-      sciEditor.setAnchor(start);
+      int start = sciEdit.getSelectionStart();
+      int end = sciEdit.getSelectionEnd();
+      sciEdit.goToPos(end);
+      sciEdit.setAnchor(start);
     }
     // backward search
     else {
-      sciEditor.goToPos(sciEditor.getSelectionStart());
-      sciEditor.searchAnchor();
+      sciEdit.goToPos(sciEdit.getSelectionStart());
+      sciEdit.searchAnchor();
 
-      if (!sciEditor.searchPrev(flags, findWhat))
+      if (!sciEdit.searchPrev(flags, findWhat))
 	Beep(100, 10);
 
-      int start = sciEditor.getSelectionStart();
-      int end = sciEditor.getSelectionEnd();
-      sciEditor.goToPos(start);
-      sciEditor.setAnchor(end);
+      int start = sciEdit.getSelectionStart();
+      int end = sciEdit.getSelectionEnd();
+      sciEdit.goToPos(start);
+      sciEdit.setAnchor(end);
     }
   }
 
   void onReplace(FindTextDialog* dlg)
   {
-    SciEditor &sciEditor(getTextEditor()->getEditor());
-    int start = sciEditor.getSelectionStart();
-    int end = sciEditor.getSelectionEnd();
+    SciEdit &sciEdit(getTextEditor()->getEditor());
+    int start = sciEdit.getSelectionStart();
+    int end = sciEdit.getSelectionEnd();
 
-    sciEditor.goToPos(start);
+    sciEdit.goToPos(start);
 
     onFindNext(dlg);
 
     if (start != end &&
-	start == sciEditor.getSelectionStart() &&
-	end == sciEditor.getSelectionEnd()) {
-      sciEditor.replaceSel(dlg->getReplaceWith());
+	start == sciEdit.getSelectionStart() &&
+	end == sciEdit.getSelectionEnd()) {
+      sciEdit.replaceSel(dlg->getReplaceWith());
       onFindNext(dlg);
     }
   }
 
   void onReplaceAll(FindTextDialog* dlg)
   {
-    SciEditor &sciEditor(getTextEditor()->getEditor());
+    SciEdit &sciEdit(getTextEditor()->getEditor());
     do {
       onReplace(dlg);
-    } while (sciEditor.getSelectionStart() != sciEditor.getSelectionEnd());
+    } while (sciEdit.getSelectionStart() != sciEdit.getSelectionEnd());
   }
 
   // Find stuff end

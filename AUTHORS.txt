@@ -2,7 +2,8 @@
 DEVELOPERS
 ----------------------------------------------------------------------
 
-  David A. Capello <davidcapello@gmail.com>
+  David Capello <davidcapello@gmail.com>
+  Jie Zhang <nanothyll@gmail.com>
 
 
 ----------------------------------------------------------------------

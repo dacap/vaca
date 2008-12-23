@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -37,25 +37,6 @@
 #include "Vaca/Event.h"
 
 namespace Vaca {
-
-/**
- * This style hides the icon of the Dialog frame. You can remove this
- * style if you want to see an icon in the title bar of the Dialog.
- *
- * @see DialogStyle
- */
-#define ModalDialogStyle	Style(0, WS_EX_DLGMODALFRAME)
-
-/**
- * This is the default style for the dialogs. It includes
- * ModalDialogStyle.
- * 
- * @see ModalDialogStyle
- */
-#define DialogStyle		(WithCaptionFrameStyle +		\
-				 WithSystemMenuFrameStyle +		\
-				 ModalDialogStyle +			\
-				 Style(WS_POPUP | DS_CONTROL, 0))
 
 /**
  * Represents the Win32 class used by Dialog.
@@ -109,8 +90,13 @@ class VACA_DLL Dialog : public Register<DialogClass>, public Frame
 
 public:
 
-  Dialog(const String& title, Widget* parent = NULL, Style style = DialogStyle);
-  Dialog(const WidgetClassName& className, const String& title, Widget* parent = NULL, Style style = DialogStyle);
+  struct VACA_DLL Styles {
+    static const Style Default;
+    static const Style Modal;
+  };
+
+  Dialog(const String& title, Widget* parent = NULL, Style style = Styles::Default);
+  Dialog(const WidgetClassName& className, const String& title, Widget* parent = NULL, Style style = Styles::Default);
   virtual ~Dialog();
 
   void setReturnState(bool state);

@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -40,27 +40,17 @@
 namespace Vaca {
 
 /**
- * Default style for ListBox: a visible child (ChildVisible), with tab
- * stop (FocusableStyle), with client-edges (ClientEdgeStyle), and
- * scroll bars (ScrollStyle), and LBS_NOINTEGRALHEIGHT | LBS_NOTIFY.
- */
-#define ListBoxStyle		(ChildStyle +			\
-				 FocusableStyle +		\
-				 ClientEdgeStyle +		\
-				 ScrollStyle +			\
-				 Style(LBS_NOINTEGRALHEIGHT |	\
-				       LBS_NOTIFY, 0))
-
-#define DragListBoxStyle	(ListBoxStyle)
-
-/**
  * List box control. Widget to manage a list of strings.
  */
 class VACA_DLL ListBox : public Widget
 {
 public:
 
-  ListBox(Widget* parent, Style style = ListBoxStyle);
+  struct VACA_DLL Styles {
+    static const Style Default;
+  };
+
+  ListBox(Widget* parent, Style style = Styles::Default);
   virtual ~ListBox();
 
   int addItem(const String& text);
@@ -99,7 +89,11 @@ class VACA_DLL DragListBox : public ListBox
 {
 public:
 
-  DragListBox(Widget* parent, Style style = DragListBoxStyle);
+  struct VACA_DLL Styles {
+    static const Style Default;
+  };
+
+  DragListBox(Widget* parent, Style style = Styles::Default);
   
 };
 

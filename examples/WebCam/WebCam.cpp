@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -106,12 +106,12 @@ public:
   WebCam(Widget* parent)
     // Create the Widget without a Win32 class (this means that the
     // HWND will be created later). See TN002 for more information.
-    : Widget(WidgetClassName::None, parent)
+    : Widget(WidgetClassName::None, parent, Widget::Styles::None)
     , m_driverIndex(-1)
   {
     // now we can create the widget because in this point is when our
     // version of createHandle (see below) will be called
-    create(WidgetClassName::None, parent, ChildStyle);
+    create(WidgetClassName::None, parent, Widget::Styles::Child);
     
     setPreferredSize(Size(320, 240));
   }
@@ -199,7 +199,7 @@ class MainFrame : public Frame
   Button m_copy;
   Label m_rateLabel;
   Slider m_rate;
-  Edit m_rateEdit;
+  TextEdit m_rateEdit;
 
 public:
   MainFrame()
@@ -212,7 +212,8 @@ public:
     , m_copy("Copy", this)
     , m_rateLabel("Preview Rate (milliseconds):", this)
     , m_rate(1, 1000, 100, this)
-    , m_rateEdit("", this, EditStyle + ReadOnlyEditStyle)
+    , m_rateEdit("", this, TextEdit::Styles::Default +
+			   TextEdit::Styles::ReadOnly)
   {
     setLayout(Bix::parse("Y[X[%,f%],X[fX[],%,fX[]],X[fX[],%,%,%,fX[]],%,X[f%,%]]",
 			 &m_driverLabel, &m_driver,

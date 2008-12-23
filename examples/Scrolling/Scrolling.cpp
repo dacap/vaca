@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -52,10 +52,10 @@ class Scrollable : public Panel
 
 public:
   Scrollable(Widget* parent)
-    : Panel(parent, PanelStyle +
-		    ScrollStyle +     // <--- to show both scroll bars
-		    ClientEdgeStyle + // <--- to show an edge arround the client area
-		    FocusableStyle)   // <--- to receive onMouseWheel
+    : Panel(parent, Panel::Styles::Default +
+		    Widget::Styles::Scroll +     // to show both scroll bars
+		    Widget::Styles::ClientEdge + // to show an edge arround the client area
+		    Widget::Styles::Focusable)   // to receive onMouseWheel
     , m_fullSize(2000, 1500)
     , m_sleep(false)
   {

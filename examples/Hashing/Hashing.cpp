@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -100,8 +100,8 @@ class MainFrame : public Frame
 {
   Label m_helpLabel;
   ListView m_filesList;
-  Edit m_md5Edit;
-  Edit m_shaEdit;
+  TextEdit m_md5Edit;
+  TextEdit m_shaEdit;
   LinkLabel m_md5Label;
   LinkLabel m_shaLabel;
 
@@ -110,11 +110,17 @@ public:
   MainFrame()
     : Frame("Hashing")
     , m_helpLabel("Drop files to the list", this)
-    , m_filesList(this, ListViewStyle + AcceptFilesStyle + SingleSelectionListViewStyle)
-    , m_md5Edit("", this, EditStyle + ReadOnlyEditStyle)
-    , m_shaEdit("", this, EditStyle + ReadOnlyEditStyle)
-    , m_md5Label("http://www.faqs.org/rfcs/rfc1321.html", "RFC 1321 - The MD5 Message-Digest Algorithm", this)
-    , m_shaLabel("http://www.faqs.org/rfcs/rfc3174.html", "RFC 3174 - US Secure Hash Algorithm 1 (SHA1)", this)
+    , m_filesList(this, ListView::Styles::Default +
+			ListView::Styles::SingleSelection +
+			Widget::Styles::AcceptFiles)
+    , m_md5Edit("", this, TextEdit::Styles::Default +
+			  TextEdit::Styles::ReadOnly)
+    , m_shaEdit("", this, TextEdit::Styles::Default +
+			  TextEdit::Styles::ReadOnly)
+    , m_md5Label("http://www.faqs.org/rfcs/rfc1321.html",
+		 "RFC 1321 - The MD5 Message-Digest Algorithm", this)
+    , m_shaLabel("http://www.faqs.org/rfcs/rfc3174.html",
+		 "RFC 3174 - US Secure Hash Algorithm 1 (SHA1)", this)
   {
     setLayout(Bix::parse("Y[%,f%,XY[%,fx%;%,fx%]]",
 			 &m_helpLabel,

@@ -31,7 +31,7 @@
 // ------------------------------------------------------------------
 // 
 // Vaca - Visual Application Components Abstraction
-// Adapted by David A. Capello
+// Adapted by David Capello
 
 #include "Vaca/ConditionVariable.h"
 #include "Vaca/ScopedLock.h"

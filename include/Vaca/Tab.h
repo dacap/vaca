@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -44,10 +44,6 @@ class TabBase;
 class Tab;
 class TabPage;
 
-#define TabBaseStyle		ChildStyle
-#define TabStyle		TabBaseStyle
-#define TabPageStyle		PanelStyle
-
 //////////////////////////////////////////////////////////////////////
 // TabBase
 
@@ -67,7 +63,11 @@ class VACA_DLL TabBase : public Widget
 
 public:
 
-  TabBase(Widget* parent, Style style = TabBaseStyle);
+  struct VACA_DLL Styles {
+    static const Style Default;
+  };
+
+  TabBase(Widget* parent, Style style = Styles::Default);
   virtual ~TabBase();
 
   virtual Font getFont() const;
@@ -132,7 +132,11 @@ class VACA_DLL Tab : public TabBase
 {
 public:
 
-  Tab(Widget* parent, Style style = TabStyle);
+  struct VACA_DLL Styles {
+    static const Style Default;
+  };
+
+  Tab(Widget* parent, Style style = Styles::Default);
   virtual ~Tab();
 
   TabPage* getPage(int pageIndex);
@@ -162,7 +166,11 @@ class VACA_DLL TabPage : public Register<TabPageClass>, public Panel
 
 public:
 
-  TabPage(const String& text, Tab* parent, Style style = TabPageStyle);
+  struct VACA_DLL Styles {
+    static const Style Default;
+  };
+
+  TabPage(const String& text, Tab* parent, Style style = Styles::Default);
   virtual ~TabPage();
 
   virtual String getText() const;

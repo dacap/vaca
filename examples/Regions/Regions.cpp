@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -47,7 +47,8 @@ class Regions : public Panel
 public:
 
   Regions(Widget* parent)
-    : Panel(parent, PanelStyle + ClientEdgeStyle)
+    : Panel(parent, Panel::Styles::Default +
+		    Widget::Styles::ClientEdge)
     , m_readOnly(true)
   {
     setBgColor(Color::White);

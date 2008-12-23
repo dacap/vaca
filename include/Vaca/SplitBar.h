@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -38,8 +38,6 @@
 #include "Vaca/WidgetClass.h"
 
 namespace Vaca {
-
-#define SplitBarStyle	(ChildStyle + ContainerStyle)
 
 /**
  * Represents the Win32 class used by SplitBar.
@@ -67,7 +65,11 @@ class VACA_DLL SplitBar : public Register<SplitBarClass>
 
 public:
 
-  SplitBar(Orientation orientation, Widget* parent, Style style = SplitBarStyle);
+  struct VACA_DLL Styles {
+    static const Style Default;
+  };
+
+  SplitBar(Orientation orientation, Widget* parent, Style style = Styles::Default);
   virtual ~SplitBar();
 
   virtual void layout();

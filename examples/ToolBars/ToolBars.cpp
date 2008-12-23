@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -36,14 +36,15 @@ using namespace Vaca;
 
 //////////////////////////////////////////////////////////////////////
 
-class Console : public MultilineEdit
+class Console : public TextEdit
 {
   Font m_font;
   
 public:
 
   Console(Widget* parent)
-    : MultilineEdit("", parent, MultilineEditStyle + ScrollStyle)
+    : TextEdit("", parent, TextEdit::Styles::TextArea +
+			   Widget::Styles::Scroll)
     , m_font("Verdana", 10)
   {
     setFont(m_font);
@@ -266,8 +267,9 @@ class Example : public Application
 
 public:
   Example()
-    : m_mainFrame1(ToolSetStyle)
-    , m_mainFrame2(ToolSetStyle + FlatToolSetStyle)
+    : m_mainFrame1(ToolSet::Styles::Default)
+    , m_mainFrame2(ToolSet::Styles::Default +
+		   ToolSet::Styles::Flat)
   {
   }
   

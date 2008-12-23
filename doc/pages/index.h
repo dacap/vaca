@@ -6,7 +6,7 @@ namespace Vaca {
 
 @image html Vaca.png
 <div style="text-align:center;">
-<div style="font-size:12pt;margin-bottom:16px;">by David A. Capello</div>
+<div style="font-size:12pt;margin-bottom:16px;">by David Capello</div>
 
 Licensed under the terms of the @ref page_license "New BSD license". @n
 Report bugs, errors, and mistakes to <a href="mailto:davidcapello@gmail.com">davidcapello@gmail.com</a>.

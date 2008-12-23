@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -30,37 +30,70 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <Vaca/Vaca.h>
+#include <ctime>
 
 using namespace Vaca;
 
-void hello_world(const String &title)
+class Clock : public Panel
 {
-  Frame frm(title);                    // creates the main window
-  Label lbl("Hello World!", &frm);     // creates a label for that window
-  frm.setLayout(new ClientLayout);     // the label'll use the client area
-  frm.setSize(frm.getPreferredSize()); // set the preferred size
-  frm.setVisible(true);                // make the window visible
-  Thread::doMessageLoop();
+  Timer m_timer;
+  Label m_label;
+  
+public:
+
+  Clock(Widget* parent)
+    : Panel(parent)
+    , m_timer(1000)
+    , m_label("", this)
+  {
+    setLayout(new ClientLayout);
+    m_label.setBgColor(Color::White);
+
+    m_timer.Tick.connect(&Clock::onTick, this);
+    m_timer.start();
+  }
+
+private:
+
+  void onTick()
+  {
+    std::tm now = *std::localtime(NULL);
+    m_label.setText(String::format("%02d/%02d/%04d %02:%02.%02",
+				   now.tm_mon+1, now.tm_mday, now.tm_year+1900,
+				   now.tm_hour, now.tm_min, now.tm_sec));
+  }
+   
+
+};
+
+void create_clock(Frame* parent)
+{
+  // Clock clk(parent);
+  // Frame frm(title);                    // creates the main window
+  // Label lbl("Hello World!", &frm);     // creates a label for that window
+  // frm.setLayout(new ClientLayout);     // the label'll use the client area
+  // frm.setSize(frm.getPreferredSize()); // set the preferred size
+  // frm.setVisible(true);                // make the window visible
+  // Thread::doMessageLoop();
 }
 
 int VACA_MAIN()
 {
   Application app;
-  std::vector<Thread*> threads;	// group of threads
-  std::vector<Thread*>::iterator it;
+  Frame frm("Threads");
+  Panel panel(&frm);
+  Thread thread(Bind<void>(&create_clock, &frm));
 
-  // create 10 threads
-  for (int c=0; c<10; ++c) {
-    Thread* t = new Thread(Bind<void>(&hello_world, String::fromInt(c+1)));
-    threads.push_back(t);
-  }
+  frm.setVisible(true);
 
-  // join all threads
-  for (it=threads.begin(); it!=threads.end(); ++it) {
-    Thread* t = *it;
-    t->join();
-    delete t;
-  }
+  app.run();
+
+  // // join all threads
+  // for (it=threads.begin(); it!=threads.end(); ++it) {
+  //   Thread* t = *it;
+  //   t->join();
+  //   delete t;
+  // }
 
   return 0;
 }

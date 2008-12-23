@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -58,7 +58,7 @@ SciRegister::SciRegister()
   }
 }
 
-SciEditor::SciEditor(Widget* parent, Style style)
+SciEdit::SciEdit(Widget* parent, Style style)
   : Widget(WidgetClassName(_T("Scintilla")), parent, style)
 {
 //   sendMessage(SCI_SETLEXER, SCLEX_HTML, 0);
@@ -68,7 +68,7 @@ SciEditor::SciEditor(Widget* parent, Style style)
   setEolMode(SC_EOL_CRLF);
 }
 
-SciEditor::~SciEditor()
+SciEdit::~SciEdit()
 {
 }
 
@@ -77,7 +77,7 @@ SciEditor::~SciEditor()
  * sets the default style of the Scintilla editor (see for
  * STYLE_DEFAULT in the Scintilla documentation).
  */
-void SciEditor::setFont(Font font)
+void SciEdit::setFont(Font font)
 {
   Widget::setFont(font);
 
@@ -97,12 +97,12 @@ void SciEditor::setFont(Font font)
 //////////////////////////////////////////////////////////////////////
 // Text retrieval and modification
 
-String SciEditor::getText() const
+String SciEdit::getText() const
 {
-  int length = const_cast<SciEditor*>(this)->sendMessage(SCI_GETLENGTH, 0, 0);
+  int length = const_cast<SciEdit*>(this)->sendMessage(SCI_GETLENGTH, 0, 0);
   if (length > 0) {
     char* text = new char[length+1];
-    const_cast<SciEditor*>(this)->sendMessage(SCI_GETTEXT, length+1, reinterpret_cast<LPARAM>(text));
+    const_cast<SciEdit*>(this)->sendMessage(SCI_GETTEXT, length+1, reinterpret_cast<LPARAM>(text));
     String str(text);
     delete text;
     return str;
@@ -111,12 +111,12 @@ String SciEditor::getText() const
     return String("");
 }
 
-void SciEditor::setText(const String& str)
+void SciEdit::setText(const String& str)
 {
   sendMessage(SCI_SETTEXT, 0, reinterpret_cast<LPARAM>(str.c_str()));
 }
 
-void SciEditor::setSavePoint()
+void SciEdit::setSavePoint()
 {
   sendMessage(SCI_SETSAVEPOINT, 0, 0);
 }
@@ -125,13 +125,13 @@ void SciEditor::setSavePoint()
  * Returns a lien of text. Line 0 is the first line. The text returned
  * includes the new line character.
  */
-String SciEditor::getLine(int line) const
+String SciEdit::getLine(int line) const
 {
   int length = getLineLength(line);
   if (length > 0) {
     char* text = new char[length+1];
     ZeroMemory(text, length+1);
-    const_cast<SciEditor*>(this)->sendMessage(SCI_GETLINE, line, reinterpret_cast<LPARAM>(text));
+    const_cast<SciEdit*>(this)->sendMessage(SCI_GETLINE, line, reinterpret_cast<LPARAM>(text));
     String str(text, length);
     delete text;
     return str;
@@ -140,26 +140,26 @@ String SciEditor::getLine(int line) const
     return String();
 }
 
-void SciEditor::replaceSel(const String& str)
+void SciEdit::replaceSel(const String& str)
 {
   sendMessage(SCI_REPLACESEL, 0, reinterpret_cast<LPARAM>(str.c_str()));
 }
 
-void SciEditor::setReadOnly(bool readOnly)
+void SciEdit::setReadOnly(bool readOnly)
 {
   sendMessage(SCI_SETREADONLY, readOnly, 0);
 }
 
-bool SciEditor::getReadOnly() const
+bool SciEdit::getReadOnly() const
 {
-  return const_cast<SciEditor*>(this)->sendMessage(SCI_GETREADONLY, 0, 0) != 0;
+  return const_cast<SciEdit*>(this)->sendMessage(SCI_GETREADONLY, 0, 0) != 0;
 }
 
 /**
  * Adds the first @c length characters of @c str string at the current
  * position of the document.
  */
-void SciEditor::addText(const char* str, int length)
+void SciEdit::addText(const char* str, int length)
 {
   sendMessage(SCI_ADDTEXT, length, reinterpret_cast<LPARAM>(str));
 }
@@ -167,7 +167,7 @@ void SciEditor::addText(const char* str, int length)
 /**
  * Adds the string @c str at the current position of the document.
  */
-void SciEditor::addText(const String& str)
+void SciEdit::addText(const String& str)
 {
   sendMessage(SCI_ADDTEXT, str.size(), reinterpret_cast<LPARAM>(str.c_str()));
 }
@@ -176,7 +176,7 @@ void SciEditor::addText(const String& str)
  * Adds the first @c length characters of @c str string to the end of
  * the document.
  */
-void SciEditor::appendText(const char* str, int length)
+void SciEdit::appendText(const char* str, int length)
 {
   sendMessage(SCI_APPENDTEXT, length, reinterpret_cast<LPARAM>(str));
 }
@@ -184,45 +184,44 @@ void SciEditor::appendText(const char* str, int length)
 /**
  * Adds the string @c str to the end of the document.
  */
-void SciEditor::appendText(const String& str)
+void SciEdit::appendText(const String& str)
 {
   sendMessage(SCI_APPENDTEXT, str.size(), reinterpret_cast<LPARAM>(str.c_str()));
 }
 
-void SciEditor::insertText(int pos, const String& str)
+void SciEdit::insertText(int pos, const String& str)
 {
   sendMessage(SCI_INSERTTEXT, pos, reinterpret_cast<LPARAM>(str.c_str()));
 }
 
-void SciEditor::clearAll()
+void SciEdit::clearAll()
 {
   sendMessage(SCI_CLEARALL, 0, 0);
 }
 
-Character SciEditor::getCharAt(int pos) const
+Character SciEdit::getCharAt(int pos) const
 {
   return (Character)
-    const_cast<SciEditor*>(this)->
-    sendMessage(SCI_GETCHARAT, pos, 0);
+    const_cast<SciEdit*>(this)->sendMessage(SCI_GETCHARAT, pos, 0);
 }
 
 //////////////////////////////////////////////////////////////////////
 // Searching
 
 
-void SciEditor::searchAnchor()
+void SciEdit::searchAnchor()
 {
   sendMessage(SCI_SEARCHANCHOR, 0, 0);
 }
 
-bool SciEditor::searchNext(int flags, String& str)
+bool SciEdit::searchNext(int flags, String& str)
 {
   return sendMessage(SCI_SEARCHNEXT,
 		     flags,
 		     reinterpret_cast<LPARAM>(str.c_str())) >= 0;
 }
 
-bool SciEditor::searchPrev(int flags, String& str)
+bool SciEdit::searchPrev(int flags, String& str)
 {
   return sendMessage(SCI_SEARCHPREV, flags,
 		     reinterpret_cast<LPARAM>(str.c_str())) >= 0;
@@ -231,7 +230,7 @@ bool SciEditor::searchPrev(int flags, String& str)
 //////////////////////////////////////////////////////////////////////
 // Searching and replace using target
 
-// bool SciEditor::findText(const String& str, bool matchCase, bool wholeWord)
+// bool SciEdit::findText(const String& str, bool matchCase, bool wholeWord)
 // {
 //   int pos = sendMessage(SCI_SEARCHNEXT,
 // 			(matchCase ? SCFIND_MATCHCASE: 0) |
@@ -264,36 +263,36 @@ bool SciEditor::searchPrev(int flags, String& str)
 //////////////////////////////////////////////////////////////////////
 // Overtype (overwrite-mode)
 
-void SciEditor::setOverwriteMode(bool state)
+void SciEdit::setOverwriteMode(bool state)
 {
   sendMessage(SCI_SETOVERTYPE, state, 0);
 }
 
-bool SciEditor::getOverwriteMode() const
+bool SciEdit::getOverwriteMode() const
 {
-  return const_cast<SciEditor*>(this)->sendMessage(SCI_GETOVERTYPE, 0, 0) != 0;
+  return const_cast<SciEdit*>(this)->sendMessage(SCI_GETOVERTYPE, 0, 0) != 0;
 }
 
 //////////////////////////////////////////////////////////////////////
 // Cut, copy and paste
 
 
-void SciEditor::cutTextToClipboard()
+void SciEdit::cutTextToClipboard()
 {
   sendMessage(SCI_CUT, 0, 0);
 }
 
-void SciEditor::copyTextToClipboard()
+void SciEdit::copyTextToClipboard()
 {
   sendMessage(SCI_COPY, 0, 0);
 }
 
-void SciEditor::pasteTextFromClipboard()
+void SciEdit::pasteTextFromClipboard()
 {
   sendMessage(SCI_PASTE, 0, 0);
 }
 
-void SciEditor::clearText()
+void SciEdit::clearText()
 {
   sendMessage(SCI_CLEAR, 0, 0);
 }
@@ -306,37 +305,37 @@ void SciEditor::clearText()
 // Undo and redo
 
 
-void SciEditor::undo()
+void SciEdit::undo()
 {
   sendMessage(SCI_UNDO, 0, 0);
 }
 
-bool SciEditor::canUndo() const
+bool SciEdit::canUndo() const
 {
-  return const_cast<SciEditor*>(this)->sendMessage(SCI_CANUNDO, 0, 0) != 0;
+  return const_cast<SciEdit*>(this)->sendMessage(SCI_CANUNDO, 0, 0) != 0;
 }
 
-void SciEditor::redo()
+void SciEdit::redo()
 {
   sendMessage(SCI_REDO, 0, 0);
 }
 
-bool SciEditor::canRedo() const
+bool SciEdit::canRedo() const
 {
-  return const_cast<SciEditor*>(this)->sendMessage(SCI_CANREDO, 0, 0) != 0;
+  return const_cast<SciEdit*>(this)->sendMessage(SCI_CANREDO, 0, 0) != 0;
 }
 
-void SciEditor::emptyUndoBuffer()
+void SciEdit::emptyUndoBuffer()
 {
   sendMessage(SCI_EMPTYUNDOBUFFER, 0, 0);
 }
 
-void SciEditor::beginUndoAction()
+void SciEdit::beginUndoAction()
 {
   sendMessage(SCI_BEGINUNDOACTION, 0, 0);
 }
 
-void SciEditor::endUndoAction()
+void SciEdit::endUndoAction()
 {
   sendMessage(SCI_ENDUNDOACTION, 0, 0);
 }
@@ -345,9 +344,9 @@ void SciEditor::endUndoAction()
 // Selection and information
 
 
-int SciEditor::getTextLength() const
+int SciEdit::getTextLength() const
 {
-  return const_cast<SciEditor*>(this)->sendMessage(SCI_GETTEXTLENGTH, 0, 0);
+  return const_cast<SciEdit*>(this)->sendMessage(SCI_GETTEXTLENGTH, 0, 0);
 }
 
 /**
@@ -355,81 +354,81 @@ int SciEditor::getTextLength() const
  *
  * @warning The last line doesn't have a end of line (\\n) character.
  */
-int SciEditor::getLineCount() const
+int SciEdit::getLineCount() const
 {
-  return const_cast<SciEditor*>(this)->sendMessage(SCI_GETLINECOUNT, 0, 0);
+  return const_cast<SciEdit*>(this)->sendMessage(SCI_GETLINECOUNT, 0, 0);
 }
 
-int SciEditor::getFirstVisibleLine() const
+int SciEdit::getFirstVisibleLine() const
 {
-  return const_cast<SciEditor*>(this)->sendMessage(SCI_GETFIRSTVISIBLELINE, 0, 0);
+  return const_cast<SciEdit*>(this)->sendMessage(SCI_GETFIRSTVISIBLELINE, 0, 0);
 }
 
-// int SciEditor::getVisibleLineCount()
-int SciEditor::getLinesOnScreen() const
+// int SciEdit::getVisibleLineCount()
+int SciEdit::getLinesOnScreen() const
 {
-  return const_cast<SciEditor*>(this)->sendMessage(SCI_LINESONSCREEN, 0, 0);
+  return const_cast<SciEdit*>(this)->sendMessage(SCI_LINESONSCREEN, 0, 0);
 }
 
-bool SciEditor::isModified() const
+bool SciEdit::isModified() const
 {
-  return const_cast<SciEditor*>(this)->sendMessage(SCI_GETMODIFY, 0, 0) != 0;
+  return const_cast<SciEdit*>(this)->sendMessage(SCI_GETMODIFY, 0, 0) != 0;
 }
 
-void SciEditor::goToPos(int pos)
+void SciEdit::goToPos(int pos)
 {
   sendMessage(SCI_GOTOPOS, pos, 0);
 }
 
-void SciEditor::goToLine(int line)
+void SciEdit::goToLine(int line)
 {
   sendMessage(SCI_GOTOLINE, line, 0);
 }
 
-void SciEditor::setCurrentPos(int pos)
+void SciEdit::setCurrentPos(int pos)
 {
   sendMessage(SCI_SETCURRENTPOS, pos, 0);
 }
 
-int SciEditor::getCurrentPos() const
+int SciEdit::getCurrentPos() const
 {
-  return const_cast<SciEditor*>(this)->sendMessage(SCI_GETCURRENTPOS, 0, 0);
+  return const_cast<SciEdit*>(this)->sendMessage(SCI_GETCURRENTPOS, 0, 0);
 }
 
-void SciEditor::setAnchor(int pos)
+void SciEdit::setAnchor(int pos)
 {
   sendMessage(SCI_SETANCHOR, pos, 0);
 }
 
-int SciEditor::getAnchor() const
+int SciEdit::getAnchor() const
 {
-  return const_cast<SciEditor*>(this)->sendMessage(SCI_GETANCHOR, 0, 0);
+  return const_cast<SciEdit*>(this)->sendMessage(SCI_GETANCHOR, 0, 0);
 }
 
-int SciEditor::getSelectionStart() const
+int SciEdit::getSelectionStart() const
 {
-  return const_cast<SciEditor*>(this)->sendMessage(SCI_GETSELECTIONSTART, 0, 0);
+  return const_cast<SciEdit*>(this)->sendMessage(SCI_GETSELECTIONSTART, 0, 0);
 }
 
-int SciEditor::getSelectionEnd() const
+int SciEdit::getSelectionEnd() const
 {
-  return const_cast<SciEditor*>(this)->sendMessage(SCI_GETSELECTIONEND, 0, 0);
+  return const_cast<SciEdit*>(this)->sendMessage(SCI_GETSELECTIONEND, 0, 0);
 }
 
 /**
  * Returns the length of the line (including the end of line). The
  * first line is 0.
  */
-int SciEditor::getLineLength(int line) const
+int SciEdit::getLineLength(int line) const
 {
-  return const_cast<SciEditor*>(this)->sendMessage(SCI_LINELENGTH, line, 0);
+  return const_cast<SciEdit*>(this)->sendMessage(SCI_LINELENGTH, line, 0);
 }
 
-String SciEditor::getSelText() const
+String SciEdit::getSelText() const
 {
   int length = getSelectionEnd() - getSelectionStart() + 1;
   char* text = new char[length+1];
-  const_cast<SciEditor*>(this)->sendMessage(SCI_GETSELTEXT, 0, reinterpret_cast<LPARAM>(text));
+  const_cast<SciEdit*>(this)->sendMessage(SCI_GETSELTEXT, 0, reinterpret_cast<LPARAM>(text));
   String str(text);
   delete text;
   return str;
@@ -461,29 +460,29 @@ String SciEditor::getSelText() const
  * @li SC_EOL_CR
  * @li SC_EOL_LF
  */
-void SciEditor::setEolMode(int eolMode)
+void SciEdit::setEolMode(int eolMode)
 {
   sendMessage(SCI_SETEOLMODE, eolMode, 0);
 }
 
-int SciEditor::getEolMode() const
+int SciEdit::getEolMode() const
 {
-  return const_cast<SciEditor*>(this)->sendMessage(SCI_GETEOLMODE, 0, 0);
+  return const_cast<SciEdit*>(this)->sendMessage(SCI_GETEOLMODE, 0, 0);
 }
 
-void SciEditor::convertEols(int eolMode)
+void SciEdit::convertEols(int eolMode)
 {
   sendMessage(SCI_CONVERTEOLS, eolMode, 0);
 }
 
-void SciEditor::setViewEol(bool visible)
+void SciEdit::setViewEol(bool visible)
 {
   sendMessage(SCI_SETVIEWEOL, visible, 0);
 }
 
-bool SciEditor::getViewEol() const
+bool SciEdit::getViewEol() const
 {
-  return const_cast<SciEditor*>(this)->sendMessage(SCI_GETVIEWEOL, 0, 0) != 0;
+  return const_cast<SciEdit*>(this)->sendMessage(SCI_GETVIEWEOL, 0, 0) != 0;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -561,12 +560,12 @@ bool SciEditor::getViewEol() const
 //////////////////////////////////////////////////////////////////////
 // Multiple views
 
-void* SciEditor::getDocPointer()
+void* SciEdit::getDocPointer()
 {
   return reinterpret_cast<void*>(sendMessage(SCI_GETDOCPOINTER, 0, 0));
 }
 
-void SciEditor::setDocPointer(void* doc)
+void SciEdit::setDocPointer(void* doc)
 {
   sendMessage(SCI_SETDOCPOINTER, 0, reinterpret_cast<LPARAM>(doc));
 }
@@ -583,22 +582,22 @@ void SciEditor::setDocPointer(void* doc)
 // Zooming
 
 
-void SciEditor::zoomIn()
+void SciEdit::zoomIn()
 {
   sendMessage(SCI_ZOOMIN, 0, 0);
 }
 
-void SciEditor::zoomOut()
+void SciEdit::zoomOut()
 {
   sendMessage(SCI_ZOOMOUT, 0, 0);
 }
 
-void SciEditor::setZoom(int zoomInPoints)
+void SciEdit::setZoom(int zoomInPoints)
 {
   sendMessage(SCI_SETZOOM, zoomInPoints, 0);
 }
 
-int SciEditor::getZoom()
+int SciEdit::getZoom()
 {
   return sendMessage(SCI_GETZOOM, 0, 0);
 }
@@ -614,7 +613,7 @@ int SciEditor::getZoom()
 //////////////////////////////////////////////////////////////////////
 // Notifications
 
-bool SciEditor::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult)
+bool SciEdit::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult)
 {
   if (Widget::onReflectedNotify(lpnmhdr, lResult))
     return true;
@@ -639,7 +638,7 @@ bool SciEditor::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult)
  * (SCN_UPDATEUI). In response to this event you should update your UI
  * elements.  The default implementation fires the UpdateUI signal.
  */
-void SciEditor::onUpdateUI()
+void SciEdit::onUpdateUI()
 {
   UpdateUI();
 }

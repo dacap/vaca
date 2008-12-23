@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -37,16 +37,6 @@
 #include "Vaca/CancelableEvent.h"
 
 namespace Vaca {
-
-#define SpinButtonStyle		(ChildStyle + Style(UDS_SETBUDDYINT |	\
-						    UDS_ALIGNRIGHT |	\
-						    UDS_AUTOBUDDY |	\
-						    UDS_ARROWKEYS |	\
-						    UDS_NOTHOUSANDS, 0))
-
-#define HorizontalSpinButtonStyle	(Style(UDS_HORZ, 0))
-
-#define HotTrackSpinButtonStyle		(Style(UDS_HOTTRACK, 0))
 
 // TODO move this to "SpinButtonEvent.h"
 class SpinButtonEvent : public CancelableEvent
@@ -82,9 +72,14 @@ class VACA_DLL SpinButton : public Widget
 {
 public:
 
-  SpinButton(Widget* parent, Style style = SpinButtonStyle);
-  SpinButton(int minValue, int maxValue, int value,
-	     Widget* parent, Style style = SpinButtonStyle);
+  struct VACA_DLL Styles {
+    static const Style Default;
+    static const Style Horizontal; // TODO change with set/getOrientation
+    static const Style HotTrack;
+  };
+
+  SpinButton(Widget* parent, Style style = Styles::Default);
+  SpinButton(int minValue, int maxValue, int value, Widget* parent, Style style = Styles::Default);
   virtual ~SpinButton();
 
   bool isHorizontal();

@@ -1,5 +1,5 @@
 # Vaca - Visual Application Components Abstraction
-# Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
+# Copyright (c) 2005, 2006, 2007, 2008, David Capello
 # All rights reserved.
 
 default: all
@@ -13,6 +13,7 @@ default: all
 # STATIC = 1
 # PROFILE = 1
 # UNICODE = 1
+# ADD_COMPILER_VERSION = 1
 
 WIN32_IMPL = 1
 # ALLEG_IMPL = 1
@@ -54,7 +55,7 @@ LIB_SOURCES = Anchor AnchorLayout Application BandedDockArea		\
 	      Clipboard CloseEvent Color ColorDialog ComboBox Command	\
 	      CommonDialog Component ConditionVariable Constraint	\
 	      Cursor CustomButton CustomLabel Debug Dialog DockArea	\
-	      DockBar DockFrame DropFilesEvent Edit Event Exception	\
+	      DockBar DockFrame DropFilesEvent Event Exception		\
 	      FileDialog FindTextDialog Font FontDialog Frame Graphics	\
 	      GraphicsPath GroupBox HttpRequest Icon Image ImageList	\
 	      KeyEvent Keys Label Layout LinkLabel ListBox ListView	\
@@ -62,9 +63,9 @@ LIB_SOURCES = Anchor AnchorLayout Application BandedDockArea		\
 	      Point ProgressBar RadioButton ReBar Rect Referenceable	\
 	      Region ResourceId Scintilla ScrollEvent ScrollInfo	\
 	      Separator Size Slider SpinButton Spinner SplitBar		\
-	      StatusBar String System Tab Thread TimePoint Timer	\
-	      ToggleButton ToolBar TreeNode TreeView TreeViewEvent	\
-	      Vaca Widget WidgetClass
+	      StatusBar String Style Styles System Tab TextEdit Thread	\
+	      TimePoint Timer ToggleButton ToolBar TreeNode TreeView	\
+	      TreeViewEvent Vaca Widget WidgetClass
 
 ifndef EXAMPLES
 EXAMPLES = AnchorLayouts AutoCompletion Bixes BouncingBalls BoxLayouts	\
@@ -79,6 +80,7 @@ endif
 
 ifndef TESTS
 TESTS = \
+	test_backward \
 	test_bind \
 	test_menu \
 	test_point \
@@ -124,25 +126,11 @@ EXE_LIBS = $(LIBS)
 # ----------------------------------------------------------------------
 
 ifdef STATIC
-
   VACA_LIB_FLAGS = -DVACA_STATIC
   VACA_EXE_FLAGS = -DVACA_STATIC
-
-  ifdef DEBUG
-    SUFFIX = _ds
-  else
-    SUFFIX = _s
-  endif
-
 else
-
   VACA_LIB_FLAGS = -DVACA_SRC
   VACA_EXE_FLAGS = 
-
-  ifdef DEBUG
-    SUFFIX = _d
-  endif
-
 endif
 
 # ----------------------------------------------------------------------
@@ -153,12 +141,6 @@ ifdef PROFILE
   CXXFLAGS += -pg
   LFLAGS += -pg
   DLLFLAGS += -pg
-
-  ifdef SUFFIX
-    SUFFIX := $(SUFFIX)p
-  else
-    SUFFIX := _p
-  endif
 endif
 
 # ----------------------------------------------------------------------
@@ -167,12 +149,6 @@ endif
 
 ifdef UNICODE
   CXXFLAGS += -DUNICODE -D_UNICODE
-
-  ifdef SUFFIX
-    SUFFIX := $(SUFFIX)u
-  else
-    SUFFIX := _u
-  endif
 endif
 
 # ----------------------------------------------------------------------
@@ -211,6 +187,36 @@ ifdef MEMORY_LEAK_DETECTOR
 #   LFLAGS += -g
 #   DLLFLAGS += -g
   LIB_SOURCES += $(basename $(notdir $(wildcard third_party/nvwa/*.cpp)))
+endif
+
+# ----------------------------------------------------------------------
+# Make the Suffix
+# ----------------------------------------------------------------------
+
+SUFFIX = 
+
+ifdef DEBUG
+  SUFFIX := $(SUFFIX)d
+endif
+
+ifdef PROFILE
+  SUFFIX := $(SUFFIX)p
+endif
+
+ifdef STATIC
+  SUFFIX := $(SUFFIX)s
+endif
+
+ifdef UNICODE
+  SUFFIX := $(SUFFIX)u
+endif
+
+ifdef ADD_COMPILER_VERSION
+ SUFFIX := $(SUFFIX)-$(shell gcc -dumpversion)
+endif
+
+ifneq ($(SUFFIX),)
+  SUFFIX := -$(SUFFIX)
 endif
 
 # ----------------------------------------------------------------------
@@ -346,7 +352,7 @@ cleanobj:
 	-$(RM) -f $(LIB_OBJS)
 
 distclean: clean
-	-$(RM) -f bin/Vaca*.dll bin/*.exe lib/*.a lib/*.lib
+	-$(RM) -f bin/Vaca*.dll bin/*.exe bin/*.manifest lib/*.a lib/*.lib bin/vaca.log
 
 ifdef MINGW_ROOT
 install: lib

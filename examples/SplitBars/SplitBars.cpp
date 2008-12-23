@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -95,22 +95,25 @@ public:
   MainFrame()
     : Frame("SplitBar demo")
   {
-    MultilineEdit* me;
+    TextEdit* me;
     
     setMenuBar(new MenuBar(CommandId(IDR_MAINMENU)));
 
     SplitBar* sp1 = new SplitBar(Orientation::Vertical, this);
     sp1->setPaneSize(Size(300, 200));
 
-    me = new MultilineEdit("First Panel", sp1, MultilineEditStyle + ScrollStyle);
+    me = new TextEdit("First Panel", sp1, TextEdit::Styles::TextArea +
+					  Widget::Styles::Scroll);
     me->setBgColor(Color(120, 224, 120));
 
     SplitBar* sp2 = new SplitBar(Orientation::Horizontal, sp1);
 
-    me = new MultilineEdit("Sub First Panel", sp2, MultilineEditStyle + ScrollStyle);
+    me = new TextEdit("Sub First Panel", sp2, TextEdit::Styles::TextArea +
+					      Widget::Styles::Scroll);
     me->setBgColor(Color(224, 120, 120));
 
-    me = new MultilineEdit("Sub Second Panel", sp2, MultilineEditStyle + ScrollStyle);
+    me = new TextEdit("Sub Second Panel", sp2, TextEdit::Styles::TextArea +
+					       Widget::Styles::Scroll);
     me->setBgColor(Color(120, 120, 224));
 
     // The following lines aren't necessary (it's done automatically

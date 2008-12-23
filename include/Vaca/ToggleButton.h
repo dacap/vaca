@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -35,10 +35,6 @@
 #include "Vaca/ButtonBase.h"
 
 namespace Vaca {
-
-#define ToggleButtonStyle	(ChildStyle +				\
-				 FocusableStyle +			\
-				 Style(BS_AUTOCHECKBOX | BS_PUSHLIKE, 0))
   
 /**
  * Handles a pusheable button (with BS_AUTOCHECKBOX | BS_PUSHLIKE styles).
@@ -47,7 +43,11 @@ class VACA_DLL ToggleButton : public ButtonBase
 {
 public:
 
-  ToggleButton(const String& text, Widget* parent, Style style = ToggleButtonStyle);
+  struct VACA_DLL Styles {
+    static const Style Default;
+  };
+
+  ToggleButton(const String& text, Widget* parent, Style style = Styles::Default);
   virtual ~ToggleButton();
 
 };

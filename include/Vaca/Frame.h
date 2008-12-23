@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -50,27 +50,6 @@ class MenuItem;
 class StatusBar;
 class Thread;
 
-#define WithCaptionFrameStyle		(Style(WS_CAPTION, 0))
-
-#define WithSystemMenuFrameStyle	(Style(WS_SYSMENU, 0))
-
-#define MinimizableFrameStyle		(Style(WS_MINIMIZEBOX, 0))
-
-#define MaximizableFrameStyle		(Style(WS_MAXIMIZEBOX, 0))
-
-#define ResizableFrameStyle		(Style(WS_SIZEBOX, 0))
-
-#define InitiallyMinimizedFrameStyle	(Style(WS_MINIMIZE, 0))
-
-#define InitiallyMaximizedFrameStyle	(Style(WS_MAXIMIZE, 0))
-
-#define FrameStyle			(ContainerStyle +		\
-					 WithCaptionFrameStyle +	\
-					 WithSystemMenuFrameStyle +	\
-					 MinimizableFrameStyle +	\
-					 MaximizableFrameStyle +	\
-					 ResizableFrameStyle)
-
 /**
  * Represents the Win32 class used by Frame.
  */
@@ -95,8 +74,19 @@ class VACA_DLL Frame : public Register<FrameClass>, public Widget
 
 public:
 
-  Frame(const String& title, Widget* parent = NULL, Style style = FrameStyle);
-  Frame(const WidgetClassName& className, const String& title, Widget* parent = NULL, Style style = FrameStyle);
+  struct VACA_DLL Styles {
+    static const Style Default;
+    static const Style WithCaption;
+    static const Style WithSystemMenu;
+    static const Style Minimizable;
+    static const Style Maximizable;
+    static const Style Resizable;
+    static const Style InitiallyMinimized;
+    static const Style InitiallyMaximized;
+  };
+
+  Frame(const String& title, Widget* parent = NULL, Style style = Styles::Default);
+  Frame(const WidgetClassName& className, const String& title, Widget* parent = NULL, Style style = Styles::Default);
   virtual ~Frame();
 
   virtual void setVisible(bool visible);

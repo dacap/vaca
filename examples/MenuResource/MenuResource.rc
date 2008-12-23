@@ -9,7 +9,7 @@ IDM_MENUBAR MENU
   POPUP "&Popup1" {
     MENUITEM "&Item2",		IDM_ITEM2
     POPUP "&Popup2" {
-      MENUITEM "&Item3",	IDM_ITEM3
+      MENUITEM "&Item3",	IDM_ITEM3,	CHECKED
       MENUITEM SEPARATOR
       MENUITEM "&Item4",	IDM_ITEM4
     }

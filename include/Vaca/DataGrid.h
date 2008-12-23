@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -33,95 +33,10 @@
 #define VACA_DATAGRID_H
 
 #include "Vaca/base.h"
-#include "Vaca/Widget.h"
-#include "Vaca/WidgetClass.h"
-#include "Vaca/Register.h"
 
 namespace Vaca {
 
-// TODO
-
-//////////////////////////////////////////////////////////////////////
-// DataGridType
-
-enum DataGridType
-{
-  DataGrid_Bool,
-  DataGrid_Int,
-  DataGrid_Float,
-  DataGrid_String,
-};
-
-//////////////////////////////////////////////////////////////////////
-// DataGridColumn
-
-class DataGridColumn
-{
-  DataGridType mType;
-  void* mValue;
-
-public:
-
-  DataGridColumn(bool);
-
-};
-
-//////////////////////////////////////////////////////////////////////
-// DataGridValue
-
-class DataGridValue
-{
-public:
-
-public:
-
-  DataGridType();
-  
-};
-
-//////////////////////////////////////////////////////////////////////
-// DataGridSource
-
-class DataGridSource
-{
-public:
-
-  virtual int getColumnCount() = 0;
-  virtual DataGridColumn* getColumn(int columnIndex) = 0;
-
-  virtual int getRowCount() = 0;
-  virtual String getRowText(int rowIndex) = 0;
-
-  virtual DataGridValue* getCellValue(int col, int row) = 0;
-  virtual void setCellValue(int col, int row, DataGridValue* value) = 0;
-
-};
-
-//////////////////////////////////////////////////////////////////////
-
-/**
- * Represents the Win32 class used by DataGrid.
- */
-class DataGridClass : public WidgetClass
-{
-public:
-  static WidgetClassName getClassName()
-  { return WidgetClassName("Vaca.DataGrid"); }
-};
-
-//////////////////////////////////////////////////////////////////////
-// DataGrid
-
-#define DataGridStyle		(ChildStyle)
-
-class VACA_DLL DataGrid : public Register<DataGridClass>, public Widget
-{
-public:
-
-  DataGrid(DataGridSource* dataSource, Widget* parent, Style style = DataGridStyle);
-  virtual ~DataGrid();
-
-};
+  // TODO
 
 } // namespace Vaca
 

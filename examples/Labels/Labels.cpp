@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -45,17 +45,22 @@ class MainFrame : public Frame
 public:
 
   MainFrame()
-    : Frame("Labels", NULL, FrameStyle - MaximizableFrameStyle)
+    : Frame("Labels", NULL, Frame::Styles::Default
+			    - Frame::Styles::Maximizable)
     , m_longLabel("This is a long label to test the word wrap. Also, see\r\n"
 		 "how the BoxLayout manager fit all in the right place.", this)
     , m_simpleLabel("A simple label (it's not word wrapped, not text-aligned).",
-		   this, LabelStyle + SimpleLabelStyle)
+		    this, Label::Styles::Default +
+			  Label::Styles::Simple)
     , m_ellipsis1Label("A label with word-ellipsis style.",
-		      this, LabelStyle + WordEllipsisLabelStyle)
+		      this, Label::Styles::Default +
+			    Label::Styles::WordEllipsis)
     , m_ellipsis2Label("C:\\folder\\subFolder\\subSubFolder\\fileName.txt",
-		      this, LabelStyle + EndEllipsisLabelStyle)
+		      this, Label::Styles::Default +
+			    Label::Styles::EndEllipsis)
     , m_ellipsis3Label("C:\\folder\\subFolder\\subSubFolder\\fileName.txt",
-		      this, LabelStyle + PathEllipsisLabelStyle)
+		      this, Label::Styles::Default +
+			    Label::Styles::PathEllipsis)
     , m_alignButton("Set Alignment", this)
   {
     setLayout(new BoxLayout(Orientation::Vertical, false));

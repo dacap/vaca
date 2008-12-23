@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -304,7 +304,7 @@ private:
 //////////////////////////////////////////////////////////////////////
 // a representation of an element as widgets
 
-class ElementViewAsWidgets : public MultilineEdit
+class ElementViewAsWidgets : public TextEdit
 {
   Element* m_element;
   bool m_selected;
@@ -314,7 +314,9 @@ public:
   Signal1<void, Element*> ElementSelected;
 
   ElementViewAsWidgets(Element* element, Widget* parent)
-    : MultilineEdit(element->getName(), parent, MultilineEditStyle + AutoVerticalScrollEditStyle)
+    : TextEdit(element->getName(), parent,
+	       TextEdit::Styles::TextArea +
+	       TextEdit::Styles::AutoVerticalScroll)
   {
     m_element = element;
     m_selected = false;
@@ -343,13 +345,13 @@ protected:
 
   virtual void onGotFocus(Event& ev)
   {
-    MultilineEdit::onGotFocus(ev);
+    TextEdit::onGotFocus(ev);
     ElementSelected(m_element);
   }
 
   virtual void onLostFocus(Event& ev)
   {
-    MultilineEdit::onLostFocus(ev);
+    TextEdit::onLostFocus(ev);
   }
 
   void onChange(Event& ev)
@@ -384,7 +386,8 @@ public:
   Signal1<void, Element*> ElementSelected;
 
   ModelViewAsWidgets(Model* model, Widget* parent)
-    : Panel(parent, PanelStyle + ClientEdgeStyle)
+    : Panel(parent, Panel::Styles::Default +
+		    Widget::Styles::ClientEdge)
     , m_model(model)
     , m_bix(NULL)
   {
@@ -560,7 +563,8 @@ public:
     , m_selectedElement(NULL)
     , m_treeView(&m_model, this)
     , m_widgetsView(&m_model, this)
-    , m_toolBar("Standard", this, ToolSetStyle + FlatToolSetStyle)
+    , m_toolBar("Standard", this, ToolSet::Styles::Default +
+				  ToolSet::Styles::Flat)
     , m_imageList(ResourceId(IDB_TOOLBAR), 16, Color(192, 192, 192))
     , m_widgetCounter(0)
     , m_disableReselect(false)
@@ -699,7 +703,7 @@ private:
   {
     Dialog dlg("Insert a value", this);
     Label label("Number of columns of the matrix:", &dlg);
-    Edit value("3", &dlg);
+    TextEdit value("3", &dlg);
     Button ok("&OK", &dlg);
     Button cancel("&Cancel", &dlg);
 

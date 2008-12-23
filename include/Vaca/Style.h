@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -57,43 +57,22 @@ namespace Vaca {
  *   (@msdn{WS_} and @msdn{WS_EX_}).
  * @endwin32
  */
-class Style
+struct VACA_DLL Style
 {
-public:
-
   int regular;
   int extended;
 
-  Style(int regular, int extended)
-    : regular(regular),
-      extended(extended) { }
+  Style(int regular, int extended);
+  Style(const Style& style);
 
-  inline Style operator+(const Style& style) const {
-    return Style(regular | style.regular,
-		 extended | style.extended);
-  }
+  Style operator+(const Style& style) const;
+  Style operator|(const Style& style) const;
+  Style operator-(const Style& style) const;
+  Style operator&(const Style& style) const;
+  Style operator~() const;
 
-  inline Style operator-(const Style& style) const {
-    return Style(regular & ~style.regular,
-		 extended & ~style.extended);
-  }
-
-  inline Style operator&(const Style& style) const {
-    return Style(regular & style.regular,
-		 extended & style.extended);
-  }
-
-  inline bool operator==(const Style& style) const {
-    return
-      regular == style.regular &&
-      extended == style.extended;
-  }
-
-  inline bool operator!=(const Style& style) const {
-    return
-      regular != style.regular ||
-      extended != style.extended;
-  }
+  bool operator==(const Style& style) const;
+  bool operator!=(const Style& style) const;
 
 };
 

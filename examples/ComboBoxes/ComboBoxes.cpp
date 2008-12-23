@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -38,20 +38,17 @@ class MainFrame : public Frame
   Label m_label1; ComboBox m_combo1;
   Label m_label2; ComboBox m_combo2;
   Label m_label3; ComboBox m_combo3;
-  Label m_label4; ComboBox m_combo4;
   
 public:
 
   MainFrame()
     : Frame("ComboBoxes")
-    , m_label1("Default ComboBoxStyle (it's like ListComboBoxStyle)", this)
+    , m_label1("ComboBox::Styles::Default", this)
     , m_combo1(this)
-    , m_label2("SimpleComboBoxStyle", this)
-    , m_combo2(this, SimpleComboBoxStyle)
-    , m_label3("EditComboBoxStyle", this)
-    , m_combo3(this, EditComboBoxStyle)
-    , m_label4("ListComboBoxStyle", this)
-    , m_combo4(this, ListComboBoxStyle)
+    , m_label2("ComboBox::Styles::Simple", this)
+    , m_combo2(this, ComboBox::Styles::Simple)
+    , m_label3("ComboBox::Styles::Editable", this)
+    , m_combo3(this, ComboBox::Styles::Editable)
   {
     setLayout(new BoxLayout(Orientation::Vertical, false));
 
@@ -60,7 +57,6 @@ public:
       m_combo1.addItem(text);
       m_combo2.addItem(text);
       m_combo3.addItem(text);
-      m_combo4.addItem(text);
     }
 
     m_combo1.SelChange.connect(&MainFrame::onComboChange, this);

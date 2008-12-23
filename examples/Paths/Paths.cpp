@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -92,7 +92,7 @@ class FigureProperties : public Dialog
   Label m_penLabel;
   Label m_penWidthLabel;
   Slider m_penWidthSlider;
-  Edit m_penWidthEdit;
+  TextEdit m_penWidthEdit;
   Button m_penColor;
   GroupBox m_endCapInfo;
   RadioGroup m_endCapGroup;
@@ -128,7 +128,8 @@ public:
     , m_penLabel("Pen configuration:", this)
     , m_penWidthLabel("Width:", this)
     , m_penWidthSlider(1, 64, 32, this)
-    , m_penWidthEdit("", this, EditStyle + ReadOnlyEditStyle)
+    , m_penWidthEdit("", this, TextEdit::Styles::Default +
+			       TextEdit::Styles::ReadOnly)
     , m_penColor("Color", this)
     , m_endCapInfo("End Cap", this)
     , m_roundEndCap("Round", m_endCapGroup, &m_endCapInfo)
@@ -146,7 +147,7 @@ public:
     , m_ok("&OK", this)
     , m_cancel("Cancel", this)
   {
-    // preferred size for the Edit control of the pen-width
+    // preferred size for the TextEdit control of the pen-width
     m_penWidthEdit.setPreferredSize(Size(32, m_penWidthEdit.getPreferredSize().h));
 
     // this two labels will have boldface
@@ -289,7 +290,8 @@ class FigsEditor : public Panel
 public:
 
   FigsEditor(Widget* parent)
-    : Panel(parent, PanelStyle + ClientEdgeStyle)
+    : Panel(parent, Panel::Styles::Default +
+		    Widget::Styles::ClientEdge)
   {
     setBgColor(Color::White);
     setDoubleBuffered(true);

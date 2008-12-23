@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -89,7 +89,7 @@ static void Widget_DestroyHWNDProc(HWND hwnd)
  *
  * @param className
  *     Must be a registered WNDCLASS for Windows.
- *	
+ *
  * @param parent
  *     It's a Widget (generally a Frame) that will act as the container
  *     parent of the new widget.
@@ -97,11 +97,12 @@ static void Widget_DestroyHWNDProc(HWND hwnd)
  * @param style
  *     You can specify the style to be used to create the
  *     widget. Generally Vaca handles the styles in this way: If the
- *     class is called @c Button, the default style is @c ButtonStyle.
- *     There exist another global styles that can be used for
- *     <em>every widget</em> like @c FocusableStyle or @c VisibleStyle,
- *     but the specific styles for a particular class,
- *     e.g. Edit, end with @c ...EditStyle, like @c ReadOnlyEditStyle.
+ *     class is called @c Button, the default style is @c Button::Styles::Default.
+ *     There exist global styles that can be used for
+ *     <em>every widget</em> like @c Widget::Styles::Focusable or
+ *     @c Widget::Styles::Visible, but the specific styles for a
+ *     particular class, e.g. TextEdit, should be in @c TextEdit::Styles::...,
+ *     like @c TextEdit::Styles::ReadOnly.
  */
 Widget::Widget(const WidgetClassName& className, Widget* parent, Style style)
 {
@@ -1922,6 +1923,11 @@ void Widget::onScroll(ScrollEvent& ev)
 
 /**
  * When the user drops files to the widget this event is generated.
+ *
+ * @warning This event is generated only if the widget has the
+ *          Widget::Styles::AcceptFiles style.
+ *
+ * @see Widget::Styles::AcceptFiles
  */
 void Widget::onDropFiles(DropFilesEvent& ev)
 {

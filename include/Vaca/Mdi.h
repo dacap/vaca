@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -36,17 +36,6 @@
 #include "Vaca/Frame.h"
 
 namespace Vaca {
-
-#define MdiChildStyle		(FrameStyle +				\
-				 Style(WS_CHILD,			\
-				       WS_EX_MDICHILD))
-
-#define MdiClientStyle		(ChildStyle +				\
-				 ScrollStyle +				\
-				 ClientEdgeStyle +			\
-				 ContainerStyle)
-
-#define MdiFrameStyle		(FrameStyle)
 
 class MdiClient;
 class MdiFrame;
@@ -76,8 +65,13 @@ class VACA_DLL MdiChild : public Register<MdiChildClass>, public Frame
   void initialize();
 
 public:
-  MdiChild(const String& title, MdiClient* parent, Style style = MdiChildStyle);
-  MdiChild(const String& title, MdiFrame* parent, Style style = MdiChildStyle);
+
+  struct VACA_DLL Styles {
+    static const Style Default;
+  };
+
+  MdiChild(const String& title, MdiClient* parent, Style style = Styles::Default);
+  MdiChild(const String& title, MdiFrame* parent, Style style = Styles::Default);
   virtual ~MdiChild();
 
 protected:
@@ -97,7 +91,12 @@ private:
 class VACA_DLL MdiClient : public Widget
 {
 public:
-  MdiClient(Widget* parent, Style style = MdiClientStyle);
+
+  struct VACA_DLL Styles {
+    static const Style Default;
+  };
+
+  MdiClient(Widget* parent, Style style = Styles::Default);
   virtual ~MdiClient();
 
   void cascade();
@@ -136,9 +135,11 @@ private:
 
 public:
 
-  MdiFrame(const String& title,
-	   Widget* parent = NULL,
-	   Style style = MdiFrameStyle,
+  struct VACA_DLL Styles {
+    static const Style Default;
+  };
+
+  MdiFrame(const String& title, Widget* parent = NULL, Style style = Styles::Default,
 	   bool customMdiClient = false);
 //   MdiFrame(Widget* parent, Style style = ChildStyle); // TODO ChildStyle???
   virtual ~MdiFrame();

@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_EDIT_H
-#define VACA_EDIT_H
+#ifndef VACA_TEXTEDIT_H
+#define VACA_TEXTEDIT_H
 
 #include "Vaca/base.h"
 #include "Vaca/Widget.h"
@@ -38,49 +38,30 @@
 namespace Vaca {
 
 /**
- * Align the text to the right in Edit widgets (ES_RIGHT).
- */
-#define RightAlignedEditStyle		Style(ES_RIGHT, 0)
-
-/**
- * Makes the text read-only in Edit widgets (ES_READONLY).
- */
-#define ReadOnlyEditStyle		Style(ES_READONLY, 0)
-
-#define AutoHorizontalScrollEditStyle	Style(ES_AUTOHSCROLL, 0)
-#define AutoVerticalScrollEditStyle	Style(ES_AUTOVSCROLL, 0)
-
-/**
- * Default style for Edit: a visible child (ChildVisible), with tab
- * stop (FocusableStyle), edge in its client-area (ClientEdgeStyle),
- * and ES_AUTOHSCROLL (AutoHorizontalScrollEditStyle).
- */
-#define EditStyle		(ChildStyle +				\
-				 FocusableStyle +			\
-				 ClientEdgeStyle +			\
-				 AutoHorizontalScrollEditStyle)
-/**
- * Default style for PasswordEdit: an EditStyle with ES_PASSWORD.
- */
-#define PasswordEditStyle	(EditStyle + Style(ES_PASSWORD, 0))
-
-/**
- * Default style for MultilineEdit: an EditStyle with ES_MULTILINE.
- */
-#define MultilineEditStyle	(EditStyle +	\
-				 Style(ES_MULTILINE, 0))
-
-/**
- * Widget to edit a line of text.
+ * Widget to edit text.
  *
  * @see @ref page_tn_008
  */
-class VACA_DLL Edit : public Widget
+class VACA_DLL TextEdit : public Widget
 {
 public:
 
-  Edit(const String& text, Widget* parent, Style style = EditStyle);
-  virtual ~Edit();
+  struct VACA_DLL Styles {
+    static const Style Default;
+    static const Style Password;
+    static const Style TextArea;
+    static const Style RightAligned;
+    static const Style ReadOnly;
+    static const Style AutoHorizontalScroll;
+    static const Style AutoVerticalScroll;
+  };
+
+  TextEdit(const String& text, Widget* parent, Style style = Styles::Default);
+  virtual ~TextEdit();
+
+  // ============================================================
+  // ANY TEXT EDIT
+  // ============================================================
 
   int getTextLength() const;
 
@@ -103,6 +84,30 @@ public:
   
   void getSelection(int& start, int& end);
 
+  // ============================================================
+  // PASSWORD
+  // ============================================================
+
+  Character getPasswordCharacter();
+  void setPasswordCharacter(Character passwordChar);
+
+  // ============================================================
+  // TEXT AREA
+  // ============================================================
+
+  bool getWantReturnMode();
+  void setWantReturnMode(bool wantReturn);
+
+  int getLineCount();
+  String getLine(int lineNo);
+  int getLineLength(int lineNo);
+
+  void scrollLines(int lines);
+
+  // ============================================================
+  // SIGNALS
+  // ============================================================
+
   // signals
   Signal1<void, Event&> Change; ///< @see onChange
 
@@ -118,41 +123,6 @@ protected:
 
 };
 
-/**
- * Widget to input a password field.
- */
-class VACA_DLL PasswordEdit : public Edit
-{
-public:
-
-  PasswordEdit(const String& text, Widget* parent, Style style = PasswordEditStyle);
-  virtual ~PasswordEdit();
-
-  Character getPasswordCharacter();
-  void setPasswordCharacter(Character passwordChar);
-};
-
-/**
- * Widget to edit multiple lines of text.
- */
-class VACA_DLL MultilineEdit : public Edit
-{
-public:
-
-  MultilineEdit(const String& text, Widget* parent, Style style = MultilineEditStyle);
-  virtual ~MultilineEdit();
-
-  bool getWantReturnMode();
-  void setWantReturnMode(bool wantReturn);
-
-  int getLineCount();
-  String getLine(int lineNo);
-  int getLineLength(int lineNo);
-
-  void scrollLines(int lines);
-
-};
-
 } // namespace Vaca
 
-#endif // VACA_EDIT_H
+#endif // VACA_TEXTEDIT_H

@@ -1,5 +1,5 @@
 # Vaca - Visual Application Components Abstraction
-# Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
+# Copyright (c) 2005, 2006, 2007, 2008, David Capello
 # All rights reserved.
 
 # ----------------------------------------------------------------------
@@ -117,7 +117,7 @@ OBJS = obj/Anchor.obj obj/AnchorLayout.obj obj/Application.obj		\
   obj/Constraint.obj obj/Cursor.obj obj/CustomButton.obj		\
   obj/CustomLabel.obj obj/Debug.obj obj/Dialog.obj obj/DockArea.obj	\
   obj/DockBar.obj obj/DockFrame.obj obj/DropFilesEvent.obj		\
-  obj/Edit.obj obj/Event.obj obj/Exception.obj obj/FileDialog.obj	\
+  obj/Event.obj obj/Exception.obj obj/FileDialog.obj			\
   obj/FindTextDialog.obj obj/Font.obj obj/FontDialog.obj obj/Frame.obj	\
   obj/Graphics.obj obj/GraphicsPath.obj obj/GroupBox.obj		\
   obj/HttpRequest.obj obj/Icon.obj obj/Image.obj obj/ImageList.obj	\
@@ -130,8 +130,9 @@ OBJS = obj/Anchor.obj obj/AnchorLayout.obj obj/Application.obj		\
   obj/Scintilla.obj obj/ScrollEvent.obj obj/ScrollInfo.obj		\
   obj/Separator.obj obj/Size.obj obj/Slider.obj obj/SpinButton.obj	\
   obj/Spinner.obj obj/SplitBar.obj obj/StatusBar.obj obj/String.obj	\
-  obj/System.obj obj/Tab.obj obj/Thread.obj obj/TimePoint.obj		\
-  obj/Timer.obj obj/ToggleButton.obj obj/ToolBar.obj obj/TreeNode.obj	\
+  obj/Style.obj obj/Styles.obj obj/System.obj obj/Tab.obj		\
+  obj/TextEdit.obj obj/Thread.obj obj/TimePoint.obj obj/Timer.obj	\
+  obj/ToggleButton.obj obj/ToolBar.obj obj/TreeNode.obj			\
   obj/TreeView.obj obj/TreeViewEvent.obj obj/Vaca.obj obj/Widget.obj	\
   obj/WidgetClass.obj
 
@@ -151,6 +152,7 @@ EXAMPLES_EXE = bin/AnchorLayouts.exe bin/AutoCompletion.exe		\
   bin/Undo.exe bin/WebCam.exe
 
 TESTS_EXE = \
+  bin/test_backward.exe \
   bin/test_bind.exe \
   bin/test_menu.exe \
   bin/test_point.exe \
@@ -400,6 +402,9 @@ obj/WebCam.obj: examples/WebCam/WebCam.cpp
 # ----------------------------------------------------------------------
 # Tests
 # ----------------------------------------------------------------------
+
+obj/test_backward.obj: tests/test_backward.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c tests/test_backward.cpp
 
 obj/test_bind.obj: tests/test_bind.cpp
 	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c tests/test_bind.cpp

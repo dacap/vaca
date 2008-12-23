@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -39,24 +39,6 @@
 
 namespace Vaca {
 
-#define CommonComboBoxStyle     (ChildStyle +				\
-				 FocusableStyle +			\
-				 ClientEdgeStyle +			\
-				 VerticalScrollStyle +			\
-				 Style(CBS_HASSTRINGS |			\
-				       CBS_AUTOHSCROLL, 0))
-
-/**
- * Default style for ComboBox: a visible child (ChildVisible), with
- * tab stop (FocusableStyle), with client-edges (ClientEdgeStyle),
- * CBS_HASSTRINGS, and CBS_DROPDOWNLIST.
- */
-#define ComboBoxStyle		(CommonComboBoxStyle + Style(CBS_DROPDOWNLIST, 0))
-
-#define SimpleComboBoxStyle	(CommonComboBoxStyle + Style(CBS_SIMPLE, 0))
-#define EditComboBoxStyle	(CommonComboBoxStyle + Style(CBS_DROPDOWN, 0))
-#define ListComboBoxStyle	(ComboBoxStyle)
-
 /**
  * Combo box control. Widget to select an option from a drop down
  * list.
@@ -65,7 +47,13 @@ class VACA_DLL ComboBox : public Widget
 {
 public:
 
-  ComboBox(Widget* parent, Style style = ComboBoxStyle);
+  struct VACA_DLL Styles {
+    static const Style Default;
+    static const Style Simple;
+    static const Style Editable;
+  };
+
+  ComboBox(Widget* parent, Style style = Styles::Default);
   virtual ~ComboBox();
 
   int addItem(const String& text);

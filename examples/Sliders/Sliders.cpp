@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -37,10 +37,10 @@ using namespace Vaca;
 class MainFrame : public Dialog
 {
   Label m_rangeL;
-  Edit m_minValue;
-  Edit m_maxValue;
+  TextEdit m_minValue;
+  TextEdit m_maxValue;
   Label m_valueL;
-  Edit m_value;
+  TextEdit m_value;
   GroupBox m_orienL;
   GroupBox m_sidesL;
   GroupBox m_ticks;
@@ -51,14 +51,15 @@ class MainFrame : public Dialog
   CheckBox m_side2;
   CheckBox m_showTicks;
   Label m_tickFreqL;
-  Edit m_tickFreq;
+  TextEdit m_tickFreq;
   Separator m_sep;
   Slider m_slider;
 
 public:
 
   MainFrame()
-    : Dialog("Sliders", NULL, DialogStyle + ResizableFrameStyle)
+    : Dialog("Sliders", NULL, Dialog::Styles::Default +
+			      Frame::Styles::Resizable)
     , m_rangeL("Range (Min/Max):", this)
     , m_minValue("0", this)
     , m_maxValue("100", this)
@@ -138,7 +139,7 @@ private:
     m_slider.setValue(value);
   }
 
-  void updateEditColors(Edit& edit, bool error)
+  void updateEditColors(TextEdit& edit, bool error)
   {
     edit.setBgColor(error ? Color::Red: Color::White);
     edit.setFgColor(error ? Color::White: Color::Black);

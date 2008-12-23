@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -40,22 +40,6 @@
 #include "Vaca/ImageList.h"
 
 namespace Vaca {
-
-#define TreeViewStyle				\
-  (ChildStyle +					\
-   FocusableStyle +				\
-   ClientEdgeStyle +				\
-   Style(TVS_LINESATROOT | TVS_HASBUTTONS |	\
-	 TVS_HASLINES | TVS_SHOWSELALWAYS |	\
-	 TVS_DISABLEDRAGDROP, 0))
-
-/**
- * With this style in a TreeeView the label of each TreeNode can be edited.
- */
-#define EditLabelTreeViewStyle	(Style(TVS_EDITLABELS, 0))
-
-#define ShowSelectionAlwaysTreeViewStyle	\
-  (Style(TVS_SHOWSELALWAYS, 0))
 
 class TreeViewEvent;
 class ImageList;
@@ -123,13 +107,20 @@ class VACA_DLL TreeView : public Widget
   ImageList m_stateImageList;
 
 public:
+
   /**
    * Iterator to go through all the nodes of the tree (it does a deep
    * scan).
    */
   typedef TreeViewIterator iterator;
 
-  TreeView(Widget* parent, Style style = TreeViewStyle);
+  struct VACA_DLL Styles {
+    static const Style Default;
+    static const Style EditLabel;
+    static const Style ShowSelectionAlways;
+  };
+
+  TreeView(Widget* parent, Style style = Styles::Default);
   virtual ~TreeView();
 
   iterator begin();

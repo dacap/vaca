@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -36,10 +36,6 @@
 
 namespace Vaca {
 
-#define GroupBoxStyle		(ChildStyle +				\
-				 ContainerStyle +			\
-				 Style(BS_GROUPBOX, 0))
-
 /**
  * An edge (with a label optionally) that can be used to group
  * sub-widgets.
@@ -48,7 +44,11 @@ class VACA_DLL GroupBox : public Widget
 {
 public:
 
-  GroupBox(const String& text, Widget* parent, Style style = GroupBoxStyle);
+  struct VACA_DLL Styles {
+    static const Style Default;
+  };
+
+  GroupBox(const String& text, Widget* parent, Style style = Styles::Default);
   virtual ~GroupBox();
 
   virtual Rect getLayoutBounds() const;

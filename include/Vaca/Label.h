@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -38,38 +38,6 @@
 namespace Vaca {
 
 /**
- * Default style for Label.
- *
- * It is ChildStyle with Win32's SS_NOTIFY (to receive mouse notifications).
- */
-#define LabelStyle		(ChildStyle + Style(SS_NOTIFY, 0))
-
-/**
- * A simple label has left-alignment and is not wrapped in multiple lines.
- */
-#define SimpleLabelStyle	(Style(SS_SIMPLE, 0))
-
-/**
- * If the label is too long, ellipsis ("...") is used at the end of
- * each word instead of wrap them.
- */
-#define WordEllipsisLabelStyle	(Style(SS_WORDELLIPSIS, 0))
-
-/**
- * If the label is too long, ellipsis ("...") is used at the end of
- * the text. The text is not wrapped.
- */
-#define EndEllipsisLabelStyle	(Style(SS_ENDELLIPSIS, 0))
-
-/**
- * If the label is too long, ellipsis ("...") is used in the middle of
- * the text. It is useful to show file name paths, because the
- * ellipsis is used trying to show the file name part
- * (String#getFileName). The text is not wrapped.
- */
-#define PathEllipsisLabelStyle	(Style(SS_PATHELLIPSIS, 0))
-
-/**
  * A static label of text. It's just an informative label. Remember to
  * pass the LabelStyle to @link Label#Label Label's constructor@endlink
  * if you derived this class.
@@ -84,7 +52,15 @@ class VACA_DLL Label : public Widget
 {
 public:
 
-  Label(const String& text, Widget* parent, Style style = LabelStyle);
+  struct VACA_DLL Styles {
+    static const Style Default;
+    static const Style Simple;
+    static const Style WordEllipsis;
+    static const Style EndEllipsis;
+    static const Style PathEllipsis;
+  };
+
+  Label(const String& text, Widget* parent, Style style = Styles::Default);
   virtual ~Label();
 
   virtual TextAlign getTextAlign() const;

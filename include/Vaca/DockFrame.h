@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -37,18 +37,6 @@
 #include "Vaca/Event.h"
 
 namespace Vaca {
-
-/**
- * Default style for DockFrame.
- *
- * @win32
- *   Includes WS_POPUP and WS_EX_TOOLWINDOW.
- * @endwin32
- */
-#define DockFrameStyle		(WithCaptionFrameStyle +		\
-				 WithSystemMenuFrameStyle +		\
-				 ResizableFrameStyle +			\
-				 Style(WS_POPUP, WS_EX_TOOLWINDOW))
 
 class DockBar;
 
@@ -85,7 +73,12 @@ class VACA_DLL DockFrame : public Register<DockFrameClass>, public Frame
   DockBar* m_dockBar;
 
 public:
-  DockFrame(DockBar* dockBar, Widget* parent = NULL, Style style = DockFrameStyle);
+
+  struct VACA_DLL Styles {
+    static const Style Default;
+  };
+
+  DockFrame(DockBar* dockBar, Widget* parent = NULL, Style style = Styles::Default);
   virtual ~DockFrame();
 
 protected:

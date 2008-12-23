@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -43,6 +43,7 @@
 #include "Vaca/Size.h"
 #include "Vaca/String.h"
 #include "Vaca/Style.h"
+#include "Vaca/WidgetHit.h"
 
 #include <vector>
 
@@ -61,214 +62,6 @@ class ScrollEvent;
 class ScrollInfo;
 class Widget;
 class WidgetClassName;
-
-//////////////////////////////////////////////////////////////////////
-// Vaca Widget Styles
-
-/**
- * Without a special style.
- */
-#define NoStyle			(Style(0, 0))
-
-/**
- * When widget can be viewed by the user (@msdn{WS_VISIBLE}).
- */
-#define VisibleStyle            (Style(WS_VISIBLE, 0))
-
-/**
- * Basic style for every child that will be inside a container
- * (@msdn{WS_CHILD} | @msdn{WS_VISIBLE}).
- */
-#define ChildStyle              (Style(WS_CHILD | WS_VISIBLE, 0))
-
-/**
- * Style to indicate that a Widget can receive the focus in Dialogs
- * (@msdn{WS_TABSTOP}).
- */
-#define FocusableStyle		(Style(WS_TABSTOP, 0))
-
-/**
- * When the widget needs both scroll bars: horizontal and vertical
- * (@msdn{WS_HSCROLL} | @msdn{WS_VSCROLL}).
- */
-#define ScrollStyle		(Style(WS_HSCROLL | WS_VSCROLL, 0))
-
-/**
- * When the widget needs the horizontal scroll bar (@msdn{WS_HSCROLL}).
- */
-#define HorizontalScrollStyle	(Style(WS_HSCROLL, 0))
-
-/**
- * When the widget needs the veritcal scroll bar (@msdn{WS_VSCROLL}).
- */
-#define VerticalScrollStyle	(Style(WS_VSCROLL, 0))
-
-/**
- * This style makes the widget to have an edge in its client area
- * (@msdn{WS_EX_CLIENTEDGE}). This style is used by text-fields (Edit) to
- * enclose the typed text for example.
- */
-#define ClientEdgeStyle         (Style(0, WS_EX_CLIENTEDGE))
-
-/**
- * Style used for container widgets, that is, widget that contains
- * children (WS_CLIPCHILDREN | WS_EX_CONTROLPARENT).
- */
-#define ContainerStyle		(Style(WS_CLIPCHILDREN,		\
-				       WS_EX_CONTROLPARENT))
-// #define ClipChildrenStyle	(Style(WS_CLIPCHILDREN, 0))
-
-/**
- * Use this style if you want to receive the Widget#onDropFiles event.
- */
-#define AcceptFilesStyle	(Style(0, WS_EX_ACCEPTFILES))
-
-//////////////////////////////////////////////////////////////////////
-
-/**
- * @see WidgetHitTest
- */
-struct WidgetHitTestEnum
-{
-  enum enumeration {
-    Error,
-    Transparent,
-
-    /**
-     * When the mouse is in the background of a Widget.
-     */
-    Nowhere,
-
-    /**
-     * When the mouse is in the client area of a Widget.
-     */
-    Client,
-
-    /**
-     * When the mouse is in the title bar of a Frame.
-     */
-    Caption,
-
-    /**
-     * TODO
-     */
-    SystemMenu,
-
-    /**
-     * TODO
-     */
-    Size,
-
-    /**
-     * When the mouse is in a menu of a Frame.
-     */
-    Menu,
-
-    /**
-     * When the mouse is in a horizontal scroll bar.
-     */
-    HorizontalScroll,
-
-    /**
-     * When the mouse is in a vertical scroll bar.
-     */
-    VerticalScroll,
-
-    /**
-     * When the mouse is in the minimize button.
-     */
-    MinimizeButton,
-
-    /**
-     * When the mouse is in the maximize button.
-     */
-    MaximizeButton,
-
-    /**
-     * When the mouse is in the left side to resize a Frame.
-     */
-    Left,
-
-    /**
-     * When the mouse is in the right side to resize a Frame.
-     */
-    Right,
-
-    /**
-     * When the mouse is in the top side to resize a Frame.
-     */
-    Top,
-
-    /**
-     * When the mouse is in the top-left corner to resize a Frame.
-     */
-    TopLeft,
-
-    /**
-     * When the mouse is in the top-right corner to resize a Frame.
-     */
-    TopRight,
-
-    /**
-     * When the mouse is in the bottom side to resize a Frame.
-     */
-    Bottom,
-
-    /**
-     * When the mouse is in the bottom-left corner to resize a Frame.
-     */
-    BottomLeft,
-
-    /**
-     * When the mouse is in the bottom-right corner to resize a Frame.
-     */
-    BottomRight,
-
-    /**
-     * The cursor is in a border of the widget that doesn't support.
-     */
-    Border,
-    
-    Object,
-    Close,
-    Help
-  };
-  static const enumeration default_value = Nowhere;
-};
-
-/**
- * It indicates a place inside a Widget which the mouse cursor
- * could be.
- *
- * One of the following values:
- * @li WidgetHitTest::Error
- * @li WidgetHitTest::Transparent
- * @li WidgetHitTest::Nowhere
- * @li WidgetHitTest::Client
- * @li WidgetHitTest::Caption
- * @li WidgetHitTest::SystemMenu
- * @li WidgetHitTest::Size
- * @li WidgetHitTest::Menu
- * @li WidgetHitTest::HorizontalScroll
- * @li WidgetHitTest::VerticalScroll
- * @li WidgetHitTest::MinimizeButton
- * @li WidgetHitTest::MaximizeButton
- * @li WidgetHitTest::Left
- * @li WidgetHitTest::Right
- * @li WidgetHitTest::Top
- * @li WidgetHitTest::TopLeft
- * @li WidgetHitTest::TopRight
- * @li WidgetHitTest::Bottom
- * @li WidgetHitTest::BottomLeft
- * @li WidgetHitTest::BottomRight
- * @li WidgetHitTest::Border
- * @li WidgetHitTest::Object
- * @li WidgetHitTest::Close
- * @li WidgetHitTest::Help
- */
-typedef Enum<WidgetHitTestEnum> WidgetHitTest;
-
-//////////////////////////////////////////////////////////////////////
 
 /**
  * This exception is thrown when the operating system can't create the Widget.
@@ -302,7 +95,7 @@ public:
  */
 class VACA_DLL Widget : public Component
 {
-  friend class VACA_DLL MakeWidgetRef;
+  friend class MakeWidgetRef;
   friend VACA_DLL void delete_widget(Widget* widget);
   
 public:
@@ -314,10 +107,27 @@ public:
   typedef std::vector<Widget*> Container;
 
   // ============================================================
-  // Members
+  // STYLES
   // ============================================================
 
+  struct VACA_DLL Styles {
+    static const Style None;
+    static const Style Visible;
+    static const Style Child;
+    static const Style Focusable;
+    static const Style Scroll;
+    static const Style HorizontalScroll;
+    static const Style VerticalScroll;
+    static const Style ClientEdge;
+    static const Style Container;
+    static const Style AcceptFiles;
+  };
+
 private:
+
+  // ============================================================
+  // PRIVATE MEMBERS
+  // ============================================================
 
   /**
    * The window handler to use with the Windows API.
@@ -424,14 +234,14 @@ private:
    * Win32's DestroyWindow function.
    */
   void (*m_destroyHWNDProc)(HWND hwnd);
-
+  
 public:
 
   // ============================================================
   // CTOR & DTOR
   // ============================================================
 
-  Widget(const WidgetClassName& className, Widget* parent, Style style = NoStyle);
+  Widget(const WidgetClassName& className, Widget* parent, Style style);
   virtual ~Widget();
 
   // ============================================================

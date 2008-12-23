@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -36,9 +36,9 @@ using namespace Vaca;
 class MainFrame : public Dialog
 {
   Label m_usernameLabel;
-  Edit m_usernameEdit;
+  TextEdit m_usernameEdit;
   Label m_passwordLabel;
-  PasswordEdit m_passwordEdit;
+  TextEdit m_passwordEdit;
   CheckBox m_administrator;
   Button m_loginButton;
   Button m_cancelButton;
@@ -50,7 +50,7 @@ public:
     , m_usernameLabel("&Username:", this)
     , m_usernameEdit("", this)
     , m_passwordLabel("&Password:", this)
-    , m_passwordEdit("", this)
+    , m_passwordEdit("", this, TextEdit::Styles::Password)
     , m_administrator("&Administrador account", this)
     , m_loginButton("&Login", this)
     , m_cancelButton("&Cancel", this)

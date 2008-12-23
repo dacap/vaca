@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -36,14 +36,15 @@ using namespace Vaca;
 
 //////////////////////////////////////////////////////////////////////
 
-class Console : public MultilineEdit
+class Console : public TextEdit
 {
   Font m_font;
   
 public:
 
   Console(Widget* parent)
-    : MultilineEdit("", parent, MultilineEditStyle + ScrollStyle)
+    : TextEdit("", parent, TextEdit::Styles::TextArea +
+			   Widget::Styles::Scroll)
     , m_font("Courier New", 10)
   {
     setFont(m_font);
@@ -65,6 +66,7 @@ class MainFrame : public Frame
 {
   Console m_console;
   MenuItem* m_menuItem2;
+  MenuItem* m_menuItem3;
 
 public:
 
@@ -76,8 +78,9 @@ public:
     setMenuBar(new MenuBar(IDM_MENUBAR));
     setLayout(new ClientLayout);
 
-    // get the Item2
+    // get Item2 and Item3
     m_menuItem2 = getMenuBar()->getMenuItemById(IDM_ITEM2);
+    m_menuItem3 = getMenuBar()->getMenuItemById(IDM_ITEM3);
 
     // disable Item4
     getMenuBar()->getMenuItemById(IDM_ITEM4)->setEnabled(false);
@@ -102,8 +105,12 @@ private:
 
       case IDM_ITEM3:
 	m_console.println("Item3 selected (change Item2 state)");
-	// here we modify the state of the MenuItem directly
+
+	// here we modify the selected-state of the MenuItem directly
 	m_menuItem2->setEnabled(!m_menuItem2->isEnabled());
+
+	// change the checked-state of IDM_ITEM3
+	m_menuItem3->setChecked(m_menuItem2->isEnabled());
 	break;
 
       default:
@@ -118,18 +125,11 @@ private:
 
 //////////////////////////////////////////////////////////////////////
 
-class Example : public Application
-{
-  MainFrame m_mainFrame;
-public:
-  virtual void main() {
-    m_mainFrame.setVisible(true);
-  }
-};
-
 int VACA_MAIN()
 {
-  Example app;
+  Application app;
+  MainFrame frm;
+  frm.setVisible(true);
   app.run();
   return 0;
 }

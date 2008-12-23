@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -91,7 +91,7 @@ class InsertSeedDialog : public Dialog
   Panel mTop;
   Panel mBottom;
   Label mSeedLabel;
-  Edit mSeedEdit;
+  TextEdit mSeedEdit;
   Button mOk;
   Button mCancel;
 
@@ -206,9 +206,9 @@ public:
 
   // create the sudoku window
   MainFrame()
-    : Frame("Sudoku", NULL, FrameStyle
-			    - MaximizableFrameStyle // can't be maximized
-			    - ResizableFrameStyle)  // can't change the size
+    : Frame("Sudoku", NULL, Frame::Styles::Default
+			    - Frame::Styles::Maximizable // can't be maximized
+			    - Frame::Styles::Resizable)  // can't change the size
     , m_font("Verdana", 10)
     , m_fontSmall("Verdana", 7)
     , m_fontBold("Verdana", 10, FontStyle::Bold)

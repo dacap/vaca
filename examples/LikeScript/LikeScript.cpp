@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -34,8 +34,8 @@
 using namespace Vaca;
 
 void configure_frame(Frame& frame);
-void configure_editor(Edit& edit, Font& normalFont, Font& hotFont, int preferredWidth);
-void configure_num_editor(Edit& edit);
+void configure_editor(TextEdit& edit, Font& normalFont, Font& hotFont, int preferredWidth);
+void configure_num_editor(TextEdit& edit);
 void configure_buttons(Button& ok, Button& cancel);
 void filter_num_keys(KeyEvent& ev);
 void msg_ok(Widget* owner);
@@ -46,17 +46,18 @@ int VACA_MAIN()
 
   // creates a Dialog that looks like a Frame
   Dialog frame("Like a script", NULL,
-	       DialogStyle
-	       + ResizableFrameStyle
-	       + MinimizableFrameStyle
-	       + MaximizableFrameStyle);
+	       Dialog::Styles::Default
+	       + Frame::Styles::Resizable
+	       + Frame::Styles::Minimizable
+	       + Frame::Styles::Maximizable);
 
   Label firstNameLabel("First name:", &frame);
   Label lastNameLabel("Last name:", &frame);
   Label ageLabel("Age:", &frame);
-  Edit firstName("", &frame);
-  Edit lastName("", &frame);
-  Edit age("", &frame, EditStyle + RightAlignedEditStyle);
+  TextEdit firstName("", &frame);
+  TextEdit lastName("", &frame);
+  TextEdit age("", &frame, TextEdit::Styles::Default +
+			   TextEdit::Styles::RightAligned);
   Button ok("&OK", &frame);
   Button cancel("&Cancel", &frame);
   Font font1("Courier New", 10);
@@ -103,7 +104,7 @@ void configure_frame(Frame &frame)
   frame.Resizing.connect(limit_frame_resizing(&frame));
 }
 
-void configure_editor(Edit &edit, Font &normalFont, Font &hotFont, int preferredWidth)
+void configure_editor(TextEdit &edit, Font &normalFont, Font &hotFont, int preferredWidth)
 {
   edit.GotFocus.connect(Bind(&Widget::setFont, &edit, hotFont));
   edit.LostFocus.connect(Bind(&Widget::setFont, &edit, normalFont));
@@ -117,7 +118,7 @@ void configure_editor(Edit &edit, Font &normalFont, Font &hotFont, int preferred
   edit.setPreferredSize(Size(preferredWidth, edit.getPreferredSize().h));
 }
 
-void configure_num_editor(Edit &edit)
+void configure_num_editor(TextEdit &edit)
 {
   edit.KeyDown.connect(&filter_num_keys);
 }

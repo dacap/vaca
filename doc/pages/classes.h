@@ -81,7 +81,6 @@ namespace Vaca {
   @itemRow{DragListBox}
   @itemRow{Edit}
   @itemRow{Frame}
-  @itemRow{GroupBox}
   @itemRow{Label}
   @itemRow{LinkLabel}
   @itemRow{ListBox}
@@ -89,7 +88,6 @@ namespace Vaca {
   @itemRow{Panel}
   @itemRow{PasswordEdit}
   @itemRow{RadioButton}
-  @itemRow{Separator}
   @itemRow{Slider}
   @itemRow{StatusBar}
   @itemRow{ToggleButton}
@@ -101,6 +99,10 @@ namespace Vaca {
 @titleRow{Customizable Widgets}
   @itemRow{CustomButton}
   @itemRow{CustomLabel}
+@titleRow{Separators}
+  @itemRow{GroupBox}
+  @itemRow{Separator}
+  @itemRow{SplitBar}
 @titleRow{Dialogs}
   @itemRow{ColorDialog}
   @itemRow{CommonDialog}

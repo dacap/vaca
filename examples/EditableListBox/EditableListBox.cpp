@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, 2008, David A. Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@
 //   notice, this list of conditions and the following disclaimer in
 //   the documentation and/or other materials provided with the
 //   distribution.
-// * Neither the name of the Vaca nor the names of its contributors
+// * Neither the name of the author nor the names of its contributors
 //   may be used to endorse or promote products derived from this
 //   software without specific prior written permission.
 //
@@ -38,7 +38,7 @@ using namespace Vaca;
 
 class EditableListBox : public ListBox
 {
-  Edit *m_edit;
+  TextEdit* m_edit;
   int m_editingItem;
 
 public:
@@ -95,7 +95,8 @@ private:
   {
     if (index >= 0 && m_edit == NULL) {
       // create an Edit widget without client-edge
-      m_edit = new Edit(getItemText(index), this, EditStyle - ClientEdgeStyle);
+      m_edit = new TextEdit(getItemText(index), this, TextEdit::Styles::Default -
+						      Widget::Styles::ClientEdge);
       m_edit->KeyDown.connect(&EditableListBox::onEditKeyDown, this);
       m_edit->LostFocus.connect(&EditableListBox::onEditLostFocus, this);
       m_edit->selectAll();
@@ -113,7 +114,7 @@ private:
       // we need to reset the m_edit variable to avoid calling two
       // times this destruction process
       int editingItem = m_editingItem;
-      Edit *edit = m_edit;
+      TextEdit *edit = m_edit;
       m_edit = NULL;
 
       // this could produce a "onBeforePosChange" event

@@ -417,7 +417,7 @@ void Thread::processMessage(Message& message)
     HWND hactive = GetActiveWindow();
     if (hactive != NULL && hactive != msg->hwnd) {
       Widget* activeWidget = Widget::fromHandle(hactive);
-      if (activeWidget->preTranslateMessage(message))
+      if (activeWidget != NULL && activeWidget->preTranslateMessage(message))
 	return;
     }
 

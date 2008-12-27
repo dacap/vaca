@@ -57,6 +57,7 @@ class Event;
 class KeyEvent;
 class Layout;
 class MakeWidgetRef;
+class Message;
 class MouseEvent;
 class ScrollEvent;
 class ScrollInfo;
@@ -389,6 +390,13 @@ public:
   Command* findCommandById(CommandId id);
 
   // ===============================================================
+  // MESSAGES
+  // ===============================================================
+
+  void enqueueMessage(const Message& message);
+  virtual bool preTranslateMessage(Message& message);
+
+  // ===============================================================
   // WIN32 SPECIFIC
   // ===============================================================
 
@@ -398,7 +406,6 @@ public:
   static Widget* fromHandle(HWND hwnd);
   static WNDPROC getGlobalWndProc();
   
-  virtual bool preTranslateMessage(Message& msg);
   LRESULT sendMessage(UINT message, WPARAM wParam, LPARAM lParam);
 
   // TODO public? I don't think so

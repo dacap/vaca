@@ -1520,6 +1520,39 @@ Command* Widget::findCommandById(CommandId id)
 }
 
 /**
+ * This routine is called before to dispatch the message.
+ *
+ * You can hook this virtual method to receive custom messages from
+ * another threads.
+ *
+ * @win32 
+ *   For example, it is used by Dialog to call @msdn{IsDialogMessage}.
+ * @endwin32
+ *
+ * @return
+ *    True if the message was translated and sent, so the GUI
+ *    thread doesn't need to dispatch it.
+ */
+bool Widget::preTranslateMessage(Message& message)
+{
+  if (m_parent != NULL)
+    return m_parent->preTranslateMessage(message);
+  else
+    return false;
+}
+
+/**
+ * Enqueue a message for the widget to be processed by its thread.
+ */
+void Widget::enqueueMessage(const Message& message)
+{
+  ::PostMessage(getHandle(),
+		message.m_msg.message,
+		message.m_msg.wParam,
+		message.m_msg.lParam);
+}
+
+/**
  * Returns the HWND of this Widget. This can't be NULL.
  *
  * @see fromHandle, getParentHandle
@@ -1581,6 +1614,7 @@ WNDPROC Widget::getGlobalWndProc()
 // EVENTS
 // ===============================================================
 
+
 /**
  * It should calculates the preferred size for this widget.
  *
@@ -2882,25 +2916,6 @@ void Widget::setDestroyHWNDProc(void (*proc)(HWND))
 }
 
 /**
- * This routine is called before to dispatch the message.
- *
- * @win32 
- *   It's used by Dialog to call @msdn{IsDialogMessage} for example.
- * @endwin32
- *
- * @return
- *    True if the message was translated and sent, so the GUI
- *    thread doesn't need to dispatch it.
- */
-bool Widget::preTranslateMessage(Message& msg)
-{
-  if (m_parent != NULL)
-    return m_parent->preTranslateMessage(msg);
-  else
-    return false;
-}
-
-/**
  * Sends a message to the widget.
  *
  * @win32
@@ -2920,20 +2935,20 @@ LRESULT Widget::sendMessage(UINT message, WPARAM wParam, LPARAM lParam)
  * It's unique goal is to get the Widget pointer from HWND
  * using #fromHandle, and to call its #wndProc method.
  */
-LRESULT CALLBACK Widget::globalWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK Widget::globalWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
   Widget* widget = Widget::fromHandle(hwnd);
 
 #ifdef REPORT_MESSAGES
   String preString =
-    "Message "+String::fromInt(message)+" for " +
+    "Message "+String::fromInt(msg)+" for " +
     String::fromInt(reinterpret_cast<int>(widget != NULL ? widget:
 							   // getThreadData()->outsideWidget
 							   __vaca_get_outside_widget()
 					  ), 16, 8);
   
   String msgString = "Unknown";
-  switch (message) {
+  switch (msg) {
     case WM_ACTIVATE: msgString = "WM_ACTIVATE"; break;
     case WM_ACTIVATEAPP: msgString = "WM_ACTIVATEAPP"; break;
     case WM_APP: msgString = "WM_APP"; break;
@@ -3136,9 +3151,9 @@ LRESULT CALLBACK Widget::globalWndProc(HWND hwnd, UINT message, WPARAM wParam, L
     widget->m_lparam = lParam;
 
     // window procedures
-    used = widget->wndProc(message, wParam, lParam, lResult);
+    used = widget->wndProc(msg, wParam, lParam, lResult);
     if (!used)
-      lResult = widget->defWndProc(message, wParam, lParam);
+      lResult = widget->defWndProc(msg, wParam, lParam);
 
     widget->m_wparam = old_wparam;
     widget->m_lparam = old_lparam;
@@ -3151,13 +3166,13 @@ LRESULT CALLBACK Widget::globalWndProc(HWND hwnd, UINT message, WPARAM wParam, L
     if (widget != NULL) {
       assert(hwnd != NULL);
       widget->m_handle = hwnd;
-      return widget->defWndProc(message, wParam, lParam);
+      return widget->defWndProc(msg, wParam, lParam);
     }
   }
 
   // never should be here...
 
-  VACA_TRACE("------------ LOST MESSAGE: %p %d %d %d ---------------\n", hwnd, message, wParam, lParam);
+  VACA_TRACE("------------ LOST MESSAGE: %p %d %d %d ---------------\n", hwnd, msg, wParam, lParam);
   Beep(900, 100);
 
   return FALSE;

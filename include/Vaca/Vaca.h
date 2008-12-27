@@ -93,6 +93,7 @@
 #include "Vaca/Mdi.h"
 #include "Vaca/Menu.h"
 #include "Vaca/MenuItemEvent.h"
+#include "Vaca/Message.h"
 #include "Vaca/MouseEvent.h"
 #include "Vaca/MsgBox.h"
 #include "Vaca/Mutex.h"

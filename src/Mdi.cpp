@@ -325,12 +325,12 @@ MdiChild* MdiClient::getChildById(int wID)
   return NULL;
 }
 
-bool MdiClient::preTranslateMessage(Message& msg)
+bool MdiClient::preTranslateMessage(Message& message)
 {
-  if (Widget::preTranslateMessage(msg))
+  if (Widget::preTranslateMessage(message))
     return true;
 
-  if (TranslateMDISysAccel(getHandle(), &msg))
+  if (TranslateMDISysAccel(getHandle(), (LPMSG)message))
     return true;
 
   return false;

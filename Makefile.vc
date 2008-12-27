@@ -123,18 +123,18 @@ OBJS = obj/Anchor.obj obj/AnchorLayout.obj obj/Application.obj		\
   obj/HttpRequest.obj obj/Icon.obj obj/Image.obj obj/ImageList.obj	\
   obj/KeyEvent.obj obj/Keys.obj obj/Label.obj obj/Layout.obj		\
   obj/LinkLabel.obj obj/ListBox.obj obj/ListView.obj obj/Mdi.obj	\
-  obj/Menu.obj obj/MenuItemEvent.obj obj/MouseEvent.obj obj/MsgBox.obj	\
-  obj/Mutex.obj obj/Panel.obj obj/Pen.obj obj/Point.obj			\
-  obj/ProgressBar.obj obj/RadioButton.obj obj/ReBar.obj obj/Rect.obj	\
-  obj/Referenceable.obj obj/Region.obj obj/ResourceId.obj		\
-  obj/Scintilla.obj obj/ScrollEvent.obj obj/ScrollInfo.obj		\
-  obj/Separator.obj obj/Size.obj obj/Slider.obj obj/SpinButton.obj	\
-  obj/Spinner.obj obj/SplitBar.obj obj/StatusBar.obj obj/String.obj	\
-  obj/Style.obj obj/Styles.obj obj/System.obj obj/Tab.obj		\
-  obj/TextEdit.obj obj/Thread.obj obj/TimePoint.obj obj/Timer.obj	\
-  obj/ToggleButton.obj obj/ToolBar.obj obj/TreeNode.obj			\
-  obj/TreeView.obj obj/TreeViewEvent.obj obj/Vaca.obj obj/Widget.obj	\
-  obj/WidgetClass.obj
+  obj/Menu.obj obj/MenuItemEvent.obj obj/MouseEvent.obj			\
+  obj/Message.obj obj/MsgBox.obj obj/Mutex.obj obj/Panel.obj		\
+  obj/Pen.obj obj/Point.obj obj/ProgressBar.obj obj/RadioButton.obj	\
+  obj/ReBar.obj obj/Rect.obj obj/Referenceable.obj obj/Region.obj	\
+  obj/ResourceId.obj obj/Scintilla.obj obj/ScrollEvent.obj		\
+  obj/ScrollInfo.obj obj/Separator.obj obj/Size.obj obj/Slider.obj	\
+  obj/SpinButton.obj obj/Spinner.obj obj/SplitBar.obj			\
+  obj/StatusBar.obj obj/String.obj obj/Style.obj obj/Styles.obj		\
+  obj/System.obj obj/Tab.obj obj/TextEdit.obj obj/Thread.obj		\
+  obj/TimePoint.obj obj/Timer.obj obj/ToggleButton.obj obj/ToolBar.obj	\
+  obj/TreeNode.obj obj/TreeView.obj obj/TreeViewEvent.obj obj/Vaca.obj	\
+  obj/Widget.obj obj/WidgetClass.obj
 
 EXAMPLES_EXE = bin/AnchorLayouts.exe bin/AutoCompletion.exe		\
   bin/Bixes.exe bin/BouncingBalls.exe bin/BoxLayouts.exe		\

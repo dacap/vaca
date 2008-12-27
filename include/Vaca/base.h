@@ -137,18 +137,6 @@ typedef unsigned int CommandId;
  */
 typedef unsigned int ThreadId;
 
-/**
- * A message that comes from the operating system.
- *
- * You should use a Message like a black-box, which means
- * that you can't see and ask for any property about it.
- *
- * @win32
- *   This is just a @msdn{MSG}.
- * @endwin32
- */
-typedef MSG Message;
-
 //////////////////////////////////////////////////////////////////////
 
 /**

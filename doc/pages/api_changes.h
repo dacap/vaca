@@ -54,6 +54,32 @@ New signature:
 Bix::Bix(int flags, int matrixColumns)
 @endcode
 @endChange
+@beginChange{Thread::setPriority - Renamed/Signature Changed}
+Before the "priority" argument was from Win32 API:
+@code
+void Thread::setPriority(int priority);
+Where:
+  priority = THREAD_PRIORITY_IDLE
+  priority = THREAD_PRIORITY_LOWEST
+  priority = THREAD_PRIORITY_BELOW_NORMAL
+  priority = THREAD_PRIORITY_NORMAL
+  priority = THREAD_PRIORITY_ABOVE_NORMAL
+  priority = THREAD_PRIORITY_HIGHEST
+  priority = THREAD_PRIORITY_TIME_CRITICAL
+@endcode
+Now it is:
+@code
+void Thread::setThreadPriority(ThreadPriority priority);
+Where:
+  priority = ThreadPriority::Idle
+  priority = ThreadPriority::Lowest
+  priority = ThreadPriority::Low
+  priority = ThreadPriority::Normal
+  priority = ThreadPriority::High
+  priority = ThreadPriority::Highest
+  priority = ThreadPriority::TimeCritical
+@endcode
+@endChange
 @beginChange{onScroll - Signature Changed}
 
 Old signature:
@@ -101,9 +127,13 @@ header file.
 @endChange
 @beginChange{New Classes/Methods}
 
+@li Application::setProcessPriority
 @li String::encodeUrl
 @li String::decodeUrl
 @li Thread::sleep
+@li Thread::enqueueMessage
+@li Widget::enqueueMessage
+@li Widget::enqueueMessage
 @li Added new header file "Vaca/ScrollEvent.h"
 @li New widgets: SplitBar
 

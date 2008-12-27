@@ -114,7 +114,7 @@ public:
   // void maximize(MdiChild* window);
   // void restore(MdiChild* window);
 
-  virtual bool preTranslateMessage(Message& msg);
+  virtual bool preTranslateMessage(Message& message);
 
 private:
   virtual HWND createHandle(LPCTSTR className, Widget* parent, Style style);

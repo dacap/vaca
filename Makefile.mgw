@@ -59,13 +59,13 @@ LIB_SOURCES = Anchor AnchorLayout Application BandedDockArea		\
 	      FileDialog FindTextDialog Font FontDialog Frame Graphics	\
 	      GraphicsPath GroupBox HttpRequest Icon Image ImageList	\
 	      KeyEvent Keys Label Layout LinkLabel ListBox ListView	\
-	      Mdi Menu MenuItemEvent MouseEvent MsgBox Mutex Panel Pen	\
-	      Point ProgressBar RadioButton ReBar Rect Referenceable	\
-	      Region ResourceId Scintilla ScrollEvent ScrollInfo	\
-	      Separator Size Slider SpinButton Spinner SplitBar		\
-	      StatusBar String Style Styles System Tab TextEdit Thread	\
-	      TimePoint Timer ToggleButton ToolBar TreeNode TreeView	\
-	      TreeViewEvent Vaca Widget WidgetClass
+	      Mdi Menu MenuItemEvent Message MouseEvent MsgBox Mutex	\
+	      Panel Pen Point ProgressBar RadioButton ReBar Rect	\
+	      Referenceable Region ResourceId Scintilla ScrollEvent	\
+	      ScrollInfo Separator Size Slider SpinButton Spinner	\
+	      SplitBar StatusBar String Style Styles System Tab		\
+	      TextEdit Thread TimePoint Timer ToggleButton ToolBar	\
+	      TreeNode TreeView TreeViewEvent Vaca Widget WidgetClass
 
 ifndef EXAMPLES
 EXAMPLES = AnchorLayouts AutoCompletion Bixes BouncingBalls BoxLayouts	\

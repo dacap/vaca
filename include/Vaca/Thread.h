@@ -34,6 +34,7 @@
 
 #include "Vaca/base.h"
 #include "Vaca/Exception.h"
+#include "Vaca/Message.h"
 #include "Vaca/NonCopyable.h"
 #include "Vaca/Slot.h"
 
@@ -41,6 +42,43 @@ namespace Vaca {
 
 class Frame;
 class Widget;
+
+//////////////////////////////////////////////////////////////////////
+
+/**
+ * It's like a namespace for ThreadPriority.
+ * 
+ * @see ThreadPriority
+ */
+struct ThreadPriorityEnum
+{
+  enum enumeration {
+    Idle,
+    Lowest,
+    Low,
+    Normal,
+    High,
+    Highest,
+    TimeCritical,
+  };
+  static const enumeration default_value = Normal;
+};
+
+/**
+ * Thread priority.
+ *
+ * One of the following values:
+ * @li ThreadPriority::Idle
+ * @li ThreadPriority::Lowest
+ * @li ThreadPriority::Low
+ * @li ThreadPriority::Normal
+ * @li ThreadPriority::High
+ * @li ThreadPriority::Highest
+ * @li ThreadPriority::TimeCritical
+ */
+typedef Enum<ThreadPriorityEnum> ThreadPriority;
+
+//////////////////////////////////////////////////////////////////////
 
 /**
  * This exception is thrown when a new Thread couldn't be created.
@@ -96,28 +134,28 @@ public:
   void join();
   bool isJoinable() const;
 
-  void setPriority(int priority);
+  void setThreadPriority(ThreadPriority priority);
 
-  //////////////////////////////////////////////////////////////////////
-  // functions for the current thread
+  // ===============================================================
+  // MESSAGES
+  // ===============================================================
 
+  void enqueueMessage(const Message& message);
+  
   static void doMessageLoop();
   static void doMessageLoopFor(Widget* widget);
-
   static void pumpMessageQueue();
   static void breakMessageLoop();
 
   static void yield();
   static void sleep(int msecs);
 
-protected:
-
   static bool getMessage(Message& msg);
   static bool peekMessage(Message& msg);
   static void processMessage(Message& msg);
-  static bool preTranslateMessage(Message& msg);
 
 private:
+  static bool preTranslateMessage(Message& message);
 
   void _Thread(const Slot0<void>& slot);
   static void addFrame(Frame* frame);

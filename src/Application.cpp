@@ -122,6 +122,27 @@ HINSTANCE Application::getHandle()
 }
 
 /**
+ * Changes the priority of the process respecting to all other
+ * processes currently running on the operating system.
+ *
+ * @see Thread#setThreadPriority
+ */
+void Application::setProcessPriority(ProcessPriority priority)
+{
+  int nPriority;
+  switch (priority) {
+    case ProcessPriority::Idle:     nPriority = IDLE_PRIORITY_CLASS; break;
+    case ProcessPriority::Normal:   nPriority = NORMAL_PRIORITY_CLASS; break;
+    case ProcessPriority::High:     nPriority = HIGH_PRIORITY_CLASS; break;
+    case ProcessPriority::RealTime: nPriority = REALTIME_PRIORITY_CLASS; break;
+    default:
+      assert(false);	      // TODO throw invalid argument exception
+      return;
+  }
+  ::SetPriorityClass(::GetCurrentProcess(), nPriority);
+}
+
+/**
  * The common way to start the application. You should call this
  * method from @e main or @e WinMain, using the instance of
  * Application.

@@ -103,7 +103,7 @@ public:
 
   virtual bool doModal();
 
-  virtual bool preTranslateMessage(Message& msg);
+  virtual bool preTranslateMessage(Message& message);
 
   void defaultOkAction();
   void defaultCancelAction();

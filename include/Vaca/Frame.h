@@ -118,7 +118,7 @@ public:
   Signal1<void, CloseEvent&> Close;   ///< @see onClose
   Signal2<void, CardinalDirection, Rect&> Resizing; ///< @see onResizing
 
-  virtual bool preTranslateMessage(Message& msg);
+  virtual bool preTranslateMessage(Message& message);
 
 protected:
   // events

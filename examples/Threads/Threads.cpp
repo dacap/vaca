@@ -34,66 +34,92 @@
 
 using namespace Vaca;
 
-class Clock : public Panel
+Message print_message("Vaca.Message.Print");
+Message die_message("Vaca.Message.Die");
+
+//////////////////////////////////////////////////////////////////////
+
+void working_thread(Widget* dest)
 {
-  Timer m_timer;
-  Label m_label;
-  
+  while (true) {
+    Thread::sleep(1000);	// do intensive I/O work
+
+    // after doing something, we can notify the main thread for a
+    // event (like disk error, end-of-file, one packet was received,
+    // etc.); here we are enqueuing a message towards the widget...
+    dest->enqueueMessage(print_message);
+
+    // look if the main thread send us a message to stop working
+    Message message;
+    if (Thread::peekMessage(message) && message == die_message)
+      break;
+  }
+}
+
+//////////////////////////////////////////////////////////////////////
+
+class MainFrame : public Frame
+{
+  TextEdit m_text;
+
 public:
 
-  Clock(Widget* parent)
-    : Panel(parent)
-    , m_timer(1000)
-    , m_label("", this)
+  MainFrame()
+    : Frame("Threads")
+    , m_text("", this, TextEdit::Styles::TextArea +
+		       Widget::Styles::Scroll)
   {
     setLayout(new ClientLayout);
-    m_label.setBgColor(Color::White);
-
-    m_timer.Tick.connect(&Clock::onTick, this);
-    m_timer.start();
   }
 
-private:
-
-  void onTick()
+  virtual bool preTranslateMessage(Message& message)
   {
-    std::tm now = *std::localtime(NULL);
-    m_label.setText(String::format("%02d/%02d/%04d %02:%02.%02",
-				   now.tm_mon+1, now.tm_mday, now.tm_year+1900,
-				   now.tm_hour, now.tm_min, now.tm_sec));
+    if (Frame::preTranslateMessage(message))
+      return true;
+
+    if (message == print_message) {
+      print("A message from the working thread was received...\r\n");
+      return true;
+    }
+
+    return false;
   }
-   
+
+  void print(const String& str)
+  {
+    m_text.setText(m_text.getText() + str);
+    m_text.scrollLines(m_text.getLineCount());
+  }
 
 };
 
-void create_clock(Frame* parent)
-{
-  // Clock clk(parent);
-  // Frame frm(title);                    // creates the main window
-  // Label lbl("Hello World!", &frm);     // creates a label for that window
-  // frm.setLayout(new ClientLayout);     // the label'll use the client area
-  // frm.setSize(frm.getPreferredSize()); // set the preferred size
-  // frm.setVisible(true);                // make the window visible
-  // Thread::doMessageLoop();
-}
+//////////////////////////////////////////////////////////////////////
 
 int VACA_MAIN()
 {
   Application app;
-  Frame frm("Threads");
-  Panel panel(&frm);
-  Thread thread(Bind<void>(&create_clock, &frm));
-
+  MainFrame frm;
   frm.setVisible(true);
 
-  app.run();
+  Thread thread(Bind<void>(&working_thread, &frm));
 
-  // // join all threads
-  // for (it=threads.begin(); it!=threads.end(); ++it) {
-  //   Thread* t = *it;
-  //   t->join();
-  //   delete t;
-  // }
+  // process the message queue of the main thread
+  Thread::doMessageLoop(); // ...it is the same to call "app.run()"
+
+  // the message loop stops when the frame is closed, so we can make
+  // it visible again to show a final message of "we are trying to
+  // kill the working thread"...
+  frm.setVisible(true);
+  frm.print("Killing working thread...");
+  frm.update();
+
+  // here we enqueue a message to the thread (this message has to be
+  // processed by the thread itself, because it is not going no any
+  // specific widget)...
+  thread.enqueueMessage(die_message);
+
+  // we have to wait to the thread to finish correctly
+  thread.join();
 
   return 0;
 }

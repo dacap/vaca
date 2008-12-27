@@ -231,22 +231,51 @@ bool Thread::isJoinable() const
 /**
  * Sets the priority of the thread.
  *
- * @todo Remove this Win32 entry point!!!
- * 
- * @param priority Can be one of the following values:
- * @li THREAD_PRIORITY_ABOVE_NORMAL
- * @li THREAD_PRIORITY_BELOW_NORMAL
- * @li THREAD_PRIORITY_HIGHEST
- * @li THREAD_PRIORITY_IDLE
- * @li THREAD_PRIORITY_LOWEST
- * @li THREAD_PRIORITY_NORMAL
- * @li THREAD_PRIORITY_TIME_CRITICAL
+ * Thread priority is relative to the other threads of the same
+ * process. If you want to change the priority of the entire process
+ * (respecting to all other processes) you have to use the
+ * Application#setProcessPriority method. In other words, you should
+ * use this method only if you have more than one thread in your
+ * application and you want to make run faster one thread than other.
+ *
+ * @param priority
+ *   Can be one of the following values:
+ *   One of the following values:
+ *   @li ThreadPriority::Idle
+ *   @li ThreadPriority::Lowest
+ *   @li ThreadPriority::Low
+ *   @li ThreadPriority::Normal
+ *   @li ThreadPriority::High
+ *   @li ThreadPriority::Highest
+ *   @li ThreadPriority::TimeCritical
+ *   
+ * @see Application#setProcessPriority
  */
-void Thread::setPriority(int priority)
+void Thread::setThreadPriority(ThreadPriority priority)
 {
   assert(m_handle != NULL);
- 
-  SetThreadPriority(m_handle, priority);
+
+  int nPriority;
+  switch (priority) {
+    case ThreadPriority::Idle:         nPriority = THREAD_PRIORITY_IDLE; break;
+    case ThreadPriority::Lowest:       nPriority = THREAD_PRIORITY_LOWEST; break;
+    case ThreadPriority::Low:          nPriority = THREAD_PRIORITY_BELOW_NORMAL; break;
+    case ThreadPriority::Normal:       nPriority = THREAD_PRIORITY_NORMAL; break;
+    case ThreadPriority::High:         nPriority = THREAD_PRIORITY_ABOVE_NORMAL; break;
+    case ThreadPriority::Highest:      nPriority = THREAD_PRIORITY_HIGHEST; break;
+    case ThreadPriority::TimeCritical: nPriority = THREAD_PRIORITY_TIME_CRITICAL; break;
+    default:
+      assert(false);	      // TODO throw invalid argument exception
+      return;
+  }
+
+  ::SetThreadPriority(m_handle, nPriority);
+}
+
+void Thread::enqueueMessage(const Message& message)
+{
+  MSG const* msg = (MSG const*)message;
+  ::PostThreadMessage(m_id, msg->message, msg->wParam, msg->lParam);
 }
 
 /**
@@ -280,9 +309,9 @@ void Thread::doMessageLoopFor(Widget* widget)
     ::EnableWindow(hparent, FALSE);
 
   // message loop
-  Message msg;
-  while (widget->isVisible() && getMessage(msg))
-    processMessage(msg);
+  Message message;
+  while (widget->isVisible() && getMessage(message))
+    processMessage(message);
 
   // enable the parent HWND
   if (hparent)
@@ -317,11 +346,11 @@ void Thread::sleep(int msecs)
  * until a message is received from the operating system.
  * 
  * @return 
- *   True if the @a msg parameter was filled (because a message was received)
+ *   True if the @a message parameter was filled (because a message was received)
  *   or false if there aren't more visible @link Frame frames@endlink
  *   to dispatch messages.
  */
-bool Thread::getMessage(Message& msg)
+bool Thread::getMessage(Message& message)
 {
   ThreadData* data = getThreadData();
 
@@ -345,15 +374,16 @@ bool Thread::getMessage(Message& msg)
   }
 
   // get the message from the queue
-  msg.hwnd = NULL;
-  BOOL bRet = ::GetMessage(&msg, NULL, 0, 0);
+  LPMSG msg = (LPMSG)message;
+  msg->hwnd = NULL;
+  BOOL bRet = ::GetMessage(msg, NULL, 0, 0);
 
   // WM_QUIT received?
   if (bRet == 0)
     return false;
 
   // WM_NULL message... maybe Timers or CallInNextRound
-  if (msg.message == WM_NULL)
+  if (msg->message == WM_NULL)
     Timer::pollTimers();
 
   return true;
@@ -369,29 +399,32 @@ bool Thread::getMessage(Message& msg)
  *   Returns true if the @a msg parameter was filled with the next message
  *   in the queue or false if the queue was empty.
  */
-bool Thread::peekMessage(Message& msg)
+bool Thread::peekMessage(Message& message)
 {
-  msg.hwnd = NULL;
-  return ::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE) != FALSE;
+  LPMSG msg = (LPMSG)message;
+  msg->hwnd = NULL;
+  return ::PeekMessage(msg, NULL, 0, 0, PM_REMOVE) != FALSE;
 }
 
-void Thread::processMessage(Message& msg)
+void Thread::processMessage(Message& message)
 {
-  if (!preTranslateMessage(msg)) {
+  LPMSG msg = (LPMSG)message;
+  
+  if (!preTranslateMessage(message)) {
     // Send preTranslateMessage to the active window (useful for
     // modeless dialogs). WARNING: Don't use GetForegroundWindow
     // because it returns windows from other applications
     HWND hactive = GetActiveWindow();
-    if (hactive != NULL && hactive != msg.hwnd) {
+    if (hactive != NULL && hactive != msg->hwnd) {
       Widget* activeWidget = Widget::fromHandle(hactive);
-      if (activeWidget->preTranslateMessage(msg))
+      if (activeWidget->preTranslateMessage(message))
 	return;
     }
 
-    //if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg)) 
+    //if (!TranslateAccelerator(msg->hwnd, hAccelTable, msg)) 
     //{
-    ::TranslateMessage(&msg);
-    ::DispatchMessage(&msg);
+    ::TranslateMessage(msg);
+    ::DispatchMessage(msg);
     //}
   }
 }
@@ -401,23 +434,25 @@ void Thread::processMessage(Message& msg)
  * Widget pointer (using Widget::fromHandle()) and then (if it isn't
  * NULL), call its Widget#preTranslateMessage.
  */
-bool Thread::preTranslateMessage(Message& msg)
+bool Thread::preTranslateMessage(Message& message)
 {
+  LPMSG msg = (LPMSG)message;
+
   // TODO process messages that produce a update-indicators event
-  if ((msg.message == WM_ACTIVATE) ||
-      (msg.message == WM_CLOSE) ||
-      (msg.message == WM_SETFOCUS) ||
-      (msg.message == WM_KILLFOCUS) ||
-      (msg.message >= WM_LBUTTONDOWN && msg.message <= WM_MBUTTONDBLCLK) ||
-      (msg.message >= WM_KEYDOWN && msg.message <= WM_DEADCHAR)) {
+  if ((msg->message == WM_ACTIVATE) ||
+      (msg->message == WM_CLOSE) ||
+      (msg->message == WM_SETFOCUS) ||
+      (msg->message == WM_KILLFOCUS) ||
+      (msg->message >= WM_LBUTTONDOWN && msg->message <= WM_MBUTTONDBLCLK) ||
+      (msg->message >= WM_KEYDOWN && msg->message <= WM_DEADCHAR)) {
     ThreadData* data = getThreadData();
     data->updateIndicators = true;
     data->updateIndicatorsMark = TimePoint();
   }
 
-  if (msg.hwnd != NULL) {
-    Widget* widget = Widget::fromHandle(msg.hwnd);
-    if (widget && widget->preTranslateMessage(msg))
+  if (msg->hwnd != NULL) {
+    Widget* widget = Widget::fromHandle(msg->hwnd);
+    if (widget && widget->preTranslateMessage(message))
       return true;
   }
 

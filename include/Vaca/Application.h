@@ -40,6 +40,37 @@ namespace Vaca {
 
 class Widget;
 
+//////////////////////////////////////////////////////////////////////
+
+/**
+ * It's like a namespace for ProcessPriority.
+ * 
+ * @see ProcessPriority
+ */
+struct ProcessPriorityEnum
+{
+  enum enumeration {
+    Idle,
+    Normal,
+    High,
+    RealTime,
+  };
+  static const enumeration default_value = Normal;
+};
+
+/**
+ * Process priority.
+ *
+ * One of the following values:
+ * @li ProcessPriority::Idle
+ * @li ProcessPriority::Normal
+ * @li ProcessPriority::High
+ * @li ProcessPriority::RealTime
+ */
+typedef Enum<ProcessPriorityEnum> ProcessPriority;
+
+//////////////////////////////////////////////////////////////////////
+
 /**
  * The main class of Vaca: initializes and destroys the GUI library
  * resources.
@@ -71,6 +102,7 @@ public:
 
   static Application* getInstance();
   static HINSTANCE getHandle();
+  static void setProcessPriority(ProcessPriority priority);
 
   virtual void run();
 

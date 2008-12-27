@@ -96,8 +96,10 @@ Frame::~Frame()
   }
 }
 
-bool Frame::preTranslateMessage(Message& msg)
+bool Frame::preTranslateMessage(Message& message)
 {
+  MSG& msg(*(LPMSG)message);
+
   if (m_menuBar != NULL) {
     // TODO accelerators
     if (msg.message == WM_KEYDOWN) {
@@ -119,7 +121,7 @@ bool Frame::preTranslateMessage(Message& msg)
     }
   }
 
-  return Widget::preTranslateMessage(msg);
+  return Widget::preTranslateMessage(message);
 }
 
 /**

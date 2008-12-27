@@ -50,7 +50,6 @@ static ConditionVariable   wakeup_condition;    // wake-up the timer thread loop
 
 /**
  * @param interval In milliseconds.
- * 
  */
 Timer::Timer(int interval)
   : m_threadOwnerId(::GetCurrentThreadId())

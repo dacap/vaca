@@ -723,15 +723,21 @@ const Style BandedDockArea::Styles::Default =
 const Style BasicDockArea::Styles::Default =
   Widget::Styles::Child;
 
+// same as ATL_SIMPLE_REBAR_STYLE - WS_CLIPSIBLINGS
 const Style ReBar::Styles::Default =
-  Widget::Styles::Child |
-  Widget::Styles::Container |
-  Style(WS_CLIPSIBLINGS |
-	RBS_BANDBORDERS
-#if (_WIN32_IE >= 0x0400)
-	| RBS_DBLCLKTOGGLE
-#endif
-	, 0);
+  Widget::Styles::Child +
+  Style(WS_BORDER | WS_CLIPCHILDREN /*| WS_CLIPSIBLINGS*/ |
+	RBS_AUTOSIZE | RBS_VARHEIGHT | CCS_NODIVIDER, 0);
+
+// const Style ReBar::Styles::Default =
+//   Widget::Styles::Child |
+//   Widget::Styles::Container |
+//   Style(WS_CLIPSIBLINGS |
+// 	RBS_BANDBORDERS
+// #if (_WIN32_IE >= 0x0400)
+// 	| RBS_DBLCLKTOGGLE
+// #endif
+// 	, 0);
 
 /**
  * Default style for DockFrame widget.

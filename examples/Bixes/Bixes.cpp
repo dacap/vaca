@@ -171,12 +171,12 @@ public:
 //////////////////////////////////////////////////////////////////////
 // a representation of an element of the model in a TreeNode
 
-class ElementViewAsTreeNode : public TreeNode
+class TreeNode_Element : public TreeNode
 {
   Element* m_element;
 
 public:
-  ElementViewAsTreeNode(Element* element)
+  TreeNode_Element(Element* element)
     : TreeNode(element->getName())
   {
     m_element = element;
@@ -190,7 +190,7 @@ public:
 //////////////////////////////////////////////////////////////////////
 // a representation of the model in a TreeView
 
-class ModelViewAsTreeView : public TreeView
+class TreeView_Model : public TreeView
 {
   Model* m_model;
     
@@ -198,14 +198,14 @@ public:
 
   Signal1<void, Element*> ElementSelected;
 
-  ModelViewAsTreeView(Model* model, Widget* parent)
+  TreeView_Model(Model* model, Widget* parent)
     : TreeView(parent)
     , m_model(model)
   {
-    m_model->BeforeAddElement.connect(&ModelViewAsTreeView::onBeforeAddElement, this);
-    m_model->AfterAddElement.connect(&ModelViewAsTreeView::onAfterAddElement, this);
-    m_model->BeforeRemoveElement.connect(&ModelViewAsTreeView::onBeforeRemoveElement, this);
-    m_model->AfterRemoveElement.connect(&ModelViewAsTreeView::onAfterRemoveElement, this);
+    m_model->BeforeAddElement.connect(&TreeView_Model::onBeforeAddElement, this);
+    m_model->AfterAddElement.connect(&TreeView_Model::onAfterAddElement, this);
+    m_model->BeforeRemoveElement.connect(&TreeView_Model::onBeforeRemoveElement, this);
+    m_model->AfterRemoveElement.connect(&TreeView_Model::onAfterRemoveElement, this);
   }
 
   void selectElement(Element* element)
@@ -213,7 +213,7 @@ public:
     TreeView::iterator it;
 
     for (it = begin(); it != end(); ++it) {
-      ElementViewAsTreeNode* node = dynamic_cast<ElementViewAsTreeNode*>(*it);
+      TreeNode_Element* node = dynamic_cast<TreeNode_Element*>(*it);
       assert(node != NULL);
 
       if (node->getElement() == element) {
@@ -233,7 +233,7 @@ protected:
 
       TreeNode* node = ev.getTreeNode();
       if (node != NULL) {
-	ElementViewAsTreeNode* elemNode = dynamic_cast<ElementViewAsTreeNode*>(node);
+	TreeNode_Element* elemNode = dynamic_cast<TreeNode_Element*>(node);
 	assert(elemNode != NULL);
 
 	ElementSelected(elemNode->getElement());
@@ -251,8 +251,8 @@ private:
 
   void onAfterAddElement(Element* element)
   {
-    ElementViewAsTreeNode* elementNode = new ElementViewAsTreeNode(element);
-    ElementViewAsTreeNode* parentNode = findNodeByElement(element->getParent());
+    TreeNode_Element* elementNode = new TreeNode_Element(element);
+    TreeNode_Element* parentNode = findNodeByElement(element->getParent());
 
     if (parentNode != NULL) {
       parentNode->addNode(elementNode);	// add the new node in the parent
@@ -272,7 +272,7 @@ private:
 
   void onBeforeRemoveElement(Element* element)
   {
-    ElementViewAsTreeNode* elementNode = findNodeByElement(element);
+    TreeNode_Element* elementNode = findNodeByElement(element);
     removeNode(elementNode);
     delete elementNode;
 
@@ -283,13 +283,13 @@ private:
   {
   }
 
-  ElementViewAsTreeNode* findNodeByElement(Element* element)
+  TreeNode_Element* findNodeByElement(Element* element)
   {
     TreeView::iterator it;
 
     // iterate all the TreeView to find the TreeNode that has the specified "element"
     for (it = begin(); it != end(); ++it) {
-      ElementViewAsTreeNode* node = dynamic_cast<ElementViewAsTreeNode*>(*it);
+      TreeNode_Element* node = dynamic_cast<TreeNode_Element*>(*it);
       assert(node != NULL);
 
       if (node->getElement() == element)
@@ -304,7 +304,7 @@ private:
 //////////////////////////////////////////////////////////////////////
 // a representation of an element as widgets
 
-class ElementViewAsWidgets : public TextEdit
+class TextEdit_Element : public TextEdit
 {
   Element* m_element;
   bool m_selected;
@@ -313,7 +313,7 @@ public:
 
   Signal1<void, Element*> ElementSelected;
 
-  ElementViewAsWidgets(Element* element, Widget* parent)
+  TextEdit_Element(Element* element, Widget* parent)
     : TextEdit(element->getName(), parent,
 	       TextEdit::Styles::TextArea +
 	       TextEdit::Styles::AutoVerticalScroll)
@@ -321,7 +321,7 @@ public:
     m_element = element;
     m_selected = false;
 
-    Change.connect(&ElementViewAsWidgets::onChange, this);
+    Change.connect(&TextEdit_Element::onChange, this);
   }
 
   Element* getElement() {
@@ -375,7 +375,7 @@ typename Map::mapped_type find_element(const Map& map,
     return typename Map::mapped_type(0); // NULL
 }
 
-class ModelViewAsWidgets : public Panel
+class Panel_Model : public Panel
 {
   Model* m_model;
   Bix* m_bix;
@@ -385,19 +385,19 @@ public:
 
   Signal1<void, Element*> ElementSelected;
 
-  ModelViewAsWidgets(Model* model, Widget* parent)
+  Panel_Model(Model* model, Widget* parent)
     : Panel(parent, Panel::Styles::Default +
 		    Widget::Styles::ClientEdge)
     , m_model(model)
     , m_bix(NULL)
   {
-    m_model->BeforeAddElement.connect(&ModelViewAsWidgets::onBeforeAddElement, this);
-    m_model->AfterAddElement.connect(&ModelViewAsWidgets::onAfterAddElement, this);
-    m_model->BeforeRemoveElement.connect(&ModelViewAsWidgets::onBeforeRemoveElement, this);
-    m_model->AfterRemoveElement.connect(&ModelViewAsWidgets::onAfterRemoveElement, this);
+    m_model->BeforeAddElement.connect(&Panel_Model::onBeforeAddElement, this);
+    m_model->AfterAddElement.connect(&Panel_Model::onAfterAddElement, this);
+    m_model->BeforeRemoveElement.connect(&Panel_Model::onBeforeRemoveElement, this);
+    m_model->AfterRemoveElement.connect(&Panel_Model::onAfterRemoveElement, this);
   }
 
-  virtual ~ModelViewAsWidgets()
+  virtual ~Panel_Model()
   {
     Container children = getChildren();
     Container::iterator it;
@@ -410,7 +410,7 @@ public:
     Container children = getChildren();
     Container::iterator it;
     for (it = children.begin(); it != children.end(); ++it) {
-      ElementViewAsWidgets* w = dynamic_cast<ElementViewAsWidgets*>(*it);
+      TextEdit_Element* w = dynamic_cast<TextEdit_Element*>(*it);
       assert(w != NULL);
 
       if (w->getElement() == element ||
@@ -461,8 +461,8 @@ private:
       assert(parentBix);
       
       if (flags == 0) {
-	ElementViewAsWidgets* elementWidget = new ElementViewAsWidgets(element, this);
-	elementWidget->ElementSelected.connect(&ModelViewAsWidgets::onElementSelected, this);
+	TextEdit_Element* elementWidget = new TextEdit_Element(element, this);
+	elementWidget->ElementSelected.connect(&Panel_Model::onElementSelected, this);
 	parentBix->add(elementWidget);
       }
       else {
@@ -483,7 +483,7 @@ private:
       Container children = getChildren();
       Container::iterator it;
       for (it = children.begin(); it != children.end(); ++it) {
-	ElementViewAsWidgets* w = dynamic_cast<ElementViewAsWidgets*>(*it);
+	TextEdit_Element* w = dynamic_cast<TextEdit_Element*>(*it);
 	assert(w != NULL);
 
 	if (w->getElement() == element) {
@@ -492,7 +492,7 @@ private:
 	  assert(parentBix);
 
 	  parentBix->remove(w);
-	  w->getParent()->removeChild(w, true);
+	  w->getParent()->removeChild(w);
 	  delete w;
 	  break;
 	}
@@ -502,11 +502,11 @@ private:
       Container children = getChildren();
       Container::iterator it;
       for (it = children.begin(); it != children.end(); ++it) {
-	ElementViewAsWidgets* w = dynamic_cast<ElementViewAsWidgets*>(*it);
+	TextEdit_Element* w = dynamic_cast<TextEdit_Element*>(*it);
 	assert(w != NULL);
 
 	if (w->getElement()->isAncestor(element)) {
-	  w->getParent()->removeChild(w, true);
+	  w->getParent()->removeChild(w);
 	  delete w;
 	}
       }
@@ -548,8 +548,8 @@ class MainFrame : public Frame,
 {
   Model m_model;
   Element* m_selectedElement;
-  ModelViewAsTreeView m_treeView;
-  ModelViewAsWidgets m_widgetsView;
+  TreeView_Model m_treeView;
+  Panel_Model m_widgetsView;
   ToolBar m_toolBar;
   ImageList m_imageList;
   int m_widgetCounter;

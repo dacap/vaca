@@ -16,13 +16,32 @@ default: all
 # ADD_COMPILER_VERSION = 1
 
 WIN32_IMPL = 1
-# ALLEG_IMPL = 1
 
 ifdef MEMORY_LEAK_DETECTOR
 ifdef STATIC
 MEMORY_LEAK_DETECTOR = 1
 endif
 endif
+
+# ----------------------------------------------------------------------
+# Target
+# ----------------------------------------------------------------------
+
+  WINVER = 0x0500	# Windows 2000
+# WINVER = 0x0501	# Windows Server 2003, Windows XP
+# WINVER = 0x0502	# Windows Server 2003 SP1, Windows XP SP2
+# WINVER = 0x0600	# Windows Server 2008
+# WINVER = 0x0600	# Windows Vista
+
+  _WIN32_IE = 0x0500	# IE 5.0
+# _WIN32_IE = 0x0501	# IE 5.01
+# _WIN32_IE = 0x0550	# IE 5.5
+# _WIN32_IE = 0x0600	# IE 6.0
+# _WIN32_IE = 0x0601	# IE 6.0 SP1
+# _WIN32_IE = 0x0603	# IE 6.0 SP2
+# _WIN32_IE = 0x0700	# IE 7.0
+
+  _WIN32_WINNT = $(WINVER)
 
 # ----------------------------------------------------------------------
 # Extensions
@@ -32,6 +51,7 @@ OBJ = .o
 LIB = .a
 DLL = .dll
 EXE = .exe
+RES = .res
 
 # ----------------------------------------------------------------------
 # Programs
@@ -73,9 +93,9 @@ EXAMPLES = AnchorLayouts AutoCompletion Bixes BouncingBalls BoxLayouts	\
 	   EditableListBox Edits EyeDropper FontMetrics FreeOfLayout	\
 	   Hashing HelloWorld Images Labels LikeScript Maths		\
 	   MenuResource MiniExplorer Minimal Paths Primitives		\
-	   ProgressBars Regions Scribble Scrolling Sliders Spinners	\
-	   SplitBars Sudoku SystemImageList Tabs TextEditor Threads	\
-	   Timers ToolBars Trees Undo WebCam
+	   ProgressBars ReBars Regions Scribble Scrolling Sliders	\
+	   Spinners SplitBars Sudoku SystemImageList Tabs TextEditor	\
+	   Threads Timers ToolBars Trees Undo WebCam
 endif
 
 ifndef TESTS
@@ -105,18 +125,15 @@ LIBS =
 
 # Win32
 ifdef WIN32_IMPL
-  CXXFLAGS += -DVACA_WIN32_IMPL -DWINVER=0x0500 -D_WIN32_IE=0x0500 -D_WIN32_WINNT=0x0500
+  CXXFLAGS += -DVACA_WIN32_IMPL \
+	      -DWINVER=$(WINVER) \
+	      -D_WIN32_IE=$(_WIN32_IE) \
+	      -D_WIN32_WINNT=$(_WIN32_WINNT)
 
   LIBS += -lkernel32 -luser32 -lgdi32 -lcomdlg32 -lwinspool \
 	  -lwinmm -lshell32 -lshlwapi -lcomctl32 -lole32 \
 	  -loleaut32 -luuid -lrpcrt4 -ladvapi32 -lwsock32 \
 	  -lodbc32 -lcomctl32 -lsecur32 -lmsimg32 -lwininet
-endif
-
-# Allegro
-ifdef ALLEG_IMPL
-  CXXFLAGS += -DVACA_ALLEG_IMPL
-  LIBS += -lalleg
 endif
 
 EXE_LIBS = $(LIBS)
@@ -248,10 +265,10 @@ obj/Library.%$(SUFFIX)$(OBJ): third_party/nvwa/%.cpp
 obj/Example.%$(SUFFIX)$(OBJ): %.cpp
 	$(GXX) $(CXXFLAGS) $(VACA_EXE_FLAGS) -o $@ -c $<
 
-obj/Example.res: examples/Example.rc
+obj/Example$(SUFFIX)$(RES): examples/Example.rc
 	$(WINDRES) -Iexamples/ -O coff -o $@ -i $<
 
-obj/Example.%.res: %.rc
+obj/Example.%$(SUFFIX)$(RES): %.rc
 	$(WINDRES) $(addprefix -I, $(EXAMPLES_DIRS_WITH_RC)) -O coff -o $@ -i $<
 
 obj/Test.%$(SUFFIX)$(OBJ): tests/%.cpp
@@ -274,39 +291,39 @@ endif
 
 # general examples
 
-bin/%$(EXE): obj/Example.%$(OBJ) obj/Example.res $(VACA_LIB)
+bin/%$(EXE): obj/Example.%$(OBJ) obj/Example$(SUFFIX)$(RES) $(VACA_LIB)
 	$(GXX) $(LFLAGS) -o $@ $^ $(EXE_LIBS) 
 
 # special examples
 
-bin/Bixes$(SUFFIX)$(EXE): obj/Example.Bixes$(SUFFIX)$(OBJ) obj/Example.Bixes.res $(VACA_LIB)
+bin/Bixes$(SUFFIX)$(EXE): obj/Example.Bixes$(SUFFIX)$(OBJ) obj/Example.Bixes$(SUFFIX)$(RES) $(VACA_LIB)
 	$(GXX) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
 
-bin/Commands$(SUFFIX)$(EXE): obj/Example.Commands$(SUFFIX)$(OBJ) obj/Example.Commands.res $(VACA_LIB)
+bin/Commands$(SUFFIX)$(EXE): obj/Example.Commands$(SUFFIX)$(OBJ) obj/Example.Commands$(SUFFIX)$(RES) $(VACA_LIB)
 	$(GXX) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
 
-bin/EyeDropper$(SUFFIX)$(EXE): obj/Example.EyeDropper$(SUFFIX)$(OBJ) obj/Example.EyeDropper.res $(VACA_LIB)
+bin/EyeDropper$(SUFFIX)$(EXE): obj/Example.EyeDropper$(SUFFIX)$(OBJ) obj/Example.EyeDropper$(SUFFIX)$(RES) $(VACA_LIB)
 	$(GXX) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
 
-bin/Hashing$(SUFFIX)$(EXE): obj/Example.Hashing$(SUFFIX)$(OBJ) obj/Example.md5$(SUFFIX)$(OBJ) obj/Example.sha1$(SUFFIX)$(OBJ) obj/Example.res $(VACA_LIB)
+bin/Hashing$(SUFFIX)$(EXE): obj/Example.Hashing$(SUFFIX)$(OBJ) obj/Example.md5$(SUFFIX)$(OBJ) obj/Example.sha1$(SUFFIX)$(OBJ) obj/Example$(SUFFIX)$(RES) $(VACA_LIB)
 	$(GXX) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
 
-bin/Images$(SUFFIX)$(EXE): obj/Example.Images$(SUFFIX)$(OBJ) obj/Example.Images.res $(VACA_LIB)
+bin/Images$(SUFFIX)$(EXE): obj/Example.Images$(SUFFIX)$(OBJ) obj/Example.Images$(SUFFIX)$(RES) $(VACA_LIB)
 	$(GXX) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
 
-bin/MenuResource$(SUFFIX)$(EXE): obj/Example.MenuResource$(SUFFIX)$(OBJ) obj/Example.MenuResource.res $(VACA_LIB)
+bin/MenuResource$(SUFFIX)$(EXE): obj/Example.MenuResource$(SUFFIX)$(OBJ) obj/Example.MenuResource$(SUFFIX)$(RES) $(VACA_LIB)
 	$(GXX) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
 
-bin/SplitBars$(SUFFIX)$(EXE): obj/Example.SplitBars$(SUFFIX)$(OBJ) obj/Example.SplitBars.res $(VACA_LIB)
+bin/SplitBars$(SUFFIX)$(EXE): obj/Example.SplitBars$(SUFFIX)$(OBJ) obj/Example.SplitBars$(SUFFIX)$(RES) $(VACA_LIB)
 	$(GXX) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
 
-bin/TextEditor$(SUFFIX)$(EXE): obj/Example.TextEditor$(SUFFIX)$(OBJ) obj/Example.TextEditor.res $(VACA_LIB)
+bin/TextEditor$(SUFFIX)$(EXE): obj/Example.TextEditor$(SUFFIX)$(OBJ) obj/Example.TextEditor$(SUFFIX)$(RES) $(VACA_LIB)
 	$(GXX) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
 
-bin/ToolBars$(SUFFIX)$(EXE): obj/Example.ToolBars$(SUFFIX)$(OBJ) obj/Example.ToolBars.res $(VACA_LIB)
+bin/ToolBars$(SUFFIX)$(EXE): obj/Example.ToolBars$(SUFFIX)$(OBJ) obj/Example.ToolBars$(SUFFIX)$(RES) $(VACA_LIB)
 	$(GXX) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
 
-bin/WebCam$(SUFFIX)$(EXE): obj/Example.WebCam$(SUFFIX)$(OBJ) obj/Example.res $(VACA_LIB)
+bin/WebCam$(SUFFIX)$(EXE): obj/Example.WebCam$(SUFFIX)$(OBJ) obj/Example$(SUFFIX)$(RES) $(VACA_LIB)
 	$(GXX) $(LFLAGS) -o $@ $^ $(EXE_LIBS) -lvfw32
 
 # tests

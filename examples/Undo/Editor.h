@@ -40,7 +40,7 @@ using namespace Vaca;
 // Document's view
 class Editor : public Panel
 {
-  Document* m_doc;
+  DocumentPtr m_doc;
   Font m_font;
   DocPos m_carret;
   bool m_carretVisible;
@@ -69,7 +69,7 @@ public:
     requestFocus();
   }
 
-  void setDocument(Document* doc) {
+  void setDocument(DocumentPtr doc) {
     m_doc = doc;
     m_carret = doc ? doc->size(): 0;
     makeCarretVisible();

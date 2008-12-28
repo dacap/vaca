@@ -92,7 +92,7 @@ bool DockArea::isLayoutFree()
  */
 void DockArea::addDockBar(DockBar* dockBar)
 {
-  addChild(dockBar, true);
+  addChild(dockBar);
 
   onAddDockBar(dockBar);
 }
@@ -104,7 +104,7 @@ void DockArea::addDockBar(DockBar* dockBar)
  */
 void DockArea::removeDockBar(DockBar* dockBar)
 {
-  removeChild(dockBar, true);
+  removeChild(dockBar);
 
   onRemoveDockBar(dockBar);
 }

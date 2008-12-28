@@ -167,7 +167,7 @@ Widget::~Widget()
   if (getParent() != NULL) {
     // this is very important!!! we can't set the parent of the HWND:
     // MdiChild needs the parent HWND to send WM_MDIDESTROY
-    getParent()->removeChild(this, false);
+    getParent()->removeChildWin32(this, false); // <-- false means: don't call Win32's SetParent
   }
 
   // delete all children (this is the case for children added using
@@ -251,6 +251,28 @@ Widget::Container Widget::getChildren() const
 #else
   return m_children;
 #endif
+}
+
+/**
+ * Adds a child to this widget.
+ *
+ * @param child
+ *   The child to add inside the widget.
+ */
+void Widget::addChild(Widget* child)
+{
+  addChildWin32(child, true);
+}
+
+/**
+ * Removes a child from this widget.
+ *
+ * @param child
+ *     The child that we want to remove from the parent.
+ */
+void Widget::removeChild(Widget* child)
+{
+  removeChildWin32(child, true);
 }
 
 // ===============================================================
@@ -2050,7 +2072,7 @@ bool Widget::onReflectedDrawItem(Graphics& g, LPDRAWITEMSTRUCT lpDrawItem)
  * 
  * @internal
  */
-void Widget::addChild(Widget* child, bool setParent)
+void Widget::addChildWin32(Widget* child, bool setParent)
 {
   assert(::IsWindow(m_handle));
   assert(child != NULL);
@@ -2080,7 +2102,7 @@ void Widget::addChild(Widget* child, bool setParent)
  *
  * @internal
  */
-void Widget::removeChild(Widget* child, bool setParent)
+void Widget::removeChildWin32(Widget* child, bool setParent)
 {
   assert(::IsWindow(m_handle));
   assert(child != NULL);
@@ -2092,6 +2114,9 @@ void Widget::removeChild(Widget* child, bool setParent)
   remove_from_container(m_children, child);
 
   if (setParent) {
+    invalidate(child->getBounds(), true);
+    child->removeStyle(Style(WS_VISIBLE, 0));
+
     ::SetParent(child->m_handle, NULL);
     child->removeStyle(Style(WS_CHILD, 0));
   }
@@ -2164,7 +2189,7 @@ void Widget::create(const WidgetClassName& className, Widget* parent, Style styl
 
   // add the widget to its parent
   if (parent != NULL)
-    parent->addChild(this, false);
+    parent->addChildWin32(this, false);
 }
 
 /**

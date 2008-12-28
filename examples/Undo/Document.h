@@ -38,7 +38,7 @@ using namespace Vaca;
 
 typedef String::size_type DocPos;
 
-class Document
+class Document : public Referenceable
 {
   String m_name;
   String m_string;
@@ -76,5 +76,7 @@ public:
   }
   
 };
+
+typedef SmartPtr<Document> DocumentPtr;
 
 #endif // DOCUMENT_H

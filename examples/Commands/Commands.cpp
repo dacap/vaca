@@ -88,10 +88,12 @@ class Example : public Application
 
 public:
   Example();
-  virtual void main();
 
   Console* getEditor();
   Console* getConsole();
+
+private:
+  virtual void main();
 };
 
 #define TheEditor							\
@@ -325,11 +327,6 @@ Example::Example()
   addCommand(new ViewToolBarCommand(&m_mainFrame));
 }
 
-void Example::main()
-{
-  m_mainFrame.setVisible(true);
-}
-
 Console* Example::getEditor()
 {
   return m_mainFrame.getEditor();
@@ -338,6 +335,11 @@ Console* Example::getEditor()
 Console* Example::getConsole()
 {
   return m_mainFrame.getConsole();
+}
+
+void Example::main()
+{
+  m_mainFrame.setVisible(true);
 }
 
 //////////////////////////////////////////////////////////////////////

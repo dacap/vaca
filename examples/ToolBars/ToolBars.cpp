@@ -266,13 +266,16 @@ class Example : public Application
   MainFrame m_mainFrame2;
 
 public:
+
   Example()
     : m_mainFrame1(ToolSet::Styles::Default)
     , m_mainFrame2(ToolSet::Styles::Default +
 		   ToolSet::Styles::Flat)
   {
   }
-  
+
+private:
+
   virtual void main() {
     m_mainFrame1.setVisible(true);
     m_mainFrame2.setVisible(true);

@@ -252,6 +252,9 @@ public:
   Widget* getParent() const;
   Container getChildren() const;
 
+  void addChild(Widget* child);
+  void removeChild(Widget* child);
+
   // ===============================================================
   // LAYOUT & CONSTRAINT
   // ===============================================================
@@ -408,10 +411,6 @@ public:
   
   LRESULT sendMessage(UINT message, WPARAM wParam, LPARAM lParam);
 
-  // TODO public? I don't think so
-  void addChild(Widget* child, bool setParent);
-  void removeChild(Widget* child, bool setParent);
-
   // ===============================================================
   // SIGNALS (signals are public, see TN004)
   // ===============================================================
@@ -485,6 +484,9 @@ protected:
   void setDestroyHWNDProc(void (*proc)(HWND));
 
 private:
+
+  void addChildWin32(Widget* child, bool setParent);
+  void removeChildWin32(Widget* child, bool setParent);
 
   virtual HWND createHandle(LPCTSTR className, Widget* parent, Style style);
 

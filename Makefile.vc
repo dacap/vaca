@@ -144,7 +144,7 @@ EXAMPLES_EXE = bin/AnchorLayouts.exe bin/AutoCompletion.exe		\
   bin/FreeOfLayout.exe bin/Hashing.exe bin/HelloWorld.exe		\
   bin/Images.exe bin/Labels.exe bin/LikeScript.exe bin/Maths.exe	\
   bin/MenuResource.exe bin/MiniExplorer.exe bin/Minimal.exe		\
-  bin/Paths.exe bin/Primitives.exe bin/ProgressBars.exe			\
+  bin/Paths.exe bin/Primitives.exe bin/ProgressBars.exe bin/ReBars.exe	\
   bin/Regions.exe bin/Scribble.exe bin/Scrolling.exe bin/Sliders.exe	\
   bin/Spinners.exe bin/SplitBars.exe bin/Sudoku.exe			\
   bin/SystemImageList.exe bin/Tabs.exe bin/TextEditor.exe		\
@@ -263,6 +263,7 @@ bin/Paths.exe: obj/Paths.obj obj/Example.res
 bin/Primitives.exe: obj/Primitives.obj obj/Example.res
 bin/ProgressBars.exe: obj/ProgressBars.obj obj/Example.res
 bin/Regions.exe: obj/Regions.obj obj/Example.res
+bin/ReBars.exe: obj/ReBars.obj obj/ReBars.res
 bin/Scribble.exe: obj/Scribble.obj obj/Example.res
 bin/Scrolling.exe: obj/Scrolling.obj obj/Example.res
 bin/Sliders.exe: obj/Sliders.obj obj/Example.res
@@ -298,6 +299,9 @@ obj/Images.res: examples/Images/Images.rc
 obj/MenuResource.res: examples/MenuResource/MenuResource.rc
 	$(RC) examples/MenuResource/MenuResource.rc
 	move examples\\MenuResource\\MenuResource.res obj\\MenuResource.res
+obj/ReBars.res: examples/ReBars/ReBars.rc
+	$(RC) examples/ReBars/ReBars.rc
+	move examples\\ReBars\\ReBars.res obj\\ReBars.res
 obj/SplitBars.res: examples/SplitBars/SplitBars.rc
 	$(RC) examples/SplitBars/SplitBars.rc
 	move examples\\SplitBars\\SplitBars.res obj\\SplitBars.res
@@ -366,6 +370,8 @@ obj/Primitives.obj: examples/Primitives/Primitives.cpp
 	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/Primitives/Primitives.cpp
 obj/ProgressBars.obj: examples/ProgressBars/ProgressBars.cpp
 	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/ProgressBars/ProgressBars.cpp
+obj/ReBars.obj: examples/ReBars/ReBars.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/ReBars/ReBars.cpp
 obj/Regions.obj: examples/Regions/Regions.cpp
 	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c examples/Regions/Regions.cpp
 obj/Scribble.obj: examples/Scribble/Scribble.cpp

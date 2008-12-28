@@ -802,7 +802,7 @@ private:
 class Example : public Application
 {
   MainFrame m_mainFrame;
-public:
+
   virtual void main() {
     m_mainFrame.setVisible(true);
   }

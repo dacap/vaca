@@ -52,30 +52,31 @@ class MainFrame;
 class Example : public Application
 	      , public CommandsClient
 {
-  typedef std::vector<Document*> Documents;
+  typedef std::vector<DocumentPtr> Documents;
 
   int m_docCounter;
   Documents m_docs;
-  Document* m_currentDoc;
+  DocumentPtr m_currentDoc;
   std::auto_ptr<MainFrame> m_mainFrame;
+
+  virtual void main();
 
 public:
   Example();
   virtual ~Example();
-  virtual void main();
 
   void onNew();
   void onClose();
 
   bool hasCurrentDoc();
-  void setCurrentDocument(Document* doc);
+  void setCurrentDocument(DocumentPtr doc);
 
   Documents getDocuments() { return m_docs; };
-  Document* getCurrentDocument() { return m_currentDoc; };
+  DocumentPtr getCurrentDocument() { return m_currentDoc; };
 
-  Signal1<void, Document*> DocumentChange;
-  Signal1<void, Document*> NewDocument;
-  Signal1<void, Document*> CloseDocument;
+  Signal1<void, DocumentPtr> DocumentChange;
+  Signal1<void, DocumentPtr> NewDocument;
+  Signal1<void, DocumentPtr> CloseDocument;
 };
 
 Example* GetApp()
@@ -88,14 +89,14 @@ Example* GetApp()
 
 class DocMenuItem : public MenuItem
 {
-  Document* m_doc;
+  DocumentPtr m_doc;
 public:
-  DocMenuItem(Document* doc)
+  DocMenuItem(DocumentPtr doc)
     : MenuItem(doc->getName(), 0)
     , m_doc(doc) {
   }
 
-  Document* getDoc() {
+  DocumentPtr getDoc() {
     return m_doc;
   }
 
@@ -144,18 +145,18 @@ private:
     return menuBar;
   }
 
-  void onDocumentChange(Document* doc)
+  void onDocumentChange(DocumentPtr doc)
   {
     m_editor.setDocument(doc);
   }
 
-  void onNewDocument(Document* doc)
+  void onNewDocument(DocumentPtr doc)
   {
     m_listMenu->add(new DocMenuItem(doc));
     updateListMenuIds();
   }
 
-  void onCloseDocument(Document* doc)
+  void onCloseDocument(DocumentPtr doc)
   {
     int i, count = m_listMenu->getItemCount();
     for (i=0; i<count; ++i) {
@@ -206,10 +207,6 @@ Example::Example()
 
 Example::~Example()
 {
-  for (Documents::iterator
-	 it=m_docs.begin(); it!=m_docs.end(); ++it) {
-    delete *it;
-  }
 }
 
 void Example::main()
@@ -222,7 +219,7 @@ void Example::onNew()
   m_docCounter++;
 
   // create the new document
-  Document* doc = new Document(String("Document #" + String::fromInt(m_docCounter)));
+  DocumentPtr doc(new Document(String("Document #" + String::fromInt(m_docCounter))));
   doc->add(0, "Text " + String::fromInt(m_docCounter));
 
   // add the document to the list
@@ -236,7 +233,9 @@ void Example::onNew()
 void Example::onClose()
 {
   CloseDocument(m_currentDoc);
-  DocumentChange(m_currentDoc = NULL);
+
+  m_currentDoc.reset();
+  DocumentChange(m_currentDoc);
 }
 
 bool Example::hasCurrentDoc()
@@ -244,7 +243,7 @@ bool Example::hasCurrentDoc()
   return m_currentDoc != NULL;
 }
 
-void Example::setCurrentDocument(Document* doc)
+void Example::setCurrentDocument(DocumentPtr doc)
 {
   DocumentChange(m_currentDoc = doc);
 }

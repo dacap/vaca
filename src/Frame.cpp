@@ -259,17 +259,6 @@ void Frame::onRemoveChild(Widget* child)
     m_statusBar = NULL;
 }
 
-#if 0
-/**
- * Returns true if the windows is currently visible by the user.
- */
-bool Frame::isVisible()
-{
-  // this is visibility for frame, for this frame, I don't want to known about the visibility of the parents
-  return (getStyle() & WS_VISIBLE) == WS_VISIBLE ? true: false;
-}
-#endif
-
 /**
  * Hides or shows the window. If visible is true, the window'll be
  * shown, if it's false the window'll be hidden.
@@ -551,10 +540,7 @@ void Frame::deleteDockAreas()
 {
   for (std::vector<DockArea*>::iterator it=m_dockAreas.begin(); it!=m_dockAreas.end(); ++it) {
     DockArea* dockArea = *it;
-
-    dockArea->setVisible(false);
-    // removeChild(dockArea, false);
-    removeChild(dockArea, true);
+    removeChild(dockArea);
     delete dockArea;
   }
 

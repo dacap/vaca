@@ -317,6 +317,8 @@ public:
     // the Application destructor calls CoUninitialize...
   }
 
+private:
+
   virtual void main()
   {
     m_mainFrame->setVisible(true);

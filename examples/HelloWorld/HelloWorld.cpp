@@ -81,8 +81,6 @@ class Example : public Application
   // the main frame
   MainFrame m_mainFrame;
 
-public:
-
   // it's called when we use Application::run...
   virtual void main() {
     // at this point the frame is created (the constructor was called

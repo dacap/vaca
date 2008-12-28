@@ -157,7 +157,6 @@ private:
 
 class MyApp : public Application
 {
-private:
   MainFrame mainWnd;
 
   virtual void main()

@@ -112,7 +112,7 @@ DockBar::DockBar(const String& title, Frame* parent, Style style)
   setVisible(false);
 
   if (parent != NULL)
-    parent->removeChild(this, true);
+    parent->removeChild(this);
 }
 
 DockBar::~DockBar()
@@ -321,7 +321,7 @@ void DockBar::makeFloat(const Rect* rect)
     setVisible(false);
 
     m_dockFrame = new DockFrame(this, m_owner);
-    m_dockFrame->addChild(this, true);
+    m_dockFrame->addChild(this);
     m_dockFrame->Close.connect(&DockBar::onDockFrameClose, this);
 
     setVisible(true);
@@ -740,7 +740,7 @@ void DockBar::cleanFrame()
   assert(m_dockFrame != NULL);
 
   if (m_dockFrame->getHandle())
-    m_dockFrame->removeChild(this, true);
+    m_dockFrame->removeChild(this);
 
   delete_widget(m_dockFrame);
   m_dockFrame = NULL;

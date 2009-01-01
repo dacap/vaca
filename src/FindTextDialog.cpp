@@ -53,7 +53,7 @@ using namespace Vaca;
 UINT FindTextDialog::m_findMsgId = 0;	// TODO add multithreading support
 
 FindTextDialog::FindTextDialog(bool replace, Widget* parent)
-  : Dialog(WidgetClassName::None, "", NULL, Widget::Styles::None)
+  : Dialog(WidgetClassName::None, L"", NULL, Widget::Styles::None)
   , m_replace(replace)
 {
   if (!m_findMsgId)
@@ -143,7 +143,7 @@ void FindTextDialog::getTextFromDlgItem(int id, String& s)
   if (::IsWindow(hwnd)) {
     int len = GetWindowTextLength(hwnd);
     if (len > 0) {
-      LPTSTR buf = (LPTSTR)new _TCHAR[len+1];
+      Char* buf = new Char[len+1];
       ::GetWindowText(hwnd, buf, len+1);
       s = buf;
       delete buf;
@@ -174,7 +174,7 @@ HWND FindTextDialog::createHandle(LPCTSTR className, Widget* parent, Style style
     | FR_ENABLEHOOK
     ;
 
-  m_findReplace.lpstrFindWhat = new Character[FINDREPLACE_BUFSIZE];
+  m_findReplace.lpstrFindWhat = new Char[FINDREPLACE_BUFSIZE];
   m_findReplace.wFindWhatLen = FINDREPLACE_BUFSIZE;
 
   ZeroMemory(m_findReplace.lpstrFindWhat, m_findReplace.wFindWhatLen);
@@ -182,7 +182,7 @@ HWND FindTextDialog::createHandle(LPCTSTR className, Widget* parent, Style style
   m_findReplace.lpfnHook = &FindTextDialog::hookProc;
 
   if (m_replace) {
-    m_findReplace.lpstrReplaceWith = m_replace ? new Character[FINDREPLACE_BUFSIZE]: NULL;
+    m_findReplace.lpstrReplaceWith = m_replace ? new Char[FINDREPLACE_BUFSIZE]: NULL;
     m_findReplace.wReplaceWithLen = m_replace ? FINDREPLACE_BUFSIZE: 0;
 
     ZeroMemory(m_findReplace.lpstrReplaceWith, m_findReplace.wReplaceWithLen);

@@ -37,7 +37,6 @@
 #include "Vaca/base.h"
 #include "Vaca/Component.h"
 #include "Vaca/NonCopyable.h"
-#include "Vaca/String.h"
 
 namespace Vaca {
 
@@ -60,7 +59,7 @@ private:
 
   friend class TreeView;
   friend class TreeViewIterator;
-  
+
   String    m_text;
   int       m_image;
   int       m_selectedImage;
@@ -72,7 +71,7 @@ private:
 
 public:
 
-  TreeNode(const String& text = "", int imageIndex = -1, int selectedImageIndex = -1);
+  TreeNode(const String& text = L"", int imageIndex = -1, int selectedImageIndex = -1);
   virtual ~TreeNode();
 
   void addNode(TreeNode* node);

@@ -111,7 +111,7 @@ Widget::Widget(const WidgetClassName& className, Widget* parent, Style style)
   {
     ScopedLock hold(vacaAtomMutex);
     if (vacaAtom == 0) {
-      vacaAtom = GlobalAddAtom(_T("VacaAtom"));
+      vacaAtom = GlobalAddAtom(L"VacaAtom");
       assert(vacaAtom != 0);
     }
   }
@@ -423,11 +423,11 @@ String Widget::getText() const
 
   int len = ::GetWindowTextLength(m_handle);
   if (!len)
-    return String("");
+    return L"";
   else {
-    LPTSTR buf = (LPTSTR)new TCHAR[len+1];
+    Char* buf = new Char[len+1];
     ::GetWindowText(m_handle, buf, len+1);
-    String str = String(buf);
+    String str(buf);
     delete[] buf;
     return str;
   }
@@ -1069,7 +1069,7 @@ int Widget::getOpacity()
 {
   assert(::IsWindow(m_handle));
 
-  HMODULE hUser32 = GetModuleHandle(_T("USER32.DLL"));
+  HMODULE hUser32 = GetModuleHandle(L"USER32.DLL");
   GLWAProc pGLWA;
   if (hUser32 != NULL)
     pGLWA = (GLWAProc)GetProcAddress(hUser32, "GetLayeredWindowAttributes");
@@ -1103,7 +1103,7 @@ void Widget::setOpacity(int opacity)
   assert(::IsWindow(m_handle));
   assert(opacity >= 0 && opacity < 256);
 
-  HMODULE  hUser32 = GetModuleHandle(_T("USER32.DLL"));
+  HMODULE  hUser32 = GetModuleHandle(L"USER32.DLL");
   SLWAProc pSLWA = (SLWAProc)GetProcAddress(hUser32, "SetLayeredWindowAttributes");
 
   // The version of Windows running does not support translucent windows!
@@ -2177,13 +2177,13 @@ void Widget::create(const WidgetClassName& className, Widget* parent, Style styl
     assert(outsideWidget == NULL);
     
     __vaca_set_outside_widget(this);
-    m_handle = createHandle(className.toLPCTSTR(), parent, style);
+    m_handle = createHandle(className.c_str(), parent, style);
     __vaca_set_outside_widget(NULL);
   }
 
   if (m_handle == NULL || !::IsWindow(m_handle))
-    throw CreateWidgetException("Error creating widget of class \"" +
-				String(className.toLPCTSTR()) + "\"");
+    throw CreateWidgetException(format_string(L"Error creating widget of class \"%s\"",
+					      className.c_str()));
 
   subClass();
 
@@ -2249,7 +2249,7 @@ void Widget::subClass()
  * {
  *   ...
  *   // we call "create" manually here
- *   create("Vaca.MdiChild", parent, style);
+ *   create(L"Vaca.MdiChild", parent, style);
  * }
  * 
  * // it's invoked from "create" from the MdiChild's constructor
@@ -2260,7 +2260,7 @@ void Widget::subClass()
  */
 HWND Widget::createHandle(LPCTSTR className, Widget* parent, Style style)
 {
-  return CreateWindowEx(style.extended, className, _T(""),
+  return CreateWindowEx(style.extended, className, L"",
 			style.regular,
 			CW_USEDEFAULT, CW_USEDEFAULT,
 			CW_USEDEFAULT, CW_USEDEFAULT,
@@ -2803,7 +2803,7 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
       for (index=0; index<count; ++index) {
 	length = DragQueryFile(hDrop, index, NULL, 0);
 	if (length > 0) {
-	  LPTSTR lpstr = new TCHAR[length+1];
+	  Char* lpstr = new Char[length+1];
 	  DragQueryFile(hDrop, index, lpstr, length+1);
 	  files.push_back(lpstr);
 	  delete[] lpstr;

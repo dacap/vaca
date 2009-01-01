@@ -92,17 +92,17 @@ class MainFrame : public Frame
 public:
 
   MainFrame()
-    : Frame("Timers", NULL, Frame::Styles::Default
-			    - Frame::Styles::Resizable
-			    - Frame::Styles::Maximizable)
-    , m_label1("1 sec", this)
-    , m_label2("2 sec", this)
-    , m_label3("4 sec", this)
+    : Frame(L"Timers", NULL, Frame::Styles::Default
+			     - Frame::Styles::Resizable
+			     - Frame::Styles::Maximizable)
+    , m_label1(L"1 sec", this)
+    , m_label2(L"2 sec", this)
+    , m_label3(L"4 sec", this)
     , m_timer1(1000, Color::Red, this)
     , m_timer2(2000, Color(0, 128, 0), this)
     , m_timer3(4000, Color::Blue, this)
   {
-    setLayout(Bix::parse("XY[%,%,%;%,%,%]",
+    setLayout(Bix::parse(L"XY[%,%,%;%,%,%]",
 			 &m_label1, &m_label2, &m_label3,
 			 &m_timer1, &m_timer2, &m_timer3));
     setSize(getPreferredSize());

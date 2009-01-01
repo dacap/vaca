@@ -34,6 +34,7 @@
 #include "Vaca/Graphics.h"
 #include "Vaca/Application.h"
 #include "Vaca/ResourceException.h"
+#include "Vaca/String.h"
 
 using namespace Vaca;
 
@@ -74,7 +75,8 @@ Image::Image(ResourceId imageId)
   // HBITMAP
   HBITMAP hbmp = LoadBitmap(Application::getHandle(), imageId.toLPTSTR());
   if (hbmp == NULL)
-    throw ResourceException("Can't load the image resource " + imageId.toString());
+    throw ResourceException(format_string(L"Can't load the image resource %d",
+					  imageId.getId()));
 
   get()->m_hdc = GetDC(GetDesktopWindow());
   get()->setHandle(hbmp);
@@ -85,8 +87,8 @@ Image::Image(const String& fileName)
 {
   // file name size
   int size = fileName.size()+1;
-  LPTSTR lpstr = new TCHAR[size];
-  fileName.copyTo(lpstr, size);
+  Char* lpstr = new Char[size];
+  copy_string_to(fileName, lpstr, size);
 
   // HBITMAP
   HBITMAP hbmp = reinterpret_cast<HBITMAP>
@@ -98,7 +100,7 @@ Image::Image(const String& fileName)
   delete[] lpstr;
 
   if (hbmp == NULL)
-    throw ResourceException("Can't load the image from file " + fileName);
+    throw ResourceException(L"Can't load the image from file " + fileName);
 
   get()->m_hdc = GetDC(GetDesktopWindow());
   get()->setHandle(hbmp);

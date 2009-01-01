@@ -36,7 +36,6 @@
 #include <shlobj.h>
 
 #include "Vaca/base.h"
-#include "Vaca/String.h"
 #include "Vaca/Rect.h"
 #include "Vaca/Keys.h"
 

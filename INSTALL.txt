@@ -11,7 +11,6 @@ Overview
   DEBUG=1 ..... build for debug, with debug information
   STATIC=1 .... build the static version, no DLL
   PROFILE=1 ... build the version to do profiling, e.g. with gprof
-  UNICODE=1 ... build the library with Unicode support
 
   --- Macros for Microsoft Visual C ---
   STATIC_LIBC=1 build using /MT[d] (instead of /MD[d])
@@ -26,8 +25,8 @@ Overview
   distclean: .. remove .exe .lib .dll files
 
   --- Example ---
-  make -f Makefile.mgw DEBUG=1 UNICODE=1
-  Builds the DLL with debug information and Unicode support.
+  make -f Makefile.mgw DEBUG=1
+  Builds the DLL with debug information in Unicode.
 
 
 ----------------------------------------------------------------------
@@ -55,7 +54,7 @@ Compiling with MinGW
 
 3) Run make in the Vaca directory:
 
-     C:\Vaca>make -f Makefile.mgw [RELEASE=1] [DEBUG=1] [STATIC=1] [PROFILE=1] [UNICODE=1]
+     C:\Vaca>make -f Makefile.mgw [RELEASE=1] [DEBUG=1] [STATIC=1] [PROFILE=1]
 
 
 ----------------------------------------------------------------------
@@ -72,7 +71,7 @@ Compiling with Microsoft Visual C
 3) Run nmake in the Vaca directory:
 
      C:\Vaca>nmake -f Makefile.vc [RELEASE=1] [DEBUG=1] [STATIC=1]
-                                  [STATIC_LIBC=1] [PROFILE=1] [UNICODE=1]
+                                  [STATIC_LIBC=1] [PROFILE=1]
 
 4) In case that you want to recompile Vaca with another configuration,
    you should do a "clean" before:
@@ -99,7 +98,7 @@ You have to compile the Vaca sources using some special flags:
   * -DWINVER=0x0500
   * -D_WIN32_IE=0x0500
   * -D_WIN32_WINNT=0x0500
-  * -DUNICODE and -D_UNICODE to add Unicode support
+  * -DUNICODE and -D_UNICODE for Unicode support
   * -D_DEBUG when you want debug information
   * -DNDEBUG when you don't want debug information (and no assertions)
 - finally compile all the *.cpp using that flags and put all the

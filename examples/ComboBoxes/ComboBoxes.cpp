@@ -42,18 +42,18 @@ class MainFrame : public Frame
 public:
 
   MainFrame()
-    : Frame("ComboBoxes")
-    , m_label1("ComboBox::Styles::Default", this)
+    : Frame(L"ComboBoxes")
+    , m_label1(L"ComboBox::Styles::Default", this)
     , m_combo1(this)
-    , m_label2("ComboBox::Styles::Simple", this)
+    , m_label2(L"ComboBox::Styles::Simple", this)
     , m_combo2(this, ComboBox::Styles::Simple)
-    , m_label3("ComboBox::Styles::Editable", this)
+    , m_label3(L"ComboBox::Styles::Editable", this)
     , m_combo3(this, ComboBox::Styles::Editable)
   {
     setLayout(new BoxLayout(Orientation::Vertical, false));
 
     for (int c=0; c<8; ++c) {
-      String text = String("Item ") + String::fromInt(c);
+      String text = format_string(L"Item %d", c);
       m_combo1.addItem(text);
       m_combo2.addItem(text);
       m_combo3.addItem(text);

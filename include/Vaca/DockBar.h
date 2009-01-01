@@ -53,7 +53,7 @@ class DockBarClass : public WidgetClass
 {
 public:
   static WidgetClassName getClassName()
-  { return WidgetClassName("Vaca.DockBar"); }
+  { return WidgetClassName(L"Vaca.DockBar"); }
 };
 
 /**

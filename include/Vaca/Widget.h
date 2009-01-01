@@ -41,7 +41,6 @@
 #include "Vaca/Rect.h"
 #include "Vaca/Signal.h"
 #include "Vaca/Size.h"
-#include "Vaca/String.h"
 #include "Vaca/Style.h"
 #include "Vaca/WidgetHit.h"
 

@@ -30,6 +30,7 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "Vaca/ResourceId.h"
+#include "Vaca/String.h"
 
 using namespace Vaca;
 
@@ -54,7 +55,7 @@ int ResourceId::getId()
 
 String ResourceId::toString()
 {
-  return String::fromInt(m_id);
+  return convert_to<String>(m_id);
 }
 
 LPTSTR ResourceId::toLPTSTR()

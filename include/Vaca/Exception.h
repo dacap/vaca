@@ -34,7 +34,7 @@
 
 #include <exception>
 
-#include "Vaca/String.h"
+#include "Vaca/base.h"
 
 namespace Vaca {
 

@@ -56,23 +56,23 @@ class MainFrame : public Frame
 public:
 
   MainFrame()
-    : Frame("BoxLayouts")
+    : Frame(L"BoxLayouts")
     , m_top(this)
     , m_bottom(this)
     , m_bottomSub1(&m_bottom)
     , m_bottomSub2(&m_bottom)
     , m_bottomSub3(&m_bottom)
-    , m_label("Label", &m_top)
-    , m_edit("Edit", &m_top, TextEdit::Styles::TextArea +
-			     Widget::Styles::Scroll)
-    , m_button("Button", &m_top)
-    , m_horizontal("Horizontal", m_orientation, &m_bottomSub1)
-    , m_vertical("Vertical", m_orientation, &m_bottomSub1)
-    , m_homogeneous("Homogeneous", m_distribution, &m_bottomSub2)
-    , m_heterogeneous("Heterogeneous", m_distribution, &m_bottomSub2)
-    , m_expandLabel("Expand Label", &m_bottomSub3)
-    , m_expandEdit("Expand Edit", &m_bottomSub3)
-    , m_expandButton("Expand Button", &m_bottomSub3)
+    , m_label(L"Label", &m_top)
+    , m_edit(L"Edit", &m_top, TextEdit::Styles::TextArea +
+			      Widget::Styles::Scroll)
+    , m_button(L"Button", &m_top)
+    , m_horizontal(L"Horizontal", m_orientation, &m_bottomSub1)
+    , m_vertical(L"Vertical", m_orientation, &m_bottomSub1)
+    , m_homogeneous(L"Homogeneous", m_distribution, &m_bottomSub2)
+    , m_heterogeneous(L"Heterogeneous", m_distribution, &m_bottomSub2)
+    , m_expandLabel(L"Expand Label", &m_bottomSub3)
+    , m_expandEdit(L"Expand Edit", &m_bottomSub3)
+    , m_expandButton(L"Expand Button", &m_bottomSub3)
   {
     // MainFrame layout
     setLayout(new BoxLayout(Orientation::Vertical, false)); // heterogeneous

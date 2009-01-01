@@ -33,7 +33,6 @@
 #define VACA_WIDGETCLASS_H
 
 #include "Vaca/base.h"
-#include "Vaca/String.h"
 
 namespace Vaca {
 
@@ -68,7 +67,7 @@ public:
   bool operator==(const WidgetClassName& className) const;
   bool operator!=(const WidgetClassName& className) const;
 
-  LPCTSTR toLPCTSTR() const;
+  inline const Char* c_str() const { return m_className.c_str(); }
 };
 
 /**
@@ -90,7 +89,7 @@ public:
  * {
  * public:
  *   static WidgetClassName getClassName()
- *   { return WidgetClassName("Vaca.MyWidget"); }
+ *   { return WidgetClassName(L"Vaca.MyWidget"); }
  * };
  * @endcode
  *
@@ -125,7 +124,7 @@ public:
    * @endwin32
    */
   static WidgetClassName getClassName()
-  { return WidgetClassName("Vaca.Widget"); }
+  { return WidgetClassName(L"Vaca.Widget"); }
 
   /**
    * Returns the set of CS_ Win32 flags.

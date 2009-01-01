@@ -46,7 +46,7 @@ class SplitBarClass : public WidgetClass
 {
 public:
   static WidgetClassName getClassName()
-  { return WidgetClassName("Vaca.SplitBar"); }
+  { return WidgetClassName(L"Vaca.SplitBar"); }
 };
 
 class VACA_DLL SplitBar : public Register<SplitBarClass>

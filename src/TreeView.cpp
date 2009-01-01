@@ -558,7 +558,7 @@ bool TreeView::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult)
 
       TreeViewEvent ev(this, node,
 		       lptvdi->item.pszText != NULL ? String(lptvdi->item.pszText):
-						      String(""));
+						      String(L""));
 
       // the label editing was canceled by the user?
       if (lptvdi->item.pszText == NULL)

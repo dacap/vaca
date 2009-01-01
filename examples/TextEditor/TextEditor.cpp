@@ -129,9 +129,8 @@ public:
 
   // creates a new TextEditor
   TextEditor(const String& fileName, bool hasFileName, MdiFrame* parent)
-    : MdiChild(fileName.getFileName(), parent,
-	       MdiChild::Styles::Default +
-	       Widget::Styles::ClientEdge)
+    : MdiChild(file_name(fileName), parent, MdiChild::Styles::Default |
+					    Widget::Styles::ClientEdge)
     , m_editor(this)
   {
     // creates a new document
@@ -198,13 +197,20 @@ private:
   // method from View class
   virtual void onNotifyDocument()
   {
-    String newTitle =
-      // the "*"
-      (m_editor.isModified() ? "* ": "") +
-      // the name of the file
-      getFileName().getFileName() +
-      // the view number (only if it's necessary)
-      (isLastView() ? "": " : "+String::fromInt(m_document->getViewNumber(this)));
+    String newTitle;
+
+    // the modified mark (an asterisk)
+    if (m_editor.isModified())
+      newTitle += L"* ";
+
+    // the name of the file
+    newTitle += file_name(getFileName());
+
+    // the view number (only if it's necessary)
+    if (!isLastView()) {
+      newTitle += L" : ";
+      newTitle += convert_to<String>(m_document->getViewNumber(this));
+    }
 
     // is the text different? (this avoid flicker of the title-bar
     // when we write text)
@@ -220,7 +226,7 @@ public:
   // opens a file and put its text into the editor
   bool openFile()
   {
-    FILE* file = _tfopen(getFileName().c_str(), _T("rb"));
+    FILE* file = _wfopen(getFileName().c_str(), L"rb");
     if (file != NULL) {
       char buf[4096];
       int bytesReaded;
@@ -243,7 +249,7 @@ public:
   // saves the text of the editor in a file
   bool saveFile()
   {
-    FILE *file = _tfopen(getFileName().c_str(), _T("wb"));
+    FILE* file = _wfopen(getFileName().c_str(), L"wb");
     if (file != NULL) {
       int c, lines = m_editor.getLineCount();
       for (c=0; c<lines; c++) {
@@ -289,9 +295,9 @@ class MainFrame : public MdiFrame
 public:
 
   MainFrame()
-    : MdiFrame("TextEditor")
+    : MdiFrame(L"TextEditor")
     , m_docCounter(0)
-    , m_font("Courier New", 10)
+    , m_font(L"Courier New", 10)
     , m_viewEol(false)
   {
     setMenuBar(createMenuBar());
@@ -319,36 +325,36 @@ private:
   MenuBar* createMenuBar()
   {
     MenuBar* menuBar = new MenuBar;
-    Menu* fileMenu = new Menu("&File");
-    Menu* editMenu = new Menu("&Edit");
-    Menu* optionsMenu = new Menu("&Options");
-    MdiListMenu* windowsMenu = new MdiListMenu("&Windows");
+    Menu* fileMenu = new Menu(L"&File");
+    Menu* editMenu = new Menu(L"&Edit");
+    Menu* optionsMenu = new Menu(L"&Options");
+    MdiListMenu* windowsMenu = new MdiListMenu(L"&Windows");
 
-    fileMenu->add("&New\tCtrl+N", ID_FILE_NEW, Keys::Control | Keys::N);
-    fileMenu->add("&Open\tCtrl+O", ID_FILE_OPEN, Keys::Control | Keys::O);
+    fileMenu->add(L"&New\tCtrl+N", ID_FILE_NEW, Keys::Control | Keys::N);
+    fileMenu->add(L"&Open\tCtrl+O", ID_FILE_OPEN, Keys::Control | Keys::O);
     fileMenu->addSeparator();
-    fileMenu->add("&Save\tCtrl+S", ID_FILE_SAVE, Keys::Control | Keys::S);
-    fileMenu->add("Save &as...", ID_FILE_SAVE_AS);
+    fileMenu->add(L"&Save\tCtrl+S", ID_FILE_SAVE, Keys::Control | Keys::S);
+    fileMenu->add(L"Save &as...", ID_FILE_SAVE_AS);
     fileMenu->addSeparator();
-    fileMenu->add("E&xit", ID_FILE_EXIT);
+    fileMenu->add(L"E&xit", ID_FILE_EXIT);
 
-    editMenu->add("&Undo\tCtrl+Z", ID_EDIT_UNDO, Keys::Control | Keys::Z);
-    editMenu->add("&Redo\tCtrl+Y", ID_EDIT_REDO, Keys::Control | Keys::Y);
+    editMenu->add(L"&Undo\tCtrl+Z", ID_EDIT_UNDO, Keys::Control | Keys::Z);
+    editMenu->add(L"&Redo\tCtrl+Y", ID_EDIT_REDO, Keys::Control | Keys::Y);
     editMenu->addSeparator();
-    editMenu->add("Cu&t\tCtrl+X", ID_EDIT_CUT, Keys::Control | Keys::X);
-    editMenu->add("&Copy\tCtrl+C", ID_EDIT_COPY, Keys::Control | Keys::C);
-    editMenu->add("&Paste\tCtrl+V", ID_EDIT_PASTE, Keys::Control | Keys::P);
-    editMenu->add("Clea&r", ID_EDIT_CLEAR);
+    editMenu->add(L"Cu&t\tCtrl+X", ID_EDIT_CUT, Keys::Control | Keys::X);
+    editMenu->add(L"&Copy\tCtrl+C", ID_EDIT_COPY, Keys::Control | Keys::C);
+    editMenu->add(L"&Paste\tCtrl+V", ID_EDIT_PASTE, Keys::Control | Keys::P);
+    editMenu->add(L"Clea&r", ID_EDIT_CLEAR);
     editMenu->addSeparator();
-    editMenu->add("&Find\tCtrl+F", ID_EDIT_FIND, Keys::Control | Keys::F);
-    editMenu->add("R&eplace\tCtrl+H", ID_EDIT_REPLACE, Keys::Control | Keys::H);
+    editMenu->add(L"&Find\tCtrl+F", ID_EDIT_FIND, Keys::Control | Keys::F);
+    editMenu->add(L"R&eplace\tCtrl+H", ID_EDIT_REPLACE, Keys::Control | Keys::H);
 
-    optionsMenu->add("Change &Font", ID_OPTIONS_CHANGE_FONT);
-    optionsMenu->add("View &EOL", ID_OPTIONS_VIEW_EOL);
+    optionsMenu->add(L"Change &Font", ID_OPTIONS_CHANGE_FONT);
+    optionsMenu->add(L"View &EOL", ID_OPTIONS_VIEW_EOL);
 
-    windowsMenu->add("&Close\tCtrl+W", ID_WINDOWS_CLOSE, Keys::Control | Keys::W);
-    windowsMenu->add("&Duplicate\tCtrl+D", ID_WINDOWS_DUPLICATE, Keys::Control | Keys::D);
-    windowsMenu->add("&Cascade", ID_WINDOWS_CASCADE);
+    windowsMenu->add(L"&Close\tCtrl+W", ID_WINDOWS_CLOSE, Keys::Control | Keys::W);
+    windowsMenu->add(L"&Duplicate\tCtrl+D", ID_WINDOWS_DUPLICATE, Keys::Control | Keys::D);
+    windowsMenu->add(L"&Cascade", ID_WINDOWS_CASCADE);
 
     menuBar->add(fileMenu);
     menuBar->add(editMenu);
@@ -429,13 +435,13 @@ private:
 
   void onNew()
   {
-    String title = String("Untitled")+String::fromInt(++m_docCounter);
+    String title = format_string(L"Untitled %d", ++m_docCounter);
     addTextEditor(new TextEditor(title, false, this));
   }
 
   void onOpen()
   {
-    OpenFileDialog dlg("Open file", this);
+    OpenFileDialog dlg(L"Open file", this);
     addFilters(dlg);
 
     dlg.setMultiselect(true);
@@ -464,8 +470,8 @@ private:
 	    addTextEditor(textEditor);
 	  else {
 	    delete_widget(textEditor);
-	    MsgBox::show(this, "Error",
-			 "Error opening file '"+fileName+"'",
+	    MsgBox::show(this, L"Error",
+			 L"Error opening file '"+fileName+L"'",
 			 MsgBox::Type::Ok,
 			 MsgBox::Icon::Error);
 	    break;
@@ -477,7 +483,7 @@ private:
 
   void onSave()
   {
-    saveTextEditor(getTextEditor(), "Save file", false);
+    saveTextEditor(getTextEditor(), L"Save file", false);
   }
 
   bool canSave()
@@ -490,7 +496,7 @@ private:
 
   void onSaveAs()
   {
-    saveTextEditor(getTextEditor(), "Save file as...", true);
+    saveTextEditor(getTextEditor(), L"Save file as...", true);
   }
 
   bool isTextEditorAvailable()
@@ -739,8 +745,8 @@ private:
   // adds file filters to the FileDialog
   void addFilters(FileDialog &dlg)
   {
-    dlg.addFilter("All (*.*)", "*.*", true);
-    dlg.addFilter("Text files (*.txt)", "*.txt");
+    dlg.addFilter(L"All (*.*)", L"*.*", true);
+    dlg.addFilter(L"Text files (*.txt)", L"*.txt");
   }
 
   // adds a new text editor to the application
@@ -791,8 +797,8 @@ private:
     }
     // error...
     else {
-      MsgBox::show(this, "Error",
-		   "Error saving file '"+textEditor->getFileName()+"'",
+      MsgBox::show(this, L"Error",
+		   L"Error saving file '" + textEditor->getFileName() + L"'",
 		   MsgBox::Type::Ok,
 		   MsgBox::Icon::Error);
       return false;
@@ -804,8 +810,8 @@ private:
   {
     if ((textEditor->isLastView() || forceAsk) &&
 	textEditor->getEditor().isModified()) {
-      MsgBox::Result res = MsgBox::show(this, "TextEditor",
-					"Save changes to '"+textEditor->getFileName()+"'?",
+      MsgBox::Result res = MsgBox::show(this, L"TextEditor",
+					L"Save changes to '" + textEditor->getFileName() + L"'?",
 					MsgBox::Type::YesNoCancel,
 					MsgBox::Icon::Question);
 
@@ -813,7 +819,7 @@ private:
 	return false;		// "Cancel" in message-box
       }
       else if (res == MsgBox::Result::Yes) {
-	if (!saveTextEditor(textEditor, "Save file", false))
+	if (!saveTextEditor(textEditor, L"Save file", false))
 	  return false;		// "Cancel" in save-file dialog
       }
     }

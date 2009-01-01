@@ -58,15 +58,15 @@ class VACA_DLL KeyEvent : public Event
   int m_keys;
 
   /**
-   * Character-key code (ANSI, Unicode, etc.)
+   * Character-key code.
    *
    * @see #getCharCode
    */
-  Character m_charCode;
+  Char m_charCode;
 
 public:
 
-  KeyEvent(Widget* source, Keys::Type keys, Character charCode);
+  KeyEvent(Widget* source, Keys::Type keys, Char charCode);
   virtual ~KeyEvent();
 
   void consume();
@@ -74,7 +74,7 @@ public:
 
   Keys::Type getKeyCode() const;
   Keys::Type getModifiers() const;
-  Character getCharCode() const;
+  Char getCharCode() const;
 
   bool isShift() const;
   bool isControl() const;

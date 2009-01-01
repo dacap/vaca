@@ -51,12 +51,14 @@ public:
   // constructs the main frame
   MainFrame()
     // call the parent class constructor, with the title "HelloWorld"
-    : Frame("HelloWorld")
+    // why we use L"..."? because Vaca strings are wide character to support
+    // Unicode, so you have to use the L prefix in all string literals
+    : Frame(L"HelloWorld")
     // construct the link with the URL and the label to show,
     // every Widget receive the parent, in this case, "this" pointer
-    , m_label("http://vaca.sourceforge.net/", "Hello World!", this)
+    , m_label(L"http://vaca.sourceforge.net/", L"Hello World!", this)
     // construct a font to use in the link label
-    , m_linkFont("Verdana", 14)
+    , m_linkFont(L"Verdana", 14)
   {
     // set the layout to the client area, because the link'll use the
     // entire client area

@@ -62,8 +62,7 @@ public:
     if (getChildren().empty()) {
       // add ten sub-infinite nodes as children
       for (int c=0; c<10; c++)
-	addNode(new InfiniteTreeNode(getText() + " " +
-				     String::fromInt(c)));
+	addNode(new InfiniteTreeNode(format_string(L"%s %d", getText().c_str(), c)));
     }
   }
 
@@ -93,20 +92,20 @@ class MainFrame : public Frame
 public:
 
   MainFrame()
-    : Frame("Trees (WIP)")
-    , m_dragAndDrop1("Drag && Drop", this)
-    , m_dragAndDrop2("Drag && Drop", this)
+    : Frame(L"Trees (WIP)")
+    , m_dragAndDrop1(L"Drag && Drop", this)
+    , m_dragAndDrop2(L"Drag && Drop", this)
     , m_treeView1(this)
     , m_treeView2(this, TreeView::Styles::Default +
 			TreeView::Styles::EditLabel)
-    , m_addItem("+", this)
-    , m_deleteItem("-", this)
-    , m_from1to2(">", this)
-    , m_from2to1("<", this)
-    , m_label("", this)
+    , m_addItem(L"+", this)
+    , m_deleteItem(L"-", this)
+    , m_from1to2(L">", this)
+    , m_from2to1(L"<", this)
+    , m_label(L"", this)
   {
     // layout
-    setLayout(Bix::parse("Y[fX[Y[%,%],fY[%,f%],Y[%,%],fY[%,f%]],%]",
+    setLayout(Bix::parse(L"Y[fX[Y[%,%],fY[%,f%],Y[%,%],fY[%,f%]],%]",
 			 &m_addItem, &m_deleteItem,
 			 &m_dragAndDrop1, &m_treeView1,
 			 &m_from1to2, &m_from2to1,
@@ -119,15 +118,15 @@ public:
     m_from2to1.setPreferredSize(Size(32, 16));
 
     // add the first node (the most simple node without children)
-    m_treeView1.addNode(new TreeNode("Leaf node"));
+    m_treeView1.addNode(new TreeNode(L"Leaf node"));
 
     // add a node with three children
-    TreeNode* node = new TreeNode("Node with sub-nodes (three children)");
+    TreeNode* node = new TreeNode(L"Node with sub-nodes (three children)");
     addThreeChildren(node);
     m_treeView1.addNode(node);
 
     // add the third node (a custom node, the infinite node that we defined)
-    m_treeView1.addNode(new InfiniteTreeNode("Infinite Node"));
+    m_treeView1.addNode(new InfiniteTreeNode(L"Infinite Node"));
 
     // bind some events
     m_dragAndDrop1.Action.connect(Bind(&MainFrame::onDragAndDrop, this, &m_dragAndDrop1, &m_treeView1));
@@ -153,15 +152,18 @@ protected:
   // onAfter some event (like onAfterExpand or onAfterCollapse)
   void onAfter(TreeViewEvent& ev, const String& action)
   {
-    m_label.setText("You "+action+" \""+ev.getTreeNode()->getText()+"\" item.");
+    m_label.setText(format_string(L"You %s \"%s\" item.",
+				  action.c_str(),
+				  ev.getTreeNode()->getText().c_str()));
+
     // the label could be bigger, relayout...
     layout();
   }
 
-  void onAfterExpand   (TreeViewEvent& ev) { onAfter(ev, "expanded"); }
-  void onAfterCollapse (TreeViewEvent& ev) { onAfter(ev, "collapsed"); }
-  void onAfterSelect   (TreeViewEvent& ev) { onAfter(ev, "selected"); }
-  void onAfterLabelEdit(TreeViewEvent& ev) { onAfter(ev, "edited"); }
+  void onAfterExpand   (TreeViewEvent& ev) { onAfter(ev, L"expanded"); }
+  void onAfterCollapse (TreeViewEvent& ev) { onAfter(ev, L"collapsed"); }
+  void onAfterSelect   (TreeViewEvent& ev) { onAfter(ev, L"selected"); }
+  void onAfterLabelEdit(TreeViewEvent& ev) { onAfter(ev, L"edited"); }
 
   // adds three items in the m_treeView1
   void onAddItem()
@@ -208,9 +210,9 @@ private:
 
   void addThreeChildren(TreeNode* container)
   {
-    container->addNode(new TreeNode("A"));
-    container->addNode(new TreeNode("B"));
-    container->addNode(new TreeNode("C"));
+    container->addNode(new TreeNode(L"A"));
+    container->addNode(new TreeNode(L"B"));
+    container->addNode(new TreeNode(L"C"));
   }
 
 };

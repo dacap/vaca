@@ -78,16 +78,16 @@ public:
     : ComboBox(parent)
   {
     for (int i=0; i<10; i++) {	// driver index goes from 0 to 9
-      Character name[256];
-      Character ver[256];
+      Char name[256];
+      Char ver[256];
       if (capGetDriverDescription(i, name, sizeof(name), ver, sizeof(ver)))
-	addItem(String(name)+" "+ver);
+	addItem(String(name)+L" "+ver);
       else
 	break;
     }
     // no drivers?
     if (!getItemCount()) {
-      addItem("No drivers");
+      addItem(L"No drivers");
       setEnabled(false);
     }
     else {
@@ -179,7 +179,7 @@ private:
   virtual HWND createHandle(LPCTSTR className, Widget* parent, Style style)
   {
     // this routine is from VFW
-    return capCreateCaptureWindow(_T("WebCam"),
+    return capCreateCaptureWindow(L"WebCam",
 				  style.regular,
 				  0, 0, 160, 120,
 				  parent ? parent->getHandle(): NULL,
@@ -203,19 +203,19 @@ class MainFrame : public Frame
 
 public:
   MainFrame()
-    : Frame("WebCam")
-    , m_driverLabel("Driver:", this)
+    : Frame(L"WebCam")
+    , m_driverLabel(L"Driver:", this)
     , m_driver(this)
     , m_webcam(this)
-    , m_start("Start", this)
-    , m_capture("Capture", this)
-    , m_copy("Copy", this)
-    , m_rateLabel("Preview Rate (milliseconds):", this)
+    , m_start(L"Start", this)
+    , m_capture(L"Capture", this)
+    , m_copy(L"Copy", this)
+    , m_rateLabel(L"Preview Rate (milliseconds):", this)
     , m_rate(1, 1000, 100, this)
-    , m_rateEdit("", this, TextEdit::Styles::Default +
-			   TextEdit::Styles::ReadOnly)
+    , m_rateEdit(L"", this, TextEdit::Styles::Default +
+			    TextEdit::Styles::ReadOnly)
   {
-    setLayout(Bix::parse("Y[X[%,f%],X[fX[],%,fX[]],X[fX[],%,%,%,fX[]],%,X[f%,%]]",
+    setLayout(Bix::parse(L"Y[X[%,f%],X[fX[],%,fX[]],X[fX[],%,%,%,fX[]],%,X[f%,%]]",
 			 &m_driverLabel, &m_driver,
 			 &m_webcam,
 			 &m_start, &m_capture, &m_copy,
@@ -244,14 +244,14 @@ private:
   void onStart()
   {
     if (m_start.isSelected()) {
-      m_start.setText("Stop");
+      m_start.setText(L"Stop");
 
       m_webcam.setDriver(m_driver.getCurrentItem());
       m_webcam.startPreview();
       m_webcam.setPreviewRate(m_rate.getValue());
     }
     else {
-      m_start.setText("Start");
+      m_start.setText(L"Start");
 
       m_webcam.stopPreview();
     }
@@ -260,7 +260,7 @@ private:
   void onCapture()
   {
     if (m_start.isSelected()) {
-      m_start.setText("Start");
+      m_start.setText(L"Start");
       m_start.setSelected(false);
     }
     else {
@@ -271,8 +271,10 @@ private:
   
   void onChangeRate()
   {
-    m_rateEdit.setText(String::fromInt(m_rate.getValue()));
-    m_webcam.setPreviewRate(m_rate.getValue());
+    int rate = m_rate.getValue();
+
+    m_rateEdit.setText(convert_to<String>(rate));
+    m_webcam.setPreviewRate(rate);
   }
 
 };

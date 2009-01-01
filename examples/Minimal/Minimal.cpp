@@ -37,9 +37,9 @@ class MainFrame : public Frame
 {
   Label label;
 public:
-  MainFrame() : Frame("Minimal")
-              , label("This is the minimal program using Vaca\r\n"
-		      "so you can copy && paste this code.", this)
+  MainFrame() : Frame(L"Minimal")
+              , label(L"This is the minimal program using Vaca\r\n"
+		      L"so you can copy && paste this code.", this)
   {
     setLayout(new ClientLayout);
     setSize(getPreferredSize());

@@ -1107,7 +1107,7 @@ Size Graphics::measureString(const String& str, int fitInWidth, int flags)
   else {
     SIZE sz;
 
-    if (GetTextExtentPoint32(m_handle, _T(" "), 1, &sz)) {
+    if (GetTextExtentPoint32(m_handle, L" ", 1, &sz)) {
       rc.right = sz.cx;
       rc.bottom = sz.cy;
     }

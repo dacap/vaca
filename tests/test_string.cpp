@@ -1,4 +1,5 @@
 #include <cassert>
+#include <climits>
 
 #include "Vaca/String.h"
 
@@ -6,154 +7,159 @@ using namespace Vaca;
 
 void test_basic()
 {
-  assert(String() == _T(""));
+  String a, b;
+  assert(a == b);
+  assert(String() == L"");
+  assert(a == String());
 }
-  
+
 void test_equal()
 {
-  assert(String("Hello") == _T("Hello"));
-
-  assert(String("abc") == String("abc"));
-  assert(String("abc") != String("abcd"));
-  assert(String("abcd") != String("abc"));
+  assert(String(L"Hello") == L"Hello");
+  assert(String(L"abc") == String(L"abc"));
+  assert(String(L"abc") != String(L"abcd"));
+  assert(String(L"abcd") != String(L"abc"));
 }
 
-void test_from()
+void test_convert_to()
 {
-  String a = String::fromInt(-32);
-  String b = "-32";
-  assert(a == b);
+  assert(convert_to<String>(32039) == L"32039");
+  assert(convert_to<String>(-32994) == L"-32994");
+  assert(convert_to<String>(0.324) == L"0.324");
+  assert(convert_to<String>(0xff00) == L"65280");
 
-  assert(String::fromInt(32039) == _T("32039"));
-  assert(String::fromInt(-32994) == _T("-32994"));
-  assert(String::fromDouble(0.324, 10) == _T("0.324"));
-  assert(String::fromDouble(0.324, 1) == _T("0.3"));
-  assert(String::fromInt(0xff00, 16) == _T("ff00"));
-}
+  String a = convert_to<String>(-32);
+  String b = convert_to<String>(32);
+  String c = convert_to<String>(0x10);
+  assert(convert_to<int>(a) == -32);
+  assert(convert_to<int>(b) == 32);
+  assert(convert_to<int>(c) == 0x10);
 
-void test_parse()
-{
-  String a = String::fromInt(-32);
-  String b = String::fromInt(32);
-  String c = String::fromInt(0x10, 16);
-  assert(a.parseInt() == -32);
-  assert(b.parseInt() == 32);
-  assert(c.parseInt(16) == 0x10);
+  String a_int = convert_to<String, int>(INT_MIN);
+  String b_int = convert_to<String, int>(INT_MAX);
+  String a_uint = convert_to<String, unsigned int>(0U);
+  String b_uint = convert_to<String, unsigned int>(UINT_MAX);
+  String a_long = convert_to<String, long>(LONG_MIN);
+  String b_long = convert_to<String, long>(LONG_MAX);
+  String a_ulong = convert_to<String, unsigned long>(0UL);
+  String b_ulong = convert_to<String, unsigned long>(ULONG_MAX);
+
+  assert(convert_to<int>(a_int) == INT_MIN);
+  assert(convert_to<int>(b_int) == INT_MAX);
+  assert(convert_to<long>(a_long) == LONG_MIN);
+  assert(convert_to<long>(b_long) == LONG_MAX);
+  assert(convert_to<unsigned int>(a_uint) == 0U);
+  assert(convert_to<unsigned int>(b_uint) == UINT_MAX);
+  assert(convert_to<unsigned long>(a_ulong) == 0UL);
+  assert(convert_to<unsigned long>(b_ulong) == ULONG_MAX);
+
 }
 
 void test_filename()
 {
-  assert(String("C:\\foo\\main.cpp").getFilePath() == _T("C:\\foo"));
-  assert(String("C:/foo/pack.tar.gz").getFilePath() == _T("C:/foo"));
-  assert(String("./main.cpp").getFilePath() == _T("."));
-  assert(String(".\\main.cpp").getFilePath() == _T("."));
-  assert(String("\\main.cpp").getFilePath() == _T(""));
-  assert(String("main.cpp").getFilePath() == _T(""));
-  assert(String("main.").getFilePath() == _T(""));
-  assert(String("main").getFilePath() == _T(""));
-  assert(String("C:/foo/").getFilePath() == _T("C:/foo"));
-  assert(String("C:\\").getFilePath() == _T("C:"));
-  assert(String("C:\\.cpp").getFilePath() == _T("C:"));
-  assert(String(".cpp").getFilePath() == _T(""));
-  assert(String("").getFilePath() == _T(""));
+  assert(file_path(L"C:\\foo\\main.cpp") == L"C:\\foo");
+  assert(file_path(L"C:/foo/pack.tar.gz") == L"C:/foo");
+  assert(file_path(L"./main.cpp") == L".");
+  assert(file_path(L".\\main.cpp") == L".");
+  assert(file_path(L"\\main.cpp") == L"");
+  assert(file_path(L"main.cpp") == L"");
+  assert(file_path(L"main.") == L"");
+  assert(file_path(L"main") == L"");
+  assert(file_path(L"C:/foo/") == L"C:/foo");
+  assert(file_path(L"C:\\") == L"C:");
+  assert(file_path(L"C:\\.cpp") == L"C:");
+  assert(file_path(L".cpp") == L"");
+  assert(file_path(L"") == L"");
 
-  assert(String("C:\\foo\\main.cpp").getFileName() == _T("main.cpp"));
-  assert(String("C:/foo/pack.tar.gz").getFileName() == _T("pack.tar.gz"));
-  assert(String("./main.cpp").getFileName() == _T("main.cpp"));
-  assert(String(".\\main.cpp").getFileName() == _T("main.cpp"));
-  assert(String("\\main.cpp").getFileName() == _T("main.cpp"));
-  assert(String("main.cpp").getFileName() == _T("main.cpp"));
-  assert(String("main.").getFileName() == _T("main."));
-  assert(String("main").getFileName() == _T("main"));
-  assert(String("C:/foo/").getFileName() == _T(""));
-  assert(String("C:\\").getFileName() == _T(""));
-  assert(String("C:\\.cpp").getFileName() == _T(".cpp"));
-  assert(String(".cpp").getFileName() == _T(".cpp"));
-  assert(String("").getFileName() == _T(""));
+  assert(file_name(L"C:\\foo\\main.cpp") == L"main.cpp");
+  assert(file_name(L"C:/foo/pack.tar.gz") == L"pack.tar.gz");
+  assert(file_name(L"./main.cpp") == L"main.cpp");
+  assert(file_name(L".\\main.cpp") == L"main.cpp");
+  assert(file_name(L"\\main.cpp") == L"main.cpp");
+  assert(file_name(L"main.cpp") == L"main.cpp");
+  assert(file_name(L"main.") == L"main.");
+  assert(file_name(L"main") == L"main");
+  assert(file_name(L"C:/foo/") == L"");
+  assert(file_name(L"C:\\") == L"");
+  assert(file_name(L"C:\\.cpp") == L".cpp");
+  assert(file_name(L".cpp") == L".cpp");
+  assert(file_name(L"") == L"");
 
-  assert(String("C:\\foo\\main.cpp").getFileExtension() == _T("cpp"));
-  assert(String("C:/foo/pack.tar.gz").getFileExtension() == _T("gz"));
-  assert(String("./main.cpp").getFileExtension() == _T("cpp"));
-  assert(String(".\\main.cpp").getFileExtension() == _T("cpp"));
-  assert(String("\\main.cpp").getFileExtension() == _T("cpp"));
-  assert(String("main.cpp").getFileExtension() == _T("cpp"));
-  assert(String("main.").getFileExtension() == _T(""));
-  assert(String("main").getFileExtension() == _T(""));
-  assert(String("C:/foo/").getFileExtension() == _T(""));
-  assert(String("C:\\").getFileExtension() == _T(""));
-  assert(String("C:\\.cpp").getFileExtension() == _T("cpp"));
-  assert(String(".cpp").getFileExtension() == _T("cpp"));
-  assert(String("").getFileExtension() == _T(""));
+  assert(file_extension(L"C:\\foo\\main.cpp") == L"cpp");
+  assert(file_extension(L"C:/foo/pack.tar.gz") == L"gz");
+  assert(file_extension(L"./main.cpp") == L"cpp");
+  assert(file_extension(L".\\main.cpp") == L"cpp");
+  assert(file_extension(L"\\main.cpp") == L"cpp");
+  assert(file_extension(L"main.cpp") == L"cpp");
+  assert(file_extension(L"main.") == L"");
+  assert(file_extension(L"main") == L"");
+  assert(file_extension(L"C:/foo/") == L"");
+  assert(file_extension(L"C:\\") == L"");
+  assert(file_extension(L"C:\\.cpp") == L"cpp");
+  assert(file_extension(L".cpp") == L"cpp");
+  assert(file_extension(L"") == L"");
 
-  assert(String("C:\\foo\\main.cpp").getFileTitle() == _T("main"));
-  assert(String("C:/foo/pack.tar.gz").getFileTitle() == _T("pack.tar"));
-  assert(String("./main.cpp").getFileTitle() == _T("main"));
-  assert(String(".\\main.cpp").getFileTitle() == _T("main"));
-  assert(String("\\main.cpp").getFileTitle() == _T("main"));
-  assert(String("main.cpp").getFileTitle() == _T("main"));
-  assert(String("main.").getFileTitle() == _T("main"));
-  assert(String("main").getFileTitle() == _T("main"));
-  assert(String("C:/foo/").getFileTitle() == _T(""));
-  assert(String("C:\\").getFileTitle() == _T(""));
-  assert(String("C:\\.cpp").getFileTitle() == _T(""));
-  assert(String(".cpp").getFileTitle() == _T(""));
-  assert(String("").getFileTitle() == _T(""));
+  assert(file_title(L"C:\\foo\\main.cpp") == L"main");
+  assert(file_title(L"C:/foo/pack.tar.gz") == L"pack.tar");
+  assert(file_title(L"./main.cpp") == L"main");
+  assert(file_title(L".\\main.cpp") == L"main");
+  assert(file_title(L"\\main.cpp") == L"main");
+  assert(file_title(L"main.cpp") == L"main");
+  assert(file_title(L"main.") == L"main");
+  assert(file_title(L"main") == L"main");
+  assert(file_title(L"C:/foo/") == L"");
+  assert(file_title(L"C:\\") == L"");
+  assert(file_title(L"C:\\.cpp") == L"");
+  assert(file_title(L".cpp") == L"");
+  assert(file_title(L"") == L"");
 
-  String path("C:\\foo");
-  path.addPathComponent("src");
-  assert(path == _T("C:\\foo\\src"));
-  path.addPathComponent("headers\\");
-  assert(path == _T("C:\\foo\\src\\headers\\"));
-  path.addPathComponent("main.h");
-  assert(path == _T("C:\\foo\\src\\headers\\main.h"));
+  String path(L"C:\\foo");
+  assert(path / L"src" == L"C:\\foo\\src");
+
+  path /= L"include";
+  assert(path == L"C:\\foo\\include");
+
+  path /= L"main.h";
+  assert(path == L"C:\\foo\\include\\main.h");
 }
 
 void test_trim()
 {
-  assert(String().trim() == _T(""));
-  assert(String("No trim").trim() == _T("No trim"));
-  assert(String("Front    ").trim() == _T("Front"));
-  assert(String("   End").trim() == _T("End"));
-  assert(String("       ").trim() == _T(""));
-  assert(String(" \n \r  \t \r \n \r\n \t   ").trim() == _T(""));
-  assert(String(" \n \r Word \t   ").trim() == _T("Word"));
-  assert(String("\tNo \n \r \ttrim \n ").trim() == _T("No \n \r \ttrim"));
+  assert(trim_string(String()) == L"");
+  assert(trim_string(L"No trim") == L"No trim");
+  assert(trim_string(L"Front    ") == L"Front");
+  assert(trim_string(L"   End") == L"End");
+  assert(trim_string(L"       ") == L"");
+  assert(trim_string(L" \n \r  \t \r \n \r\n \t   ") == L"");
+  assert(trim_string(L" \n \r Word \t   ") == L"Word");
+  assert(trim_string(L"\tNo \n \r \ttrim \n ") == L"No \n \r \ttrim");
 }
 
 void test_format()
 {
-  assert(String::format(  ("")) == _T(""));
-  assert(String::format(_T("")) == _T(""));
-
-  assert(String::format(  ("Hello")) == _T("Hello"));
-  assert(String::format(_T("Hello")) == _T("Hello"));
-
-  assert(String::format(  ("%d"), 2) == _T("2"));
-  assert(String::format(_T("%d"), 2) == _T("2"));
-
-  assert(String::format(  ("%.02f"), 20.3248) == _T("20.32"));
-  assert(String::format(_T("%.02f"), 20.3248) == _T("20.32"));
-
-  assert(String::format(  ("%5d"), 202) == _T("  202"));
-  assert(String::format(_T("%5d"), 202) == _T("  202"));
-
-  assert(String::format(  ("%05d"), 202) == _T("00202"));
-  assert(String::format(_T("%05d"), 202) == _T("00202"));
+  assert(format_string(L"") == L"");
+  assert(format_string(L"Hello") == L"Hello");
+  assert(format_string(L"%d", 2) == L"2");
+  assert(format_string(L"%.02f", 20.3248) == L"20.32");
+  assert(format_string(L"%5d", 202) == L"  202");
+  assert(format_string(L"%05d", 202) == L"00202");
+  assert(format_string(L"%04x", 0xff00) == L"ff00");
+  assert(format_string(L"%0.2g", 0.324) == L"0.32");
 }
 
 void test_format_overflow()
 {
   for (int n=1024; n<1026; ++n) {
-    Character* buf(new Character[n]);
+    wchar_t* buf(new wchar_t[n]);
 
     for (int d=10; d<1000; d*=10) {
       for (int c=0; c<n-3; ++c)
-	buf[c] = 'x';
-      buf[n-3] = '%';
-      buf[n-2] = 'd';
+	buf[c] = L'x';
+      buf[n-3] = L'%';
+      buf[n-2] = L'd';
       buf[n-1] = 0;
 
-      assert(String::format(buf, d) == (String(std::string(n-3, 'x').c_str())+String::fromInt(d)));
+      assert(format_string(buf, d) == String(n-3, L'x')+convert_to<String>(d));
     }
 
     delete buf;
@@ -164,8 +170,7 @@ int main()
 {
   test_basic();
   test_equal();
-  test_from();
-  test_parse();
+  test_convert_to();
   test_filename();
   test_trim();
   test_format();

@@ -43,9 +43,9 @@ class MainFrame : public Frame
 public:
 
   MainFrame()
-    : Frame("FontMetrics")
-    , m_sampleText("abgijqM")
-    , m_font("Times New Roman", 128)
+    : Frame(L"FontMetrics")
+    , m_sampleText(L"abgijqM")
+    , m_font(L"Times New Roman", 128)
   {
     setBgColor(Color::White);
     setFgColor(Color::Black);
@@ -69,7 +69,7 @@ public:
     Pen blue(Color::Blue);
     Pen red(Color::Red);
 
-    String baseLineStr = "Base line";
+    String baseLineStr = L"Base line";
     Size baseLineStrSize = g.measureString(baseLineStr);
     
     // Measure the sampleText string
@@ -102,7 +102,7 @@ public:
     g.getFontMetrics(fontMetrics2);
 
     // Draw origin
-    g.drawString("Bounding box", Color::Blue,
+    g.drawString(L"Bounding box", Color::Blue,
 		 origin.x,
 		 origin.y-fontMetrics2.getHeight());
 
@@ -112,13 +112,13 @@ public:
 		 origin.y+fontMetrics.getAscent()-baseLineStrSize.h);
 
     // Draw the sampleText width
-    drawMeasure(g, "width=" + String::fromInt(textSize.w),
+    drawMeasure(g, L"width=" + convert_to<String>(textSize.w),
 		Color::Black,
 		origin.x, origin.y+textSize.h,
 		textSize.w, Orientation::Horizontal);
 
     // Draw the sampleText height
-    drawMeasure(g, "height=" + String::fromInt(textSize.h),
+    drawMeasure(g, L"height=" + convert_to<String>(textSize.h),
 		Color::Black,
 		origin.x+textSize.w, origin.y,
 		textSize.h, Orientation::Vertical);

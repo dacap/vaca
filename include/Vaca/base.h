@@ -34,9 +34,9 @@
 
 #include <algorithm>
 #include <stdarg.h>
-#include <tchar.h>
 #include <windows.h>
 #include <commctrl.h>
+#include <string>
 
 #include "Vaca/Enum.h"
 
@@ -79,7 +79,10 @@ namespace Vaca {
 /**
  * Returns the minimum of @a x and @a y.
  *
- * @note It's just like @b std::min
+ * @note It is just like @b std::min, but there are problems
+ *       in MSVC++ because a macro named @b min.
+ *
+ * @see max_value, clamp_value
  */
 template<typename T>
 inline T min_value(T x, T y)
@@ -90,7 +93,10 @@ inline T min_value(T x, T y)
 /**
  * Returns the maximum of @a x and @a y.
  *
- * @note It's just like @b std::max
+ * @note It is just like @b std::max, but there are problems
+ *       in MSVC++ because a macro named @b max.
+ *
+ * @see min_value, clamp_value
  */
 template<typename T>
 inline T max_value(T x, T y)
@@ -104,6 +110,8 @@ inline T max_value(T x, T y)
  * If @a x is great than @a high, then @a high is returned,
  * if @a x is less than @a low, then @a low is returned.
  * In other case, @a x is in the range, and @a x is returned.
+ *
+ * @see min_value, max_value
  */
 template<typename T>
 inline T clamp_value(T x, T low, T high)
@@ -112,18 +120,20 @@ inline T clamp_value(T x, T low, T high)
 }
 
 /**
- * A character.
+ * A wide character used in a String.
  *
- * It has 8-bits (char) if Unicode is disabled, or 16-bits (short) if
- * you compile with Unicode support.
- *
- * @win32
- *   It is a TCHAR.
- * @endwin32
- *
- * @see @ref page_tn_008
+ * @see String, @ref page_tn_008
  */
-typedef TCHAR Character;
+typedef wchar_t Char;
+
+/**
+ * String type used through the Vaca API.
+ *
+ * It is a std::wstring.
+ *
+ * @see Char, @ref page_tn_008
+ */
+typedef std::wstring String;
 
 /**
  * An identifier for an application's Command.

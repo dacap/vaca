@@ -40,7 +40,7 @@ const WidgetClassName WidgetClassName::None;
 // WidgetClassName
 
 WidgetClassName::WidgetClassName()
-  : m_className("")
+  : m_className(L"")
 {
 }
 
@@ -72,9 +72,4 @@ bool WidgetClassName::operator==(const WidgetClassName& className) const
 bool WidgetClassName::operator!=(const WidgetClassName& className) const
 {
   return m_className != className.m_className;
-}
-
-LPCTSTR WidgetClassName::toLPCTSTR() const
-{
-  return m_className.c_str();
 }

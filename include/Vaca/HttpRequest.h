@@ -35,7 +35,6 @@
 #include "Vaca/base.h"
 #include "Vaca/NonCopyable.h"
 #include "Vaca/Exception.h"
-#include "Vaca/String.h"
 
 #include <wininet.h>
 
@@ -87,10 +86,10 @@ class VACA_DLL HttpRequest
   InetRequest req;
 
 public:
-  HttpRequest(const String& url, const String& method = _T("GET"));
+  HttpRequest(const String& url, const String& method = L"GET");
   virtual ~HttpRequest();
 
-  int send(const String& headers = _T(""), const char* body = NULL);
+  int send(const String& headers = L"", const char* body = NULL);
   std::size_t read(char* buf, std::size_t length);
 
   int getStatusCode();

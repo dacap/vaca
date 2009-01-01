@@ -159,7 +159,7 @@ class MainFrame : public Frame
 public:
   
   MainFrame()
-    : Frame("Scribble")
+    : Frame(L"Scribble")
     , m_scrible(this)
   {
     setLayout(new ClientLayout);

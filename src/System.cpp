@@ -53,12 +53,12 @@ std::vector<String> System::getArgs()
   // Convert the command-line to a vector of arguments...
   std::vector<String> args;
 
-  LPTSTR cmdline = _tcsdup(GetCommandLine());
-  Character quote;
+  Char* cmdline = wcsdup(GetCommandLine());
+  Char quote;
 
   for (int i = 0; cmdline[i] != 0; ) {
     // eat spaces
-    while (cmdline[i] != 0 && _istspace(cmdline[i]))
+    while (cmdline[i] != 0 && iswspace(cmdline[i]))
       ++i;
 
     // string with quotes?
@@ -83,7 +83,7 @@ std::vector<String> System::getArgs()
 	  ++i;
       }
       // without quotes
-      else if (_istspace(cmdline[i]))
+      else if (iswspace(cmdline[i]))
 	break;
 
       arg.push_back(cmdline[i]);
@@ -92,7 +92,7 @@ std::vector<String> System::getArgs()
     args.push_back(arg);
   }
 
-  free(cmdline);
+  std::free(cmdline);
   return args;
 }
 
@@ -110,7 +110,7 @@ void System::println(String line)
 
 void System::printf(LPCTSTR fmt, ...)
 {
-  _TCHAR buf[1024];		// TODO: overflow
+  Char buf[1024];		// TODO: overflow
   va_list ap;
 
   va_start(ap, fmt);
@@ -139,22 +139,22 @@ void System::print(String buf)
 
 String System::getCurrentDirectory()
 {
-  LPTSTR buf = new TCHAR[MAX_PATH];
+  Char* buf = new Char[MAX_PATH];
 
   if (GetCurrentDirectory(MAX_PATH, buf) > 0)
     return String(buf);
   else
-    return "";
+    return L"";
 }
 
 String System::getWindowsDirectory()
 {
-  LPTSTR buf = new TCHAR[MAX_PATH];
+  Char* buf = new Char[MAX_PATH];
 
   if (GetWindowsDirectory(buf, MAX_PATH) > 0)
     return String(buf);
   else
-    return "";
+    return L"";
 }
 
 /**
@@ -218,12 +218,12 @@ String System::getWindowsDirectory()
  */
 String System::getShellFolderPath(int folderCsidl, bool create)
 {
-  LPTSTR buf = new TCHAR[MAX_PATH];
+  Char* buf = new Char[MAX_PATH];
 
   if (SHGetSpecialFolderPath(NULL, buf, folderCsidl, create))
     return String(buf);
   else
-    return "";
+    return L"";
 }
 
 ImageList System::getImageList(bool smallImage)
@@ -232,7 +232,7 @@ ImageList System::getImageList(bool smallImage)
   SHFILEINFO shfi;
 
   himl = reinterpret_cast<HIMAGELIST>
-    (SHGetFileInfo(_T(""),
+    (SHGetFileInfo(L"",
 		   0, &shfi, sizeof(shfi),
 		   SHGFI_SYSICONINDEX |
 		   (smallImage ? SHGFI_SMALLICON:
@@ -354,7 +354,7 @@ void System::setCursorPos(const Point& pt)
 
 String System::getUserName()
 {
-  _TCHAR buf[UNLEN+1];
+  Char buf[UNLEN+1];
   // char buf[UNLEN+1];
   DWORD len = UNLEN+1;
 
@@ -371,19 +371,13 @@ String System::getFriendlyUserName()
 {
 #if 0				// TODO
 #if (_WIN32_WINNT >= 0x0500)
-  HMODULE hSecur32 = GetModuleHandle(_T("SECUR32.DLL"));
+  HMODULE hSecur32 = GetModuleHandle(L"SECUR32.DLL");
   if (!hSecur32)
-    hSecur32 = LoadLibrary(_T("SECUR32.DLL"));
-  GUNEProc pGUNE = (GUNEProc)GetProcAddress(hSecur32, 
-#ifdef UNICODE
-					    "GetUserNameExW"
-#else
-					    "GetUserNameExA"
-#endif
-					    );
+    hSecur32 = LoadLibrary(L"SECUR32.DLL");
+  GUNEProc pGUNE = (GUNEProc)GetProcAddress(hSecur32, "GetUserNameExW");
 
   if (pGUNE != NULL) {
-    _TCHAR buf[UNLEN+1];
+    Char buf[UNLEN+1];
     ULONG len = UNLEN+1;
 
     if (pGUNE(NameDisplay, buf, &len))

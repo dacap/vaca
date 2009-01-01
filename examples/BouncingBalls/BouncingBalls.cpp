@@ -329,8 +329,8 @@ class MainFrame : public Frame
 public:
 
   MainFrame()
-    : Frame("BouncingBall", NULL, Frame::Styles::Default +
-				  Widget::Styles::ClientEdge)
+    : Frame(L"BouncingBall", NULL, Frame::Styles::Default +
+				   Widget::Styles::ClientEdge)
     , m_timer(1000/TPS)
   {
     setDoubleBuffered(true);
@@ -403,7 +403,7 @@ protected:
     double a = static_cast<double>(rc.w) / static_cast<double>(900);
     double b = static_cast<double>(rc.h) / static_cast<double>(650);
 
-    g.drawString("Press 'A' key to add balls", getFgColor(), 0, 0);
+    g.drawString(L"Press 'A' key to add balls", getFgColor(), 0, 0);
 
     simulation_model::draw_balls   (g, a, b);
     simulation_model::draw_segments(g, a, b);

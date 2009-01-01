@@ -30,6 +30,7 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "Vaca/Exception.h"
+#include "Vaca/String.h"
 
 #include <lmerr.h>
 #include <wininet.h>
@@ -96,11 +97,11 @@ void Exception::show()
   String msg;
 
   if (m_errorCode != ERROR_SUCCESS)
-    msg = String(what());
+    msg = convert_to<String>(what());
   else
     msg = getMessage();
 
-  MessageBox(NULL, msg.c_str(), _T("Error/Exception"),
+  MessageBox(NULL, msg.c_str(), L"Error/Exception",
 	     MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
 }
 
@@ -117,13 +118,13 @@ void Exception::initialize()
 
   // is it an network-error?
   if (m_errorCode >= NERR_BASE && m_errorCode <= MAX_NERR) {
-    hmodule = LoadLibraryEx(_T("netmsg.dll"),
+    hmodule = LoadLibraryEx(L"netmsg.dll",
 			    NULL, LOAD_LIBRARY_AS_DATAFILE);
     if (hmodule)
       flags |= FORMAT_MESSAGE_FROM_HMODULE;
   }
   else if (m_errorCode >= INTERNET_ERROR_BASE && m_errorCode <= INTERNET_ERROR_LAST) {
-    hmodule = LoadLibraryEx(_T("wininet.dll"),
+    hmodule = LoadLibraryEx(L"wininet.dll",
 			    NULL, LOAD_LIBRARY_AS_DATAFILE);
     if (hmodule)
       flags |= FORMAT_MESSAGE_FROM_HMODULE;
@@ -143,11 +144,11 @@ void Exception::initialize()
   if (hmodule)
     FreeLibrary(hmodule);
 
-  m_what += String::fromInt(m_errorCode).to_string();
+  m_what += convert_to<std::string>(format_string(L"%d", m_errorCode));
   m_what += " - ";
   if (msgbuf) {
     m_what += msgbuf;
     LocalFree(msgbuf);
   }
-  m_what += m_message.to_string();
+  m_what += convert_to<std::string>(m_message);
 }

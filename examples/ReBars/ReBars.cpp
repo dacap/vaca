@@ -44,27 +44,27 @@ private:
 
 public:
   MainFrame()
-    : Frame ("Hello, ReBar!")
+    : Frame(L"Hello, ReBar!")
     , rebar(this)
-    , ed("Hello,world!", this, TextEdit::Styles::TextArea)
+    , ed(L"Hello,world!", this, TextEdit::Styles::TextArea)
   {
     // maybe we should add a Frame::setReBar(ReBar* rebar) function
     // if we use setLayout (new ClientLayout), 
     // then ed control will fill the whole client bound and cover the rebar controls
 
     ReBarBand rb = rebar.addBand(new ComboBox(&rebar));
-    rb.setText("Wow~~~ , do you like it? ");
+    rb.setText(L"Wow~~~ , do you like it? ");
     rb.setColors(Color::Green, Color::Yellow);
 
-    rb = rebar.addBand(new Label(" I am a fixed pane! ", &rebar), 
+    rb = rebar.addBand(new Label(L" I am a fixed pane! ", &rebar), 
 		       ReBarBandStyle::Simple |
 		       ReBarBandStyle::FixedSize |
 		       ReBarBandStyle::NoGripper);
 
-    rb = rebar.addBand(new TextEdit("Hello, ReBar!", &rebar),
+    rb = rebar.addBand(new TextEdit(L"Hello, ReBar!", &rebar),
 		       ReBarBandStyle::Simple |
 		       ReBarBandStyle::Break);
-    rb.setText("Another band!!!");
+    rb.setText(L"Another band!!!");
     rb.setColors(Color::Blue, Color::Red);
 
     //		ToolSet * toolset = new ToolSet(&rebar);

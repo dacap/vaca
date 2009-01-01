@@ -46,7 +46,7 @@ class MainFrame : public Frame
 public:
 
   MainFrame()
-    : Frame("Images")
+    : Frame(L"Images")
     , m_vacaImage(ResourceId(IDB_VACA))
     , m_mouseImage(Size(64, 64))
   {

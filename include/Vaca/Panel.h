@@ -46,7 +46,7 @@ class PanelClass : public WidgetClass
 {
 public:
   static WidgetClassName getClassName()
-  { return WidgetClassName("Vaca.Panel"); }
+  { return WidgetClassName(L"Vaca.Panel"); }
 };
 
 /**

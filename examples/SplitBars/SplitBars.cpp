@@ -93,7 +93,7 @@ class MainFrame : public Frame,
 public:
 
   MainFrame()
-    : Frame("SplitBar demo")
+    : Frame(L"SplitBar demo")
   {
     TextEdit* me;
     
@@ -102,18 +102,18 @@ public:
     SplitBar* sp1 = new SplitBar(Orientation::Vertical, this);
     sp1->setPaneSize(Size(300, 200));
 
-    me = new TextEdit("First Panel", sp1, TextEdit::Styles::TextArea +
-					  Widget::Styles::Scroll);
+    me = new TextEdit(L"First Panel", sp1, TextEdit::Styles::TextArea +
+					   Widget::Styles::Scroll);
     me->setBgColor(Color(120, 224, 120));
 
     SplitBar* sp2 = new SplitBar(Orientation::Horizontal, sp1);
 
-    me = new TextEdit("Sub First Panel", sp2, TextEdit::Styles::TextArea +
-					      Widget::Styles::Scroll);
+    me = new TextEdit(L"Sub First Panel", sp2, TextEdit::Styles::TextArea +
+					       Widget::Styles::Scroll);
     me->setBgColor(Color(224, 120, 120));
 
-    me = new TextEdit("Sub Second Panel", sp2, TextEdit::Styles::TextArea +
-					       Widget::Styles::Scroll);
+    me = new TextEdit(L"Sub Second Panel", sp2, TextEdit::Styles::TextArea +
+						Widget::Styles::Scroll);
     me->setBgColor(Color(120, 120, 224));
 
     // The following lines aren't necessary (it's done automatically
@@ -147,8 +147,8 @@ private:
   void onAppAbout()
   {
     MsgBox::show(this,
-		 "SplitBar demo",
-		 "SplitBar demo - written by nanothyll @2008",
+		 L"SplitBar demo",
+		 L"SplitBar demo - written by nanothyll @2008",
 		 MsgBox::Type::Ok,
 		 MsgBox::Icon::Information);
   }

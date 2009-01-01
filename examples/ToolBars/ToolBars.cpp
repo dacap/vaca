@@ -43,16 +43,16 @@ class Console : public TextEdit
 public:
 
   Console(Widget* parent)
-    : TextEdit("", parent, TextEdit::Styles::TextArea +
-			   Widget::Styles::Scroll)
-    , m_font("Verdana", 10)
+    : TextEdit(L"", parent, TextEdit::Styles::TextArea |
+			    Widget::Styles::Scroll)
+    , m_font(L"Verdana", 10)
   {
     setFont(m_font);
   }
 
   void println(const String &str)
   {
-    setText(getText() + str + "\r\n");
+    setText(getText() + str + L"\r\n");
     scrollLines(getLineCount());
   }
   
@@ -79,20 +79,20 @@ class MainFrame : public Frame
 public:
 
   MainFrame(Style toolSetStyle)
-    : Frame("ToolBars")
-    , m_toolBar1("ToolBar 1", this, toolSetStyle)
-    , m_toolBar2("ToolBar 2", this, toolSetStyle)
-    , m_toolBar3("ToolBar 3", this, toolSetStyle)
-    , m_dockBar("DockBar", this)
-    , m_button1("Setup BandedDockArea", &m_dockBar)
-    , m_button2("Setup BasicDockAreas)", &m_dockBar)
-    , m_button3("Clear DockAreas", &m_dockBar)
+    : Frame(L"ToolBars")
+    , m_toolBar1(L"ToolBar 1", this, toolSetStyle)
+    , m_toolBar2(L"ToolBar 2", this, toolSetStyle)
+    , m_toolBar3(L"ToolBar 3", this, toolSetStyle)
+    , m_dockBar(L"DockBar", this)
+    , m_button1(L"Setup BandedDockArea", &m_dockBar)
+    , m_button2(L"Setup BasicDockAreas)", &m_dockBar)
+    , m_button3(L"Clear DockAreas", &m_dockBar)
     , m_imageList(ResourceId(IDB_TOOLBAR), 16, Color(192, 192, 192))
     , m_console(this)
     , m_bottomPanel(this)
-    , m_button4("Show all DockBars", &m_bottomPanel)
-    , m_button5("Full Drag mode", &m_bottomPanel)
-    , m_button6("Floating Gripper mode", &m_bottomPanel)
+    , m_button4(L"Show all DockBars", &m_bottomPanel)
+    , m_button5(L"Full Drag mode", &m_bottomPanel)
+    , m_button6(L"Floating Gripper mode", &m_bottomPanel)
   {
     setLayout(new BoxLayout(Orientation::Vertical, false));
     m_console.setConstraint(new BoxConstraint(true));
@@ -160,7 +160,7 @@ public:
     m_button5.Action.connect(Bind(&MainFrame::onToggleFullDrag, this));
     m_button6.Action.connect(Bind(&MainFrame::onToggleFloatingGripper, this));
 
-    m_console.println("You must to setup DockAreas to dock the Tool/DockBars");
+    m_console.println(L"You must to setup DockAreas to dock the Tool/DockBars");
   }
 
 protected:
@@ -179,7 +179,7 @@ private:
       defaultDockAreas();
       layout();
 
-      m_console.println("Try to dock the Tool/DockBars in the BandedDockAreas that are around the Frame");
+      m_console.println(L"Try to dock the Tool/DockBars in the BandedDockAreas that are around the Frame");
     }
   }
 
@@ -192,7 +192,7 @@ private:
       addDockArea(new BasicDockArea(Side::Right,  this));
       layout();
 
-      m_console.println("Try to dock the Tool/DockBars in the new BasicDockAreas that are around the Frame");
+      m_console.println(L"Try to dock the Tool/DockBars in the new BasicDockAreas that are around the Frame");
     }
   }
 
@@ -200,7 +200,7 @@ private:
   {
     if (safeDeleteDockAreas()) {
       layout();
-      m_console.println("All DockAreas were cleared, right now you can't dock the Tool/DockBars");
+      m_console.println(L"All DockAreas were cleared, right now you can't dock the Tool/DockBars");
     }
   }
 
@@ -211,7 +211,7 @@ private:
     m_toolBar3.setVisible(true);
     m_dockBar.setVisible(true);
 
-    m_console.println("All DockBars are visible now");
+    m_console.println(L"All DockBars are visible now");
   }
 
   void onToggleFullDrag()
@@ -223,7 +223,9 @@ private:
     m_toolBar3.setFullDrag(state);
     m_dockBar.setFullDrag(state);
 
-    m_console.println(String("Full Drag mode ") + (state ? "enabled": "disabled"));
+    m_console.println(String(L"Full Drag mode ") +
+		      (state ? L"enabled":
+			       L"disabled"));
   }
 
   void onToggleFloatingGripper()
@@ -235,7 +237,8 @@ private:
     m_toolBar3.setFloatingGripper(state);
     m_dockBar.setFloatingGripper(state);
 
-    m_console.println(String("Floating Gripper mode ") + (state ? "enabled": "disabled"));
+    m_console.println(String(L"Floating Gripper mode ") +
+		      (state ? L"enabled": L"disabled"));
   }
 
 private:
@@ -244,8 +247,8 @@ private:
   {
     if (m_toolBar1.isDocked() || m_toolBar2.isDocked() ||
 	m_toolBar3.isDocked() || m_dockBar.isDocked()) {
-      MsgBox::show(this, "Error",
-		   "You can't change DockAreas if you have some Tool/DockBars docked.",
+      MsgBox::show(this, L"Error",
+		   L"You can't change DockAreas if you have some Tool/DockBars docked.",
 		   MsgBox::Type::Ok,
 		   MsgBox::Icon::Error);
       return false;

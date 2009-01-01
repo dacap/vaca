@@ -39,8 +39,6 @@
 
 namespace Vaca {
 
-class String;
-
 /**
  * @see SysCursor
  */

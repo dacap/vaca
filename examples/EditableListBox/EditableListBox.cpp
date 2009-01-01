@@ -146,11 +146,11 @@ class MainFrame : public Frame
 public:
 
   MainFrame()
-    : Frame("EditableListBox")
+    : Frame(L"EditableListBox")
     , m_listBox(this)
     , m_bottomPanel(this)
-    , m_addButton("Add", &m_bottomPanel)
-    , m_removeButton("Remove", &m_bottomPanel)
+    , m_addButton(L"Add", &m_bottomPanel)
+    , m_removeButton(L"Remove", &m_bottomPanel)
     , m_counter(0)
   {
     setLayout(new BoxLayout(Orientation::Vertical, false)); // no-homogeneous
@@ -171,7 +171,7 @@ private:
 
   void onAdd()
   {
-    int index = m_listBox.addItem("Item number "+String::fromInt(++m_counter));
+    int index = m_listBox.addItem(format_string(L"Item number %d", ++m_counter));
     m_listBox.setCurrentItem(index);
     m_listBox.requestFocus();
   }

@@ -159,7 +159,7 @@ class MainFrame : public Frame
 public:
 
   MainFrame()
-    : Frame("AnchorLayouts")
+    : Frame(L"AnchorLayouts")
     , m_allWidget   (new Anchor(Rect( 48,  48, 160, 160), Sides::All), this)
     , m_leftWidget  (new Anchor(Rect(  8,  48,  32, 160), Sides::Left   | Sides::Top  | Sides::Bottom), this)
     , m_topWidget   (new Anchor(Rect( 48,   8, 160,  32), Sides::Top    | Sides::Left | Sides::Right), this)

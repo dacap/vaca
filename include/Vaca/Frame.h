@@ -57,7 +57,7 @@ class FrameClass : public WidgetClass
 {
 public:
   static WidgetClassName getClassName()
-  { return WidgetClassName("Vaca.Frame"); }
+  { return WidgetClassName(L"Vaca.Frame"); }
 };
 
 /**

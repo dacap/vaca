@@ -6,22 +6,22 @@ using namespace Vaca;
 
 void test_label()
 {
-  MenuItem mi("MenuItem label", 1);
-  assert(mi.getText() == _T("MenuItem label"));
+  MenuItem mi(L"MenuItem label", 1);
+  assert(mi.getText() == L"MenuItem label");
 
-  Menu m("Menu label");
-  assert(m.getText() == _T("Menu label"));
+  Menu m(L"Menu label");
+  assert(m.getText() == L"Menu label");
 }
 
 void test_enabled()
 {
-  MenuItem mi("a", 1);
+  MenuItem mi(L"a", 1);
 
   assert(mi.isEnabled());
   mi.setEnabled(false);
   assert(!mi.isEnabled());
 
-  Menu m("b");
+  Menu m(L"b");
 
   m.add(&mi);
   assert(!mi.isEnabled());
@@ -32,13 +32,13 @@ void test_enabled()
 
 void test_checked()
 {
-  MenuItem mi("a", 1);
+  MenuItem mi(L"a", 1);
 
   assert(!mi.isChecked());
   mi.setChecked(true);
   assert(mi.isChecked());
 
-  Menu m("b");
+  Menu m(L"b");
 
   m.add(&mi);
   assert(mi.isChecked());

@@ -33,7 +33,6 @@
 #define VACA_FONT_H
 
 #include "Vaca/base.h"
-#include "Vaca/String.h"
 #include "Vaca/SmartPtr.h"
 #include "Vaca/GdiObject.h"
 

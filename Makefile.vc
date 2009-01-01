@@ -11,7 +11,6 @@
 # STATIC = 1
 # STATIC_LIBC = 1
 # PROFILE = 1
-# UNICODE = 1
 
 # ----------------------------------------------------------------------
 # Flags
@@ -19,7 +18,8 @@
 
 CPPFLAGS = -Iinclude -Iscintilla/include -wd4355 -wd4996 -Ob1 -EHa	\
 	   -DVACA_WIN32_IMPL -DWINVER=0x0500 -D_WIN32_IE=0x0500		\
-	   -D_WIN32_WINNT=0x0500
+	   -D_WIN32_WINNT=0x0500					\
+           -DUNICODE -D_UNICODE
 
 LFLAGS =
 
@@ -56,22 +56,6 @@ VACA_LIB_FLAGS = -DVACA_SRC=1
 # ----------------------------------------------------------------------
 
 # TODO
-
-# ----------------------------------------------------------------------
-# UNICODE
-# ----------------------------------------------------------------------
-
-!if "$(UNICODE)" == "1"
-
-CPPFLAGS = $(CPPFLAGS) -DUNICODE -D_UNICODE
-
-# !if "$(SUFFIX)" == ""
-# SUFFIX = $(SUFFIX)u
-# !else
-# SUFFIX = _u
-# !endif
-
-!endif
 
 # ----------------------------------------------------------------------
 # DEBUG or NDEBUG?

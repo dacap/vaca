@@ -246,20 +246,20 @@ float func_log(float x) { return log(x); }
 struct function
 {
   float (*f)(float x);
-  const char* expr;
+  const Char* expr;
 } functions[] = {
-  { func_x, "x" },
-  { func_xx, "x^2" },
-  { func_xxx, "x^3" },
-  { func_sin, "sin(x)" },
-  { func_cos, "cos(x)" },
-  { func_tan, "tan(x)" },
-  { func_exp, "exp(x)" },
-  { func_1_exp_x, "1-exp(-x)" },
-  { func_asin, "asin(x)" },
-  { func_acos, "acos(x)" },
-  { func_atan, "atan(x)" },
-  { func_log, "log(x)" },
+  { func_x, L"x" },
+  { func_xx, L"x^2" },
+  { func_xxx, L"x^3" },
+  { func_sin, L"sin(x)" },
+  { func_cos, L"cos(x)" },
+  { func_tan, L"tan(x)" },
+  { func_exp, L"exp(x)" },
+  { func_1_exp_x, L"1-exp(-x)" },
+  { func_asin, L"asin(x)" },
+  { func_acos, L"acos(x)" },
+  { func_atan, L"atan(x)" },
+  { func_log, L"log(x)" },
 };
 
 class FunctionsPage : public AxisPage
@@ -271,10 +271,10 @@ class FunctionsPage : public AxisPage
 public:
 
   FunctionsPage(Tab* parent)
-    : AxisPage("2-D functions y=f(x)", parent)
+    : AxisPage(L"2-D functions y=f(x)", parent)
     , m_timer(1500)
     , m_currentFunction(0)
-    , m_font("Courier", 10)
+    , m_font(L"Courier", 10)
   {
     m_timer.Tick.connect(Bind(&FunctionsPage::nextFunction, this));
     m_timer.start();
@@ -322,7 +322,7 @@ class Lagrange : public EditablePointsPage
 public:
 
   Lagrange(Tab* parent)
-    : EditablePointsPage("Lagrange polynomial", parent)
+    : EditablePointsPage(L"Lagrange polynomial", parent)
   {
   }
 
@@ -371,7 +371,7 @@ class Bezier : public EditablePointsPage
 public:
 
   Bezier(Tab* parent)
-    : EditablePointsPage("Bézier curve", parent)
+    : EditablePointsPage(L"B\x00E9zier curve", parent)
   {
   }
 
@@ -420,7 +420,7 @@ class MainFrame : public Frame
 public:
 
   MainFrame()
-    : Frame("Maths")
+    : Frame(L"Maths")
     , m_tab(this)
     , m_functionsPage(&m_tab)
     , m_lagrangePage(&m_tab)

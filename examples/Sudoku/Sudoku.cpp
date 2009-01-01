@@ -98,13 +98,13 @@ class InsertSeedDialog : public Dialog
 public:
 
   InsertSeedDialog(Widget* parent)
-    : Dialog("Game Seed", parent)
+    : Dialog(L"Game Seed", parent)
     , mTop(this)
     , mBottom(this)
-    , mSeedLabel("Seed:", &mTop)
-    , mSeedEdit(String::fromInt(rand()), &mTop)
-    , mOk("OK", &mBottom)
-    , mCancel("Cancel", &mBottom)
+    , mSeedLabel(L"Seed:", &mTop)
+    , mSeedEdit(convert_to<String>(rand()), &mTop)
+    , mOk(L"OK", &mBottom)
+    , mCancel(L"Cancel", &mBottom)
   {
     setLayout(new BoxLayout(Orientation::Vertical, true));
     mTop.setLayout(new BoxLayout(Orientation::Horizontal, false, 0));
@@ -123,7 +123,7 @@ public:
   }
 
   int getSeed() {
-    return mSeedEdit.getText().parseInt();
+    return convert_to<int>(mSeedEdit.getText());
   }
 
 };
@@ -206,12 +206,12 @@ public:
 
   // create the sudoku window
   MainFrame()
-    : Frame("Sudoku", NULL, Frame::Styles::Default
-			    - Frame::Styles::Maximizable // can't be maximized
-			    - Frame::Styles::Resizable)  // can't change the size
-    , m_font("Verdana", 10)
-    , m_fontSmall("Verdana", 7)
-    , m_fontBold("Verdana", 10, FontStyle::Bold)
+    : Frame(L"Sudoku", NULL, Frame::Styles::Default
+			     - Frame::Styles::Maximizable // can't be maximized
+			     - Frame::Styles::Resizable)  // can't change the size
+    , m_font(L"Verdana", 10)
+    , m_fontSmall(L"Verdana", 7)
+    , m_fontBold(L"Verdana", 10, FontStyle::Bold)
   {
     m_hotCell = m_puzzle.end();
 
@@ -275,7 +275,7 @@ protected:
 	}
 
 	if (it->digit != 0) {
-	  String text = String::fromInt(it->digit);
+	  String text = convert_to<String>(it->digit);
 	  Size textSize = g.measureString(text);
 	  g.drawString(text, textColor,
 		       cellBounds.x + (cellBounds.w - textSize.w)/2,
@@ -291,7 +291,7 @@ protected:
 
 	  for (std::vector<int>::iterator it2=it->history.begin();
 	       it2!=it->history.end(); ++it2) {
-	    String text = String::fromInt(*it2);
+	    String text = convert_to<String>(*it2);
 	    Size textSize = g.measureString(text);
 
 	    g.drawString(text, textColor,
@@ -446,15 +446,15 @@ private:
   MenuBar* createMenuBar()
   {
     MenuBar* menuBar = new MenuBar;
-    Menu* gameMenu = new Menu("&Game");
+    Menu* gameMenu = new Menu(L"&Game");
 
-    gameMenu->add("&New\tCtrl+Shift+N", ID_GAME_NEW, Keys::Control | Keys::Shift | Keys::N);
-    gameMenu->add("New with &seed\tCtrl+N", ID_GAME_NEW_WITH_SEED, Keys::Control | Keys::N);
+    gameMenu->add(L"&New\tCtrl+Shift+N", ID_GAME_NEW, Keys::Control | Keys::Shift | Keys::N);
+    gameMenu->add(L"New with &seed\tCtrl+N", ID_GAME_NEW_WITH_SEED, Keys::Control | Keys::N);
     gameMenu->addSeparator();
-    gameMenu->add("&Exit", ID_GAME_EXIT);
+    gameMenu->add(L"&Exit", ID_GAME_EXIT);
 
     menuBar->add(gameMenu);
-    menuBar->add("&Help", ID_HELP);
+    menuBar->add(L"&Help", ID_HELP);
     return menuBar;
   }
   
@@ -494,12 +494,12 @@ private:
   void onHelp()
   {
     MsgBox::show
-      (this, "Help",
-       "Every 3x3 box, every column, and every row can't repeat the same digit.\n"
-       "Use the number from 1 to 9 to add a digit, and the 0 to remove it.\n"
-       "You can use the left mouse button to push the digit to the history,\n"
-       "the right button to pop a digit from the history, and the middle button\n"
-       "to remove the entire history.\n");
+      (this, L"Help",
+       L"Every 3x3 box, every column, and every row can't repeat the same digit.\n"
+       L"Use the number from 1 to 9 to add a digit, and the 0 to remove it.\n"
+       L"You can use the left mouse button to push the digit to the history,\n"
+       L"the right button to pop a digit from the history, and the middle button\n"
+       L"to remove the entire history.\n");
   }
 
   //////////////////////////////////////////////////////////////////////
@@ -547,7 +547,7 @@ private:
       if (it->digit == 0 || it->warning)
 	return;
 
-    MsgBox::show(this, "Congratulations", "You win!!!");
+    MsgBox::show(this, L"Congratulations", L"You win!!!");
 
     // set all to given
     std::for_each(m_puzzle.begin(), m_puzzle.end(), set_given_to_true());
@@ -557,7 +557,7 @@ private:
   void generateGame(int gameNumber)
   {
     srand(gameNumber);
-    setText("Sudoku (Game " + String::fromInt(gameNumber) + ")");
+    setText(format_string(L"Sudoku (Game %d)", gameNumber));
 
     // no hot cell
     m_hotCell = m_puzzle.end();

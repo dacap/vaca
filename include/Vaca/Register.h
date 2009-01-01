@@ -37,6 +37,7 @@
 #include "Vaca/Widget.h"
 #include "Vaca/WidgetClass.h"
 #include "Vaca/Exception.h"
+#include "Vaca/String.h"
 
 namespace Vaca {
 
@@ -78,11 +79,10 @@ public:
    */
   Register()
   {
-    WidgetClassName widget_class_name = T::getClassName();
-    LPCTSTR class_name = widget_class_name.toLPCTSTR();
+    WidgetClassName class_name = T::getClassName();
     WNDCLASSEX wcex;
 
-    if (!GetClassInfoEx(Application::getHandle(), class_name, &wcex)) {
+    if (!GetClassInfoEx(Application::getHandle(), class_name.c_str(), &wcex)) {
       wcex.cbSize        = sizeof(WNDCLASSEX); 
       wcex.style         = T::getStyle();
       wcex.lpfnWndProc   = Widget::getGlobalWndProc();
@@ -93,12 +93,12 @@ public:
       wcex.hCursor       = (HCURSOR)NULL;//LoadCursor(NULL, IDC_ARROW);
       wcex.hbrBackground = reinterpret_cast<HBRUSH>(T::getColor()+1);
       wcex.lpszMenuName  = (LPCTSTR)NULL;
-      wcex.lpszClassName = class_name;
+      wcex.lpszClassName = class_name.c_str();
       wcex.hIconSm       = NULL;//LoadIcon(wcex.hInstance, (LPCTSTR)IDI_SMALL);
 
       if (RegisterClassEx(&wcex) == 0)
-	throw RegisterException(String("Error registering class \"") +
-				String(class_name) + "\"");
+	throw RegisterException(format_string(L"Error registering class \"%s\"",
+					      class_name.c_str()));
     }
   }
 

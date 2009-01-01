@@ -32,6 +32,7 @@
 #include "Vaca/Scintilla.h"
 #include "Vaca/Font.h"
 #include "Vaca/WidgetClass.h"
+#include "Vaca/String.h"
 #include "Scintilla.h"
 #include "SciLexer.h"
 
@@ -43,15 +44,15 @@ SciRegister::SciRegister()
 {
   if (hmod == NULL) {
     // try SciLexer.dll
-    hmod = LoadLibrary(_T("SciLexer.dll"));
+    hmod = LoadLibrary(L"SciLexer.dll");
     if (hmod == NULL) {
       // try Scintilla.dll
-      hmod = LoadLibrary(_T("Scintilla.dll"));
+      hmod = LoadLibrary(L"Scintilla.dll");
       if (hmod == NULL) {
 	// fail
 	MessageBox(NULL,
-		   _T("The Scintilla DLL could not be loaded."),
-		   _T("Error loading Scintilla"),
+		   L"The Scintilla DLL could not be loaded.",
+		   L"Error loading Scintilla",
 		   MB_OK | MB_ICONERROR);
       }
     }
@@ -59,7 +60,7 @@ SciRegister::SciRegister()
 }
 
 SciEdit::SciEdit(Widget* parent, Style style)
-  : Widget(WidgetClassName(_T("Scintilla")), parent, style)
+  : Widget(WidgetClassName(L"Scintilla"), parent, style)
 {
 //   sendMessage(SCI_SETLEXER, SCLEX_HTML, 0);
 //   sendMessage(SCI_SETSTYLEBITS, 7, 0);
@@ -103,12 +104,12 @@ String SciEdit::getText() const
   if (length > 0) {
     char* text = new char[length+1];
     const_cast<SciEdit*>(this)->sendMessage(SCI_GETTEXT, length+1, reinterpret_cast<LPARAM>(text));
-    String str(text);
+    String str = convert_to<String>(text);
     delete text;
     return str;
   }
   else
-    return String("");
+    return L"";
 }
 
 void SciEdit::setText(const String& str)
@@ -132,12 +133,12 @@ String SciEdit::getLine(int line) const
     char* text = new char[length+1];
     ZeroMemory(text, length+1);
     const_cast<SciEdit*>(this)->sendMessage(SCI_GETLINE, line, reinterpret_cast<LPARAM>(text));
-    String str(text, length);
+    String str = convert_to<String>(text);
     delete text;
     return str;
   }
   else
-    return String();
+    return L"";
 }
 
 void SciEdit::replaceSel(const String& str)
@@ -199,10 +200,9 @@ void SciEdit::clearAll()
   sendMessage(SCI_CLEARALL, 0, 0);
 }
 
-Character SciEdit::getCharAt(int pos) const
+char SciEdit::getCharAt(int pos) const
 {
-  return (Character)
-    const_cast<SciEdit*>(this)->sendMessage(SCI_GETCHARAT, pos, 0);
+  return (char)const_cast<SciEdit*>(this)->sendMessage(SCI_GETCHARAT, pos, 0);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -429,7 +429,7 @@ String SciEdit::getSelText() const
   int length = getSelectionEnd() - getSelectionStart() + 1;
   char* text = new char[length+1];
   const_cast<SciEdit*>(this)->sendMessage(SCI_GETSELTEXT, 0, reinterpret_cast<LPARAM>(text));
-  String str(text);
+  String str = convert_to<String>(text);
   delete text;
   return str;
 }

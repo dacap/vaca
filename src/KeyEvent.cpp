@@ -34,7 +34,7 @@
 
 using namespace Vaca;
 
-KeyEvent::KeyEvent(Widget* source, Keys::Type keys, Character charCode)
+KeyEvent::KeyEvent(Widget* source, Keys::Type keys, Char charCode)
   : Event(source)
   , m_consumed(false)
   , m_keys(keys)
@@ -66,7 +66,7 @@ Keys::Type KeyEvent::getModifiers() const
   return m_keys & Keys::Modifiers;
 }
 
-Character KeyEvent::getCharCode() const
+Char KeyEvent::getCharCode() const
 {
   return m_charCode;
 }

@@ -57,7 +57,7 @@ static void MdiChild_DestroyHWNDProc(HWND hwnd)
  *          can't be changed, see @ref page_tn_005 for more information).
  */
 MdiChild::MdiChild(const String& title, MdiClient* parent, Style style)
-  : Frame(WidgetClassName::None, "", NULL, Widget::Styles::None)
+  : Frame(WidgetClassName::None, L"", NULL, Widget::Styles::None)
 {
   setDefWndProc(DefMDIChildProc);
   setDestroyHWNDProc(MdiChild_DestroyHWNDProc);
@@ -74,7 +74,7 @@ MdiChild::MdiChild(const String& title, MdiClient* parent, Style style)
  *          can't be changed, see @ref page_tn_005 for more information).
  */
 MdiChild::MdiChild(const String& title, MdiFrame* parent, Style style)
-  : Frame(WidgetClassName::None, "", NULL, Widget::Styles::None)
+  : Frame(WidgetClassName::None, L"", NULL, Widget::Styles::None)
 {
   setDefWndProc(DefMDIChildProc);
   setDestroyHWNDProc(MdiChild_DestroyHWNDProc);
@@ -190,7 +190,7 @@ MdiClient::MdiClient(Widget* parent, Style style)
   : Widget(WidgetClassName::None, NULL, Widget::Styles::None) // className must be NULL to avoid calling the Widget::createHandle
 {
   // now Widget::create calls MdiClient::createHandle because MdiClient is constructed
-  create(WidgetClassName(_T("MDICLIENT")), parent, style);
+  create(WidgetClassName(L"MDICLIENT"), parent, style);
 }
 
 MdiClient::~MdiClient()
@@ -208,7 +208,7 @@ HWND MdiClient::createHandle(LPCTSTR className, Widget* parent, Style style)
   ccs.hWindowMenu = NULL;//GetMenu(parent->m_hwnd);
   ccs.idFirstChild = VACA_FIRST_MDICHILD;
 
-  return CreateWindowEx(style.extended, className, _T(""),
+  return CreateWindowEx(style.extended, className, L"",
 			style.regular,
 			CW_USEDEFAULT, CW_USEDEFAULT,
 			CW_USEDEFAULT, CW_USEDEFAULT,

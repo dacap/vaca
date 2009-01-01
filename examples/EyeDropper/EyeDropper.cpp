@@ -45,7 +45,7 @@ public:
 
   EyeDropper(Widget* parent)
     : Panel(parent)
-    , m_font("Courier", 10)
+    , m_font(L"Courier", 10)
     , m_cursor(ResourceId(IDC_EYEDROPPER))
     , m_isHexFormat(false)
   {
@@ -85,15 +85,9 @@ protected:
     String str;
 
     if (m_isHexFormat)
-      str = "#" +
-	String::fromInt(bg.getR(), 16, 2) +
-	String::fromInt(bg.getG(), 16, 2) +
-	String::fromInt(bg.getB(), 16, 2);
+      str = format_string(L"#%02x%02x%02x", bg.getR(), bg.getG(), bg.getB());
     else
-      str = "(" +
-	String::fromInt(bg.getR(), 10) + ", " +
-	String::fromInt(bg.getG(), 10) + ", " +
-	String::fromInt(bg.getB(), 10) + ")";
+      str = format_string(L"(%d, %d, %d)", bg.getR(), bg.getG(), bg.getB());
 
     g.drawString(str, bg.toBlackAndWhite().negative(),
 		 rc.getCenter() - Point(g.measureString(str)/2));
@@ -144,13 +138,13 @@ class MainFrame : public Frame
 public:
 
   MainFrame()
-    : Frame("Eye Dropper", NULL, Frame::Styles::Default
-				 - Frame::Styles::Resizable
-				 - Frame::Styles::Maximizable)
-    , m_label("Drag from the box to the pixel\r\n"
-	     "that you want to get its color", this)
+    : Frame(L"Eye Dropper", NULL, Frame::Styles::Default
+				  - Frame::Styles::Resizable
+				  - Frame::Styles::Maximizable)
+    , m_label(L"Drag from the box to the pixel\r\n"
+	      L"that you want to get its color", this)
     , m_eyeDropper(this)
-    , m_hexFormat("Hex", this)
+    , m_hexFormat(L"Hex", this)
   {
     setLayout(new BoxLayout(Orientation::Vertical, false));
     m_hexFormat.Action.connect(&MainFrame::onHexToggle, this);

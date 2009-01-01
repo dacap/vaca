@@ -33,6 +33,7 @@
 #include "Vaca/Application.h"
 #include "Vaca/Debug.h"
 #include "Vaca/ResourceException.h"
+#include "Vaca/String.h"
 
 using namespace Vaca;
 
@@ -60,7 +61,7 @@ Cursor::Cursor(ResourceId cursorId)
 {
   HCURSOR handle = ::LoadCursor(Application::getHandle(), cursorId.toLPTSTR());
   if (!handle)
-    throw ResourceException("Can't load the cursor resource " + cursorId.toString());
+    throw ResourceException(L"Can't load the cursor resource " + cursorId.toString());
 
   get()->setHandle(handle);
 }
@@ -102,7 +103,7 @@ Cursor::Cursor(SysCursor cursor)
   
   HCURSOR handle = ::LoadCursor(NULL, winCursor);
   if (handle == NULL)
-    throw ResourceException("Can't load the SysCursor " + String::fromInt(cursor));
+    throw ResourceException(format_string(L"Can't load the SysCursor %d", int(cursor)));
 
   get()->setHandle(handle);
 }
@@ -121,7 +122,7 @@ Cursor::Cursor(const String& fileName)
 		 0, 0, LR_LOADFROMFILE));
 
   if (handle == NULL)
-    throw ResourceException("Can't load cursor from file " + fileName);
+    throw ResourceException(L"Can't load cursor from file " + fileName);
 
   get()->setHandle(handle);
 }

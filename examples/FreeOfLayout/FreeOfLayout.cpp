@@ -46,14 +46,14 @@ class MainFrame : public Dialog
 public:
 
   MainFrame()
-    : Dialog("FreeOfLayout")
-    , m_usernameLabel("&Username:", this)
-    , m_usernameEdit("", this)
-    , m_passwordLabel("&Password:", this)
-    , m_passwordEdit("", this, TextEdit::Styles::Password)
-    , m_administrator("&Administrador account", this)
-    , m_loginButton("&Login", this)
-    , m_cancelButton("&Cancel", this)
+    : Dialog(L"FreeOfLayout")
+    , m_usernameLabel(L"&Username:", this)
+    , m_usernameEdit(L"", this)
+    , m_passwordLabel(L"&Password:", this)
+    , m_passwordEdit(L"", this, TextEdit::Styles::Password)
+    , m_administrator(L"&Administrador account", this)
+    , m_loginButton(L"&Login", this)
+    , m_cancelButton(L"&Cancel", this)
   {
     // if we don't setup a layout manager through this->setLayout(),
     // we are free of layout manager...
@@ -93,7 +93,7 @@ protected:
     m_usernameLabel.setEnabled(enabled);
     m_usernameEdit.setEnabled(enabled);
     if (!enabled)
-      m_usernameEdit.setText("root");
+      m_usernameEdit.setText(L"root");
   }
 
 };
@@ -104,13 +104,13 @@ int VACA_MAIN()
   MainFrame dlg;
 
   if (dlg.doModal())
-    MsgBox::show(&dlg, "Information",
-		 "Welcome '"+dlg.getUserName()+"'",
+    MsgBox::show(&dlg, L"Information",
+		 L"Welcome '" + dlg.getUserName() + L"'",
 		 MsgBox::Type::Ok,
 		 MsgBox::Icon::Information);
   else
-    MsgBox::show(&dlg, "Information",
-		 "You canceled the operation",
+    MsgBox::show(&dlg, L"Information",
+		 L"You canceled the operation",
 		 MsgBox::Type::Ok,
 		 MsgBox::Icon::Information);
   return 0;

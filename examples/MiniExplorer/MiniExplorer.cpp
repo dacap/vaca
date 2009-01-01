@@ -244,7 +244,7 @@ class MainFrame : public Frame
 public:
 
   MainFrame()
-    : Frame("MiniExplorer")
+    : Frame(L"MiniExplorer")
     , m_treeView(this, TreeView::Styles::Default
 		       - TreeView::Styles::EditLabel)
   {

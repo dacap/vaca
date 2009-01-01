@@ -62,6 +62,99 @@ namespace Vaca
 #define VACA_CLAMP(x, low, high)	(Vaca::clamp_value(x, low, high))
 
 // ===================================================================
+// Old String
+// ===================================================================
+
+/**
+ * @deprecated Use Char.
+ */
+typedef wchar_t Character;
+
+/**
+ * @deprecated This is the string class used in old versions of
+ *   Vaca. Now you must to use the String type.
+ */
+class _String : public String
+{
+public:
+
+  _String() : String(L"") { }
+  explicit _String(int length) : String(length, L'\0') { }
+  _String(const String& str) : String(str) { }
+  _String(const _String& str) : String(str) { }
+  _String(const std::string& str) : String(convert_to<String>(str)) { }
+  _String(const char* str) : String(convert_to<String>(str)) { }
+  virtual ~_String() { }
+
+  _String& trim() { return *this = trim_string(*this); }
+  static _String trim(const _String& str) { return trim_string(str); }
+
+  // static _String format(const char* fmt, ...) { }
+  // static _String format(const wchar_t* fmt, ...) { }
+
+  std::string to_string() const { return convert_to<std::string, String>(*this); }
+  std::wstring to_wstring() const { return *this; }
+
+  void copyTo(LPTSTR dest, int size) const {
+    copy_string_to(*this, dest, size);
+  }
+
+  // static String fromInt(int value, int base = 10, int precision = 0) { }
+  // int parseInt(int base = 10) const { }
+  static String fromInt(int value) { return convert_to<String>(value); }
+  int parseInt() const { return convert_to<int, String>(*this); }
+
+  // static String fromDouble(double value, int precision) { }
+  // double parseDouble() const { }
+  static String fromDouble(double value) { return convert_to<String>(value); }
+  double parseDouble() const { return convert_to<double, String>(*this); }
+
+  _String addPathComponent(const _String& component) const {
+    return operator/(*this, component);
+  }
+
+  _String getFilePath() const { return file_path(*this); }
+  _String getFileName() const { return file_name(*this); }
+  _String getFileExtension() const { return file_extension(*this); }
+  _String getFileTitle() const { return file_title(*this); }
+
+  _String getUrlHost() const { return url_host(*this); }
+  _String getUrlObject() const { return url_object(*this); }
+
+  _String encodeUrl() const { return encode_url(*this); }
+  _String decodeUrl() const { return decode_url(*this); }
+
+};
+
+inline String operator+(const String& _s1, const char* _s2)
+{
+  _String _res(_s1);
+  _res.append(_String(_s2));
+  return _res;
+}
+
+inline _String operator+(const _String& _s1, const wchar_t* _s2)
+{
+  _String _res(_s1);
+  _res.append(_String(_s2));
+  return _res;
+}
+
+inline _String operator+(const char* _s1, const _String& _s2)
+{
+  _String _res(_s1);
+  _res.append(_s2);
+  return _res;
+}
+
+inline _String operator+(const wchar_t* _s1, const _String& _s2)
+{
+  _String _res(_s1);
+  _res.append(_s2);
+  return _res;
+}
+
+// ===================================================================
 // Styles
 // ===================================================================
 
@@ -513,7 +606,7 @@ namespace Vaca
 #define AcceptFilesStyle	(Vaca::Style(0, WS_EX_ACCEPTFILES))
 
 // ===================================================================
-// Renamed Widgets
+// Edit Widgets
 // ===================================================================
 
 /**
@@ -546,6 +639,11 @@ public:
   PasswordEdit(const String& text, Widget* parent, Style style = PasswordEditStyle)
     : TextEdit(text, parent, style) { }
   virtual ~PasswordEdit() { }
+
+  Character getPasswordCharacter() { return getPasswordChar(); }
+  void setPasswordCharacter(Character passwordChar) {
+    setPasswordChar(passwordChar);
+  }
 };
 
 /**

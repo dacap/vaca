@@ -48,7 +48,7 @@ class SpinnerClass : public WidgetClass
 {
 public:
   static WidgetClassName getClassName()
-  { return WidgetClassName("Vaca.Spinner"); }
+  { return WidgetClassName(L"Vaca.Spinner"); }
 };
 
 /**

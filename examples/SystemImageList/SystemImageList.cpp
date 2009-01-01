@@ -44,11 +44,11 @@ class MainFrame : public Frame
 public:
 
   MainFrame()
-    : Frame("System_imageList")
+    : Frame(L"System_imageList")
     , m_listView(this)
     , m_bottom(this)
-    , m_browseButton("Browse to get more icons...", &m_bottom)
-    , m_refreshButton("Refresh list", &m_bottom)
+    , m_browseButton(L"Browse to get more icons...", &m_bottom)
+    , m_refreshButton(L"Refresh list", &m_bottom)
   {
     setLayout(new BoxLayout(Orientation::Vertical, false));
     m_listView.setConstraint(new BoxConstraint(true));
@@ -73,7 +73,7 @@ protected:
 
   void onBrowse()
   {
-    OpenFileDialog dlg("Browse to get more icons...", this);
+    OpenFileDialog dlg(L"Browse to get more icons...", this);
     dlg.doModal();
   }
 
@@ -84,7 +84,7 @@ protected:
     // add one item for each image in the system image-list
     int i, count = m_imageList.getImageCount();
     for (i = 0; i < count; ++i) {
-      m_listView.addItem("Image #"+String::fromInt(i), i);
+      m_listView.addItem(format_string(L"Image #%d", i), i);
     }
   }
 

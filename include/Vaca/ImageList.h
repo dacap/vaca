@@ -41,7 +41,6 @@
 
 namespace Vaca {
 
-class String;
 class Size;
 
 /**

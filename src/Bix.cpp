@@ -689,7 +689,7 @@ void Bix::fillMatrix(Matrix& mat)
  * @throw ParseException
  *   Thrown when the syntax of the string @a fmt is ill-formed.
  */
-Bix* Bix::parse(const char* fmt, ...)
+Bix* Bix::parse(const Char* fmt, ...)
 {
 #define PARSE_ASSERT(condition, error)				\
   if (!(condition))						\
@@ -719,21 +719,21 @@ Bix* Bix::parse(const char* fmt, ...)
 
   va_start(ap, fmt);
   try {
-    const char* p;
+    const Char* p;
     for (p=fmt; *p; ADVANCE()) {
       // is not a space character...
       if (!isspace(*p)) {
 	// expect a close?
 	if (expectClose) {
-	  PARSE_ASSERT((*p == ',' || *p == ';' || *p == ']'), "',' or ';' or ']' expected");
+	  PARSE_ASSERT((*p == L',' || *p == L';' || *p == L']'), L"',' or ';' or ']' expected");
 	  expectClose = false;
 	}
 
 	switch (*p) {
 
 	  // widget
-	  case '%':
-	    PARSE_ASSERT(!bixes.empty(), "Bix expected before '%'");
+	  case L'%':
+	    PARSE_ASSERT(!bixes.empty(), L"Bix expected before '%'");
 
 	    (*columns.top())++;
 
@@ -744,12 +744,12 @@ Bix* Bix::parse(const char* fmt, ...)
 	    break;
 
 	    // fill
-	  case 'f':
-	    if (p[1] == 'x') {
+	  case L'f':
+	    if (p[1] == L'x') {
 	      fill = BixFillX;
 	      ADVANCE();
 	    }
-	    else if (p[1] == 'y') {
+	    else if (p[1] == L'y') {
 	      fill = BixFillY;
 	      ADVANCE();
 	    }
@@ -759,12 +759,12 @@ Bix* Bix::parse(const char* fmt, ...)
 	    break;
 
 	    // even
-	  case 'e':
-	    if (p[1] == 'x') {
+	  case L'e':
+	    if (p[1] == L'x') {
 	      fill = BixEvenX;
 	      ADVANCE();
 	    }
-	    else if (p[1] == 'y') {
+	    else if (p[1] == L'y') {
 	      fill = BixEvenY;
 	      ADVANCE();
 	    }
@@ -774,19 +774,19 @@ Bix* Bix::parse(const char* fmt, ...)
 	    break;
 
 	    // row or matrix
-	  case 'X':
+	  case L'X':
 	    if (mainBix != NULL)
 	      (*columns.top())++;
 
 	    // matrix
-	    if (p[1] == 'Y') {
-	      PARSE_ASSERT(p[2] == '[', "'[' expected after 'XY' to open the matrix");
+	    if (p[1] == L'Y') {
+	      PARSE_ASSERT(p[2] == L'[', L"'[' expected after 'XY' to open the matrix");
 	      NEW_BIX(BixMat);
 	      p += 2;
 	    }
 	    // row
 	    else {
-	      PARSE_ASSERT(p[1] == '[', "'[' expected after 'X' to open the row");
+	      PARSE_ASSERT(p[1] == L'[', L"'[' expected after 'X' to open the row");
 	      NEW_BIX(BixRow);
 	      ADVANCE();
 	    }
@@ -794,11 +794,11 @@ Bix* Bix::parse(const char* fmt, ...)
 	    break;
 	
 	    // column
-	  case 'Y':
+	  case L'Y':
 	    if (mainBix != NULL)
 	      (*columns.top())++;
 
-	    PARSE_ASSERT(p[1] == '[', "'[' expected after 'Y' to open the column");
+	    PARSE_ASSERT(p[1] == L'[', L"'[' expected after 'Y' to open the column");
 	    NEW_BIX(BixCol);
 	    ADVANCE();
 
@@ -806,7 +806,7 @@ Bix* Bix::parse(const char* fmt, ...)
 	    break;
 
 	    // pop a bix from the stack
-	  case ']':
+	  case L']':
 	    bixes.pop();
 
 	    delete columns.top();
@@ -815,29 +815,29 @@ Bix* Bix::parse(const char* fmt, ...)
 	    expectClose = true;
 	    break;
 
-	  case ',':
-	    PARSE_ASSERT(!bixes.empty(), "Bix expected before ','");
+	  case L',':
+	    PARSE_ASSERT(!bixes.empty(), L"Bix expected before ','");
 	    break;
 
 	    // row separator
-	  case ';':
-	    PARSE_ASSERT(!bixes.empty(), "Bix expected before ';'");
+	  case L';':
+	    PARSE_ASSERT(!bixes.empty(), L"Bix expected before ';'");
 
 	    bixes.top()->setMatrixColumns(*columns.top());
 	    (*columns.top()) = 0;
 	    break;
 
 	    // do nothing
-	  case ' ':
+	  case L' ':
 	    break;
 	}
       }
-      else if (*p == '\n') {
+      else if (*p == L'\n') {
 	++n_line;
 	n_column = 0;
       }
     }
-    PARSE_ASSERT(bixes.empty(), "']' expected to close Bixes before end of string");
+    PARSE_ASSERT(bixes.empty(), L"']' expected to close Bixes before end of string");
   }
   catch (...) {
     delete mainBix;

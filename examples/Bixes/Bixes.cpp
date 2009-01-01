@@ -558,13 +558,13 @@ class MainFrame : public Frame,
 public:
 
   MainFrame()
-    : Frame("Bixes")
+    : Frame(L"Bixes")
     , m_model()
     , m_selectedElement(NULL)
     , m_treeView(&m_model, this)
     , m_widgetsView(&m_model, this)
-    , m_toolBar("Standard", this, ToolSet::Styles::Default +
-				  ToolSet::Styles::Flat)
+    , m_toolBar(L"Standard", this, ToolSet::Styles::Default +
+				   ToolSet::Styles::Flat)
     , m_imageList(ResourceId(IDB_TOOLBAR), 16, Color(192, 192, 192))
     , m_widgetCounter(0)
     , m_disableReselect(false)
@@ -578,7 +578,7 @@ public:
     addCommand(new SignalCommand(IDM_PROPERTIES));
 
     // layout
-    setLayout(Bix::parse("X[%,f%]", &m_treeView, &m_widgetsView));
+    setLayout(Bix::parse(L"X[%,f%]", &m_treeView, &m_widgetsView));
     m_treeView.setPreferredSize(Size(256, 256));
 
     // signals
@@ -670,13 +670,13 @@ private:
   {
     if ((m_selectedElement == NULL && m_model.getRoot() == NULL) ||
 	(m_selectedElement != NULL && m_selectedElement->acceptChildren())) {
-      String name = "Unknown";
+      String name = L"Unknown";
 
       switch (elementType) {
-	case Element::Widget: name = "Widget " + String::fromInt(++m_widgetCounter); break;
-	case Element::Row:    name = "BixRow (a row vector)"; break;
-	case Element::Column: name = "BixCol (a column vector)"; break;
-	case Element::Matrix: name = "BixMat (a matrix)"; break;
+	case Element::Widget: name = L"Widget " + convert_to<String>(++m_widgetCounter); break;
+	case Element::Row:    name = L"BixRow (a row vector)"; break;
+	case Element::Column: name = L"BixCol (a column vector)"; break;
+	case Element::Matrix: name = L"BixMat (a matrix)"; break;
       }
 
       m_model.addElement(new Element(name, elementType, columns),
@@ -701,13 +701,13 @@ private:
 
   bool askIntValue(int& retValue)
   {
-    Dialog dlg("Insert a value", this);
-    Label label("Number of columns of the matrix:", &dlg);
-    TextEdit value("3", &dlg);
-    Button ok("&OK", &dlg);
-    Button cancel("&Cancel", &dlg);
+    Dialog dlg(L"Insert a value", this);
+    Label label(L"Number of columns of the matrix:", &dlg);
+    TextEdit value(L"3", &dlg);
+    Button ok(L"&OK", &dlg);
+    Button cancel(L"&Cancel", &dlg);
 
-    dlg.setLayout(Bix::parse("Y[X[%,f%],X[fX[],eX[%,%]]]",
+    dlg.setLayout(Bix::parse(L"Y[X[%,f%],X[fX[],eX[%,%]]]",
 			     &label, &value, &ok, &cancel));
 
     value.setPreferredSize(Size(32, value.getPreferredSize().h));
@@ -724,10 +724,10 @@ private:
       if (!dlg.doModal())
 	return false;
 
-      retValue = value.getText().parseInt();
+      retValue = convert_to<int>(value.getText());
       if (retValue < 1)
-	MsgBox::show(this, "Error",
-		     "You must to insert a value greater than 1",
+	MsgBox::show(this, L"Error",
+		     L"You must to insert a value greater than 1",
 		     MsgBox::Type::Ok,
 		     MsgBox::Icon::Error);
       else

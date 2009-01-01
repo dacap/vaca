@@ -36,7 +36,6 @@
 
 #include "Vaca/base.h"
 #include "Vaca/Event.h"
-#include "Vaca/String.h"
 
 namespace Vaca {
 

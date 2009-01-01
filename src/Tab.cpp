@@ -194,7 +194,7 @@ int TabBase::insertPage(int pageIndex, const String& text)
   TCITEM tci;
 
   tci.mask = TCIF_TEXT;
-  tci.pszText = const_cast<TCHAR*>(text.c_str());
+  tci.pszText = (Char*)text.c_str();
   tci.cchTextMax = text.size();
 
   if (pageIndex < 0)
@@ -240,7 +240,7 @@ String TabBase::getPageText(int pageIndex)
   TCITEM tci;
 
   tci.mask = TCIF_TEXT;
-  tci.pszText = new Character[1024];
+  tci.pszText = new Char[1024];
   tci.cchTextMax = 1024;
 
   if (TabCtrl_GetItem(getHandle(), pageIndex, &tci) != FALSE) {
@@ -261,10 +261,10 @@ void TabBase::setPageText(int pageIndex, const String& text)
   TCITEM tci;
 
   tci.mask = TCIF_TEXT;
-  tci.pszText = new Character[1024];
+  tci.pszText = new Char[1024];
   tci.cchTextMax = 1024;
 
-  text.copyTo(tci.pszText, tci.cchTextMax);
+  copy_string_to(text, tci.pszText, tci.cchTextMax);
 
   TabCtrl_SetItem(getHandle(), pageIndex, &tci);
 }

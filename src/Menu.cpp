@@ -346,7 +346,7 @@ Menu::Menu(CommandId menuId)
 		       MAKEINTRESOURCE(menuId));
 
   if (m_HMENU == NULL)
-    throw ResourceException("Can't load the menu resource " + String::fromInt(menuId));
+    throw ResourceException(format_string(L"Can't load the menu resource %d", menuId));
 
   subClass();
 }
@@ -394,13 +394,13 @@ void Menu::subClass()
   // now we must sub-class all existent menu items
   int menuItemCount = GetMenuItemCount(m_HMENU);
   for (int itemIndex=0; itemIndex<menuItemCount; ++itemIndex) {
-    TCHAR buf[4096];		// TODO buffer overflow
+    Char buf[4096];		// TODO buffer overflow
     MENUITEMINFO mii;
 
     mii.cbSize = sizeof(MENUITEMINFO);
     mii.fMask = MIIM_FTYPE | MIIM_DATA | MIIM_ID | MIIM_STRING | MIIM_SUBMENU;
     mii.dwTypeData = buf;
-    mii.cch = sizeof(buf) / sizeof(TCHAR);
+    mii.cch = sizeof(buf) / sizeof(Char);
 
     BOOL res = GetMenuItemInfo(m_HMENU, itemIndex, TRUE, &mii);
     assert(res == TRUE);
@@ -500,7 +500,7 @@ MenuItem* Menu::insert(int index, MenuItem* menuItem)
 
   String text(menuItem->getText());
   int len = text.size();
-  LPTSTR buf = new TCHAR[len+1];
+  Char* buf = new Char[len+1];
 #ifdef UNICODE
   wcscpy(buf, text.c_str());
 #else

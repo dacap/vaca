@@ -32,6 +32,7 @@
 #include "Vaca/Clipboard.h"
 #include "Vaca/Widget.h"
 #include "Vaca/System.h"
+#include "Vaca/String.h"
 
 using namespace Vaca;
 
@@ -86,9 +87,9 @@ void Clipboard::setString(const String& str)
   // NT, 2K and XP
   if (System::isWinNT_2K_XP()) {
     int len = str.size();
-    HGLOBAL hglobal = GlobalAlloc(GMEM_MOVEABLE, sizeof(TCHAR)*(len+1));
+    HGLOBAL hglobal = GlobalAlloc(GMEM_MOVEABLE, sizeof(Char)*(len+1));
     LPTSTR lptstr = static_cast<LPTSTR>(GlobalLock(hglobal));
-    str.copyTo(lptstr, len);
+    copy_string_to(str, lptstr, len);
     GlobalUnlock(hglobal);
  
 #ifdef _UNICODE
@@ -103,7 +104,7 @@ void Clipboard::setString(const String& str)
     // TODO convert the str to ANSI and copy the content to Clipboard
 #else
     int len = str.size();
-    HGLOBAL hglobal = GlobalAlloc(GMEM_MOVEABLE, sizeof(TCHAR)*(len+1));
+    HGLOBAL hglobal = GlobalAlloc(GMEM_MOVEABLE, sizeof(Char)*(len+1));
     LPTSTR lptstr = static_cast<LPTSTR>(GlobalLock(hglobal));
     str.copyTo(lptstr, len);
     GlobalUnlock(hglobal);

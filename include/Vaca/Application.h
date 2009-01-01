@@ -33,7 +33,6 @@
 #define VACA_APPLICATION_H
 
 #include "Vaca/base.h"
-#include "Vaca/String.h"
 #include "Vaca/Thread.h"
 
 namespace Vaca {

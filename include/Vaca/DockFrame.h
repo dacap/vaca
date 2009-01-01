@@ -47,7 +47,7 @@ class DockFrameClass : public WidgetClass
 {
 public:
   static WidgetClassName getClassName()
-  { return WidgetClassName("Vaca.DockFrame"); }
+  { return WidgetClassName(L"Vaca.DockFrame"); }
 };
 
 /**

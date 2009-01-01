@@ -35,7 +35,7 @@ using namespace Vaca;
 
 Spinner::Spinner(Widget* parent, Style spinStyle, Style style)
   : Widget(SpinnerClass::getClassName(), parent, style)
-  , m_edit("", this)
+  , m_edit(L"", this)
   , m_spin(this, spinStyle)
 {
   m_spin.setBuddy(&m_edit);
@@ -44,7 +44,7 @@ Spinner::Spinner(Widget* parent, Style spinStyle, Style style)
 Spinner::Spinner(int minValue, int maxValue, int posValue,
 		 Widget* parent, Style spinStyle, Style style)
   : Widget(SpinnerClass::getClassName(), parent, style)
-  , m_edit("", this)
+  , m_edit(L"", this)
   , m_spin(minValue, maxValue, posValue, this, spinStyle)
 {
   m_spin.setBuddy(&m_edit);

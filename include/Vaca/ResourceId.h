@@ -33,7 +33,6 @@
 #define VACA_RESOURCEID_H
 
 #include "Vaca/base.h"
-#include "Vaca/String.h"
 
 namespace Vaca {
 

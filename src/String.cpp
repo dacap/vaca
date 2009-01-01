@@ -44,140 +44,13 @@
 
 using namespace Vaca;
 
-// work-arround for the dynamic version of Vaca on MSC compiler (Q168958)
-// #if !defined VACA_STATIC && defined _MSC_VER
-//   VACA_STRING_BASE __vaca_empty_string__;
-// #endif
-
-String::String()
-  : VACA_STRING_BASE(_T(""))
+String Vaca::format_string(const Char* fmt, ...)
 {
-}
-
-String::String(int length)
-  : VACA_STRING_BASE(length, static_cast<Character>(0))
-{
-}
-
-String::String(const String& str)
-  : VACA_STRING_BASE(str)
-{
-}
-
-String::String(const VACA_STRING_BASE& str)
-  : VACA_STRING_BASE(str)
-{
-}
-
-#ifdef _UNICODE
-String::String(const char* str)
-  : VACA_STRING_BASE()
-{
-  int len = strlen(str)+1;
-  LPWSTR wideBuf = new WCHAR[len];
-  int ret = MultiByteToWideChar(CP_ACP, 0, str, len, wideBuf, len);
-  if (ret == 0)
-    assign(L"");
-  else
-    assign(wideBuf);
-}
-
-String::String(const char* str, int len)
-  : VACA_STRING_BASE()
-{
-  LPWSTR wideBuf = new WCHAR[len];
-  int ret = MultiByteToWideChar(CP_ACP, 0, str, len, wideBuf, len);
-  if (ret == 0)
-    assign(L"");
-  else
-    assign(wideBuf);
-}
-
-String::String(const wchar_t* str)
-  : VACA_STRING_BASE(str)
-{
-}
-#else
-String::String(const char* str)
-  : VACA_STRING_BASE(str)
-{
-}
-
-String::String(const char* str, int length)
-  : VACA_STRING_BASE(str, length)
-{
-}
-
-String::String(const wchar_t* str)
-  : VACA_STRING_BASE()
-{
-  int len = wcslen(str)+1;
-  char* buf = new char[len];
-  int ret = WideCharToMultiByte(CP_ACP, 0, str, len, buf, len, NULL, NULL);
-
-  if (ret != 0)
-    assign(buf);
-  else {
-    // error!
-  }
-
-  delete buf;
-}
-#endif
-
-String::~String()
-{
-}
-
-String& String::trim()
-{
-  while (!empty() && std::isspace(at(0)))
-    erase(begin());
-  while (!empty() && std::isspace(at(size()-1)))
-    erase(end()-1);
-  return *this;
-}
-
-String String::trim(const String& str)
-{
-  String ret(str);
-  return ret.trim();
-}
-
-String String::format(const char* fmt, ...)
-{
-  std::auto_ptr<char> buf;
+  std::auto_ptr<Char> buf;
   int size = 512;
 
   while (true) {
-    buf = std::auto_ptr<char>(new char[size <<= 1]);
-
-    va_list ap;
-    va_start(ap, fmt);
-    int written = vsnprintf(buf.get(), size, fmt, ap);
-    va_end(ap);
-
-    if (written == size) {
-      if (buf.get()[size] == 0)
-	break;
-    }
-    else if (written >= 0 && written < size) {
-      assert(buf.get()[written] == 0);
-      break;
-    }
-    // else continue growing the buffer...
-  }
-
-  return String(buf.get());
-}
-
-String String::format(const wchar_t* fmt, ...)
-{
-  std::auto_ptr<wchar_t> buf;
-  int size = 512;
-
-  while (true) {
-    buf = std::auto_ptr<wchar_t>(new wchar_t[size <<= 1]);
+    buf = std::auto_ptr<Char>(new Char[size <<= 1]);
 
     va_list ap;
     va_start(ap, fmt);
@@ -198,149 +71,205 @@ String String::format(const wchar_t* fmt, ...)
   return String(buf.get());
 }
 
-/**
- * @todo docme
- */
-std::string String::to_string() const
+String Vaca::trim_string(const String& str)
 {
-#ifdef _UNICODE
-  int len = this->size()+1;
-  LPSTR ansiBuf = new CHAR[len];
-  int ret = WideCharToMultiByte(CP_ACP, 0, this->c_str(), len, ansiBuf, len, NULL, NULL);
-  if (ret == 0)
-    return "";
-
-  std::string res(ansiBuf);
-  delete ansiBuf;
-  return res;
-#else
-  return *this;
-#endif
+  return trim_string(str.c_str());
 }
 
-/**
- * Converts the String to a new a string with wide-characters
- * (std::wstring). If Vaca was compiled without the Unicode support
- * (it is that String is just ASCII), it converts the string to
- * @c wstring using the Win32 routine @c MultiByteToWideChar.
- */
-std::wstring String::to_wstring() const
+String Vaca::trim_string(const Char* str)
 {
-#ifdef _UNICODE
-  return *this;
-#else
-  int len = this->size()+1;
-  LPWSTR wideBuf = new WCHAR[len];
-  int ret = MultiByteToWideChar(CP_ACP, 0, this->c_str(), len, wideBuf, len);
+  assert(str != NULL);
+
+  String res(str);
+  while (!res.empty() && std::isspace(res.at(0)))
+    res.erase(res.begin());
+  while (!res.empty() && std::isspace(res.at(res.size()-1)))
+    res.erase(res.end()-1);
+
+  return res;
+}
+
+template<> std::string Vaca::convert_to(const Char* const& from)
+{
+  int len = std::wcslen(from)+1;
+  std::auto_ptr<char> ansiBuf(new char[len]);
+  int ret = WideCharToMultiByte(CP_ACP, 0, from, len, ansiBuf.get(), len, NULL, NULL);
+  if (ret == 0)
+    return "";
+  else
+    return std::string(ansiBuf.get());
+}
+
+template<> std::string Vaca::convert_to(const String& from)
+{
+  int len = from.size()+1;
+  std::auto_ptr<char> ansiBuf(new char[len]);
+  int ret = WideCharToMultiByte(CP_ACP, 0, from.c_str(), len, ansiBuf.get(), len, NULL, NULL);
+  if (ret == 0)
+    return "";
+  else
+    return std::string(ansiBuf.get());
+}
+
+template<> int Vaca::convert_to(const String& from)
+{
+  return (int)std::wcstol(from.c_str(), NULL, 10);
+}
+
+template<> long Vaca::convert_to(const String& from)
+{
+  return (long)std::wcstol(from.c_str(), NULL, 10);
+}
+
+template<> unsigned int Vaca::convert_to(const String& from)
+{
+  return (unsigned int)std::wcstoul(from.c_str(), NULL, 10);
+}
+
+template<> unsigned long Vaca::convert_to(const String& from)
+{
+  return (unsigned long)std::wcstoul(from.c_str(), NULL, 10);
+}
+
+template<> float Vaca::convert_to(const String& from)
+{
+  return std::wcstod(from.c_str(), NULL);
+}
+
+template<> double Vaca::convert_to(const String& from)
+{
+  return std::wcstod(from.c_str(), NULL);
+}
+
+template<> String Vaca::convert_to(const char* const& from)
+{
+  int len = strlen(from)+1;
+  std::auto_ptr<Char> wideBuf(new Char[len]);
+  int ret = MultiByteToWideChar(CP_ACP, 0, from, len, wideBuf.get(), len);
   if (ret == 0)
     return L"";
+  else
+    return String(wideBuf.get());
+}
 
-  std::wstring res(wideBuf);
-  delete wideBuf;
-  return res;
-#endif
+template<> String Vaca::convert_to(const std::string& from)
+{
+  int len = from.size()+1;
+  std::auto_ptr<Char> wideBuf(new Char[len]);
+  int ret = MultiByteToWideChar(CP_ACP, 0, from.c_str(), len, wideBuf.get(), len);
+  if (ret == 0)
+    return L"";
+  else
+    return String(wideBuf.get());
+}
+
+template<> String Vaca::convert_to(const int& from)
+{
+  return format_string(L"%d", from);
+}
+
+template<> String Vaca::convert_to(const long& from)
+{
+  return format_string(L"%ld", from);
+}
+
+template<> String Vaca::convert_to(const unsigned int& from)
+{
+  return format_string(L"%u", from);
+}
+
+template<> String Vaca::convert_to(const unsigned long& from)
+{
+  return format_string(L"%lu", from);
+}
+
+template<> String Vaca::convert_to(const float& from)
+{
+  return format_string(L"%.16g", from);
+}
+
+template<> String Vaca::convert_to(const double& from)
+{
+  return format_string(L"%.16g", from);
 }
 
 /**
  * Commondly used to give strings to Win32 API or from Win32 API (in
  * structures and messages).
  */
-void String::copyTo(LPTSTR dest, int size) const
+void Vaca::copy_string_to(const String& src, Char* dest, int size)
 {
-  _tcsncpy(dest, c_str(), size);
-  dest[size-1] = 0;
-}
-
-String String::fromInt(int value, int base, int precision)
-{
-  String str;
-
-  assert(base > 0);
-
-  div_t d;
-  d.quot = value < 0 ? -value: value;
-  d.rem = 0;
-
-  int i = 0;
-  do {
-    d = div(d.quot, base);
-    str.push_back(d.rem < 10 ? '0'+d.rem:
-			       'a'+(d.rem-10));
-    i++;
-  } while (d.quot != 0);
-
-  for (; i<precision; i++)
-    str.push_back('0');
-
-  if (value < 0)
-    str.push_back('-');
-
-  std::reverse(str.begin(), str.end());
-
-  return str;
-}
-
-int String::parseInt(int base) const
-{
-  return _tcstol(c_str(), NULL, base);
-}
-
-String String::fromDouble(double value, int precision)
-{
-#ifdef _UNICODE
-  return String::format(_T("%.*g"), precision, value);
-#else
-  return String::format("%.*g", precision, value);
-#endif
-}
-
-double String::parseDouble() const
-{
-  return _tcstod(c_str(), NULL);
+  std::wcsncpy(dest, src.c_str(), size);
+  dest[size-1] = L'\0';
 }
 
 /**
- * Adds a path component to this string.
+ * Concatenates two path components.
  *
  * It is useful if the string represent a path and we have to add a
  * file name. For example:
  * @code
- * String path("C:\\myproject\\src");
- * path.addPathComponent("main.h");
- *
- * assert(path == "C:\\myproject\\src\\main.h");
+ * String path(L"C:\\myproject\\src");
+ * assert(path / L"main.h" == L"C:\\myproject\\src\\main.h");
  * @endcode
  *
  * @param component
  *   The string to be added at the end of the string
  *   (separated by a slash).
  */
-void String::addPathComponent(const String& component)
+String Vaca::operator/(const String& path, const String& comp)
 {
-  if (!empty() && *(end()-1) != '/' && *(end()-1) != '\\')
-    push_back('\\');
+  String res(path);
 
-  operator+=(component);
+  if (!res.empty() && *(res.end()-1) != L'/' && *(res.end()-1) != L'\\')
+    res.push_back(L'\\');
+
+  res += comp;
+  return res;
+}
+
+/**
+ * Adds a path component at the end of the path.
+ *
+ * It is useful if the string represent a path and we have to add a
+ * file name. For example:
+ * @code
+ * String path(L"C:\\myproject\\src");
+ * path /= L"main.h";
+ * assert(path == L"C:\\myproject\\src\\main.h");
+ * @endcode
+ *
+ * @param component
+ *   The string to be added at the end of the string
+ *   (separated by a slash).
+ */
+String& Vaca::operator/=(String& path, const String& comp)
+{
+  if (!path.empty() && *(path.end()-1) != L'/' && *(path.end()-1) != L'\\')
+    path.push_back(L'\\');
+
+  path += comp;
+  return path;
 }
 
 /**
  * Returns the file path (the path of "C:\foo\main.cpp" is "C:\foo"
  * without the file name).
  *
- * @see getFileName
+ * @see file_name
  */
-String String::getFilePath() const
+String Vaca::file_path(const String& fullpath)
 {
-  const_reverse_iterator rit;
+  String::const_reverse_iterator rit;
   String res;
 
-  for (rit=rbegin(); rit!=rend(); ++rit)
-    if (*rit == '\\' || *rit == '/')
+  for (rit=fullpath.rbegin(); rit!=fullpath.rend(); ++rit)
+    if (*rit == L'\\' || *rit == L'/')
       break;
 
-  if (rit != rend()) {
+  if (rit != fullpath.rend()) {
     ++rit;
-    std::copy(begin(), const_iterator(rit.base()),
+    std::copy(fullpath.begin(), String::const_iterator(rit.base()),
 	      std::back_inserter(res));
   }
 
@@ -351,18 +280,18 @@ String String::getFilePath() const
  * Returns the file name (the file name of "C:\foo\main.cpp" is
  * "main.cpp", without the path).
  *
- * @see getFilePath, getFileTitle
+ * @see file_path, file_title
  */
-String String::getFileName() const
+String Vaca::file_name(const String& fullpath)
 {
-  const_reverse_iterator rit;
+  String::const_reverse_iterator rit;
   String res;
 
-  for (rit=rbegin(); rit!=rend(); ++rit)
-    if (*rit == '\\' || *rit == '/')
+  for (rit=fullpath.rbegin(); rit!=fullpath.rend(); ++rit)
+    if (*rit == L'\\' || *rit == L'/')
       break;
 
-  std::copy(const_iterator(rit.base()), end(),
+  std::copy(String::const_iterator(rit.base()), fullpath.end(),
 	    std::back_inserter(res));
 
   return res;
@@ -375,23 +304,23 @@ String String::getFileName() const
  * @warning
  *   For a file name like "pack.tar.gz" the extension is "gz".
  *
- * @see getFilePath, getFileTitle
+ * @see file_path, file_title
  */
-String String::getFileExtension() const
+String Vaca::file_extension(const String& fullpath)
 {
-  const_reverse_iterator rit;
+  String::const_reverse_iterator rit;
   String res;
 
   // search for the first dot from the end of the string
-  for (rit=rbegin(); rit!=rend(); ++rit) {
-    if (*rit == '\\' || *rit == '/')
+  for (rit=fullpath.rbegin(); rit!=fullpath.rend(); ++rit) {
+    if (*rit == L'\\' || *rit == L'/')
       return res;
-    else if (*rit == '.')
+    else if (*rit == L'.')
       break;
   }
 
-  if (rit != rend()) {
-    std::copy(const_iterator(rit.base()), end(),
+  if (rit != fullpath.rend()) {
+    std::copy(String::const_iterator(rit.base()), fullpath.end(),
 	      std::back_inserter(res));
   }
 
@@ -405,22 +334,22 @@ String String::getFileExtension() const
  * @warning
  *   For a file name like "pack.tar.gz" the title is "pack.tar".
  *
- * @see getFilePath, getFileExtension
+ * @see file_path, file_extension
  */
-String String::getFileTitle() const
+String Vaca::file_title(const String& fullpath)
 {
-  const_reverse_iterator rit;
-  const_iterator last_dot = end();
+  String::const_reverse_iterator rit;
+  String::const_iterator last_dot = fullpath.end();
   String res;
 
-  for (rit=rbegin(); rit!=rend(); ++rit) {
-    if (*rit == '\\' || *rit == '/')
+  for (rit=fullpath.rbegin(); rit!=fullpath.rend(); ++rit) {
+    if (*rit == L'\\' || *rit == L'/')
       break;
-    else if (*rit == '.' && last_dot == end())
+    else if (*rit == L'.' && last_dot == fullpath.end())
       last_dot = rit.base()-1;
   }
 
-  for (const_iterator it(rit.base()); it!=end(); ++it) {
+  for (String::const_iterator it(rit.base()); it!=fullpath.end(); ++it) {
     if (it == last_dot)
       break;
     else
@@ -430,43 +359,43 @@ String String::getFileTitle() const
   return res;
 }
 
-String String::getUrlHost() const
+String Vaca::url_host(const String& url)
 {
   String host;
-  int len = size();
+  int len = url.size();
   for (int c=0; c<len; ++c) {
-    if (at(c) == ':' && at(c+1) == '/' && at(c+2) == '/') {
-      for (c+=3; c<len && at(c) != '/'; ++c)
-	host.push_back(at(c));
+    if (url[c] == L':' && url[c+1] == L'/' && url[c+2] == L'/') {
+      for (c+=3; c<len && url[c] != L'/'; ++c)
+	host.push_back(url[c]);
     }
   }
   return host;
 }
 
-String String::getUrlObject() const
+String Vaca::url_object(const String& url)
 {
   String object;
-  int len = size();
+  int len = url.size();
   for (int c=0; c<len; ++c) {
-    if (at(c) == ':' && at(c+1) == '/' && at(c+2) == '/') {
-      for (c+=3; c<len && at(c) != '/'; ++c)
+    if (url[c] == ':' && url[c+1] == '/' && url[c+2] == '/') {
+      for (c+=3; c<len && url[c] != '/'; ++c)
 	;
       for (; c<len; ++c)
-	object.push_back(at(c));
+	object.push_back(url[c]);
     }
   }
   return object;
 }
 
-String String::encodeUrl() const
+String Vaca::encode_url(const String& url)
 {
-  std::auto_ptr<Character> buf;
+  std::auto_ptr<Char> buf;
   DWORD size = 1024;
 
   while (true) {
-    buf = std::auto_ptr<Character>(new Character[size]);
+    buf = std::auto_ptr<Char>(new Char[size]);
 
-    if (::InternetCanonicalizeUrl(c_str(), buf.get(), &size, 0))
+    if (::InternetCanonicalizeUrl(url.c_str(), buf.get(), &size, 0))
       break;
 
     if (GetLastError() != ERROR_INSUFFICIENT_BUFFER)
@@ -478,15 +407,15 @@ String String::encodeUrl() const
   return String(buf.get());
 }
 
-String String::decodeUrl() const
+String Vaca::decode_url(const String& url)
 {
-  std::auto_ptr<Character> buf;
+  std::auto_ptr<Char> buf;
   DWORD size = 1024;
 
   while (true) {
-    buf = std::auto_ptr<Character>(new Character[size]);
+    buf = std::auto_ptr<Char>(new Char[size]);
 
-    if (::InternetCanonicalizeUrl(c_str(), buf.get(), &size,
+    if (::InternetCanonicalizeUrl(url.c_str(), buf.get(), &size,
 				  ICU_DECODE | ICU_NO_ENCODE))
       break;
 
@@ -498,26 +427,3 @@ String String::decodeUrl() const
 
   return String(buf.get());
 }
-
-#if 0
-String String::removeExtension() const
-{
-  TCHAR buf[MAX_PATH];
-  copyTo(buf, MAX_PATH);
-
-  PathRemoveExtension(buf);
-  return String(buf);
-}
-
-String String::replaceExtension(const String& newExtension) const
-{
-  return removeExtension() + "." + newExtension;
-//   TCHAR buf[MAX_PATH];
-//   copyTo(buf, MAX_PATH);
-
-//   if (PathAppend(buf, component.c_str()))
-//     return String(buf);
-//   else
-//     return *this;
-}
-#endif

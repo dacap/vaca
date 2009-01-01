@@ -54,19 +54,19 @@ class MainFrame : public Frame
 public:
 
   MainFrame()
-    : Frame("Buttons")
+    : Frame(L"Buttons")
     , m_leftPanel(this)
     , m_rightPanel(this)
-    , m_button("Button", &m_leftPanel)
-    , m_toggleButton("ToggleButton", &m_leftPanel)
-    , m_checkBox("CheckBox", &m_leftPanel)
-    , m_radioButton1("RadioButton1_Group1", m_radioGroup1, &m_leftPanel)
-    , m_radioButton2("RadioButton2_Group1", m_radioGroup1, &m_leftPanel)
-    , m_radioButton3("RadioButton3_Group2", m_radioGroup2, &m_leftPanel)
-    , m_radioButton4("RadioButton4_Group2", m_radioGroup2, &m_leftPanel)
-    , m_label1("", &m_rightPanel)
-    , m_label2("", &m_rightPanel)
-    , m_disableButton("All Disabled", &m_rightPanel)
+    , m_button(L"Button", &m_leftPanel)
+    , m_toggleButton(L"ToggleButton", &m_leftPanel)
+    , m_checkBox(L"CheckBox", &m_leftPanel)
+    , m_radioButton1(L"RadioButton1_Group1", m_radioGroup1, &m_leftPanel)
+    , m_radioButton2(L"RadioButton2_Group1", m_radioGroup1, &m_leftPanel)
+    , m_radioButton3(L"RadioButton3_Group2", m_radioGroup2, &m_leftPanel)
+    , m_radioButton4(L"RadioButton4_Group2", m_radioGroup2, &m_leftPanel)
+    , m_label1(L"", &m_rightPanel)
+    , m_label2(L"", &m_rightPanel)
+    , m_disableButton(L"All Disabled", &m_rightPanel)
     , m_actions(-1)
   {
     setLayout(new BoxLayout(Orientation::Horizontal, true)); // homogeneous
@@ -99,8 +99,9 @@ private:
   void updateLabel()
   {
     m_actions++;
-    m_label1.setText(String("Action signal fired ") + String::fromInt(m_actions) + " time(s)");
-    m_label2.setText(String("CheckBox's ") + (m_checkBox.isSelected() ? "checked": "unchecked"));
+    m_label1.setText(format_string(L"Action signal fired %d time(s)", m_actions));
+    m_label2.setText(format_string(L"CheckBox is %s", m_checkBox.isSelected() ? L"checked":
+										L"unchecked"));
 
     // the labels are bigger and bigger, so a relayout isn't a bad idea
     layout();

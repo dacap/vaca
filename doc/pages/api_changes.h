@@ -10,20 +10,19 @@ namespace Vaca {
 @section page_api_changes_0_0_8 API Changes from 0.0.7 to 0.0.8
 
 @beginChanges
-@beginChange{String::addPathComponent - Semantic change}
+@beginChange{String - Now it is a std::wstring}
 
-Before:
-@code
-String String::addPathComponent(const String& component) const;
-@endcode
-Now:
-@code
-void String::addPathComponent(const String& component);
-@endcode
+There were problems using the old String (a derived class of
+std::basic_string<Character>). So now String is just a std::wstring.
+This has two implications:
+@li You cannot directly create a String from an ASCII string. So if you
+    were using String("Hi") now you have to change it to String(L"Hi").
+    Also you can use the convert_to function to convert an
+    std::string to a std::wstring (String).
+@li Now Unicode is not optional.
 
-Now String::addPathComponent adds the specified path-component to the
-string instance used to call the method.
-
+The old string class is inside the "Vaca/backward.h" under the name
+of _String. It will be completelly removed in the next version of Vaca.
 @endChange
 @beginChange{VACA_MIN/MAX/CLAMP - Renamed}
 
@@ -114,28 +113,15 @@ ComboBox box(&dlg, EditComboBoxStyle);
 
 Now you should to change to:
 @code
-Dialog dlg("", NULL, Dialog::Styles::Default +
-                     Frame::Styles::ResizableFrameStyle);
-Button ok("OK", &dlg, Button::Styles::Default);
-Button cancel("Cancel", &dlg); // <-- uses the default style
+Dialog dlg(L"", NULL, Dialog::Styles::Default +
+                      Frame::Styles::ResizableFrameStyle);
+Button ok(L"OK", &dlg, Button::Styles::Default);
+Button cancel(L"Cancel", &dlg); // <-- uses the default style
 ComboBox box(&dlg, ComboBox::Styles::Editable);
 @endcode
 
 You can still use the old style macros including the "Vaca/backward.h"
 header file.
-
-@endChange
-@beginChange{New Classes/Methods}
-
-@li Application::setProcessPriority
-@li String::encodeUrl
-@li String::decodeUrl
-@li Thread::sleep
-@li Thread::enqueueMessage
-@li Widget::enqueueMessage
-@li Widget::enqueueMessage
-@li Added new header file "Vaca/ScrollEvent.h"
-@li New widgets: SplitBar
 
 @endChange
 @endChanges

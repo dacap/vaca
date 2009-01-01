@@ -722,7 +722,6 @@ Widget::Container Frame::getSynchronizedGroup()
 // #endif
 
 /**
- *
  * This method converts next messages to events:
  * @li @c WM_ACTIVATE -&gt; onActivate()
  * @li @c WM_CLOSE -&gt; onClose()

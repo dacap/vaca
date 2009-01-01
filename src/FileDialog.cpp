@@ -33,6 +33,7 @@
 #include "Vaca/Widget.h"
 #include "Vaca/Application.h"
 #include "Vaca/System.h"
+#include "Vaca/String.h"
 
 // 32k is the limit for Win95/98/Me/NT4/2000/XP with ANSI version
 #define FILENAME_BUFSIZE (1024*32)
@@ -45,13 +46,13 @@ using namespace Vaca;
 FileDialog::FileDialog(const String& title, Widget* parent)
   : CommonDialog(parent)
   , m_title(title)
-  , m_defaultExtension("")
+  , m_defaultExtension(L"")
   , m_showReadOnly(false)
   , m_showHelp(false)
   , m_defaultFilter(0)
 {
-  m_fileName = new TCHAR[FILENAME_BUFSIZE];
-  ZeroMemory(m_fileName, sizeof(TCHAR[FILENAME_BUFSIZE]));
+  m_fileName = new Char[FILENAME_BUFSIZE];
+  ZeroMemory(m_fileName, sizeof(Char[FILENAME_BUFSIZE]));
 }
 
 FileDialog::~FileDialog()
@@ -110,7 +111,7 @@ String FileDialog::getFileName()
 
 void FileDialog::setFileName(const String& fileName)
 {
-  fileName.copyTo(m_fileName, FILENAME_BUFSIZE);
+  copy_string_to(fileName, m_fileName, FILENAME_BUFSIZE);
 }
 
 LPTSTR FileDialog::getOriginalFileName()
@@ -235,7 +236,7 @@ std::vector<String> OpenFileDialog::getFileNames()
 	if (path.empty())
 	  path = start;
 	else
-	  result.push_back(path + "\\" + start);
+	  result.push_back(path + L"\\" + start);
 
 	if (*(++ptr) == '\0')
 	  break;

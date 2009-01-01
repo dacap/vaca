@@ -40,8 +40,6 @@
 
 namespace Vaca {
 
-class String;
-
 /**
  * Used to destroy the HICON handle from GdiObject.
  * 

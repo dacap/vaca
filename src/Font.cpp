@@ -32,6 +32,7 @@
 #include "Vaca/Font.h"
 #include "Vaca/Debug.h"
 #include "Vaca/Graphics.h"
+#include "Vaca/String.h"
 
 using namespace Vaca;
 
@@ -86,7 +87,7 @@ Font::Font(String familyName, int size, FontStyle style)
   lf.lfQuality = DEFAULT_QUALITY; //ANTIALIASED_QUALITY
   lf.lfPitchAndFamily = DEFAULT_PITCH;
 
-  familyName.copyTo(lf.lfFaceName, LF_FACESIZE);
+  copy_string_to(familyName, lf.lfFaceName, LF_FACESIZE);
 
   assign(&lf);
 }

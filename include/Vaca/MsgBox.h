@@ -43,7 +43,6 @@
 #include "Vaca/ScrollInfo.h"
 #include "Vaca/Signal.h"
 #include "Vaca/Size.h"
-#include "Vaca/String.h"
 #include "Vaca/Style.h"
 
 namespace Vaca {

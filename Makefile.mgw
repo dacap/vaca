@@ -12,7 +12,6 @@ default: all
 # DEBUG = 1
 # STATIC = 1
 # PROFILE = 1
-# UNICODE = 1
 # ADD_COMPILER_VERSION = 1
 
 WIN32_IMPL = 1
@@ -99,40 +98,31 @@ EXAMPLES = AnchorLayouts AutoCompletion Bixes BouncingBalls BoxLayouts	\
 endif
 
 ifndef TESTS
-TESTS = \
-	test_backward \
-	test_bind \
-	test_menu \
-	test_point \
-	test_rect \
-	test_region \
-	test_signal \
-	test_size \
-	test_smartptr \
-	test_string \
-	test_tab \
-	test_thread
+TESTS = test_backward test_bind test_menu test_point test_rect		\
+	test_region test_signal test_size test_smartptr test_string	\
+	test_tab test_thread
 endif
 
 # ----------------------------------------------------------------------
 # Flags
 # ----------------------------------------------------------------------
 
-CXXFLAGS = -Iinclude -Iscintilla/include -W -Wall -Wno-unused
+CXXFLAGS = -Iinclude -Iscintilla/include -W -Wall -Wno-unused	\
+           -DUNICODE -D_UNICODE
 DLLFLAGS =
 LFLAGS = -mwindows -Lobj
 LIBS =
 
 # Win32
 ifdef WIN32_IMPL
-  CXXFLAGS += -DVACA_WIN32_IMPL \
-	      -DWINVER=$(WINVER) \
-	      -D_WIN32_IE=$(_WIN32_IE) \
+  CXXFLAGS += -DVACA_WIN32_IMPL					\
+	      -DWINVER=$(WINVER)				\
+	      -D_WIN32_IE=$(_WIN32_IE)				\
 	      -D_WIN32_WINNT=$(_WIN32_WINNT)
 
-  LIBS += -lkernel32 -luser32 -lgdi32 -lcomdlg32 -lwinspool \
-	  -lwinmm -lshell32 -lshlwapi -lcomctl32 -lole32 \
-	  -loleaut32 -luuid -lrpcrt4 -ladvapi32 -lwsock32 \
+  LIBS += -lkernel32 -luser32 -lgdi32 -lcomdlg32 -lwinspool	\
+	  -lwinmm -lshell32 -lshlwapi -lcomctl32 -lole32	\
+	  -loleaut32 -luuid -lrpcrt4 -ladvapi32 -lwsock32	\
 	  -lodbc32 -lcomctl32 -lsecur32 -lmsimg32 -lwininet
 endif
 
@@ -158,14 +148,6 @@ ifdef PROFILE
   CXXFLAGS += -pg
   LFLAGS += -pg
   DLLFLAGS += -pg
-endif
-
-# ----------------------------------------------------------------------
-# UNICODE
-# ----------------------------------------------------------------------
-
-ifdef UNICODE
-  CXXFLAGS += -DUNICODE -D_UNICODE
 endif
 
 # ----------------------------------------------------------------------
@@ -224,12 +206,11 @@ ifdef STATIC
   SUFFIX := $(SUFFIX)s
 endif
 
-ifdef UNICODE
-  SUFFIX := $(SUFFIX)u
-endif
-
 ifdef ADD_COMPILER_VERSION
- SUFFIX := $(SUFFIX)-$(shell gcc -dumpversion)
+ ifneq ($(SUFFIX),)
+   SUFFIX := $(SUFFIX)-
+ endif
+ SUFFIX := $(SUFFIX)$(shell gcc -dumpversion)
 endif
 
 ifneq ($(SUFFIX),)

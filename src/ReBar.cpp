@@ -203,7 +203,7 @@ ReBar::ReBar(Widget* parent, Style style /* = ReBarStyle */)
   sendMessage(RB_SETPARENT, (WPARAM)parent->getHandle(), (LPARAM)0);
 
   if (!sendMessage(RB_SETBARINFO, (WPARAM)0, (LPARAM)&rbi))
-    throw ReBarException("ReBar Error: Failed to initialize rebar!");
+    throw ReBarException(L"ReBar Error: Failed to initialize rebar!");
 }
 
 ReBar::~ReBar()
@@ -218,7 +218,7 @@ void ReBar::setImageList(ImageList& imageList)
   rbi.himl   = imageList.getHandle();
 
   if (!sendMessage(RB_SETBARINFO, (WPARAM)0, (LPARAM)&rbi))
-    throw ReBarException("ReBar Error: Failed to initialize rebar!");
+    throw ReBarException(L"ReBar Error: Failed to initialize rebar!");
 
   // make a reference to the image list (remember that
   // ImageLists are smart pointers)
@@ -249,7 +249,7 @@ ReBarBand ReBar::addBand(Widget* item, ReBarBandStyle style, int position)
   rbbi.cyMinChild = sz.h;
 
   if (!sendMessage(RB_INSERTBAND, (WPARAM)position, (LPARAM)&rbbi))
-    throw ReBarException("ReBar Error: Failed to append ReBar Band!");
+    throw ReBarException(L"ReBar Error: Failed to append ReBar Band!");
 
   return ReBarBand(this, (position < 0) ? getBandCount() : position);
 }
@@ -257,7 +257,7 @@ ReBarBand ReBar::addBand(Widget* item, ReBarBandStyle style, int position)
 ReBarBand ReBar::getBand(int index)
 {
   if (index < 0 || index >= getBandCount())
-    throw ReBarException("ReBar Error: Invalid index of the Band!");
+    throw ReBarException(L"ReBar Error: Invalid index of the Band!");
 
   return ReBarBand(this, index);
 }
@@ -265,7 +265,7 @@ ReBarBand ReBar::getBand(int index)
 void ReBar::removeBand(int index)
 {
   if (!sendMessage(RB_DELETEBAND, (WPARAM)index, (LPARAM)0))
-    throw ReBarException("ReBar Error: Failed to delete ReBar Band!");
+    throw ReBarException(L"ReBar Error: Failed to delete ReBar Band!");
 }
 
 Color ReBar::getBgColor()

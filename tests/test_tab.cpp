@@ -6,7 +6,7 @@ using namespace Vaca;
 
 void test_base()
 {
-  Frame frame("Temporary");
+  Frame frame(L"Temporary");
   TabBase tab(&frame);
 
   // default side
@@ -22,18 +22,18 @@ void test_base()
   assert(tab.getSide() == Side::Left);
 
   // add/insert/remove pages
-  tab.addPage("Remove me");
-  tab.addPage("A");
-  tab.addPage("C");
-  tab.addPage("D");
-  tab.insertPage(2, "B");
+  tab.addPage(L"Remove me");
+  tab.addPage(L"A");
+  tab.addPage(L"C");
+  tab.addPage(L"D");
+  tab.insertPage(2, L"B");
   tab.removePage(0);
   tab.removePage(3);
 
   assert(tab.getPageCount() == 3);
-  assert(tab.getPageText(0) == _T("A"));
-  assert(tab.getPageText(1) == _T("B"));
-  assert(tab.getPageText(2) == _T("C"));
+  assert(tab.getPageText(0) == L"A");
+  assert(tab.getPageText(1) == L"B");
+  assert(tab.getPageText(2) == L"C");
 }
 
 int main()

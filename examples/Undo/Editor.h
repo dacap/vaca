@@ -50,9 +50,10 @@ class Editor : public Panel
 public:
 
   Editor(Widget* parent)
-    : Panel(parent)
+    : Panel(parent, Panel::Styles::Default |
+		    Widget::Styles::Focusable)
     , m_doc(NULL)
-    , m_font("Courier New", 24)
+    , m_font(L"Courier New", 24)
     , m_carret(0)
     , m_carretVisible(true)
     , m_carretFlicker(750)
@@ -109,7 +110,7 @@ public:
     makeCarretVisible();
   }
 
-  void writeChar(Character chr) {
+  void writeChar(Char chr) {
     if (m_doc->size() < max_length)
       m_doc->add(m_carret++, chr);
     makeCarretVisible();
@@ -125,7 +126,7 @@ protected:
     Pen grayPen(Color(192, 192, 192), 1, PenStyle::Dot);
     Size celBox(32, 32);
     Point origPt = rc.getCenter() - Point(celBox.w*max_length, celBox.h)/2;
-    String tmp(1);
+    String tmp(1, L'\0');
 
     g.drawRoundRect(grayPen,
 		    Rect(origPt, Size(celBox.w*max_length, celBox.h)),
@@ -153,7 +154,7 @@ protected:
       }
     }
     else {
-      g.drawString("No document", Color::Black, rc);
+      g.drawString(L"No document", Color::Black, rc);
     }
   }
 

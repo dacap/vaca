@@ -45,8 +45,8 @@ class MainFrame : public Frame
 public:
 
   MainFrame()
-    : Frame("Graphics Primitives")
-    , m_fill("Fill", this)
+    : Frame(L"Graphics Primitives")
+    , m_fill(L"Fill", this)
   {
     setLayout(new AnchorLayout(Size(100, 100)));
     setSize(getNonClientSize()+Size(256, 256));

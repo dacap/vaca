@@ -58,27 +58,27 @@ class MainFrame : public Dialog
 public:
 
   MainFrame()
-    : Dialog("Sliders", NULL, Dialog::Styles::Default +
-			      Frame::Styles::Resizable)
-    , m_rangeL("Range (Min/Max):", this)
-    , m_minValue("0", this)
-    , m_maxValue("100", this)
-    , m_valueL("Value:", this)
-    , m_value("100", this)
-    , m_orienL("Orientation:", this)
-    , m_sidesL("Sides:", this)
-    , m_ticks("Ticks:", this)
-    , m_horz("Horizontal", m_orienGroup, &m_orienL)
-    , m_vert("Vertical", m_orienGroup, &m_orienL)
-    , m_side1("Top", &m_sidesL)
-    , m_side2("Bottom", &m_sidesL)
-    , m_showTicks("Visible", &m_ticks)
-    , m_tickFreqL("Frequency:", &m_ticks)
-    , m_tickFreq("", &m_ticks)
+    : Dialog(L"Sliders", NULL, Dialog::Styles::Default +
+			       Frame::Styles::Resizable)
+    , m_rangeL(L"Range (Min/Max):", this)
+    , m_minValue(L"0", this)
+    , m_maxValue(L"100", this)
+    , m_valueL(L"Value:", this)
+    , m_value(L"100", this)
+    , m_orienL(L"Orientation:", this)
+    , m_sidesL(L"Sides:", this)
+    , m_ticks(L"Ticks:", this)
+    , m_horz(L"Horizontal", m_orienGroup, &m_orienL)
+    , m_vert(L"Vertical", m_orienGroup, &m_orienL)
+    , m_side1(L"Top", &m_sidesL)
+    , m_side2(L"Bottom", &m_sidesL)
+    , m_showTicks(L"Visible", &m_ticks)
+    , m_tickFreqL(L"Frequency:", &m_ticks)
+    , m_tickFreq(L"", &m_ticks)
     , m_sep(this)
     , m_slider(this)
   {
-    setLayout(Bix::parse("X[Y[XY[%,eX[%,%];%,%],X[%,%],%],%,f%]",
+    setLayout(Bix::parse(L"X[Y[XY[%,eX[%,%];%,%],X[%,%],%],%,f%]",
 			 &m_rangeL, &m_minValue, &m_maxValue,
 			 &m_valueL, &m_value,
 			 &m_orienL, &m_sidesL,
@@ -86,7 +86,7 @@ public:
 			 &m_sep, &m_slider));
     m_orienL.setLayout(new BoxLayout(Orientation::Vertical, false));
     m_sidesL.setLayout(new BoxLayout(Orientation::Vertical, false));
-    m_ticks.setLayout(Bix::parse("Y[%,X[%,%]]",
+    m_ticks.setLayout(Bix::parse(L"Y[%,X[%,%]]",
 				 &m_showTicks,
 				 &m_tickFreqL, &m_tickFreq));
 
@@ -120,9 +120,9 @@ private:
   // in the other widgets
   void onRangesChange()
   {
-    int minValue = m_minValue.getText().parseInt();
-    int maxValue = m_maxValue.getText().parseInt();
-    int value = m_value.getText().parseInt();
+    int minValue = convert_to<int>(m_minValue.getText());
+    int maxValue = convert_to<int>(m_maxValue.getText());
+    int value = convert_to<int>(m_value.getText());
 
     bool minValueError = (minValue < Slider::MinLimit || minValue > maxValue || minValue > value);
     bool maxValueError = (maxValue > Slider::MaxLimit || maxValue < minValue || maxValue < value);
@@ -156,15 +156,15 @@ private:
     Sides sides;
 
     if (horz) {
-      m_side1.setText("Top");
-      m_side2.setText("Bottom");
+      m_side1.setText(L"Top");
+      m_side2.setText(L"Bottom");
 
       if (m_side1.isSelected()) sides |= Sides::Top;
       if (m_side2.isSelected()) sides |= Sides::Bottom;
     }
     else {
-      m_side1.setText("Left");
-      m_side2.setText("Right");
+      m_side1.setText(L"Left");
+      m_side2.setText(L"Right");
 
       if (m_side1.isSelected()) sides |= Sides::Left;
       if (m_side2.isSelected()) sides |= Sides::Right;
@@ -172,12 +172,12 @@ private:
 
     m_slider.setSides(sides);
     m_slider.setTickVisible(m_showTicks.isSelected());
-    m_slider.setTickFreq(m_tickFreq.getText().parseInt());
+    m_slider.setTickFreq(convert_to<int>(m_tickFreq.getText()));
   }
 
   void onSliderChange()
   {
-    m_value.setText(String::fromInt(m_slider.getValue()));
+    m_value.setText(convert_to<String>(m_slider.getValue()));
   }
 
 };

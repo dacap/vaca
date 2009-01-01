@@ -174,22 +174,22 @@ class MainFrame : public Frame
 public:
   
   MainFrame()
-    : Frame("Regions")
+    : Frame(L"Regions")
     , m_tab(this)
-    , m_label("Use right/left mouse buttons to draw/erase regions", this)
+    , m_label(L"Use right/left mouse buttons to draw/erase regions", this)
     , m_regions(&m_tab)
   {
     setLayout(new BoxLayout(Orientation::Vertical, false));
     m_tab.setConstraint(new BoxConstraint(true));
     m_tab.setLayout(new BoxLayout(Orientation::Vertical, true));
 
-    m_tab.addPage("Region A");
-    m_tab.addPage("Region B");
-    m_tab.addPage("Union: A | B");
-    m_tab.addPage("Intersect: A && B");
-    m_tab.addPage("Substract: A - B");
-    m_tab.addPage("Substract: B - A");
-    m_tab.addPage("Xor: A ^ B");
+    m_tab.addPage(L"Region A");
+    m_tab.addPage(L"Region B");
+    m_tab.addPage(L"Union: A | B");
+    m_tab.addPage(L"Intersect: A && B");
+    m_tab.addPage(L"Substract: A - B");
+    m_tab.addPage(L"Substract: B - A");
+    m_tab.addPage(L"Xor: A ^ B");
 
     m_tab.PageChange.connect(Bind(&MainFrame::onPageChange, this));
 

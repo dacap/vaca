@@ -102,11 +102,11 @@ String ComboBox::getItemText(int itemIndex)
 {
   int len = sendMessage(CB_GETLBTEXTLEN, itemIndex, 0);
   if (!len)
-    return String("");
+    return L"";
   else {
-    LPTSTR buf = (LPTSTR)new _TCHAR[len+1];
+    Char* buf = new Char[len+1];
     sendMessage(CB_GETLBTEXT, itemIndex, reinterpret_cast<LPARAM>(buf));
-    String str = String(buf);
+    String str(buf);
     delete buf;
     return str;
   }

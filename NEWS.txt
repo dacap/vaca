@@ -1,7 +1,13 @@
 Vaca 0.0.8
 
+- Unicode support is activated by default.
+- Added Thread::enqueueMessage and Widget::enqueueMessage.
+- Added Vaca/backward.h header file.
+- Replaced styles macros with WidgetName::Styles::* namespace.
+- Implemented ReBar widget (Jie Zhang contribution).
+- Added SplitBar widget/example (Jie Zhang contribution).
 - Added Scrolling example.
-- Added Thread::sleep. 
+- Added Thread::sleep and Thread::yield.
 - Added ScrollEvent and ScrollRequest. Modified onScroll to
   receive a ScrollEvent.
 - Fixed a problem in BandedDockArea::onRemoveDockBar with a

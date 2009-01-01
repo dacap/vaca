@@ -81,14 +81,14 @@ class MainFrame : public Frame
 public:
 
   MainFrame()
-    : Frame("Tabs")
+    : Frame(L"Tabs")
     , m_tab(this)
-    , m_labelHere("", &m_tab)
-    , m_labelLast("Start", &m_tab)
-    , m_label0("Go to page0", &m_tab)
-    , m_label1("Go to page1", &m_tab)
-    , m_label2("Go to page2", &m_tab)
-    , m_label3("Go to page3", &m_tab)
+    , m_labelHere(L"", &m_tab)
+    , m_labelLast(L"Start", &m_tab)
+    , m_label0(L"Go to page0", &m_tab)
+    , m_label1(L"Go to page1", &m_tab)
+    , m_label2(L"Go to page2", &m_tab)
+    , m_label3(L"Go to page3", &m_tab)
   {
     setMenuBar(createMenuBar());
     setLayout(new ClientLayout);
@@ -106,10 +106,10 @@ public:
     // m_tab
     m_tab.setLayout(new BoxLayout(Orientation::Vertical, false));
 
-    m_tab.addPage("Page0");
-    m_tab.addPage("Page1");
-    m_tab.addPage("Page2");
-    m_tab.addPage("Page3");
+    m_tab.addPage(L"Page0");
+    m_tab.addPage(L"Page1");
+    m_tab.addPage(L"Page2");
+    m_tab.addPage(L"Page3");
 
     m_tab.PageChange.connect(Bind(&MainFrame::onPageChange, this));
 
@@ -129,24 +129,24 @@ private:
   MenuBar* createMenuBar()
   {
     MenuBar* menuBar  = new MenuBar();
-    Menu* appMenu     = new Menu("&Tabs");
-    Menu* optionsMenu = new Menu("&Options");
-    Menu* sideMenu    = new Menu("&Side");
+    Menu* appMenu     = new Menu(L"&Tabs");
+    Menu* optionsMenu = new Menu(L"&Options");
+    Menu* sideMenu    = new Menu(L"&Side");
 
-    appMenu->add("E&xit", ID_EXIT);
+    appMenu->add(L"E&xit", ID_EXIT);
 
-    optionsMenu->add("Change &Font", ID_CHANGE_FONT);
-    optionsMenu->add("&Multiline", ID_MULTILINE);
+    optionsMenu->add(L"Change &Font", ID_CHANGE_FONT);
+    optionsMenu->add(L"&Multiline", ID_MULTILINE);
     optionsMenu->add(sideMenu);
 
-    sideMenu->add(new SideMenuItem("&Top", ID_TOP, Side::Top, m_tab));
-    sideMenu->add(new SideMenuItem("&Left", ID_LEFT, Side::Left, m_tab));
-    sideMenu->add(new SideMenuItem("&Bottom", ID_BOTTOM, Side::Bottom, m_tab));
-    sideMenu->add(new SideMenuItem("&Right", ID_RIGHT, Side::Right, m_tab));
+    sideMenu->add(new SideMenuItem(L"&Top", ID_TOP, Side::Top, m_tab));
+    sideMenu->add(new SideMenuItem(L"&Left", ID_LEFT, Side::Left, m_tab));
+    sideMenu->add(new SideMenuItem(L"&Bottom", ID_BOTTOM, Side::Bottom, m_tab));
+    sideMenu->add(new SideMenuItem(L"&Right", ID_RIGHT, Side::Right, m_tab));
 
     menuBar->add(appMenu);
     menuBar->add(optionsMenu);
-    menuBar->add("&Read me", ID_READ_ME);
+    menuBar->add(L"&Read me", ID_READ_ME);
 
     return menuBar;
   }
@@ -189,23 +189,23 @@ private:
   void onPageChange()
   {
     updatePage();
-    m_labelLast.setText("Last clicked " + m_tab.getPageText(m_tab.getActivePage()));
+    m_labelLast.setText(L"Last clicked " + m_tab.getPageText(m_tab.getActivePage()));
   }
 
   void onReadMe()
   {
     // TODO remove this
-    MsgBox::show(this, "Win32 Limitations",
-		 "A Tab widget with pages in Left or Right sides\n"
-		 "must be Multiline. Also, when you use themes on\n"
-		 "WinXP, you can't use Left or Right sides at all.\n");
+    MsgBox::show(this, L"Win32 Limitations",
+		 L"A Tab widget with pages in Left or Right sides\n"
+		 L"must be Multiline. Also, when you use themes on\n"
+		 L"WinXP, you can't use Left or Right sides at all.\n");
   }
 
 private:
 
   void updatePage()
   {
-    m_labelHere.setText("We are in " + m_tab.getPageText(m_tab.getActivePage()));
+    m_labelHere.setText(L"We are in " + m_tab.getPageText(m_tab.getActivePage()));
   }
 
 };

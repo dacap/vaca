@@ -34,7 +34,6 @@
 
 #include "Vaca/base.h"
 #include "Vaca/Dialog.h"
-#include "Vaca/String.h"
 #include "Vaca/Signal.h"
 
 namespace Vaca {

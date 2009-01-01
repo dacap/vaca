@@ -121,31 +121,31 @@ public:
   Signal0<void> Change;
 
   FigureProperties(Figure& fig, Widget* parent)
-    : Dialog("Figure Properties", parent)
+    : Dialog(L"Figure Properties", parent)
     , m_fig(fig)
     , m_figBackup(fig)
     , m_penInfo(this)
-    , m_penLabel("Pen configuration:", this)
-    , m_penWidthLabel("Width:", this)
+    , m_penLabel(L"Pen configuration:", this)
+    , m_penWidthLabel(L"Width:", this)
     , m_penWidthSlider(1, 64, 32, this)
-    , m_penWidthEdit("", this, TextEdit::Styles::Default +
-			       TextEdit::Styles::ReadOnly)
-    , m_penColor("Color", this)
-    , m_endCapInfo("End Cap", this)
-    , m_roundEndCap("Round", m_endCapGroup, &m_endCapInfo)
-    , m_squareEndCap("Square", m_endCapGroup, &m_endCapInfo)
-    , m_flatEndCap("Flat", m_endCapGroup, &m_endCapInfo)
-    , m_joinInfo("Join", this)
-    , m_roundJoin("Round", m_joinGroup, &m_joinInfo)
-    , m_bevelJoin("Bevel", m_joinGroup, &m_joinInfo)
-    , m_miterJoin("Miter", m_joinGroup, &m_joinInfo)
+    , m_penWidthEdit(L"", this, TextEdit::Styles::Default +
+				TextEdit::Styles::ReadOnly)
+    , m_penColor(L"Color", this)
+    , m_endCapInfo(L"End Cap", this)
+    , m_roundEndCap(L"Round", m_endCapGroup, &m_endCapInfo)
+    , m_squareEndCap(L"Square", m_endCapGroup, &m_endCapInfo)
+    , m_flatEndCap(L"Flat", m_endCapGroup, &m_endCapInfo)
+    , m_joinInfo(L"Join", this)
+    , m_roundJoin(L"Round", m_joinGroup, &m_joinInfo)
+    , m_bevelJoin(L"Bevel", m_joinGroup, &m_joinInfo)
+    , m_miterJoin(L"Miter", m_joinGroup, &m_joinInfo)
     , m_brushInfo(this)
-    , m_brushLabel("Brush configuration:", this)
-    , m_brushColor("Color", this)
+    , m_brushLabel(L"Brush configuration:", this)
+    , m_brushColor(L"Color", this)
     , m_separator(this)
-    , m_closeFigure("Close Figure", this)
-    , m_ok("&OK", this)
-    , m_cancel("Cancel", this)
+    , m_closeFigure(L"Close Figure", this)
+    , m_ok(L"&OK", this)
+    , m_cancel(L"Cancel", this)
   {
     // preferred size for the TextEdit control of the pen-width
     m_penWidthEdit.setPreferredSize(Size(32, m_penWidthEdit.getPreferredSize().h));
@@ -155,7 +155,7 @@ public:
     m_brushLabel.setFont(Font(getFont(), FontStyle::Italic));
 
     // layout managers
-    setLayout(Bix::parse("Y[%,%,Y[X[%,f%,%],X[f%,f%,Y[%]]],%,%,X[%],%,X[f%,eX[%,%]]]",
+    setLayout(Bix::parse(L"Y[%,%,Y[X[%,f%,%],X[f%,f%,Y[%]]],%,%,X[%],%,X[f%,eX[%,%]]]",
 			 &m_penInfo,
 			 &m_penLabel,
 			 &m_penWidthLabel, &m_penWidthSlider, &m_penWidthEdit,
@@ -193,7 +193,7 @@ private:
   void initValues()
   {
     m_penWidthSlider.setValue(m_fig.pen.getWidth());
-    m_penWidthEdit.setText(String::fromInt(m_fig.pen.getWidth()));
+    m_penWidthEdit.setText(convert_to<String>(m_fig.pen.getWidth()));
       
     m_endCapGroup.setSelectedIndex(m_fig.pen.getEndCap());
     m_joinGroup.setSelectedIndex(m_fig.pen.getJoin());
@@ -218,7 +218,7 @@ private:
   void onPenChange()
   {
     m_fig.pen = createPen(m_fig.pen.getColor());
-    m_penWidthEdit.setText(String::fromInt(m_fig.pen.getWidth()));
+    m_penWidthEdit.setText(convert_to<String>(m_fig.pen.getWidth()));
     Change();
   }
 
@@ -540,8 +540,8 @@ private:
   void showPopupMenuForBackground(const Point& pt)
   {
     PopupMenu menu;
-    menu.add("&New", CommandId(ID_NEW));
-    menu.add("&Paste", CommandId(ID_PASTE))->setEnabled(!m_clipboard.path.empty());
+    menu.add(L"&New", CommandId(ID_NEW));
+    menu.add(L"&Paste", CommandId(ID_PASTE))->setEnabled(!m_clipboard.path.empty());
     if (CommandId id = menu.doModal(this, pt)) {
       switch (id) {
 	case ID_NEW:
@@ -560,8 +560,8 @@ private:
   void showPopupMenuForMovePath(const Point& pt)
   {
     PopupMenu menu;
-    menu.add("&Move Here", CommandId(ID_MOVE_HERE));
-    menu.add("&Copy Here", CommandId(ID_COPY_HERE));
+    menu.add(L"&Move Here", CommandId(ID_MOVE_HERE));
+    menu.add(L"&Copy Here", CommandId(ID_COPY_HERE));
 
     if (CommandId id = menu.doModal(this, pt)) {
       switch (id) {
@@ -581,14 +581,14 @@ private:
   void showPopupMenuForPath(const Point& pt)
   {
     PopupMenu menu;
-    menu.add("Cu&t", CommandId(ID_CUT));
-    menu.add("&Copy", CommandId(ID_COPY));
-    menu.add("&Remove", CommandId(ID_REMOVE));
+    menu.add(L"Cu&t", CommandId(ID_CUT));
+    menu.add(L"&Copy", CommandId(ID_COPY));
+    menu.add(L"&Remove", CommandId(ID_REMOVE));
     menu.addSeparator();
-    menu.add("Send to &Front", CommandId(ID_FRONT));
-    menu.add("Send to &Back", CommandId(ID_BACK));
+    menu.add(L"Send to &Front", CommandId(ID_FRONT));
+    menu.add(L"Send to &Back", CommandId(ID_BACK));
     menu.addSeparator();
-    menu.add("&Properties", CommandId(ID_PROPERTIES));
+    menu.add(L"&Properties", CommandId(ID_PROPERTIES));
 
     if (CommandId id = menu.doModal(this, pt)) {
       switch (id) {
@@ -652,7 +652,7 @@ class MainFrame : public Frame
 public:
 
   MainFrame()
-    : Frame("Paths")
+    : Frame(L"Paths")
     , m_editor(this)
   {
     setLayout(new ClientLayout);

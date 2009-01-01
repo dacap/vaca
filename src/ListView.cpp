@@ -343,8 +343,9 @@ Rect ListView::getItemBounds(int itemIndex, int code)
   assert(::IsWindow(getHandle()));
 
   RECT rc;
-  if (ListView_GetItemRect(getHandle(), itemIndex, &rc, code))
-    return Rect(&rc);
+  LPRECT prc = &rc; // to avoid a warning with MinGW with the ListView_GetItemRect macro
+  if (ListView_GetItemRect(getHandle(), itemIndex, prc, code))
+    return Rect(prc);
 
   // empty rectangle
   return Rect();
@@ -360,7 +361,7 @@ String ListView::getItemText(int itemIndex, int columnIndex)
 
   int size = 4096;		// TODO how to get the text length of
 				// the item?
-  LPTSTR lpstr = new TCHAR[size];
+  Char* lpstr = new Char[size];
 
   ListView_GetItemText(getHandle(), itemIndex, columnIndex, lpstr, size);
 

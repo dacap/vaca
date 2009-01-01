@@ -53,7 +53,7 @@ class MdiChildClass : public WidgetClass
 {
 public:
   static WidgetClassName getClassName()
-  { return WidgetClassName("Vaca.MdiChild"); }
+  { return WidgetClassName(L"Vaca.MdiChild"); }
 };
 
 /**

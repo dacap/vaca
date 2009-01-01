@@ -33,6 +33,7 @@
 #include "Vaca/Application.h"
 #include "Vaca/Debug.h"
 #include "Vaca/ResourceException.h"
+#include "Vaca/String.h"
 
 using namespace Vaca;
 
@@ -47,7 +48,7 @@ ImageList::ImageList(const Size& sz)
   : SmartPtr<GdiObj>(new GdiObj(ImageList_Create(sz.w, sz.w, ILC_COLOR32, 0, 1)))
 {
   if (getHandle() == NULL)
-    throw ResourceException("Can't create the image-list");
+    throw ResourceException(L"Can't create the image-list");
 }
 
 ImageList::ImageList(HIMAGELIST hImageList)
@@ -71,7 +72,8 @@ ImageList::ImageList(ResourceId bitmapId, int widthPerIcon, Color maskColor)
 			0);
 
   if (himagelist == NULL)
-    throw ResourceException("Can't create the image-list resource " + bitmapId.toString());
+    throw ResourceException(format_string(L"Can't create the image-list resource %d",
+					  bitmapId.getId()));
 
   get()->setHandle(himagelist);
 }
@@ -91,7 +93,7 @@ ImageList::ImageList(const String& fileName, int widthPerIcon, Color maskColor)
 			IMAGE_BITMAP,
 			LR_LOADFROMFILE);
   if (himagelist == NULL)
-    throw ResourceException("Can't load the image-list from file " + fileName);
+    throw ResourceException(L"Can't load the image-list from file " + fileName);
 
   get()->setHandle(himagelist);
 }

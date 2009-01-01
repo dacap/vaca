@@ -101,11 +101,11 @@ class MainFrame : public Frame
 public:
 
   MainFrame()
-    : Frame("ColoredButton")
-    , m_button1("Red Button", Color(255, 150, 150), this)
-    , m_button2("Green Button", Color(150, 255, 150), this)
-    , m_button3("Blue Button", Color(150, 150, 255), this)
-    , m_button4("Custom Button", Color(200, 200, 200), this)
+    : Frame(L"ColoredButton")
+    , m_button1(L"Red Button", Color(255, 150, 150), this)
+    , m_button2(L"Green Button", Color(150, 255, 150), this)
+    , m_button3(L"Blue Button", Color(150, 150, 255), this)
+    , m_button4(L"Custom Button", Color(200, 200, 200), this)
   {
     setLayout(new BoxLayout(Orientation::Vertical, true));
 

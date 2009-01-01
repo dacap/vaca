@@ -34,8 +34,8 @@
 
 using namespace Vaca;
 
-Message print_message("Vaca.Message.Print");
-Message die_message("Vaca.Message.Die");
+Message print_message(L"Vaca.Message.Print");
+Message die_message(L"Vaca.Message.Die");
 
 //////////////////////////////////////////////////////////////////////
 
@@ -65,9 +65,9 @@ class MainFrame : public Frame
 public:
 
   MainFrame()
-    : Frame("Threads")
-    , m_text("", this, TextEdit::Styles::TextArea +
-		       Widget::Styles::Scroll)
+    : Frame(L"Threads")
+    , m_text(L"", this, TextEdit::Styles::TextArea +
+			Widget::Styles::Scroll)
   {
     setLayout(new ClientLayout);
   }
@@ -78,7 +78,7 @@ public:
       return true;
 
     if (message == print_message) {
-      print("A message from the working thread was received...\r\n");
+      print(L"A message from the working thread was received...\r\n");
       return true;
     }
 
@@ -110,7 +110,7 @@ int VACA_MAIN()
   // it visible again to show a final message of "we are trying to
   // kill the working thread"...
   frm.setVisible(true);
-  frm.print("Killing working thread...");
+  frm.print(L"Killing working thread...");
   frm.update();
 
   // here we enqueue a message to the thread (this message has to be

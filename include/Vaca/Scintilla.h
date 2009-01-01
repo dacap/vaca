@@ -88,7 +88,7 @@ public:
   void insertText(int pos, const String& str);
   void clearAll();
 // SCI_CLEARDOCUMENTSTYLE
-  Character getCharAt(int pos) const;
+  char getCharAt(int pos) const;
 // SCI_GETSTYLEAT(int pos)
 // SCI_SETSTYLEBITS(int bits)
 // SCI_GETSTYLEBITS

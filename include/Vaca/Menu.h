@@ -36,7 +36,6 @@
 
 #include "Vaca/base.h"
 #include "Vaca/Component.h"
-#include "Vaca/String.h"
 #include "Vaca/Event.h"
 #include "Vaca/Keys.h"
 

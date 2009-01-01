@@ -45,23 +45,23 @@ class MainFrame : public Frame
 public:
 
   MainFrame()
-    : Frame("Labels", NULL, Frame::Styles::Default
-			    - Frame::Styles::Maximizable)
-    , m_longLabel("This is a long label to test the word wrap. Also, see\r\n"
-		 "how the BoxLayout manager fit all in the right place.", this)
-    , m_simpleLabel("A simple label (it's not word wrapped, not text-aligned).",
+    : Frame(L"Labels", NULL, Frame::Styles::Default
+			     - Frame::Styles::Maximizable)
+    , m_longLabel(L"This is a long label to test the word wrap. Also, see\r\n"
+		  L"how the BoxLayout manager fit all in the right place.", this)
+    , m_simpleLabel(L"A simple label (it's not word wrapped, not text-aligned).",
 		    this, Label::Styles::Default +
 			  Label::Styles::Simple)
-    , m_ellipsis1Label("A label with word-ellipsis style.",
-		      this, Label::Styles::Default +
-			    Label::Styles::WordEllipsis)
-    , m_ellipsis2Label("C:\\folder\\subFolder\\subSubFolder\\fileName.txt",
-		      this, Label::Styles::Default +
-			    Label::Styles::EndEllipsis)
-    , m_ellipsis3Label("C:\\folder\\subFolder\\subSubFolder\\fileName.txt",
+    , m_ellipsis1Label(L"A label with word-ellipsis style.",
+		       this, Label::Styles::Default +
+			     Label::Styles::WordEllipsis)
+    , m_ellipsis2Label(L"C:\\folder\\subFolder\\subSubFolder\\fileName.txt",
+		       this, Label::Styles::Default +
+			     Label::Styles::EndEllipsis)
+    , m_ellipsis3Label(L"C:\\folder\\subFolder\\subSubFolder\\fileName.txt",
 		      this, Label::Styles::Default +
 			    Label::Styles::PathEllipsis)
-    , m_alignButton("Set Alignment", this)
+    , m_alignButton(L"Set Alignment", this)
   {
     setLayout(new BoxLayout(Orientation::Vertical, false));
 

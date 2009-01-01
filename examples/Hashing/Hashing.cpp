@@ -39,11 +39,11 @@ using namespace Vaca;
 //////////////////////////////////////////////////////////////////////
 // MD5
 
-static String MD5File(const String &fileName)
+static String MD5File(const String& fileName)
 {
-  FILE *stream = _tfopen(fileName.c_str(), _T("rb"));
+  FILE* stream = _wfopen(fileName.c_str(), L"rb");
   if (stream == NULL)
-    return String("Error loading file");
+    return String(L"Error loading file");
 
   MD5_CTX md5;
   MD5Init(&md5);
@@ -61,7 +61,7 @@ static String MD5File(const String &fileName)
   // transform "digest" to String
   String res;
   for(int c=0; c<16; ++c)
-    res += String::fromInt(digest[c], 16, 2);
+    res += format_string(L"%02x", digest[c]);
   return res;
 }
 
@@ -70,9 +70,9 @@ static String MD5File(const String &fileName)
 
 static String SHA1File(const String &fileName)
 {
-  FILE *stream = _tfopen(fileName.c_str(), _T("rb"));
+  FILE* stream = _wfopen(fileName.c_str(), L"rb");
   if (stream == NULL)
-    return String("Error loading file");
+    return String(L"Error loading file");
 
   SHA1Context sha;
   SHA1Reset(&sha);
@@ -90,7 +90,7 @@ static String SHA1File(const String &fileName)
   // transform "digest" to String
   String res;
   for(int c=0; c<20; ++c)
-    res += String::fromInt(digest[c], 16, 2);
+    res += format_string(L"%02x", digest[c]);
   return res;
 }
 
@@ -108,21 +108,21 @@ class MainFrame : public Frame
 public:
 
   MainFrame()
-    : Frame("Hashing")
-    , m_helpLabel("Drop files to the list", this)
+    : Frame(L"Hashing")
+    , m_helpLabel(L"Drop files to the list", this)
     , m_filesList(this, ListView::Styles::Default +
 			ListView::Styles::SingleSelection +
 			Widget::Styles::AcceptFiles)
-    , m_md5Edit("", this, TextEdit::Styles::Default +
-			  TextEdit::Styles::ReadOnly)
-    , m_shaEdit("", this, TextEdit::Styles::Default +
-			  TextEdit::Styles::ReadOnly)
-    , m_md5Label("http://www.faqs.org/rfcs/rfc1321.html",
-		 "RFC 1321 - The MD5 Message-Digest Algorithm", this)
-    , m_shaLabel("http://www.faqs.org/rfcs/rfc3174.html",
-		 "RFC 3174 - US Secure Hash Algorithm 1 (SHA1)", this)
+    , m_md5Edit(L"", this, TextEdit::Styles::Default +
+			   TextEdit::Styles::ReadOnly)
+    , m_shaEdit(L"", this, TextEdit::Styles::Default +
+			   TextEdit::Styles::ReadOnly)
+    , m_md5Label(L"http://www.faqs.org/rfcs/rfc1321.html",
+		 L"RFC 1321 - The MD5 Message-Digest Algorithm", this)
+    , m_shaLabel(L"http://www.faqs.org/rfcs/rfc3174.html",
+		 L"RFC 3174 - US Secure Hash Algorithm 1 (SHA1)", this)
   {
-    setLayout(Bix::parse("Y[%,f%,XY[%,fx%;%,fx%]]",
+    setLayout(Bix::parse(L"Y[%,f%,XY[%,fx%;%,fx%]]",
 			 &m_helpLabel,
 			 &m_filesList,
 			 &m_md5Label, &m_md5Edit,
@@ -130,9 +130,9 @@ public:
 
     // setup report view
     m_filesList.setType(ListViewType::Report);
-    m_filesList.addColumn("Filename");
-    m_filesList.addColumn("MD5");
-    m_filesList.addColumn("SHA1");
+    m_filesList.addColumn(L"Filename");
+    m_filesList.addColumn(L"MD5");
+    m_filesList.addColumn(L"SHA1");
 
     // signals
     m_filesList.DropFiles.connect(&MainFrame::onDropFilesInFilesList, this);
@@ -154,12 +154,10 @@ private:
     for (std::vector<String>::iterator
 	   it = files.begin(); it != files.end(); ++it) {
       // get the what image to use
-      int imageIndex =
-	System::getFileImageIndex((*it), true);
+      int imageIndex = System::getFileImageIndex((*it), true);
 
       // add the new item and hold its index
-      int itemIndex =
-	m_filesList.addItem((*it).getFileName(), imageIndex);
+      int itemIndex = m_filesList.addItem(file_name(*it), imageIndex);
 
       // calculates the MD5 and SHA1 of the file
       m_filesList.setItemText(itemIndex, MD5File(*it), 1);

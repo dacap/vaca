@@ -48,13 +48,13 @@ void test_styles()
 
 void test_textedit()
 {
-  Frame frm("test");
-  TextEdit e1("e1", &frm);
-  TextEdit e2("e2", &frm, TextEdit::Styles::Password);
-  TextEdit e3("e3", &frm, TextEdit::Styles::TextArea);
-  Edit be1("e1", &frm);
-  PasswordEdit be2("e2", &frm);
-  MultilineEdit be3("e3", &frm);
+  Frame frm(L"test");
+  TextEdit e1(L"e1", &frm);
+  TextEdit e2(L"e2", &frm, TextEdit::Styles::Password);
+  TextEdit e3(L"e3", &frm, TextEdit::Styles::TextArea);
+  Edit be1(L"e1", &frm);
+  PasswordEdit be2(L"e2", &frm);
+  MultilineEdit be3(L"e3", &frm);
 
   assert(e1.getText() == be1.getText());
   assert(e2.getText() == be2.getText());

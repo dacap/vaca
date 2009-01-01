@@ -116,7 +116,7 @@ class MainFrame : public Frame
 
 public:
   MainFrame()
-    : Frame("Undo (WIP)")
+    : Frame(L"Undo (WIP)")
     , m_editor(this)
   {
     setMenuBar(createMenuBar());
@@ -132,13 +132,13 @@ private:
   MenuBar* createMenuBar()
   {
     MenuBar* menuBar = new MenuBar();
-    Menu* docMenu = new Menu("Document");
-    m_listMenu = new Menu("List");
+    Menu* docMenu = new Menu(L"Document");
+    m_listMenu = new Menu(L"List");
 
-    docMenu->add("New", ID_NEW_DOCUMENT);
-    docMenu->add("Close", ID_CLOSE_DOCUMENT);
+    docMenu->add(L"New", ID_NEW_DOCUMENT);
+    docMenu->add(L"Close", ID_CLOSE_DOCUMENT);
     docMenu->addSeparator();
-    docMenu->add("Exit", ID_EXIT);
+    docMenu->add(L"Exit", ID_EXIT);
 
     menuBar->add(docMenu);
     menuBar->add(m_listMenu);
@@ -219,8 +219,8 @@ void Example::onNew()
   m_docCounter++;
 
   // create the new document
-  DocumentPtr doc(new Document(String("Document #" + String::fromInt(m_docCounter))));
-  doc->add(0, "Text " + String::fromInt(m_docCounter));
+  DocumentPtr doc(new Document(format_string(L"Document #%d", m_docCounter)));
+  doc->add(0, format_string(L"Text %d", m_docCounter));
 
   // add the document to the list
   m_docs.push_back(doc);

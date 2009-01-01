@@ -55,7 +55,7 @@ public:
     return m_name;
   }
 
-  Character at(DocPos pos) const {
+  Char at(DocPos pos) const {
     return m_string.at(pos);
   }
 
@@ -63,7 +63,7 @@ public:
     return m_string.size();
   }
 
-  void add(DocPos pos, Character chr) {
+  void add(DocPos pos, Char chr) {
     m_string.insert(pos, 1, chr);
   }
 

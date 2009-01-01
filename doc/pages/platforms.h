@@ -11,11 +11,10 @@ namespace Vaca {
 @section page_platforms_supported Supported
 
 Platforms and Compilers:
-@li Vaca is tested on Win98, Win2K, and WinXP.
+@li Vaca is tested on Win2K and WinXP.
 @li Compiled with MSVC 7.1, MSVC 8.0 and MinGW (GCC 3.4.2, 4.3.0 alpha-testing).
 
-Platforms that we aren't thinking to add support for:
-@li Win95 and WinNT4.
+Platforms which we are not thinking to add support for: Win95, Win98 and WinNT4.
 
 
 @section page_platforms_portability Portability

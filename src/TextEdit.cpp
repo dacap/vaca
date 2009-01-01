@@ -190,7 +190,7 @@ void TextEdit::onPreferredSize(Size& sz)
     int lines = sendMessage(EM_GETLINECOUNT, 0, 0);
 
     textSize.w = realSize.w;
-    textSize.h = lines * g.measureString("", 32767, 0).h;
+    textSize.h = lines * g.measureString(L"", 32767, 0).h;
   }
 
   sz = textSize+border;
@@ -222,14 +222,14 @@ bool TextEdit::onReflectedCommand(int id, int code, LRESULT& lResult)
   return false;
 }
 
-Character TextEdit::getPasswordCharacter()
+Char TextEdit::getPasswordChar()
 {
-  return static_cast<Character>(sendMessage(EM_GETPASSWORDCHAR, 0, 0));
+  return static_cast<Char>(sendMessage(EM_GETPASSWORDCHAR, 0, 0));
 }
 
-void TextEdit::setPasswordCharacter(Character passwordChar)
+void TextEdit::setPasswordChar(Char passChar)
 {
-  sendMessage(EM_SETPASSWORDCHAR, passwordChar, 0);
+  sendMessage(EM_SETPASSWORDCHAR, passChar, 0);
 }
 
 bool TextEdit::getWantReturnMode()
@@ -254,20 +254,21 @@ int TextEdit::getLineCount()
 
 String TextEdit::getLine(int lineNo)
 {
-  int length = getLineLength(lineNo);
+  size_t length = getLineLength(lineNo);
   if (length > 0) {
-    LPTSTR tstr = new _TCHAR[length];
+    Char* pstr = new Char[length];
 
-    sendMessage(EM_GETLINE, lineNo, reinterpret_cast<LPARAM>(tstr));
+    sendMessage(EM_GETLINE, lineNo, reinterpret_cast<LPARAM>(pstr));
 
-    String string(length);
+    String str;
+    str.reserve(length);
 
-    LPTSTR p = tstr;
-    for (int c=0; c<length; ++c, ++p)
-      string.push_back(*p);
+    Char* p = pstr;
+    for (size_t c=0; c<length; ++c, ++p)
+      str.push_back(*p);
 
-    delete tstr;
-    return string;
+    delete pstr;
+    return str;
   }
   else
     return String();

@@ -60,29 +60,29 @@ using namespace Vaca;
  *     Style to put to this widget.
  */
 LinkLabel::LinkLabel(const String& urlOrText, Widget* parent, Style style)
-  : CustomLabel("", parent, style)
+  : CustomLabel(L"", parent, style)
 {
   // is a URL?
-  if (urlOrText.find_first_of(_T("www")) != String::npos ||
-      urlOrText.find_first_of(_T("://")) != String::npos ||
-      urlOrText.find_first_of(_T("@")) != String::npos)
+  if (urlOrText.find_first_of(L"www") != String::npos ||
+      urlOrText.find_first_of(L"://") != String::npos ||
+      urlOrText.find_first_of(L"@"  ) != String::npos)
     m_url = urlOrText;
 
   init(urlOrText);
 }
 
 LinkLabel::LinkLabel(const String& url, const String& text, Widget* parent, Style style)
-  : CustomLabel("", parent, style)
+  : CustomLabel(L"", parent, style)
   , m_url(url)
 {
   init(text);
 }
 
 LinkLabel::LinkLabel(const String& url, Image& image, Widget* parent, Style style)
-  : CustomLabel("", parent, style)
+  : CustomLabel(L"", parent, style)
   , m_url(url)
 {
-  init("", &image);
+  init(L"", &image);
 }
 
 LinkLabel::~LinkLabel()
@@ -282,7 +282,7 @@ void LinkLabel::init(String text, Image* image)
 void LinkLabel::action()
 {
   if (!m_url.empty())
-    ShellExecute(NULL, _T("open"), m_url.c_str(), NULL, NULL, SW_SHOW);
+    ShellExecute(NULL, L"open", m_url.c_str(), NULL, NULL, SW_SHOW);
 
   Event ev(this);
   onAction(ev);

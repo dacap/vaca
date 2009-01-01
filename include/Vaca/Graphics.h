@@ -38,7 +38,6 @@
 #include "Vaca/base.h"
 #include "Vaca/NonCopyable.h"
 #include "Vaca/Rect.h"
-#include "Vaca/String.h"
 #include "Vaca/Font.h"
 
 namespace Vaca {

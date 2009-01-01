@@ -88,8 +88,8 @@ public:
   // PASSWORD
   // ============================================================
 
-  Character getPasswordCharacter();
-  void setPasswordCharacter(Character passwordChar);
+  Char getPasswordChar();
+  void setPasswordChar(Char passChar);
 
   // ============================================================
   // TEXT AREA

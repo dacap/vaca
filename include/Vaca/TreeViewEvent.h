@@ -34,7 +34,6 @@
 
 #include "Vaca/base.h"
 #include "Vaca/CancelableEvent.h"
-#include "Vaca/String.h"
 
 namespace Vaca {
 
@@ -51,7 +50,7 @@ class VACA_DLL TreeViewEvent : public CancelableEvent
 
 public:
 
-  TreeViewEvent(TreeView* treeView, TreeNode* treeNode, String label = "");
+  TreeViewEvent(TreeView* treeView, TreeNode* treeNode, String label = L"");
   virtual ~TreeViewEvent();
 
   TreeView* getTreeView();

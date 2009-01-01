@@ -32,166 +32,77 @@
 #ifndef VACA_STRING_H
 #define VACA_STRING_H
 
-#include <string>
-
 #include "Vaca/base.h"
 
-#ifndef VACA_STRING_BASE
-#  define VACA_STRING_BASE std::basic_string<Vaca::Character>
-#endif
-
-// // work-arround for the dynamic version of Vaca on MSC compiler (Q168958)
-// #if !defined VACA_STATIC && defined _MSC_VER
-//   #ifdef VACA_STRING_CPP
-//     template class VACA_DLL VACA_STRING_BASE;
-//   #elif !defined VACA_SRC
-//     extern template class VACA_STRING_BASE;
-//   #endif
-// #endif
-
 namespace Vaca {
-
-/**
- * A string of characters.
- *
- * It is a @c std::basic_string<Character> with some extra
- * methods, but this class doesn't have extra data members.
- */
-class VACA_DLL String : public VACA_STRING_BASE
-{
-public:
-
-  // ============================================================
-  // CTOR & DTOR
-  // ============================================================
-
-  String();
-  explicit String(int length);
-  String(const String& str);
-  String(const VACA_STRING_BASE& str);
-  String(const char* str);
-  String(const char* str, int length);
-  String(const wchar_t* str);
-  virtual ~String();
 
   // ============================================================
   // UTILITARY
   // ============================================================
 
-  String& trim();
-  static String trim(const String& str);
+  VACA_DLL String format_string(const Char* fmt, ...);
 
-  static String format(const char* fmt, ...);
-  static String format(const wchar_t* fmt, ...);
+  VACA_DLL String trim_string(const String& str);
+  VACA_DLL String trim_string(const Char* str);
 
   // ============================================================
   // CONVERSION
   // ============================================================
 
-  // Method to convert the string to the standard
-  std::string to_string() const;
-  std::wstring to_wstring() const;
+  // you have to use a specialization
+  template<typename To, typename From>
+  To convert_to(const From& from) {
+    enum { not_supported = 1/(1 == 0) }; // static_assert(false)
+  }
 
-  // Converts the string to a string for Win32 API
-  void copyTo(LPTSTR dest, int size) const;
+  // convert from String
+  template<> VACA_DLL std::string   convert_to(const String& from);
+  template<> VACA_DLL int           convert_to(const String& from);
+  template<> VACA_DLL long          convert_to(const String& from);
+  template<> VACA_DLL unsigned int  convert_to(const String& from);
+  template<> VACA_DLL unsigned long convert_to(const String& from);
+  template<> VACA_DLL float         convert_to(const String& from);
+  template<> VACA_DLL double        convert_to(const String& from);
+  template<> VACA_DLL std::string   convert_to(const Char* const& from);
 
-  // String <-> int conversion
-  static String fromInt(int value, int base = 10, int precision = 0);
-  int parseInt(int base = 10) const;
+  template<> inline std::string convert_to(Char* const& from) {
+    return convert_to<std::string, const Char*>(from);
+  }
 
-  // String <-> double conversion
-  static String fromDouble(double value, int precision);
-  double parseDouble() const;
+  // convert to String
+  template<> VACA_DLL String convert_to(const std::string& from);
+  template<> VACA_DLL String convert_to(const int& from);
+  template<> VACA_DLL String convert_to(const long& from);
+  template<> VACA_DLL String convert_to(const unsigned int& from);
+  template<> VACA_DLL String convert_to(const unsigned long& from);
+  template<> VACA_DLL String convert_to(const float& from);
+  template<> VACA_DLL String convert_to(const double& from);
+  template<> VACA_DLL String convert_to(const char* const& from);
+
+  template<> inline String convert_to(char* const& from) {
+    return convert_to<String, const char*>(from);
+  }
+
+  // copy to a raw string
+  VACA_DLL void copy_string_to(const String& src, Char* dest, int size);
 
   // ============================================================
   // FILE NAMES, PATHS AND URLS
   // ============================================================
 
-  void addPathComponent(const String& component);
-  
-  String getFilePath() const;
-  String getFileName() const;
-  String getFileExtension() const;
-  String getFileTitle() const;
+  VACA_DLL String operator/(const String& path, const String& comp);
+  VACA_DLL String& operator/=(String& path, const String& comp);
 
-  String getUrlHost() const;
-  String getUrlObject() const;
+  VACA_DLL String file_path(const String& fullpath);
+  VACA_DLL String file_name(const String& fullpath);
+  VACA_DLL String file_extension(const String& fullpath);
+  VACA_DLL String file_title(const String& fullpath);
 
-  String encodeUrl() const;
-  String decodeUrl() const;
+  VACA_DLL String url_host(const String& url);
+  VACA_DLL String url_object(const String& url);
 
-//   String removeExtension() const;
-//   String replaceExtension(const String& newExtension) const;
-
-};
-
-/**
- * Concatenate a String with a normal C string.
- * 
- * With this you can do:
- * @code
- * String res = String("...") + "...";
- * @endcode
- *
- * @return A new string.
- */
-inline String operator+(const String& _s1, const char* _s2)
-{
-  String _res(_s1);
-  _res.append(String(_s2));
-  return _res;
-}
-
-/**
- * Concatenate a String with a C string with wide-characters.
- * 
- * With this you can do:
- * @code
- * String res = String("...") + _T("...");
- * @endcode
- *
- * @return A new string.
- */
-inline String operator+(const String& _s1, const wchar_t* _s2)
-{
-  String _res(_s1);
-  _res.append(String(_s2));
-  return _res;
-}
-
-/**
- * Concatenate a normal C string and a String.
- * 
- * With this you can do:
- * @code
- * String res = "..." + String("...");
- * @endcode
- *
- * @return A new string.
- */
-inline String operator+(const char* _s1, const String& _s2)
-{
-  String _res(_s1);
-  _res.append(_s2);
-  return _res;
-}
-
-/**
- * Concatenate a C string with wide-characters and a String.
- * 
- * With this you can do:
- * @code
- * String res = _T("...") + String("...");
- * @endcode
- *
- * @return A new string.
- */
-inline String operator+(const wchar_t* _s1, const String& _s2)
-{
-  String _res(_s1);
-  _res.append(_s2);
-  return _res;
-}
+  VACA_DLL String encode_url(const String& url);
+  VACA_DLL String decode_url(const String& url);
 
 } // namespace Vaca
 

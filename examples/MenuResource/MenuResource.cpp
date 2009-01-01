@@ -43,9 +43,9 @@ class Console : public TextEdit
 public:
 
   Console(Widget* parent)
-    : TextEdit("", parent, TextEdit::Styles::TextArea +
-			   Widget::Styles::Scroll)
-    , m_font("Courier New", 10)
+    : TextEdit(L"", parent, TextEdit::Styles::TextArea +
+			    Widget::Styles::Scroll)
+    , m_font(L"Courier New", 10)
   {
     setFont(m_font);
     setBgColor(Color::Black);
@@ -54,7 +54,7 @@ public:
 
   void println(const String &str)
   {
-    setText(getText() + str + "\r\n");
+    setText(getText() + str + L"\r\n");
     scrollLines(getLineCount());
   }
   
@@ -71,7 +71,7 @@ class MainFrame : public Frame
 public:
 
   MainFrame()
-    : Frame("MenuResource")
+    : Frame(L"MenuResource")
     , m_console(this)
   {
     // load the MenuBar from the resource with id=IDM_MENUBAR
@@ -96,15 +96,15 @@ private:
     switch (id) {
 
       case IDM_ITEM1:
-	m_console.println("Item1 selected");
+	m_console.println(L"Item1 selected");
 	break;
 
       case IDM_ITEM2:
-	m_console.println("Item2 selected");
+	m_console.println(L"Item2 selected");
 	break;
 
       case IDM_ITEM3:
-	m_console.println("Item3 selected (change Item2 state)");
+	m_console.println(L"Item3 selected (change Item2 state)");
 
 	// here we modify the selected-state of the MenuItem directly
 	m_menuItem2->setEnabled(!m_menuItem2->isEnabled());
@@ -114,7 +114,7 @@ private:
 	break;
 
       default:
-	m_console.println("Unknown action");
+	m_console.println(L"Unknown action");
 	break;
     }
 

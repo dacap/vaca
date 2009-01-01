@@ -56,12 +56,12 @@ class MainFrame : public Dialog
 public:
 
   MainFrame()
-    : Dialog("ProgressBars")
+    : Dialog(L"ProgressBars")
     , m_progressBar1(this)
     , m_progressBar2(this, ProgressBar::Styles::Default +
 			   ProgressBar::Styles::Smooth)
-    , m_start("Start", this)
-    , m_close("Close", this)
+    , m_start(L"Start", this)
+    , m_close(L"Close", this)
   {
     // a box layout manager with vertical orientation and no-homogeneous
     setLayout(new BoxLayout(Orientation::Vertical, false));
@@ -99,7 +99,7 @@ protected:
       case WaitingToWork:
       case Paused: {
 	m_state = Working;
-	m_start.setText("Pause"); // convert the button to "Pause"...
+	m_start.setText(L"Pause"); // convert the button to "Pause"...
 
 	// this is "The Loop", where the real work is done
 	do {
@@ -109,7 +109,7 @@ protected:
 	  // work done
 	  if (m_progressBar1.getValue() == m_progressBar1.getMaximum()) {
 	    m_state = WorkDone;
-	    m_start.setText("Restart"); // convert the button to "Restart"
+	    m_start.setText(L"Restart"); // convert the button to "Restart"
 	  }
 	  else {
 	    m_progressBar1.addValue(1);
@@ -130,7 +130,7 @@ protected:
 
       case Working:
 	m_state = Paused;
-	m_start.setText("Continue"); // convert the button to "Continue"
+	m_start.setText(L"Continue"); // convert the button to "Continue"
 	break;
 
       // the work is done? the user press the "Restart" button
@@ -138,7 +138,7 @@ protected:
 	// restart progress bars
 	m_progressBar1.setValue(m_progressBar1.getMinimum());
 	m_progressBar2.setValue(m_progressBar2.getMinimum());
-	m_start.setText("Start"); // convert the button to "Start"
+	m_start.setText(L"Start"); // convert the button to "Start"
 	m_state = WaitingToWork;
 	break;
 
@@ -153,9 +153,9 @@ protected:
     // work in progress? (we are in "The Loop")
     if (m_state == Working) {
       // display a warning message
-      if (MsgBox::show(this, "Warning",
-		       "The application is working.\r\n"
-		       "Do you really want to close it?",
+      if (MsgBox::show(this, L"Warning",
+		       L"The application is working.\r\n"
+		       L"Do you really want to close it?",
 		       MsgBox::Type::YesNo,
 		       MsgBox::Icon::Warning, 2) == MsgBox::Result::Yes) {
 	// the user really want to close the window, abort the work
@@ -168,9 +168,9 @@ protected:
     // need more time?
     else if (m_state == Paused) {
       // display a warning message
-      if (MsgBox::show(this, "Warning",
-		       "The application is paused, but doesn't finish its work.\r\n"
-		       "Do you really want to close it?",
+      if (MsgBox::show(this, L"Warning",
+		       L"The application is paused, but doesn't finish its work.\r\n"
+		       L"Do you really want to close it?",
 		       MsgBox::Type::YesNo,
 		       MsgBox::Icon::Warning, 2) == MsgBox::Result::Yes) {
 	// hide the dialog

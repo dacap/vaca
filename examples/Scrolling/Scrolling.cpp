@@ -229,9 +229,9 @@ void updateSleep(Scrollable* s, CheckBox* cb)
 int VACA_MAIN()
 {
   Application app;
-  Frame frm("Scrolling");
+  Frame frm(L"Scrolling");
   Scrollable wgt(&frm);
-  CheckBox sleep("Show invalidated areas for some milliseconds", &frm);
+  CheckBox sleep(L"Show invalidated areas for some milliseconds", &frm);
 
   sleep.Action.connect(Bind<void>(&updateSleep, &wgt, &sleep));
 

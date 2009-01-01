@@ -33,7 +33,6 @@
 #define VACA_CLIPBOARD_H
 
 #include "Vaca/base.h"
-#include "Vaca/String.h"
 
 namespace Vaca {
 

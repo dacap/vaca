@@ -44,7 +44,7 @@ class MainFrame : public Frame
 public:
 
   MainFrame()
-    : Frame("Spinners")
+    : Frame(L"Spinners")
     , m_spinButton1(this)
     , m_spinButton2(this, SpinButton::Styles::Default +
 			  SpinButton::Styles::Horizontal)

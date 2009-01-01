@@ -107,7 +107,7 @@ public:
   
   virtual Size getPreferredSize(Widget* parent, Widget::Container& widgets, const Size& fitIn);
 
-  static Bix* parse(const char* fmt, ...);
+  static Bix* parse(const Char* fmt, ...);
 
 protected:
 

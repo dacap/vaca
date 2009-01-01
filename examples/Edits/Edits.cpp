@@ -43,16 +43,16 @@ class MainFrame : public Frame
 public:
 
   MainFrame()
-    : Frame("Edits")
-    , m_edit1("Default TextEdit widget with some text that you can edit.", this)
-    , m_edit2("An TextEdit widget without client-edge and right-aligned.", this,
+    : Frame(L"Edits")
+    , m_edit1(L"Default TextEdit widget with some text that you can edit.", this)
+    , m_edit2(L"An TextEdit widget without client-edge and right-aligned.", this,
 	      TextEdit::Styles::Default +
 	      TextEdit::Styles::RightAligned
 	      - Widget::Styles::ClientEdge)
-    , m_edit3("A read-only TextEdit widget without client-edge and with modified bgColor", this,
+    , m_edit3(L"A read-only TextEdit widget without client-edge and with modified bgColor", this,
 	      TextEdit::Styles::Default
 	      - Widget::Styles::ClientEdge)
-    , m_edit4("A TextEdit widget with TextArea style.\r\nIt has multiple lines\r\nof text...", this,
+    , m_edit4(L"A TextEdit widget with TextArea style.\r\nIt has multiple lines\r\nof text...", this,
 	      TextEdit::Styles::TextArea +
 	      Widget::Styles::Scroll)
   {

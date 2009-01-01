@@ -45,32 +45,33 @@ int VACA_MAIN()
   Application application;
 
   // creates a Dialog that looks like a Frame
-  Dialog frame("Like a script", NULL,
+  Dialog frame(L"Like a script", NULL,
 	       Dialog::Styles::Default
 	       + Frame::Styles::Resizable
 	       + Frame::Styles::Minimizable
 	       + Frame::Styles::Maximizable);
 
-  Label firstNameLabel("First name:", &frame);
-  Label lastNameLabel("Last name:", &frame);
-  Label ageLabel("Age:", &frame);
-  TextEdit firstName("", &frame);
-  TextEdit lastName("", &frame);
-  TextEdit age("", &frame, TextEdit::Styles::Default +
-			   TextEdit::Styles::RightAligned);
-  Button ok("&OK", &frame);
-  Button cancel("&Cancel", &frame);
-  Font font1("Courier New", 10);
-  Font font2("Courier New", 10, FontStyle::Bold);
+  Label firstNameLabel(L"First name:", &frame);
+  Label lastNameLabel(L"Last name:", &frame);
+  Label ageLabel(L"Age:", &frame);
+  TextEdit firstName(L"", &frame);
+  TextEdit lastName(L"", &frame);
+  TextEdit age(L"", &frame, TextEdit::Styles::Default +
+			    TextEdit::Styles::RightAligned);
+  Button ok(L"&OK", &frame);
+  Button cancel(L"&Cancel", &frame);
+  Font font1(L"Courier New", 10);
+  Font font2(L"Courier New", 10, FontStyle::Bold);
 
   try {
-    frame.setLayout(Bix::parse("Y[XY[%,fx%;%,fx%;%,fxX[%,fX[]]],X[f,exX[%,%]]]",
+    frame.setLayout(Bix::parse(L"Y[XY[%,fx%;%,fx%;%,fxX[%,fX[]]],X[f,exX[%,%]]]",
 			       &firstNameLabel, &firstName,
 			       &lastNameLabel, &lastName,
 			       &ageLabel, &age,
 			       &ok, &cancel));
   } catch (ParseException &e) {
-    MsgBox::show(&frame, "Bix::parse Error", e.what());
+    MsgBox::show(&frame, L"Bix::parse Error",
+		 convert_to<String>(e.what()));
     return 0;
   }
 
@@ -141,5 +142,5 @@ void filter_num_keys(KeyEvent &ev)
 
 void msg_ok(Widget* owner)
 {
-  MsgBox::show(owner, "OK", "You press the OK button");
+  MsgBox::show(owner, L"OK", L"You press the OK button");
 }

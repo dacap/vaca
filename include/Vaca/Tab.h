@@ -154,7 +154,7 @@ class TabPageClass : public WidgetClass
 {
 public:
   static WidgetClassName getClassName()
-  { return WidgetClassName("Vaca.TabPage"); }
+  { return WidgetClassName(L"Vaca.TabPage"); }
 };
 
 /**

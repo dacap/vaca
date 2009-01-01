@@ -45,7 +45,7 @@ class DialogClass : public WidgetClass
 {
 public:
   static WidgetClassName getClassName()
-  { return WidgetClassName("Vaca.Dialog"); }
+  { return WidgetClassName(L"Vaca.Dialog"); }
   static int getWndExtra() { return DLGWINDOWEXTRA; }
 };
 

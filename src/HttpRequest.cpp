@@ -30,6 +30,8 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "Vaca/HttpRequest.h"
+#include "Vaca/String.h"
+
 #include <memory>
 #include <cassert>
 
@@ -63,7 +65,7 @@ HttpRequest::InetConnection::InetConnection(const String& agentName)
   : InetHandle(InternetOpen(agentName.c_str(),
 			    INTERNET_OPEN_TYPE_DIRECT,
 			    NULL, NULL, 0),
-	       "Can't connect to Internet")
+	       L"Can't connect to Internet")
 {
 }
 
@@ -76,7 +78,7 @@ HttpRequest::InetSession::InetSession(InetConnection& conn,
 			       host.c_str(),
 			       INTERNET_DEFAULT_HTTP_PORT,
 			       NULL, NULL, INTERNET_SERVICE_HTTP, 0, 0),
-	       String("Can't open a HTTP session with ") + host)
+	       String(L"Can't open a HTTP session with ") + host)
 {
 }
 
@@ -91,7 +93,7 @@ HttpRequest::InetRequest::InetRequest(InetSession& ses,
 			       object.c_str(),
 			       NULL, NULL, NULL,
 			       INTERNET_FLAG_NO_UI, 0),
-	       "Can't send a " + method + " request to " + object)
+	       L"Can't send a " + method + L" request to " + object)
 {
 }
 
@@ -100,9 +102,9 @@ HttpRequest::InetRequest::InetRequest(InetSession& ses,
 
 HttpRequest::HttpRequest(const String& url,
 			 const String& method)
-    : conn("Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)")
-    , ses(conn, url.getUrlHost())
-    , req(ses, method, url.getUrlObject())
+    : conn(L"Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)")
+    , ses(conn, url_host(url))
+    , req(ses, method, url_object(url))
 {
 }
 
@@ -195,7 +197,7 @@ bool HttpRequest::hasHeader(const String& headerName)
   auto_ptr<char> buf(new char[bufLength]);
   DWORD index = 0;
 
-  strcpy(buf.get(), headerName.to_string().c_str());
+  strcpy(buf.get(), convert_to<std::string>(headerName).c_str());
 
   if (HttpQueryInfo(req.handle, HTTP_QUERY_CUSTOM,
 		    buf.get(), &bufLength, &index)) {
@@ -225,13 +227,13 @@ String HttpRequest::getHeader(const String& headerName)
 
   while (true) {
     // copy the header's name in the buffer 'buf'
-    strcpy(buf.get(), headerName.to_string().c_str());
+    strcpy(buf.get(), convert_to<std::string>(headerName).c_str());
 
     // get the header's value
     if (HttpQueryInfo(req.handle, HTTP_QUERY_CUSTOM,
 		      buf.get(), &bufLength, &index)) {
       // ok
-      return String(buf.get());
+      return convert_to<String, const char*>(buf.get());
     }
     else if (GetLastError() == ERROR_INSUFFICIENT_BUFFER) {
       // the old value is deleted by auto_ptr::operator=
@@ -241,6 +243,6 @@ String HttpRequest::getHeader(const String& headerName)
     else if (GetLastError() == ERROR_HTTP_HEADER_NOT_FOUND)
       return String();
     else
-      throw HttpRequestException("Error retrieving header");
+      throw HttpRequestException(L"Error retrieving header");
   }
 }

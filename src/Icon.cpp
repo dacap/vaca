@@ -33,6 +33,7 @@
 #include "Vaca/Application.h"
 #include "Vaca/Debug.h"
 #include "Vaca/ResourceException.h"
+#include "Vaca/String.h"
 
 using namespace Vaca;
 
@@ -76,7 +77,7 @@ Icon::Icon(ResourceId iconId, const Size& sz)
 		 IMAGE_ICON,
 		 sz.w, sz.h, 0));
   if (handle == NULL)
-    throw ResourceException("Can't load the icon resource " + String::fromInt(iconId.getId()));
+    throw ResourceException(format_string(L"Can't load the icon resource %d", iconId.getId()));
 
   get()->setHandle(handle);
 }
@@ -101,7 +102,7 @@ Icon::Icon(const String& fileName, const Size& sz)
 		 IMAGE_ICON,
 		 sz.w, sz.h, LR_LOADFROMFILE));
   if (handle == NULL)
-    throw ResourceException("Can't load icon from file " + fileName);
+    throw ResourceException(L"Can't load icon from file " + fileName);
 
   get()->setHandle(handle);
 }

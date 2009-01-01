@@ -295,8 +295,8 @@ bool GridValue::getBool() const
       const Vaca::String& value(*(Vaca::String*)m_data);
       return
 	!value.empty() &&
-	value != _T("0") &&
-	value != _T("false");
+	value != L"0" &&
+	value != L"false";
     }
   }
   return false;
@@ -333,7 +333,7 @@ int GridValue::getInt() const
     }
     case String: {
       Vaca::String& value(*(Vaca::String*)m_data);
-      return value.parseInt(10);
+      return convert_to<int>(value);
     }
   }
   return 0;
@@ -370,7 +370,7 @@ unsigned int GridValue::getUInt() const
     }
     case String: {
       Vaca::String& value(*(Vaca::String*)m_data);
-      return (unsigned long)value.parseInt(10);
+      return convert_to<unsigned long>(value);
     }
   }
   return 0;
@@ -407,7 +407,7 @@ long GridValue::getLong() const
     }
     case String: {
       Vaca::String& value(*(Vaca::String*)m_data);
-      return (long)value.parseInt(10);
+      return convert_to<long>(value);
     }
   }
   return 0;
@@ -444,7 +444,7 @@ unsigned long GridValue::getULong() const
     }
     case String: {
       Vaca::String& value(*(Vaca::String*)m_data);
-      return (unsigned long)value.parseInt(10);
+      return convert_to<unsigned long>(value);
     }
   }
   return 0;
@@ -481,7 +481,7 @@ double GridValue::getDouble() const
     }
     case String: {
       Vaca::String& value(*(Vaca::String*)m_data);
-      return value.parseDouble();
+      return convert_to<double>(value);
     }
   }
   return 0;
@@ -494,27 +494,27 @@ Vaca::String GridValue::getString() const
       return Vaca::String();
     case Bool: {
       bool value = *(bool*)m_data;
-      return value ? _T("1"): _T("0");
+      return value ? L"1": L"0";
     }
     case Int: {
       int value = *(int*)m_data;
-      return String::format("%d", value);
+      return format_string(L"%d", value);
     }
     case UInt: {
       unsigned int value = *(unsigned int*)m_data;
-      return String::format("%u", value);
+      return format_string(L"%u", value);
     }
     case Long: {
       long value = *(long*)m_data;
-      return String::format("%l", value);
+      return format_string(L"%l", value);
     }
     case ULong: {
       unsigned long value = *(unsigned long*)m_data;
-      return String::format("%ul", value);
+      return format_string(L"%ul", value);
     }
     case Double: {
       double value = *(double*)m_data;
-      return String::format("%.16g", value);
+      return format_string(L"%.16g", value);
     }
     case String: {
       Vaca::String& value(*(Vaca::String*)m_data);
@@ -1083,7 +1083,7 @@ void GridView::onPaint(Graphics& g)
 	drawCell(g,
 		 j != CRUD_COLUMN_INDEX ?
 		    m_columns[j].getHeader():
-		    "",
+		    L"",
 		 getColumnBounds(j),
 		 headerBorderColor,
 		 headerFaceColor,
@@ -1095,7 +1095,7 @@ void GridView::onPaint(Graphics& g)
       drawCell(g,
 	       m_hotCol != CRUD_COLUMN_INDEX ?
 	          m_columns[m_hotCol].getHeader():
-		  "",
+		  L"",
 	       getColumnBounds(m_hotCol),
 	       hotHeaderBorderColor,
 	       hotHeaderFaceColor,
@@ -1116,7 +1116,7 @@ void GridView::onPaint(Graphics& g)
     }
     else {
       // rightSide.x -= 1;
-      drawCell(g, "", rightSide,
+      drawCell(g, L"", rightSide,
 	       headerBorderColor,
 	       headerFaceColor,
 	       getFgColor());
@@ -1155,7 +1155,7 @@ void GridView::onPaint(Graphics& g)
 	  }
 	  // crud column
 	  else {
-	    text = "";
+	    text = L"";
 	    borderColor = headerBorderColor;
 	    backgroundColor = headerFaceColor;
 	    textColor = getFgColor();
@@ -1550,7 +1550,7 @@ class MainFrame : public Frame
 public:
 
   MainFrame()
-    : Frame("GridViews (WIP)")
+    : Frame(L"GridViews (WIP)")
     , m_gridView(this)
   {
     setLayout(new ClientLayout);
@@ -1561,15 +1561,15 @@ private:
 
   void fillGrid()
   {
-    m_gridView.addColumn(GridColumn("Integer", GridValue(int(0))));
-    m_gridView.addColumn(GridColumn("String", GridValue(String(""))));
-    m_gridView.addColumn(GridColumn("Double", GridValue(double(0.0))));
-    m_gridView.addColumn(GridColumn("Boolean", GridValue(bool(false))));
+    m_gridView.addColumn(GridColumn(L"Integer", GridValue(int(0))));
+    m_gridView.addColumn(GridColumn(L"String", GridValue(String(L""))));
+    m_gridView.addColumn(GridColumn(L"Double", GridValue(double(0.0))));
+    m_gridView.addColumn(GridColumn(L"Boolean", GridValue(bool(false))));
 
     for (int i=0; i<25; ++i) {
       m_gridView.addRow(GridRow());
       m_gridView.getCellValue(i, 0) = GridValue(int(1+i));
-      m_gridView.getCellValue(i, 1) = GridValue(String("String #" + String::fromInt(1+i)));
+      m_gridView.getCellValue(i, 1) = GridValue(format_string(L"String #%d", 1+i));
       m_gridView.getCellValue(i, 2) = GridValue(double(0.0 + (double)i / 10.0));
       m_gridView.getCellValue(i, 3) = GridValue(bool(i & 1 ? true: false));
     }

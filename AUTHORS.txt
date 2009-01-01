@@ -17,6 +17,9 @@ THANKS TO
   J Brown <james@catch22.net>
   His site http://www.catch22.net has some good Windows tricks.
 
+  William E. Kempf
+  For his work in the Boost.Threads library and the ConditionVariable class.
+
   Developers of:
     Adobe Open Source    http://opensource.adobe.com/
     Boost                http://www.boost.org/

@@ -53,7 +53,7 @@ public:
   ResourceId(const ResourceId& rc);
   virtual ~ResourceId();
 
-  int getId();
+  int getId() const;
 
   String toString();
   LPTSTR toLPTSTR();

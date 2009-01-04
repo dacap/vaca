@@ -52,26 +52,31 @@
 #include "Vaca/ScrollInfo.h"
 #include "Vaca/ScrollEvent.h"
 
-// comment this to use the old behaviour (using GWL_USERDATA to store
-// the "Widget" pointer)
-#define USE_PROP
-
 // uncomment this if you want message reporting in the "vaca.log"
 // #define REPORT_MESSAGES
 
 using namespace Vaca;
 
-#ifdef USE_PROP
-#define VACAATOM (reinterpret_cast<LPCTSTR>(MAKELPARAM(vacaAtom, 0)))
+#define VACA_ATOM (reinterpret_cast<LPCTSTR>(MAKELPARAM(atom, 0)))
 
-static Mutex vacaAtomMutex; // used to access vacaAtom
-static volatile ATOM vacaAtom = 0;
-#endif
+static Mutex atomMutex; // used to access atom
+static volatile ATOM atom = 0;
 
 // default callback to destroy a HWND
 static void Widget_DestroyHWNDProc(HWND hwnd)
 {
   ::DestroyWindow(hwnd);
+}
+
+// creates the "VacaAtom" (the property name to put the "Widget*"
+// pointer in the HWNDs)
+static void create_atom()
+{
+  ScopedLock hold(atomMutex);
+  if (atom == 0) {
+    atom = GlobalAddAtom(L"VacaAtom");
+    assert(atom != 0);
+  }
 }
 
 // ============================================================
@@ -106,15 +111,7 @@ static void Widget_DestroyHWNDProc(HWND hwnd)
  */
 Widget::Widget(const WidgetClassName& className, Widget* parent, Style style)
 {
-  // creates the "VacaAtom" (the property name to put the "Widget*"
-  // pointer in the HWNDs)
-  {
-    ScopedLock hold(vacaAtomMutex);
-    if (vacaAtom == 0) {
-      vacaAtom = GlobalAddAtom(L"VacaAtom");
-      assert(vacaAtom != 0);
-    }
-  }
+  create_atom();
 
   // initialize members
   m_handle           = NULL;
@@ -135,6 +132,67 @@ Widget::Widget(const WidgetClassName& className, Widget* parent, Style style)
   // create with the specified "className"?
   if (className != WidgetClassName::None)
     create(className, parent, style);
+}
+
+/**
+ * Creates a widget from an existent Win32 handle that is not
+ * currently managed by Vaca.
+ *
+ * @warning The handle must be a handle created by yourself. You
+ * cannot create a widget from the handle of another existent
+ * Vaca Widget.
+ *
+ * @win32
+ *   This constructor is only for Windows platform.
+ * @endwin32
+ * 
+ * @throw CreateWidgetException
+ *   If the @a handle is NULL. This can occur if a dialog is initialized
+ *   with a resource ID and the resource couldn't be loaded.
+ *   Also this exception will be thrown if the widget is already subclassed
+ *   by Vaca. This means that you can't do something like the following example:
+ *   @code
+ *     Button button(L"OK", parent);
+ *     Widget wrapper(button.getHandle()); // throws CreateWidgetException
+ *   @endcode
+ */
+Widget::Widget(HWND handle)
+{
+  create_atom();
+
+  // the handle must be a valid Win32 handle
+  if (handle == NULL || !::IsWindow(handle))
+    throw CreateWidgetException(format_string(L"Cannot create a widget with an invalid handle."));
+
+  // avoid double-subclassing
+  if (fromHandle(handle) != NULL)
+    throw CreateWidgetException(format_string(L"Cannot subclass two times the same widget."));
+
+  // initialize members
+  m_handle           = handle;
+  m_parent           = NULL;
+  m_fgColor          = System::getColor(COLOR_WINDOWTEXT);
+  m_bgColor          = System::getColor(COLOR_3DFACE);
+  m_constraint       = NULL;
+  m_layout           = NULL;
+  m_baseWndProc      = NULL;
+  m_hasMouse         = false;
+  m_deleteAfterEvent = false;
+  m_doubleBuffered   = false;
+  m_preferredSize    = NULL;
+  m_defWndProc       = NULL; // m_baseWndProc will be used
+  m_destroyHWNDProc  = NULL; // to avoid destroying this widget in dtor
+  m_hbrush           = NULL;
+
+  subClass();
+
+  assert(m_baseWndProc != NULL);
+
+  // add the widget to its parent
+  HWND parent_handle = ::GetParent(handle);
+  Widget* parent = parent_handle ? Widget::fromHandle(parent_handle): NULL;
+  if (parent != NULL)
+    parent->addChildWin32(this, false);
 }
 
 /**
@@ -161,8 +219,9 @@ Widget::~Widget()
   if (hasFocus())
     releaseFocus();
 
-  // hide the window
-  ::ShowWindow(m_handle, SW_HIDE);
+  // hide the window (only if we will call DestroyWindow)
+  if (m_destroyHWNDProc)
+    ::ShowWindow(m_handle, SW_HIDE);
 
   if (getParent() != NULL) {
     // this is very important!!! we can't set the parent of the HWND:
@@ -190,20 +249,13 @@ Widget::~Widget()
 
   if (m_hbrush)
     DeleteObject(m_hbrush);
-
-  // Please!!! don't remove the pointer from the widget, why?
-  // because some messages could be lost (like WM_DESTROY)
-  // 
-  // ...
-  //   #ifdef USE_PROP
-  //     RemoveProp(m_handle, VACAATOM);
-  //   #else
-  //     SetWindowLongPtr(m_handle, GWL_USERDATA, static_cast<LONG_PTR>(NULL));
-  //   #endif
-  // ...
   
   // call the procedure to destroy the HWND handler
-  m_destroyHWNDProc(m_handle);
+  if (m_destroyHWNDProc)
+    m_destroyHWNDProc(m_handle);
+  else
+    RemoveProp(m_handle, VACA_ATOM);
+
   m_handle = NULL;
 }
 
@@ -461,6 +513,22 @@ void Widget::setFont(Font font)
 {
   m_font = font;
   sendMessage(WM_SETFONT, reinterpret_cast<WPARAM>(m_font.getHandle()), TRUE);
+}
+
+// ===============================================================
+// COMMAND
+// ===============================================================
+
+CommandId Widget::getId() const
+{
+  assert(::IsWindow(m_handle));
+  return ::GetWindowLong(m_handle, GWL_ID);
+}
+
+void Widget::setId(CommandId id)
+{
+  assert(::IsWindow(m_handle));
+  ::SetWindowLong(m_handle, GWL_ID, id);
 }
 
 // ===============================================================
@@ -946,13 +1014,14 @@ void Widget::setVisible(bool visible)
 {
   assert(::IsWindow(m_handle));
 
-  if (hasFocus())
-    releaseFocus();
-
   if (visible)
     ::ShowWindow(m_handle, SW_SHOW);
-  else
+  else {
+    if (hasFocus())
+      releaseFocus();
+
     ::ShowWindow(m_handle, SW_HIDE);
+  }
 }
 
 /**
@@ -1612,13 +1681,10 @@ HWND Widget::getParentHandle() const
  */
 Widget* Widget::fromHandle(HWND hwnd)
 {
-  // unbox the pointer
-#ifdef USE_PROP
-  // ScopedLock hold(vacaAtomMutex); <-- is it necessary?
-  return reinterpret_cast<Widget*>(::GetProp(hwnd, VACAATOM));
-#else
-  return reinterpret_cast<Widget*>(::GetWindowLongPtr(hwnd, GWL_USERDATA));
-#endif
+  // unbox the pointer...
+
+  // ScopedLock hold(atomMutex); <-- is it necessary?
+  return reinterpret_cast<Widget*>(::GetProp(hwnd, VACA_ATOM));
 }
 
 /**
@@ -2154,25 +2220,21 @@ void Widget::create(const WidgetClassName& className, Widget* parent, Style styl
   // infinite loops in Win32's dialog boxes (for more information see
   // the 'src/msw/window.cpp' file of 'wxWidgets' library)
   if ((parent != NULL) &&
-      (parent->getStyle().extended & WS_EX_CONTROLPARENT) != 0)
+      (parent->getStyle().extended & WS_EX_CONTROLPARENT) != 0) {
     parent->addStyle(Style(0, WS_EX_CONTROLPARENT));
+  }
+
+  // fixup styles...
+  // remove child style if you don't specify a parent
+  if (parent == NULL && style.regular & WS_CHILD) {
+    style.regular &= ~WS_CHILD;
+  }
+  else if (parent != NULL && !(style.regular & WS_CHILD)) {
+    style.regular |= WS_CHILD;
+  }
 
   // create the HWND handler
-//   {
-//     ScopedLock hold(outsideWidgetMutex);
-//     assert(outsideWidget == NULL);
-
-//     outsideWidget = this;
-//     m_handle = createHandle(className, parent, style);
-//     outsideWidget = NULL;
-//   }
   {
-//     ThreadDataForWidget* data = getThreadData();
-//     assert(data->outsideWidget == NULL);
-
-//     data->outsideWidget = this;
-//     m_handle = createHandle(className, parent, style);
-//     data->outsideWidget = NULL;
     Widget* outsideWidget = __vaca_get_outside_widget();
     assert(outsideWidget == NULL);
     
@@ -2214,16 +2276,8 @@ void Widget::subClass()
   if (m_baseWndProc == getGlobalWndProc())
     m_baseWndProc = NULL;
 
-  // box the pointer
-#ifdef USE_PROP
-  {
-    // ScopedLock hold(vacaAtomMutex);
-    SetProp(m_handle, VACAATOM, reinterpret_cast<HANDLE>(this));
-  }
-#else
-  LONG_PTR oldData = SetWindowLongPtr(m_handle, GWL_USERDATA, reinterpret_cast<LONG_PTR>(this));
-  assert(oldData == 0);
-#endif
+  // box the pointer...
+  SetProp(m_handle, VACA_ATOM, reinterpret_cast<HANDLE>(this));
 
   // TODO get the font from the hwnd
 
@@ -2613,14 +2667,12 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
 					  lResult);
 	}
       }
-      // accelerator or a menu
-      else if (HIWORD(wParam) == 1 ||
-	       HIWORD(wParam) == 0) {
-	if (onCommand(static_cast<CommandId>(LOWORD(wParam)))) {
-	  // ...onCommand returns true when processed the command
-	  lResult = 0;		// processed
-	  ret = true;
-	}
+
+      // accelerator, menu or dialog widget
+      if (!ret && onCommand(static_cast<CommandId>(LOWORD(wParam)))) {
+	// ...onCommand returns true when processed the command
+	lResult = 0;		// processed
+	ret = true;
       }
       break;
 
@@ -2838,8 +2890,10 @@ LRESULT Widget::defWndProc(UINT message, WPARAM wParam, LPARAM lParam)
 {
   if (m_baseWndProc != NULL)
     return CallWindowProc(m_baseWndProc, m_handle, message, wParam, lParam);
-  else
+  else {
+    assert(m_defWndProc != NULL);
     return m_defWndProc(m_handle, message, wParam, lParam);
+  }
 }
 
 /**

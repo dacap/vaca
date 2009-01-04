@@ -70,6 +70,12 @@ Frame::Frame(const WidgetClassName& className, const String& title, Widget* pare
   initialize(title);
 }
 
+Frame::Frame(HWND handle)
+  : Widget(handle)
+{
+  initialize(getText());
+}
+
 void Frame::initialize(const String& title)
 {
   m_menuBar = NULL;

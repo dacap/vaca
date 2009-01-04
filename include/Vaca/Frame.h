@@ -87,6 +87,7 @@ public:
 
   Frame(const String& title, Widget* parent = NULL, Style style = Styles::Default);
   Frame(const WidgetClassName& className, const String& title, Widget* parent = NULL, Style style = Styles::Default);
+  explicit Frame(HWND handle);
   virtual ~Frame();
 
   virtual void setVisible(bool visible);

@@ -111,7 +111,7 @@ public:
   {
     // now we can create the widget because in this point is when our
     // version of createHandle (see below) will be called
-    create(WidgetClassName::None, parent, Widget::Styles::Child);
+    create(WidgetClassName::None, parent, Widget::Styles::Visible);
     
     setPreferredSize(Size(320, 240));
   }

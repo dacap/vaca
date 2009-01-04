@@ -73,6 +73,21 @@ Dialog::Dialog(const WidgetClassName& className, const String& title, Widget* pa
   m_state = false;
 }
 
+Dialog::Dialog(ResourceId dialogId, Widget* parent)
+  : Frame(::CreateDialog(Application::getHandle(),
+			 dialogId.toLPTSTR(),
+			 parent ? parent->getHandle() : NULL,
+			 Dialog::globalDlgProc))
+{
+  m_state = false;
+}
+
+Dialog::Dialog(HWND handle)
+  : Frame(handle)
+{
+  m_state = false;
+}
+
 Dialog::~Dialog()
 {
 }
@@ -116,55 +131,6 @@ bool Dialog::preTranslateMessage(Message& message)
   return false;
 }
 
-/**
- * Hides the dialog, but before changes the return state
- * (setReturnState) to true, so #doModal returns true.
- * 
- * You can use this to bind the OK button action (Button::Action).
- * Example:
- * 
- * @code
- *   ...
- *   Dialog dlg(...);
- *   Button okButton("&OK", &dlg);
- *   ...
- *   okButton.Action.connect(Bind(&Dialog::defaultOkAction, &dlg));
- *   ...
- * @endcode
- *
- * @see defaultCancelAction
- */
-void Dialog::defaultOkAction()
-{
-  setReturnState(true);
-  setVisible(false);
-}
-
-/**
- * Generates a onClose event (WM_CLOSE message) for the dialog, but
- * before changes the return state (setReturnState) to false, so
- * doModal() returns false too.  You can use this method to bind
- * the Cancel button action (Button::Action).  Example:
- * 
- * @code
- *   ...
- *   Dialog dlg(...);
- *   Button cancelButton("&Cancel", &dlg);
- *   ...
- *   cancelButton.Action.connect(Bind(&Dialog::defaultCancelAction, &dlg));
- *   ...
- * @endcode
- *
- * @see defaultOkAction, onClose
- */
-void Dialog::defaultCancelAction()
-{
-  setReturnState(false);
-
-  // cancel is like if the user close the window
-  sendMessage(WM_CLOSE, 0, 0);
-}
-
 Widget* Dialog::getNextFocusableWidget(Widget* widget)
 {
   assert(::IsWindow(getHandle()));
@@ -187,33 +153,85 @@ Widget* Dialog::getPreviousFocusableWidget(Widget* widget)
   return hwnd != NULL ? Widget::fromHandle(hwnd): NULL;
 }
 
-bool Dialog::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult)
+/**
+ * Hides the dialog, but before changes the return state
+ * (#setReturnState) to true, so #doModal returns true.
+ * 
+ * You can use this to bind the OK button action (Button::Action).
+ * Also, this function is automatically called when the IDOK command
+ * is processed by the dialog through #onCommand event.
+ *
+ * Example:
+ * @code
+ *   Dialog dlg(...);
+ *   Button ok("&OK", &dlg);
+ *   ok.Action.connect(Bind(&Dialog::onOk, &dlg));
+ * @endcode
+ * Or:
+ * @code
+ *   Dialog dlg(...);
+ *   Button ok("&OK", IDOK, &dlg);
+ * @endcode
+ *
+ * @see #onCancel
+ */
+void Dialog::onOk()
 {
-  if (Frame::wndProc(message, wParam, lParam, lResult))
+  Ok();
+  setReturnState(true);
+  setVisible(false);
+}
+
+/**
+ * Generates a #onClose event for the dialog, but before changes the
+ * return state (setReturnState) to false, so #doModal returns false
+ * too.
+ *
+ * You can use this method to bind the Cancel button action
+ * (Button::Action). Anyway this function is automatically
+ * called when the IDCANCEL command is processed by the dialog
+ * through #onCommand event.
+ *
+ * Example:
+ * @code
+ *   Dialog dlg(...);
+ *   Button cancel("&Cancel", &dlg);
+ *   cancel.Action.connect(Bind(&Dialog::onCancel, &dlg));
+ * @endcode
+ * Or:
+ * @code
+ *   Dialog dlg(...);
+ *   Button cancel("&Cancel", IDCANCEL, &dlg);
+ * @endcode
+ *
+ * @see #onOk, #onClose
+ */
+void Dialog::onCancel()
+{
+  Cancel();
+  setReturnState(false);
+  sendMessage(WM_CLOSE, 0, 0); // cancel is like if the user close the window
+}
+
+bool Dialog::onCommand(CommandId id)
+{
+  if (Frame::onCommand(id))
     return true;
 
-  switch (message) {
+  switch (id) {
 
-    case WM_COMMAND:
-      switch (LOWORD(wParam)) {
+    case IDOK:
+      onOk();
+      return true;
 
-	case IDOK:
-	  // not necessary, because the default button should have the IDOK
-	  break;
-
-	case IDCANCEL:
-	  defaultCancelAction();
-	  break;
-
-      }
-      break;
-
+    case IDCANCEL:
+      onCancel();
+      return true;
   }
-
   return false;
 }
 
-LRESULT CALLBACK Dialog::globalDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+BOOL CALLBACK Dialog::globalDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
   // do default behaviour
   return FALSE;

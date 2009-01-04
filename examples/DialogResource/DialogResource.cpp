@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, 2008, 2009, David Capello
+// Copyright (c) 2005, 2006, 2007, 2008, David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -29,45 +29,27 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_BUTTONBASE_H
-#define VACA_BUTTONBASE_H
+#include <Vaca/Vaca.h>
+#include "resource.h"
 
-#include "Vaca/Widget.h"
+using namespace Vaca;
 
-namespace Vaca {
-
-/**
- * Base for every button.
- *
- * @win32
- *   It's a wrapper for the @msdn{BUTTON} class.
- * @endwin32
- */
-class VACA_DLL ButtonBase : public Widget
+void show_about(Widget* parent)
 {
-public:
+  Dialog dlg(ResourceId(IDD_ABOUT), parent);
 
-  ButtonBase(Widget* parent, Style style);
-  explicit ButtonBase(HWND handle);
-  virtual ~ButtonBase();
+  dlg.center();
+  dlg.doModal();
+}
 
-  bool isSelected();
-  void setSelected(bool state);
+int VACA_MAIN()
+{
+  Application app;
+  Dialog dlg(ResourceId(IDD_MAIN));
+  Button but(::GetDlgItem(dlg.getHandle(), IDC_MAIN_ABOUT_BUTTON));
+  but.Action.connect(Bind<void>(&show_about, &dlg));
 
-  // signals
-  Signal1<void, Event&> Action; ///< @see onAction
-
-protected:
-  // events
-  virtual void onPreferredSize(Size& sz);
-
-  // new events
-  virtual void onAction(Event& ev);
-
-  // reflection
-  virtual bool onReflectedCommand(int id, int code, LRESULT& lResult);
-};
-
-} // namespace Vaca
-
-#endif
+  dlg.center();
+  dlg.doModal();
+  return 0;
+}

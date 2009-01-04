@@ -40,6 +40,18 @@ Button::Button(const String& text, Widget* parent, Style style)
   setText(text);
 }
 
+Button::Button(const String& text, CommandId id, Widget* parent, Style style)
+  : ButtonBase(parent, style)
+{
+  setText(text);
+  setId(id);
+}
+
+Button::Button(HWND handle)
+  : ButtonBase(handle)
+{
+}
+
 Button::~Button()
 {
 }
@@ -53,10 +65,11 @@ void Button::setDefault(bool state)
 {
   if (state) {
     addStyle(Style(BS_DEFPUSHBUTTON, 0));
-    SetWindowLong(getHandle(), GWL_ID, IDOK);
+    // setId(IDOK);
   }
   else {
     removeStyle(Style(BS_DEFPUSHBUTTON, 0));
-    SetWindowLong(getHandle(), GWL_ID, 0);
+    // if (getId() == IDOK)
+    //   setId(0);
   }
 }

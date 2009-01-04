@@ -121,6 +121,7 @@ public:
   };
 
   TreeView(Widget* parent, Style style = Styles::Default);
+  explicit TreeView(HWND handle);
   virtual ~TreeView();
 
   iterator begin();

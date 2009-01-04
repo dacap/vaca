@@ -42,6 +42,11 @@ ButtonBase::ButtonBase(Widget* parent, Style style)
 {
 }
 
+ButtonBase::ButtonBase(HWND handle)
+  : Widget(handle)
+{
+}
+
 ButtonBase::~ButtonBase()
 {
 }

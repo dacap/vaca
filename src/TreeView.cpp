@@ -124,7 +124,18 @@ TreeView::TreeView(Widget* parent, Style style)
   m_deleted = false;
   m_isDragging = false;
 
-//   Widget::setBgColor(Color(TreeView_GetBkColor(getHandle())));
+  // Widget::setBgColor(Color(TreeView_GetBkColor(getHandle())));
+  setBgColor(System::getColor(COLOR_WINDOW));
+}
+
+TreeView::TreeView(HWND handle)
+  : Widget(handle)
+{
+  m_root.m_owner = this;
+  m_deleted = false;
+  m_isDragging = false;
+
+  // Widget::setBgColor(Color(TreeView_GetBkColor(getHandle())));
   setBgColor(System::getColor(COLOR_WINDOW));
 }
 

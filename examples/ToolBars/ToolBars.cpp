@@ -78,11 +78,11 @@ class MainFrame : public Frame
 
 public:
 
-  MainFrame(Style toolSetStyle)
+  MainFrame()
     : Frame(L"ToolBars")
-    , m_toolBar1(L"ToolBar 1", this, toolSetStyle)
-    , m_toolBar2(L"ToolBar 2", this, toolSetStyle)
-    , m_toolBar3(L"ToolBar 3", this, toolSetStyle)
+    , m_toolBar1(L"ToolBar 1 (default style)", this, ToolSet::Styles::Default)
+    , m_toolBar2(L"ToolBar 2 (flat style)", this, ToolSet::Styles::Default | ToolSet::Styles::Flat)
+    , m_toolBar3(L"ToolBar 3 (flat style)", this, ToolSet::Styles::Default | ToolSet::Styles::Flat)
     , m_dockBar(L"DockBar", this)
     , m_button1(L"Setup BandedDockArea", &m_dockBar)
     , m_button2(L"Setup BasicDockAreas)", &m_dockBar)
@@ -108,6 +108,10 @@ public:
     m_toolBar1.addSeparator();
     m_toolBar1.addButton(new ToolButton(1003, 3));
     m_toolBar1.addButton(new ToolButton(1004, 4));
+    m_toolBar1.addButton(new ToolButton(1005, 5));
+    m_toolBar1.addSeparator();
+    m_toolBar1.addButton(new ToolButton(1005, 5));
+    m_toolBar1.addButton(new ToolButton(1005, 5));
     m_toolBar1.addButton(new ToolButton(1005, 5));
 
     for (int c=0; c<8; ++c) {
@@ -263,31 +267,11 @@ private:
 
 //////////////////////////////////////////////////////////////////////
 
-class Example : public Application
-{
-  MainFrame m_mainFrame1;
-  MainFrame m_mainFrame2;
-
-public:
-
-  Example()
-    : m_mainFrame1(ToolSet::Styles::Default)
-    , m_mainFrame2(ToolSet::Styles::Default +
-		   ToolSet::Styles::Flat)
-  {
-  }
-
-private:
-
-  virtual void main() {
-    m_mainFrame1.setVisible(true);
-    m_mainFrame2.setVisible(true);
-  }
-};
-
 int VACA_MAIN()
 {
-  Example app;
+  Application app;
+  MainFrame frm;
+  frm.setVisible(true);
   app.run();
   return 0;
 }

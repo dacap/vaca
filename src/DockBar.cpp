@@ -341,7 +341,7 @@ void DockBar::makeFloat(const Rect* rect)
 				m_dockFrame->getNonClientSize() + floatingSize));
   }
 
-  m_dockFrame->setVisible(true);
+  m_dockFrame->setVisible(m_owner ? m_owner->isVisible(): true);
 
   focusOwner();
   onFloating();

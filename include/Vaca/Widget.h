@@ -113,7 +113,6 @@ public:
   struct VACA_DLL Styles {
     static const Style None;
     static const Style Visible;
-    static const Style Child;
     static const Style Focusable;
     static const Style Scroll;
     static const Style HorizontalScroll;
@@ -242,6 +241,7 @@ public:
   // ============================================================
 
   Widget(const WidgetClassName& className, Widget* parent, Style style);
+  explicit Widget(HWND handle);
   virtual ~Widget();
 
   // ============================================================
@@ -276,6 +276,13 @@ public:
 
   virtual Font getFont() const;
   virtual void setFont(Font font);
+
+  // ===============================================================
+  // COMMAND
+  // ===============================================================
+
+  CommandId getId() const;
+  void setId(CommandId id);
 
   // ===============================================================
   // WIDGET STYLE

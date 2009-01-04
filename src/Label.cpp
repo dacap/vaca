@@ -50,6 +50,11 @@ Label::Label(const String& text, Widget* parent, Style style)
   setText(text);
 }
 
+Label::Label(HWND handle)
+  : Widget(handle)
+{
+}
+
 Label::~Label()
 {
 }

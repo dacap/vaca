@@ -56,9 +56,12 @@ public:
  *
  * @li When the user press ESC, the #onClose event is generated.
  * @li If the dialog has a "Cancel" button is a good idea to bind its
- *     Button#Action to #defaultCancelAction.
+ *     Button#Action to #onCancel.
  * @li If the dialog has an "OK" button is a good idea to bind its
- *     Button#Action to #defaultOkAction.
+ *     Button#Action to #onOk.
+ *
+ * If the Dialog have buttons with the special ids IDOK and/or IDCANCEL,
+ * the #onOk and #onCancel will be called automatically.
  *
  * Example:
  * @code
@@ -71,8 +74,8 @@ public:
  *     , ok("OK", this)
  *     , cnl("Cancel", this)
  *   {
- *     ok.Action.connect(Bind(&MyDialog::defaultOkAction, this));
- *     cnl.Action.connect(Bind(&MyDialog::defaultCancelAction, this));
+ *     ok.Action.connect(Bind(&MyDialog::onOk, this));
+ *     cnl.Action.connect(Bind(&MyDialog::onCancel, this));
  *     // ...
  *   }
  * };
@@ -97,26 +100,38 @@ public:
 
   Dialog(const String& title, Widget* parent = NULL, Style style = Styles::Default);
   Dialog(const WidgetClassName& className, const String& title, Widget* parent = NULL, Style style = Styles::Default);
+  explicit Dialog(ResourceId dialogId, Widget* parent = NULL);
+  explicit Dialog(HWND handle);
   virtual ~Dialog();
 
   void setReturnState(bool state);
 
   virtual bool doModal();
-
   virtual bool preTranslateMessage(Message& message);
 
-  void defaultOkAction();
-  void defaultCancelAction();
+  /**
+   * @deprecated Use #onOk instead.
+   */
+  void defaultOkAction() { onOk(); }
+
+  /**
+   * @deprecated Use #onCancel instead.
+   */
+  void defaultCancelAction() { onCancel(); }
 
   Widget* getNextFocusableWidget(Widget* widget);
   Widget* getPreviousFocusableWidget(Widget* widget);
 
+  Signal0<void> Ok;       ///< @see onOk
+  Signal0<void> Cancel;   ///< @see onCancel
+
 protected:
-  virtual bool wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult);
-//   virtual LRESULT defWndProc(UINT message, WPARAM wParam, LPARAM lParam);
+  virtual void onOk();
+  virtual void onCancel();
+  virtual bool onCommand(CommandId id);
 
 private:
-  static LRESULT CALLBACK globalDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+  static BOOL CALLBACK globalDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 
 };
 

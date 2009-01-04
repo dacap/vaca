@@ -88,42 +88,40 @@ const Point historyOffsets[] = {
 
 class InsertSeedDialog : public Dialog
 {
-  Panel mTop;
-  Panel mBottom;
-  Label mSeedLabel;
-  TextEdit mSeedEdit;
-  Button mOk;
-  Button mCancel;
+  Panel m_top;
+  Panel m_bottom;
+  Label m_seedLabel;
+  TextEdit m_seedEdit;
+  Button m_ok;
+  Button m_cancel;
 
 public:
 
   InsertSeedDialog(Widget* parent)
     : Dialog(L"Game Seed", parent)
-    , mTop(this)
-    , mBottom(this)
-    , mSeedLabel(L"Seed:", &mTop)
-    , mSeedEdit(convert_to<String>(rand()), &mTop)
-    , mOk(L"OK", &mBottom)
-    , mCancel(L"Cancel", &mBottom)
+    , m_top(this)
+    , m_bottom(this)
+    , m_seedLabel(L"Seed:", &m_top)
+    , m_seedEdit(convert_to<String>(rand()), &m_top)
+    , m_ok(L"OK", IDOK, &m_bottom)
+    , m_cancel(L"Cancel", IDCANCEL, &m_bottom)
   {
     setLayout(new BoxLayout(Orientation::Vertical, true));
-    mTop.setLayout(new BoxLayout(Orientation::Horizontal, false, 0));
-    mBottom.setLayout(new BoxLayout(Orientation::Horizontal, true, 0));
-    mSeedEdit.setConstraint(new BoxConstraint(true));
+    m_top.setLayout(new BoxLayout(Orientation::Horizontal, false, 0));
+    m_bottom.setLayout(new BoxLayout(Orientation::Horizontal, true, 0));
+    m_seedEdit.setConstraint(new BoxConstraint(true));
 
-    mSeedEdit.requestFocus();
-    mSeedEdit.selectAll();
-    mOk.Action.connect(Bind(&InsertSeedDialog::defaultOkAction, this));
-    mCancel.Action.connect(Bind(&InsertSeedDialog::defaultCancelAction, this));
+    m_seedEdit.requestFocus();
+    m_seedEdit.selectAll();
 
-    mOk.setDefault(true);
+    m_ok.setDefault(true);
 
     setSize(getPreferredSize());
     center();
   }
 
   int getSeed() {
-    return convert_to<int>(mSeedEdit.getText());
+    return convert_to<int>(m_seedEdit.getText());
   }
 
 };

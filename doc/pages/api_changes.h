@@ -24,6 +24,16 @@ This has two implications:
 The old string class is inside the "Vaca/backward.h" under the name
 of _String. It will be completelly removed in the next version of Vaca.
 @endChange
+@beginChange{ChildStyle - Removed}
+Now ChildStyle is deprecated. You should replace all places
+where you were using ChildStyle with Widget::Styles::Visible
+(yes, Visible, it is not a typo, because ChildStyle was
+WS_CHILD | WS_VISIBLE).
+
+The WS_CHILD style is automatically controlled by Vaca if you
+specify or not a parent when create a Widget. You don't have to
+worry about it.
+@endChange
 @beginChange{VACA_MIN/MAX/CLAMP - Renamed}
 
 Now the three macros VACA_MIN, VACA_MAX, and VACA_CLAMP where replaced

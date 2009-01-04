@@ -51,6 +51,8 @@ public:
   };
 
   Button(const String& text, Widget* parent, Style style = Styles::Default);
+  Button(const String& text, CommandId id, Widget* parent, Style style = Styles::Default);
+  explicit Button(HWND handle);
   virtual ~Button();
 
   bool isDefault();

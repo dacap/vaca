@@ -570,11 +570,11 @@ public:
     , m_disableReselect(false)
   {
     // commands
-    addCommand(new SignalCommand(IDM_ADD_COLUMN, Bind(&MainFrame::cmdAddColumn, this)));
-    addCommand(new SignalCommand(IDM_ADD_ROW, Bind(&MainFrame::cmdAddRow, this)));
-    addCommand(new SignalCommand(IDM_ADD_MATRIX, Bind(&MainFrame::cmdAddMatrix, this)));
-    addCommand(new SignalCommand(IDM_ADD_WIDGET, Bind(&MainFrame::cmdAddWidget, this)));
-    addCommand(new SignalCommand(IDM_REMOVE, Bind(&MainFrame::cmdRemove, this)));
+    addCommand(new SignalCommand(IDM_ADD_COLUMN, Bind(&MainFrame::onAddColumn, this)));
+    addCommand(new SignalCommand(IDM_ADD_ROW, Bind(&MainFrame::onAddRow, this)));
+    addCommand(new SignalCommand(IDM_ADD_MATRIX, Bind(&MainFrame::onAddMatrix, this)));
+    addCommand(new SignalCommand(IDM_ADD_WIDGET, Bind(&MainFrame::onAddWidget, this)));
+    addCommand(new SignalCommand(IDM_REMOVE, Bind(&MainFrame::onRemove, this)));
     addCommand(new SignalCommand(IDM_PROPERTIES));
 
     // layout
@@ -605,19 +605,19 @@ public:
 
 protected:
 
-  void cmdAddColumn()
+  void onAddColumn()
   {
     addElement(Element::Column);
     updateToolBarButtons();
   }
 
-  void cmdAddRow()
+  void onAddRow()
   {
     addElement(Element::Row);
     updateToolBarButtons();
   }
 
-  void cmdAddMatrix()
+  void onAddMatrix()
   {
     int columns;
     if (askIntValue(columns))
@@ -625,13 +625,13 @@ protected:
     updateToolBarButtons();
   }
 
-  void cmdAddWidget()
+  void onAddWidget()
   {
     addElement(Element::Widget);
     updateToolBarButtons();
   }
 
-  void cmdRemove()
+  void onRemove()
   {
     removeElement();
     updateToolBarButtons();
@@ -704,8 +704,10 @@ private:
     Dialog dlg(L"Insert a value", this);
     Label label(L"Number of columns of the matrix:", &dlg);
     TextEdit value(L"3", &dlg);
-    Button ok(L"&OK", &dlg);
-    Button cancel(L"&Cancel", &dlg);
+    Button ok(L"&OK", IDOK, &dlg);
+    Button cancel(L"&Cancel", IDCANCEL, &dlg);
+
+    ok.setDefault(true);
 
     dlg.setLayout(Bix::parse(L"Y[X[%,f%],X[fX[],eX[%,%]]]",
 			     &label, &value, &ok, &cancel));
@@ -713,10 +715,6 @@ private:
     value.setPreferredSize(Size(32, value.getPreferredSize().h));
     dlg.setSize(dlg.getPreferredSize());
     dlg.center();
-
-    ok.setDefault(true);
-    ok.Action.connect(Bind(&Dialog::defaultOkAction, &dlg));
-    cancel.Action.connect(Bind(&Dialog::defaultCancelAction, &dlg));
 
     while (true) {
       value.requestFocus();

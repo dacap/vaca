@@ -52,8 +52,8 @@ public:
     , m_passwordLabel(L"&Password:", this)
     , m_passwordEdit(L"", this, TextEdit::Styles::Password)
     , m_administrator(L"&Administrador account", this)
-    , m_loginButton(L"&Login", this)
-    , m_cancelButton(L"&Cancel", this)
+    , m_loginButton(L"&Login", IDOK, this)
+    , m_cancelButton(L"&Cancel", IDCANCEL, this)
   {
     // if we don't setup a layout manager through this->setLayout(),
     // we are free of layout manager...
@@ -68,8 +68,6 @@ public:
 
     m_loginButton.setDefault(true);
 
-    m_loginButton.Action.connect(Bind(&MainFrame::defaultOkAction, this));
-    m_cancelButton.Action.connect(Bind(&MainFrame::defaultCancelAction, this));
     m_administrator.Action.connect(&MainFrame::onAdministrator, this);
 
     // so because we are not using layout managers we can't use

@@ -48,7 +48,7 @@ ResourceId::~ResourceId()
 {
 }
 
-int ResourceId::getId()
+int ResourceId::getId() const
 {
   return m_id;
 }

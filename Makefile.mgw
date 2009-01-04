@@ -89,18 +89,18 @@ LIB_SOURCES = Anchor AnchorLayout Application BandedDockArea		\
 ifndef EXAMPLES
 EXAMPLES = AnchorLayouts AutoCompletion Bixes BouncingBalls BoxLayouts	\
 	   Buttons ColoredButton ComboBoxes Commands DataGrids		\
-	   EditableListBox Edits EyeDropper FontMetrics FreeOfLayout	\
-	   Hashing HelloWorld Images Labels LikeScript Maths		\
-	   MenuResource MiniExplorer Minimal Paths Primitives		\
+	   DialogResource EditableListBox Edits EyeDropper FontMetrics	\
+	   FreeOfLayout Hashing HelloWorld Images Labels LikeScript	\
+	   Maths MenuResource MiniExplorer Minimal Paths Primitives	\
 	   ProgressBars ReBars Regions Scribble Scrolling Sliders	\
 	   Spinners SplitBars Sudoku SystemImageList Tabs TextEditor	\
 	   Threads Timers ToolBars Trees Undo WebCam
 endif
 
 ifndef TESTS
-TESTS = test_backward test_bind test_menu test_point test_rect		\
-	test_region test_signal test_size test_smartptr test_string	\
-	test_tab test_thread
+TESTS = test_backward test_bind test_handle test_menu test_point	\
+	test_rect test_region test_signal test_size test_smartptr	\
+	test_string test_tab test_thread test_widget
 endif
 
 # ----------------------------------------------------------------------
@@ -281,6 +281,9 @@ bin/Bixes$(SUFFIX)$(EXE): obj/Example.Bixes$(SUFFIX)$(OBJ) obj/Example.Bixes$(SU
 	$(GXX) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
 
 bin/Commands$(SUFFIX)$(EXE): obj/Example.Commands$(SUFFIX)$(OBJ) obj/Example.Commands$(SUFFIX)$(RES) $(VACA_LIB)
+	$(GXX) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
+
+bin/DialogResource$(SUFFIX)$(EXE): obj/Example.DialogResource$(SUFFIX)$(OBJ) obj/Example.DialogResource$(SUFFIX)$(RES) $(VACA_LIB)
 	$(GXX) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
 
 bin/EyeDropper$(SUFFIX)$(EXE): obj/Example.EyeDropper$(SUFFIX)$(OBJ) obj/Example.EyeDropper$(SUFFIX)$(RES) $(VACA_LIB)

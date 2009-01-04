@@ -76,9 +76,8 @@ public:
     // call "onStart" when the "Start" button is pressed
     m_start.Action.connect(Bind(&MainFrame::onStart, this));
 
-    // the defaultCancelAction of dialogs generates an "WM_CLOSE"
-    // message that is converted to the "onClose" event
-    m_close.Action.connect(Bind(&MainFrame::defaultCancelAction, this));
+    // the Dialog::onCancel generates an onClose event
+    m_close.Action.connect(Bind(&MainFrame::onCancel, this));
 
     // the application is waiting to work (the user should press the
     // "Start" button)

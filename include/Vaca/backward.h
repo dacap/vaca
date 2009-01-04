@@ -95,7 +95,7 @@ public:
   std::string to_string() const { return convert_to<std::string, String>(*this); }
   std::wstring to_wstring() const { return *this; }
 
-  void copyTo(LPTSTR dest, int size) const {
+  void copyTo(wchar_t* dest, int size) const {
     copy_string_to(*this, dest, size);
   }
 

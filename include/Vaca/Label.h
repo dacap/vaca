@@ -61,6 +61,7 @@ public:
   };
 
   Label(const String& text, Widget* parent, Style style = Styles::Default);
+  explicit Label(HWND handle);
   virtual ~Label();
 
   virtual TextAlign getTextAlign() const;

@@ -144,8 +144,8 @@ public:
     , m_brushColor(L"Color", this)
     , m_separator(this)
     , m_closeFigure(L"Close Figure", this)
-    , m_ok(L"&OK", this)
-    , m_cancel(L"Cancel", this)
+    , m_ok(L"&OK", IDOK, this)
+    , m_cancel(L"Cancel", IDCANCEL, this)
   {
     // preferred size for the TextEdit control of the pen-width
     m_penWidthEdit.setPreferredSize(Size(32, m_penWidthEdit.getPreferredSize().h));
@@ -171,9 +171,6 @@ public:
     initValues();
     
     // signals/slots
-    m_ok.Action.connect(Bind(&FigureProperties::defaultOkAction, this));
-    m_cancel.Action.connect(Bind(&FigureProperties::onCancel, this));
-
     m_penWidthSlider.Change.connect(Bind(&FigureProperties::onPenChange, this));
     m_endCapGroup.Change.connect(Bind(&FigureProperties::onPenChange, this));
     m_joinGroup.Change.connect(Bind(&FigureProperties::onPenChange, this));
@@ -203,7 +200,7 @@ private:
 
   // If the user presses the Cancel button, then we have to restore to
   // the old figure properties
-  void onCancel()
+  virtual void onCancel()
   {
     // restore the figure configuration
     m_fig = m_figBackup;
@@ -212,7 +209,7 @@ private:
     Change();
 
     // close the dialog
-    defaultCancelAction();
+    Dialog::onCancel();
   }
 
   void onPenChange()

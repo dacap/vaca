@@ -63,7 +63,7 @@ static Mutex atomMutex; // used to access atom
 static volatile ATOM atom = 0;
 
 // default callback to destroy a HWND
-static void Widget_DestroyHWNDProc(HWND hwnd)
+static void Widget_DestroyHandleProc(HWND hwnd)
 {
   ::DestroyWindow(hwnd);
 }
@@ -114,20 +114,20 @@ Widget::Widget(const WidgetClassName& className, Widget* parent, Style style)
   create_atom();
 
   // initialize members
-  m_handle           = NULL;
-  m_parent           = NULL;
-  m_fgColor          = System::getColor(COLOR_WINDOWTEXT);
-  m_bgColor          = System::getColor(COLOR_3DFACE);
-  m_constraint       = NULL;
-  m_layout           = NULL;
-  m_baseWndProc      = NULL;
-  m_hasMouse         = false;
-  m_deleteAfterEvent = false;
-  m_doubleBuffered   = false;
-  m_preferredSize    = NULL;
-  m_defWndProc       = ::DefWindowProc;
-  m_destroyHWNDProc  = Widget_DestroyHWNDProc;
-  m_hbrush           = NULL;
+  m_handle            = NULL;
+  m_parent            = NULL;
+  m_fgColor           = System::getColor(COLOR_WINDOWTEXT);
+  m_bgColor           = System::getColor(COLOR_3DFACE);
+  m_constraint        = NULL;
+  m_layout            = NULL;
+  m_baseWndProc       = NULL;
+  m_hasMouse          = false;
+  m_deleteAfterEvent  = false;
+  m_doubleBuffered    = false;
+  m_preferredSize     = NULL;
+  m_defWndProc        = ::DefWindowProc;
+  m_destroyHandleProc = Widget_DestroyHandleProc;
+  m_hbrush            = NULL;
 
   // create with the specified "className"?
   if (className != WidgetClassName::None)
@@ -169,20 +169,20 @@ Widget::Widget(HWND handle)
     throw CreateWidgetException(format_string(L"Cannot subclass two times the same widget."));
 
   // initialize members
-  m_handle           = handle;
-  m_parent           = NULL;
-  m_fgColor          = System::getColor(COLOR_WINDOWTEXT);
-  m_bgColor          = System::getColor(COLOR_3DFACE);
-  m_constraint       = NULL;
-  m_layout           = NULL;
-  m_baseWndProc      = NULL;
-  m_hasMouse         = false;
-  m_deleteAfterEvent = false;
-  m_doubleBuffered   = false;
-  m_preferredSize    = NULL;
-  m_defWndProc       = NULL; // m_baseWndProc will be used
-  m_destroyHWNDProc  = NULL; // to avoid destroying this widget in dtor
-  m_hbrush           = NULL;
+  m_handle            = handle;
+  m_parent            = NULL;
+  m_fgColor           = System::getColor(COLOR_WINDOWTEXT);
+  m_bgColor           = System::getColor(COLOR_3DFACE);
+  m_constraint        = NULL;
+  m_layout            = NULL;
+  m_baseWndProc       = NULL;
+  m_hasMouse          = false;
+  m_deleteAfterEvent  = false;
+  m_doubleBuffered    = false;
+  m_preferredSize     = NULL;
+  m_defWndProc        = NULL; // m_baseWndProc will be used
+  m_destroyHandleProc = NULL; // to avoid destroying this widget in dtor
+  m_hbrush            = NULL;
 
   subClass();
 
@@ -206,7 +206,7 @@ Widget::Widget(HWND handle)
  *   It calls @msdn{DestroyWindow} function.
  * @endwin32
  *
- * @see @ref page_tn_002, setDestroyHWNDProc
+ * @see @ref page_tn_002, setDestroyHandleProc
  */
 Widget::~Widget()
 {
@@ -220,7 +220,7 @@ Widget::~Widget()
     releaseFocus();
 
   // hide the window (only if we will call DestroyWindow)
-  if (m_destroyHWNDProc)
+  if (m_destroyHandleProc)
     ::ShowWindow(m_handle, SW_HIDE);
 
   if (getParent() != NULL) {
@@ -251,8 +251,8 @@ Widget::~Widget()
     DeleteObject(m_hbrush);
   
   // call the procedure to destroy the HWND handler
-  if (m_destroyHWNDProc)
-    m_destroyHWNDProc(m_handle);
+  if (m_destroyHandleProc)
+    (*m_destroyHandleProc)(m_handle);
   else
     RemoveProp(m_handle, VACA_ATOM);
 
@@ -2989,9 +2989,9 @@ void Widget::setDefWndProc(WNDPROC proc)
  *
  * @see ~Widget
  */
-void Widget::setDestroyHWNDProc(void (*proc)(HWND))
+void Widget::setDestroyHandleProc(void (*proc)(HWND))
 {
-  m_destroyHWNDProc = proc;
+  m_destroyHandleProc = proc;
 }
 
 /**

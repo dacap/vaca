@@ -232,7 +232,7 @@ private:
    * Used by MdiChild to send a WM_MDIDESTROY instead of calling
    * Win32's DestroyWindow function.
    */
-  void (*m_destroyHWNDProc)(HWND hwnd);
+  void (*m_destroyHandleProc)(HWND hwnd);
   
 public:
 
@@ -487,7 +487,7 @@ protected:
   bool doPaint(Graphics& g);
 
   void setDefWndProc(WNDPROC proc);
-  void setDestroyHWNDProc(void (*proc)(HWND));
+  void setDestroyHandleProc(void (*proc)(HWND));
 
 private:
 

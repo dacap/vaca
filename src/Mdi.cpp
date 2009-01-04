@@ -42,7 +42,7 @@ using namespace Vaca;
 // MdiChild
 
 
-static void MdiChild_DestroyHWNDProc(HWND hwnd)
+static void MdiChild_DestroyHandleProc(HWND hwnd)
 {
   // we must be limited to use only the HWND...
   HWND hClient = ::GetParent(hwnd);
@@ -60,7 +60,7 @@ MdiChild::MdiChild(const String& title, MdiClient* parent, Style style)
   : Frame(WidgetClassName::None, L"", NULL, Widget::Styles::None)
 {
   setDefWndProc(DefMDIChildProc);
-  setDestroyHWNDProc(MdiChild_DestroyHWNDProc);
+  setDestroyHandleProc(MdiChild_DestroyHandleProc);
 
   create(MdiChildClass::getClassName(), parent, style);
   setText(title);
@@ -77,7 +77,7 @@ MdiChild::MdiChild(const String& title, MdiFrame* parent, Style style)
   : Frame(WidgetClassName::None, L"", NULL, Widget::Styles::None)
 {
   setDefWndProc(DefMDIChildProc);
-  setDestroyHWNDProc(MdiChild_DestroyHWNDProc);
+  setDestroyHandleProc(MdiChild_DestroyHandleProc);
 
   create(MdiChildClass::getClassName(), parent->getMdiClient(), style);
   setText(title);

@@ -48,21 +48,6 @@
 
 namespace Vaca {
 
-class Command;  
-class Constraint;
-class Cursor;
-class DropFilesEvent;
-class Event;
-class KeyEvent;
-class Layout;
-class MakeWidgetRef;
-class Message;
-class MouseEvent;
-class ScrollEvent;
-class ScrollInfo;
-class Widget;
-class WidgetClassName;
-
 /**
  * This exception is thrown when the operating system can't create the Widget.
  *

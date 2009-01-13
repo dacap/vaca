@@ -40,8 +40,6 @@
 
 namespace Vaca {
 
-class Event;
-
 /**
  * A command, action or function of the application.
  *

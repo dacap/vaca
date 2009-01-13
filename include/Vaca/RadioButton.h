@@ -36,8 +36,6 @@
 
 namespace Vaca {
 
-class RadioButton;
-
 /**
  * Groups a set of @link Vaca::RadioButton RadioButtons@endlink. It's used to known
  * which RadioButton should be desactived when the user select a

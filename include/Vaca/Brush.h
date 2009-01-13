@@ -38,8 +38,6 @@
 
 namespace Vaca {
 
-class Color;
-
 /**
  * A brush can be used to fill rectangles, ellipses, and paths.
  *

@@ -39,10 +39,6 @@
 
 namespace Vaca {
 
-class Widget;
-class Frame;
-class DockBar;
-
 /**
  * Information needed for every DockBar that is docked in a specific
  * DockArea. You have to specialized this class to use it in your own

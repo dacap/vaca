@@ -40,8 +40,6 @@
 
 namespace Vaca {
 
-class Widget;
-
 /**
  * A common dialog box to select files. You shouldn't use directly
  * this class, you must to use the OpenFileDialog and SaveFileDialog

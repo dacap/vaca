@@ -41,9 +41,6 @@
 
 namespace Vaca {
 
-class TreeViewEvent;
-class ImageList;
-
 /**
  * @internal You should use @link Vaca::TreeView::iterator TreeView::iterator @endlink.
  */

@@ -41,9 +41,6 @@
 
 namespace Vaca {
 
-class Color;
-class ImageList;
-
 /**
  * Class to access to operating system information.
  *

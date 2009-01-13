@@ -36,9 +36,6 @@
 
 namespace Vaca {
 
-class Point;
-class Size;
-
 /**
  * A rectangle.
  */

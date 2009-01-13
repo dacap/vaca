@@ -68,8 +68,6 @@ public:
   virtual ~ReBarException() throw() { }
 };
 
-class ReBar;
-
 class VACA_DLL ReBarBand
 {
   ReBar* m_rebar;

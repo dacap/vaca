@@ -39,8 +39,6 @@
 
 namespace Vaca {
 
-class Widget;
-
 /**
  * Base class for common dialogs.
  */

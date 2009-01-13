@@ -37,9 +37,6 @@
 #include "Vaca/Exception.h"
 
 namespace Vaca {
-  
-class Thread;
-class Widget;
 
 /**
  * Thrown when a Message cannot be registered/created.

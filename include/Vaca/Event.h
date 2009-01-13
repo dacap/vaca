@@ -36,8 +36,6 @@
 
 namespace Vaca {
 
-class Component;
-
 /**
  * Base class for every kind of event.
  */

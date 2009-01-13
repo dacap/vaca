@@ -39,8 +39,6 @@
 
 namespace Vaca {
 
-class Widget;
-
 /**
  * It's like a namespace for ScrollRequest.
  * 

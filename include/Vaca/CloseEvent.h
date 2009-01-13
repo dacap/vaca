@@ -36,8 +36,6 @@
 
 namespace Vaca {
 
-class Frame;
-
 class VACA_DLL CloseEvent : public CancelableEvent
 {
 public:

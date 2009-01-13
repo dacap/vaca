@@ -39,8 +39,6 @@
 
 namespace Vaca {
 
-class ListView;
-
 class VACA_DLL ListItem : public Component
 {
   friend class ListView;

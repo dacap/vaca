@@ -43,13 +43,6 @@
 
 namespace Vaca {
 
-class CloseEvent;
-class Menu;
-class MenuBar;
-class MenuItem;
-class StatusBar;
-class Thread;
-
 /**
  * Represents the Win32 class used by Frame.
  */

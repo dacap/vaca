@@ -38,10 +38,6 @@
 
 namespace Vaca {
 
-class Point;
-class Rect;
-class Size;
-
 /**
  * A region, it can be simple as a rectangle, complex as any shape,
  * but also can be empty.

@@ -41,8 +41,6 @@
 
 namespace Vaca {
 
-class Size;
-
 /**
  * Used to destroy the HIMAGELIST handle from GdiObject.
  * 

@@ -38,8 +38,6 @@
 
 namespace Vaca {
 
-class Widget;
-
 /**
  * Data for an event that comes from the keyboard.
  */

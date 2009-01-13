@@ -40,10 +40,6 @@
 
 namespace Vaca {
 
-class TreeView;
-class TreeViewEvent;
-class TreeViewIterator;
-
 /**
  * A TreeView node.  It has a text label, an image, a selected image
  * asociated, and a state (collapsed/expanded). A node can be parent

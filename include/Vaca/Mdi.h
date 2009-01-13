@@ -37,9 +37,6 @@
 
 namespace Vaca {
 
-class MdiClient;
-class MdiFrame;
-
 /**
  * ID for the first MdiChild. These IDs are used internally by Win32
  * and the MdiListMenu.

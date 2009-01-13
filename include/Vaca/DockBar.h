@@ -41,11 +41,6 @@
 
 namespace Vaca {
 
-class DockArea;
-class DockFrame;
-class DockInfo;
-class CloseEvent;
-
 /**
  * Represents the Win32 class used by DockBar.
  */

@@ -40,9 +40,6 @@
 
 namespace Vaca {
 
-class ImageList;
-class ToolSet;
-
 //////////////////////////////////////////////////////////////////////
 
 struct ToolButtonStateEnumSet

@@ -39,9 +39,6 @@
 
 namespace Vaca {
 
-class Pen;
-class Region;
-
 /**
  * Set of nodes to draw polygons and shapes in Graphics.
  */

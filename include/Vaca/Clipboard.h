@@ -36,8 +36,6 @@
 
 namespace Vaca {
 
-class Widget;
-
 /**
  * Handles the global clipboard.
  */

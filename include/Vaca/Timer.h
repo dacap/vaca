@@ -39,9 +39,6 @@
 
 namespace Vaca {
 
-class Application;
-struct _Timer;
-
 /**
  * Class to schedule events every @e x milliseconds.
  *
@@ -57,7 +54,6 @@ struct _Timer;
 class VACA_DLL Timer : private NonCopyable
 {
   friend class Application;
-  friend struct _Timer;
 
   ThreadId m_threadOwnerId;
   bool m_running : 1;

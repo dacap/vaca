@@ -37,9 +37,6 @@
 
 namespace Vaca {
 
-class TreeView;
-class TreeNode;
-
 /**
  * Event where interact a TreeView and TreeNode.
  */

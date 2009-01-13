@@ -42,17 +42,6 @@
 
 namespace Vaca {
 
-class Application;
-class Brush;
-class Color;
-class GraphicsPath;
-class Image;
-class ImageList;
-class Pen;
-class Point;
-class Region;
-class Widget;
-
 //////////////////////////////////////////////////////////////////////
   
 struct FillRuleEnum

@@ -38,8 +38,6 @@
 
 namespace Vaca {
 
-class Widget;
-
 /**
  * A common dialog box to find (or replace) text.
  */

@@ -36,8 +36,6 @@
 
 namespace Vaca {
 
-class Point;
-
 /**
  * A 2D size.
  */

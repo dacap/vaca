@@ -41,16 +41,6 @@
 
 namespace Vaca {
 
-class Command;
-class Frame;
-class MenuItemEvent;
-class MenuItem;
-class Menu;
-class MenuBar;
-class MdiListMenu;
-class Point;
-class Widget;
-
 /**
  * A menu item.
  */

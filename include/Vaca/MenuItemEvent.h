@@ -37,8 +37,6 @@
 
 namespace Vaca {
 
-class MenuItem;
-
 class VACA_DLL MenuItemEvent : public Event
 {
 

@@ -112,12 +112,12 @@ private:
   {
     if (m_edit != NULL) {
       // we need to reset the m_edit variable to avoid calling two
-      // times this destruction process
+      // times this destruction process because...
       int editingItem = m_editingItem;
       TextEdit *edit = m_edit;
       m_edit = NULL;
 
-      // this could produce a "onBeforePosChange" event
+      // ...this could produce a "onBeforePosChange" event
       setItemText(editingItem, edit->getText());
 
       // delete the edit control

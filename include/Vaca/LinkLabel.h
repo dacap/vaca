@@ -38,9 +38,6 @@
 
 namespace Vaca {
 
-class Font;
-class Image;
-
 /**
  * A link to Internet (or whatever you want).
  */

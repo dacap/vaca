@@ -38,8 +38,6 @@
 
 namespace Vaca {
 
-class ScopedLock;
-
 /**
  * This exception is thrown when a ConditionVariable couldn't be created.
  */

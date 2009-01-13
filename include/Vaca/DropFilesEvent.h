@@ -39,8 +39,6 @@
 
 namespace Vaca {
 
-class Widget;
-
 class VACA_DLL DropFilesEvent : public Event
 {
   std::vector<String>& m_files;

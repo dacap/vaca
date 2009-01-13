@@ -40,9 +40,6 @@
 
 namespace Vaca {
 
-class Graphics;
-class Image;
-
 /**
  * Used to destroy the HBITMAP handle of a Image.
  * 

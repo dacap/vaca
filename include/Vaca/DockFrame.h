@@ -38,8 +38,6 @@
 
 namespace Vaca {
 
-class DockBar;
-
 /**
  * Represents the Win32 class used by DockFrame.
  */

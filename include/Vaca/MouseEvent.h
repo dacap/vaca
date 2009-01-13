@@ -39,8 +39,6 @@
 
 namespace Vaca {
 
-class Widget;
-
 /**
  * Namespace for MouseButton enumeration.
  */

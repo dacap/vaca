@@ -531,6 +531,39 @@ void Widget::setId(CommandId id)
   ::SetWindowLong(m_handle, GWL_ID, id);
 }
 
+/**
+ * Returns the command with the specified ID searching in all the
+ * CommandsClient that this widget can know: itself, the parent
+ * (some ancestor), and the Application instance.
+ *
+ * The command is searched in this instance if the Widget is a
+ * CommandsClient (a @c dynamic_cast is used for this), then it looks
+ * for the parent (using this same method), and finally in the
+ * @link Application#getInstance Application instance@endlink (if the
+ * Application is a CommandsClient).
+ */
+Command* Widget::findCommandById(CommandId id)
+{
+  // if this widget is a CommandsClient instance
+  if (CommandsClient* cc = dynamic_cast<CommandsClient*>(this)) {
+    if (Command* cmd = cc->getCommandById(id))
+      return cmd;
+  }
+
+  // does it have a parent?
+  if (getParent() != NULL) {
+    if (Command* cmd = getParent()->findCommandById(id))
+      return cmd;
+  }
+  // check if the application is a CommandsClient
+  else if (CommandsClient* cc = dynamic_cast<CommandsClient*>(Application::getInstance())) {
+    if (Command* cmd = cc->getCommandById(id))
+      return cmd;
+  }
+
+  return NULL;
+}
+
 // ===============================================================
 // WIDGET STYLE
 // ===============================================================
@@ -1575,39 +1608,6 @@ void Widget::scrollRect(const Rect& rc, const Point& delta)
 		 delta.x, delta.y,
 		 &rc2, &rc2, NULL, NULL,
 		 SW_ERASE | SW_INVALIDATE);
-}
-
-/**
- * Returns the command with the specified ID searching in all the
- * CommandsClient that this widget can know: itself, the parent
- * (some ancestor), and the Application instance.
- *
- * The command is searched in this instance if the Widget is a
- * CommandsClient (a @c dynamic_cast is used for this), then it looks
- * for the parent (using this same method), and finally in the
- * @link Application#getInstance Application instance@endlink (if the
- * Application is a CommandsClient).
- */
-Command* Widget::findCommandById(CommandId id)
-{
-  // if this widget is a CommandsClient instance
-  if (CommandsClient* cc = dynamic_cast<CommandsClient*>(this)) {
-    if (Command* cmd = cc->getCommandById(id))
-      return cmd;
-  }
-
-  // does it have a parent?
-  if (getParent() != NULL) {
-    if (Command* cmd = getParent()->findCommandById(id))
-      return cmd;
-  }
-  // check if the application is a CommandsClient
-  else if (CommandsClient* cc = dynamic_cast<CommandsClient*>(Application::getInstance())) {
-    if (Command* cmd = cc->getCommandById(id))
-      return cmd;
-  }
-
-  return NULL;
 }
 
 /**

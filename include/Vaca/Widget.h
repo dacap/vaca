@@ -269,6 +269,8 @@ public:
   CommandId getId() const;
   void setId(CommandId id);
 
+  Command* findCommandById(CommandId id);
+
   // ===============================================================
   // WIDGET STYLE
   // ===============================================================
@@ -376,12 +378,6 @@ public:
   void hideScrollBar(Orientation orientation);
 
   void scrollRect(const Rect& rect, const Point& delta);
-
-  // ===============================================================
-  // COMMANDS
-  // ===============================================================
-
-  Command* findCommandById(CommandId id);
 
   // ===============================================================
   // MESSAGES

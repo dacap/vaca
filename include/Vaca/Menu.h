@@ -132,7 +132,7 @@ public:
   typedef std::vector<MenuItem*> Container;
 
 private:
-  HMENU m_HMENU;
+  HMENU m_handle;
   Container m_container;
 
 public:

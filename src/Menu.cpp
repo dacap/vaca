@@ -328,8 +328,8 @@ bool MenuSeparator::isSeparator() const
 
 Menu::Menu()
 {
-  m_HMENU = ::CreateMenu();
-  VACA_TRACE("%p = CreateMenu()\n", m_HMENU);
+  m_handle = ::CreateMenu();
+  VACA_TRACE("%p = CreateMenu()\n", m_handle);
 
   subClass();
 }
@@ -337,18 +337,18 @@ Menu::Menu()
 Menu::Menu(const String& text)
   : MenuItem(text, 0)
 {
-  m_HMENU = ::CreatePopupMenu();
-  VACA_TRACE("%p = CreatePopupMenu()\n", m_HMENU);
+  m_handle = ::CreatePopupMenu();
+  VACA_TRACE("%p = CreatePopupMenu()\n", m_handle);
 
   subClass();
 }
 
 Menu::Menu(CommandId menuId)
 {
-  m_HMENU = ::LoadMenu(Application::getHandle(),
+  m_handle = ::LoadMenu(Application::getHandle(),
 		       MAKEINTRESOURCE(menuId));
 
-  if (m_HMENU == NULL)
+  if (m_handle == NULL)
     throw ResourceException(format_string(L"Can't load the menu resource %d", menuId));
 
   subClass();
@@ -358,30 +358,30 @@ Menu::Menu(HMENU hmenu)
 {
   assert(hmenu != NULL);
   
-  m_HMENU = hmenu;
+  m_handle = hmenu;
   subClass();
 }
 
 Menu::~Menu()
 {
-  assert(m_HMENU != NULL);
+  assert(m_handle != NULL);
 
   while (!m_container.empty()) {
     MenuItem* menuItem = m_container.front();
     delete menuItem;
   }
 
-  DestroyMenu(m_HMENU);
+  DestroyMenu(m_handle);
 }
 
 void Menu::subClass()
 {
-  assert(m_HMENU != NULL);
+  assert(m_handle != NULL);
 
   MENUINFO mi;
   mi.cbSize = sizeof(MENUINFO);
   mi.fMask = MIM_MENUDATA | MIM_STYLE;
-  GetMenuInfo(m_HMENU, &mi);
+  GetMenuInfo(m_handle, &mi);
 
   // Vaca doesn't use MNS_NOTIFYBYPOS
   assert((mi.dwStyle & MNS_NOTIFYBYPOS) == 0);
@@ -392,10 +392,10 @@ void Menu::subClass()
   // set the associated data with this Menu
   mi.fMask = MIM_MENUDATA;
   mi.dwMenuData = reinterpret_cast<ULONG_PTR>(this);
-  SetMenuInfo(m_HMENU, &mi);
+  SetMenuInfo(m_handle, &mi);
 
   // now we must sub-class all existent menu items
-  int menuItemCount = GetMenuItemCount(m_HMENU);
+  int menuItemCount = GetMenuItemCount(m_handle);
   for (int itemIndex=0; itemIndex<menuItemCount; ++itemIndex) {
     Char buf[4096];		// TODO buffer overflow
     MENUITEMINFO mii;
@@ -405,7 +405,7 @@ void Menu::subClass()
     mii.dwTypeData = buf;
     mii.cch = sizeof(buf) / sizeof(Char);
 
-    BOOL res = GetMenuItemInfo(m_HMENU, itemIndex, TRUE, &mii);
+    BOOL res = GetMenuItemInfo(m_handle, itemIndex, TRUE, &mii);
     assert(res == TRUE);
 
     // the item can't have data
@@ -540,7 +540,7 @@ MenuItem* Menu::insert(int index, MenuItem* menuItem)
     // HBITMAP hbmpItem;
   }
 
-  InsertMenuItem(m_HMENU, index, TRUE, &mii);
+  InsertMenuItem(m_handle, index, TRUE, &mii);
 
   delete[] buf;
 
@@ -584,10 +584,10 @@ void Menu::insertSeparator(int index)
  */
 MenuItem* Menu::remove(MenuItem* menuItem)
 {
-  assert(m_HMENU != NULL);
+  assert(m_handle != NULL);
 
   // TODO check if this works
-  ::RemoveMenu(m_HMENU, getMenuItemIndex(menuItem), MF_BYPOSITION);
+  ::RemoveMenu(m_handle, getMenuItemIndex(menuItem), MF_BYPOSITION);
 
   // see the "RemoveMenu Function" in the MSDN, you "must call the
   // DrawMenuBar function whenever a menu changes"
@@ -740,7 +740,7 @@ bool Menu::isMenu() const
 
 HMENU Menu::getHandle()
 {
-  return m_HMENU;
+  return m_handle;
 }
 
 //////////////////////////////////////////////////////////////////////

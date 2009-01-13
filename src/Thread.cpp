@@ -115,7 +115,7 @@ static ThreadData* getThreadData()
   return data;
 }
 
-void Vaca::__vaca_remove_all_thread_data()
+void Vaca::details::remove_all_thread_data()
 {
   ScopedLock hold(data_mutex);
   std::vector<ThreadData*>::iterator it, end = dataOfEachThread.end();
@@ -128,12 +128,12 @@ void Vaca::__vaca_remove_all_thread_data()
   dataOfEachThread.clear();
 }
 
-Widget* Vaca::__vaca_get_outside_widget()
+Widget* Vaca::details::get_outside_widget()
 {
   return getThreadData()->outsideWidget;
 }
 
-void Vaca::__vaca_set_outside_widget(Widget* widget)
+void Vaca::details::set_outside_widget(Widget* widget)
 {
   getThreadData()->outsideWidget = widget;
 }

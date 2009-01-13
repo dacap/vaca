@@ -2235,12 +2235,12 @@ void Widget::create(const WidgetClassName& className, Widget* parent, Style styl
 
   // create the HWND handler
   {
-    Widget* outsideWidget = __vaca_get_outside_widget();
+    Widget* outsideWidget = details::get_outside_widget();
     assert(outsideWidget == NULL);
     
-    __vaca_set_outside_widget(this);
+    details::set_outside_widget(this);
     m_handle = createHandle(className.c_str(), parent, style);
-    __vaca_set_outside_widget(NULL);
+    details::set_outside_widget(NULL);
   }
 
   if (m_handle == NULL || !::IsWindow(m_handle))
@@ -3023,7 +3023,7 @@ LRESULT CALLBACK Widget::globalWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARA
     "Message "+String::fromInt(msg)+" for " +
     String::fromInt(reinterpret_cast<int>(widget != NULL ? widget:
 							   // getThreadData()->outsideWidget
-							   __vaca_get_outside_widget()
+							   details::get_outside_widget()
 					  ), 16, 8);
   
   String msgString = "Unknown";
@@ -3241,7 +3241,7 @@ LRESULT CALLBACK Widget::globalWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARA
   }
   else {
 //     widget = getThreadData()->outsideWidget;
-    widget = __vaca_get_outside_widget();
+    widget = details::get_outside_widget();
     if (widget != NULL) {
       assert(hwnd != NULL);
       widget->m_handle = hwnd;

@@ -39,22 +39,23 @@
 namespace Vaca {
 
 #ifdef NDEBUG
-// #  define VACA_TRACE(msg...)   1 ? (void)0 : __vaca_trace
 #  ifdef __GNUC__
-#    define VACA_TRACE(msg...)   
+#    define VACA_TRACE(msg...)
 #  else
 #    define VACA_TRACE(...)
 #  endif
 #else
 #  ifdef __GNUC__
-#    define VACA_TRACE(msg...) Vaca::__vaca_trace(__FILE__, __LINE__, msg)
+#    define VACA_TRACE(msg...) Vaca::details::trace(__FILE__, __LINE__, msg)
 #  else
-#    define VACA_TRACE         Vaca::__make_trace(__FILE__, __LINE__)
+#    define VACA_TRACE         Vaca::details::make_trace(__FILE__, __LINE__)
 #  endif
 #endif
 
-void VACA_DLL __vaca_trace(LPCSTR filename, UINT line, LPCSTR msg, ...);
-void VACA_DLL __vaca_close_log_file();
+namespace details {
+
+void VACA_DLL trace(LPCSTR filename, UINT line, LPCSTR msg, ...);
+void VACA_DLL close_log_file();
 
 #ifndef __GNUC__
 /**
@@ -62,7 +63,7 @@ void VACA_DLL __vaca_close_log_file();
  *    Dirty trick for non-GNU compilers that doesn't support
  *    macros with ellipsis (...).
  */
-struct __vaca_trace_s {
+struct trace_t {
   LPCSTR filename;
   UINT line;
   void operator()(LPCSTR fmt, ...) {
@@ -71,16 +72,18 @@ struct __vaca_trace_s {
     va_start(ap, fmt);
     vsprintf(buf, fmt, ap);
     va_end(ap);
-    __vaca_trace(filename, line, buf);
+    Vaca::details::trace(filename, line, buf);
   }
 };
-inline struct __vaca_trace_s __make_trace(LPCSTR filename, UINT line) {
-  struct __vaca_trace_s tmp;
+inline trace_t make_trace(LPCSTR filename, UINT line) {
+  trace_t tmp;
   tmp.filename = filename;
   tmp.line = line;
   return tmp;
 }
 #endif
+
+} // namespace details
 
 } // namespace Vaca
 

@@ -160,10 +160,11 @@ private:
 
 };
 
-VACA_DLL void __vaca_remove_all_thread_data();
-
-VACA_DLL Widget* __vaca_get_outside_widget();
-VACA_DLL void __vaca_set_outside_widget(Widget* widget);
+namespace details {
+  VACA_DLL void remove_all_thread_data();
+  VACA_DLL Widget* get_outside_widget();
+  VACA_DLL void set_outside_widget(Widget* widget);
+}
 
 } // namespace Vaca
 

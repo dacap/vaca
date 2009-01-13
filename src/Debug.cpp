@@ -59,7 +59,7 @@ struct Debug {
 };
 #endif
 
-void Vaca::__vaca_trace(LPCSTR filename, UINT line, LPCSTR fmt, ...)
+void Vaca::details::trace(LPCSTR filename, UINT line, LPCSTR fmt, ...)
 {
 #ifndef NDEBUG
   if (closed) { return; }
@@ -79,7 +79,7 @@ void Vaca::__vaca_trace(LPCSTR filename, UINT line, LPCSTR fmt, ...)
 #endif
 }
 
-void Vaca::__vaca_close_log_file()
+void Vaca::details::close_log_file()
 {
 #ifndef NDEBUG
   delete dbg;

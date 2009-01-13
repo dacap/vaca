@@ -90,8 +90,8 @@ Application::~Application()
 #endif
 
   // close the log file
-  __vaca_remove_all_thread_data();
-  __vaca_close_log_file();
+  details::remove_all_thread_data();
+  details::close_log_file();
 
   CoUninitialize();
 

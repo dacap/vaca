@@ -83,6 +83,7 @@ public:
   virtual MenuItem* checkShortcuts(Keys::Type pressedKey);
 
   virtual bool isMenu() const;
+  virtual bool isMenuBar() const;
   virtual bool isSeparator() const;
   virtual bool isMdiList() const;
 
@@ -191,6 +192,8 @@ public:
   Frame* getFrame();
 
   MdiListMenu* getMdiListMenu();
+
+  virtual bool isMenuBar() const;
 
 private:
   void setFrame(Frame* frame);

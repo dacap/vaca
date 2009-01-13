@@ -250,6 +250,7 @@ MenuItem* MenuItem::checkShortcuts(Keys::Type pressedKey)
 }
 
 bool MenuItem::isMenu() const { return false; }
+bool MenuItem::isMenuBar() const { return false; }
 bool MenuItem::isSeparator() const { return false; }
 bool MenuItem::isMdiList() const { return false; }
 
@@ -282,7 +283,9 @@ void MenuItem::onUpdate(MenuItemEvent& ev)
   // does this menu item have an associated command-id?
   if (m_id != 0) {
     // search the command in the frame where is the menu-bar
-    if (MenuBar* menuBar = dynamic_cast<MenuBar*>(getRoot())) {
+    Menu* rootMenu = getRoot();
+    if (rootMenu && rootMenu->isMenuBar()) {
+      MenuBar* menuBar = static_cast<MenuBar*>(rootMenu);
       if (Frame* frame = menuBar->getFrame()) {
 	if (Command* cmd = frame->findCommandById(m_id))
 	  updateFromCommand(cmd);
@@ -589,8 +592,10 @@ MenuItem* Menu::remove(MenuItem* menuItem)
   // see the "RemoveMenu Function" in the MSDN, you "must call the
   // DrawMenuBar function whenever a menu changes"
   // http://msdn.microsoft.com/en-us/library/ms647994(VS.85).aspx
-  if (MenuBar* bar = dynamic_cast<MenuBar*>(getRoot())) {
-    Frame* frame = bar->getFrame();
+  Menu* rootMenu = getRoot();
+  if (rootMenu && rootMenu->isMenuBar()) {
+    MenuBar* menuBar = static_cast<MenuBar*>(rootMenu);
+    Frame* frame = menuBar->getFrame();
     ::DrawMenuBar(frame ? frame->getHandle(): NULL);
   }
 
@@ -788,6 +793,8 @@ MdiListMenu* MenuBar::getMdiListMenu()
 
   return NULL;
 }
+
+bool MenuBar::isMenuBar() const { return true; }
 
 //////////////////////////////////////////////////////////////////////
 // PopupMenu

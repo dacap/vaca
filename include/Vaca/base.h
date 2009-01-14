@@ -476,6 +476,78 @@ class WidgetClassName;
 template<class T>
 class SmartPtr;
 
+//////////////////////////////////////////////////////////////////////
+// Pointers
+
+typedef SmartPtr<Anchor> AnchorPtr;
+typedef SmartPtr<AnchorLayout> AnchorLayoutPtr;
+typedef SmartPtr<BandedDockArea> BandedDockAreaPtr;
+typedef SmartPtr<BasicDockArea> BasicDockAreaPtr;
+typedef SmartPtr<Bix> BixPtr;
+typedef SmartPtr<BoxConstraint> BoxConstraintPtr;
+typedef SmartPtr<BoxLayout> BoxLayoutPtr;
+typedef SmartPtr<Button> ButtonPtr;
+typedef SmartPtr<ButtonBase> ButtonBasePtr;
+typedef SmartPtr<CheckBox> CheckBoxPtr;
+typedef SmartPtr<ClientLayout> ClientLayoutPtr;
+typedef SmartPtr<ColorDialog> ColorDialogPtr;
+typedef SmartPtr<ComboBox> ComboBoxPtr;
+typedef SmartPtr<Command> CommandPtr;
+typedef SmartPtr<CommonDialog> CommonDialogPtr;
+typedef SmartPtr<Component> ComponentPtr;
+typedef SmartPtr<Constraint> ConstraintPtr;
+typedef SmartPtr<CustomButton> CustomButtonPtr;
+typedef SmartPtr<CustomLabel> CustomLabelPtr;
+typedef SmartPtr<Dialog> DialogPtr;
+typedef SmartPtr<DockArea> DockAreaPtr;
+typedef SmartPtr<DockBar> DockBarPtr;
+typedef SmartPtr<DockFrame> DockFramePtr;
+typedef SmartPtr<DockInfo> DockInfoPtr;
+typedef SmartPtr<FileDialog> FileDialogPtr;
+typedef SmartPtr<OpenFileDialog> OpenFileDialogPtr;
+typedef SmartPtr<SaveFileDialog> SaveFileDialogPtr;
+typedef SmartPtr<FindTextDialog> FindTextDialogPtr;
+typedef SmartPtr<FontDialog> FontDialogPtr;
+typedef SmartPtr<Frame> FramePtr;
+typedef SmartPtr<GroupBox> GroupBoxPtr;
+typedef SmartPtr<Label> LabelPtr;
+typedef SmartPtr<Layout> LayoutPtr;
+typedef SmartPtr<LinkLabel> LinkLabelPtr;
+typedef SmartPtr<ListBox> ListBoxPtr;
+typedef SmartPtr<DragListBox> DragListBoxPtr;
+typedef SmartPtr<ListItem> ListItemPtr;
+typedef SmartPtr<ListView> ListViewPtr;
+typedef SmartPtr<MdiChild> MdiChildPtr;
+typedef SmartPtr<MdiClient> MdiClientPtr;
+typedef SmartPtr<MdiFrame> MdiFramePtr;
+typedef SmartPtr<MenuItem> MenuItemPtr;
+typedef SmartPtr<MenuSeparator> MenuSeparatorPtr;
+typedef SmartPtr<Menu> MenuPtr;
+typedef SmartPtr<MenuBar> MenuBarPtr;
+typedef SmartPtr<PopupMenu> PopupMenuPtr;
+typedef SmartPtr<MdiListMenu> MdiListMenuPtr;
+typedef SmartPtr<Panel> PanelPtr;
+typedef SmartPtr<ProgressBar> ProgressBarPtr;
+typedef SmartPtr<RadioButton> RadioButtonPtr;
+typedef SmartPtr<ReBar> ReBarPtr;
+typedef SmartPtr<SciEdit> SciEditPtr;
+typedef SmartPtr<Separator> SeparatorPtr;
+typedef SmartPtr<Slider> SliderPtr;
+typedef SmartPtr<SpinButton> SpinButtonPtr;
+typedef SmartPtr<Spinner> SpinnerPtr;
+typedef SmartPtr<SplitBar> SplitBarPtr;
+typedef SmartPtr<StatusBar> StatusBarPtr;
+typedef SmartPtr<TabBase> TabBasePtr;
+typedef SmartPtr<Tab> TabPtr;
+typedef SmartPtr<TabPage> TabPagePtr;
+typedef SmartPtr<TextEdit> TextEditPtr;
+typedef SmartPtr<ToggleButton> ToggleButtonPtr;
+typedef SmartPtr<ToolSet> ToolSetPtr;
+typedef SmartPtr<ToolBar> ToolBarPtr;
+typedef SmartPtr<TreeNode> TreeNodePtr;
+typedef SmartPtr<TreeView> TreeViewPtr;
+typedef SmartPtr<Widget> WidgetPtr;
+
 } // namespace Vaca
 
 #endif // VACA_BASE_H

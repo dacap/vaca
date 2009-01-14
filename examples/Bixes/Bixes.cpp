@@ -378,7 +378,6 @@ typename Map::mapped_type find_element(const Map& map,
 class Panel_Model : public Panel
 {
   Model* m_model;
-  Bix* m_bix;
   std::map<Element*, Bix*> m_mapElemBix;
 
 public:
@@ -389,7 +388,6 @@ public:
     : Panel(parent, Panel::Styles::Default +
 		    Widget::Styles::ClientEdge)
     , m_model(model)
-    , m_bix(NULL)
   {
     m_model->BeforeAddElement.connect(&Panel_Model::onBeforeAddElement, this);
     m_model->AfterAddElement.connect(&Panel_Model::onAfterAddElement, this);
@@ -442,17 +440,17 @@ private:
 
     // put "element" as the root
     if (parent == NULL) {
-      assert(m_bix == NULL);
+      assert(getLayout() == NULL);
 
       if (flags == 0) {
 	// avoid
       }
       else {
-	m_bix = new Bix(flags, element->getColumns());
-	m_bix->setChildSpacing(4);
+	Bix* bix = new Bix(flags, element->getColumns());
+	bix->setChildSpacing(4);
 
-	m_mapElemBix[element] = m_bix;
-	setLayout(m_bix);
+	m_mapElemBix[element] = bix;
+	setLayout(bix);
       }
     }
     // insert a child in "parent" element
@@ -512,14 +510,15 @@ private:
       }
 
       if (element->getParent() != NULL) {
+	Bix* elementBix = find_element(m_mapElemBix, element);
 	Bix* parentBix = find_element(m_mapElemBix, element->getParent());
 	if (parentBix)
 	  parentBix->remove(find_element(m_mapElemBix, element));
 
 	m_mapElemBix.erase(element);
+	delete elementBix;
       }
       else {
-	m_bix = NULL;	     // the Bix* is deleted inside setLayout()
 	setLayout(NULL);
 
 	m_mapElemBix.clear();

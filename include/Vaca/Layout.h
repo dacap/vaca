@@ -53,7 +53,7 @@ namespace Vaca {
  *
  * @see @ref page_tn_011
  */
-class VACA_DLL Layout
+class VACA_DLL Layout : public Referenceable
 {
   HDWP m_HDWP;
   Widget::Container m_relayoutWidgets;

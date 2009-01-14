@@ -70,13 +70,6 @@ Anchor::Anchor(const Rect& refRect, Sides sides)
 {
 }
 
-Anchor::Anchor(const Anchor& anchor)
-  : Constraint(anchor)
-  , m_refRect(anchor.m_refRect)
-  , m_sides(anchor.m_sides)
-{
-}
-
 Anchor::~Anchor()
 {
 }

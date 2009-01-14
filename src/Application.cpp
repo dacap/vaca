@@ -36,6 +36,10 @@
 #include "Vaca/Graphics.h"
 #include "Vaca/Font.h"
 
+#ifndef NDEBUG
+#include "Vaca/System.h"
+#endif
+
 using namespace Vaca;
 
 HINSTANCE Application::m_HINSTANCE = NULL;
@@ -68,6 +72,8 @@ Application::Application()
     ;
 
   InitCommonControlsEx(&icce);
+
+  VACA_TRACE("Program %s started\n", convert_to<std::string>(System::getArgs()[0]).c_str());
 }
 
 /**
@@ -88,6 +94,8 @@ Application::~Application()
 #ifndef NDEBUG
   Referenceable::showLeaks();
 #endif
+
+  VACA_TRACE("Program %s finished\n", convert_to<std::string>(System::getArgs()[0]).c_str());
 
   // close the log file
   details::remove_all_thread_data();

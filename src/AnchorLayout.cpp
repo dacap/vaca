@@ -67,7 +67,7 @@ void AnchorLayout::layout(Widget* parent, Widget::Container& widgets, const Rect
     if (constraint == NULL)
       continue;
 
-    Anchor* anchor = dynamic_cast<Anchor *>(constraint);
+    Anchor* anchor = static_cast<Anchor*>(constraint);
     assert(anchor != NULL);
 
     Sides sides = anchor->getSides();

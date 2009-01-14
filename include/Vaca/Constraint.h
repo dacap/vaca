@@ -33,6 +33,7 @@
 #define VACA_CONSTRAINT_H
 
 #include "Vaca/base.h"
+#include "Vaca/Referenceable.h"
 
 namespace Vaca {
 
@@ -49,12 +50,11 @@ namespace Vaca {
  * parent widget) special properties to be used when the layout manager
  * must to arrange the widget.
  */
-class VACA_DLL Constraint
+class VACA_DLL Constraint : public Referenceable
 {
 public:
 
   Constraint();
-  Constraint(const Constraint& constraint);
   virtual ~Constraint();
 
 };

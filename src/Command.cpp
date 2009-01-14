@@ -60,6 +60,13 @@ CommandsClient::~CommandsClient()
     delete *it;
 }
 
+/**
+ * Adds a command.
+ *
+ * @warning The cmd will be deleted automatically.
+ *
+ * @see @ref page_tn_010
+ */
 void CommandsClient::addCommand(Command* cmd)
 {
   m_commands.push_back(cmd);

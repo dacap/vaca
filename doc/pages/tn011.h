@@ -8,8 +8,7 @@ When you use @link Vaca::Widget#setLayout setLayout@endlink or
 @link Vaca::Widget#setConstraint setConstraint@endlink, you must to specify a
 pointer to a @link Vaca::Layout Layout@endlink or a
 @link Vaca::Constraint Constraint@endlink respectively. These pointers are
-deleted automatically when the widget is destroyed, but they're not
-destroyed when you change the layout manager or the constraint. E.g.:
+SmartPtr, they are deleted automatically when the widget is destroyed.
 
 @code
   {
@@ -17,37 +16,42 @@ destroyed when you change the layout manager or the constraint. E.g.:
     ...
     {
       Frame frame(...);
-      frame.setLayout(new MyLayout(...));
-      MyLayout* oldLayout = frame.setLayout(betterLayout);
-
-      delete oldLayout; // <-- we must to destroy the layout: it isn't 
-                        //     deleted automatically because it isn't
-                        //     the 'frame' layout manager anymore
+      frame.setLayout(new MyLayout(...)); // <-- Here the smart pointer is created
+      frame.setLayout(betterLayout);      // <-- MyLayout is destroyed automatically
     }
     ...
-    // here betterLayout doesn't exist (was automatically deleted 
+    // here betterLayout doesn't exist (was automatically deleted
     // in the Frame destructor)
   }
 @endcode
 
-Remember to use the following code if you make instances of
-@c Layout (or @c Constraint) in the stack:
+If you want to make @c betterLayout to live more time than @c frame,
+you can use a SmartPtr:
 
 @code
   {
-    Frame frame(...);
-    ClientLayout layout;
-    frame.setLayout(&layout);
+    LayoutPtr betterLayout(new MyBetterLayout());
     ...
-    frame.setLayout(NULL); // you have to do this because "layout" would be
-                           // deleted in ~Frame() by second time
+    {
+      Frame frame(...);
+      frame.setLayout(betterLayout);
+    }
+    ...
+    // here betterLayout still exists
   }
 @endcode
 
-@see @link Vaca::Layout Layout@endlink,
-     @link Vaca::Constraint Constraint@endlink,
-     @link Vaca::Widget#setLayout Widget::setLayout@endlink,
-     @link Vaca::Widget#setConstraint Widget::setConstraint@endlink
+@warning You cannot use layouts in stack:
+@code
+  {
+    Frame frame(...);
+    ClientLayout layout;      // <-- a layout in stack
+    frame.setLayout(&layout); // <-- here we're making a SmartPtr to stack!!!
+    ...
+  } // <-- runtime error: double deletion here
+@endcode
+
+@see Layout, Constraint, Widget#setLayout, Widget#setConstraint
 
 */
 

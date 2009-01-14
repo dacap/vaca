@@ -142,12 +142,12 @@ private:
   /**
    * Constraint used by the layout manager that own the parent widget.
    */
-  Constraint* m_constraint;
+  ConstraintPtr m_constraint;
 
   /**
    * Layout manager of this widget used to arrange its children.
    */
-  Layout* m_layout;
+  LayoutPtr m_layout;
 
   /**
    * Flag to indicate if this widget has the mouse.
@@ -243,11 +243,11 @@ public:
   // LAYOUT & CONSTRAINT
   // ===============================================================
 
-  Layout* getLayout();
-  void setLayout(Layout* layout);
+  LayoutPtr getLayout();
+  void setLayout(LayoutPtr layout);
 
-  Constraint* getConstraint();
-  void setConstraint(Constraint* constraint);
+  ConstraintPtr getConstraint();
+  void setConstraint(ConstraintPtr constraint);
 
   virtual void layout();
   virtual bool isLayoutFree();

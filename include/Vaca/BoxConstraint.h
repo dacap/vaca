@@ -53,7 +53,6 @@ class VACA_DLL BoxConstraint : public Constraint
 public:
 
   BoxConstraint(bool expansive);
-  BoxConstraint(const BoxConstraint& boxConstraint);
   virtual ~BoxConstraint();
 
   bool isExpansive();

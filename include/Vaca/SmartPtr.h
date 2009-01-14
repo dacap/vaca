@@ -33,6 +33,7 @@
 #define VACA_SMARTPTR_H
 
 #include "Vaca/base.h"
+#include "Vaca/Referenceable.h"
 
 namespace Vaca {
 
@@ -65,13 +66,19 @@ public:
     m_ptr = NULL;
   }
 
-  explicit SmartPtr(T* ptr) {
+  /*explicit*/ SmartPtr(T* ptr) {
     m_ptr = ptr;
     ref();
   }
 
-  SmartPtr(const SmartPtr& other) {
-    m_ptr = other.m_ptr;
+  SmartPtr(const SmartPtr<T>& other) {
+    m_ptr = other.get();
+    ref();
+  }
+
+  template<class T2>
+  SmartPtr(const SmartPtr<T2>& other) {
+    m_ptr = static_cast<T*>(other.get());
     ref();
   }
 
@@ -87,10 +94,20 @@ public:
     }
   }
 
-  SmartPtr& operator=(const SmartPtr& other) {
-    if (m_ptr != other.m_ptr) {
+  SmartPtr& operator=(const SmartPtr<T>& other) {
+    if (m_ptr != other.get()) {
       unref();
-      m_ptr = other.m_ptr;
+      m_ptr = other.get();
+      ref();
+    }
+    return *this;
+  }
+
+  template<class T2>
+  SmartPtr& operator=(const SmartPtr<T2>& other) {
+    if (m_ptr != static_cast<T*>(other.get())) {
+      unref();
+      m_ptr = static_cast<T*>(other.get());
       ref();
     }
     return *this;
@@ -99,18 +116,18 @@ public:
   inline T* get() const { return m_ptr; }
   inline T& operator*() const { return *m_ptr; }
   inline T* operator->() const { return m_ptr; }
-  inline operator bool() const { return m_ptr != NULL ? true: false; }
+  inline operator T*() const { return m_ptr; }
 
 private:
 
   void ref() {
     if (m_ptr)
-      m_ptr->ref();
+      ((Referenceable*)m_ptr)->ref();
   }
 
   void unref() {
     if (m_ptr) {
-      if (m_ptr->unref() == 0)
+      if (((Referenceable*)m_ptr)->unref() == 0)
 	delete m_ptr;
       m_ptr = NULL;
     }

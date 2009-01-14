@@ -210,7 +210,7 @@ ifdef ADD_COMPILER_VERSION
  ifneq ($(SUFFIX),)
    SUFFIX := $(SUFFIX)-
  endif
- SUFFIX := $(SUFFIX)$(shell gcc -dumpversion)
+ SUFFIX := $(SUFFIX)$(shell $(GXX) -dumpversion)
 endif
 
 ifneq ($(SUFFIX),)

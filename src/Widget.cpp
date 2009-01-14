@@ -238,9 +238,9 @@ Widget::~Widget()
     delete (*it);
   }
   
-  delete m_constraint;		// delete the constraint,
-  delete m_layout;		// the layout manager,
-  delete m_preferredSize;	// the preferred size
+  m_constraint = NULL;		// unref the constraint
+  m_layout = NULL;		// unref the layout manager
+  delete m_preferredSize;	// delete the preferred size
 
   // restore the old window-procedure
   if (m_baseWndProc != NULL)
@@ -337,11 +337,9 @@ void Widget::removeChild(Widget* child)
  * For most widgets, the Layout will be NULL. But for widgets like
  * Frame you should use #setLayout to change the Layout manager.
  *
- * @warning You shouldn't delete the returned pointer.
- *
- * @see setLayout, getConstraint, @ref page_tn_010, @ref page_tn_011
+ * @see setLayout, getConstraint, @ref page_tn_011
  */
-Layout* Widget::getLayout()
+LayoutPtr Widget::getLayout()
 {
   return m_layout;
 }
@@ -349,45 +347,10 @@ Layout* Widget::getLayout()
 /**
  * Changes the current layout manager to arrange widget's children.
  *
- * The @a layout pointer'll be deleted automatically in the #~Widget
- * destructor. If you change the layout manager, the old layout is
- * automatically deleted too.
- *
- * Example: 
- * @code
- * {
- *   Layout* layout1 = new MyLayout();
- *   Layout* layout2 = new MyBetterLayout();
- *   ...
- *   {
- *     Frame frame(...);
- *     frame.setLayout(layout1);
- *     frame.setLayout(layout2); // here layout1 is deleted automatically
- *   }
- *   ...
- *   // here layout2 doesn't exist (was automatically deleted in the Frame destructor)
- * }
- * @endcode
- *
- * Ilegal example:
- * @code
- * {
- *   MyLayout myLayout(...);
- *   Frame frame(...);
- *   frame.setLayout(&myLayout); // <- ilegal! the layout will be deleted two times!
- *   ...
- * }
- * @endcode
- *
- * @warning As general rule: You must to use dynamic allocated Layouts
- * with this routine. In other words, you shouldn't create instances of
- * Layout allocated in the stack.
- *
- * @see getLayout, setConstraint, @ref page_tn_010
+ * @see getLayout, setConstraint
  */
-void Widget::setLayout(Layout* layout)
+void Widget::setLayout(LayoutPtr layout)
 {
-  delete m_layout;
   m_layout = layout;
 }
 
@@ -398,11 +361,9 @@ void Widget::setLayout(Layout* layout)
  * to lay the widget. For example, the AnchorLayout uses a Anchor
  * constraint to know what side of a widget is anchored.
  *
- * @warning You shouldn't delete the returned pointer.
- *
- * @see setConstraint, getLayout, @ref page_tn_010
+ * @see setConstraint, getLayout
  */
-Constraint* Widget::getConstraint()
+ConstraintPtr Widget::getConstraint()
 {
   return m_constraint;
 }
@@ -410,16 +371,10 @@ Constraint* Widget::getConstraint()
 /**
  * Modifies the widget's constraint.
  *
- * The @a constraint pointer'll be deleted automatically by
- * the #~Widget destructor. If you change the constraint,
- * the old constraint will be deleted automatically (the same behavior
- * as #setLayout).
- *
- * @see getConstraint, setLayout, @ref page_tn_010
+ * @see getConstraint, setLayout
  */
-void Widget::setConstraint(Constraint* constraint)
+void Widget::setConstraint(ConstraintPtr constraint)
 {
-  delete m_constraint;
   m_constraint = constraint;
 }
 

@@ -120,6 +120,9 @@ unsigned Referenceable::getRefCount()
 #ifndef NDEBUG
 void Referenceable::showLeaks()
 {
+  if (!list.empty())
+    ::Beep(400, 100);
+
   for (std::vector<Referenceable*>::iterator
 	 it=list.begin(); it!=list.end(); ++it) {
     VACA_TRACE("leak Referenceable %p\n", *it);

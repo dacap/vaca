@@ -221,7 +221,7 @@ void ReBar::setImageList(ImageList& imageList)
     throw ReBarException(L"ReBar Error: Failed to initialize rebar!");
 
   // make a reference to the image list (remember that
-  // ImageLists are smart pointers)
+  // ImageLists are shared pointers)
   m_imageList = imageList;
 }
 

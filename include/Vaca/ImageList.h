@@ -37,7 +37,7 @@
 #include "Vaca/Color.h"
 #include "Vaca/ResourceId.h"
 #include "Vaca/GdiObject.h"
-#include "Vaca/SmartPtr.h"
+#include "Vaca/SharedPtr.h"
 
 namespace Vaca {
 
@@ -58,7 +58,7 @@ struct Win32DestroyImageList
  * ImageLists are containers of images and icons that can be used in
  * items of a ListView or a TreeView.
  *
- * This is a SmartPtr, so if you copy instances of ImageLists they will be
+ * This is a SharedPtr, so if you copy instances of ImageLists they will be
  * referencing to the same place.
  *
  * @win32
@@ -67,7 +67,7 @@ struct Win32DestroyImageList
  *
  * @see ListView#setNormalImageList, TreeView#setNormalImageList
  */
-class VACA_DLL ImageList : private SmartPtr<GdiObject<HIMAGELIST, Win32DestroyImageList> >
+class VACA_DLL ImageList : private SharedPtr<GdiObject<HIMAGELIST, Win32DestroyImageList> >
 {
 public:
 

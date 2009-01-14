@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_SMARTPTR_H
-#define VACA_SMARTPTR_H
+#ifndef VACA_SHAREDPTR_H
+#define VACA_SHAREDPTR_H
 
 #include "Vaca/base.h"
 #include "Vaca/Referenceable.h"
@@ -42,47 +42,46 @@ namespace Vaca {
  * automatically deletes the pointed object when it is
  * no longer referenced.
  *
- * What is a smart pointer? It is a class that wraps a pointer to a
- * dynamically allocated object. Various smart pointers can share
+ * What is a shared pointer? It is a class that wraps a pointer to a
+ * dynamically allocated object. Various shared pointers can share
  * the same object counting references for that object. When the
- * last smart pointer is destroyed, the object is automatically
+ * last shared pointer is destroyed, the object is automatically
  * deleted.
  *
- * It's used internally by Vaca to wrap classes that can't be
- * derivable and handle graphics resources (like Brush, Pen, Image,
- * Icon, etc.).
+ * The SharedPtr is mainly used to wrap classes that handle
+ * graphics resources (like Brush, Pen, Image, Icon, etc.).
  *
  * @tparam T Must be of Referenceable type, because Referenceable has
  *           the reference counter.
  */
 template<class T>
-class SmartPtr
+class SharedPtr
 {
   T* m_ptr;
 
 public:
 
-  SmartPtr() {
+  SharedPtr() {
     m_ptr = NULL;
   }
 
-  /*explicit*/ SmartPtr(T* ptr) {
+  /*explicit*/ SharedPtr(T* ptr) {
     m_ptr = ptr;
     ref();
   }
 
-  SmartPtr(const SmartPtr<T>& other) {
+  SharedPtr(const SharedPtr<T>& other) {
     m_ptr = other.get();
     ref();
   }
 
   template<class T2>
-  SmartPtr(const SmartPtr<T2>& other) {
+  SharedPtr(const SharedPtr<T2>& other) {
     m_ptr = static_cast<T*>(other.get());
     ref();
   }
 
-  virtual ~SmartPtr() {
+  virtual ~SharedPtr() {
     unref();
   }
 
@@ -94,7 +93,7 @@ public:
     }
   }
 
-  SmartPtr& operator=(const SmartPtr<T>& other) {
+  SharedPtr& operator=(const SharedPtr<T>& other) {
     if (m_ptr != other.get()) {
       unref();
       m_ptr = other.get();
@@ -104,7 +103,7 @@ public:
   }
 
   template<class T2>
-  SmartPtr& operator=(const SmartPtr<T2>& other) {
+  SharedPtr& operator=(const SharedPtr<T2>& other) {
     if (m_ptr != static_cast<T*>(other.get())) {
       unref();
       m_ptr = static_cast<T*>(other.get());
@@ -135,27 +134,27 @@ private:
 };
 
 /**
- * Compares if two smart-pointers points to the same place (object, memory address).
+ * Compares if two shared-pointers points to the same place (object, memory address).
  * 
- * @see @ref SmartPtr
+ * @see @ref SharedPtr
  */
 template<class T>
-bool operator==(const SmartPtr<T>& ptr1, const SmartPtr<T>& ptr2)
+bool operator==(const SharedPtr<T>& ptr1, const SharedPtr<T>& ptr2)
 {
   return ptr1.get() == ptr2.get();
 }
 
 /**
- * Compares if two smart-pointers points to different places (objects, memory addresses).
+ * Compares if two shared-pointers points to different places (objects, memory addresses).
  *
- * @see @ref SmartPtr
+ * @see @ref SharedPtr
  */
 template<class T>
-bool operator!=(const SmartPtr<T>& ptr1, const SmartPtr<T>& ptr2)
+bool operator!=(const SharedPtr<T>& ptr1, const SharedPtr<T>& ptr2)
 {
   return ptr1.get() != ptr2.get();
 }
 
 } // namespace Vaca
 
-#endif // VACA_SMARTPTR_H
+#endif // VACA_SHAREDPTR_H

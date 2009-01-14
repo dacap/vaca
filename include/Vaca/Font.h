@@ -33,7 +33,7 @@
 #define VACA_FONT_H
 
 #include "Vaca/base.h"
-#include "Vaca/SmartPtr.h"
+#include "Vaca/SharedPtr.h"
 #include "Vaca/GdiObject.h"
 
 namespace Vaca {
@@ -89,10 +89,10 @@ public:
 };
 
 /**
- * A smart pointer to a font that can be used in Graphics or Widget to
+ * A shared pointer to a font that can be used in Graphics or Widget to
  * draw text.
  * 
- * This is a SmartPtr, so if you copy instances of fonts they will be
+ * This is a SharedPtr, so if you copy instances of fonts they will be
  * referencing to the same place. You can't clone fonts because you
  * can't modify them.
  *
@@ -102,7 +102,7 @@ public:
  *
  * @see Graphics#setFont, Graphics#drawString
  */
-class VACA_DLL Font : private SmartPtr<GdiObject<HFONT> >
+class VACA_DLL Font : private SharedPtr<GdiObject<HFONT> >
 {
   friend class Application;
 

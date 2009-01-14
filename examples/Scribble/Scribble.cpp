@@ -68,9 +68,9 @@ protected:
       g.drawImage(m_image, Point(imageSize/2 - m_image.getSize()/2));
 
     // Assign the new image to the member variable m_image. Remember
-    // that Image class is a smart-pointer, so here the old image
+    // that Image class is a shared-pointer, so here the old image
     // referenced by m_image is automatically deleted.  This is the
-    // magic of SmartPtrs!
+    // magic of SharedPtrs!
     m_image = newImage;
 
     // redraw all the image

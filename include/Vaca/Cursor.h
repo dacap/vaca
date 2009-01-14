@@ -34,7 +34,7 @@
 
 #include "Vaca/base.h"
 #include "Vaca/ResourceId.h"
-#include "Vaca/SmartPtr.h"
+#include "Vaca/SharedPtr.h"
 #include "Vaca/GdiObject.h"
 
 namespace Vaca {
@@ -86,7 +86,7 @@ struct Win32DestroyCursor
 /**
  * A mouse cursor.
  *
- * This is a SmartPtr, so if you copy instances of cursors they will be
+ * This is a SharedPtr, so if you copy instances of cursors they will be
  * referencing to the same place. You can't clone cursors because you can't
  * modify them.
  *
@@ -94,7 +94,7 @@ struct Win32DestroyCursor
  *   This is a @msdn{HCURSOR} wrapper.
  * @endwin32
  */
-class VACA_DLL Cursor : private SmartPtr<GdiObject<HCURSOR, Win32DestroyCursor> >
+class VACA_DLL Cursor : private SharedPtr<GdiObject<HCURSOR, Win32DestroyCursor> >
 {
 public:
   Cursor();

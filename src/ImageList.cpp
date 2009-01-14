@@ -40,19 +40,19 @@ using namespace Vaca;
 #define GdiObj GdiObject<HIMAGELIST, Win32DestroyImageList>
 
 ImageList::ImageList()
-  : SmartPtr<GdiObj>(new GdiObj(ImageList_Create(16, 16, ILC_COLOR32, 0, 1)))
+  : SharedPtr<GdiObj>(new GdiObj(ImageList_Create(16, 16, ILC_COLOR32, 0, 1)))
 {
 }
 
 ImageList::ImageList(const Size& sz)
-  : SmartPtr<GdiObj>(new GdiObj(ImageList_Create(sz.w, sz.w, ILC_COLOR32, 0, 1)))
+  : SharedPtr<GdiObj>(new GdiObj(ImageList_Create(sz.w, sz.w, ILC_COLOR32, 0, 1)))
 {
   if (getHandle() == NULL)
     throw ResourceException(L"Can't create the image-list");
 }
 
 ImageList::ImageList(HIMAGELIST hImageList)
-  : SmartPtr<GdiObj>(new GdiObj(hImageList))
+  : SharedPtr<GdiObj>(new GdiObj(hImageList))
 {
 }
 
@@ -60,7 +60,7 @@ ImageList::ImageList(HIMAGELIST hImageList)
  * Loads a ImageList from a @msdn{BITMAP} resource.
  */
 ImageList::ImageList(ResourceId bitmapId, int widthPerIcon, Color maskColor)
-  : SmartPtr<GdiObj>(new GdiObj())
+  : SharedPtr<GdiObj>(new GdiObj())
 {
   HIMAGELIST himagelist =
     ImageList_LoadImage(Application::getHandle(),
@@ -82,7 +82,7 @@ ImageList::ImageList(ResourceId bitmapId, int widthPerIcon, Color maskColor)
  * Loads a ImageList from a file.
  */
 ImageList::ImageList(const String& fileName, int widthPerIcon, Color maskColor)
-  : SmartPtr<GdiObj>(new GdiObj())
+  : SharedPtr<GdiObj>(new GdiObj())
 {
   HIMAGELIST himagelist =
     ImageList_LoadImage(Application::getHandle(),

@@ -53,7 +53,7 @@ Icon::Icon()
  *   Icon to be referenced.
  */
 Icon::Icon(const Icon& icon)
-  : SmartPtr<GdiObj>(icon)
+  : SharedPtr<GdiObj>(icon)
 {
 }
 
@@ -69,7 +69,7 @@ Icon::Icon(const Icon& icon)
  *   When the resource with ID @a iconId wasn't found.
  */
 Icon::Icon(ResourceId iconId, const Size& sz)
-  : SmartPtr<GdiObj>(new GdiObj)
+  : SharedPtr<GdiObj>(new GdiObj)
 {
   HICON handle = reinterpret_cast<HICON>
     (::LoadImage(Application::getHandle(),
@@ -94,7 +94,7 @@ Icon::Icon(ResourceId iconId, const Size& sz)
  *   When the icon couldn't be loaded from the specified @a fileName.
  */
 Icon::Icon(const String& fileName, const Size& sz)
-  : SmartPtr<GdiObj>(new GdiObj)
+  : SharedPtr<GdiObj>(new GdiObj)
 {
   HICON handle = reinterpret_cast<HICON>
     (::LoadImage(Application::getHandle(),
@@ -116,7 +116,7 @@ Icon::Icon(const String& fileName, const Size& sz)
  *   A @msdn{HICON} handle.
  */
 Icon::Icon(HICON handle)
-  : SmartPtr<GdiObj>(new GdiObj(handle))
+  : SharedPtr<GdiObj>(new GdiObj(handle))
 {
 }
 

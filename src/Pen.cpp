@@ -36,13 +36,13 @@
 using namespace Vaca;
 
 Pen::Pen()
-  : SmartPtr<GdiObject<HPEN> >(new GdiObject<HPEN>(CreatePen(PS_COSMETIC | PS_SOLID, 1,
+  : SharedPtr<GdiObject<HPEN> >(new GdiObject<HPEN>(CreatePen(PS_COSMETIC | PS_SOLID, 1,
 							     RGB(0, 0, 0))))
 {
 }
 
 Pen::Pen(const Pen& pen)
-  : SmartPtr<GdiObject<HPEN> >(pen)
+  : SharedPtr<GdiObject<HPEN> >(pen)
 {
 }
 
@@ -54,14 +54,14 @@ Pen::Pen(const Pen& pen)
  *              if width > 0 the pen will be geometric.
  */
 Pen::Pen(const Color& color, int width)
-  : SmartPtr<GdiObject<HPEN> >(new GdiObject<HPEN>(CreatePen(PS_COSMETIC | PS_SOLID, width,
+  : SharedPtr<GdiObject<HPEN> >(new GdiObject<HPEN>(CreatePen(PS_COSMETIC | PS_SOLID, width,
 								 color.getColorRef())))
 {
 }
 
 Pen::Pen(const Color& color, int width,
 	 PenStyle style, PenEndCap endCap, PenJoin join)
-  : SmartPtr<GdiObject<HPEN> >(new GdiObject<HPEN>)
+  : SharedPtr<GdiObject<HPEN> >(new GdiObject<HPEN>)
 {
   int flags = 0;
 
@@ -117,7 +117,7 @@ Pen::~Pen()
 
 Pen& Pen::operator=(const Pen& pen)
 {
-  SmartPtr<GdiObject<HPEN> >::operator=(pen);
+  SharedPtr<GdiObject<HPEN> >::operator=(pen);
   return *this;
 }
 

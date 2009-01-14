@@ -40,7 +40,7 @@ using namespace Vaca;
  * Constructs the default font.
  */
 Font::Font()
-  : SmartPtr<GdiObject<HFONT> >(new GdiObject<HFONT>(reinterpret_cast<HFONT>(GetStockObject(DEFAULT_GUI_FONT))))
+  : SharedPtr<GdiObject<HFONT> >(new GdiObject<HFONT>(reinterpret_cast<HFONT>(GetStockObject(DEFAULT_GUI_FONT))))
 {
 }
 
@@ -48,7 +48,7 @@ Font::Font()
  * Makes a reference to the specified font.
  */
 Font::Font(const Font& font)
-  : SmartPtr<GdiObject<HFONT> >(font)
+  : SharedPtr<GdiObject<HFONT> >(font)
 {
 }
 
@@ -96,7 +96,7 @@ Font::Font(String familyName, int size, FontStyle style)
  * Wrapper constructor for HFONT.
  */
 Font::Font(HFONT hfont)
-  : SmartPtr<GdiObject<HFONT> >(new GdiObject<HFONT>(hfont))
+  : SharedPtr<GdiObject<HFONT> >(new GdiObject<HFONT>(hfont))
 {
 }
 
@@ -143,13 +143,13 @@ FontStyle Font::getStyle() const
  */
 Font& Font::operator=(const Font& font)
 {
-  SmartPtr<GdiObject<HFONT> >::operator=(font);
+  SharedPtr<GdiObject<HFONT> >::operator=(font);
   return *this;
 }
 
 void Font::assign(LPLOGFONT lplf)
 {
-  SmartPtr<GdiObject<HFONT> >::operator=(Font(CreateFontIndirect(lplf)));
+  SharedPtr<GdiObject<HFONT> >::operator=(Font(CreateFontIndirect(lplf)));
 }
 
 HFONT Font::getHandle() const

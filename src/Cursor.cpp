@@ -43,12 +43,12 @@ using namespace Vaca;
  * Creates the null cursor (NoCursor).
  */
 Cursor::Cursor()
-  : SmartPtr<GdiObj>(new GdiObj)
+  : SharedPtr<GdiObj>(new GdiObj)
 {
 }
 
 Cursor::Cursor(const Cursor& cursor)
-  : SmartPtr<GdiObj>(cursor)
+  : SharedPtr<GdiObj>(cursor)
 {
 }
 
@@ -57,7 +57,7 @@ Cursor::Cursor(const Cursor& cursor)
  *   When the resource with ID @a cursorId wasn't found.
  */
 Cursor::Cursor(ResourceId cursorId)
-  : SmartPtr<GdiObj>(new GdiObj)
+  : SharedPtr<GdiObj>(new GdiObj)
 {
   HCURSOR handle = ::LoadCursor(Application::getHandle(), cursorId.toLPTSTR());
   if (!handle)
@@ -71,7 +71,7 @@ Cursor::Cursor(ResourceId cursorId)
  *   When the specified system @a cursor couldn't be loaded.
  */
 Cursor::Cursor(SysCursor cursor)
-  : SmartPtr<GdiObj>(new GdiObj)
+  : SharedPtr<GdiObj>(new GdiObj)
 {
   LPCTSTR winCursor = IDC_ARROW;
 
@@ -113,7 +113,7 @@ Cursor::Cursor(SysCursor cursor)
  *   When the cursor couldn't be loaded from the specified @a fileName.
  */
 Cursor::Cursor(const String& fileName)
-  : SmartPtr<GdiObj>(new GdiObj)
+  : SharedPtr<GdiObj>(new GdiObj)
 {
   HCURSOR handle = reinterpret_cast<HCURSOR>
     (::LoadImage(Application::getHandle(),
@@ -128,7 +128,7 @@ Cursor::Cursor(const String& fileName)
 }
 
 Cursor::Cursor(HCURSOR handle)
-  : SmartPtr<GdiObj>(new GdiObj(handle))
+  : SharedPtr<GdiObj>(new GdiObj(handle))
 {
 }
 

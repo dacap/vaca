@@ -1,6 +1,6 @@
 #include <cassert>
 
-#include "Vaca/SmartPtr.h"
+#include "Vaca/SharedPtr.h"
 #include "Vaca/Referenceable.h"
 
 using namespace Vaca;
@@ -14,8 +14,8 @@ public:
 
 void test_equal()
 {
-  SmartPtr<Int> a(new Int(5));
-  SmartPtr<Int> b;
+  SharedPtr<Int> a(new Int(5));
+  SharedPtr<Int> b;
   assert(a->value == 5);
   assert(a != b);
   b = a;

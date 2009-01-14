@@ -34,14 +34,14 @@
 
 #include "Vaca/base.h"
 #include "Vaca/GdiObject.h"
-#include "Vaca/SmartPtr.h"
+#include "Vaca/SharedPtr.h"
 
 namespace Vaca {
 
 /**
  * A brush can be used to fill rectangles, ellipses, and paths.
  *
- * This is a SmartPtr, so if you copy instances of brushes they will be
+ * This is a SharedPtr, so if you copy instances of brushes they will be
  * referencing to the same place. You can't clone brushes because you can't
  * modify them.
  *
@@ -51,7 +51,7 @@ namespace Vaca {
  *
  * @see Graphics, Graphics#fillRect, Graphics#fillPath
  */
-class VACA_DLL Brush : private SmartPtr<GdiObject<HBRUSH> >
+class VACA_DLL Brush : private SharedPtr<GdiObject<HBRUSH> >
 {
 public:
 

@@ -38,25 +38,25 @@
 using namespace Vaca;
 
 Region::Region()
-  : SmartPtr<GdiObject<HRGN> >(new GdiObject<HRGN>(CreateRectRgn(0, 0, 0, 0)))
+  : SharedPtr<GdiObject<HRGN> >(new GdiObject<HRGN>(CreateRectRgn(0, 0, 0, 0)))
 {
   assert(getHandle()); // TODO exception
 }
 
 Region::Region(const Region& rgn)
-  : SmartPtr<GdiObject<HRGN> >(rgn)
+  : SharedPtr<GdiObject<HRGN> >(rgn)
 {
 }
 
 Region::Region(HRGN hrgn)
-  : SmartPtr<GdiObject<HRGN> >(new GdiObject<HRGN>)
+  : SharedPtr<GdiObject<HRGN> >(new GdiObject<HRGN>)
 {
   assert(hrgn);
   get()->setHandle(hrgn);
 }
 
 Region::Region(const Rect& rc)
-  : SmartPtr<GdiObject<HRGN> >(new GdiObject<HRGN>)
+  : SharedPtr<GdiObject<HRGN> >(new GdiObject<HRGN>)
 {
   RECT _rc = rc;
   get()->setHandle(CreateRectRgnIndirect(&_rc));
@@ -104,7 +104,7 @@ bool Region::isComplex() const
 
 Region& Region::operator=(const Region& rgn)
 {
-  SmartPtr<GdiObject<HRGN> >::operator=(rgn);
+  SharedPtr<GdiObject<HRGN> >::operator=(rgn);
   return *this;
 }
 

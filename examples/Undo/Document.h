@@ -77,6 +77,6 @@ public:
   
 };
 
-typedef SmartPtr<Document> DocumentPtr;
+typedef SharedPtr<Document> DocumentPtr;
 
 #endif // DOCUMENT_H

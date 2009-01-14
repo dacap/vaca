@@ -61,7 +61,7 @@ ImageHandle::~ImageHandle()
 //////////////////////////////////////////////////////////////////////
 
 Image::Image()
-  : SmartPtr<ImageHandle>(new ImageHandle())
+  : SharedPtr<ImageHandle>(new ImageHandle())
 {
 }
 
@@ -70,7 +70,7 @@ Image::Image()
  * constructor uses Win32 LoadBitmap.
  */
 Image::Image(ResourceId imageId)
-  : SmartPtr<ImageHandle>(new ImageHandle())
+  : SharedPtr<ImageHandle>(new ImageHandle())
 {
   // HBITMAP
   HBITMAP hbmp = LoadBitmap(Application::getHandle(), imageId.toLPTSTR());
@@ -83,7 +83,7 @@ Image::Image(ResourceId imageId)
 }
 
 Image::Image(const String& fileName)
-  : SmartPtr<ImageHandle>(new ImageHandle())
+  : SharedPtr<ImageHandle>(new ImageHandle())
 {
   // file name size
   int size = fileName.size()+1;
@@ -107,7 +107,7 @@ Image::Image(const String& fileName)
 }
 
 Image::Image(const Size& sz)
-  : SmartPtr<ImageHandle>(new ImageHandle())
+  : SharedPtr<ImageHandle>(new ImageHandle())
 {
   assert(sz.w > 0 && sz.h > 0);
 
@@ -118,7 +118,7 @@ Image::Image(const Size& sz)
 }
 
 Image::Image(const Size& sz, int depth)
-  : SmartPtr<ImageHandle>(new ImageHandle())
+  : SharedPtr<ImageHandle>(new ImageHandle())
 {
   assert(sz.w > 0 && sz.h > 0);
 
@@ -151,7 +151,7 @@ Image::Image(const Size& sz, int depth)
 }
 
 Image::Image(const Size& sz, Graphics& g)
-  : SmartPtr<ImageHandle>(new ImageHandle())
+  : SharedPtr<ImageHandle>(new ImageHandle())
 {
   assert(g.getHandle());
   assert(sz.w > 0 && sz.h > 0);
@@ -162,7 +162,7 @@ Image::Image(const Size& sz, Graphics& g)
 }
 
 Image::Image(const Image& image)
-  : SmartPtr<ImageHandle>(image)
+  : SharedPtr<ImageHandle>(image)
 {
 }
 
@@ -222,7 +222,7 @@ HBITMAP Image::getHandle() const
 
 Image& Image::operator=(const Image& image)
 {
-  SmartPtr<ImageHandle>::operator=(image);
+  SharedPtr<ImageHandle>::operator=(image);
   return *this;
 }
 

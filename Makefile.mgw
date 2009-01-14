@@ -99,7 +99,7 @@ endif
 
 ifndef TESTS
 TESTS = test_backward test_bind test_handle test_menu test_point	\
-	test_rect test_region test_signal test_size test_smartptr	\
+	test_rect test_region test_signal test_size test_sharedptr	\
 	test_string test_tab test_thread test_widget
 endif
 

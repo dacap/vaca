@@ -35,7 +35,7 @@
 #include "Vaca/base.h"
 #include "Vaca/Size.h"
 #include "Vaca/ResourceId.h"
-#include "Vaca/SmartPtr.h"
+#include "Vaca/SharedPtr.h"
 #include "Vaca/GdiObject.h"
 
 namespace Vaca {
@@ -54,9 +54,9 @@ struct Win32DestroyIcon
 };
 
 /**
- * A smart pointer to an icon.
+ * A shared pointer to an icon.
  *
- * This is a SmartPtr, so if you copy instances of icons they will be
+ * This is a SharedPtr, so if you copy instances of icons they will be
  * referencing to the same place. You can't clone icons because you can't
  * modify them.
  *
@@ -71,7 +71,7 @@ struct Win32DestroyIcon
  *   This is a @msdn{HICON} wrapper.
  * @endwin32
  */
-class VACA_DLL Icon : private SmartPtr<GdiObject<HICON, Win32DestroyIcon> >
+class VACA_DLL Icon : private SharedPtr<GdiObject<HICON, Win32DestroyIcon> >
 {
 public:
   Icon();

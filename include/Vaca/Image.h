@@ -36,7 +36,7 @@
 #include "Vaca/ResourceId.h"
 #include "Vaca/Size.h"
 #include "Vaca/GdiObject.h"
-#include "Vaca/SmartPtr.h"
+#include "Vaca/SharedPtr.h"
 
 namespace Vaca {
 
@@ -57,9 +57,9 @@ public:
 };
 
 /**
- * A smart pointer to an image.
+ * A shared pointer to an image.
  *
- * This is a SmartPtr, so if you copy instances of images they will be
+ * This is a SharedPtr, so if you copy instances of images they will be
  * referencing to the same place. You have to use Image#clone method
  * to create real copies of the Image.
  *
@@ -76,7 +76,7 @@ public:
  *   This is a @msdn{HBITMAP} wrapper.
  * @endwin32
  */
-class VACA_DLL Image : private SmartPtr<ImageHandle>
+class VACA_DLL Image : private SharedPtr<ImageHandle>
 {
 public:
   Image();

@@ -36,17 +36,17 @@
 using namespace Vaca;
 
 Brush::Brush()
-  : SmartPtr<GdiObject<HBRUSH> >(new GdiObject<HBRUSH>(CreateSolidBrush(RGB(0, 0, 0))))
+  : SharedPtr<GdiObject<HBRUSH> >(new GdiObject<HBRUSH>(CreateSolidBrush(RGB(0, 0, 0))))
 {
 }
 
 Brush::Brush(const Brush& brush)
-  : SmartPtr<GdiObject<HBRUSH> >(brush)
+  : SharedPtr<GdiObject<HBRUSH> >(brush)
 {
 }
 
 Brush::Brush(const Color& color)
-  : SmartPtr<GdiObject<HBRUSH> >(new GdiObject<HBRUSH>(CreateSolidBrush(color.getColorRef())))
+  : SharedPtr<GdiObject<HBRUSH> >(new GdiObject<HBRUSH>(CreateSolidBrush(color.getColorRef())))
 {
 }
 
@@ -56,7 +56,7 @@ Brush::~Brush()
 
 Brush& Brush::operator=(const Brush& brush)
 {
-  SmartPtr<GdiObject<HBRUSH> >::operator=(brush);
+  SharedPtr<GdiObject<HBRUSH> >::operator=(brush);
   return *this;
 }
 

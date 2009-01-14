@@ -35,7 +35,7 @@
 #include "Vaca/base.h"
 #include "Vaca/Enum.h"
 #include "Vaca/GdiObject.h"
-#include "Vaca/SmartPtr.h"
+#include "Vaca/SharedPtr.h"
 
 namespace Vaca {
 
@@ -132,7 +132,7 @@ typedef Enum<PenJoinEnum> PenJoin;
  * A pen can be used to draw lines, edges of rectangles, ellipses, and
  * paths.
  *
- * This is a SmartPtr, so if you copy instances of pens they will be
+ * This is a SharedPtr, so if you copy instances of pens they will be
  * referencing to the same place. You can't clone pens because you can't
  * modify them.
  *
@@ -142,7 +142,7 @@ typedef Enum<PenJoinEnum> PenJoin;
  *
  * @see Graphics, Graphics#drawLine, Graphics#drawRect, Graphics#strokePath
  */
-class VACA_DLL Pen : private SmartPtr<GdiObject<HPEN> >
+class VACA_DLL Pen : private SharedPtr<GdiObject<HPEN> >
 {
 public:
 

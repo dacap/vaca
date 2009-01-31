@@ -144,7 +144,6 @@ TESTS_EXE = \
   bin/test_region.exe \
   bin/test_signal.exe \
   bin/test_size.exe \
-  bin/test_smartptr.exe \
   bin/test_string.exe \
   bin/test_tab.exe \
   bin/test_thread.exe

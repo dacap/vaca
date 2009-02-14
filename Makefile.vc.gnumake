@@ -1,4 +1,4 @@
-# Vaca - Visual Application Components Abstraction
+# Vaca - Visual Application Components Abstraction	-*- Makefile -*-
 # Copyright (c) 2005-2009 David Capello
 # All rights reserved.
 
@@ -207,12 +207,19 @@ all: lib examples tests
 ifdef STATIC
 lib: $(VACA_LIB)
 else
+ifdef STATIC_LIBC
+error:
+	@echo You cannot compile Vaca DLL using the static C runtime of MSVC.
+	@exit 1
+lib: error
+else
 lib: $(VACA_DLL)
 endif
+endif
 
-examples: $(EXAMPLES_EXE)
+examples: lib $(EXAMPLES_EXE)
 
-tests: $(TESTS_EXE)
+tests: lib $(TESTS_EXE)
 
 runtests: tests
 	@for file in bin/test_*.exe ; do \

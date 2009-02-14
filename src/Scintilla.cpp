@@ -86,8 +86,11 @@ void SciEdit::setFont(Font font)
   if (font.getLogFont(&lf)) {
     FontStyle style = font.getStyle();
 
+    // we have to convert the face name to ANSI
+    std::string faceName = convert_to<std::string>((Char*)lf.lfFaceName);
+
     // set font for the default style
-    sendMessage(SCI_STYLESETFONT, STYLE_DEFAULT, reinterpret_cast<LPARAM>(lf.lfFaceName));
+    sendMessage(SCI_STYLESETFONT, STYLE_DEFAULT, reinterpret_cast<LPARAM>(faceName.c_str()));
     sendMessage(SCI_STYLESETSIZE, STYLE_DEFAULT, font.getPointSize());
     sendMessage(SCI_STYLESETBOLD, STYLE_DEFAULT, style & FontStyle::Bold ? TRUE: FALSE);
     sendMessage(SCI_STYLESETITALIC, STYLE_DEFAULT, style & FontStyle::Italic ? TRUE: FALSE);

@@ -42,7 +42,7 @@ TreeNode::TreeNode(const String& text, int imageIndex, int selectedImageIndex)
   , m_selectedImage(selectedImageIndex)
 {
   m_parent = NULL;
-  m_HTREEITEM = NULL;
+  m_handle = NULL;
   m_owner = NULL;
 
   m_deleted = false;
@@ -69,9 +69,9 @@ TreeNode::~TreeNode()
   // finally, we can remove the node from the Win32 TreeView control
   // (because it shouldn't have any children)
   if (m_owner != NULL) {
-    assert(TreeView_GetChild(m_owner->getHandle(), m_HTREEITEM) == NULL);
+    assert(TreeView_GetChild(m_owner->getHandle(), m_handle) == NULL);
 
-    TreeView_DeleteItem(m_owner->getHandle(), m_HTREEITEM);
+    TreeView_DeleteItem(m_owner->getHandle(), m_handle);
   }
 }
 
@@ -82,7 +82,7 @@ TreeNode::~TreeNode()
 void TreeNode::addNode(TreeNode* node)
 {
   assert(node != NULL);
-  assert(node->m_HTREEITEM == NULL && node->m_parent == NULL);
+  assert(node->m_handle == NULL && node->m_parent == NULL);
 
   // add this node in the "m_children" container of the parent
   this->m_children.push_back(node);
@@ -243,21 +243,21 @@ bool TreeNode::isExpanded()
 
 void TreeNode::setExpanded(bool state)
 {
-  assert(m_HTREEITEM != NULL && m_owner != NULL);
+  assert(m_handle != NULL && m_owner != NULL);
 
-  TreeView_Expand(m_owner->getHandle(), m_HTREEITEM, state ? TVE_EXPAND: TVE_COLLAPSE);
+  TreeView_Expand(m_owner->getHandle(), m_handle, state ? TVE_EXPAND: TVE_COLLAPSE);
 }
 
-void TreeNode::ensureVisibility()
+void TreeNode::ensureVisible()
 {
-  assert(m_HTREEITEM != NULL && m_owner != NULL);
+  assert(m_handle != NULL && m_owner != NULL);
 
-  TreeView_EnsureVisible(m_owner->getHandle(), m_HTREEITEM);
+  TreeView_EnsureVisible(m_owner->getHandle(), m_handle);
 }
 
 HTREEITEM TreeNode::getHandle()
 {
-  return m_HTREEITEM;
+  return m_handle;
 }
 
 TreeNode* TreeNode::fromHandle(HWND hwnd, HTREEITEM htreeitem)
@@ -332,7 +332,7 @@ void TreeNode::addToTreeView(TreeView* treeView)
   if (treeView != NULL) {
     TVINSERTSTRUCT is;
 
-    is.hParent = m_parent->m_HTREEITEM;
+    is.hParent = m_parent->m_handle;
     is.hInsertAfter = TVI_LAST;
     is.item.mask = TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_CHILDREN | TVIF_PARAM;
     is.item.pszText = LPSTR_TEXTCALLBACK;
@@ -341,7 +341,7 @@ void TreeNode::addToTreeView(TreeView* treeView)
     is.item.cChildren = I_CHILDRENCALLBACK;
     is.item.lParam = reinterpret_cast<LPARAM>(this);
 
-    m_HTREEITEM = TreeView_InsertItem(treeView->getHandle(), &is);
+    m_handle = TreeView_InsertItem(treeView->getHandle(), &is);
   }
 
   for (Container::iterator it=m_children.begin();
@@ -365,14 +365,14 @@ void TreeNode::removeFromTreeView()
   // remove the node from the Win32 TreeView control (because it
   // shouldn't have any children)
   if (m_owner != NULL) {
-    assert(m_HTREEITEM != NULL);
+    assert(m_handle != NULL);
 
-    TreeView_DeleteItem(m_owner->getHandle(), m_HTREEITEM);
+    TreeView_DeleteItem(m_owner->getHandle(), m_handle);
 
-    m_HTREEITEM = NULL;
+    m_handle = NULL;
     m_owner = NULL;
   }
   else {
-    assert(m_HTREEITEM == NULL);
+    assert(m_handle == NULL);
   }
 }

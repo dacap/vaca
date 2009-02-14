@@ -55,18 +55,29 @@ String Clipboard::getString() const
   HWND hwndOwner = m_owner ? m_owner->getHandle(): NULL;
   String str;
 
-  if (!IsClipboardFormatAvailable(CF_TEXT))
+  if (!IsClipboardFormatAvailable(CF_TEXT) &&
+      !IsClipboardFormatAvailable(CF_UNICODETEXT))
     return str;
 
   if (!OpenClipboard(hwndOwner)) 
     return str;
 
-  HGLOBAL hglobal = GetClipboardData(CF_TEXT); 
+  HGLOBAL hglobal = GetClipboardData(CF_UNICODETEXT);
   if (hglobal != NULL) {
-    LPTSTR lptstr = static_cast<LPTSTR>(GlobalLock(hglobal));
-    if (lptstr != NULL) {
-      str.assign(lptstr);
+    LPWSTR lpwstr = static_cast<LPWSTR>(GlobalLock(hglobal));
+    if (lpwstr != NULL) {
+      str = lpwstr;
       GlobalUnlock(hglobal);
+    }
+  }
+  else {
+    hglobal = GetClipboardData(CF_TEXT);
+    if (hglobal != NULL) {
+      LPSTR lpstr = static_cast<LPSTR>(GlobalLock(hglobal));
+      if (lpstr != NULL) {
+	str = convert_to<String>(lpstr);
+	GlobalUnlock(hglobal);
+      }
     }
   }
 

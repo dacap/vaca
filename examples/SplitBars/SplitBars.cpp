@@ -108,7 +108,7 @@ public:
     SplitBar* sp2 = new SplitBar(Orientation::Horizontal, sp1,
 				 SplitBar::Styles::Default |
 				 SplitBar::Styles::ByPixels);
-    sp1->setBarPosition(100);	// pixels
+    sp2->setBarPosition(100);	// pixels
 
     me = new TextEdit(L"Sub First Panel", sp2, TextEdit::Styles::TextArea +
 					       Widget::Styles::Scroll);

@@ -523,6 +523,13 @@ const Style SplitBar::Styles::Default =
   Widget::Styles::Visible |
   Widget::Styles::Container;
 
+/**
+ * SplitBar position is expressed in percentage by default, but if you
+ * specify this style the position will be expressed in pixels.
+ */
+const Style SplitBar::Styles::ByPixels =
+  Style(1, 0);
+
 // ===================================================================
 // Sliders
 // ===================================================================
@@ -677,6 +684,9 @@ const Style ListView::Styles::Default =
 
 const Style ListView::Styles::SingleSelection =
   Style(LVS_SINGLESEL, 0);
+
+const Style ListView::Styles::ShowSelectionAlways =
+  Style(LVS_SHOWSELALWAYS, 0);
 
 // ===================================================================
 // TreeView

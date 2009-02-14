@@ -32,23 +32,9 @@ LIBS = User32.lib Shell32.lib ComCtl32.lib ComDlg32.lib Gdi32.lib	\
 # ----------------------------------------------------------------------
 
 !if "$(STATIC)" == "1"
-
 CPPFLAGS = $(CPPFLAGS) -DVACA_STATIC=1
-
-# !if "$(DEBUG)" == "1"
-# SUFFIX = _ds
-# !else
-# SUFFIX = _s
-# !endif
-
 !else
-
 VACA_LIB_FLAGS = -DVACA_SRC=1
-
-# !if "$(DEBUG)" == ""
-# SUFFIX = _d
-# !endif
-
 !endif
 
 # ----------------------------------------------------------------------
@@ -142,6 +128,7 @@ TESTS_EXE = \
   bin/test_point.exe \
   bin/test_rect.exe \
   bin/test_region.exe \
+  bin/test_sharedptr.exe \
   bin/test_signal.exe \
   bin/test_size.exe \
   bin/test_string.exe \
@@ -410,14 +397,14 @@ obj/test_rect.obj: tests/test_rect.cpp
 obj/test_region.obj: tests/test_region.cpp
 	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c tests/test_region.cpp
 
+obj/test_sharedptr.obj: tests/test_sharedptr.cpp
+	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c tests/test_sharedptr.cpp
+
 obj/test_signal.obj: tests/test_signal.cpp
 	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c tests/test_signal.cpp
 
 obj/test_size.obj: tests/test_size.cpp
 	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c tests/test_size.cpp
-
-obj/test_smartptr.obj: tests/test_smartptr.cpp
-	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c tests/test_smartptr.cpp
 
 obj/test_string.obj: tests/test_string.cpp
 	$(CPP) -nologo $(CPPFLAGS) -Foobj/ -c tests/test_string.cpp

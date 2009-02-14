@@ -1,0 +1,261 @@
+# Vaca - Visual Application Components Abstraction
+# Copyright (c) 2005-2009 David Capello
+# All rights reserved.
+
+default: all
+
+# ----------------------------------------------------------------------
+# Extensions
+# ----------------------------------------------------------------------
+
+_OBJ = .obj
+_LIB = .lib
+_DLL = .dll
+_EXE = .exe
+_RES = .res
+
+# ----------------------------------------------------------------------
+# Programs
+# ----------------------------------------------------------------------
+
+AR	= lib -NOLOGO
+CPP	= cl -nologo
+LINK	= link -NOLOGO
+RM	= "./gnumake/rm.exe"
+CP	= "./gnumake/cp.exe"
+MV	= "./gnumake/mv.exe"
+RMDIR	= rmdir
+MKDIR	= mkdir
+WINDRES = rc
+
+# ----------------------------------------------------------------------
+# Common
+# ----------------------------------------------------------------------
+
+include Makefile.common
+
+# ----------------------------------------------------------------------
+# Flags
+# ----------------------------------------------------------------------
+
+CPPFLAGS += -wd4355 -wd4996 -Ob1 -EHa
+LIBS += User32.lib Shell32.lib ComCtl32.lib ComDlg32.lib Gdi32.lib	\
+        Msimg32.lib WinMM.lib AdvAPI32.lib Ole32.lib ShLwApi.lib	\
+        Vfw32.Lib WinInet.lib
+EXE_LIBS += $(LIBS)
+
+# ----------------------------------------------------------------------
+# PROFILE?
+# ----------------------------------------------------------------------
+
+ifdef PROFILE
+   CPPFLAGS += /GL /O2
+   DLLFLAGS += /LTCG
+   LFLAGS   += /LTCG
+endif
+
+# ----------------------------------------------------------------------
+# DEBUG
+# ----------------------------------------------------------------------
+
+ifdef DEBUG
+  CPPFLAGS += -Zi
+  DLLFLAGS += -DEBUG
+  LFLAGS   += -DEBUG
+
+  ifdef STATIC_LIBC
+    CPPFLAGS += -MTd
+  else
+    CPPFLAGS += -MDd
+  endif
+else
+  ifdef STATIC_LIBC
+    CPPFLAGS += -MT
+  else
+    CPPFLAGS += -MD
+  endif
+endif
+
+# ----------------------------------------------------------------------
+# RELEASE (optimized)
+# ----------------------------------------------------------------------
+
+ifdef RELEASE
+  CPPFLAGS += -O2
+  DLLFLAGS += -RELEASE
+  LFLAGS   += -RELEASE
+endif
+
+# ----------------------------------------------------------------------
+# Memory leak detector
+# ----------------------------------------------------------------------
+
+ifdef MEMORY_LEAK_DETECTOR
+#   VACA_LIB_FLAGS += -D_DEBUG
+#   VACA_EXE_FLAGS += -D_DEBUG
+  CPPFLAGS += -Ithird_party/nvwa -DMEMORY_LEAK_DETECTOR
+#   LFLAGS += -g
+#   DLLFLAGS += -g
+  LIB_SOURCES += $(basename $(notdir $(wildcard third_party/nvwa/*.cpp)))
+endif
+
+# ----------------------------------------------------------------------
+# Files
+# ----------------------------------------------------------------------
+
+VACA_LIB = lib/Vaca$(SUFFIX)$(_LIB)
+VACA_DLL = bin/Vaca$(SUFFIX)$(_DLL)
+
+LIB_OBJS = $(addprefix obj/Library., $(addsuffix $(SUFFIX)$(_OBJ), $(LIB_SOURCES)))
+EXAMPLES_EXE = $(addprefix bin/Example., $(addsuffix $(SUFFIX)$(_EXE), $(EXAMPLES)))
+TESTS_EXE = $(addprefix bin/Test., $(addsuffix $(SUFFIX)$(_EXE), $(TESTS)))
+
+EXAMPLES_DIRS_WITH_RC = $(dir $(wildcard examples/*/*.rc))
+
+# ----------------------------------------------------------------------
+# Generic Rules
+# ----------------------------------------------------------------------
+
+vpath %.cpp $(addprefix examples/, $(EXAMPLES)) tests
+vpath %.rc $(EXAMPLES_DIRS_WITH_RC)
+
+obj/Library.%$(SUFFIX)$(_OBJ): src/%.cpp
+	$(CPP) $(CPPFLAGS) $(VACA_LIB_FLAGS) -Fo$@ -c $<
+
+obj/Library.%$(SUFFIX)$(_OBJ): third_party/nvwa/%.cpp
+	$(CPP) $(CPPFLAGS) $(VACA_LIB_FLAGS) -Fo$@ -c $<
+
+obj/Example.%$(SUFFIX)$(_OBJ): %.cpp
+	$(CPP) $(CPPFLAGS) $(VACA_EXE_FLAGS) -Fo$@ -c $<
+
+obj/Example$(SUFFIX)$(_RES): examples/Example.rc
+	$(WINDRES) $<
+	$(MV) examples/Example$(_RES) $@
+
+obj/Example.%$(SUFFIX)$(_RES): %.rc
+	$(WINDRES) $<
+	$(MV) $(basename $<)$(_RES) $@
+
+obj/Test.%$(SUFFIX)$(_OBJ): tests/%.cpp
+	$(CPP) $(CPPFLAGS) $(VACA_EXE_FLAGS) -Fo$@ -c $<
+
+# %.h.gch: %.h
+# 	$(CPP) $(CPPFLAGS) -o $@ -c $<
+
+ifdef STATIC
+$(VACA_LIB): $(LIB_OBJS)
+	$(AR) -OUT:$@ $^
+else
+$(VACA_LIB): $(LIB_OBJS)
+	$(RM) -f $@
+
+$(VACA_DLL): $(VACA_LIB)
+	$(LINK) $(DLLFLAGS) -DLL -IMPLIB:$(VACA_LIB) $(LIB_OBJS) $(LIBS) -OUT:$(VACA_DLL)
+endif
+
+# general examples
+
+bin/Example.%$(SUFFIX)$(_EXE): obj/Example.%$(SUFFIX)$(_OBJ) obj/Example$(SUFFIX)$(_RES) $(VACA_LIB)
+	$(LINK) $(LFLAGS) -SUBSYSTEM:WINDOWS -MACHINE:X86 -OUT:$@ $^ $(EXE_LIBS)
+
+# special examples
+
+bin/Example.Bixes$(SUFFIX)$(_EXE): obj/Example.Bixes$(SUFFIX)$(_OBJ) obj/Example.Bixes$(SUFFIX)$(_RES) $(VACA_LIB)
+	$(LINK) $(LFLAGS) -SUBSYSTEM:WINDOWS -MACHINE:X86 -OUT:$@ $^ $(EXE_LIBS)
+
+bin/Example.Commands$(SUFFIX)$(_EXE): obj/Example.Commands$(SUFFIX)$(_OBJ) obj/Example.Commands$(SUFFIX)$(_RES) $(VACA_LIB)
+	$(LINK) $(LFLAGS) -SUBSYSTEM:WINDOWS -MACHINE:X86 -OUT:$@ $^ $(EXE_LIBS)
+
+bin/Example.DialogResource$(SUFFIX)$(_EXE): obj/Example.DialogResource$(SUFFIX)$(_OBJ) obj/Example.DialogResource$(SUFFIX)$(_RES) $(VACA_LIB)
+	$(LINK) $(LFLAGS) -SUBSYSTEM:WINDOWS -MACHINE:X86 -OUT:$@ $^ $(EXE_LIBS)
+
+bin/Example.EyeDropper$(SUFFIX)$(_EXE): obj/Example.EyeDropper$(SUFFIX)$(_OBJ) obj/Example.EyeDropper$(SUFFIX)$(_RES) $(VACA_LIB)
+	$(LINK) $(LFLAGS) -SUBSYSTEM:WINDOWS -MACHINE:X86 -OUT:$@ $^ $(EXE_LIBS)
+
+bin/Example.Hashing$(SUFFIX)$(_EXE): obj/Example.Hashing$(SUFFIX)$(_OBJ) obj/Example.md5$(SUFFIX)$(_OBJ) obj/Example.sha1$(SUFFIX)$(_OBJ) obj/Example$(SUFFIX)$(_RES) $(VACA_LIB)
+	$(LINK) $(LFLAGS) -SUBSYSTEM:WINDOWS -MACHINE:X86 -OUT:$@ $^ $(EXE_LIBS)
+
+bin/Example.Images$(SUFFIX)$(_EXE): obj/Example.Images$(SUFFIX)$(_OBJ) obj/Example.Images$(SUFFIX)$(_RES) $(VACA_LIB)
+	$(LINK) $(LFLAGS) -SUBSYSTEM:WINDOWS -MACHINE:X86 -OUT:$@ $^ $(EXE_LIBS)
+
+bin/Example.MenuResource$(SUFFIX)$(_EXE): obj/Example.MenuResource$(SUFFIX)$(_OBJ) obj/Example.MenuResource$(SUFFIX)$(_RES) $(VACA_LIB)
+	$(LINK) $(LFLAGS) -SUBSYSTEM:WINDOWS -MACHINE:X86 -OUT:$@ $^ $(EXE_LIBS)
+
+bin/Example.SplitBars$(SUFFIX)$(_EXE): obj/Example.SplitBars$(SUFFIX)$(_OBJ) obj/Example.SplitBars$(SUFFIX)$(_RES) $(VACA_LIB)
+	$(LINK) $(LFLAGS) -SUBSYSTEM:WINDOWS -MACHINE:X86 -OUT:$@ $^ $(EXE_LIBS)
+
+bin/Example.TextEditor$(SUFFIX)$(_EXE): obj/Example.TextEditor$(SUFFIX)$(_OBJ) obj/Example.TextEditor$(SUFFIX)$(_RES) $(VACA_LIB)
+	$(LINK) $(LFLAGS) -SUBSYSTEM:WINDOWS -MACHINE:X86 -OUT:$@ $^ $(EXE_LIBS)
+
+bin/Example.ToolBars$(SUFFIX)$(_EXE): obj/Example.ToolBars$(SUFFIX)$(_OBJ) obj/Example.ToolBars$(SUFFIX)$(_RES) $(VACA_LIB)
+	$(LINK) $(LFLAGS) -SUBSYSTEM:WINDOWS -MACHINE:X86 -OUT:$@ $^ $(EXE_LIBS)
+
+bin/Example.WebCam$(SUFFIX)$(_EXE): obj/Example.WebCam$(SUFFIX)$(_OBJ) obj/Example$(SUFFIX)$(_RES) $(VACA_LIB)
+	$(LINK) $(LFLAGS) -SUBSYSTEM:WINDOWS -MACHINE:X86 -OUT:$@ $^ $(EXE_LIBS) vfw32.lib
+
+# tests
+
+bin/Test.%$(SUFFIX)$(_EXE): obj/Test.%$(SUFFIX)$(_OBJ) $(VACA_LIB)
+	$(LINK) $(LFLAGS) -SUBSYSTEM:CONSOLE -MACHINE:X86 -OUT:$@ $^ $(EXE_LIBS)
+
+# ----------------------------------------------------------------------
+# Rules
+# ----------------------------------------------------------------------
+
+all: lib examples tests
+
+ifdef STATIC
+lib: $(VACA_LIB)
+else
+lib: $(VACA_DLL)
+endif
+
+examples: $(EXAMPLES_EXE)
+
+tests: $(TESTS_EXE)
+
+runtests: tests
+	@for file in bin/test_*.exe ; do \
+		echo Running ./$$file ... ; \
+		if ./$$file ; then \
+			echo " - OK" ; \
+		else \
+			echo " - *FAIL*" ; \
+		fi ; \
+	done
+
+deps:
+	$(CPP) -MM $(CPPFLAGS) src/*.cpp | sed -e 's|^\([A-Za-z_0-9]\+\)|obj/Library.\1\$$\(SUFFIX\)|' > .deps
+	$(CPP) -MM $(CPPFLAGS) examples/*/*.cpp | sed -e 's|^\([A-Za-z_0-9]\+\)|obj/Example.\1\$$\(SUFFIX\)|' >> .deps
+	$(CPP) -MM $(CPPFLAGS) tests/*.cpp | sed -e 's|^\([A-Za-z_0-9]\+\)|obj/Test.\1\$$\(SUFFIX\)|' >> .deps
+
+clean:
+	-$(RM) -f bin/*.ilk bin/*.pdb obj/*.res obj/*.o obj/*.obj
+
+cleanobj:
+	-$(RM) -f $(LIB_OBJS)
+
+distclean: clean
+	-$(RM) -f bin/Vaca*.dll bin/*.exe bin/*.manifest lib/*.a lib/*.lib lib/*.exp bin/vaca.log
+
+ifdef VCINSTALLDIR
+install: lib
+	-$(MKDIR) "$(VCINSTALLDIR)/include/Vaca"
+	$(CP) $(wildcard include/Vaca/*.h) "$(VCINSTALLDIR)/include/Vaca"
+	$(CP) $(VACA_LIB) "$(VCINSTALLDIR)/lib"
+
+uninstall:
+	-$(RM) "$(VCINSTALLDIR)/$(VACA_LIB)"
+	-$(RM) -fr "$(VCINSTALLDIR)/include/Vaca"
+else
+install:
+	@echo You must to setup your VCINSTALLDIR enviroment variable
+
+uninstall:
+	@echo You must to setup your VCINSTALLDIR enviroment variable
+endif
+
+# ----------------------------------------------------------------------
+# Dependencies
+
+-include .deps

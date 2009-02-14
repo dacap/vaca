@@ -63,7 +63,7 @@ public:
 private:
   static Mutex mutex;
   static volatile int instanceCounter;
-  static std::vector<Referenceable*> list;
+  static std::vector<Referenceable*> list; // TODO rename these variables
 #endif
 };
 

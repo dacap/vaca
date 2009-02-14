@@ -1,0 +1,151 @@
+# Vaca - Visual Application Components Abstraction
+# Copyright (c) 2005-2009 David Capello
+# All rights reserved.
+
+# ----------------------------------------------------------------------
+# Configuration
+# ----------------------------------------------------------------------
+
+# RELEASE = 1
+# DEBUG = 1
+# STATIC = 1
+# STATIC_LIBC = 1
+# PROFILE = 1
+# ADD_COMPILER_VERSION = 1
+
+ifdef MEMORY_LEAK_DETECTOR
+ifdef STATIC
+MEMORY_LEAK_DETECTOR = 1
+endif
+endif
+
+# ----------------------------------------------------------------------
+# Target
+# ----------------------------------------------------------------------
+
+  WINVER = 0x0500	# Windows 2000
+# WINVER = 0x0501	# Windows Server 2003, Windows XP
+# WINVER = 0x0502	# Windows Server 2003 SP1, Windows XP SP2
+# WINVER = 0x0600	# Windows Server 2008
+# WINVER = 0x0600	# Windows Vista
+
+  _WIN32_IE = 0x0500	# IE 5.0
+# _WIN32_IE = 0x0501	# IE 5.01
+# _WIN32_IE = 0x0550	# IE 5.5
+# _WIN32_IE = 0x0600	# IE 6.0
+# _WIN32_IE = 0x0601	# IE 6.0 SP1
+# _WIN32_IE = 0x0603	# IE 6.0 SP2
+# _WIN32_IE = 0x0700	# IE 7.0
+
+  _WIN32_WINNT = $(WINVER)
+
+# ----------------------------------------------------------------------
+# Sources & Examples
+# ----------------------------------------------------------------------
+
+LIB_SOURCES = Anchor AnchorLayout Application BandedDockArea		\
+	      BasicDockArea Bix BoxConstraint BoxLayout Brush Button	\
+	      ButtonBase CancelableEvent CheckBox ClientLayout		\
+	      Clipboard CloseEvent Color ColorDialog ComboBox Command	\
+	      CommonDialog Component ConditionVariable Constraint	\
+	      Cursor CustomButton CustomLabel Debug Dialog DockArea	\
+	      DockBar DockFrame DropFilesEvent Event Exception		\
+	      FileDialog FindTextDialog Font FontDialog Frame Graphics	\
+	      GraphicsPath GroupBox HttpRequest Icon Image ImageList	\
+	      KeyEvent Keys Label Layout LinkLabel ListBox ListView	\
+	      Mdi Menu MenuItemEvent Message MouseEvent MsgBox Mutex	\
+	      Panel Pen Point ProgressBar RadioButton ReBar Rect	\
+	      Referenceable Region ResourceId Scintilla ScrollEvent	\
+	      ScrollInfo Separator Size Slider SpinButton Spinner	\
+	      SplitBar StatusBar String Style Styles System Tab		\
+	      TextEdit Thread TimePoint Timer ToggleButton ToolBar	\
+	      TreeNode TreeView TreeViewEvent Vaca Widget WidgetClass
+
+ifndef EXAMPLES
+EXAMPLES = AnchorLayouts AutoCompletion Bixes BouncingBalls BoxLayouts	\
+	   Buttons ColoredButton ComboBoxes Commands DataGrids		\
+	   DialogResource EditableListBox Edits EyeDropper FontMetrics	\
+	   FreeOfLayout Hashing HelloWorld Images Labels LikeScript	\
+	   Maths MenuResource MiniExplorer Minimal Paths Primitives	\
+	   ProgressBars ReBars Regions Scribble Scrolling Sliders	\
+	   Spinners SplitBars Sudoku SystemImageList Tabs TextEditor	\
+	   Threads Timers ToolBars Trees Undo WebCam
+endif
+
+ifndef TESTS
+TESTS = test_backward test_bind test_handle test_menu test_point	\
+	test_rect test_region test_signal test_size test_sharedptr	\
+	test_string test_tab test_thread test_widget
+endif
+
+# ----------------------------------------------------------------------
+# Flags
+# ----------------------------------------------------------------------
+
+CPPFLAGS = -Iinclude -Iscintilla/include		\
+           -DUNICODE -D_UNICODE				\
+	   -DWINVER=$(WINVER)				\
+	   -D_WIN32_IE=$(_WIN32_IE)			\
+	   -D_WIN32_WINNT=$(_WIN32_WINNT)
+DLLFLAGS =
+LFLAGS =
+LIBS =
+EXE_LIBS = 
+
+# ----------------------------------------------------------------------
+# STATIC or SHARED?
+# ----------------------------------------------------------------------
+
+ifdef STATIC
+  VACA_LIB_FLAGS = -DVACA_STATIC
+  VACA_EXE_FLAGS = -DVACA_STATIC
+else
+  VACA_LIB_FLAGS = -DVACA_SRC
+  VACA_EXE_FLAGS = 
+endif
+
+# ----------------------------------------------------------------------
+# DEBUG
+# ----------------------------------------------------------------------
+
+ifdef DEBUG
+  VACA_LIB_FLAGS += -D_DEBUG
+  VACA_EXE_FLAGS += -D_DEBUG
+endif
+
+# ----------------------------------------------------------------------
+# RELEASE (without-asserts)
+# ----------------------------------------------------------------------
+
+ifdef RELEASE
+  CPPFLAGS += -DNDEBUG
+endif
+
+# ----------------------------------------------------------------------
+# LIBRARY SUFFIX
+# ----------------------------------------------------------------------
+
+SUFFIX = 
+
+ifdef DEBUG
+  SUFFIX := $(SUFFIX)d
+endif
+
+ifdef PROFILE
+  SUFFIX := $(SUFFIX)p
+endif
+
+ifdef STATIC
+  SUFFIX := $(SUFFIX)s
+endif
+
+ifdef ADD_COMPILER_VERSION
+ ifneq ($(SUFFIX),)
+   SUFFIX := $(SUFFIX)-
+ endif
+ SUFFIX := $(SUFFIX)$(shell $(CPP) -dumpversion)
+endif
+
+ifneq ($(SUFFIX),)
+  SUFFIX := -$(SUFFIX)
+endif

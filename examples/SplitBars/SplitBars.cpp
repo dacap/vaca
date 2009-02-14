@@ -36,7 +36,6 @@ using namespace Vaca;
 
 class OrientationSwitchCommand : public Command
 {
-private:
   SplitBar* sp;
 
 public:
@@ -62,7 +61,6 @@ public:
 
 class FullDragCommand : public Command
 {
-private:
   SplitBar* sp1;
   SplitBar* sp2;
 
@@ -99,14 +97,18 @@ public:
     
     setMenuBar(new MenuBar(CommandId(IDR_MAINMENU)));
 
+    // The position of SplitBars are specified in percentage by
+    // default, and the starting position is 50%
     SplitBar* sp1 = new SplitBar(Orientation::Vertical, this);
-    sp1->setPaneSize(Size(300, 200));
 
     me = new TextEdit(L"First Panel", sp1, TextEdit::Styles::TextArea +
 					   Widget::Styles::Scroll);
     me->setBgColor(Color(120, 224, 120));
 
-    SplitBar* sp2 = new SplitBar(Orientation::Horizontal, sp1);
+    SplitBar* sp2 = new SplitBar(Orientation::Horizontal, sp1,
+				 SplitBar::Styles::Default |
+				 SplitBar::Styles::ByPixels);
+    sp1->setBarPosition(100);	// pixels
 
     me = new TextEdit(L"Sub First Panel", sp2, TextEdit::Styles::TextArea +
 					       Widget::Styles::Scroll);

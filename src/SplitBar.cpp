@@ -38,18 +38,19 @@
 
 using namespace Vaca;
 
-#define SPLITBAR_DEFAULT_WIDTH		5
+#define SPLITBAR_DEFAULT_SIZE		5
+#define SPLITBAR_DEFAULT_POS		50
 
 SplitBar::SplitBar(Orientation orientation, Widget* parent, Style style)
   : Widget(SplitBarClass::getClassName(), parent, style)
   , m_orientation(orientation)
   , m_first(NULL)
   , m_second(NULL)
-  , m_size(Size(100, 100))
+  , m_barSize(SPLITBAR_DEFAULT_SIZE)
+  , m_barPos(SPLITBAR_DEFAULT_POS)
   , m_fullDrag(false)
   , m_trackerIsVisible(false)
   , m_gripperVisible(true)
-  , m_barWidth(SPLITBAR_DEFAULT_WIDTH)
 {
 }
 
@@ -91,9 +92,27 @@ Widget* SplitBar::getSecondWidget() const
   return m_second;
 }
 
-void SplitBar::setPaneSize(const Size& sz)
+int SplitBar::getBarSize() const
 {
-  m_size = sz;
+  return m_barSize;
+}
+
+void SplitBar::setBarSize(int size)
+{
+  if (m_barSize != size) {
+    m_barSize = size;
+    layout();
+  }
+}
+
+double SplitBar::getBarPosition() const
+{
+  return m_barPos;
+}
+
+void SplitBar::setBarPosition(double pos)
+{
+  m_barPos = pos;
   layout();
 }
 
@@ -129,19 +148,6 @@ void SplitBar::setGripperVisible(bool state)
 bool SplitBar::isGripperVisible() const
 {
   return m_gripperVisible;
-}
-
-void SplitBar::setBarWidth(int width)
-{
-  if (m_barWidth != width) {
-    m_barWidth = width;
-    layout();
-  }
-}
-
-int SplitBar::getBarWidth() const
-{
-  return m_barWidth;
 }
 
 void SplitBar::onResize(const Size& sz)
@@ -184,7 +190,7 @@ void SplitBar::onMouseDown(MouseEvent& ev)
   // capture the mouse only if the user clicks in the bar
   if (getBarRect().contains(ev.getPoint())) {
     m_oldPoint = ev.getPoint();
-    m_oldSize = m_size;
+    m_oldBarPos = m_barPos;
 
     captureMouse();
 
@@ -219,13 +225,28 @@ void SplitBar::onMouseMove(MouseEvent& ev)
     if (!isFullDrag())
       cleanTracker(g);
 
-    if (m_orientation == Orientation::Vertical) {
-      m_size.w = m_oldSize.w + (ev.getPoint().x - m_oldPoint.x);
-      m_size.w = clamp_value(m_size.w, 0, rcClient.w-m_barWidth);
+    bool byPixels = (getStyle() & Styles::ByPixels) == Styles::ByPixels;
+
+    // Bar-position by pixels
+    if (byPixels) {
+      if (m_orientation == Orientation::Vertical) {
+	m_barPos = m_oldBarPos + (ev.getPoint().x - m_oldPoint.x);
+	m_barPos = clamp_value(m_barPos, 0.0, (double)rcClient.w-m_barSize);
+      }
+      else {
+	m_barPos = m_oldBarPos + (ev.getPoint().y - m_oldPoint.y);
+	m_barPos = clamp_value(m_barPos, 0.0, (double)rcClient.h-m_barSize);
+      }
     }
+    // Bar-position by percentage
     else {
-      m_size.h = m_oldSize.h + (ev.getPoint().y - m_oldPoint.y);
-      m_size.h = clamp_value(m_size.h, 0, rcClient.h-m_barWidth);
+      if (m_orientation == Orientation::Vertical) {
+	m_barPos = m_oldBarPos + 100.0 * (ev.getPoint().x - m_oldPoint.x) / getBounds().w;
+      }
+      else {
+	m_barPos = m_oldBarPos + 100.0 * (ev.getPoint().y - m_oldPoint.y) / getBounds().h;
+      }
+      m_barPos = clamp_value(m_barPos, 0.0, 100.0);
     }
 
     if (!isFullDrag())
@@ -278,14 +299,23 @@ void SplitBar::updateChildrenVisibility()
 Rect SplitBar::getBarRect() const
 {
   Rect rcBar(getClientBounds());
+  bool byPixels = (getStyle() & Styles::ByPixels) == Styles::ByPixels;
 
   if (m_orientation == Orientation::Vertical) {
-    rcBar.x = clamp_value(m_size.w, 0, rcBar.w-m_barWidth);
-    rcBar.w = m_barWidth;
+    if (byPixels)
+      rcBar.x = clamp_value(m_barPos, 0.0, (double)rcBar.w-m_barSize);
+    else
+      rcBar.x = clamp_value(rcBar.w * m_barPos / 100, 0.0, (double)rcBar.w-m_barSize);
+
+    rcBar.w = m_barSize;
   }
   else {
-    rcBar.y = clamp_value(m_size.h, 0, rcBar.h-m_barWidth);
-    rcBar.h = m_barWidth;
+    if (byPixels)
+      rcBar.y = clamp_value(m_barPos, 0.0, (double)rcBar.h-m_barSize);
+    else
+      rcBar.y = clamp_value(rcBar.h * m_barPos / 100.0, 0.0, (double)rcBar.h-m_barSize);
+
+    rcBar.h = m_barSize;
   }
 
   return rcBar;

@@ -262,7 +262,7 @@ private:
 	parentNode->setExpanded(true);
 
       setSelectedNode(parentNode);	// ...selected the parent node
-      elementNode->ensureVisibility();	// ...but ensure visibility of the new node
+      elementNode->ensureVisible();	// ...but ensure that this node is visible
     }
     else
       addNode(elementNode);

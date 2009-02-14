@@ -55,18 +55,19 @@ class VACA_DLL SplitBar : public Register<SplitBarClass>
   Orientation m_orientation;
   Widget* m_first;
   Widget* m_second;
-  Size m_size;
-  Size m_oldSize;
+  int m_barSize;
+  double m_barPos;
+  double m_oldBarPos;
   Point	m_oldPoint;
   bool m_fullDrag;
   bool m_trackerIsVisible;
   bool m_gripperVisible;
-  int m_barWidth;
 
 public:
 
   struct VACA_DLL Styles {
     static const Style Default;
+    static const Style ByPixels;
   };
 
   SplitBar(Orientation orientation, Widget* parent, Style style = Styles::Default);
@@ -80,7 +81,11 @@ public:
   Widget* getFirstWidget() const;
   Widget* getSecondWidget() const;
 
-  void setPaneSize(const Size& sz);
+  int getBarSize() const;
+  void setBarSize(int size);
+
+  double getBarPosition() const;
+  void setBarPosition(double pos);
 
   Orientation getOrientation() const;
   void setOrientation(Orientation orientation);
@@ -90,9 +95,6 @@ public:
 
   void setGripperVisible(bool state);
   bool isGripperVisible() const;
-
-  void setBarWidth(int width);
-  int getBarWidth() const;
 
 protected:
   virtual void onResize(const Size& sz);

@@ -327,7 +327,7 @@ void ListView::removeAllItems()
  * Returns the number of items.
  * 
  */
-int ListView::getItemCount()
+int ListView::getItemCount() const
 {
   assert(::IsWindow(getHandle()));
   
@@ -396,11 +396,33 @@ void ListView::editItemText(int itemIndex)
   ListView_EditLabel(getHandle(), itemIndex);
 }
 
+int ListView::getSelectedItemCount() const
+{
+  assert(::IsWindow(getHandle()));
+
+  return (int)ListView_GetSelectedCount(getHandle());
+}
+
 bool ListView::isItemSelected(int itemIndex)
 {
   assert(::IsWindow(getHandle()));
 
   return ListView_GetItemState(getHandle(), itemIndex, LVIS_SELECTED) ? true: false;
+}
+
+void ListView::setItemSelected(int itemIndex, bool state)
+{
+  assert(::IsWindow(getHandle()));
+
+  ListView_SetItemState(getHandle(), itemIndex,
+			(state ? LVIS_SELECTED: 0), LVIS_SELECTED);
+}
+
+void ListView::ensureVisible(int itemIndex)
+{
+  assert(::IsWindow(getHandle()));
+
+  ListView_EnsureVisible(getHandle(), itemIndex, false);
 }
 
 /**

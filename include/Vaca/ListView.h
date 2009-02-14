@@ -75,6 +75,7 @@ public:
   struct VACA_DLL Styles {
     static const Style Default;
     static const Style SingleSelection;
+    static const Style ShowSelectionAlways;
   };
 
   ListView(Widget* parent, Style style = Styles::Default);
@@ -111,13 +112,18 @@ public:
   void removeItem(int itemIndex);
   void removeAllItems();
 
-  int getItemCount();
+  int getItemCount() const;
   Rect getItemBounds(int itemIndex, int code = LVIR_BOUNDS);
 
   String getItemText(int itemIndex, int columnIndex = 0);
   void setItemText(int itemIndex, const String& text, int columnIndex = 0);
   void editItemText(int itemIndex);
+
+  int getSelectedItemCount() const;
   bool isItemSelected(int itemIndex);
+  void setItemSelected(int itemIndex, bool state);
+
+  void ensureVisible(int itemIndex);
 
 //   void sortItems(std::less<ListItem> functor);
 

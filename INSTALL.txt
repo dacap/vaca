@@ -3,7 +3,7 @@ Overview
 ----------------------------------------------------------------------
 
   --- Compiler ---
-  Use "make -f Makefile.mgw" for MinGW
+  Use "make -f Makefile.mingw" for MinGW
   Use "nmake -f Makefile.vc" for Microsoft Visual C++
 
   --- Macros you can define ---
@@ -25,7 +25,7 @@ Overview
   distclean: .. remove .exe .lib .dll files
 
   --- Example ---
-  make -f Makefile.mgw DEBUG=1
+  make -f Makefile.mingw DEBUG=1
   Builds the DLL with debug information in Unicode.
 
 
@@ -54,7 +54,7 @@ Compiling with MinGW
 
 3) Run make in the Vaca directory:
 
-     C:\Vaca>make -f Makefile.mgw [RELEASE=1] [DEBUG=1] [STATIC=1] [PROFILE=1]
+     C:\Vaca>make -f Makefile.mingw [RELEASE=1] [DEBUG=1] [STATIC=1] [PROFILE=1]
 
 
 ----------------------------------------------------------------------
@@ -65,7 +65,7 @@ Compiling with Microsoft Visual C
    decompress it anywhere).
 2) Open a cmd shell (Start/Run/cmd) and then execute the vsvars32.bat:
 
-     C:\Documents and Settings\Username>cd C:\Vaca
+     C:\Documents and Settings\UserName>cd C:\Vaca
      C:\Vaca>vsvars32.bat
 
 3) Run nmake in the Vaca directory:

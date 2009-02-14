@@ -61,7 +61,7 @@ private:
   int       m_selectedImage;
   TreeNode* m_parent;
   Container m_children;
-  HTREEITEM m_HTREEITEM;
+  HTREEITEM m_handle;
   TreeView* m_owner;
   bool      m_deleted;
 
@@ -89,7 +89,7 @@ public:
   bool isExpanded();
   void setExpanded(bool state);
 
-  void ensureVisibility();
+  void ensureVisible();
   
   HTREEITEM getHandle();
 

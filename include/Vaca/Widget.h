@@ -269,6 +269,7 @@ public:
   CommandId getId() const;
   void setId(CommandId id);
 
+  Command* getCommandById(CommandId id);
   Command* findCommandById(CommandId id);
 
   // ===============================================================

@@ -287,7 +287,7 @@ void MenuItem::onUpdate(MenuItemEvent& ev)
     if (rootMenu && rootMenu->isMenuBar()) {
       MenuBar* menuBar = static_cast<MenuBar*>(rootMenu);
       if (Frame* frame = menuBar->getFrame()) {
-	if (Command* cmd = frame->findCommandById(m_id))
+	if (Command* cmd = frame->getCommandById(m_id))
 	  updateFromCommand(cmd);
       }
     }

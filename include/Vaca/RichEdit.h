@@ -29,8 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_TEXTEDIT_H
-#define VACA_TEXTEDIT_H
+#ifndef VACA_RICHEDIT_H
+#define VACA_RICHEDIT_H
 
 #include "Vaca/base.h"
 #include "Vaca/Widget.h"
@@ -38,41 +38,51 @@
 namespace Vaca {
 
 /**
- * Widget to edit text.
- *
- * @see @ref page_tn_008
+ * Loads the RichEdit DLL.
  */
-class VACA_DLL TextEdit : public Widget
+class VACA_DLL RichEditRegister
+{
+  static HINSTANCE hmod;
+
+public:
+  RichEditRegister();
+};
+
+/**
+ * Widget to edit rich-text.
+ */
+class VACA_DLL RichEdit : public RichEditRegister, public Widget
 {
 public:
 
   struct VACA_DLL Styles {
     static const Style Default;
-    static const Style Password;
-    static const Style TextArea;
     static const Style RightAligned;
     static const Style ReadOnly;
     static const Style AutoHorizontalScroll;
     static const Style AutoVerticalScroll;
   };
 
-  TextEdit(const String& text, Widget* parent, Style style = Styles::Default);
-  virtual ~TextEdit();
+  RichEdit(const String& text, Widget* parent, Style style = Styles::Default);
+  virtual ~RichEdit();
 
-  // ============================================================
-  // ANY TEXT EDIT
-  // ============================================================
+  virtual void setBgColor(const Color& color);
 
-  int getTextLength() const;
-  int getTextLimit() const;
-  void setTextLimit(int textLimit);
-
-  bool isReadOnly() const;
-  void setReadOnly(bool readOnly);
-
+  size_t getTextLength() const;
+  size_t getTextLimit() const;
+  void setTextLimit(size_t textLimit);
+  
+  bool canPaste() const;
   bool canUndo() const;
+  bool canRedo() const;
   void undo();
+  void redo();
 
+  void setUndoLimit(int maximumActions);
+
+  void setAutoUrlDetect(bool state);
+  bool isAutoUrlDetect();
+  
   void cut();
   void copy();
   void paste();
@@ -82,43 +92,7 @@ public:
   void deselect();
   
   void getSelection(int& start, int& end);
-
-  // ============================================================
-  // PASSWORD
-  // ============================================================
-
-  Char getPasswordChar();
-  void setPasswordChar(Char passChar);
-
-  // ============================================================
-  // TEXT AREA
-  // ============================================================
-
-  bool getWantReturnMode();
-  void setWantReturnMode(bool wantReturn);
-
-  int getLineCount();
-  String getLine(int lineNo);
-  int getLineLength(int lineNo);
-
-  void scrollLines(int lines);
-
-  // ============================================================
-  // SIGNALS
-  // ============================================================
-
-  // signals
-  Signal1<void, Event&> Change; ///< @see onChange
-
-protected:
-  // events
-  virtual void onPreferredSize(Size& sz);
-
-  // new events
-  virtual void onChange(Event& ev);
-
-  // reflection
-  virtual bool onReflectedCommand(int id, int code, LRESULT& lResult);
+  String getSelectedText() const;
 
 };
 

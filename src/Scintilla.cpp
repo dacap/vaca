@@ -33,6 +33,7 @@
 #include "Vaca/Font.h"
 #include "Vaca/WidgetClass.h"
 #include "Vaca/String.h"
+#include "Vaca/Register.h"
 #include "Scintilla.h"
 #include "SciLexer.h"
 
@@ -40,6 +41,11 @@ using namespace Vaca;
 
 HINSTANCE SciRegister::hmod = NULL;
 
+/**
+ * Tries to load the SciLexer or Scintilla DLLs.
+ * 
+ * @throw RegisterException If both DLLs are not found.
+ */
 SciRegister::SciRegister()
 {
   if (hmod == NULL) {
@@ -48,13 +54,8 @@ SciRegister::SciRegister()
     if (hmod == NULL) {
       // try Scintilla.dll
       hmod = LoadLibrary(L"Scintilla.dll");
-      if (hmod == NULL) {
-	// fail
-	MessageBox(NULL,
-		   L"The Scintilla DLL could not be loaded.",
-		   L"Error loading Scintilla",
-		   MB_OK | MB_ICONERROR);
-      }
+      if (hmod == NULL)
+	throw RegisterException(L"Cannot load Scintilla.dll or SciLexer.dll");
     }
   }
 }

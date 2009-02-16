@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005, 2006, 2007, 2008, David Capello
+// Copyright (C) 2005-2009 David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -34,6 +34,8 @@
 
 #include <Vaca/Vaca.h>
 #include "grid.h"
+
+#include <richedit.h>
 
 using namespace Vaca;
 
@@ -70,20 +72,6 @@ exist(InputIterator first, InputIterator last, Predicate pred)
 }
 
 //////////////////////////////////////////////////////////////////////
-// constants
-
-const Point historyOffsets[] = {
-  Point(32*0/3+32/3/2, 32*0/3+32/3/2),
-  Point(32*1/3+32/3/2, 32*0/3+32/3/2),
-  Point(32*2/3+32/3/2, 32*0/3+32/3/2),
-  Point(32*0/3+32/3/2, 32*1/3+32/3/2),
-  Point(32*2/3+32/3/2, 32*1/3+32/3/2),
-  Point(32*0/3+32/3/2, 32*2/3+32/3/2),
-  Point(32*1/3+32/3/2, 32*2/3+32/3/2),
-  Point(32*2/3+32/3/2, 32*2/3+32/3/2),
-};
-
-//////////////////////////////////////////////////////////////////////
 // Dialog to insert the game seed
 
 class InsertSeedDialog : public Dialog
@@ -103,8 +91,8 @@ public:
     , m_bottom(this)
     , m_seedLabel(L"Seed:", &m_top)
     , m_seedEdit(convert_to<String>(rand()), &m_top)
-    , m_ok(L"OK", IDOK, &m_bottom)
-    , m_cancel(L"Cancel", IDCANCEL, &m_bottom)
+    , m_ok(L"OK", CommandId(IDOK), &m_bottom)
+    , m_cancel(L"Cancel", CommandId(IDCANCEL), &m_bottom)
   {
     setLayout(new BoxLayout(Orientation::Vertical, true));
     m_top.setLayout(new BoxLayout(Orientation::Horizontal, false, 0));
@@ -114,7 +102,7 @@ public:
     m_seedEdit.requestFocus();
     m_seedEdit.selectAll();
 
-    m_ok.setDefault(true);
+    // m_ok.setDefault(true);
 
     setSize(getPreferredSize());
     center();
@@ -124,6 +112,117 @@ public:
     return convert_to<int>(m_seedEdit.getText());
   }
 
+};
+
+//////////////////////////////////////////////////////////////////////
+// Help Dialog
+
+class HelpDialog : public Dialog
+{
+  RichEdit m_help;
+  Button m_close;
+
+public:
+
+  HelpDialog(Widget* parent)
+    : Dialog(L"Help", parent)
+    , m_help(L"", this, RichEdit::Styles::Default
+			+ RichEdit::Styles::ReadOnly
+			- Widget::Styles::HorizontalScroll
+			- Widget::Styles::ClientEdge)
+    , m_close(L"Close", IDOK, this)
+  {
+    setLayout(Bix::parse(L"Y[f%,X[fX[],%,fX[]]]", &m_help, &m_close));
+
+    m_close.setDefault(true);
+
+    m_help.requestFocus();
+    m_help.setBgColor(getBgColor());
+    m_help.setAutoUrlDetect(true);
+    m_help.setText(L"The objective is to fill a 9\x00D7\x0039 grid so that each column, "
+		   L"each row, and each of the nine 3\x00D7\x0033 boxes (also called "
+		   L"blocks or regions) contains the digits from 1 to 9 only one time each. [http://en.wikipedia.org/wiki/Sudoku]");
+
+    setSize(Size(400, 128));
+    center();
+  }
+
+};
+
+//////////////////////////////////////////////////////////////////////
+//
+
+class CellEdit : public TextEdit
+{
+public:
+
+  CellEdit(int maxChars, Font font, Widget* parent)
+    : TextEdit(L"", parent, TextEdit::Styles::Default
+			    - Widget::Styles::Visible
+			    - Widget::Styles::ClientEdge)
+  {
+    setFont(font);
+    setTextLimit(maxChars);
+  }
+
+  void setDigit(int digit)
+  {
+    setText(digit == 0 ? L"": convert_to<String>(digit));
+    selectAll();
+  }
+
+  int getDigit()
+  {
+    return getTextLength() == 1 ? convert_to<int>(getText()): 0;
+  }
+
+  void setCandidates(const std::vector<int>& candidates)
+  {
+    String result;
+    for (int i=0; i<candidates.size(); ++i)
+      result += convert_to<String>(candidates[i]);
+    setText(result);
+    selectRange(getTextLength(), getTextLength());
+  }
+
+  std::vector<int> getCandidates() const
+  {
+    String text = getText();
+    std::vector<int> result;
+    for (int i=0; i<text.size(); ++i)
+      result.push_back(text[i] - L'0');
+    return result;
+  }
+
+  int getFontHeight()
+  {
+    ScreenGraphics g;
+    g.setFont(getFont());
+    return g.measureString(L" ").h;
+  }
+  
+  Signal0<void> Enter;
+  
+protected:
+  virtual void onKeyDown(KeyEvent& ev)
+  {
+    if ((ev.getCharCode() != 0) &&
+	!(ev.getCharCode() >= '0' && ev.getCharCode() <= '9') &&
+	(ev.getCharCode() >= ' ')) {
+      ev.consume();
+    }
+    else if (ev.getKeyCode() == Keys::Enter) {
+      Enter();
+      ev.consume();
+    }
+    else
+      TextEdit::onKeyDown(ev);
+  }
+  virtual void onLostFocus(Event& ev)
+  {
+    TextEdit::onLostFocus(ev);
+    Enter();
+  }
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -139,7 +238,7 @@ public:	// MSVC needs it to be public because grid<cell> needs to access to it
     int digit;
     bool given;
     bool warning;
-    std::vector<int> history;
+    std::vector<int> candidates;
     cell() {
       digit = 0;
       given = false;
@@ -196,9 +295,13 @@ private:
 
   grid<cell> m_puzzle;
   grid_iterator m_hotCell;
+  grid_iterator m_editingCell;
   Font m_font;			     // font for the digits
-  Font m_fontSmall;		     // font for the digits of the history
+  Font m_fontSmall;		     // font for the digits of candidates
   Font m_fontBold;		     // font for the warnings and for same-digits
+  CellEdit m_valueEdit;
+  CellEdit m_candidatesEdit;
+  bool m_done;
 
 public:
 
@@ -210,8 +313,11 @@ public:
     , m_font(L"Verdana", 10)
     , m_fontSmall(L"Verdana", 7)
     , m_fontBold(L"Verdana", 10, FontStyle::Bold)
+    , m_valueEdit(1, m_font, this)
+    , m_candidatesEdit(10, m_fontSmall, this)
   {
     m_hotCell = m_puzzle.end();
+    m_editingCell = m_puzzle.end();
 
     setBgColor(Color::White);
     setMenuBar(createMenuBar());
@@ -222,8 +328,13 @@ public:
     addCommand(new SignalCommand(ID_GAME_EXIT, Bind(&MainFrame::setVisible, this, false)));
     addCommand(new SignalCommand(ID_HELP, &MainFrame::onHelp, this));
 
+    m_valueEdit.Enter.connect(Bind(&MainFrame::onCellEnter, this));
+    m_valueEdit.Change.connect(Bind(&MainFrame::onCellChange, this));
+    m_candidatesEdit.Enter.connect(Bind(&MainFrame::onCellEnter, this));
+    m_candidatesEdit.Change.connect(Bind(&MainFrame::onCellChange, this));
+
     setDoubleBuffered(true);
-    setSize(getNonClientSize()+Size(32*9, 32*9));
+    setSize(getNonClientSize()+Size(40*9, 40*9));
     center();
 
     onNew();
@@ -242,12 +353,12 @@ protected:
       Color color;
 
       // cell background color
-      if (it->warning)
+      if (it == m_editingCell)
+	color = Color::White;
+      else if (it->warning)
 	color = Color::Red;
       else if (it->given)
 	color = Color(240, 240, 240);
-      else if (m_hotCell == it)
-	color = Color::Yellow;
       else
 	color = Color::White;
 
@@ -256,20 +367,30 @@ protected:
       g.fillRect(brush, cellBounds);
 
       // paint text inside the cell
-      if (it->digit != 0 || !it->history.empty()) {
+      if (it->digit != 0 || !it->candidates.empty()) {
 	Color textColor;
 
+	// editing
+	if (it == m_editingCell) {
+	  color = Color::Black;
+	  g.setFont(m_font);
+	}
 	// warning
-	if (it->warning) {
+	else if (it->warning) {
 	  textColor = Color::White;
 	  g.setFont(m_fontBold);
 	}
 	// hot or normal
 	else {
+	  int hotDigit = 0;
+
+	  if (m_hotCell != m_puzzle.end())
+	    hotDigit = m_hotCell->digit;
+	  else if (m_editingCell != m_puzzle.end())
+	    hotDigit = m_editingCell->digit;
+	  
 	  textColor = Color::Black;
-	  g.setFont(m_hotCell != m_puzzle.end() &&
-		    it->digit == m_hotCell->digit ? m_fontBold: // hot
-						    m_font); // normal
+	  g.setFont(it->digit == hotDigit ? m_fontBold: m_font);
 	}
 
 	if (it->digit != 0) {
@@ -280,23 +401,27 @@ protected:
 		       cellBounds.y + (cellBounds.h - textSize.h)/2);
 	}
 
-	if (!it->history.empty()) {
-	  int c = 0;
-
+	if (!it->candidates.empty() &&
+	    (it != m_editingCell || !m_candidatesEdit.isVisible())) {
 	  g.setFont(m_fontSmall);
 	  if (!it->warning)
 	    textColor = Color(190, 190, 190);
 
-	  for (std::vector<int>::iterator it2=it->history.begin();
-	       it2!=it->history.end(); ++it2) {
-	    String text = convert_to<String>(*it2);
+	  Point offset(1, 1);
+
+	  for (int i=0; i<it->candidates.size(); ++i) {
+	    String text = convert_to<String>(it->candidates[i]);
 	    Size textSize = g.measureString(text);
 
-	    g.drawString(text, textColor,
-			 cellBounds.x + historyOffsets[c].x - textSize.w/2,
-			 cellBounds.y + historyOffsets[c].y - textSize.h/2);
+	    g.drawString(text, textColor, cellBounds.getOrigin()+offset);
 
-	    c++;
+	    if (i == 4) {
+	      offset.x = 2;
+	      offset.y = cellBounds.h - textSize.h - 1;
+	    }
+	    else {
+	      offset.x += textSize.w;
+	    }
 	  }
 	}
       }
@@ -346,97 +471,39 @@ protected:
     }
   }
 
-  // push into or pop from the history an element
   virtual void onMouseDown(MouseEvent &ev)
   {
     if ((m_hotCell != m_puzzle.end()) &&
 	(!m_hotCell->given)) {
-      // pop an element from history
-      if (ev.getButton() == MouseButton::Right) {
-	if (!m_hotCell->history.empty()) {
-	  m_hotCell->digit = m_hotCell->history.back();
-	  m_hotCell->history.pop_back();
-	}
-	else
-	  m_hotCell->digit = 0;
+
+      // restore the digit of the cell that was edited
+      if (m_editingCell != m_puzzle.end())
+	onCellEnter();
+
+      // prepare the cell editor for the selected cell
+      m_editingCell = m_hotCell;
+
+      if (ev.getPoint().y > getCellBounds(m_editingCell).y+8) {
+	Rect rc = getCellBounds(m_editingCell);
+
+	m_valueEdit.setDigit(m_editingCell->digit);
+	m_valueEdit.setBounds(Rect(rc.x+rc.w/3, rc.y+rc.h/3-2,
+				   rc.w/3, m_valueEdit.getFontHeight()));
+	m_valueEdit.setVisible(true);
+	m_valueEdit.requestFocus();
       }
-      // remove all
-      else if (ev.getButton() == MouseButton::Middle) {
-	m_hotCell->history.clear();
-      }
-      // push a digit into history
       else {
-	// push the current entry into history
-	pushIntoHistory(*m_hotCell);
+	Rect rc = getCellBounds(m_editingCell).shrink(2);
+	rc.h = m_candidatesEdit.getFontHeight();
 
-	// clear the digit
-	m_hotCell->digit = 0;
+	m_candidatesEdit.setCandidates(m_editingCell->candidates);
+	m_candidatesEdit.setBounds(rc);
+	m_candidatesEdit.setVisible(true);
+	m_candidatesEdit.requestFocus();
       }
 
-      updateWarnings();
-      checkWin();
       invalidate(true);
     }
-  }
-
-  // change current selected cell digit
-  virtual void onKeyDown(KeyEvent &ev)
-  {
-    Keys::Type keyCode = ev.getKeyCode();
-    int digit =
-      (keyCode >= Keys::D0 && keyCode <= Keys::D9) ? keyCode - Keys::D0:
-      ((keyCode >= Keys::NumPad0 && keyCode <= Keys::NumPad9) ? keyCode - Keys::NumPad0:
-								-1);
-    if ((digit >= 0) && (m_hotCell != m_puzzle.end()) && (!m_hotCell->given)) {
-      // push the current entry into history
-      if (digit != 0)
-	pushIntoHistory(*m_hotCell);
-
-      // replace the digit in the table
-      m_hotCell->digit = digit;
-
-      // remove the new selected entry from the history
-      remove_from_container(m_hotCell->history,
-			    m_hotCell->digit);
-
-      // check warning & win
-      updateWarnings();
-      checkWin();
-
-      // redraw
-      invalidate(true);
-
-      ev.consume();
-    }
-//     // fill history
-//     else if (keyCode == Keys::H) {
-//       // fill history
-//       for (grid_iterator it = m_puzzle.begin(); it != m_puzzle.end(); ++it) {
-// 	if (!it->given) {
-// 	  it->history.clear();
-
-// 	  for (int digit=1; digit<=9; ++digit) {
-// 	    if (it->digit == digit)
-// 	      continue;
-	      
-// 	    if (!exist(m_puzzle.col_begin(it.col()), m_puzzle.col_end(it.col()), is_digit(digit)) &&
-// 		!exist(m_puzzle.row_begin(it.row()), m_puzzle.row_end(it.row()), is_digit(digit)) &&
-// 		!exist(m_puzzle.box_begin(it.box()), m_puzzle.box_end(it.box()), is_digit(digit)))
-// 	      it->history.push_back(digit);
-// 	  }
-// 	}
-//       }
-//       // help
-//       for (grid_iterator it = m_puzzle.begin(); it != m_puzzle.end(); ++it) {
-// 	if (!it->given && it->digit == 0) {
-// 	  if (it->history.size() == 1) {
-// 	    it->digit = it->history.front();
-// 	    it->history.clear();
-// 	  }
-// 	}
-//       }
-//       invalidate(true);
-//     }
   }
 
 private:
@@ -462,20 +529,6 @@ private:
   void onNew()
   {
     generateGame(rand());
-
-//     for (int c=0; c<0xffff; ++c) {
-//       generateGame(c);
-//       for (grid_iterator it = m_puzzle.begin(); it != m_puzzle.end(); ++it) {
-// 	if (it->given) {
-// 	  printf("%d", it->digit);
-// 	}
-// 	else {
-// 	  printf(".");
-// 	}
-//       }
-//       printf("   vaca (%d)\n", c);
-//       fflush(stdout);
-//     }
   }
 
   void onNewWithSeed()
@@ -491,32 +544,36 @@ private:
 
   void onHelp()
   {
-    MsgBox::show
-      (this, L"Help",
-       L"Every 3x3 box, every column, and every row can't repeat the same digit.\n"
-       L"Use the number from 1 to 9 to add a digit, and the 0 to remove it.\n"
-       L"You can use the left mouse button to push the digit to the history,\n"
-       L"the right button to pop a digit from the history, and the middle button\n"
-       L"to remove the entire history.\n");
+    HelpDialog dlg(this);
+    dlg.doModal();
+  }
+
+  void onCellEnter()
+  {
+    onCellChange();
+
+    m_valueEdit.setVisible(false);
+    m_candidatesEdit.setVisible(false);
+    m_editingCell = m_puzzle.end();
+  }
+
+  void onCellChange()
+  {
+    assert(m_editingCell != m_puzzle.end());
+
+    if (m_valueEdit.isVisible()) {
+      m_editingCell->digit = m_valueEdit.getDigit();
+    }
+    else if (m_candidatesEdit.isVisible()) {
+      m_editingCell->candidates = m_candidatesEdit.getCandidates();
+    }
+
+    updateWarnings();
+    checkWin();
+    invalidate(true);
   }
 
   //////////////////////////////////////////////////////////////////////
-
-  void pushIntoHistory(cell& cell)
-  {
-    // push the current entry into history
-    if ((cell.digit != 0) &&
-	(std::find(cell.history.begin(),
-		   cell.history.end(),
-		   cell.digit) == cell.history.end())) {
-      // history too big?
-      if (cell.history.size() == 9)
-	cell.history.erase(cell.history.begin());
-
-      // put the new element
-      cell.history.push_back(cell.digit);
-    }
-  }
 
   Rect getCellBounds(grid_iterator it)
   {
@@ -528,9 +585,12 @@ private:
 
   void updateWarnings()
   {
+    if (m_done)
+      return;
+
     // clear warnings
     std::for_each(m_puzzle.begin(), m_puzzle.end(), set_warning());
-      
+
     // nine boxes, rows, and columns
     for (int c=0; c<9; c++) {
       compare_with_all(m_puzzle.box_begin(c), m_puzzle.box_end(c), set_warning());
@@ -541,9 +601,15 @@ private:
 
   void checkWin()
   {
-    for (grid_iterator it = m_puzzle.begin(); it != m_puzzle.end(); ++it)
+    if (m_done)
+      return;
+
+    for (grid_iterator it = m_puzzle.begin(); it != m_puzzle.end(); ++it) {
       if (it->digit == 0 || it->warning)
 	return;
+    }
+
+    m_done = true;
 
     MsgBox::show(this, L"Congratulations", L"You win!!!");
 
@@ -554,6 +620,8 @@ private:
 
   void generateGame(int gameNumber)
   {
+    m_done = false;
+
     srand(gameNumber);
     setText(format_string(L"Sudoku (Game %d)", gameNumber));
 
@@ -565,7 +633,7 @@ private:
       it->digit = 0;
       it->warning = false;
       it->given = false;
-      it->history.clear();
+      it->candidates.clear();
     }
 
     // fill all boxes with all digits
@@ -585,7 +653,7 @@ private:
       for (grid_iterator it = puzzle.begin(); it != puzzle.end(); ++it)
 	if (it->digit != 0)
 	  digits[it->digit-1].push_back(it);
-    
+
       std::vector<int> givens_for_digit(9, 0);
       for (int i=0; i<31; i++) {
 	int digit = rand()%9;
@@ -762,7 +830,7 @@ private:
 	if (it->given)
 	  continue;
 
-	it->history.clear();
+	it->candidates.clear();
 
 	for (int digit=1; digit<=9; ++digit) {
 	  if (it->digit == digit)
@@ -771,7 +839,7 @@ private:
 	  if (!exist(puzzle.col_begin(it.col()), puzzle.col_end(it.col()), is_digit(digit)) &&
 	      !exist(puzzle.row_begin(it.row()), puzzle.row_end(it.row()), is_digit(digit)) &&
 	      !exist(puzzle.box_begin(it.box()), puzzle.box_end(it.box()), is_digit(digit)))
-	    it->history.push_back(digit);
+	    it->candidates.push_back(digit);
 	}
       }
 
@@ -779,9 +847,9 @@ private:
       continue_working = false;
       for (grid_iterator it = puzzle.begin(); it != puzzle.end(); ++it) {
 	if (!it->given && it->digit == 0) {
-	  if (it->history.size() == 1) {
-	    it->digit = it->history.front();
-	    it->history.clear();
+	  if (it->candidates.size() == 1) {
+	    it->digit = it->candidates.front();
+	    it->candidates.clear();
 	    continue_working = true;
 	  }
 	  else
@@ -797,20 +865,13 @@ private:
 
 //////////////////////////////////////////////////////////////////////
 
-class Example : public Application
-{
-  MainFrame m_mainFrame;
-
-  virtual void main() {
-    m_mainFrame.setVisible(true);
-  }
-};
-
 int VACA_MAIN()
 {
   srand(static_cast<unsigned int>(time(NULL)));
 
-  Example app;
+  Application app;
+  MainFrame frm;
+  frm.setVisible(true);
   app.run();
   return 0;
 }

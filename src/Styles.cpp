@@ -290,10 +290,38 @@ const Style TextEdit::Styles::Password =
 
 const Style TextEdit::Styles::TextArea =
   TextEdit::Styles::Default |
+  Widget::Styles::Scroll |
   Style(ES_MULTILINE, 0);
 
+// ===================================================================
+// RichEdit
+// ===================================================================
+
+const Style RichEdit::Styles::RightAligned =
+  Style(ES_RIGHT, 0);
+
+const Style RichEdit::Styles::ReadOnly =
+  Style(ES_READONLY, 0);
+
+const Style RichEdit::Styles::AutoHorizontalScroll =
+  Style(ES_AUTOHSCROLL, 0);
+
+const Style RichEdit::Styles::AutoVerticalScroll =
+  Style(ES_AUTOVSCROLL, 0);
+
+const Style RichEdit::Styles::Default =
+  Widget::Styles::Visible |
+  Widget::Styles::Focusable |
+  Widget::Styles::ClientEdge |
+  Widget::Styles::Scroll |
+  Style(ES_MULTILINE, 0);
+
+// ===================================================================
+// SciEdit
+// ===================================================================
+
 const Style SciEdit::Styles::Default =
-  Widget::Styles::Visible +
+  Widget::Styles::Visible |
   Widget::Styles::Scroll;
 
 // ===================================================================
@@ -535,8 +563,8 @@ const Style SplitBar::Styles::ByPixels =
 // ===================================================================
 
 const Style Slider::Styles::Default =
-  Widget::Styles::Visible +
-  Widget::Styles::Focusable +
+  Widget::Styles::Visible |
+  Widget::Styles::Focusable |
   Style(TBS_HORZ | TBS_BOTH |
 	TBS_NOTICKS | TBS_AUTOTICKS, 0);
 
@@ -555,7 +583,7 @@ const Style SpinButton::Styles::HotTrack =
   Style(UDS_HOTTRACK, 0);
 
 const Style Spinner::Styles::Default =
-  Widget::Styles::Visible +
+  Widget::Styles::Visible |
   Widget::Styles::Container;
 
 // ===================================================================

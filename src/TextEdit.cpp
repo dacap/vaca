@@ -47,6 +47,11 @@ TextEdit::~TextEdit()
 {
 }
 
+int TextEdit::getTextLength() const
+{
+  return static_cast<int>(const_cast<TextEdit*>(this)->sendMessage(WM_GETTEXTLENGTH, 0, 0));
+}
+
 /**
  * Returns the current text limit (EM_GETLIMITTEXT).
  */
@@ -85,8 +90,11 @@ void TextEdit::setReadOnly(bool readOnly)
 }
 
 /**
- * Returns true if the user can undo the last operation (EM_CANUNDO).
- * 
+ * Returns true if the user can undo the last operation.
+ *
+ * @win32
+ *   Sends the @msdn{EM_CANUNDO} message to the widget.
+ * @endwin32
  */
 bool TextEdit::canUndo() const
 {
@@ -96,6 +104,9 @@ bool TextEdit::canUndo() const
 /**
  * Undoes the last user's operation in the Edit widget.
  * 
+ * @win32
+ *   Sends the @msdn{EM_UNDO} message to the widget.
+ * @endwin32
  */
 void TextEdit::undo()
 {

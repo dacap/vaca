@@ -42,9 +42,9 @@ class Editor : public Panel
 {
   DocumentPtr m_doc;
   Font m_font;
-  DocPos m_carret;
-  bool m_carretVisible;
-  Timer m_carretFlicker;
+  DocPos m_caret;
+  bool m_caretVisible;
+  Timer m_caretBlink;
   const DocPos max_length;
   
 public:
@@ -54,17 +54,17 @@ public:
 		    Widget::Styles::Focusable)
     , m_doc(NULL)
     , m_font(L"Courier New", 24)
-    , m_carret(0)
-    , m_carretVisible(true)
-    , m_carretFlicker(750)
+    , m_caret(0)
+    , m_caretVisible(true)
+    , m_caretBlink(750)
     , max_length(10)
   {
     setBgColor(Color::White);
     setDoubleBuffered(true);
     setFont(m_font);
 
-    m_carretFlicker.Tick.connect(&Editor::toggleCarretVisibility, this);
-    m_carretFlicker.start();
+    m_caretBlink.Tick.connect(&Editor::toggleCaretVisibility, this);
+    m_caretBlink.start();
 
     setPreferredSize(Size(32*max_length, 32));
     requestFocus();
@@ -72,48 +72,48 @@ public:
 
   void setDocument(DocumentPtr doc) {
     m_doc = doc;
-    m_carret = doc ? doc->size(): 0;
-    makeCarretVisible();
+    m_caret = doc ? doc->size(): 0;
+    makeCaretVisible();
   }
 
   void goBeginOfLine() {
-    m_carret = 0;
-    makeCarretVisible();
+    m_caret = 0;
+    makeCaretVisible();
   }
 
   void goEndOfLine() {
-    m_carret = m_doc->size();
-    makeCarretVisible();
+    m_caret = m_doc->size();
+    makeCaretVisible();
   }
 
   void goPreviousChar() {
-    if (m_carret > 0)
-      m_carret--;
-    makeCarretVisible();
+    if (m_caret > 0)
+      m_caret--;
+    makeCaretVisible();
   }
 
   void goNextChar() {
-    if (m_carret < m_doc->size())
-      m_carret++;
-    makeCarretVisible();
+    if (m_caret < m_doc->size())
+      m_caret++;
+    makeCaretVisible();
   }
 
   void removePreviousChar() {
-    if (m_carret > 0)
-      m_doc->remove(--m_carret, 1);
-    makeCarretVisible();
+    if (m_caret > 0)
+      m_doc->remove(--m_caret, 1);
+    makeCaretVisible();
   }
 
   void removeNextChar() {
-    if (m_carret < m_doc->size())
-      m_doc->remove(m_carret, 1);
-    makeCarretVisible();
+    if (m_caret < m_doc->size())
+      m_doc->remove(m_caret, 1);
+    makeCaretVisible();
   }
 
   void writeChar(Char chr) {
     if (m_doc->size() < max_length)
-      m_doc->add(m_carret++, chr);
-    makeCarretVisible();
+      m_doc->add(m_caret++, chr);
+    makeCaretVisible();
   }
 
 protected:
@@ -145,9 +145,9 @@ protected:
 		     Point(x, origPt.y) + Point(celBox)/2 - Point(g.measureString(tmp))/2);
       }
 
-      // draw the carret
-      if (m_carretVisible) {
-	int x = origPt.x + m_carret*celBox.w;
+      // draw the caret
+      if (m_caretVisible) {
+	int x = origPt.x + m_caret*celBox.w;
 	g.drawLine(bluePen,
 		   Point(x, origPt.y-8),
 		   Point(x, origPt.y+celBox.h+8));
@@ -182,16 +182,16 @@ protected:
 
 private:
 
-  void toggleCarretVisibility()
+  void toggleCaretVisibility()
   {
-    m_carretVisible = !m_carretVisible;
+    m_caretVisible = !m_caretVisible;
     invalidate(true);
   }
 
-  void makeCarretVisible()
+  void makeCaretVisible()
   {
-    m_carretVisible = true;
-    m_carretFlicker.start();	// restart timer
+    m_caretVisible = true;
+    m_caretBlink.start();	// restart timer
     invalidate(true);
   }
   

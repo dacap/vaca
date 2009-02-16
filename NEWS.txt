@@ -1,6 +1,7 @@
 Vaca 0.0.8
 
 - Unicode support is activated by default.
+- Added RichEdit widget.
 - Added Thread::enqueueMessage and Widget::enqueueMessage.
 - Added Vaca/backward.h header file.
 - Replaced styles macros with WidgetName::Styles::* namespace.
@@ -12,6 +13,8 @@ Vaca 0.0.8
   receive a ScrollEvent.
 - Fixed a problem in BandedDockArea::onRemoveDockBar with a
   call to std::vector<>::erase() and invalid iterators.
+- Fixed a bug in Frame::preTranslateMessage that processed
+  menu-shortcuts even when the Frame were disabled.
 
 Vaca 0.0.7
 

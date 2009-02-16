@@ -106,7 +106,7 @@ bool Frame::preTranslateMessage(Message& message)
 {
   MSG& msg(*(LPMSG)message);
 
-  if (m_menuBar != NULL) {
+  if (m_menuBar != NULL && isEnabled()) {
     // TODO accelerators
     if (msg.message == WM_KEYDOWN) {
       Keys::Type keys = Keys::fromMessageParams(msg.wParam, msg.lParam);
@@ -163,9 +163,6 @@ void Frame::onResize(const Size& sz)
  */
 bool Frame::onCommand(CommandId id)
 {
-  if (Widget::onCommand(id))
-    return true;
-
   // use menu bar
   if (m_menuBar != NULL) {
     MenuItem* menuItem = m_menuBar->getMenuItemById(id);
@@ -178,7 +175,7 @@ bool Frame::onCommand(CommandId id)
     }
   }
 
-  return false;
+  return Widget::onCommand(id);
 }
 
 void Frame::onActivate(Event& ev)

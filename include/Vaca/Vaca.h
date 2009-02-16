@@ -108,6 +108,7 @@
 #include "Vaca/Referenceable.h"
 #include "Vaca/Region.h"
 #include "Vaca/Register.h"
+#include "Vaca/RichEdit.h"
 #include "Vaca/Scintilla.h"
 #include "Vaca/ScopedLock.h"
 #include "Vaca/ScrollEvent.h"

@@ -215,9 +215,6 @@ void Dialog::onCancel()
 
 bool Dialog::onCommand(CommandId id)
 {
-  if (Frame::onCommand(id))
-    return true;
-
   switch (id) {
 
     case IDOK:
@@ -228,7 +225,8 @@ bool Dialog::onCommand(CommandId id)
       onCancel();
       return true;
   }
-  return false;
+
+  return Frame::onCommand(id);
 }
 
 BOOL CALLBACK Dialog::globalDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)

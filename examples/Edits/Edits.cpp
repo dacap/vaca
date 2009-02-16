@@ -45,7 +45,7 @@ public:
   MainFrame()
     : Frame(L"Edits")
     , m_edit1(L"Default TextEdit widget with some text that you can edit.", this)
-    , m_edit2(L"An TextEdit widget without client-edge and right-aligned.", this,
+    , m_edit2(L"A TextEdit widget without client-edge and right-aligned.", this,
 	      TextEdit::Styles::Default +
 	      TextEdit::Styles::RightAligned
 	      - Widget::Styles::ClientEdge)

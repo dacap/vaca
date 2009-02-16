@@ -487,9 +487,25 @@ void Widget::setId(CommandId id)
 }
 
 /**
+ * Returns the command with the specified ID looking in this widget.
+ *
+ * The command is searched in this instance if the Widget is a
+ * CommandsClient (a @c dynamic_cast is used for this).
+ */
+Command* Widget::getCommandById(CommandId id)
+{
+  // if this widget is a CommandsClient instance
+  if (CommandsClient* cc = dynamic_cast<CommandsClient*>(this)) {
+    if (Command* cmd = cc->getCommandById(id))
+      return cmd;
+  }
+  return NULL;
+}
+
+/**
  * Returns the command with the specified ID searching in all the
  * CommandsClient that this widget can know: itself, the parent
- * (some ancestor), and the Application instance.
+ * (ancestors), and the Application instance.
  *
  * The command is searched in this instance if the Widget is a
  * CommandsClient (a @c dynamic_cast is used for this), then it looks
@@ -499,19 +515,16 @@ void Widget::setId(CommandId id)
  */
 Command* Widget::findCommandById(CommandId id)
 {
-  // if this widget is a CommandsClient instance
-  if (CommandsClient* cc = dynamic_cast<CommandsClient*>(this)) {
-    if (Command* cmd = cc->getCommandById(id))
+  Widget* widget = this;
+
+  while (widget != NULL) {
+    if (Command* cmd = getCommandById(id))
       return cmd;
+    widget = widget->getParent();
   }
 
-  // does it have a parent?
-  if (getParent() != NULL) {
-    if (Command* cmd = getParent()->findCommandById(id))
-      return cmd;
-  }
   // check if the application is a CommandsClient
-  else if (CommandsClient* cc = dynamic_cast<CommandsClient*>(Application::getInstance())) {
+  if (CommandsClient* cc = dynamic_cast<CommandsClient*>(Application::getInstance())) {
     if (Command* cmd = cc->getCommandById(id))
       return cmd;
   }
@@ -1943,13 +1956,28 @@ void Widget::onLostFocus(Event& ev)
  */
 bool Widget::onCommand(CommandId id)
 {
-  if (Command* cmd = findCommandById(id)) {
+  if (Command* cmd = getCommandById(id)) {
     if (cmd->isEnabled()) {
       cmd->execute();
       return true;
     }
   }
-  return false;
+
+  if (getParent() != NULL) {
+    return getParent()->onCommand(id);
+  }
+  else {
+    // check if the application is a CommandsClient
+    if (CommandsClient* cc = dynamic_cast<CommandsClient*>(Application::getInstance())) {
+      if (Command* cmd = cc->getCommandById(id)) {
+	if (cmd->isEnabled()) {
+	  cmd->execute();
+	  return true;
+	}
+      }
+    }
+    return false;
+  }
 }
 
 /**
@@ -2623,7 +2651,6 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
 	}
       }
 
-      // accelerator, menu or dialog widget
       if (!ret && onCommand(static_cast<CommandId>(LOWORD(wParam)))) {
 	// ...onCommand returns true when processed the command
 	lResult = 0;		// processed

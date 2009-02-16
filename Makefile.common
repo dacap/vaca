@@ -55,10 +55,10 @@ LIB_SOURCES = Anchor AnchorLayout Application BandedDockArea		\
 	      KeyEvent Keys Label Layout LinkLabel ListBox ListView	\
 	      Mdi Menu MenuItemEvent Message MouseEvent MsgBox Mutex	\
 	      Panel Pen Point ProgressBar RadioButton ReBar Rect	\
-	      Referenceable Region ResourceId Scintilla ScrollEvent	\
-	      ScrollInfo Separator Size Slider SpinButton Spinner	\
-	      SplitBar StatusBar String Style Styles System Tab		\
-	      TextEdit Thread TimePoint Timer ToggleButton ToolBar	\
+	      Referenceable Region ResourceId RichEdit Scintilla	\
+	      ScrollEvent ScrollInfo Separator Size Slider SpinButton	\
+	      Spinner SplitBar StatusBar String Style Styles System	\
+	      Tab TextEdit Thread TimePoint Timer ToggleButton ToolBar	\
 	      TreeNode TreeView TreeViewEvent Vaca Widget WidgetClass
 
 ifndef EXAMPLES

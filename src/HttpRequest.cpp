@@ -215,9 +215,6 @@ bool HttpRequest::hasHeader(const String& headerName)
  * @return
  *   The value of the specified header, or an empty string if the
  *   header is not found.
- *
- * @throw HttpRequestException
- *   If there are an error getting the header.
  */
 String HttpRequest::getHeader(const String& headerName)
 {
@@ -240,9 +237,7 @@ String HttpRequest::getHeader(const String& headerName)
       buf = auto_ptr<char>(new char[bufLength]);
       continue;
     }
-    else if (GetLastError() == ERROR_HTTP_HEADER_NOT_FOUND)
-      return String();
     else
-      throw HttpRequestException(L"Error retrieving header");
+      return String(L"");
   }
 }

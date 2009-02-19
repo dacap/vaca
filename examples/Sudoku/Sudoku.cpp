@@ -35,13 +35,12 @@
 #include <Vaca/Vaca.h>
 #include "grid.h"
 
-#include <richedit.h>
-
 using namespace Vaca;
 
 enum {
   ID_GAME_NEW = 1000,
   ID_GAME_NEW_WITH_SEED,
+  ID_GAME_USE_HELPER,
   ID_GAME_EXIT,
   ID_HELP,
 };
@@ -91,8 +90,8 @@ public:
     , m_bottom(this)
     , m_seedLabel(L"Seed:", &m_top)
     , m_seedEdit(convert_to<String>(rand()), &m_top)
-    , m_ok(L"OK", CommandId(IDOK), &m_bottom)
-    , m_cancel(L"Cancel", CommandId(IDCANCEL), &m_bottom)
+    , m_ok(L"OK", IDOK, &m_bottom)
+    , m_cancel(L"Cancel", IDCANCEL, &m_bottom)
   {
     setLayout(new BoxLayout(Orientation::Vertical, true));
     m_top.setLayout(new BoxLayout(Orientation::Horizontal, false, 0));
@@ -101,8 +100,6 @@ public:
 
     m_seedEdit.requestFocus();
     m_seedEdit.selectAll();
-
-    // m_ok.setDefault(true);
 
     setSize(getPreferredSize());
     center();
@@ -302,6 +299,7 @@ private:
   CellEdit m_valueEdit;
   CellEdit m_candidatesEdit;
   bool m_done;
+  bool m_useHelper;
 
 public:
 
@@ -318,16 +316,23 @@ public:
   {
     m_hotCell = m_puzzle.end();
     m_editingCell = m_puzzle.end();
+    m_useHelper = false;
 
     setBgColor(Color::White);
     setMenuBar(createMenuBar());
 
     // commands
+    SignalCommand* useHelperCmd;
     addCommand(new SignalCommand(ID_GAME_NEW, &MainFrame::onNew, this));
     addCommand(new SignalCommand(ID_GAME_NEW_WITH_SEED, &MainFrame::onNewWithSeed, this));
+    addCommand(useHelperCmd =
+	       new SignalCommand(ID_GAME_USE_HELPER, &MainFrame::onUseHelper, this));
     addCommand(new SignalCommand(ID_GAME_EXIT, Bind(&MainFrame::setVisible, this, false)));
     addCommand(new SignalCommand(ID_HELP, &MainFrame::onHelp, this));
 
+    useHelperCmd->Checked.connect(Bind(&MainFrame::isUseHelper, this));
+
+    // signals
     m_valueEdit.Enter.connect(Bind(&MainFrame::onCellEnter, this));
     m_valueEdit.Change.connect(Bind(&MainFrame::onCellChange, this));
     m_candidatesEdit.Enter.connect(Bind(&MainFrame::onCellEnter, this));
@@ -346,6 +351,12 @@ protected:
   virtual void onPaint(Graphics &g)
   {
     Rect rc = getClientBounds();
+
+    int hotDigit = 0;
+    if (m_hotCell != m_puzzle.end())
+      hotDigit = m_hotCell->digit;
+    else if (m_editingCell != m_puzzle.end())
+      hotDigit = m_editingCell->digit;
 
     // paint the 9x9 grid
     for (grid_iterator it = m_puzzle.begin(); it != m_puzzle.end(); ++it) {
@@ -366,6 +377,27 @@ protected:
       Brush brush(color);
       g.fillRect(brush, cellBounds);
 
+      // paint helper
+      if (m_useHelper && hotDigit != 0 && !it->warning) {
+	Brush b2(Color(255, 255, 200));
+
+	if (exist(m_puzzle.box_begin(it.box()), m_puzzle.box_end(it.box()), is_digit(hotDigit)))
+	  g.fillRect(b2, cellBounds);
+	else {
+	  if (exist(m_puzzle.col_begin(it.col()), m_puzzle.col_end(it.col()), is_digit(hotDigit)))
+	    g.fillRect(b2, Rect(cellBounds.x+cellBounds.w/4,
+				cellBounds.y,
+				cellBounds.w/2,
+				cellBounds.h));
+
+	  if (exist(m_puzzle.row_begin(it.row()), m_puzzle.row_end(it.row()), is_digit(hotDigit)))
+	    g.fillRect(b2, Rect(cellBounds.x,
+				cellBounds.y+cellBounds.h/4,
+				cellBounds.w,
+				cellBounds.h/2));
+	}
+      }
+
       // paint text inside the cell
       if (it->digit != 0 || !it->candidates.empty()) {
 	Color textColor;
@@ -382,13 +414,6 @@ protected:
 	}
 	// hot or normal
 	else {
-	  int hotDigit = 0;
-
-	  if (m_hotCell != m_puzzle.end())
-	    hotDigit = m_hotCell->digit;
-	  else if (m_editingCell != m_puzzle.end())
-	    hotDigit = m_editingCell->digit;
-	  
 	  textColor = Color::Black;
 	  g.setFont(it->digit == hotDigit ? m_fontBold: m_font);
 	}
@@ -516,6 +541,8 @@ private:
     gameMenu->add(L"&New\tCtrl+Shift+N", ID_GAME_NEW, Keys::Control | Keys::Shift | Keys::N);
     gameMenu->add(L"New with &seed\tCtrl+N", ID_GAME_NEW_WITH_SEED, Keys::Control | Keys::N);
     gameMenu->addSeparator();
+    gameMenu->add(L"Use &Helper", ID_GAME_USE_HELPER);
+    gameMenu->addSeparator();
     gameMenu->add(L"&Exit", ID_GAME_EXIT);
 
     menuBar->add(gameMenu);
@@ -528,11 +555,15 @@ private:
 
   void onNew()
   {
+    noEdit();
+
     generateGame(rand());
   }
 
   void onNewWithSeed()
   {
+    noEdit();
+
     // create the dialog
     InsertSeedDialog dlg(this);
 
@@ -540,6 +571,11 @@ private:
     if (dlg.doModal())
       // start a new game with the specified seed
       generateGame(dlg.getSeed());
+  }
+
+  void onUseHelper()
+  {
+    m_useHelper = !m_useHelper;
   }
 
   void onHelp()
@@ -551,10 +587,7 @@ private:
   void onCellEnter()
   {
     onCellChange();
-
-    m_valueEdit.setVisible(false);
-    m_candidatesEdit.setVisible(false);
-    m_editingCell = m_puzzle.end();
+    noEdit();
   }
 
   void onCellChange()
@@ -574,6 +607,20 @@ private:
   }
 
   //////////////////////////////////////////////////////////////////////
+
+  bool isUseHelper()
+  {
+    return m_useHelper;
+  }
+
+  void noEdit()
+  {
+    m_valueEdit.setVisible(false);
+    m_candidatesEdit.setVisible(false);
+    m_editingCell = m_puzzle.end();
+
+    requestFocus();
+  }
 
   Rect getCellBounds(grid_iterator it)
   {
@@ -610,6 +657,7 @@ private:
     }
 
     m_done = true;
+    noEdit();
 
     MsgBox::show(this, L"Congratulations", L"You win!!!");
 
@@ -623,7 +671,6 @@ private:
     m_done = false;
 
     srand(gameNumber);
-    setText(format_string(L"Sudoku (Game %d)", gameNumber));
 
     // no hot cell
     m_hotCell = m_puzzle.end();
@@ -641,46 +688,59 @@ private:
       for (int box=0; box<9; box++)
 	fillBoxWithDigit(box, digit);
 
-    grid<cell> puzzle;
+    // first: all givens
+    grid<cell> puzzle = m_puzzle;
+    for (grid_iterator it = puzzle.begin(); it != puzzle.end(); ++it)
+      it->given = true;
+
+    // make a vector to known where is each digit in the grid
+    std::vector<grid_iterator> digits[9];
+    for (grid_iterator it = puzzle.begin(); it != puzzle.end(); ++it)
+      digits[it->digit-1].push_back(it);
+
+    int givens_of_digit[9];
+    for (int i=0; i<9; ++i)
+      givens_of_digit[i] = 9;
 
     // now we must create "the givens" (the exposed digits)
-    do {
-      // make a copy of the generated puzzle
-      puzzle = m_puzzle;
+    for (int i=81; i>=17; --i) {
+      int tries, maxTries = 100-i;
 
-      // make a vector to known where is each digit in the grid
-      std::vector<grid_iterator> digits[9];
-      for (grid_iterator it = puzzle.begin(); it != puzzle.end(); ++it)
-	if (it->digit != 0)
-	  digits[it->digit-1].push_back(it);
+      grid<cell> bak_puzzle = puzzle;
 
-      std::vector<int> givens_for_digit(9, 0);
-      for (int i=0; i<31; i++) {
-	int digit = rand()%9;
-	while (true) {
-	  if (givens_for_digit[digit] < 4) {
-	    givens_for_digit[digit]++;
-	    break;
-	  }
-	  digit = (digit+1)%9;
+      for (tries=0; tries<maxTries; ++tries) {
+	// hide one "given"
+	grid_iterator it;
+	{
+	  int digit = rand()%9;
+	  while (givens_of_digit[digit] < i/9)
+	    digit = (digit+1) % 9;
+
+	  int pos = rand()%9;
+	  do {
+	    it = digits[digit][pos];
+	    pos = (pos+1)%9;
+	  } while (!it->given);
 	}
+
+	int given_digit = it->digit;
+	givens_of_digit[given_digit-1]--;
+
+	it->given = false;
+	it->digit = 0;
+
+	if (isSoluble(puzzle))
+	  break;
+
+	givens_of_digit[given_digit-1]++;
+	puzzle = bak_puzzle;
       }
 
-      for (int i=0; i<9; i++) {
-	for (int j=0; j<givens_for_digit[i]; j++) {
-	  grid_iterator it = digits[i][rand() % digits[i].size()];
-	  remove_from_container(digits[i], it);
-	  it->given = true;
-	}
-      }
-
-      // set to 0 non-given cells
-      for (grid_iterator it = puzzle.begin(); it != puzzle.end(); ++it)
-	if (!it->given)
-	  it->digit = 0;
+      if (tries == maxTries)
+	break;
 
       // is the sudoku is not soluble, regenerate...
-    } while (!isSoluble(puzzle));
+    }
 
     // set to 0 non-given cells
     for (grid_iterator it = puzzle.begin(); it != puzzle.end(); ++it)
@@ -689,14 +749,16 @@ private:
 
     m_puzzle = puzzle;
 
+    setText(format_string(L"Sudoku (Game %d with %d clues)",
+			  gameNumber, getGivenCount()));
+
     updateWarnings();
     invalidate(true);
   }
   
-  int getGivensCountInBox(int box)
+  int getGivenCount()
   {
-    return std::count_if(m_puzzle.box_begin(box), m_puzzle.box_end(box),
-			 if_given_is_true());
+    return std::count_if(m_puzzle.begin(), m_puzzle.end(), if_given_is_true());
   }
   
   // put a digit in its 3x3 box
@@ -825,31 +887,35 @@ private:
     bool continue_working;
     bool all_filled;
 
-    do {
-      for (grid_iterator it = puzzle.begin(); it != puzzle.end(); ++it) {
-	if (it->given)
+    // fill possible candidates of every cell
+    for (grid_iterator it = puzzle.begin(); it != puzzle.end(); ++it) {
+      if (it->given)
+	continue;
+
+      it->candidates.clear();
+
+      for (int digit=1; digit<=9; ++digit) {
+	if (it->digit == digit)
 	  continue;
 
-	it->candidates.clear();
-
-	for (int digit=1; digit<=9; ++digit) {
-	  if (it->digit == digit)
-	    continue;
-	      
-	  if (!exist(puzzle.col_begin(it.col()), puzzle.col_end(it.col()), is_digit(digit)) &&
-	      !exist(puzzle.row_begin(it.row()), puzzle.row_end(it.row()), is_digit(digit)) &&
-	      !exist(puzzle.box_begin(it.box()), puzzle.box_end(it.box()), is_digit(digit)))
-	    it->candidates.push_back(digit);
-	}
+	if (!isInScope(puzzle, it, digit))
+	  it->candidates.push_back(digit);
       }
+    }
 
+    // now we can consume candidates one by one (only if there are
+    // cells with just one candidate)
+    do {
       all_filled = true;
       continue_working = false;
+
       for (grid_iterator it = puzzle.begin(); it != puzzle.end(); ++it) {
 	if (!it->given && it->digit == 0) {
 	  if (it->candidates.size() == 1) {
 	    it->digit = it->candidates.front();
 	    it->candidates.clear();
+
+	    clearCandidateFromScope(puzzle, it);
 	    continue_working = true;
 	  }
 	  else
@@ -859,6 +925,26 @@ private:
     } while (continue_working);
 
     return all_filled;
+  }
+
+  static bool isInScope(grid<cell>& puzzle, grid_iterator it, int digit)
+  {
+    return
+      exist(puzzle.col_begin(it.col()), puzzle.col_end(it.col()), is_digit(digit)) ||
+      exist(puzzle.row_begin(it.row()), puzzle.row_end(it.row()), is_digit(digit)) ||
+      exist(puzzle.box_begin(it.box()), puzzle.box_end(it.box()), is_digit(digit));
+  }
+
+  static void clearCandidateFromScope(grid<cell>& puzzle, grid_iterator pos)
+  {
+    for (box_iterator it=puzzle.box_begin(pos.box()); it!=puzzle.box_end(pos.box()); ++it)
+      remove_from_container(it->candidates, pos->digit);
+
+    for (col_iterator it=puzzle.col_begin(pos.col()); it!=puzzle.col_end(pos.col()); ++it)
+      remove_from_container(it->candidates, pos->digit);
+
+    for (row_iterator it=puzzle.row_begin(pos.row()); it!=puzzle.row_end(pos.row()); ++it)
+      remove_from_container(it->candidates, pos->digit);
   }
 
 };

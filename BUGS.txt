@@ -12,6 +12,3 @@
     when we changes the DockAreas.
   + This error is possible only in the example (in the real life, an
     application should never change the DockAreas)
-
-- Sudoku can be enter in a infinite loop in its level generator
-  (mainly the swapCellToFixDigitCollision method).

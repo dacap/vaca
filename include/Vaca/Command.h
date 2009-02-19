@@ -59,7 +59,6 @@ public:
 
   virtual bool isEnabled() { return true; }
   virtual bool isChecked() { return false; }
-  virtual bool isVisible() { return false; }
 };
 
 /**
@@ -85,12 +84,18 @@ public:
   virtual ~SignalCommand() { }
 
   virtual void execute() { Execute(); }
+
   virtual bool isEnabled() {
     return Enabled(true);	// true by default
   }
 
+  virtual bool isChecked() {
+    return Checked(false);	// false by default
+  }
+
   Signal0<void> Execute;
   Signal0<bool> Enabled;
+  Signal0<bool> Checked;
 };
 
 /**

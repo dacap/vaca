@@ -149,6 +149,8 @@ protected:
 
   virtual void onClose(CloseEvent &ev)
   {
+    Dialog::onClose(ev);
+
     // work in progress? (we are in "The Loop")
     if (m_state == Working) {
       // display a warning message
@@ -172,16 +174,14 @@ protected:
 		       L"Do you really want to close it?",
 		       MsgBox::Type::YesNo,
 		       MsgBox::Icon::Warning, 2) == MsgBox::Result::Yes) {
-	// hide the dialog
-	Dialog::onClose(ev);
+	// hide the dialog... (not canceling the event)
       }
       else
 	// cancel the close event, don't hide the Dialog
 	ev.cancel();
     }
-    // the work is done (or never start), hide the Dialog...
     else {
-      Dialog::onClose(ev);
+      // the work is done (or never start), hide the Dialog... (not canceling the event)
     }
   }
 

@@ -55,6 +55,14 @@ namespace Vaca {
  * Defines the name and arguments that the main routine
  * of the program should contain.
  *
+ * You can use it as:
+ * @code
+ * int VACA_MAIN()
+ * {
+ *   ...
+ * }
+ * @endcode
+ *
  * @win32
  *   It is the signature of @msdn{WinMain}. In other
  *   operating systems this could be @c "main(int argc, char* argv[])".

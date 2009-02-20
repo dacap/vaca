@@ -267,7 +267,7 @@ Widget::~Widget()
  * Returns the parent of the widget.
  *
  * @win32
- *   This method doesn't use the @msdn{GetParent}. Widget has a m_parent
+ *   This method does not use the @msdn{GetParent}. Widget has a m_parent
  *   member to hold its parent.
  * @endwin32
  */
@@ -279,13 +279,13 @@ Widget* Widget::getParent() const
 /**
  * Returns the collection of children. The returned list is a
  * copy of the original, so you can do with it what you want,
- * in other words, doesn't matter if you add or remove elements
+ * in other words, does not matter if you add or remove elements
  * from them, the original list of children will not be modified.
  */
 Widget::Container Widget::getChildren() const
 {
-#if 0				// don't use this alternative (it
-				// doesn't work to synchronize Frame)
+#if 0				// do not use this alternative (it
+				// does not work to synchronize Frame)
   assert(::IsWindow(m_handle));
 
   Container container;
@@ -743,7 +743,7 @@ void Widget::center()
 }
 
 /**
- * Sets the origin position of the widget. It doesn't affect the size.
+ * Sets the origin position of the widget. It does not affect the size.
  *
  * @see setBounds, center
  */
@@ -763,7 +763,7 @@ void Widget::setOrigin(int x, int y)
 }
 
 /**
- * Sets the size of the widget. It doesn't affect the origin position.
+ * Sets the size of the widget. It does not affect the origin position.
  *
  * @see setSize(int,int)
  */
@@ -879,7 +879,7 @@ void Widget::setDoubleBuffered(bool doubleBuffered)
  * Validates the entire widget.
  *
  * It removes all paint messages from the message queue, because a
- * validated widget is like a widget that doesn't need to be
+ * validated widget is like a widget that does not need to be
  * repainted.
  *
  * @see invalidate
@@ -893,7 +893,7 @@ void Widget::validate()
 /**
  * Validates a part of the widget.
  *
- * This means that the specified rectangle doesn't need to be
+ * This means that the specified rectangle does not need to be
  * repainted.
  *
  * @see invalidate(bool)
@@ -1130,7 +1130,7 @@ typedef BOOL (WINAPI * SLWAProc)(HWND hwnd, COLORREF crKey, BYTE bAlpha, DWORD d
 #endif
 
 /**
- * Returns the widget opacity. If the current OS doesn't support
+ * Returns the widget opacity. If the current OS does not support
  * translucent windows, it will always be 255.
  *
  * @return A value from 0 (completelly transparent) to 255 (completelly opaque)
@@ -1315,7 +1315,7 @@ bool Widget::hasMouse()
 /**
  * Returns true if the widget has the mouse above.
  *
- * It doesn't matter if the widget has the capture status.
+ * It does not matter if the widget has the capture status.
  *
  * @see hasMouse
  */
@@ -1590,7 +1590,7 @@ void Widget::scrollRect(const Rect& rc, const Point& delta)
  *
  * @return
  *    True if the message was translated and sent, so the GUI
- *    thread doesn't need to dispatch it.
+ *    thread does not need to dispatch it.
  */
 bool Widget::preTranslateMessage(Message& message)
 {
@@ -1612,7 +1612,7 @@ void Widget::enqueueMessage(const Message& message)
 }
 
 /**
- * Returns the HWND of this Widget. This can't be NULL.
+ * Returns the HWND of this Widget. This cannot be NULL.
  *
  * @see fromHandle, getParentHandle
  */
@@ -1623,7 +1623,7 @@ HWND Widget::getHandle() const
 }
 
 /**
- * Returns the HWND of the parent, or NULL if this widget doesn't have a parent.
+ * Returns the HWND of the parent, or NULL if this widget does not have a parent.
  *
  * @see getHandle
  */
@@ -1672,10 +1672,10 @@ WNDPROC Widget::getGlobalWndProc()
 
 
 /**
- * It should calculates the preferred size for this widget.
+ * Calculates the preferred size for the widget.
  *
  * @param sz
- *     It's for input and output. You should put the preferred
+ *     It is for input and output. You should put the preferred
  *     size in this value, but also you should read the input value to
  *     know if you must to fit the widget in some size. The possible
  *     values for @a sz are:
@@ -1697,14 +1697,15 @@ void Widget::onPreferredSize(Size& sz)
 }
 
 /**
- * Called then the WM_PAINT event is received. The default
- * implementation calls the Graphics::noPaint to know that this widget
- * doesn't paint the surface. If you override this method, remember:
- * (1) to draw inside the Widget::getClientBounds limits, and (2)
- * don't call the base method onPaint().
+ * Called when the widget have to be painted in the screen.
+ * 
+ * The default implementation calls the Graphics::noPaint to notify that
+ * this widget does not paint the surface. If you override this method,
+ * remember: (1) to draw inside the Widget#getClientBounds limits,
+ * and (2) do not call the base method Widget#onPaint.
  *
- * @warning Don't try to override the onPaint of a system control
- *          (like Button, Edit, etc.). You must to use the
+ * @warning Do not try to override the #onPaint of a system control
+ *          (like Button, Edit, etc.). You must to use
  *          CustomButton, CustomEdit, etc. to do that.
  *
  * @code
@@ -1719,6 +1720,10 @@ void Widget::onPreferredSize(Size& sz)
  *   }
  * };
  * @endcode
+ *
+ * @win32
+ *   Called then the @msdn{WM_PAINT} event is received.
+ * @endwin32
  *
  * @see onReflectedDrawItem
  */
@@ -1738,9 +1743,8 @@ void Widget::onResize(const Size& sz)
 {
   Resize(sz);
 
-  // Don't call layout() here (the Layout::mRelayoutWidgets collection is
-  // useful to layout recursively). The first trigger of the layout()
-  // method is from Frame::onResize().
+  // Do not call layout() here. The first trigger of layout()
+  // method is from Frame::onResize()
 }
 
 /**
@@ -1795,33 +1799,10 @@ void Widget::onMouseUp(MouseEvent& ev)
 }
 
 /**
- * The user made double click over the widget.
- *
- * The default implementation calls #onMouseDown, so it is like a
- * single click (converts double-clicks to single-clicks).
- *
- * @warning If you override this event, don't call the base implementation.
- *
- * @see onMouseDown
- */
-void Widget::onDoubleClick(MouseEvent& ev)
-{
-  // if there aren't slots in DoubleClick...
-  if (DoubleClick.empty()) {
-    // ...by default onDoubleClick to onMouseDown (double-click to
-    // single-click).
-    onMouseDown(ev);
-  }
-  // if not fire DoubleClick signal
-  else
-    DoubleClick(ev);
-}
-
-/**
  * The mouse is moving inside the Widget's client area.
  *
  * If you capture the mouse, you should use the System#getCursorPos
- * function to get the cursor position when it's outside the widget's
+ * function to get the cursor position when it is outside the widget's
  * client area.
  */
 void Widget::onMouseMove(MouseEvent& ev)
@@ -1843,8 +1824,30 @@ void Widget::onMouseWheel(MouseEvent& ev)
 }
 
 /**
- * Event generated when the user press ESC in a drag-and-drop operation
- * for example.
+ * The user made double click over the widget.
+ *
+ * The default implementation calls #onMouseDown, so it is like a
+ * single click (converts double-clicks to single-clicks).
+ *
+ * @warning If you override this event, do not call the base implementation.
+ *
+ * @see onMouseDown
+ */
+void Widget::onDoubleClick(MouseEvent& ev)
+{
+  // if there are not slots in DoubleClick...
+  if (DoubleClick.empty()) {
+    // ...by default onDoubleClick to onMouseDown (double-click to
+    // single-click).
+    onMouseDown(ev);
+  }
+  // if not fire DoubleClick signal
+  else
+    DoubleClick(ev);
+}
+
+/**
+ * Event generated when the user press ESC in a drag-and-drop operation.
  *
  * @win32
  *   This event is generated when @msdn{WM_CANCELMODE} message is received.
@@ -1863,7 +1866,7 @@ void Widget::onCancelMode()
  * widget. If the widget captured the mouse, this event is not
  * generated anymore until the capture is not released.
  *
- * If you override this method, you shouldn't call the base
+ * If you override this method, you should not call the base
  * implementation.
  *
  * @param hitTest Where the mouse is inside the widget.
@@ -1874,7 +1877,7 @@ void Widget::onSetCursor(WidgetHitTest hitTest)
   if (m_baseWndProc != NULL) {
     CallWindowProc(m_baseWndProc, m_handle, WM_SETCURSOR, m_wparam, m_lparam);
   }
-  // if we aren't in the client area, maybe the defWndProc known more
+  // if we are not in the client area, maybe the defWndProc known more
   // about the cursor (like the cursors in Frame to resize the it)
   else if (hitTest != WidgetHitTest::Client) {
     defWndProc(WM_SETCURSOR, m_wparam, m_lparam);
@@ -1919,18 +1922,26 @@ void Widget::onKeyUp(KeyEvent& ev)
 
 /**
  * Event generated when the widget gets the keyboard-focus.
+ * 
+ * @win32
+ *   This event is generated when @msdn{WM_SETFOCUS} message is received.
+ * @endwin32
  */
-void Widget::onGotFocus(Event& ev)
+void Widget::onFocusEnter(Event& ev)
 {
-  GotFocus(ev);
+  FocusEnter(ev);
 }
 
 /**
  * Event generated when the widget losts the keyboard-focus.
+ *
+ * @win32
+ *   This event is generated when @msdn{WM_KILLFOCUS} message is received.
+ * @endwin32
  */
-void Widget::onLostFocus(Event& ev)
+void Widget::onFocusLeave(Event& ev)
 {
-  LostFocus(ev);
+  FocusLeave(ev);
 }
 
 /**
@@ -1944,7 +1955,7 @@ void Widget::onLostFocus(Event& ev)
  *     It should returns true if the @a commandId was used.
  *
  * @win32
- *   Don't confuse with #onReflectedCommand: onCommand is used
+ *   Do not confuse with #onReflectedCommand: onCommand is used
  *   to handle command notifications that come directly from
  *   accelarators or menus, not from Win32's
  *   controls. Notifications by Win32's controls are handled
@@ -1995,30 +2006,6 @@ void Widget::onUpdateIndicators()
 }
 
 /**
- * @todo docme
- *
- * @win32
- *   This event is generated when @msdn{WM_WINDOWPOSCHANGING} message is received.
- * @endwin32
- */
-void Widget::onBeforePosChange()
-{
-  // do nothing
-}
-
-/**
- * @todo docme ()
- *
- * @win32
- *   This event is generated when @msdn{WM_WINDOWPOSCHANGED} message is received.
- * @endwin32
- */
-void Widget::onAfterPosChange()
-{
-  // do nothing
-}
-
-/**
  * Generated when the user move the scroll of this widget.
  */
 void Widget::onScroll(ScrollEvent& ev)
@@ -2063,7 +2050,7 @@ void Widget::onRemoveChild(Widget* child)
  *   Result to return by the #wndProc method.
  *
  * @win32
- *   Don't confuse with #onCommand: onReflectedCommand is used to handle
+ *   Do not confuse with #onCommand: #onReflectedCommand is used to handle
  *   commands that this widget by self generated, were sent to the
  *   parent, and finally were reflected to this widget again by
  *   the parent.
@@ -2085,7 +2072,7 @@ bool Widget::onReflectedCommand(int id, int code, LRESULT& lResult)
  *   Result to return by the #wndProc method.
  *
  * @return
- *   False if it doesn't use the notification.
+ *   False if it does not use the notification.
  */
 bool Widget::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult)
 {
@@ -2308,11 +2295,11 @@ HWND Widget::createHandle(LPCTSTR className, Widget* parent, Style style)
 }
 
 /**
- * The customized window procedure for this particular widget.
+ * The customized Win32 window procedure for Vaca widgets.
  *
  * @win32 
  * This is called from Widget#globalWndProc. It should returns true when
- * the #defWndProc doesn't need to be called.
+ * the #defWndProc does not need to be called.
  *
  * This method is called to intercept any message after the creation
  * of the widget, and before the destruction. To intercept messages
@@ -2321,36 +2308,41 @@ HWND Widget::createHandle(LPCTSTR className, Widget* parent, Style style)
  *
  * This method mainly converts a message to a event:
  * <ul>
- *   <li><tt>WM_PAINT</tt> -&gt; onPaint()</li>
- *   <li><tt>WM_SIZE</tt> -&gt; onResize()</li>
- *   <li><tt>WM_SETCURSOR</tt> -&gt; onSetCursor()</li>
- *   <li><tt>WM_*BUTTONDOWN</tt> -&gt; onMouseDown()</li>
- *   <li><tt>WM_*BUTOTNUP</tt> -&gt; onMouseUp()</li>
- *   <li><tt>WM_*BUTOTNDBLCLK</tt> -&gt; onDoubleClick()</li>
- *   <li><tt>WM_MOUSEMOVE</tt> -&gt; onMouseMove()</li>
- *   <li><tt>WM_MOUSEWHEEL</tt> -&gt; onMouseWheel()</li>
- *   <li><tt>WM_MOUSELEAVE</tt> -&gt; onMouseLeave()</li>
- *   <li><tt>WM_CANCELMODE</tt> -&gt; onCancelMode()</li>
- *   <li><tt>WM_CHAR</tt> -&gt; onKeyDown()</li>
- *   <li><tt>WM_KEYDOWN</tt> -&gt; onKeyDown()</li>
- *   <li><tt>WM_KEYUP</tt> -&gt; onKeyUp()</li>
- *   <li><tt>WM_SETFOCUS</tt> -&gt; onGotFocus()</li>
- *   <li><tt>WM_KILLFOCUS</tt> -&gt; onLostFocus()</li>
+ *   <li><tt>WM_ERASEBKGND</tt> -&gt; Clears the background with #getBgColor.</li>
+ *   <li><tt>WM_PAINT</tt> -&gt; Calls #onPaint event.</li>
+ *   <li><tt>WM_SIZE</tt> -&gt; Calls #onResize event.</li>
+ *   <li><tt>WM_SETCURSOR</tt> -&gt; Calls #onSetCursor event.</li>
+ *   <li><tt>WM_*BUTTONDOWN</tt> -&gt; Calls #onMouseDown event.</li>
+ *   <li><tt>WM_*BUTOTNUP</tt> -&gt; Calls #onMouseUp event.</li>
+ *   <li><tt>WM_*BUTOTNDBLCLK</tt> -&gt; Calls #onDoubleClick event.</li>
+ *   <li><tt>WM_MOUSEMOVE</tt> -&gt; Calls #onMouseMove event.</li>
+ *   <li><tt>WM_MOUSEWHEEL</tt> -&gt; Calls #onMouseWheel event.</li>
+ *   <li><tt>WM_MOUSELEAVE</tt> -&gt; Calls #onMouseLeave event.</li>
+ *   <li><tt>WM_CANCELMODE</tt> -&gt; Calls #onCancelMode event.</li>
+ *   <li><tt>WM_CHAR</tt> -&gt; Calls #onKeyDown event (use the KeyEvent#getCharCode).</li>
+ *   <li><tt>WM_KEYDOWN</tt> -&gt; Calls #onKeyDown event (use the KeyEvent#getKeyCode).</li>
+ *   <li><tt>WM_KEYUP</tt> -&gt; Calls #onKeyUp event.</li>
+ *   <li><tt>WM_SETFOCUS</tt> -&gt; Calls #onFocusEnter event.</li>
+ *   <li><tt>WM_KILLFOCUS</tt> -&gt; Calls #onFocusLeave event.</li>
+ *   <li><tt>WM_CTLCOLOR*</tt> -&gt; Returns a HBRUSH with the #getBgColor.</li>
+ *   <li><tt>WM_VSCROLL</tt> -&gt; Calls #onScroll event.</li>
+ *   <li><tt>WM_HSCROLL</tt> -&gt; Calls #onScroll event.</li>
+ *   <li><tt>WM_DROPFILES</tt> -&gt; Calls #onDropFiles event.</li>
  * </ul>
  *
  * For reflection, it does:
  * <ul>
- * <li>When <tt>WM_COMMAND</tt> is received, the onReflectedCommand() event
- *     <b>of the child</b> is called when it is a WM_COMMAND from a control, or the
- *     onCommand() event <b>of this widget</b> is called when the command
- *     come from a menu or an accelerator.</li>
- * <li>When <tt>WM_NOTIFY</tt> is received, the onReflectedNotify() event <b>of the
+ * <li>When <tt>WM_COMMAND</tt> is received, the #onReflectedCommand event
+ *     <b>of the child</b> is called (if it is a WM_COMMAND from a control),
+ *     then the #onCommand() event <b>of this widget</b> (in any case/source: control,
+ *     menu item, accelerator, etc.).</li>
+ * <li>When <tt>WM_NOTIFY</tt> is received, the #onReflectedNotify event <b>of the
  *     child</b> is called.</li>
- * <li>When <tt>WM_DRAWITEM</tt> is received, the onReflectedDrawItem() event <b>of the
+ * <li>When <tt>WM_DRAWITEM</tt> is received, the #onReflectedDrawItem event <b>of the
  *     child</b> is called.</li>
  * </ul>
  *
- * How to extend widget::wndProc method?
+ * How to extend widget#wndProc method?
  *
  * @code
  * class MyWidget : public Widget {
@@ -2385,7 +2377,7 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
     case WM_ERASEBKGND:
       if (m_baseWndProc == NULL) {
 	HDC hdc = reinterpret_cast<HDC>(wParam);
-	// erase background only when the widget doesn't use
+	// erase background only when the widget does not use
 	// double-buffering
 	if (!m_doubleBuffered) {
 	  Graphics g(hdc);
@@ -2397,7 +2389,7 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
 	ret = true;
       }
       // a Custom... widget and double-buffering is activated? ok, we
-      // shouldn't send WM_ERASEBKGND to the original WNDPROC
+      // should not send WM_ERASEBKGND to the original WNDPROC
       else if (m_doubleBuffered) {
 	lResult = TRUE;
 	ret = true;
@@ -2486,16 +2478,6 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
       }
       break;
 
-//     case WM_WINDOWPOSCHANGING:
-//       {
-// 	LPWINDOWPOS lpwp = reinterpret_cast<LPWINDOWPOS>(lParam);
-// 	Size sz = getBounds().getSize();
-// 	if (lpwp->cx != sz.w ||
-// 	    lpwp->cy != sz.h)
-// 	  resize(sz);
-//       }
-//       break;
-
     case WM_LBUTTONDOWN:
     case WM_RBUTTONDOWN:
     case WM_MBUTTONDOWN: {
@@ -2569,7 +2551,6 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
       break;
     }
 
-// #ifdef WM_MOUSEWHEEL
     case WM_MOUSEWHEEL: {
       // the lParam specifies the coordinates of the cursor relative
       // to the screen (not to client area)
@@ -2585,28 +2566,16 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
       onMouseWheel(ev);
       break;
     }
-// #endif
 
-//       // TODO think about this
-//     case WM_MOUSEHOVER: {
-//       MouseEvent ev(this, Point(&MAKEPOINTS(lParam)), 0,
-// 		    MouseButton::None, wParam);
-//       onMouseHover(ev);
-//     }
-
-    case WM_MOUSELEAVE: {
-      // TODO ask for m_hasMouse?
-//       if (m_hasMouse) {
+    case WM_MOUSELEAVE:
 	m_hasMouse = false;
 	onMouseLeave();
-//       }
 	break;
-    }
 
     case WM_CANCELMODE:
       onCancelMode();
       break;
-      
+
     case WM_KEYDOWN: {
       KeyEvent ev(this, Keys::fromMessageParams(wParam, lParam), 0);
       onKeyDown(ev);
@@ -2668,40 +2637,15 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
       break;
     }
 
-    case WM_SYSCOMMAND: // TODO
-      // Beep(400, 100);
-      break;
-
-      /*
-    case WM_MENUSELECT: {
-      int index = LOWORD(wParam);
-      int flags = HIWORD(wParam);
-      HMENU hmenu = reinterpret_cast<HMENU>(lParam);
-
-      if (flags & MF_MOUSESELECT) {
-	MENUITEMINFO mii;
-	mii.cbSize = sizeof(MENUITEMINFO);
-	mii.fMask = MIIM_DATA;
-
-	if (GetMenuItemInfo(hmenu, index, TRUE, &mii)) {
-	  MenuItem* menuitem = reinterpret_cast<MenuItem *>(mii.dwItemData);
-	  if (menuitem != NULL) {
-	    ItemEvent(menuitem->onSelected, this, menuitem).fire();
-	  }
-	}
-      }
-    }
-      */
-
     case WM_SETFOCUS: {
       Event ev(this);
-      onGotFocus(ev);
+      onFocusEnter(ev);
       break;
     }
 
     case WM_KILLFOCUS: {
       Event ev(this);
-      onLostFocus(ev);
+      onFocusLeave(ev);
       break;
     }
 
@@ -2740,14 +2684,6 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
       }
       break;
     }
-
-    case WM_WINDOWPOSCHANGING:
-      onBeforePosChange();
-      break;
-
-    case WM_WINDOWPOSCHANGED:
-      onAfterPosChange();
-      break;
 
     case WM_VSCROLL:
     case WM_HSCROLL:
@@ -2807,7 +2743,7 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
 			  si.nMin,
 			  si.nMax - max_value(static_cast<int>(si.nPage) - 1, 0));
 
-	// Note: onScroll() doesn't receive the nPos=HIWORD(wParam)
+	// Note: onScroll() does not receive the nPos=HIWORD(wParam)
 	// because it has a limit of 16-bits.  Instead you should use
 	// GetScrollInfo to get the position of the scroll-bar, it has
 	// the full 32 bits

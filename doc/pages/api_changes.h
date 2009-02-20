@@ -89,6 +89,12 @@ Where:
   priority = ThreadPriority::TimeCritical
 @endcode
 @endChange
+@beginChange{onGotFocus/onLostFocus - Renamed}
+Now they are onFocusEnter and onFocusLeave (the same for Widget#FocusEnter/Widget#FocusLeave signals).
+@endChange
+@beginChange{onBeforePosChange/onAfterPosChange - Removed}
+Use Widget#onResize, and Frame#onResizing.
+@endChange
 @beginChange{onScroll - Signature Changed}
 
 Old signature:

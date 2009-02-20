@@ -216,9 +216,9 @@ runtests: tests
 	done
 
 deps:
-	$(CPP) -MM $(CPPFLAGS) src/*.cpp | sed -e 's|^\([A-Za-z_0-9]\+\)|obj/Library.\1\$$\(SUFFIX\)|' > .deps
-	$(CPP) -MM $(CPPFLAGS) examples/*/*.cpp | sed -e 's|^\([A-Za-z_0-9]\+\)|obj/Example.\1\$$\(SUFFIX\)|' >> .deps
-	$(CPP) -MM $(CPPFLAGS) tests/*.cpp | sed -e 's|^\([A-Za-z_0-9]\+\)|obj/Test.\1\$$\(SUFFIX\)|' >> .deps
+	$(CPP) -MM $(CPPFLAGS)        src/*.cpp | sed -e 's|^\([A-Za-z_0-9]\+\)\.o|obj/Library.\1\$$\(SUFFIX\)$$\(_OBJ\)|' > .deps
+	$(CPP) -MM $(CPPFLAGS) examples/*/*.cpp | sed -e 's|^\([A-Za-z_0-9]\+\)\.o|obj/Example.\1\$$\(SUFFIX\)$$\(_OBJ\)|' >> .deps
+	$(CPP) -MM $(CPPFLAGS)      tests/*.cpp | sed -e 's|^\([A-Za-z_0-9]\+\)\.o|obj/Test.\1\$$\(SUFFIX\)$$\(_OBJ\)|' >> .deps
 
 clean:
 	-$(RM) -f bin/*.ilk bin/*.pdb obj/*.res obj/*.o obj/*.obj

@@ -408,14 +408,14 @@ public:
   Signal0<void> MouseLeave; ///< @see onMouseLeave
   Signal1<void, MouseEvent&> MouseDown; ///< @see onMouseDown
   Signal1<void, MouseEvent&> MouseUp; ///< @see onMouseUp
-  Signal1<void, MouseEvent&> DoubleClick; ///< @see onDoubleClick
   Signal1<void, MouseEvent&> MouseMove; ///< @see onMouseMove
   Signal1<void, MouseEvent&> MouseWheel; ///< @see onMouseWheel
+  Signal1<void, MouseEvent&> DoubleClick; ///< @see onDoubleClick
   Signal0<void> CancelMode; ///< @see CancelMode
   Signal1<void, KeyEvent&> KeyUp; ///< @see onKeyUp
   Signal1<void, KeyEvent&> KeyDown; ///< @see onKeyDown
-  Signal1<void, Event&> GotFocus; ///< @see onGotFocus
-  Signal1<void, Event&> LostFocus; ///< @see onLostFocus
+  Signal1<void, Event&> FocusEnter; ///< @see onFocusEnter
+  Signal1<void, Event&> FocusLeave; ///< @see onFocusLeave
   Signal1<void, DropFilesEvent&> DropFiles; ///< @see onDropFiles
 
 protected:
@@ -431,19 +431,17 @@ protected:
   virtual void onMouseLeave();
   virtual void onMouseDown(MouseEvent& ev);
   virtual void onMouseUp(MouseEvent& ev);
-  virtual void onDoubleClick(MouseEvent& ev);
   virtual void onMouseMove(MouseEvent& ev);
   virtual void onMouseWheel(MouseEvent& ev);
+  virtual void onDoubleClick(MouseEvent& ev);
   virtual void onCancelMode();
   virtual void onSetCursor(WidgetHitTest hitTest);
   virtual void onKeyDown(KeyEvent& ev);
   virtual void onKeyUp(KeyEvent& ev);
-  virtual void onGotFocus(Event& ev);
-  virtual void onLostFocus(Event& ev);
+  virtual void onFocusEnter(Event& ev);
+  virtual void onFocusLeave(Event& ev);
   virtual bool onCommand(CommandId id);
   virtual void onUpdateIndicators();
-  virtual void onBeforePosChange();
-  virtual void onAfterPosChange();
   virtual void onScroll(ScrollEvent& ev);
   virtual void onDropFiles(DropFilesEvent& ev);
   virtual void onAddChild(Widget* child);

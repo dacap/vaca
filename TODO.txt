@@ -49,12 +49,6 @@ API
   Spinner (it's because the UDS_HORZ style can't be changed after up-down
   control is created).
 
-- complete:
-      onBeforePosChange();
-      onAfterPosChange();
-
-- check the WM_WINDOWPOSCHANGING message.
-
 - methods to use: EnableScrollBar
 
 - All HTHEME stuff (add "Theme" class).

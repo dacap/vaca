@@ -231,11 +231,6 @@ runtests: tests
 		fi ; \
 	done
 
-deps:
-	$(CPP) -MM $(CPPFLAGS) src/*.cpp | sed -e 's|^\([A-Za-z_0-9]\+\)|obj/Library.\1\$$\(SUFFIX\)|' > .deps
-	$(CPP) -MM $(CPPFLAGS) examples/*/*.cpp | sed -e 's|^\([A-Za-z_0-9]\+\)|obj/Example.\1\$$\(SUFFIX\)|' >> .deps
-	$(CPP) -MM $(CPPFLAGS) tests/*.cpp | sed -e 's|^\([A-Za-z_0-9]\+\)|obj/Test.\1\$$\(SUFFIX\)|' >> .deps
-
 clean:
 	-$(RM) -f bin/*.ilk bin/*.pdb obj/*.res obj/*.o obj/*.obj
 

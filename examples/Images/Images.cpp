@@ -137,7 +137,7 @@ protected:
       Frame::onSetCursor(hitTest);
   }
 
-  virtual void onPaint(Graphics &g)
+  virtual void onPaint(Graphics& g)
   {
     m_vacaOrigin =
       Point(getClientBounds().getCenter()) -
@@ -155,7 +155,7 @@ protected:
 		  Color::Black);
   }
 
-  virtual void onResize(const Size &sz)
+  virtual void onResize(const Size& sz)
   {
     Widget::onResize(sz);
     invalidate(false);

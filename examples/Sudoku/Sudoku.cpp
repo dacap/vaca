@@ -215,9 +215,9 @@ protected:
     else
       TextEdit::onKeyDown(ev);
   }
-  virtual void onLostFocus(Event& ev)
+  virtual void onFocusLeave(Event& ev)
   {
-    TextEdit::onLostFocus(ev);
+    TextEdit::onFocusLeave(ev);
     Enter();
   }
 };

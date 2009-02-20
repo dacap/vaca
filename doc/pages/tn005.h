@@ -18,12 +18,12 @@ Vaca::Widget::addStyle).
 Other problem is that because MdiChild is visible when it's
 constructed, we lost some messages (like WM_SETFOCUS, WM_MDIACTIVATE): They
 are passed directly to MdiChild#defWndProc (DefMDIChildProc finally).
-So MdiChild#wndProc can't hook these events, and the onGotFocus() and
+So MdiChild#wndProc can't hook these events, and the onFocusEnter() and
 onActivate() events aren't generated.
 
 To fix this, we repost various messages to the message queue using
 @msdn{PostMessage}:
-@li @c WM_SETFOCUS to generate Widget#onGotFocus.
+@li @c WM_SETFOCUS to generate Widget#onFocusEnter.
 @li @c WM_MDIACTIVATE to generate Frame#onActivate.
 @li @c WM_SIZE to generate Frame#onResize (and layout children).
 

@@ -228,15 +228,15 @@ void LinkLabel::onSetCursor(WidgetHitTest hitTest)
   }
 }
 
-void LinkLabel::onGotFocus(Event& ev)
+void LinkLabel::onFocusEnter(Event& ev)
 {
-  CustomLabel::onGotFocus(ev);
+  CustomLabel::onFocusEnter(ev);
   invalidate(true);
 }
 
-void LinkLabel::onLostFocus(Event& ev)
+void LinkLabel::onFocusLeave(Event& ev)
 {
-  CustomLabel::onGotFocus(ev);
+  CustomLabel::onFocusLeave(ev);
   invalidate(true);
 }
 

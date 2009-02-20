@@ -107,8 +107,8 @@ void configure_frame(Frame &frame)
 
 void configure_editor(TextEdit &edit, Font &normalFont, Font &hotFont, int preferredWidth)
 {
-  edit.GotFocus.connect(Bind(&Widget::setFont, &edit, hotFont));
-  edit.LostFocus.connect(Bind(&Widget::setFont, &edit, normalFont));
+  edit.FocusEnter.connect(Bind(&Widget::setFont, &edit, hotFont));
+  edit.FocusLeave.connect(Bind(&Widget::setFont, &edit, normalFont));
 
   edit.MouseEnter.connect(Bind(&Widget::setBgColor, &edit, Color(255, 255, 190)));
   edit.MouseLeave.connect(Bind(&Widget::setBgColor, &edit, Color::White));

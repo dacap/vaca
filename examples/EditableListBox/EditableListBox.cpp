@@ -60,15 +60,16 @@ protected:
     }
   }
 
+  // When the user double click in a item of the ListBox
   virtual void onAction(Event &ev)
   {
     ListBox::onAction(ev);
     beginEdit(getCurrentItem());
   }
 
-  virtual void onBeforePosChange()
+  virtual void onResize(const Size& sz)
   {
-    ListBox::onBeforePosChange();
+    ListBox::onResize(sz);
     endEdit();
   }
 
@@ -83,10 +84,10 @@ private:
   void onEditKeyDown(KeyEvent &ev)
   {
     if (ev.getKeyCode() == Keys::Enter)
-      onEditLostFocus(ev);
+      onEditFocusLeave(ev);
   }
 
-  void onEditLostFocus(Event& ev)
+  void onEditFocusLeave(Event& ev)
   {
     endEdit();
   }
@@ -98,7 +99,7 @@ private:
       m_edit = new TextEdit(getItemText(index), this, TextEdit::Styles::Default -
 						      Widget::Styles::ClientEdge);
       m_edit->KeyDown.connect(&EditableListBox::onEditKeyDown, this);
-      m_edit->LostFocus.connect(&EditableListBox::onEditLostFocus, this);
+      m_edit->FocusLeave.connect(&EditableListBox::onEditFocusLeave, this);
       m_edit->selectAll();
       m_edit->requestFocus();
 
@@ -117,7 +118,7 @@ private:
       TextEdit *edit = m_edit;
       m_edit = NULL;
 
-      // ...this could produce a "onBeforePosChange" event
+      // ...this could produce a "onBeforeBoundsChange" event
       setItemText(editingItem, edit->getText());
 
       // delete the edit control

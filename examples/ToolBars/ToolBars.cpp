@@ -169,9 +169,9 @@ public:
 
 protected:
 
-  virtual void onGotFocus(Event &ev)
+  virtual void onFocusEnter(Event &ev)
   {
-    Frame::onGotFocus(ev);
+    Frame::onFocusEnter(ev);
     m_console.requestFocus();
   }
 

@@ -84,8 +84,8 @@ protected:
   virtual void onMouseDown(MouseEvent& ev);
   virtual void onSetCursor(WidgetHitTest hitTest);
 //   virtual void onResize(const Size& sz);
-  virtual void onGotFocus(Event& ev);
-  virtual void onLostFocus(Event& ev);
+  virtual void onFocusEnter(Event& ev);
+  virtual void onFocusLeave(Event& ev);
   virtual void onKeyDown(KeyEvent& ev);
 
   // new events

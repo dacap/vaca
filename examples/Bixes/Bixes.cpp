@@ -343,15 +343,15 @@ public:
 
 protected:
 
-  virtual void onGotFocus(Event& ev)
+  virtual void onFocusEnter(Event& ev)
   {
-    TextEdit::onGotFocus(ev);
+    TextEdit::onFocusEnter(ev);
     ElementSelected(m_element);
   }
 
-  virtual void onLostFocus(Event& ev)
+  virtual void onFocusLeave(Event& ev)
   {
-    TextEdit::onLostFocus(ev);
+    TextEdit::onFocusLeave(ev);
   }
 
   void onChange(Event& ev)

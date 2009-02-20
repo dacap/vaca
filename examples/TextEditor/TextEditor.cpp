@@ -180,9 +180,9 @@ private:
     // the editor'll be arranged to client area bounds
     setLayout(new ClientLayout);
 
-    // on GotFocus or Activate signals, put the focus to the m_editor
+    // on FocusEnter or Activate signals, put the focus to the m_editor
     // (so the user can start writting)
-    GotFocus.connect(Bind(&SciEdit::requestFocus, &m_editor));
+    FocusEnter.connect(Bind(&SciEdit::requestFocus, &m_editor));
     // Activate.connect(Bind(&SciEditor::requestFocus, &m_editor));
 
     // add this view to the document

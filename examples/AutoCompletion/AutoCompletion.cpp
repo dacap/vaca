@@ -701,14 +701,14 @@ private:
 
 //////////////////////////////////////////////////////////////////////
 
-class ColorViewer : public Panel
+class ColorViewer : public Widget
 {
   Color* m_color;
 
 public:
 
   ColorViewer(Widget* parent)
-    : Panel(parent)
+    : Widget(parent)
   {
     m_color = NULL;
     setPreferredSize(Size(32, 8));
@@ -764,7 +764,7 @@ protected:
 class MainFrame : public Frame
 {
   Label m_label;
-  Panel m_bottomPanel;
+  Widget m_bottomPanel;
   AutoCompletionComboBox m_comboBox;
   ColorViewer m_colorViewer;
   

@@ -35,11 +35,11 @@ using namespace Vaca;
 
 class MainFrame : public Frame
 {
-  Panel m_top;			// m_top's the panel to test
-  Panel m_bottom;
-  Panel m_bottomSub1;
-  Panel m_bottomSub2;
-  Panel m_bottomSub3;
+  Widget m_top;			// m_top's the panel to test
+  Widget m_bottom;
+  Widget m_bottomSub1;
+  Widget m_bottomSub2;
+  Widget m_bottomSub3;
   Label m_label;
   TextEdit m_edit;
   Button m_button;

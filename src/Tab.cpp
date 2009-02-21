@@ -390,7 +390,7 @@ void Tab::onPageChange(Event& ev)
 // TabPage
 
 TabPage::TabPage(const String& text, Tab* parent, Style style)
-  : Panel(TabPageClass::getClassName(), parent, style)
+  : Widget(TabPageClass::getClassName(), parent, style)
 {
   setText(text);
 

@@ -36,7 +36,6 @@
 #include "Vaca/Font.h"
 #include "Vaca/WidgetClass.h"
 #include "Vaca/Register.h"
-#include "Vaca/Panel.h"
 
 namespace Vaca {
 
@@ -47,7 +46,7 @@ namespace Vaca {
  * Widget that contains tabs to switch between them. This class
  * doesn't controls pages automatically, it's useful when you want a
  * special behaviour for the tabs (see @c Tabs example). If you want
- * to put one Panel in the each page, and swap them when the user
+ * to put one widget in the each page, and swap them when the user
  * change the pages, you should use the Tab widget.
  *
  * @see Tab
@@ -154,9 +153,9 @@ public:
 };
 
 /**
- * A page for an automatic Tab. It's like a Panel.
+ * A page for an automatic Tab.
  */
-class VACA_DLL TabPage : public Register<TabPageClass>, public Panel
+class VACA_DLL TabPage : public Register<TabPageClass>, public Widget
 {
   int m_index;
 

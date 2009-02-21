@@ -606,8 +606,14 @@ inline _String operator+(const wchar_t* _s1, const _String& _s2)
 #define AcceptFilesStyle	(Vaca::Style(0, WS_EX_ACCEPTFILES))
 
 // ===================================================================
-// Edit Widgets
+// Old Widgets
 // ===================================================================
+
+/**
+ * @deprecated You can create user controls derivating Widget class
+ * directly.
+ */
+typedef Widget Panel;
 
 /**
  * @deprecated Replaced by a TextEdit with the TextEdit::Styles::Default style.

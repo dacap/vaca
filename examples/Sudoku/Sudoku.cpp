@@ -75,8 +75,8 @@ exist(InputIterator first, InputIterator last, Predicate pred)
 
 class InsertSeedDialog : public Dialog
 {
-  Panel m_top;
-  Panel m_bottom;
+  Widget m_top;
+  Widget m_bottom;
   Label m_seedLabel;
   TextEdit m_seedEdit;
   Button m_ok;

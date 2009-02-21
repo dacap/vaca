@@ -375,7 +375,7 @@ typename Map::mapped_type find_element(const Map& map,
     return typename Map::mapped_type(0); // NULL
 }
 
-class Panel_Model : public Panel
+class Widgets_Model : public Widget
 {
   Model* m_model;
   std::map<Element*, Bix*> m_mapElemBix;
@@ -384,18 +384,18 @@ public:
 
   Signal1<void, Element*> ElementSelected;
 
-  Panel_Model(Model* model, Widget* parent)
-    : Panel(parent, Panel::Styles::Default +
-		    Widget::Styles::ClientEdge)
+  Widgets_Model(Model* model, Widget* parent)
+    : Widget(parent, Widget::Styles::Default +
+		     Widget::Styles::ClientEdge)
     , m_model(model)
   {
-    m_model->BeforeAddElement.connect(&Panel_Model::onBeforeAddElement, this);
-    m_model->AfterAddElement.connect(&Panel_Model::onAfterAddElement, this);
-    m_model->BeforeRemoveElement.connect(&Panel_Model::onBeforeRemoveElement, this);
-    m_model->AfterRemoveElement.connect(&Panel_Model::onAfterRemoveElement, this);
+    m_model->BeforeAddElement.connect(&Widgets_Model::onBeforeAddElement, this);
+    m_model->AfterAddElement.connect(&Widgets_Model::onAfterAddElement, this);
+    m_model->BeforeRemoveElement.connect(&Widgets_Model::onBeforeRemoveElement, this);
+    m_model->AfterRemoveElement.connect(&Widgets_Model::onAfterRemoveElement, this);
   }
 
-  virtual ~Panel_Model()
+  virtual ~Widgets_Model()
   {
     Container children = getChildren();
     Container::iterator it;
@@ -460,7 +460,7 @@ private:
       
       if (flags == 0) {
 	TextEdit_Element* elementWidget = new TextEdit_Element(element, this);
-	elementWidget->ElementSelected.connect(&Panel_Model::onElementSelected, this);
+	elementWidget->ElementSelected.connect(&Widgets_Model::onElementSelected, this);
 	parentBix->add(elementWidget);
       }
       else {
@@ -549,7 +549,7 @@ class MainFrame : public Frame,
   Element* m_selectedElement;
   SplitBar m_splitBar;
   TreeView_Model m_treeView;
-  Panel_Model m_widgetsView;
+  Widgets_Model m_widgetsView;
   ToolBar m_toolBar;
   ImageList m_imageList;
   int m_widgetCounter;

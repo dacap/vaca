@@ -33,7 +33,7 @@
 
 using namespace Vaca;
 
-class TimerViewer : public Panel
+class TimerViewer : public Widget
 {
   Timer m_timer;
   bool m_on;
@@ -41,7 +41,7 @@ class TimerViewer : public Panel
 public:
 
   TimerViewer(int msecs, Color color, Widget* parent)
-    : Panel(parent)
+    : Widget(parent)
     , m_timer(msecs)
     , m_on(false)
   {

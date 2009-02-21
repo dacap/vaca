@@ -103,7 +103,7 @@ public:
 
   virtual void run();
 
-private:
+protected:
 
   virtual void main();
 

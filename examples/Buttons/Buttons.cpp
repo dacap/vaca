@@ -35,8 +35,8 @@ using namespace Vaca;
 
 class MainFrame : public Frame
 {
-  Panel m_leftPanel;
-  Panel m_rightPanel;
+  Widget m_leftPanel;
+  Widget m_rightPanel;
   Button m_button;
   ToggleButton m_toggleButton;
   CheckBox m_checkBox;

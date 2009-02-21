@@ -111,27 +111,18 @@ static void create_atom()
  */
 Widget::Widget(const WidgetClassName& className, Widget* parent, Style style)
 {
-  create_atom();
-
-  // initialize members
-  m_handle            = NULL;
-  m_parent            = NULL;
-  m_fgColor           = System::getColor(COLOR_WINDOWTEXT);
-  m_bgColor           = System::getColor(COLOR_3DFACE);
-  m_constraint        = NULL;
-  m_layout            = NULL;
-  m_baseWndProc       = NULL;
-  m_hasMouse          = false;
-  m_deleteAfterEvent  = false;
-  m_doubleBuffered    = false;
-  m_preferredSize     = NULL;
-  m_defWndProc        = ::DefWindowProc;
-  m_destroyHandleProc = Widget_DestroyHandleProc;
-  m_hbrush            = NULL;
+  initialize();
 
   // create with the specified "className"?
   if (className != WidgetClassName::None)
     create(className, parent, style);
+}
+
+Widget::Widget(Widget* parent, Style style)
+{
+  initialize();
+
+  create(WidgetClass::getClassName(), parent, style);
 }
 
 /**
@@ -158,7 +149,7 @@ Widget::Widget(const WidgetClassName& className, Widget* parent, Style style)
  */
 Widget::Widget(HWND handle)
 {
-  create_atom();
+  initialize();
 
   // the handle must be a valid Win32 handle
   if (handle == NULL || !::IsWindow(handle))
@@ -168,8 +159,28 @@ Widget::Widget(HWND handle)
   if (fromHandle(handle) != NULL)
     throw CreateWidgetException(format_string(L"Cannot subclass two times the same widget."));
 
-  // initialize members
+  // calibrate members so this special Widget acts like a "HWND wrapper"
   m_handle            = handle;
+  m_defWndProc        = NULL; // m_baseWndProc will be used
+  m_destroyHandleProc = NULL; // to avoid destroying this widget in dtor
+
+  // subclass the handle
+  subClass();
+
+  assert(m_baseWndProc != NULL);
+
+  // add the widget to its parent
+  HWND parent_handle = ::GetParent(handle);
+  Widget* parent = parent_handle ? Widget::fromHandle(parent_handle): NULL;
+  if (parent != NULL)
+    parent->addChildWin32(this, false);
+}
+
+void Widget::initialize()
+{
+  create_atom();
+
+  m_handle            = NULL;
   m_parent            = NULL;
   m_fgColor           = System::getColor(COLOR_WINDOWTEXT);
   m_bgColor           = System::getColor(COLOR_3DFACE);
@@ -180,19 +191,9 @@ Widget::Widget(HWND handle)
   m_deleteAfterEvent  = false;
   m_doubleBuffered    = false;
   m_preferredSize     = NULL;
-  m_defWndProc        = NULL; // m_baseWndProc will be used
-  m_destroyHandleProc = NULL; // to avoid destroying this widget in dtor
+  m_defWndProc        = ::DefWindowProc;
+  m_destroyHandleProc = Widget_DestroyHandleProc;
   m_hbrush            = NULL;
-
-  subClass();
-
-  assert(m_baseWndProc != NULL);
-
-  // add the widget to its parent
-  HWND parent_handle = ::GetParent(handle);
-  Widget* parent = parent_handle ? Widget::fromHandle(parent_handle): NULL;
-  if (parent != NULL)
-    parent->addChildWin32(this, false);
 }
 
 /**

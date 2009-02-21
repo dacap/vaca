@@ -37,7 +37,7 @@ using namespace Vaca;
 // Almost every widget that want to be scrollable should implement
 // something like this
 
-class Scrollable : public Panel
+class Scrollable : public Widget
 {
   // the full size area that can be viewed (using scrolling)
   Size m_fullSize;
@@ -52,10 +52,10 @@ class Scrollable : public Panel
 
 public:
   Scrollable(Widget* parent)
-    : Panel(parent, Panel::Styles::Default +
-		    Widget::Styles::Scroll +     // to show both scroll bars
-		    Widget::Styles::ClientEdge + // to show an edge arround the client area
-		    Widget::Styles::Focusable)   // to receive onMouseWheel
+    : Widget(parent, Widget::Styles::Default +
+		     Widget::Styles::Scroll +     // to show both scroll bars
+		     Widget::Styles::ClientEdge + // to show an edge arround the client area
+		     Widget::Styles::Focusable)   // to receive onMouseWheel
     , m_fullSize(2000, 1500)
     , m_sleep(false)
   {
@@ -99,7 +99,7 @@ protected:
 
   virtual void onResize(const Size& sz)
   {
-    Panel::onResize(sz);
+    Widget::onResize(sz);
 
     Point oldScroll = getScrollPoint();
 
@@ -127,7 +127,7 @@ protected:
 
   virtual void onMouseEnter(MouseEvent& ev)
   {
-    Panel::onMouseEnter(ev);
+    Widget::onMouseEnter(ev);
 
     // to receive onMouseWheel
     requestFocus();
@@ -136,7 +136,7 @@ protected:
   // intercepted to scroll with a "drag & drop" behavior
   virtual void onMouseDown(MouseEvent& ev)
   {
-    Panel::onMouseDown(ev);
+    Widget::onMouseDown(ev);
 
     // start dragging the viewport?
     if (!hasCapture()) {
@@ -155,7 +155,7 @@ protected:
   // intercepted to scroll with a "drag & drop" behavior
   virtual void onMouseMove(MouseEvent& ev)
   {
-    Panel::onMouseMove(ev);
+    Widget::onMouseMove(ev);
 
     if (hasCapture()) {
       // this "delta" point is the scroll variation
@@ -176,7 +176,7 @@ protected:
 
   virtual void onMouseUp(MouseEvent& ev)
   {
-    Panel::onMouseUp(ev);
+    Widget::onMouseUp(ev);
 
     // we release the mouse
     releaseMouse();
@@ -185,7 +185,7 @@ protected:
   // intercepted to scroll with the mouse wheel
   virtual void onMouseWheel(MouseEvent& ev)
   {
-    Panel::onMouseWheel(ev);
+    Widget::onMouseWheel(ev);
 
     Orientation orien =
       ev.isControlKeyPressed() ? Orientation::Horizontal:
@@ -204,7 +204,7 @@ protected:
   // this event is generated when the user touches the scroll bar
   virtual void onScroll(ScrollEvent& ev)
   {
-    Panel::onScroll(ev);
+    Widget::onScroll(ev);
 
     // "ev.getPosition()" is the tentative position where the scroll could
     // be, is calculated automatically through the scroll information

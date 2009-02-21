@@ -97,7 +97,6 @@
 #include "Vaca/MouseEvent.h"
 #include "Vaca/MsgBox.h"
 #include "Vaca/Mutex.h"
-#include "Vaca/Panel.h"
 #include "Vaca/ParseException.h"
 #include "Vaca/Pen.h"
 #include "Vaca/Point.h"

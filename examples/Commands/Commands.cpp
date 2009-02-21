@@ -34,30 +34,7 @@
 
 using namespace Vaca;
 
-//////////////////////////////////////////////////////////////////////
-// Console class
-
-class Console : public TextEdit
-{
-  Font m_font;
-
-public:
-
-  Console(Widget* parent)
-    : TextEdit(L"", parent, TextEdit::Styles::TextArea +
-			    Widget::Styles::Scroll)
-    , m_font(L"Courier New", 10)
-  {
-    setFont(m_font);
-  }
-
-  void println(const String &str)
-  {
-    setText(getText() + str + L"\r\n");
-    scrollLines(getLineCount());
-  }
-  
-};
+#include "../Console.h"
 
 //////////////////////////////////////////////////////////////////////
 // MainFrame class

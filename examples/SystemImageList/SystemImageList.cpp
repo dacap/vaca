@@ -37,7 +37,7 @@ class MainFrame : public Frame
 {
   ListView m_listView;
   ImageList m_imageList;
-  Panel m_bottom;
+  Widget m_bottom;
   Button m_browseButton;
   Button m_refreshButton;
 

@@ -35,7 +35,7 @@
 
 using namespace Vaca;
 
-class Regions : public Panel
+class Regions : public Widget
 {
   Region m_region;
   Point m_startPoint;
@@ -47,8 +47,8 @@ class Regions : public Panel
 public:
 
   Regions(Widget* parent)
-    : Panel(parent, Panel::Styles::Default +
-		    Widget::Styles::ClientEdge)
+    : Widget(parent, Widget::Styles::Default +
+		     Widget::Styles::ClientEdge)
     , m_readOnly(true)
   {
     setBgColor(Color::White);

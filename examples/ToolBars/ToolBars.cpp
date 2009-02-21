@@ -34,29 +34,7 @@
 
 using namespace Vaca;
 
-//////////////////////////////////////////////////////////////////////
-
-class Console : public TextEdit
-{
-  Font m_font;
-  
-public:
-
-  Console(Widget* parent)
-    : TextEdit(L"", parent, TextEdit::Styles::TextArea |
-			    Widget::Styles::Scroll)
-    , m_font(L"Verdana", 10)
-  {
-    setFont(m_font);
-  }
-
-  void println(const String &str)
-  {
-    setText(getText() + str + L"\r\n");
-    scrollLines(getLineCount());
-  }
-  
-};
+#include "../Console.h"
 
 //////////////////////////////////////////////////////////////////////
 
@@ -71,7 +49,7 @@ class MainFrame : public Frame
   Button m_button3;
   ImageList m_imageList;
   Console m_console;
-  Panel m_bottomPanel;
+  Widget m_bottomPanel;
   Button m_button4;
   ToggleButton m_button5;
   ToggleButton m_button6;

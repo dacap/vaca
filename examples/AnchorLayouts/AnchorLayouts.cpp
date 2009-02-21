@@ -42,7 +42,7 @@ static Sides sides[4] = { Sides::Left,
 			  Sides::Right,
 			  Sides::Bottom };
 
-class AnchoredWidget : public Panel
+class AnchoredWidget : public Widget
 {
   Anchor* m_anchor;
   Sides m_hotSides;
@@ -50,7 +50,7 @@ class AnchoredWidget : public Panel
 public:
 
   AnchoredWidget(Anchor* anchor, Widget* parent)
-    : Panel(parent)
+    : Widget(parent)
     , m_anchor(anchor)
   {
     setBgColor(Color::White);
@@ -64,7 +64,7 @@ protected:
 
   virtual void onResize(const Size &sz)
   {
-    Panel::onResize(sz);
+    Widget::onResize(sz);
     invalidate(true);
   }
 

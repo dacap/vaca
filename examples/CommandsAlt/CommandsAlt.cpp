@@ -33,37 +33,13 @@
 
 using namespace Vaca;
 
-//////////////////////////////////////////////////////////////////////
-
-class Console : public TextEdit
-{
-  Font m_font;
-  
-public:
-
-  Console(Widget* parent)
-    : TextEdit("", parent, TextEdit::Styles::TextArea +
-			   ScrollStyle)
-    , m_font("Courier New", 10)
-  {
-    setFont(&m_font);
-    setBgColor(Color::Black);
-    setFgColor(Color(0, 220, 0));
-  }
-
-  void println(const String &str)
-  {
-    setText(getText() + str + "\r\n");
-    scrollLines(getLineCount());
-  }
-  
-};
+#include "../Console.h"
 
 //////////////////////////////////////////////////////////////////////
 
 class MyCommand : public Command // class used by method 2
 {
-  Console &m_console;
+  Console& m_console;
 
 public:
 

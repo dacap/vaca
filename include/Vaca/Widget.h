@@ -39,9 +39,11 @@
 #include "Vaca/Font.h"
 #include "Vaca/Graphics.h"
 #include "Vaca/Rect.h"
+#include "Vaca/Register.h"
 #include "Vaca/Signal.h"
 #include "Vaca/Size.h"
 #include "Vaca/Style.h"
+#include "Vaca/WidgetClass.h"
 #include "Vaca/WidgetHit.h"
 
 #include <vector>
@@ -78,7 +80,7 @@ public:
  *   messages (@c "WM_*") to events.
  * @endwin32
  */
-class VACA_DLL Widget : public Component
+class VACA_DLL Widget : public Register<WidgetClass>, public Component
 {
   friend class MakeWidgetRef;
   friend VACA_DLL void delete_widget(Widget* widget);
@@ -105,6 +107,7 @@ public:
     static const Style ClientEdge;
     static const Style Container;
     static const Style AcceptFiles;
+    static const Style Default;
   };
 
 private:
@@ -226,6 +229,7 @@ public:
   // ============================================================
 
   Widget(const WidgetClassName& className, Widget* parent, Style style);
+  explicit Widget(Widget* parent, Style style = Styles::Default);
   explicit Widget(HWND handle);
   virtual ~Widget();
 
@@ -471,6 +475,7 @@ protected:
 
 private:
 
+  void initialize();
   void addChildWin32(Widget* child, bool setParent);
   void removeChildWin32(Widget* child, bool setParent);
 

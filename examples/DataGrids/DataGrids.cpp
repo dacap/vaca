@@ -613,7 +613,7 @@ public:
 //////////////////////////////////////////////////////////////////////
 // GridView
 
-class GridView : public Panel
+class GridView : public Widget
 {
   std::vector<GridValue> m_values;
   std::vector<GridColumn> m_columns;
@@ -737,7 +737,7 @@ private:
   
 };
 
-const Style GridView::Styles::Default(Panel::Styles::Default +
+const Style GridView::Styles::Default(Widget::Styles::Default +
 				      Widget::Styles::Scroll +
 				      Widget::Styles::ClientEdge +
 				      Widget::Styles::Focusable);
@@ -747,7 +747,7 @@ const Style GridView::Styles::Default(Panel::Styles::Default +
 #define CRUD_COLUMN_INDEX (-1)
 
 GridView::GridView(Widget* parent, Style style)
-  : Panel(parent, style)
+  : Widget(parent, style)
 {
   setBgColor(Color::White);
   setFgColor(Color::Black);
@@ -804,7 +804,7 @@ void GridView::setCrudColumnWidth(int width)
 
 void GridView::onScroll(ScrollEvent& ev)
 {
-  Panel::onScroll(ev);
+  Widget::onScroll(ev);
 
   Orientation orien = ev.getOrientation();
   int pos = getScrollPos(orien);
@@ -840,7 +840,7 @@ void GridView::onScroll(ScrollEvent& ev)
 
 void GridView::onDoubleClick(MouseEvent &ev)
 {
-  Panel::onDoubleClick(ev);
+  Widget::onDoubleClick(ev);
 
   // double click to fit header width
   int column = getHotResizingBorder(ev.getPoint());
@@ -857,7 +857,7 @@ void GridView::onDoubleClick(MouseEvent &ev)
 // when a mouse's button is pressed
 void GridView::onMouseDown(MouseEvent &ev)
 {
-  Panel::onMouseDown(ev);
+  Widget::onMouseDown(ev);
 
   if (!hasCapture()) {
     requestFocus();
@@ -882,7 +882,7 @@ void GridView::onMouseDown(MouseEvent &ev)
 // when a mouse's button is unpressed
 void GridView::onMouseUp(MouseEvent &ev)
 {
-  Panel::onMouseUp(ev);
+  Widget::onMouseUp(ev);
 
   if (hasCapture()) {
     if (m_resizing.column >= 0) {
@@ -899,7 +899,7 @@ void GridView::onMouseUp(MouseEvent &ev)
 // when the mouse is moved
 void GridView::onMouseMove(MouseEvent &ev)
 {
-  Panel::onMouseMove(ev);
+  Widget::onMouseMove(ev);
 
   if (hasCapture()) {
     // resizing column's header
@@ -945,7 +945,7 @@ void GridView::onMouseMove(MouseEvent &ev)
 
 void GridView::onMouseWheel(MouseEvent &ev)
 {
-  Panel::onMouseWheel(ev);
+  Widget::onMouseWheel(ev);
   //     int columnIndex = getColumnByPoint(ev.getPoint());
 
   //     SCROLLINFO si;
@@ -996,7 +996,7 @@ void GridView::onMouseWheel(MouseEvent &ev)
 
 void GridView::onMouseLeave()
 {
-  Panel::onMouseLeave();
+  Widget::onMouseLeave();
 
   if (m_hotCol != NULL_COLUMN_INDEX) {
     invalidate(getColumnBounds(m_hotCol), false);
@@ -1006,7 +1006,7 @@ void GridView::onMouseLeave()
 
 void GridView::onKeyDown(KeyEvent &ev)
 {
-  Panel::onKeyDown(ev);
+  Widget::onKeyDown(ev);
 
   switch (ev.getKeyCode()) {
 
@@ -1057,7 +1057,7 @@ void GridView::onSetCursor(WidgetHitTest hitTest)
   
 void GridView::onResize(const Size &sz)
 {
-  Panel::onResize(sz);
+  Widget::onResize(sz);
   //       invalidate(true);
   updateHorizontalScrollBarVisibility();
   //       updateVerticalScrollBarVisibility();

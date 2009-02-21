@@ -139,7 +139,7 @@ private:
 class MainFrame : public Frame
 {
   EditableListBox m_listBox;
-  Panel m_bottomPanel;
+  Widget m_bottomPanel;
   Button m_addButton;
   Button m_removeButton;
   int m_counter;

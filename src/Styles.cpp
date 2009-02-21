@@ -129,9 +129,9 @@ const Style Widget::Styles::AcceptFiles =
   Style(0, WS_EX_ACCEPTFILES);
 
 /**
- * Default style for Panel widget.
+ * Default widget style.
  */
-const Style Panel::Styles::Default =
+const Style Widget::Styles::Default =
   Widget::Styles::Visible |
   Widget::Styles::Container;
 
@@ -591,13 +591,13 @@ const Style Spinner::Styles::Default =
 // ===================================================================
 
 const Style TabBase::Styles::Default =
-  Widget::Styles::Visible;
+  Widget::Styles::Default;
 
 const Style Tab::Styles::Default =
   TabBase::Styles::Default;
 
 const Style TabPage::Styles::Default =
-  Panel::Styles::Default;
+  Widget::Styles::Default;
 
 // ===================================================================
 // MDI

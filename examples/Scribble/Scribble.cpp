@@ -33,7 +33,7 @@
 
 using namespace Vaca;
 
-class Scribble : public Panel
+class Scribble : public Widget
 {
   Image m_image;
   Point m_point[3];
@@ -42,7 +42,7 @@ class Scribble : public Panel
 public:
 
   Scribble(Widget* parent)
-    : Panel(parent)
+    : Widget(parent)
   {
     setBgColor(Color::White);
   }

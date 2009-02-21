@@ -34,7 +34,6 @@
 
 #include "Vaca/base.h"
 #include "Vaca/CustomLabel.h"
-// #include "Vaca/Panel.h"
 
 namespace Vaca {
 
@@ -42,7 +41,6 @@ namespace Vaca {
  * A link to Internet (or whatever you want).
  */
 class VACA_DLL LinkLabel : public CustomLabel
-// class VACA_DLL LinkLabel : public Panel
 {
   enum State {
     Outside,

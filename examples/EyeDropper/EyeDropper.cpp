@@ -35,7 +35,7 @@
 using namespace Vaca;
 
 // the eye-dropper widget
-class EyeDropper : public Panel
+class EyeDropper : public Widget
 {
   Font m_font;
   Cursor m_cursor;
@@ -44,7 +44,7 @@ class EyeDropper : public Panel
 public:
 
   EyeDropper(Widget* parent)
-    : Panel(parent)
+    : Widget(parent)
     , m_font(L"Courier", 10)
     , m_cursor(ResourceId(IDC_EYEDROPPER))
     , m_isHexFormat(false)
@@ -63,7 +63,7 @@ protected:
 
   virtual void onPaint(Graphics &g)
   {
-    // remember not to call the base implementation of onPaint (Panel::onPaint)
+    // remember not to call the base implementation of onPaint (Widget::onPaint)
     
     Rect rc = getClientBounds();
     Color bg = getBgColor();
@@ -99,7 +99,7 @@ protected:
   virtual void onMouseDown(MouseEvent &ev)
   {
     // remember to call the base implementation to generated the MouseDown signal
-    Panel::onMouseDown(ev);
+    Widget::onMouseDown(ev);
 
     captureMouse();
     setCursor(m_cursor);
@@ -108,7 +108,7 @@ protected:
   virtual void onMouseMove(MouseEvent &ev)
   {
     // remember to call the base implementation to generated the MouseMove signal
-    Panel::onMouseMove(ev);
+    Widget::onMouseMove(ev);
 
     if (hasCapture()) {
       ScreenGraphics g;
@@ -120,7 +120,7 @@ protected:
   virtual void onMouseUp(MouseEvent &ev)
   {
     // remember to call the base implementation to generated the MouseUp signal
-    Panel::onMouseUp(ev);
+    Widget::onMouseUp(ev);
 
     if (hasCapture())
       releaseMouse();

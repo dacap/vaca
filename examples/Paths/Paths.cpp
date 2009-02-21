@@ -268,7 +268,7 @@ private:
 //////////////////////////////////////////////////////////////////////
 // A figures' editor
 
-class FigsEditor : public Panel
+class FigsEditor : public Widget
 {
   #define NULLFIGURE	m_figs.end()
   #define NULLNODE	m_newPath.end()
@@ -287,8 +287,8 @@ class FigsEditor : public Panel
 public:
 
   FigsEditor(Widget* parent)
-    : Panel(parent, Panel::Styles::Default +
-		    Widget::Styles::ClientEdge)
+    : Widget(parent, Widget::Styles::Default +
+		     Widget::Styles::ClientEdge)
   {
     setBgColor(Color::White);
     setDoubleBuffered(true);
@@ -305,7 +305,7 @@ protected:
   // when the user presses a mouse button over the widget this event is generated
   virtual void onMouseDown(MouseEvent& ev)
   {
-    Panel::onMouseDown(ev);
+    Widget::onMouseDown(ev);
 
     // if we have the capture here is because the user pressed another
     // button but without releasing the first one
@@ -346,7 +346,7 @@ protected:
 
   virtual void onMouseMove(MouseEvent& ev)
   {
-    Panel::onMouseMove(ev);
+    Widget::onMouseMove(ev);
 
     // is the user dragging a node or figure?
     if (hasCapture()) {
@@ -375,7 +375,7 @@ protected:
   
   virtual void onMouseUp(MouseEvent& ev)
   {
-    Panel::onMouseUp(ev);
+    Widget::onMouseUp(ev);
     if (hasCapture()) {
       releaseMouse();
 
@@ -437,7 +437,7 @@ protected:
 
   virtual void onResize(const Size &sz)
   {
-    Panel::onResize(sz);
+    Widget::onResize(sz);
     invalidate(true);
   }
 

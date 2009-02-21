@@ -38,7 +38,7 @@
 using namespace Vaca;
 
 // Document's view
-class Editor : public Panel
+class Editor : public Widget
 {
   DocumentPtr m_doc;
   Font m_font;
@@ -50,8 +50,8 @@ class Editor : public Panel
 public:
 
   Editor(Widget* parent)
-    : Panel(parent, Panel::Styles::Default |
-		    Widget::Styles::Focusable)
+    : Widget(parent, Widget::Styles::Default |
+		     Widget::Styles::Focusable)
     , m_doc(NULL)
     , m_font(L"Courier New", 24)
     , m_caret(0)
@@ -160,7 +160,7 @@ protected:
 
   virtual void onKeyDown(KeyEvent& ev)
   {
-    Panel::onKeyDown(ev);
+    Widget::onKeyDown(ev);
 
     if (m_doc) {
       switch (ev.getKeyCode()) {

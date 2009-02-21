@@ -41,7 +41,8 @@ LFLAGS += -mwindows -Lobj
 LIBS += -lkernel32 -luser32 -lgdi32 -lcomdlg32 -lwinspool	\
 	-lwinmm -lshell32 -lshlwapi -lcomctl32 -lole32		\
 	-loleaut32 -luuid -lrpcrt4 -ladvapi32 -lwsock32		\
-	-lodbc32 -lcomctl32 -lsecur32 -lmsimg32 -lwininet
+	-lodbc32 -lcomctl32 -lsecur32 -lmsimg32 -lwininet	\
+	-lvfw32
 EXE_LIBS += $(LIBS)
 
 # ----------------------------------------------------------------------
@@ -137,52 +138,17 @@ $(VACA_LIB): $(LIB_OBJS)
 	$(RM) -f $@
 	$(AR) crs $(VACA_LIB) $(LIB_OBJS)
 else
-$(VACA_LIB): $(LIB_OBJS)
-	$(RM) -f $@
+$(VACA_LIB): $(VACA_DLL)
 
-$(VACA_DLL): $(VACA_LIB)
+$(VACA_DLL): $(LIB_OBJS)
+	$(RM) -f $@
 	$(CPP) $(DLLFLAGS) -shared -fPIC -o $(VACA_DLL) $(LIB_OBJS) -Wl,--out-implib,$(VACA_LIB) $(LIBS)
 endif
 
-# general examples
+# examples
 
-bin/Example.%$(SUFFIX)$(_EXE): obj/Example.%$(SUFFIX)$(_OBJ) obj/Example$(SUFFIX)$(_RES) $(VACA_LIB)
+bin/Example.%$(SUFFIX)$(_EXE): obj/Example.%$(SUFFIX)$(_OBJ) $(VACA_LIB)
 	$(CPP) $(LFLAGS) -o $@ $^ $(EXE_LIBS) 
-
-# special examples
-
-bin/Example.Bixes$(SUFFIX)$(_EXE): obj/Example.Bixes$(SUFFIX)$(_OBJ) obj/Example.Bixes$(SUFFIX)$(_RES) $(VACA_LIB)
-	$(CPP) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
-
-bin/Example.Commands$(SUFFIX)$(_EXE): obj/Example.Commands$(SUFFIX)$(_OBJ) obj/Example.Commands$(SUFFIX)$(_RES) $(VACA_LIB)
-	$(CPP) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
-
-bin/Example.DialogResource$(SUFFIX)$(_EXE): obj/Example.DialogResource$(SUFFIX)$(_OBJ) obj/Example.DialogResource$(SUFFIX)$(_RES) $(VACA_LIB)
-	$(CPP) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
-
-bin/Example.EyeDropper$(SUFFIX)$(_EXE): obj/Example.EyeDropper$(SUFFIX)$(_OBJ) obj/Example.EyeDropper$(SUFFIX)$(_RES) $(VACA_LIB)
-	$(CPP) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
-
-bin/Example.Hashing$(SUFFIX)$(_EXE): obj/Example.Hashing$(SUFFIX)$(_OBJ) obj/Example.md5$(SUFFIX)$(_OBJ) obj/Example.sha1$(SUFFIX)$(_OBJ) obj/Example$(SUFFIX)$(_RES) $(VACA_LIB)
-	$(CPP) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
-
-bin/Example.Images$(SUFFIX)$(_EXE): obj/Example.Images$(SUFFIX)$(_OBJ) obj/Example.Images$(SUFFIX)$(_RES) $(VACA_LIB)
-	$(CPP) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
-
-bin/Example.MenuResource$(SUFFIX)$(_EXE): obj/Example.MenuResource$(SUFFIX)$(_OBJ) obj/Example.MenuResource$(SUFFIX)$(_RES) $(VACA_LIB)
-	$(CPP) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
-
-bin/Example.SplitBars$(SUFFIX)$(_EXE): obj/Example.SplitBars$(SUFFIX)$(_OBJ) obj/Example.SplitBars$(SUFFIX)$(_RES) $(VACA_LIB)
-	$(CPP) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
-
-bin/Example.TextEditor$(SUFFIX)$(_EXE): obj/Example.TextEditor$(SUFFIX)$(_OBJ) obj/Example.TextEditor$(SUFFIX)$(_RES) $(VACA_LIB)
-	$(CPP) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
-
-bin/Example.ToolBars$(SUFFIX)$(_EXE): obj/Example.ToolBars$(SUFFIX)$(_OBJ) obj/Example.ToolBars$(SUFFIX)$(_RES) $(VACA_LIB)
-	$(CPP) $(LFLAGS) -o $@ $^ $(EXE_LIBS)
-
-bin/Example.WebCam$(SUFFIX)$(_EXE): obj/Example.WebCam$(SUFFIX)$(_OBJ) obj/Example$(SUFFIX)$(_RES) $(VACA_LIB)
-	$(CPP) $(LFLAGS) -o $@ $^ $(EXE_LIBS) -lvfw32
 
 # tests
 
@@ -221,13 +187,13 @@ deps:
 	$(CPP) -MM $(CPPFLAGS)      tests/*.cpp | sed -e 's|^\([A-Za-z_0-9]\+\)\.o|obj/Test.\1\$$\(SUFFIX\)$$\(_OBJ\)|' >> .deps
 
 clean:
-	-$(RM) -f bin/*.ilk bin/*.pdb obj/*.res obj/*.o obj/*.obj
+	-$(RM) -f $(wildcard bin/*.ilk bin/*.pdb obj/*.res obj/*.o obj/*.obj)
 
 cleanobj:
 	-$(RM) -f $(LIB_OBJS)
 
 distclean: clean
-	-$(RM) -f bin/Vaca*.dll bin/*.exe bin/*.manifest lib/*.a lib/*.lib lib/*.exp bin/vaca.log
+	-$(RM) -f $(wildcard bin/Vaca*.dll bin/*.exe bin/*.manifest lib/*.a lib/*.lib lib/*.exp bin/vaca.log)
 
 ifdef MINGW_ROOT
 install: lib

@@ -1,7 +1,8 @@
 #include "resource.h"
 #include "windows.h"
 
-IDI_VACA	ICON	"../Vaca.ico"
+APP_MANIFEST	RT_MANIFEST	"../Example.manifest"
+IDI_VACA	ICON		"../Vaca.ico"
 
 IDR_MAINMENU MENU 
 BEGIN

@@ -256,7 +256,7 @@ void RichEdit::getSelection(int& start, int& end)
 String RichEdit::getSelectedText() const
 {
   size_t length = getTextLength();
-  std::auto_ptr<Char> bufferWrap = new Char[length > 0 ? length: 1];
+  std::auto_ptr<Char> bufferWrap(new Char[length > 0 ? length: 1]);
   Char* buffer = bufferWrap.get();
 
   const_cast<RichEdit*>(this)->sendMessage(EM_GETSELTEXT, 0, (LPARAM)buffer);

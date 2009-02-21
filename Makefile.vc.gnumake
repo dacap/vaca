@@ -146,52 +146,19 @@ ifdef STATIC
 $(VACA_LIB): $(LIB_OBJS)
 	$(AR) -OUT:$@ $^
 else
-$(VACA_LIB): $(LIB_OBJS)
-	$(RM) -f $@
+$(VACA_LIB): $(VACA_DLL)
 
-$(VACA_DLL): $(VACA_LIB)
+$(VACA_DLL): $(LIB_OBJS)
+	$(RM) -f $@
 	$(LINK) $(DLLFLAGS) -DLL -IMPLIB:$(VACA_LIB) $(LIB_OBJS) $(LIBS) -OUT:$(VACA_DLL)
 endif
 
-# general examples
+# examples
 
-bin/Example.%$(SUFFIX)$(_EXE): obj/Example.%$(SUFFIX)$(_OBJ) obj/Example$(SUFFIX)$(_RES) $(VACA_LIB)
+bin/Example.%$(SUFFIX)$(_EXE): obj/Example.%$(SUFFIX)$(_OBJ) $(VACA_LIB)
 	$(LINK) $(LFLAGS) -SUBSYSTEM:WINDOWS -MACHINE:X86 -OUT:$@ $^ $(EXE_LIBS)
-
-# special examples
-
-bin/Example.Bixes$(SUFFIX)$(_EXE): obj/Example.Bixes$(SUFFIX)$(_OBJ) obj/Example.Bixes$(SUFFIX)$(_RES) $(VACA_LIB)
-	$(LINK) $(LFLAGS) -SUBSYSTEM:WINDOWS -MACHINE:X86 -OUT:$@ $^ $(EXE_LIBS)
-
-bin/Example.Commands$(SUFFIX)$(_EXE): obj/Example.Commands$(SUFFIX)$(_OBJ) obj/Example.Commands$(SUFFIX)$(_RES) $(VACA_LIB)
-	$(LINK) $(LFLAGS) -SUBSYSTEM:WINDOWS -MACHINE:X86 -OUT:$@ $^ $(EXE_LIBS)
-
-bin/Example.DialogResource$(SUFFIX)$(_EXE): obj/Example.DialogResource$(SUFFIX)$(_OBJ) obj/Example.DialogResource$(SUFFIX)$(_RES) $(VACA_LIB)
-	$(LINK) $(LFLAGS) -SUBSYSTEM:WINDOWS -MACHINE:X86 -OUT:$@ $^ $(EXE_LIBS)
-
-bin/Example.EyeDropper$(SUFFIX)$(_EXE): obj/Example.EyeDropper$(SUFFIX)$(_OBJ) obj/Example.EyeDropper$(SUFFIX)$(_RES) $(VACA_LIB)
-	$(LINK) $(LFLAGS) -SUBSYSTEM:WINDOWS -MACHINE:X86 -OUT:$@ $^ $(EXE_LIBS)
-
-bin/Example.Hashing$(SUFFIX)$(_EXE): obj/Example.Hashing$(SUFFIX)$(_OBJ) obj/Example.md5$(SUFFIX)$(_OBJ) obj/Example.sha1$(SUFFIX)$(_OBJ) obj/Example$(SUFFIX)$(_RES) $(VACA_LIB)
-	$(LINK) $(LFLAGS) -SUBSYSTEM:WINDOWS -MACHINE:X86 -OUT:$@ $^ $(EXE_LIBS)
-
-bin/Example.Images$(SUFFIX)$(_EXE): obj/Example.Images$(SUFFIX)$(_OBJ) obj/Example.Images$(SUFFIX)$(_RES) $(VACA_LIB)
-	$(LINK) $(LFLAGS) -SUBSYSTEM:WINDOWS -MACHINE:X86 -OUT:$@ $^ $(EXE_LIBS)
-
-bin/Example.MenuResource$(SUFFIX)$(_EXE): obj/Example.MenuResource$(SUFFIX)$(_OBJ) obj/Example.MenuResource$(SUFFIX)$(_RES) $(VACA_LIB)
-	$(LINK) $(LFLAGS) -SUBSYSTEM:WINDOWS -MACHINE:X86 -OUT:$@ $^ $(EXE_LIBS)
-
-bin/Example.SplitBars$(SUFFIX)$(_EXE): obj/Example.SplitBars$(SUFFIX)$(_OBJ) obj/Example.SplitBars$(SUFFIX)$(_RES) $(VACA_LIB)
-	$(LINK) $(LFLAGS) -SUBSYSTEM:WINDOWS -MACHINE:X86 -OUT:$@ $^ $(EXE_LIBS)
-
-bin/Example.TextEditor$(SUFFIX)$(_EXE): obj/Example.TextEditor$(SUFFIX)$(_OBJ) obj/Example.TextEditor$(SUFFIX)$(_RES) $(VACA_LIB)
-	$(LINK) $(LFLAGS) -SUBSYSTEM:WINDOWS -MACHINE:X86 -OUT:$@ $^ $(EXE_LIBS)
-
-bin/Example.ToolBars$(SUFFIX)$(_EXE): obj/Example.ToolBars$(SUFFIX)$(_OBJ) obj/Example.ToolBars$(SUFFIX)$(_RES) $(VACA_LIB)
-	$(LINK) $(LFLAGS) -SUBSYSTEM:WINDOWS -MACHINE:X86 -OUT:$@ $^ $(EXE_LIBS)
-
-bin/Example.WebCam$(SUFFIX)$(_EXE): obj/Example.WebCam$(SUFFIX)$(_OBJ) obj/Example$(SUFFIX)$(_RES) $(VACA_LIB)
-	$(LINK) $(LFLAGS) -SUBSYSTEM:WINDOWS -MACHINE:X86 -OUT:$@ $^ $(EXE_LIBS) vfw32.lib
+	mt.exe -nologo -manifest examples/Example.manifest $@.manifest "-outputresource:$@;1"
+	$(RM) $@.manifest
 
 # tests
 
@@ -232,13 +199,13 @@ runtests: tests
 	done
 
 clean:
-	-$(RM) -f bin/*.ilk bin/*.pdb obj/*.res obj/*.o obj/*.obj
+	-$(RM) -f $(wildcard bin/*.ilk bin/*.pdb obj/*.res obj/*.o obj/*.obj)
 
 cleanobj:
 	-$(RM) -f $(LIB_OBJS)
 
 distclean: clean
-	-$(RM) -f bin/Vaca*.dll bin/*.exe bin/*.manifest lib/*.a lib/*.lib lib/*.exp bin/vaca.log
+	-$(RM) -f $(wildcard bin/Vaca*.dll bin/*.exe bin/*.manifest lib/*.a lib/*.lib lib/*.exp bin/vaca.log)
 
 ifdef VCINSTALLDIR
 install: lib
@@ -256,8 +223,3 @@ install:
 uninstall:
 	@echo You must to setup your VCINSTALLDIR enviroment variable
 endif
-
-# ----------------------------------------------------------------------
-# Dependencies
-
--include .deps

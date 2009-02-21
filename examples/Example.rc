@@ -1,5 +1,5 @@
 #include "resource.h"
 #include "windows.h"
 
-CONTROL_PANEL_RESOURCE_ID	RT_MANIFEST	"Example.manifest"
-IDI_VACA			ICON		"Vaca.ico"
+APP_MANIFEST	RT_MANIFEST	"Example.manifest"
+IDI_VACA	ICON		"Vaca.ico"

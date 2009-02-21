@@ -1,5 +1,6 @@
 #include "resource.h"
 #include "windows.h"
 
-IDI_VACA	ICON	"../Vaca.ico"
-IDB_VACA	BITMAP	"Vaca.bmp"
+APP_MANIFEST	RT_MANIFEST	"../Example.manifest"
+IDI_VACA	ICON		"../Vaca.ico"
+IDB_VACA	BITMAP		"Vaca.bmp"

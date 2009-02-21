@@ -1,2 +1,2 @@
-#define CONTROL_PANEL_RESOURCE_ID	1
-#define IDI_VACA			2
+#define APP_MANIFEST			1
+#define IDI_VACA			1

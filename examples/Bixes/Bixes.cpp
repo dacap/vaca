@@ -547,6 +547,7 @@ class MainFrame : public Frame,
 {
   Model m_model;
   Element* m_selectedElement;
+  SplitBar m_splitBar;
   TreeView_Model m_treeView;
   Panel_Model m_widgetsView;
   ToolBar m_toolBar;
@@ -560,8 +561,9 @@ public:
     : Frame(L"Bixes")
     , m_model()
     , m_selectedElement(NULL)
-    , m_treeView(&m_model, this)
-    , m_widgetsView(&m_model, this)
+    , m_splitBar(Orientation::Vertical, this)
+    , m_treeView(&m_model, &m_splitBar)
+    , m_widgetsView(&m_model, &m_splitBar)
     , m_toolBar(L"Standard", this, ToolSet::Styles::Default +
 				   ToolSet::Styles::Flat)
     , m_imageList(ResourceId(IDB_TOOLBAR), 16, Color(192, 192, 192))
@@ -577,8 +579,9 @@ public:
     addCommand(new SignalCommand(IDM_PROPERTIES));
 
     // layout
-    setLayout(Bix::parse(L"X[%,f%]", &m_treeView, &m_widgetsView));
+    setLayout(new ClientLayout);
     m_treeView.setPreferredSize(Size(256, 256));
+    m_splitBar.setBarPosition(25);
 
     // signals
     m_treeView.ElementSelected.connect(&MainFrame::onElementSelectedFromTreeView, this);

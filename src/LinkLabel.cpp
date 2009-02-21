@@ -42,23 +42,22 @@
 
 using namespace Vaca;
 
-/**
- * It creates a LinkLabel.
- *
- * @param urlOrText
- *     If it contains "www", "://", or "@@", the
- *     LinkLabel'll open the browser when it's clicked.
- *     If not, it's just like test, and you should hook
- *     the LinkLabel::Action signal or
- *     LinkLabel::onAction event.
- *
- * @param parent
- *     It's a Widget (generally a Frame) that will act as the container
- *     parent of the new LinkLabel.
- * 
- * @param style
- *     Style to put to this widget.
- */
+/// It creates a LinkLabel.
+/// 
+/// @param urlOrText
+///     If it contains "www", "://", or "@@", the
+///     LinkLabel'll open the browser when it's clicked.
+///     If not, it's just like test, and you should hook
+///     the LinkLabel::Action signal or
+///     LinkLabel::onAction event.
+/// 
+/// @param parent
+///     It's a Widget (generally a Frame) that will act as the container
+///     parent of the new LinkLabel.
+/// 
+/// @param style
+///     Style to put to this widget.
+/// 
 LinkLabel::LinkLabel(const String& urlOrText, Widget* parent, Style style)
   : CustomLabel(L"", parent, style)
 {
@@ -116,12 +115,11 @@ void LinkLabel::onPreferredSize(Size& sz)
     CustomLabel::onPreferredSize(sz);
 }
 
-/**
- * Draws the background and the label. By default, the background
- * color is getBgColor() and the label color is getLinkColor(), if the
- * mouse is over the label, it's drawn using the m_underlineFont font and
- * the getHoverColor() color.
- */
+/// Draws the background and the label. By default, the background
+/// color is getBgColor() and the label color is getLinkColor(), if the
+/// mouse is over the label, it's drawn using the m_underlineFont font and
+/// the getHoverColor() color.
+/// 
 void LinkLabel::onPaint(Graphics& g)
 {
   Rect rc = getClientBounds();
@@ -201,9 +199,8 @@ void LinkLabel::onMouseLeave()
   m_state = Outside;
 }
 
-/**
- * Opens the URL (if it's not empty), and calls the onAction event.
- */
+/// Opens the URL (if it's not empty), and calls the onAction event.
+/// 
 void LinkLabel::onMouseDown(MouseEvent& ev)
 {
   if (m_state == Hover) {
@@ -213,9 +210,8 @@ void LinkLabel::onMouseDown(MouseEvent& ev)
   }
 }
 
-/**
- * Uses the Cursor::Hand when the mouse is over the label.
- */
+/// Uses the Cursor::Hand when the mouse is over the label.
+/// 
 void LinkLabel::onSetCursor(WidgetHitTest hitTest)
 {
   switch (m_state) {
@@ -251,18 +247,16 @@ void LinkLabel::onKeyDown(KeyEvent& ev)
   }
 }
 
-/**
- * If the label is resized, we must to redraw it. This is necessary
- * mainly if the LinkLabel isn't TextAlign::Left.
- */
+// If the label is resized, we must to redraw it. This is necessary
+// mainly if the LinkLabel isn't TextAlign::Left.
+// 
 // void LinkLabel::onResize(const Size& sz)
 // {
 //   invalidate(true);
 // }
 
-/**
- * Called when the user press the mouse button down over the label.
- */
+/// Called when the user press the mouse button down over the label.
+/// 
 void LinkLabel::onAction(Event& ev)
 {
   Action(ev);

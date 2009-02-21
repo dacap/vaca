@@ -43,9 +43,8 @@
 
 namespace Vaca {
 
-/**
- * Represents the Win32 class used by Frame.
- */
+/// Represents the Win32 class used by Frame.
+/// 
 class FrameClass : public WidgetClass
 {
 public:
@@ -53,9 +52,8 @@ public:
   { return WidgetClassName(L"Vaca.Frame"); }
 };
 
-/**
- * A window with title-bar that can be minimized, maximized, etc.
- */
+/// A window with title-bar that can be minimized, maximized, etc.
+/// 
 class VACA_DLL Frame : public Register<FrameClass>, public Widget
 {
   MenuBar* m_menuBar;		       // The menu bar.

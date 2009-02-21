@@ -37,9 +37,8 @@
 
 namespace Vaca {
 
-/**
- * Loads the RichEdit DLL.
- */
+/// Loads the RichEdit DLL.
+/// 
 class VACA_DLL RichEditRegister
 {
   static HINSTANCE hmod;
@@ -48,9 +47,8 @@ public:
   RichEditRegister();
 };
 
-/**
- * Widget to edit rich-text.
- */
+/// Widget to edit rich-text.
+/// 
 class VACA_DLL RichEdit : public RichEditRegister, public Widget
 {
 public:

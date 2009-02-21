@@ -42,15 +42,14 @@ namespace Vaca {
 //////////////////////////////////////////////////////////////////////
 // TabBase
 
-/**
- * Widget that contains tabs to switch between them. This class
- * doesn't controls pages automatically, it's useful when you want a
- * special behaviour for the tabs (see @c Tabs example). If you want
- * to put one widget in the each page, and swap them when the user
- * change the pages, you should use the Tab widget.
- *
- * @see Tab
- */
+/// Widget that contains tabs to switch between them. This class
+/// doesn't controls pages automatically, it's useful when you want a
+/// special behaviour for the tabs (see @c Tabs example). If you want
+/// to put one widget in the each page, and swap them when the user
+/// change the pages, you should use the Tab widget.
+/// 
+/// @see Tab
+/// 
 class VACA_DLL TabBase : public Widget
 {
   Font m_userFont;
@@ -117,12 +116,11 @@ private:
 //////////////////////////////////////////////////////////////////////
 // Tab
 
-/**
- * This class automatically controls the visibility of each page (TabPage). 
- *
- * You don't need to setup a layout manager for this widget, because
- * it uses the ClientLayout manager to arrange its TabPage(s).
- */
+/// This class automatically controls the visibility of each page (TabPage). 
+/// 
+/// You don't need to setup a layout manager for this widget, because
+/// it uses the ClientLayout manager to arrange its TabPage(s).
+/// 
 class VACA_DLL Tab : public TabBase
 {
 public:
@@ -142,9 +140,8 @@ protected:
 
 };
 
-/**
- * Represents the Win32 class used by TabPage.
- */
+/// Represents the Win32 class used by TabPage.
+/// 
 class TabPageClass : public WidgetClass
 {
 public:
@@ -152,9 +149,8 @@ public:
   { return WidgetClassName(L"Vaca.TabPage"); }
 };
 
-/**
- * A page for an automatic Tab.
- */
+/// A page for an automatic Tab.
+/// 
 class VACA_DLL TabPage : public Register<TabPageClass>, public Widget
 {
   int m_index;

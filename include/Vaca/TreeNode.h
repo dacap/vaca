@@ -40,11 +40,10 @@
 
 namespace Vaca {
 
-/**
- * A TreeView node.  It has a text label, an image, a selected image
- * asociated, and a state (collapsed/expanded). A node can be parent
- * of sub-TreeNodes.
- */
+/// A TreeView node.  It has a text label, an image, a selected image
+/// asociated, and a state (collapsed/expanded). A node can be parent
+/// of sub-TreeNodes.
+/// 
 class VACA_DLL TreeNode : public Component
 {
 public:

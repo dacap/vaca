@@ -121,28 +121,23 @@ ToolSet::~ToolSet()
   }
 }
 
-/**
- * (TB_BUTTONCOUNT).
- * 
- */
+/// (TB_BUTTONCOUNT).
+/// 
 int ToolSet::getButtonCount() const
 {
   return const_cast<ToolSet*>(this)->sendMessage(TB_BUTTONCOUNT, 0, 0);
 }
 
-/**
- * (TB_GETROWS)
- * 
- */
+/// (TB_GETROWS)
+/// 
 int ToolSet::getRows() const
 {
   return const_cast<ToolSet*>(this)->sendMessage(TB_GETROWS, 0, 0);
 }
 
-/**
- * (TB_SETROWS)
- * 
- */
+/// (TB_SETROWS)
+/// 
+/// 
 Rect ToolSet::setRows(int rows, bool expand)
 {
   RECT rect;
@@ -153,10 +148,9 @@ Rect ToolSet::setRows(int rows, bool expand)
   return Rect(&rect);
 }
 
-/**
- * (TB_SETIMAGELIST)
- * 
- */
+/// (TB_SETIMAGELIST)
+/// 
+/// 
 void ToolSet::setImageList(ImageList& imageList)
 {
   sendMessage(TB_SETIMAGELIST, 0, reinterpret_cast<LPARAM>(imageList.getHandle()));
@@ -167,24 +161,23 @@ void ToolSet::setImageList(ImageList& imageList)
 // 	      reinterpret_cast<LPARAM>(imageList.getHandle()));
 }
 
-/**
- * Adds a button to the ToolSet.
- *
- * It uses Win32's TB_INSERTBUTTON with BTNS_BUTTON.
- * 
- * @param imageIndex The images to use for this button from the
- *                   ImageList that you specified to setImageList().
- *
- * @param id
- *      Identifier of the command. This is the identifier that will be
- *      sent to Widget#onCommand.
- *
- * @param buttonState
- *      One of the following values:
- *      @li TBState::Checked
- *      @li TBState::Enabled
- *      @li TBState::Hidden
- */
+/// Adds a button to the ToolSet.
+/// 
+/// It uses Win32's TB_INSERTBUTTON with BTNS_BUTTON.
+/// 
+/// @param imageIndex The images to use for this button from the
+///                   ImageList that you specified to setImageList().
+/// 
+/// @param id
+///      Identifier of the command. This is the identifier that will be
+///      sent to Widget#onCommand.
+/// 
+/// @param buttonState
+///      One of the following values:
+///      @li TBState::Checked
+///      @li TBState::Enabled
+///      @li TBState::Hidden
+/// 
 void ToolSet::addButton(ToolButton* button)
 {
   TBBUTTON tbb;
@@ -206,11 +199,10 @@ void ToolSet::addButton(ToolButton* button)
   updatePreferredSizes();
 }
 
-/**
- * Adds a separator in the ToolSet.
- * 
- * It uses Win32's TB_INSERTBUTTON with BTNS_SEP.
- */
+/// Adds a separator in the ToolSet.
+/// 
+/// It uses Win32's TB_INSERTBUTTON with BTNS_SEP.
+/// 
 void ToolSet::addSeparator(int width)
 {
   TBBUTTON tbb;
@@ -280,13 +272,12 @@ ToolButton* ToolSet::getButtonByIndex(int index) const
     return NULL;
 }
 
-/**
- * Returns the index of the button that is above the point @a pt
- * (relative to client area). Returns a negative index if the point is
- * inside a (or the nearest of) a separator button.
- *
- * It uses Win32's TB_HITTEST.
- */
+/// Returns the index of the button that is above the point @a pt
+/// (relative to client area). Returns a negative index if the point is
+/// inside a (or the nearest of) a separator button.
+/// 
+/// It uses Win32's TB_HITTEST.
+/// 
 int ToolSet::hitTest(const Point& pt) const
 {
   POINT point = pt;
@@ -379,10 +370,9 @@ bool ToolSet::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResu
   return Widget::wndProc(message, wParam, lParam, lResult);
 }
 
-/**
- * Updates the preferred sizes of the tool-set when it has different
- * number of rows.
- */
+/// Updates the preferred sizes of the tool-set when it has different
+/// number of rows.
+/// 
 void ToolSet::updatePreferredSizes()
 {
   m_preferredSizes.clear();
@@ -433,11 +423,10 @@ ToolBar::~ToolBar()
 //   return m_set;
 // }
 
-/**
- * Returns the size of the ToolBar when it should be docked in the
- * specified @a side.
- * 
- */
+/// Returns the size of the ToolBar when it should be docked in the
+/// specified @a side.
+/// 
+/// 
 Size ToolBar::getDockedSize(Side side) const
 {
   Size size(0, 0);
@@ -470,13 +459,12 @@ void ToolBar::onUpdateIndicators()
   m_set.updateIndicators();
 }
 
-/**
- * When the ToolBar is docked in the top or bottom side, we must to
- * set the rows to 1, if it's docked in the left or right side we must
- * to make it vertical (set the rows to the maximum number).
- *
- * @see ToolSet::setRows
- */
+/// When the ToolBar is docked in the top or bottom side, we must to
+/// set the rows to 1, if it's docked in the left or right side we must
+/// to make it vertical (set the rows to the maximum number).
+/// 
+/// @see ToolSet::setRows
+/// 
 void ToolBar::onDocking()
 {
   DockBar::onDocking();

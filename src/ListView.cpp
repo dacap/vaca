@@ -37,12 +37,11 @@
 
 using namespace Vaca;
 
-/**
- * Creates a new ListView.
- *
- * It uses the LVS_SHAREIMAGELISTS to avoid destroying the image-list
- * that you specified using setImageList().
- */
+/// Creates a new ListView.
+/// 
+/// It uses the LVS_SHAREIMAGELISTS to avoid destroying the image-list
+/// that you specified using setImageList().
+/// 
 ListView::ListView(Widget* parent, Style style)
   : Widget(WidgetClassName(WC_LISTVIEW), parent, style + Style(LVS_SHAREIMAGELISTS, 0))
 {
@@ -187,10 +186,8 @@ int ListView::insertColumn(int columnIndex, const String& header, TextAlign text
   return columnIndex;
 }
 
-/**
- * Removes the specified column @a columnIndex. 
- * 
- */
+/// Removes the specified column @a columnIndex. 
+/// 
 void ListView::removeColumn(int columnIndex)
 {
   assert(::IsWindow(getHandle()));
@@ -201,10 +198,8 @@ void ListView::removeColumn(int columnIndex)
   ListView_DeleteColumn(getHandle(), columnIndex);
 }
 
-/**
- * Returns the number of columns. Only for Report views.
- * 
- */
+/// Returns the number of columns. Only for Report views.
+/// 
 int ListView::getColumnCount()
 {
   assert(::IsWindow(getHandle()));
@@ -231,11 +226,9 @@ Rect ListView::getColumnBounds(int columnIndex)
   return Rect();
 }
 
-/**
- * Returns the width (in pixels) of the specified @a columnIndex.
- * Only for Report views.
- * 
- */
+/// Returns the width (in pixels) of the specified @a columnIndex.
+/// Only for Report views.
+/// 
 int ListView::getColumnWidth(int columnIndex)
 {
   assert(::IsWindow(getHandle()));
@@ -243,11 +236,9 @@ int ListView::getColumnWidth(int columnIndex)
   return ListView_GetColumnWidth(getHandle(), columnIndex);
 }
 
-/**
- * Sets the @a width (in pixels) of the specified column @a columnIndex.
- * Only for Report views.
- * 
- */
+/// Sets the @a width (in pixels) of the specified column @a columnIndex.
+/// Only for Report views.
+/// 
 void ListView::setColumnWidth(int columnIndex, int width)
 {
   assert(::IsWindow(getHandle()));
@@ -255,12 +246,10 @@ void ListView::setColumnWidth(int columnIndex, int width)
   ListView_SetColumnWidth(getHandle(), columnIndex, width);
 }
 
-/**
- * Sets the width of the @a columnIndex to its preferred size. If @a useHeader
- * is true means that in the preferred size must be included the header, not just
- * the items' text. Only for Report views.
- * 
- */
+/// Sets the width of the @a columnIndex to its preferred size. If @a useHeader
+/// is true means that in the preferred size must be included the header, not just
+/// the items' text. Only for Report views.
+/// 
 void ListView::setPreferredColumnWidth(int columnIndex, bool useHeader)
 {
   assert(::IsWindow(getHandle()));
@@ -271,21 +260,17 @@ void ListView::setPreferredColumnWidth(int columnIndex, bool useHeader)
 				      LVSCW_AUTOSIZE);
 }
 
-/**
- * Inserts a new item in the last position.
- * 
- */
+/// Inserts a new item in the last position.
+/// 
 int ListView::addItem(const String& text, int imageIndex)
 {
   return insertItem(getItemCount(), text, imageIndex);
 }
 
-/**
- * Inserts a new item in the @a itemIndex position.
- *
- * @return The index (generally @a itemIndex).
- * 
- */
+/// Inserts a new item in the @a itemIndex position.
+/// 
+/// @return The index (generally @a itemIndex).
+/// 
 int ListView::insertItem(int itemIndex, const String& text, int imageIndex)
 {
   assert(::IsWindow(getHandle()));
@@ -301,10 +286,8 @@ int ListView::insertItem(int itemIndex, const String& text, int imageIndex)
   return ListView_InsertItem(getHandle(), &lvi);
 }
 
-/**
- * Removes one item from the list.
- * 
- */
+/// Removes one item from the list.
+/// 
 void ListView::removeItem(int itemIndex)
 {
   assert(::IsWindow(getHandle()));
@@ -312,10 +295,8 @@ void ListView::removeItem(int itemIndex)
   ListView_DeleteItem(getHandle(), itemIndex);
 }
 
-/**
- * Clears the list.
- * 
- */
+/// Clears the list.
+/// 
 void ListView::removeAllItems()
 {
   assert(::IsWindow(getHandle()));
@@ -323,10 +304,8 @@ void ListView::removeAllItems()
   ListView_DeleteAllItems(getHandle());
 }
 
-/**
- * Returns the number of items.
- * 
- */
+/// Returns the number of items.
+/// 
 int ListView::getItemCount() const
 {
   assert(::IsWindow(getHandle()));
@@ -334,10 +313,8 @@ int ListView::getItemCount() const
   return ListView_GetItemCount(getHandle());
 }
 
-/**
- * TODO it's absolute or relative?
- * 
- */
+/// TODO it's absolute or relative?
+/// 
 Rect ListView::getItemBounds(int itemIndex, int code)
 {
   assert(::IsWindow(getHandle()));
@@ -351,10 +328,8 @@ Rect ListView::getItemBounds(int itemIndex, int code)
   return Rect();
 }
 
-/**
- * Returns the text of the specified item.
- * 
- */
+/// Returns the text of the specified item.
+/// 
 String ListView::getItemText(int itemIndex, int columnIndex)
 {
   assert(::IsWindow(getHandle()));
@@ -370,11 +345,9 @@ String ListView::getItemText(int itemIndex, int columnIndex)
   return res;
 }
 
-/**
- * Changes the text of the speficied item. The @a columnIndex can be
- * used to change the text of the different columns in a Report view.
- * 
- */
+/// Changes the text of the speficied item. The @a columnIndex can be
+/// used to change the text of the different columns in a Report view.
+/// 
 void ListView::setItemText(int itemIndex, const String& text, int columnIndex)
 {
   assert(::IsWindow(getHandle()));
@@ -385,9 +358,8 @@ void ListView::setItemText(int itemIndex, const String& text, int columnIndex)
 		       const_cast<LPTSTR>(text.c_str()));
 }
 
-/**
- * Creates an TextEdit control to edit the specified item.
- */
+/// Creates an TextEdit control to edit the specified item.
+/// 
 void ListView::editItemText(int itemIndex)
 {
   assert(::IsWindow(getHandle()));
@@ -425,10 +397,9 @@ void ListView::ensureVisible(int itemIndex)
   ListView_EnsureVisible(getHandle(), itemIndex, false);
 }
 
-/**
- * Returns the index of the item that has the focus
- * (LVM_GETSELECTIONMARK).
- */
+// Returns the index of the item that has the focus
+// (LVM_GETSELECTIONMARK).
+// 
 // int ListView::getCurrentItem()
 // {
 //   assert(::IsWindow(getHandle()));

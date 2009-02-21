@@ -65,10 +65,9 @@ Image::Image()
 {
 }
 
-/**
- * Loads an image from the resource specified by @a imageId. This
- * constructor uses Win32 LoadBitmap.
- */
+/// Loads an image from the resource specified by @a imageId. This
+/// constructor uses Win32 LoadBitmap.
+/// 
 Image::Image(ResourceId imageId)
   : SharedPtr<ImageHandle>(new ImageHandle())
 {
@@ -200,9 +199,8 @@ int Image::getDepth() const
   return bc.bcBitCount;
 }
 
-/**
- * Returns a Graphics context to draw inside the image.
- */
+/// Returns a Graphics context to draw inside the image.
+/// 
 Graphics& Image::getGraphics()
 {
   ImageHandle* ptr = get();

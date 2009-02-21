@@ -75,10 +75,9 @@ TreeNode::~TreeNode()
   }
 }
 
-/**
- * Adds a new sub-node (child) to this one. After calling this method
- * @a node'll have this node as parent.
- */
+/// Adds a new sub-node (child) to this one. After calling this method
+/// @a node'll have this node as parent.
+/// 
 void TreeNode::addNode(TreeNode* node)
 {
   assert(node != NULL);
@@ -91,11 +90,10 @@ void TreeNode::addNode(TreeNode* node)
   node->addToTreeView(this->m_owner);
 }
 
-/**
- * Removes a child node.
- * 
- * @warning The specified @param node must be a child of the object @a this.
- */
+/// Removes a child node.
+/// 
+/// @warning The specified @param node must be a child of the object @a this.
+/// 
 void TreeNode::removeNode(TreeNode* node)
 {
   assert(node != NULL);
@@ -117,10 +115,9 @@ TreeNode* TreeNode::getParent()
     return m_parent;
 }
 
-/**
- * Returns the collection of children.
- * 
- */
+/// Returns the collection of children.
+/// 
+/// 
 TreeNode::Container TreeNode::getChildren()
 {
   return m_children;
@@ -131,105 +128,98 @@ TreeView* TreeNode::getTreeView()
   return m_owner;
 }
 
-/**
- * Returns true if this node should have the plus sign to be
- * expanded. The default implementation returns true if the m_children
- * member has elements. If you override this method isn't necessary to
- * call the base implementation.
- * 
- * @code
- * class MyTreeNode : public TreeNode
- * {
- * protected:
- *   bool hasChildren() {
- *     return ...;
- *   }
- * };
- * @endcode
- */
+/// Returns true if this node should have the plus sign to be
+/// expanded. The default implementation returns true if the m_children
+/// member has elements. If you override this method isn't necessary to
+/// call the base implementation.
+/// 
+/// @code
+/// class MyTreeNode : public TreeNode
+/// {
+/// protected:
+///   bool hasChildren() {
+///     return ...;
+///   }
+/// };
+/// @endcode
+/// 
 bool TreeNode::hasChildren()
 {
   return !m_children.empty();
 }
 
-/**
- * Returns the label's text for the node. If you override this method
- * isn't necessary to call the base implementation.
- * 
- * @code
- * class MyTreeNode : public TreeNode
- * {
- * protected:
- *   String getText() {
- *     return "...";
- *   }
- * };
- * @endcode
- */
+/// Returns the label's text for the node. If you override this method
+/// isn't necessary to call the base implementation.
+/// 
+/// @code
+/// class MyTreeNode : public TreeNode
+/// {
+/// protected:
+///   String getText() {
+///     return "...";
+///   }
+/// };
+/// @endcode
+/// 
 String TreeNode::getText()
 {
   return m_text;
 }
 
-/**
- * Returns the index of the image that uses this node from the
- * ImageList. If you override this method isn't necessary to call the
- * base implementation.
- * 
- * @code
- * class MyTreeNode : public TreeNode
- * {
- * protected:
- *   int getImage() {
- *     int imageIndex = -1;
- *     // ... do some work here
- *     return imageIndex;
- *   }
- * };
- * @endcode
- */
+/// Returns the index of the image that uses this node from the
+/// ImageList. If you override this method isn't necessary to call the
+/// base implementation.
+/// 
+/// @code
+/// class MyTreeNode : public TreeNode
+/// {
+/// protected:
+///   int getImage() {
+///     int imageIndex = -1;
+///     // ... do some work here
+///     return imageIndex;
+///   }
+/// };
+/// @endcode
+/// 
 int TreeNode::getImage()
 {
   return m_image;
 }
 
-/**
- * Returns the index of the image in selected-state that uses this
- * node from the ImageList. If you override this method isn't
- * necessary to call the base implementation.
- * 
- * @see getImage()
- */
+/// Returns the index of the image in selected-state that uses this
+/// node from the ImageList. If you override this method isn't
+/// necessary to call the base implementation.
+/// 
+/// @see getImage()
+/// 
 int TreeNode::getSelectedImage()
 {
   return m_selectedImage;
 }
 
-/**
- * Sets the node's text. It's useful only if you are using the default
- * implementation of getText().
- * 
- */
+/// Sets the node's text. It's useful only if you are using the default
+/// implementation of getText().
+/// 
+/// 
 void TreeNode::setText(const String& text)
 {
   m_text = text;
 }
 
-/**
- * Sets the node's image. It's useful only if you are using the
- * default implementation of getImage().
- * 
- */
+/// Sets the node's image. It's useful only if you are using the
+/// default implementation of getImage().
+/// 
+/// 
 void TreeNode::setImage(int imageIndex)
 {
   m_image = imageIndex;
 }
 
-/**
- * Sets the node's image in selected-state. It's useful only if you
- * are using the default implementation of getSelectedImage().
- * 
- */
+/// Sets the node's image in selected-state. It's useful only if you
+/// are using the default implementation of getSelectedImage().
+/// 
+/// 
 void TreeNode::setSelectedImage(int selectedImageIndex)
 {
   m_selectedImage = selectedImageIndex;
@@ -309,11 +299,10 @@ void TreeNode::onAfterSelect(TreeViewEvent& ev)
   // do nothing
 }
 
-/**
- * The default implementation changes the m_text field to be returned
- * in getText() only if @a ev wasn't canceled.
- * 
- */
+/// The default implementation changes the m_text field to be returned
+/// in getText() only if @a ev wasn't canceled.
+/// 
+/// 
 void TreeNode::onAfterLabelEdit(TreeViewEvent& ev)
 {
   // if the event isn't cancelled, change the label
@@ -321,9 +310,8 @@ void TreeNode::onAfterLabelEdit(TreeViewEvent& ev)
     m_text = ev.getLabel();
 }
 
-/**
- * Connects the node and its children to the Win32 TreeView.
- */
+/// Connects the node and its children to the Win32 TreeView.
+/// 
 void TreeNode::addToTreeView(TreeView* treeView)
 {
   assert(m_owner == NULL);
@@ -351,9 +339,8 @@ void TreeNode::addToTreeView(TreeView* treeView)
   }
 }
 
-/**
- * Disconnects the node (and its children) from the Win32 TreeView.
- */
+/// Disconnects the node (and its children) from the Win32 TreeView.
+/// 
 void TreeNode::removeFromTreeView()
 {
   // remove all children from the TreeView control

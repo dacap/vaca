@@ -40,10 +40,9 @@
 
 namespace Vaca {
 
-/**
- * This exception is thrown when HttpRequest generates an error due
- * connectivity problems.
- */
+/// This exception is thrown when HttpRequest generates an error due
+/// connectivity problems.
+/// 
 class VACA_DLL HttpRequestException : public Exception
 {
 public:
@@ -52,9 +51,8 @@ public:
   virtual ~HttpRequestException() throw() { }
 };
 
-/**
- * Sends a HTTP request to the specified URL to get its content.
- */
+/// Sends a HTTP request to the specified URL to get its content.
+/// 
 class VACA_DLL HttpRequest
 {
   class InetHandle {

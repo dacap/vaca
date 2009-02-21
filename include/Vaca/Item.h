@@ -36,11 +36,10 @@
 
 namespace Vaca {
 
-/**
- * Abstract class to represent an item of any control.
- * 
- * TODO it's used?
- */
+/// Abstract class to represent an item of any control.
+/// 
+/// TODO it's used?
+/// 
 class Item
 {
 public:

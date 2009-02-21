@@ -41,9 +41,8 @@
 
 namespace Vaca {
 
-/**
- * Thrown when Register can't registers the WidgetClass.
- */
+/// Thrown when Register can't registers the WidgetClass.
+/// 
 class RegisterException : public Exception
 {
 public:
@@ -54,29 +53,27 @@ public:
 
 };
 
-/**
- * Registers a window class to be used in Win32 routines (like
- * @msdn{CreateWindow}).
- *
- * @ref Register() "The constructor of Register" calls
- * the Win32's @msdn{RegisterClassEx} function, to register a
- * class with the specified parameters by T (see WidgetClass).
- *
- * @tparam T
- *   Must be of WidgetClass type, or a derived class of it.
- *
- * @see @ref page_tn_001
- */
+/// Registers a window class to be used in Win32 routines (like
+/// @msdn{CreateWindow}).
+/// 
+/// @ref Register() "The constructor of Register" calls
+/// the Win32's @msdn{RegisterClassEx} function, to register a
+/// class with the specified parameters by T (see WidgetClass).
+/// 
+/// @tparam T
+///   Must be of WidgetClass type, or a derived class of it.
+/// 
+/// @see @ref page_tn_001
+/// 
 template<class T>
 class Register
 {
 public:
 
-  /**
-   * Calls @msdn{RegisterClassEx} filling a @msdn{WNDCLASSEX} structure
-   * with the values returned by the T class (T must be derived from
-   * WidgetClass).
-   */
+  /// Calls @msdn{RegisterClassEx} filling a @msdn{WNDCLASSEX} structure
+  /// with the values returned by the T class (T must be derived from
+  /// WidgetClass).
+  /// 
   Register()
   {
     WidgetClassName class_name = T::getClassName();

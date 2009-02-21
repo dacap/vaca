@@ -41,10 +41,9 @@ using namespace Vaca;
 //////////////////////////////////////////////////////////////////////
 // TabBase
 
-/**
- * Creates a new tab control. A tab is a set of pages, each page has a
- * group of widgets, so you can navigate through the pages.
- */
+/// Creates a new tab control. A tab is a set of pages, each page has a
+/// group of widgets, so you can navigate through the pages.
+/// 
 TabBase::TabBase(Widget* parent, Style style)
   : Widget(WidgetClassName(WC_TABCONTROL), parent, style)
 {
@@ -67,10 +66,9 @@ void TabBase::setFont(Font font)
   updateFont();
 }
 
-/**
- * Returns the area where the pages should be positioned. It's like
- * Win32 TabCtrl_AdjustRect.
- */
+/// Returns the area where the pages should be positioned. It's like
+/// Win32 TabCtrl_AdjustRect.
+/// 
 Rect TabBase::getLayoutBounds() const
 {
   RECT rc;
@@ -128,15 +126,14 @@ Side TabBase::getSide()
   }
 }
 
-/**
- * Sets the side of the pages.
- *
- * @warning You can't use LeftSide and RightSide sides in a Tab
- *          with isMultiline() == false. This routine will set the Tab
- *          in a multiline style automatically if you try this.
- * 
- * @see #setMultiline
- */
+/// Sets the side of the pages.
+/// 
+/// @warning You can't use LeftSide and RightSide sides in a Tab
+///          with isMultiline() == false. This routine will set the Tab
+///          in a multiline style automatically if you try this.
+/// 
+/// @see #setMultiline
+/// 
 void TabBase::setSide(Side side)
 {
   int style = 0;
@@ -275,9 +272,8 @@ void TabBase::setPageText(int pageIndex, const String& text)
 //   TabCtrl_SetPadding(getHandle(), padding.w, padding.h);
 // }
 
-/**
- * @warning This function couldn't work for Tab with getSide() != TopSide.
- */
+/// @warning This function couldn't work for Tab with getSide() != TopSide.
+/// 
 Size TabBase::getNonClientSize()
 {
   assert(::IsWindow(getHandle()));
@@ -290,30 +286,27 @@ Size TabBase::getNonClientSize()
   return Rect(&nonClientRect).getSize() - clientRect.getSize();
 }
 
-// /**
-//  * TCN_SELCHANGING
-//  */
+// /// TCN_SELCHANGING
+// /// 
 // void TabBase::onPageChanging(Event& ev)
 // {
 //   PageChanging(ev);
 // }
 
-/**
- * Event generated when the user select a new page. Use
- * getActivePage() to known which page was selected.
- *
- * TCN_SELCHANGE
- */
+/// Event generated when the user select a new page. Use
+/// getActivePage() to known which page was selected.
+/// 
+/// TCN_SELCHANGE
+/// 
 void TabBase::onPageChange(Event& ev)
 {
   PageChange(ev);
 }
 
-/**
- * Adds space for the non-client size.
- *
- * @see getNonClientSize
- */
+/// Adds space for the non-client size.
+/// 
+/// @see getNonClientSize
+/// 
 void TabBase::onPreferredSize(Size& sz)
 {
   Size ncSize = getNonClientSize();

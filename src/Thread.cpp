@@ -54,28 +54,24 @@ using namespace Vaca;
 
 struct ThreadData
 {
-  /**
-   * The ID of this thread.
-   */
+  /// The ID of this thread.
+  /// 
   ThreadId threadId;
 
-  /**
-   * Visible frames in this thread. A frame is an instance of Frame
-   * class.
-   */
+  /// Visible frames in this thread. A frame is an instance of Frame
+  /// class.
+  /// 
   std::vector<Frame*> frames;
 
   TimePoint updateIndicatorsMark;
   bool updateIndicators : 1;
 
-  /**
-   * True if the message-loop must be stopped.
-   */
+  /// True if the message-loop must be stopped.
+  /// 
   bool breakLoop : 1;
 
-  /**
-   * Widget used to call createHandle.
-   */
+  /// Widget used to call createHandle.
+  /// 
   Widget* outsideWidget;
 
   ThreadData(ThreadId id) {
@@ -155,12 +151,11 @@ Thread::Thread()
   VACA_TRACE("current Thread (%p, %d)\n", this, m_id);
 }
 
-/**
- * @throw CreateThreadException
- *   If the thread couldn't be created by Win32's @c CreateThread.
- *
- * @internal
- */
+/// @throw CreateThreadException
+///   If the thread couldn't be created by Win32's @c CreateThread.
+/// 
+/// @internal
+/// 
 void Thread::_Thread(const Slot0<void>& slot)
 {
   Slot0<void>* slotclone = slot.clone();
@@ -192,22 +187,20 @@ Thread::~Thread()
   VACA_TRACE("delete Thread (%p, %d)\n", this, m_id);
 }
 
-/**
- * Returns the thread ID.
- *
- * @win32
- *   This is equal to @msdn{GetCurrentThreadId} for the current
- *   thread or the ID returned by @msdn{CreateThread}.
- * @endwin32
- */
+/// Returns the thread ID.
+/// 
+/// @win32
+///   This is equal to @msdn{GetCurrentThreadId} for the current
+///   thread or the ID returned by @msdn{CreateThread}.
+/// @endwin32
+/// 
 ThreadId Thread::getId() const
 {
   return m_id;
 }
 
-/**
- * Waits the thread to finish, and them closes it.
- */
+/// Waits the thread to finish, and them closes it.
+/// 
 void Thread::join()
 {
   assert(m_handle != NULL);
@@ -220,37 +213,35 @@ void Thread::join()
   VACA_TRACE("join Thread (%p, %d)\n", this, m_id);
 }
 
-/**
- * Returns true if this thread can be waited by the current thread.
- */
+/// Returns true if this thread can be waited by the current thread.
+/// 
 bool Thread::isJoinable() const
 {
   return m_id != ::GetCurrentThreadId();
 }
 
-/**
- * Sets the priority of the thread.
- *
- * Thread priority is relative to the other threads of the same
- * process. If you want to change the priority of the entire process
- * (respecting to all other processes) you have to use the
- * Application#setProcessPriority method. In other words, you should
- * use this method only if you have more than one thread in your
- * application and you want to make run faster one thread than other.
- *
- * @param priority
- *   Can be one of the following values:
- *   One of the following values:
- *   @li ThreadPriority::Idle
- *   @li ThreadPriority::Lowest
- *   @li ThreadPriority::Low
- *   @li ThreadPriority::Normal
- *   @li ThreadPriority::High
- *   @li ThreadPriority::Highest
- *   @li ThreadPriority::TimeCritical
- *   
- * @see Application#setProcessPriority
- */
+/// Sets the priority of the thread.
+/// 
+/// Thread priority is relative to the other threads of the same
+/// process. If you want to change the priority of the entire process
+/// (respecting to all other processes) you have to use the
+/// Application#setProcessPriority method. In other words, you should
+/// use this method only if you have more than one thread in your
+/// application and you want to make run faster one thread than other.
+/// 
+/// @param priority
+///   Can be one of the following values:
+///   One of the following values:
+///   @li ThreadPriority::Idle
+///   @li ThreadPriority::Lowest
+///   @li ThreadPriority::Low
+///   @li ThreadPriority::Normal
+///   @li ThreadPriority::High
+///   @li ThreadPriority::Highest
+///   @li ThreadPriority::TimeCritical
+///   
+/// @see Application#setProcessPriority
+/// 
 void Thread::setThreadPriority(ThreadPriority priority)
 {
   assert(m_handle != NULL);
@@ -278,12 +269,11 @@ void Thread::enqueueMessage(const Message& message)
   ::PostThreadMessage(m_id, msg->message, msg->wParam, msg->lParam);
 }
 
-/**
- * Does the message loop while there are
- * visible @link Vaca::Frame frames@endlink.
- *
- * @see Frame::setVisible
- */
+/// Does the message loop while there are
+/// visible @link Vaca::Frame frames@endlink.
+/// 
+/// @see Frame::setVisible
+/// 
 void Thread::doMessageLoop()
 {
   // message loop
@@ -292,9 +282,8 @@ void Thread::doMessageLoop()
     processMessage(msg);
 }
 
-/**
- * Does the message loop until the @a widget is hidden.
- */
+/// Does the message loop until the @a widget is hidden.
+/// 
 void Thread::doMessageLoopFor(Widget* widget)
 {
   // get widget HWND
@@ -341,15 +330,14 @@ void Thread::sleep(int msecs)
   ::Sleep(msecs);
 }
 
-/**
- * Gets a message waiting for it: locks the execution of the program
- * until a message is received from the operating system.
- * 
- * @return 
- *   True if the @a message parameter was filled (because a message was received)
- *   or false if there aren't more visible @link Frame frames@endlink
- *   to dispatch messages.
- */
+/// Gets a message waiting for it: locks the execution of the program
+/// until a message is received from the operating system.
+/// 
+/// @return 
+///   True if the @a message parameter was filled (because a message was received)
+///   or false if there aren't more visible @link Frame frames@endlink
+///   to dispatch messages.
+/// 
 bool Thread::getMessage(Message& message)
 {
   ThreadData* data = getThreadData();
@@ -389,16 +377,15 @@ bool Thread::getMessage(Message& message)
   return true;
 }
 
-/**
- * Gets a message without waiting for it, if the queue is empty, this
- * method returns false.
- *
- * The message is removed from the queue.
- *
- * @return
- *   Returns true if the @a msg parameter was filled with the next message
- *   in the queue or false if the queue was empty.
- */
+/// Gets a message without waiting for it, if the queue is empty, this
+/// method returns false.
+/// 
+/// The message is removed from the queue.
+/// 
+/// @return
+///   Returns true if the @a msg parameter was filled with the next message
+///   in the queue or false if the queue was empty.
+/// 
 bool Thread::peekMessage(Message& message)
 {
   LPMSG msg = (LPMSG)message;
@@ -429,11 +416,10 @@ void Thread::processMessage(Message& message)
   }
 }
 
-/**
- * Pretranslates the message. The main function is to retrieve the
- * Widget pointer (using Widget::fromHandle()) and then (if it isn't
- * NULL), call its Widget#preTranslateMessage.
- */
+/// Pretranslates the message. The main function is to retrieve the
+/// Widget pointer (using Widget::fromHandle()) and then (if it isn't
+/// NULL), call its Widget#preTranslateMessage.
+/// 
 bool Thread::preTranslateMessage(Message& message)
 {
   LPMSG msg = (LPMSG)message;

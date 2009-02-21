@@ -60,37 +60,33 @@ FileDialog::~FileDialog()
   delete[] m_fileName;
 }
 
-/**
- * Sets the title text.
- */
+/// Sets the title text.
+/// 
 void FileDialog::setTitle(const String& str)
 {
   m_title = str;
 }
 
-/**
- * Sets the default extension to add to the entered file name when an
- * extension isn't specified by the user. By default it's an empty
- * string.
- */
+/// Sets the default extension to add to the entered file name when an
+/// extension isn't specified by the user. By default it's an empty
+/// string.
+/// 
 void FileDialog::setDefaultExtension(const String& str)
 {
   m_defaultExtension = str;
 }
 
-/**
- * Sets the property that indicates if the dialog should show the read
- * only check box. By default it's false: the button is hidden.
- */
+/// Sets the property that indicates if the dialog should show the read
+/// only check box. By default it's false: the button is hidden.
+/// 
 void FileDialog::setShowReadOnly(bool state)
 {
   m_showReadOnly = state;
 }
 
-/**
- * Sets the property that indicates if the dialog should show the help
- * button. By default it's false: the button is hidden.
- */
+/// Sets the property that indicates if the dialog should show the help
+/// button. By default it's false: the button is hidden.
+/// 
 void FileDialog::setShowHelp(bool state)
 {
   m_showHelp = state;
@@ -215,9 +211,8 @@ OpenFileDialog::~OpenFileDialog()
 {
 }
 
-/**
- * By default it's false.
- */
+/// By default it's false.
+/// 
 void OpenFileDialog::setMultiselect(bool state)
 {
   m_multiselect = state;

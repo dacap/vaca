@@ -37,7 +37,7 @@ namespace Vaca {
   //////////////////////////////////////////////////////////////////////
   // BindAdapter0_fun
 
-  /** @see @ref page_bind */
+  /// @see @ref page_bind
   template<typename R, typename F>
   class BindAdapter0_fun
   {
@@ -60,7 +60,7 @@ namespace Vaca {
     R operator()(const A1& a1, const A2& a2, const A3& a3, const A4& a4) { return f(); }
   };
 
-  /** @see @ref page_bind */
+  /// @see @ref page_bind
   template<typename F>
   class BindAdapter0_fun<void, F>
   {
@@ -83,7 +83,7 @@ namespace Vaca {
     void operator()(const A1& a1, const A2& a2, const A3& a3, const A4& a4) { f(); }
   };
 
-  /** @see @ref page_bind */
+  /// @see @ref page_bind
   template<typename R, typename F>
   BindAdapter0_fun<R, F>
   Bind(const F& f)
@@ -94,7 +94,7 @@ namespace Vaca {
   //////////////////////////////////////////////////////////////////////
   // BindAdapter0_mem
 
-  /** @see @ref page_bind */
+  /// @see @ref page_bind
   template<typename R, typename T>
   class BindAdapter0_mem
   {
@@ -119,7 +119,7 @@ namespace Vaca {
     R operator()(const A1& a1, const A2& a2, const A3& a3, const A4& a4) { return (t->*m)(); }
   };
 
-  /** @see @ref page_bind */
+  /// @see @ref page_bind
   template<typename T>
   class BindAdapter0_mem<void, T>
   {
@@ -144,7 +144,7 @@ namespace Vaca {
     void operator()(const A1& a1, const A2& a2, const A3& a3, const A4& a4) { (t->*m)(); }
   };
 
-  /** @see @ref page_bind */
+  /// @see @ref page_bind
   template<typename R, typename T, typename T2>
   BindAdapter0_mem<R, T>
   Bind(R (T::*m)(), T2* t)
@@ -155,7 +155,7 @@ namespace Vaca {
   //////////////////////////////////////////////////////////////////////
   // BindAdapter1_fun
 
-  /** @see @ref page_bind */
+  /// @see @ref page_bind
   template<typename R, typename F,
 	   typename X1>
   class BindAdapter1_fun
@@ -180,7 +180,7 @@ namespace Vaca {
     R operator()(const A1& a1, const A2& a2, const A3& a3, const A4& a4) { return f(x1); }
   };
 
-  /** @see @ref page_bind */
+  /// @see @ref page_bind
   template<typename F,
 	   typename X1>
   class BindAdapter1_fun<void, F, X1>
@@ -205,7 +205,7 @@ namespace Vaca {
     void operator()(A1& a1, A2& a2, A3& a3, A4& a4) { f(x1); }
   };
 
-  /** @see @ref page_bind */
+  /// @see @ref page_bind
   template<typename R, typename F,
 	   typename X1>
   BindAdapter1_fun<R, F, X1>
@@ -217,7 +217,7 @@ namespace Vaca {
   //////////////////////////////////////////////////////////////////////
   // BindAdapter1_mem
 
-  /** @see @ref page_bind */
+  /// @see @ref page_bind
   template<typename R, typename T,
 	   typename B1,
 	   typename X1>
@@ -245,7 +245,7 @@ namespace Vaca {
     R operator()(const A1& a1, const A2& a2, const A3& a3, const A4& a4) { return (t->*m)(x1); }
   };
 
-  /** @see @ref page_bind */
+  /// @see @ref page_bind
   template<typename T,
 	   typename B1,
 	   typename X1>
@@ -273,7 +273,7 @@ namespace Vaca {
     void operator()(const A1& a1, const A2& a2, const A3& a3, const A4& a4) { (t->*m)(x1); }
   };
 
-  /** @see @ref page_bind */
+  /// @see @ref page_bind
   template<typename R, typename T, typename T2,
 	   typename B1, typename X1>
   BindAdapter1_mem<R, T, B1, X1>
@@ -285,7 +285,7 @@ namespace Vaca {
   //////////////////////////////////////////////////////////////////////
   // BindAdapter2_fun
 
-  /** @see @ref page_bind */
+  /// @see @ref page_bind
   template<typename R, typename F,
 	   typename X1, typename X2>
   class BindAdapter2_fun
@@ -311,7 +311,7 @@ namespace Vaca {
     R operator()(const A1& a1, const A2& a2, const A3& a3, const A4& a4) { return f(x1, x2); }
   };
 
-  /** @see @ref page_bind */
+  /// @see @ref page_bind
   template<typename F,
 	   typename X1, typename X2>
   class BindAdapter2_fun<void, F, X1, X2>
@@ -337,7 +337,7 @@ namespace Vaca {
     void operator()(const A1& a1, const A2& a2, const A3& a3, const A4& a4) { f(x1, x2); }
   };
 
-  /** @see @ref page_bind */
+  /// @see @ref page_bind
   template<typename R, typename F,
 	   typename X1, typename X2>
   BindAdapter2_fun<R, F, X1, X2>
@@ -349,7 +349,7 @@ namespace Vaca {
   //////////////////////////////////////////////////////////////////////
   // BindAdapter2_mem
 
-  /** @see @ref page_bind */
+  /// @see @ref page_bind
   template<typename R, typename T,
 	   typename B1, typename B2,
 	   typename X1, typename X2>
@@ -378,7 +378,7 @@ namespace Vaca {
     R operator()(const A1& a1, const A2& a2, const A3& a3, const A4& a4) { return (t->*m)(x1, x2); }
   };
 
-  /** @see @ref page_bind */
+  /// @see @ref page_bind
   template<typename T,
 	   typename B1, typename B2,
 	   typename X1, typename X2>
@@ -407,7 +407,7 @@ namespace Vaca {
     void operator()(const A1& a1, const A2& a2, const A3& a3, const A4& a4) { (t->*m)(x1, x2); }
   };
 
-  /** @see @ref page_bind */
+  /// @see @ref page_bind
   template<typename R, typename T, typename T2, typename B1, typename B2, typename X1, typename X2>
   BindAdapter2_mem<R, T, B1, B2, X1, X2>
   Bind(R (T::*m)(B1, B2), T2* t, X1 x1, X2 x2)
@@ -418,7 +418,7 @@ namespace Vaca {
   //////////////////////////////////////////////////////////////////////
   // BindAdapter3_fun
 
-  /** @see @ref page_bind */
+  /// @see @ref page_bind
   template<typename R, typename F,
 	   typename X1, typename X2, typename X3>
   class BindAdapter3_fun
@@ -445,7 +445,7 @@ namespace Vaca {
     R operator()(const A1& a1, const A2& a2, const A3& a3, const A4& a4) { return f(x1, x2, x3); }
   };
 
-  /** @see @ref page_bind */
+  /// @see @ref page_bind
   template<typename F,
 	   typename X1, typename X2, typename X3>
   class BindAdapter3_fun<void, F, X1, X2, X3>
@@ -472,7 +472,7 @@ namespace Vaca {
     void operator()(const A1& a1, const A2& a2, const A3& a3, const A4& a4) { f(x1, x2, x3); }
   };
 
-  /** @see @ref page_bind */
+  /// @see @ref page_bind
   template<typename R, typename F,
 	   typename X1, typename X2, typename X3>
   BindAdapter3_fun<R, F, X1, X2, X3>
@@ -484,7 +484,7 @@ namespace Vaca {
   //////////////////////////////////////////////////////////////////////
   // BindAdapter3_mem
 
-  /** @see @ref page_bind */
+  /// @see @ref page_bind
   template<typename R, typename T,
 	   typename B1, typename B2, typename B3,
 	   typename X1, typename X2, typename X3>
@@ -514,7 +514,7 @@ namespace Vaca {
     R operator()(const A1& a1, const A2& a2, const A3& a3, const A4& a4) { return (t->*m)(x1, x2, x3); }
   };
 
-  /** @see @ref page_bind */
+  /// @see @ref page_bind
   template<typename T,
 	   typename B1, typename B2, typename B3,
 	   typename X1, typename X2, typename X3>
@@ -544,7 +544,7 @@ namespace Vaca {
     void operator()(const A1& a1, const A2& a2, const A3& a3, const A4& a4) { (t->*m)(x1, x2, x3); }
   };
 
-  /** @see @ref page_bind */
+  /// @see @ref page_bind
   template<typename R, typename T, typename T2,
 	   typename B1, typename B2, typename B3,
 	   typename X1, typename X2, typename X3>
@@ -557,11 +557,10 @@ namespace Vaca {
   //////////////////////////////////////////////////////////////////////
   // RefWrapper
 
-  /**
-   * @todo
-   * 
-   * @see @ref page_bind
-   */
+  /// @todo
+  /// 
+  /// @see @ref page_bind
+  /// 
   template<class T>
   class RefWrapper
   {
@@ -571,12 +570,11 @@ namespace Vaca {
     operator T&() const { return *ptr; }
   };
 
-  /**
-   * Creates RefWrappers, useful to wrap arguments that have to be
-   * passed as a reference when you use Bind.
-   *
-   * @see @ref page_bind
-   */
+  /// Creates RefWrappers, useful to wrap arguments that have to be
+  /// passed as a reference when you use Bind.
+  /// 
+  /// @see @ref page_bind
+  /// 
   template<class T>
   RefWrapper<T> Ref(T& ref)
   {

@@ -52,18 +52,16 @@ int TextEdit::getTextLength() const
   return static_cast<int>(const_cast<TextEdit*>(this)->sendMessage(WM_GETTEXTLENGTH, 0, 0));
 }
 
-/**
- * Returns the current text limit (EM_GETLIMITTEXT).
- */
+/// Returns the current text limit (EM_GETLIMITTEXT).
+/// 
 int TextEdit::getTextLimit() const
 {
   return static_cast<int>(const_cast<TextEdit*>(this)->sendMessage(EM_GETLIMITTEXT, 0, 0));
 }
 
-/**
- * Sets the text limit (EM_SETLIMITTEXT). The user can't write more of
- * @a textLimit characters inside the Edit widget.
- */
+/// Sets the text limit (EM_SETLIMITTEXT). The user can't write more of
+/// @a textLimit characters inside the Edit widget.
+/// 
 void TextEdit::setTextLimit(int textLimit)
 {
   assert(textLimit > 0);
@@ -71,43 +69,39 @@ void TextEdit::setTextLimit(int textLimit)
   sendMessage(EM_SETLIMITTEXT, textLimit, 0);
 }
 
-/**
- * Returns true if this Edit widget has read-only mode activated.
- * 
- */
+/// Returns true if this Edit widget has read-only mode activated.
+/// 
+/// 
 bool TextEdit::isReadOnly() const
 {
   return (getStyle().regular & ES_READONLY) != 0 ? true: false;
 }
 
-/**
- * Changes the read-only mode to @a readOnly. A read-only Edit widget
- * can't be modified. It's a wrapper for the EM_SETREADONLY message.
- */
+/// Changes the read-only mode to @a readOnly. A read-only Edit widget
+/// can't be modified. It's a wrapper for the EM_SETREADONLY message.
+/// 
 void TextEdit::setReadOnly(bool readOnly)
 {
   sendMessage(EM_SETREADONLY, readOnly, 0);
 }
 
-/**
- * Returns true if the user can undo the last operation.
- *
- * @win32
- *   Sends the @msdn{EM_CANUNDO} message to the widget.
- * @endwin32
- */
+/// Returns true if the user can undo the last operation.
+/// 
+/// @win32
+///   Sends the @msdn{EM_CANUNDO} message to the widget.
+/// @endwin32
+/// 
 bool TextEdit::canUndo() const
 {
   return const_cast<TextEdit*>(this)->sendMessage(EM_CANUNDO, 0, 0) ? true: false;
 }
 
-/**
- * Undoes the last user's operation in the Edit widget.
- * 
- * @win32
- *   Sends the @msdn{EM_UNDO} message to the widget.
- * @endwin32
- */
+/// Undoes the last user's operation in the Edit widget.
+/// 
+/// @win32
+///   Sends the @msdn{EM_UNDO} message to the widget.
+/// @endwin32
+/// 
 void TextEdit::undo()
 {
   sendMessage(EM_UNDO, 0, 0);
@@ -128,18 +122,16 @@ void TextEdit::paste()
   sendMessage(WM_PASTE, 0, 0);
 }
 
-/**
- * Selects all the text in the Edit widget.
- */
+/// Selects all the text in the Edit widget.
+/// 
 void TextEdit::selectAll()
 {
   sendMessage(EM_SETSEL, 0, -1);
 }
 
-/**
- * Selects a range of text. The range is specified by the indexes
- * startIndex and endIndex.
- */
+/// Selects a range of text. The range is specified by the indexes
+/// startIndex and endIndex.
+/// 
 void TextEdit::selectRange(int startIndex, int endIndex)
 {
   // TODO
@@ -148,17 +140,15 @@ void TextEdit::selectRange(int startIndex, int endIndex)
   sendMessage(EM_SETSEL, startIndex, endIndex);
 }
 
-/**
- * Removes the text's selection.
- */
+/// Removes the text's selection.
+/// 
 void TextEdit::deselect()
 {
   sendMessage(EM_SETSEL, static_cast<WPARAM>(-1), 0);
 }
 
-/**
- * Returns the current selected range in the text-box.
- */
+/// Returns the current selected range in the text-box.
+/// 
 void TextEdit::getSelection(int& start, int& end)
 {
   DWORD s, e;
@@ -212,9 +202,8 @@ void TextEdit::onChange(Event& ev)
   Change(ev);
 }
 
-/**
- * Converts the EN_CHANGE in onChange.
- */
+/// Converts the EN_CHANGE in onChange.
+/// 
 bool TextEdit::onReflectedCommand(int id, int code, LRESULT& lResult)
 {
   if (Widget::onReflectedCommand(id, code, lResult))

@@ -38,9 +38,8 @@
 
 namespace Vaca {
 
-/**
- * A common dialog box to find (or replace) text.
- */
+/// A common dialog box to find (or replace) text.
+/// 
 class VACA_DLL FindTextDialog : public Dialog
 {
   static UINT m_findMsgId;

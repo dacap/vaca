@@ -42,9 +42,8 @@ namespace Vaca {
   //////////////////////////////////////////////////////////////////////
   // Signal0_base<R>
 
-  /**
-   * Base class for signals which call functions without parameters.
-   */
+  /// Base class for signals which call functions without parameters.
+  /// 
   template<typename R>
   class Signal0_base
   {
@@ -194,9 +193,8 @@ namespace Vaca {
   //////////////////////////////////////////////////////////////////////
   // Signal1_base<R, A1>
 
-  /**
-   * Base class for signals which call functions with one parameter.
-   */
+  /// Base class for signals which call functions with one parameter.
+  /// 
   template<typename R, typename A1>
   class Signal1_base
   {
@@ -346,9 +344,8 @@ namespace Vaca {
   //////////////////////////////////////////////////////////////////////
   // Signal2_base<R, A1, A2>
 
-  /**
-   * Base class for signals which call functions with two parameters.
-   */
+  /// Base class for signals which call functions with two parameters.
+  /// 
   template<typename R, typename A1, typename A2>
   class Signal2_base
   {

@@ -37,9 +37,8 @@
 
 namespace Vaca {
 
-/**
- * The most basic dock area management.
- */
+/// The most basic dock area management.
+/// 
 class VACA_DLL BasicDockArea : public DockArea
 {
 public:

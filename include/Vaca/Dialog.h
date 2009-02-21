@@ -38,9 +38,8 @@
 
 namespace Vaca {
 
-/**
- * Represents the Win32 class used by Dialog.
- */
+/// Represents the Win32 class used by Dialog.
+/// 
 class DialogClass : public WidgetClass
 {
 public:
@@ -49,44 +48,43 @@ public:
   static int getWndExtra() { return DLGWINDOWEXTRA; }
 };
 
-/**
- * A dialog box.
- *
- * There are some standard considerations for a dialog:
- *
- * @li When the user press ESC, the #onClose event is generated.
- * @li If the dialog has a "Cancel" button is a good idea to bind its
- *     Button#Action to #onCancel.
- * @li If the dialog has an "OK" button is a good idea to bind its
- *     Button#Action to #onOk.
- *
- * If the Dialog have buttons with the special ids IDOK and/or IDCANCEL,
- * the #onOk and #onCancel will be called automatically.
- *
- * Example:
- * @code
- * class MyDialog : public Dialog
- * {
- *   Button ok, cnl;
- * public:
- *   MyDialog()
- *     : Dialog("My dialog")
- *     , ok("OK", this)
- *     , cnl("Cancel", this)
- *   {
- *     ok.Action.connect(Bind(&MyDialog::onOk, this));
- *     cnl.Action.connect(Bind(&MyDialog::onCancel, this));
- *     // ...
- *   }
- * };
- * @endcode
- *
- * How to customize the close action? Just use your own #onClose.
- *
- * If you want to use a MenuBar, you should use a Frame instead of a
- * Dialog, because the #preTranslateMessage "eat" all
- * Alt+Letter keyboard messages (used as mnemonics for MenuItems).
- */
+/// A dialog box.
+/// 
+/// There are some standard considerations for a dialog:
+/// 
+/// @li When the user press ESC, the #onClose event is generated.
+/// @li If the dialog has a "Cancel" button is a good idea to bind its
+///     Button#Action to #onCancel.
+/// @li If the dialog has an "OK" button is a good idea to bind its
+///     Button#Action to #onOk.
+/// 
+/// If the Dialog have buttons with the special ids IDOK and/or IDCANCEL,
+/// the #onOk and #onCancel will be called automatically.
+/// 
+/// Example:
+/// @code
+/// class MyDialog : public Dialog
+/// {
+///   Button ok, cnl;
+/// public:
+///   MyDialog()
+///     : Dialog("My dialog")
+///     , ok("OK", this)
+///     , cnl("Cancel", this)
+///   {
+///     ok.Action.connect(Bind(&MyDialog::onOk, this));
+///     cnl.Action.connect(Bind(&MyDialog::onCancel, this));
+///     // ...
+///   }
+/// };
+/// @endcode
+/// 
+/// How to customize the close action? Just use your own #onClose.
+/// 
+/// If you want to use a MenuBar, you should use a Frame instead of a
+/// Dialog, because the #preTranslateMessage "eat" all
+/// Alt+Letter keyboard messages (used as mnemonics for MenuItems).
+/// 
 class VACA_DLL Dialog : public Register<DialogClass>, public Frame
 {
   bool m_state;
@@ -109,14 +107,12 @@ public:
   virtual bool doModal();
   virtual bool preTranslateMessage(Message& message);
 
-  /**
-   * @deprecated Use #onOk instead.
-   */
+  /// @deprecated Use #onOk instead.
+  /// 
   void defaultOkAction() { onOk(); }
 
-  /**
-   * @deprecated Use #onCancel instead.
-   */
+  /// @deprecated Use #onCancel instead.
+  /// 
   void defaultCancelAction() { onCancel(); }
 
   Widget* getNextFocusableWidget(Widget* widget);

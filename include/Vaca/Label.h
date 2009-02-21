@@ -37,17 +37,16 @@
 
 namespace Vaca {
 
-/**
- * A static label of text. It's just an informative label. Remember to
- * pass the LabelStyle to @link Label#Label Label's constructor@endlink
- * if you derived this class.
- *
- * @warning
- *   For people that want to mix up Win32 @c SS_ styles with the ones
- *   in @c LabelStyles, you should be aware to use them because some
- *   can overlap the @c SS_CENTER or @c SS_RIGHT, so you should override
- *   #getTextAlign and #getTextAlign methods (like CustomLabel does).
- */
+/// A static label of text. It's just an informative label. Remember to
+/// pass the LabelStyle to @link Label#Label Label's constructor@endlink
+/// if you derived this class.
+/// 
+/// @warning
+///   For people that want to mix up Win32 @c SS_ styles with the ones
+///   in @c LabelStyles, you should be aware to use them because some
+///   can overlap the @c SS_CENTER or @c SS_RIGHT, so you should override
+///   #getTextAlign and #getTextAlign methods (like CustomLabel does).
+/// 
 class VACA_DLL Label : public Widget
 {
 public:

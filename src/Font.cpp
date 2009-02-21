@@ -36,25 +36,22 @@
 
 using namespace Vaca;
 
-/**
- * Constructs the default font.
- */
+/// Constructs the default font.
+/// 
 Font::Font()
   : SharedPtr<GdiObject<HFONT> >(new GdiObject<HFONT>(reinterpret_cast<HFONT>(GetStockObject(DEFAULT_GUI_FONT))))
 {
 }
 
-/**
- * Makes a reference to the specified font.
- */
+/// Makes a reference to the specified font.
+/// 
 Font::Font(const Font& font)
   : SharedPtr<GdiObject<HFONT> >(font)
 {
 }
 
-/**
- * Makes a copy of the font changing it's style.
- */
+/// Makes a copy of the font changing it's style.
+/// 
 Font::Font(const Font& font, FontStyle style)
 {
   LOGFONT lf;
@@ -92,9 +89,8 @@ Font::Font(String familyName, int size, FontStyle style)
   assign(&lf);
 }
 
-/**
- * Wrapper constructor for HFONT.
- */
+/// Wrapper constructor for HFONT.
+/// 
 Font::Font(HFONT hfont)
   : SharedPtr<GdiObject<HFONT> >(new GdiObject<HFONT>(hfont))
 {
@@ -109,11 +105,10 @@ Font::~Font()
 {
 }
 
-/**
- * Returns the size of the font in points.
- *
- * @return -1 if there is an error getting the point size.
- */
+/// Returns the size of the font in points.
+/// 
+/// @return -1 if there is an error getting the point size.
+/// 
 int Font::getPointSize() const
 {
   LOGFONT lf;
@@ -137,10 +132,9 @@ FontStyle Font::getStyle() const
     return FontStyle::Regular;			// TODO error, document it
 }
 
-/**
- * Makes a copy of @a font. You can safely delete the @a font after
- * this method.
- */
+/// Makes a copy of @a font. You can safely delete the @a font after
+/// this method.
+/// 
 Font& Font::operator=(const Font& font)
 {
   SharedPtr<GdiObject<HFONT> >::operator=(font);

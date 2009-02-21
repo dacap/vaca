@@ -43,11 +43,10 @@
 
 using namespace Vaca;
 
-/**
- * Returns the parameters in the command line.
- *
- * @c System::getArgs()[0] is the name of the executable file.
- */
+/// Returns the parameters in the command line.
+/// 
+/// @c System::getArgs()[0] is the name of the executable file.
+/// 
 std::vector<String> System::getArgs()
 {
   // Convert the command-line to a vector of arguments...
@@ -96,9 +95,8 @@ std::vector<String> System::getArgs()
   return args;
 }
 
-/**
- * Prints a line in the console.
- */
+/// Prints a line in the console.
+/// 
 void System::println(String line)
 {
 #ifdef _UNICODE
@@ -157,65 +155,64 @@ String System::getWindowsDirectory()
     return L"";
 }
 
-/**
- * 
- * TODO folderCsidl can't be a virtual folder
- * 
- * CSIDL_ADMINTOOLS
- * CSIDL_ALTSTARTUP
- * CSIDL_APPDATA
- * CSIDL_BITBUCKET
- * CSIDL_CDBURN_AREA
- * CSIDL_COMMON_ADMINTOOLS
- * CSIDL_COMMON_ALTSTARTUP
- * CSIDL_COMMON_APPDATA
- * CSIDL_COMMON_DESKTOPDIRECTORY
- * CSIDL_COMMON_DOCUMENTS
- * CSIDL_COMMON_FAVORITES
- * CSIDL_COMMON_MUSIC
- * CSIDL_COMMON_OEM_LINKS
- * CSIDL_COMMON_PICTURES
- * CSIDL_COMMON_PROGRAMS
- * CSIDL_COMMON_STARTMENU
- * CSIDL_COMMON_STARTUP
- * CSIDL_COMMON_TEMPLATES
- * CSIDL_COMMON_VIDEO
- * CSIDL_COMPUTERSNEARME
- * CSIDL_CONNECTIONS
- * CSIDL_CONTROLS
- * CSIDL_COOKIES
- * CSIDL_DESKTOP
- * CSIDL_DESKTOPDIRECTORY
- * CSIDL_DRIVES
- * CSIDL_FAVORITES
- * CSIDL_FONTS
- * CSIDL_HISTORY
- * CSIDL_INTERNET
- * CSIDL_INTERNET_CACHE
- * CSIDL_LOCAL_APPDATA
- * CSIDL_MYPICTURES
- * CSIDL_NETHOOD
- * CSIDL_NETWORK
- * CSIDL_PERSONAL
- * CSIDL_PRINTERS
- * CSIDL_PRINTHOOD
- * CSIDL_PROFILE
- * CSIDL_PROGRAMS
- * CSIDL_PROGRAM_FILES
- * CSIDL_PROGRAM_FILESX86
- * CSIDL_PROGRAM_FILES_COMMON
- * CSIDL_PROGRAM_FILES_COMMONX86
- * CSIDL_RECENT
- * CSIDL_RESOURCES
- * CSIDL_RESOURCES_LOCALIZED
- * CSIDL_SENDTO
- * CSIDL_STARTMENU
- * CSIDL_STARTUP
- * CSIDL_SYSTEM
- * CSIDL_SYSTEMX86
- * CSIDL_TEMPLATES
- * CSIDL_WINDOWS
- */
+/// 
+/// TODO folderCsidl can't be a virtual folder
+/// 
+/// CSIDL_ADMINTOOLS
+/// CSIDL_ALTSTARTUP
+/// CSIDL_APPDATA
+/// CSIDL_BITBUCKET
+/// CSIDL_CDBURN_AREA
+/// CSIDL_COMMON_ADMINTOOLS
+/// CSIDL_COMMON_ALTSTARTUP
+/// CSIDL_COMMON_APPDATA
+/// CSIDL_COMMON_DESKTOPDIRECTORY
+/// CSIDL_COMMON_DOCUMENTS
+/// CSIDL_COMMON_FAVORITES
+/// CSIDL_COMMON_MUSIC
+/// CSIDL_COMMON_OEM_LINKS
+/// CSIDL_COMMON_PICTURES
+/// CSIDL_COMMON_PROGRAMS
+/// CSIDL_COMMON_STARTMENU
+/// CSIDL_COMMON_STARTUP
+/// CSIDL_COMMON_TEMPLATES
+/// CSIDL_COMMON_VIDEO
+/// CSIDL_COMPUTERSNEARME
+/// CSIDL_CONNECTIONS
+/// CSIDL_CONTROLS
+/// CSIDL_COOKIES
+/// CSIDL_DESKTOP
+/// CSIDL_DESKTOPDIRECTORY
+/// CSIDL_DRIVES
+/// CSIDL_FAVORITES
+/// CSIDL_FONTS
+/// CSIDL_HISTORY
+/// CSIDL_INTERNET
+/// CSIDL_INTERNET_CACHE
+/// CSIDL_LOCAL_APPDATA
+/// CSIDL_MYPICTURES
+/// CSIDL_NETHOOD
+/// CSIDL_NETWORK
+/// CSIDL_PERSONAL
+/// CSIDL_PRINTERS
+/// CSIDL_PRINTHOOD
+/// CSIDL_PROFILE
+/// CSIDL_PROGRAMS
+/// CSIDL_PROGRAM_FILES
+/// CSIDL_PROGRAM_FILESX86
+/// CSIDL_PROGRAM_FILES_COMMON
+/// CSIDL_PROGRAM_FILES_COMMONX86
+/// CSIDL_RECENT
+/// CSIDL_RESOURCES
+/// CSIDL_RESOURCES_LOCALIZED
+/// CSIDL_SENDTO
+/// CSIDL_STARTMENU
+/// CSIDL_STARTUP
+/// CSIDL_SYSTEM
+/// CSIDL_SYSTEMX86
+/// CSIDL_TEMPLATES
+/// CSIDL_WINDOWS
+/// 
 String System::getShellFolderPath(int folderCsidl, bool create)
 {
   Char* buf = new Char[MAX_PATH];
@@ -253,23 +250,21 @@ int System::getFileImageIndex(const String& fileName, bool smallImage)
   return shfi.iIcon;
 }
 
-/**
- * Returns the screen size.
- */
+/// Returns the screen size.
+/// 
 Size System::getScreenSize()
 {
   return Size(GetSystemMetrics(SM_CXFULLSCREEN),
 	      GetSystemMetrics(SM_CYFULLSCREEN));
 }
 
-/**
- * Returns the work-area of the screen, it is like the desktop area,
- * that is not overlapped by the task-bar.
- *
- * @warning
- *   Win32: It is a call to @msdn{SystemParametersInfo} using
- *   @msdn{SPI_GETWORKAREA}.
- */
+/// Returns the work-area of the screen, it is like the desktop area,
+/// that is not overlapped by the task-bar.
+/// 
+/// @warning
+///   Win32: It is a call to @msdn{SystemParametersInfo} using
+///   @msdn{SPI_GETWORKAREA}.
+/// 
 Rect System::getWorkAreaBounds()
 {
   RECT rc;
@@ -282,48 +277,47 @@ Rect System::getWorkAreaBounds()
     return Rect(Point(0, 0), System::getScreenSize());
 }
 
-/**
- * Returns color from the system. It's a wrapper for the Win32's GetSysColor.
- *
- * @param index
- *     Can be one of the following values:
- *     @li COLOR_3DDKSHADOW
- *     @li COLOR_3DFACE
- *     @li COLOR_3DHILIGHT
- *     @li COLOR_3DHIGHLIGHT
- *     @li COLOR_3DLIGHT
- *     @li COLOR_BTNHILIGHT
- *     @li COLOR_3DSHADOW
- *     @li COLOR_ACTIVEBORDER
- *     @li COLOR_ACTIVECAPTION
- *     @li COLOR_APPWORKSPACE
- *     @li COLOR_BACKGROUND
- *     @li COLOR_DESKTOP
- *     @li COLOR_BTNFACE
- *     @li COLOR_BTNHIGHLIGHT
- *     @li COLOR_BTNSHADOW
- *     @li COLOR_BTNTEXT
- *     @li COLOR_CAPTIONTEXT
- *     @li COLOR_GRAYTEXT
- *     @li COLOR_HIGHLIGHT
- *     @li COLOR_HIGHLIGHTTEXT
- *     @li COLOR_INACTIVEBORDER
- *     @li COLOR_INACTIVECAPTION
- *     @li COLOR_INACTIVECAPTIONTEXT
- *     @li COLOR_INFOBK
- *     @li COLOR_INFOTEXT
- *     @li COLOR_MENU
- *     @li COLOR_MENUTEXT
- *     @li COLOR_SCROLLBAR
- *     @li COLOR_WINDOW
- *     @li COLOR_WINDOWFRAME
- *     @li COLOR_WINDOWTEXT
- *     @li COLOR_HOTLIGHT
- *     @li COLOR_GRADIENTACTIVECAPTION
- *     @li COLOR_GRADIENTINACTIVECAPTION
- *
- * @todo make the index a Enum
- */
+/// Returns color from the system. It's a wrapper for the Win32's GetSysColor.
+/// 
+/// @param index
+///     Can be one of the following values:
+///     @li COLOR_3DDKSHADOW
+///     @li COLOR_3DFACE
+///     @li COLOR_3DHILIGHT
+///     @li COLOR_3DHIGHLIGHT
+///     @li COLOR_3DLIGHT
+///     @li COLOR_BTNHILIGHT
+///     @li COLOR_3DSHADOW
+///     @li COLOR_ACTIVEBORDER
+///     @li COLOR_ACTIVECAPTION
+///     @li COLOR_APPWORKSPACE
+///     @li COLOR_BACKGROUND
+///     @li COLOR_DESKTOP
+///     @li COLOR_BTNFACE
+///     @li COLOR_BTNHIGHLIGHT
+///     @li COLOR_BTNSHADOW
+///     @li COLOR_BTNTEXT
+///     @li COLOR_CAPTIONTEXT
+///     @li COLOR_GRAYTEXT
+///     @li COLOR_HIGHLIGHT
+///     @li COLOR_HIGHLIGHTTEXT
+///     @li COLOR_INACTIVEBORDER
+///     @li COLOR_INACTIVECAPTION
+///     @li COLOR_INACTIVECAPTIONTEXT
+///     @li COLOR_INFOBK
+///     @li COLOR_INFOTEXT
+///     @li COLOR_MENU
+///     @li COLOR_MENUTEXT
+///     @li COLOR_SCROLLBAR
+///     @li COLOR_WINDOW
+///     @li COLOR_WINDOWFRAME
+///     @li COLOR_WINDOWTEXT
+///     @li COLOR_HOTLIGHT
+///     @li COLOR_GRADIENTACTIVECAPTION
+///     @li COLOR_GRADIENTINACTIVECAPTION
+/// 
+/// @todo make the index a Enum
+/// 
 Color System::getColor(int index)
 {
   return Color(GetSysColor(index));
@@ -337,9 +331,8 @@ bool System::getKeyState(Keys::Type keyCode)
   return (GetKeyState(keyCode) & 0x8000) != 0;
 }
 
-/**
- * Returns the cursor position in the screen.
- */
+/// Returns the cursor position in the screen.
+/// 
 Point System::getCursorPos()
 {
   POINT pt;

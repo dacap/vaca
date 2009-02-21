@@ -52,12 +52,11 @@ public:
   }
 };
 
-/**
- * Creates a new ConditionVariable.
- * 
- * @throw CreateConditionVariableException
- *   If the creation of the ConditionVariable fails.
- */
+/// Creates a new ConditionVariable.
+/// 
+/// @throw CreateConditionVariableException
+///   If the creation of the ConditionVariable fails.
+/// 
 ConditionVariable::ConditionVariable()
   : m_gone(0)
   , m_blocked(0)
@@ -184,7 +183,7 @@ void ConditionVariable::wait(ScopedLock& lock)
   ReleaseMutex(m_mutex);
 
   if (was_waiting == 1) {
-    for (/**/ ; was_gone; --was_gone) {
+    for (; was_gone; --was_gone) {
       // better now than spurious later
       WaitForSingleObject(m_queue, INFINITE);
     }
@@ -235,7 +234,7 @@ bool ConditionVariable::waitFor(ScopedLock& lock, double seconds)
   ReleaseMutex(m_mutex);
 
   if (was_waiting == 1) {
-    for (/**/ ; was_gone; --was_gone) {
+    for (; was_gone; --was_gone) {
       // better now than spurious later
       WaitForSingleObject(m_queue, INFINITE);
     }

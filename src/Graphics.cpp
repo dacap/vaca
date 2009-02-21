@@ -72,10 +72,9 @@ void Graphics::initialize()
   m_noPaint = false;
   m_fillRule = FillRule::EvenOdd;
 }
-    
-/**
- * Creates a Graphics context for the screen.
- */
+
+/// Creates a Graphics context for the screen.
+/// 
 Graphics::Graphics()
 {
   m_handle      = ::GetDC(NULL);
@@ -85,9 +84,8 @@ Graphics::Graphics()
   initialize();
 }
 
-/**
- * Creates a Graphics context related to the specified HDC.
- */
+/// Creates a Graphics context related to the specified HDC.
+/// 
 Graphics::Graphics(HDC hdc)
 {
   assert(hdc != NULL);
@@ -138,10 +136,9 @@ Graphics::~Graphics()
     ::DeleteDC(m_handle);
 }
 
-/**
- * Indicates that the Graphics wasn't touched. It's called by the
- * default implementation of the Widget::onPaint.
- */
+/// Indicates that the Graphics wasn't touched. It's called by the
+/// default implementation of the Widget::onPaint.
+/// 
 void Graphics::noPaint()
 {
   m_noPaint = true;
@@ -578,34 +575,33 @@ void Graphics::drawImage(Image& image, const Point& pt, const Rect& rc, const Co
   drawImage(image, pt.x, pt.y, rc.x, rc.y, rc.w, rc.h, bgColor);
 }
 
-/**
- * Draws the specified image of the ImageList.
- * 
- * @param imageList
- *     List of image to get the specified image.
- *
- * @param imageIndex
- *     Specific image to draw. This must be a valid index of the image
- *     list. You can check the size of the ImageList using ImageList#getImageCount(),
- *     so the index must be between @c 0 and @c getImageCount-1.
- * 
- * @param x
- *     TODO
- * 
- * @param y
- *     TODO
- * 
- * @param style
- *     One of the following values:
- *     @li ILD_BLEND25
- *     @li ILD_FOCUS
- *     @li ILD_BLEND50
- *     @li ILD_SELECTED
- *     @li ILD_BLEND
- *     @li ILD_MASK
- *     @li ILD_NORMAL
- *     @li ILD_TRANSPARENT
- */
+/// Draws the specified image of the ImageList.
+/// 
+/// @param imageList
+///     List of image to get the specified image.
+/// 
+/// @param imageIndex
+///     Specific image to draw. This must be a valid index of the image
+///     list. You can check the size of the ImageList using ImageList#getImageCount(),
+///     so the index must be between @c 0 and @c getImageCount-1.
+/// 
+/// @param x
+///     TODO
+/// 
+/// @param y
+///     TODO
+/// 
+/// @param style
+///     One of the following values:
+///     @li ILD_BLEND25
+///     @li ILD_FOCUS
+///     @li ILD_BLEND50
+///     @li ILD_SELECTED
+///     @li ILD_BLEND
+///     @li ILD_MASK
+///     @li ILD_NORMAL
+///     @li ILD_TRANSPARENT
+/// 
 void Graphics::drawImageList(ImageList& imageList, int imageIndex, int x, int y, int style)
 {
   assert(m_handle);
@@ -747,10 +743,9 @@ void Graphics::draw3dRect(int x, int y, int w, int h, const Color& topLeft, cons
   DeleteObject(pen2);
 }
 
-/**
- * Draws the outline of an ellipse. It uses the current selected color
- * (see setColor), and doesn't paint the background.
- */
+/// Draws the outline of an ellipse. It uses the current selected color
+/// (see setColor), and doesn't paint the background.
+/// 
 void Graphics::drawEllipse(const Pen& pen, const Rect& rc)
 {
   drawEllipse(pen, rc.x, rc.y, rc.w, rc.h);
@@ -769,12 +764,11 @@ void Graphics::drawEllipse(const Pen& pen, int x, int y, int w, int h)
   SelectObject(m_handle, oldBrush);
 }
 
-/**
- * Draws an arc with rc as a bounding rectangle for the ellipse that
- * encloses the arc. The arc start in the startAngle (a value between
- * -360 and 360), and as a arc length of sweepAngle (in
- * counter-clockwise).
- */
+/// Draws an arc with rc as a bounding rectangle for the ellipse that
+/// encloses the arc. The arc start in the startAngle (a value between
+/// -360 and 360), and as a arc length of sweepAngle (in
+/// counter-clockwise).
+/// 
 void Graphics::drawArc(const Pen& pen, const Rect& rc, double startAngle, double sweepAngle)
 {
   drawArc(pen, rc.x, rc.y, rc.w, rc.h, startAngle, sweepAngle);
@@ -1090,10 +1084,9 @@ void Graphics::drawFocus(const Rect& rc)
   ::DrawFocusRect(m_handle, &_rc);
 }
 
-/**
- * @warning
- *   In Win98, 32767 is the limit for @a fitInWidth.
- */
+/// @warning
+///   In Win98, 32767 is the limit for @a fitInWidth.
+/// 
 Size Graphics::measureString(const String& str, int fitInWidth, int flags)
 {
   assert(m_handle);
@@ -1118,27 +1111,26 @@ Size Graphics::measureString(const String& str, int fitInWidth, int flags)
   return Rect(&rc).getSize();
 }
 
-/**
- * Changes the current raster operation mode (SetROP2).
- *
- * @param drawMode
- * @li R2_BLACK
- * @li R2_COPYPEN
- * @li R2_MASKNOTPEN
- * @li R2_MASKPEN
- * @li R2_MASKPENNOT
- * @li R2_MERGENOTPEN
- * @li R2_MERGEPEN
- * @li R2_MERGEPENNOT
- * @li R2_NOP
- * @li R2_NOT
- * @li R2_NOTCOPYPEN
- * @li R2_NOTMASKPEN
- * @li R2_NOTMERGEPEN
- * @li R2_NOTXORPEN
- * @li R2_WHITE
- * @li R2_XORPEN
- */
+/// Changes the current raster operation mode (SetROP2).
+/// 
+/// @param drawMode
+/// @li R2_BLACK
+/// @li R2_COPYPEN
+/// @li R2_MASKNOTPEN
+/// @li R2_MASKPEN
+/// @li R2_MASKPENNOT
+/// @li R2_MERGENOTPEN
+/// @li R2_MERGEPEN
+/// @li R2_MERGEPENNOT
+/// @li R2_NOP
+/// @li R2_NOT
+/// @li R2_NOTCOPYPEN
+/// @li R2_NOTMASKPEN
+/// @li R2_NOTMERGEPEN
+/// @li R2_NOTXORPEN
+/// @li R2_WHITE
+/// @li R2_XORPEN
+/// 
 void Graphics::setRop2(int drawMode)
 {
   assert(m_handle);
@@ -1181,9 +1173,8 @@ void Graphics::drawPolyline(const Pen& pen, CONST POINT* lppt, int numPoints)
 //////////////////////////////////////////////////////////////////////
 // ScreenGraphics
 
-/**
- * Creates a Graphics instance to draw in the screen (anywhere).
- */
+/// Creates a Graphics instance to draw in the screen (anywhere).
+/// 
 ScreenGraphics::ScreenGraphics()
   : Graphics()
 {

@@ -36,9 +36,8 @@
 
 namespace Vaca {
 
-/**
- * A 2D coordinate in the screen or client area of a widget.
- */
+/// A 2D coordinate in the screen or client area of a widget.
+/// 
 class VACA_DLL Point
 {
 public:

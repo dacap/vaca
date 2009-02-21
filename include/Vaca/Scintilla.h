@@ -37,12 +37,11 @@
 
 namespace Vaca {
 
-/**
- * Loads the Scintilla DLL.
- *
- * First it tries to load @c SciLexer.dll and then if it fails, it
- * will try to load @c Scintilla.dll
- */
+/// Loads the Scintilla DLL.
+/// 
+/// First it tries to load @c SciLexer.dll and then if it fails, it
+/// will try to load @c Scintilla.dll
+/// 
 class VACA_DLL SciRegister
 {
   static HINSTANCE hmod;
@@ -51,10 +50,9 @@ public:
   SciRegister();
 };
 
-/**
- * Controls a Scintilla text editor. This is the class with more
- * methods, but each method only wrap an Scintilla (@c SCI_) message.
- */
+/// Controls a Scintilla text editor. This is the class with more
+/// methods, but each method only wrap an Scintilla (@c SCI_) message.
+/// 
 class VACA_DLL SciEdit : public SciRegister, public Widget
 {
 public:

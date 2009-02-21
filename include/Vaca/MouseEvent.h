@@ -39,50 +39,45 @@
 
 namespace Vaca {
 
-/**
- * Namespace for MouseButton enumeration.
- */
+/// Namespace for MouseButton enumeration.
+/// 
 struct MouseButtonEnum
 {
-  /**
-   * Enumeration to know which mouse's button triggers the MouseEvent.
-   */
+  /// Enumeration to know which mouse's button triggers the MouseEvent.
+  /// 
   enum enumeration {
     None,
     Left,
     Right,
     Middle,
   };
-  /**
-   * Default value for a MouseButton instance.
-   */
+  /// Default value for a MouseButton instance.
+  /// 
   static const enumeration default_value = None;
 };
 
-/**
- * A button of the mouse.
- *
- * One of the following values:
- * @li MouseButton::None
- * @li MouseButton::Left
- * @li MouseButton::Right
- * @li MouseButton::Middle
- */
+/// A button of the mouse.
+/// 
+/// One of the following values:
+/// @li MouseButton::None
+/// @li MouseButton::Left
+/// @li MouseButton::Right
+/// @li MouseButton::Middle
+/// 
 typedef Enum<MouseButtonEnum> MouseButton;
 
-/**
- * An event from the mouse.
- *
- * It has a trigger mouse button (the button of the mouse that was the
- * trigger of the event), a point where the event was happend
- * (relative to the widget's client area).
- *
- * This kind of event is generated when the mouse position is changed,
- * the wheel is moved, or a button is pressed (click or double-click).
- *
- * #getButton returns MouseButton::None if the event was produced by
- * mouse movement (no button was pressed to trigger the event).
- */
+/// An event from the mouse.
+/// 
+/// It has a trigger mouse button (the button of the mouse that was the
+/// trigger of the event), a point where the event was happend
+/// (relative to the widget's client area).
+/// 
+/// This kind of event is generated when the mouse position is changed,
+/// the wheel is moved, or a button is pressed (click or double-click).
+/// 
+/// #getButton returns MouseButton::None if the event was produced by
+/// mouse movement (no button was pressed to trigger the event).
+/// 
 class VACA_DLL MouseEvent : public Event
 {
   Point m_point;

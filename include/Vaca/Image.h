@@ -40,11 +40,10 @@
 
 namespace Vaca {
 
-/**
- * Used to destroy the HBITMAP handle of a Image.
- * 
- * @internal
- */
+/// Used to destroy the HBITMAP handle of a Image.
+/// 
+/// @internal
+/// 
 class VACA_DLL ImageHandle : public GdiObject<HBITMAP>
 {
   friend class Image;
@@ -56,26 +55,25 @@ public:
   virtual ~ImageHandle();
 };
 
-/**
- * A shared pointer to an image.
- *
- * This is a SharedPtr, so if you copy instances of images they will be
- * referencing to the same place. You have to use Image#clone method
- * to create real copies of the Image.
- *
- * Example
- * @code
- * Image img1(Size(32, 32));
- * Image img2 = img1;		// img1 and img2 references the same Image
- * Image img3 = img1.clone(); 
- * assert(img == img2);
- * assert(img != img3);
- * @endcode
- *
- * @win32
- *   This is a @msdn{HBITMAP} wrapper.
- * @endwin32
- */
+/// A shared pointer to an image.
+/// 
+/// This is a SharedPtr, so if you copy instances of images they will be
+/// referencing to the same place. You have to use Image#clone method
+/// to create real copies of the Image.
+/// 
+/// Example
+/// @code
+/// Image img1(Size(32, 32));
+/// Image img2 = img1;		// img1 and img2 references the same Image
+/// Image img3 = img1.clone(); 
+/// assert(img == img2);
+/// assert(img != img3);
+/// @endcode
+/// 
+/// @win32
+///   This is a @msdn{HBITMAP} wrapper.
+/// @endwin32
+/// 
 class VACA_DLL Image : private SharedPtr<ImageHandle>
 {
 public:

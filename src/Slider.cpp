@@ -132,11 +132,10 @@ void Slider::setSides(Sides sides)
   setStyle(style);
 }
 
-/**
- * Sets the visibility state of the tick marks in the slider.
- *
- * @see #setTickFreq
- */
+/// Sets the visibility state of the tick marks in the slider.
+/// 
+/// @see #setTickFreq
+/// 
 void Slider::setTickVisible(bool state)
 {
   if (state)
@@ -145,11 +144,10 @@ void Slider::setTickVisible(bool state)
     addStyle(Style(TBS_NOTICKS, 0));
 }
 
-/**
- * Sets the frequency of the tick marks in the slider.
- * 
- * @see #setTickVisible
- */
+/// Sets the frequency of the tick marks in the slider.
+/// 
+/// @see #setTickVisible
+/// 
 void Slider::setTickFreq(int freq)
 {
   sendMessage(TBM_SETTICFREQ, freq, 0);
@@ -165,32 +163,30 @@ int Slider::getMaxValue()
   return sendMessage(TBM_GETRANGEMAX, 0, 0);
 }
 
-/**
- * Gets the current range of the slider which indicates the posible
- * values that the user can select.
- *
- * @param minValue Minimum value in the range.
- * @param maxValue Maximum value in the range.
- *
- * @see #getMinValue, #getMaxValue
- */
+/// Gets the current range of the slider which indicates the posible
+/// values that the user can select.
+/// 
+/// @param minValue Minimum value in the range.
+/// @param maxValue Maximum value in the range.
+/// 
+/// @see #getMinValue, #getMaxValue
+/// 
 void Slider::getRange(int& minValue, int& maxValue)
 {
   minValue = getMinValue();
   maxValue = getMaxValue();
 }
 
-/**
- * Sets the range of values which the user can select from.
- * 
- * @param minValue
- *   Must be great or equal to #MinLimit.
- * @param maxValue
- *   Must be less or equal to #MaxLimit.
- *   And it must be also equal Must be greater or equal to minValue.
- *
- * @see #getRange, #MinLimit, #MaxLimit
- */
+/// Sets the range of values which the user can select from.
+/// 
+/// @param minValue
+///   Must be great or equal to #MinLimit.
+/// @param maxValue
+///   Must be less or equal to #MaxLimit.
+///   And it must be also equal Must be greater or equal to minValue.
+/// 
+/// @see #getRange, #MinLimit, #MaxLimit
+/// 
 void Slider::setRange(int minValue, int maxValue)
 {
   assert(minValue <= maxValue);
@@ -200,21 +196,19 @@ void Slider::setRange(int minValue, int maxValue)
   sendMessage(TBM_SETRANGE, TRUE, MAKELONG(minValue, maxValue));
 }
 
-/**
- * Returns the selected value in the range of the slider.
- */
+/// Returns the selected value in the range of the slider.
+/// 
 int Slider::getValue()
 {
   return sendMessage(TBM_GETPOS, 0, 0);
 }
 
-/**
- * Sets the selected value in the slider.
- *
- * @param value
- *   Must be inside the slider's range. You can obtain the
- *   current minimum and maximum values using the #getRange method.
- */
+/// Sets the selected value in the slider.
+/// 
+/// @param value
+///   Must be inside the slider's range. You can obtain the
+///   current minimum and maximum values using the #getRange method.
+/// 
 void Slider::setValue(int value)
 {
   assert(getMinValue() <= value);
@@ -223,45 +217,41 @@ void Slider::setValue(int value)
   sendMessage(TBM_SETPOS, TRUE, value);
 }
 
-/**
- * Returns the current line size, it is how many units the value will
- * move when the user press the arrow keys.
- *
- * @see #setLineSize
- */
+/// Returns the current line size, it is how many units the value will
+/// move when the user press the arrow keys.
+/// 
+/// @see #setLineSize
+/// 
 int Slider::getLineSize()
 {
   return sendMessage(TBM_GETLINESIZE, 0, 0);
 }
 
-/**
- * Sets the current line size, it is how many units the value will
- * move when the user press the arrow keys.
- *
- * @see #getLineSize
- */
+/// Sets the current line size, it is how many units the value will
+/// move when the user press the arrow keys.
+/// 
+/// @see #getLineSize
+/// 
 void Slider::setLineSize(int lineSize)
 {
   sendMessage(TBM_SETLINESIZE, 0, lineSize);
 }
 
-/**
- * Returns the current page size, it is how many units the value will
- * move when the user press the PageUp/Down keys.
- *
- * @see #setPageSize
- */
+/// Returns the current page size, it is how many units the value will
+/// move when the user press the PageUp/Down keys.
+/// 
+/// @see #setPageSize
+/// 
 int Slider::getPageSize()
 {
   return sendMessage(TBM_GETPAGESIZE, 0, 0);
 }
 
-/**
- * Sets the current page size, it is how many units the value will
- * move when the user press the PageUp/Down keys.
- *
- * @see #getPageSize
- */
+/// Sets the current page size, it is how many units the value will
+/// move when the user press the PageUp/Down keys.
+/// 
+/// @see #getPageSize
+/// 
 void Slider::setPageSize(int pageSize)
 {
   sendMessage(TBM_SETPAGESIZE, 0, pageSize);

@@ -39,9 +39,8 @@
 
 namespace Vaca {
 
-/**
- * Set of nodes to draw polygons and shapes in Graphics.
- */
+/// Set of nodes to draw polygons and shapes in Graphics.
+///
 class VACA_DLL GraphicsPath
 {
 public:
@@ -57,19 +56,18 @@ public:
     CloseFigure = 8,
   };
 
-  /**
-   * A node in a GraphicsPath.
-   *
-   * A node is an action to draw the GraphicsPath, it can be a node of
-   * movement (MoveTo), a node to draw a line (LineTo), or a curve
-   * (BezierTo).
-   *
-   * The nodes of movement don't draw lines, they just change the
-   * current position which we have to start to draw. For example,
-   * a GraphicsPath that represent just one line, has really two nodes:
-   * @li a node of movement (MoveTo) to go to the line's start position, and
-   * @li a node to draw a line (LineTo) that represent the end position of the line.
-   */
+  /// A node in a GraphicsPath.
+  ///
+  /// A node is an action to draw the GraphicsPath, it can be a node of
+  /// movement (MoveTo), a node to draw a line (LineTo), or a curve
+  /// (BezierTo).
+  ///
+  /// The nodes of movement don't draw lines, they just change the
+  /// current position which we have to start to draw. For example,
+  /// a GraphicsPath that represent just one line, has really two nodes:
+  /// @li a node of movement (MoveTo) to go to the line's start position, and
+  /// @li a node to draw a line (LineTo) that represent the end position of the line.
+  ///
   class VACA_DLL Node
   {
     friend class GraphicsPath;
@@ -91,7 +89,7 @@ private:
 public:
   typedef std::vector<Node>::iterator iterator;
   typedef std::vector<Node>::const_iterator const_iterator;
-  
+
   GraphicsPath();
   virtual ~GraphicsPath();
 

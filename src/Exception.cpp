@@ -37,20 +37,18 @@
 
 using namespace Vaca;
 
-/**
- * Creates generic exception with an empty error message.
- */
+/// Creates generic exception with an empty error message.
+/// 
 Exception::Exception()
   : std::exception()
 {
   initialize();
 }
 
-/**
- * Creates an exception with the specified error message.
- *
- * @param message Error message.
- */
+/// Creates an exception with the specified error message.
+/// 
+/// @param message Error message.
+/// 
 Exception::Exception(const String& message)
   : std::exception()
   , m_message(message)
@@ -58,20 +56,18 @@ Exception::Exception(const String& message)
   initialize();
 }
 
-/**
- * Destroys the exception.
- */
+/// Destroys the exception.
+/// 
 Exception::~Exception() throw()
 {
 }
 
-/**
- * Returns a printable C-string of the error.
- *
- * If the Exception(const String&) constructor was used to
- * create the exception, this method returns the same string
- * as #getMessage but in ASCII format.
- */
+/// Returns a printable C-string of the error.
+/// 
+/// If the Exception(const String&) constructor was used to
+/// create the exception, this method returns the same string
+/// as #getMessage but in ASCII format.
+/// 
 const char* Exception::what() const throw()
 {
   return m_what.c_str();
@@ -82,16 +78,15 @@ const String& Exception::getMessage() const throw()
   return m_message;
 }
 
-/**
- * Shows the error in a MsgBox.
- *
- * @warning The MsgBox doesn't lock any Frame. It's like a dialog
- *          running in background.
- *
- * @win32
- *   It is like call MessageBox(NULL, getMessage(), ...);
- * @endwin32
- */
+/// Shows the error in a MsgBox.
+/// 
+/// @warning The MsgBox doesn't lock any Frame. It's like a dialog
+///          running in background.
+/// 
+/// @win32
+///   It is like call MessageBox(NULL, getMessage(), ...);
+/// @endwin32
+/// 
 void Exception::show()
 {
   String msg;

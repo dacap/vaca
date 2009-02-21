@@ -41,9 +41,8 @@ namespace Vaca {
 
 //////////////////////////////////////////////////////////////////////
 
-/**
- * @see ListViewType
- */
+/// @see ListViewType
+/// 
 struct ListViewTypeEnum
 {
   enum enumeration {
@@ -55,15 +54,13 @@ struct ListViewTypeEnum
   static const enumeration default_value = List;
 };
 
-/**
- */
+/// 
 typedef Enum<ListViewTypeEnum> ListViewType;
 
 //////////////////////////////////////////////////////////////////////
 
-/**
- * A ListView control.
- */
+/// A ListView control.
+/// 
 class VACA_DLL ListView : public Widget 
 {
   ImageList m_normalImageList;
@@ -150,9 +147,8 @@ private:
 
 };
 
-/**
- * Event where interact a ListView.
- */
+/// Event where interact a ListView.
+/// 
 class ListViewEvent : public CancelableEvent
 {
   int mItemIndex;

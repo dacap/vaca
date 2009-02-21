@@ -88,9 +88,8 @@ static LRESULT CALLBACK dragHookProc(int code, WPARAM wParam, LPARAM lParam)
   return CallNextHookEx(dragHook, code, wParam, lParam);
 }
 
-/**
- * Creates a new DockBar
- */
+/// Creates a new DockBar
+/// 
 DockBar::DockBar(const String& title, Frame* parent, Style style)
   : Widget(DockBarClass::getClassName(), parent, style)
 {
@@ -125,11 +124,10 @@ DockBar::~DockBar()
   delete m_dockInfo;
 }
 
-/**
- * You can use setVisible() to hide or show the DockBar. If you hide
- * the DockBar, this method deletes the #Vaca::DockFrame if it exist, or
- * remove the DockBar from the #Vaca::DockArea. All is automatic.
- */
+/// You can use setVisible() to hide or show the DockBar. If you hide
+/// the DockBar, this method deletes the #Vaca::DockFrame if it exist, or
+/// remove the DockBar from the #Vaca::DockArea. All is automatic.
+/// 
 void DockBar::setVisible(bool visible)
 {
   Widget::setVisible(visible);
@@ -143,9 +141,8 @@ void DockBar::setVisible(bool visible)
   }
 }
 
-/**
- * Leaves some space for the gripper (using measureGripper()).
- */
+/// Leaves some space for the gripper (using measureGripper()).
+/// 
 Rect DockBar::getLayoutBounds() const
 {
   Rect rc = Widget::getLayoutBounds();
@@ -193,10 +190,9 @@ bool DockBar::isFullDrag() const
   return m_fullDrag;
 }
 
-/**
- * If @a state is true, the gripper is drawn on floating mode too. By
- * default, the gripper is not drawn in floating mode.
- */
+/// If @a state is true, the gripper is drawn on floating mode too. By
+/// default, the gripper is not drawn in floating mode.
+/// 
 void DockBar::setFloatingGripper(bool state)
 {
   m_floatingGripper = state;
@@ -207,25 +203,22 @@ void DockBar::setFloatingGripper(bool state)
   }
 }
 
-/**
- * Default value: false.
- */
+/// Default value: false.
+/// 
 bool DockBar::isFloatingGripper() const
 {
   return m_floatingGripper;
 }
 
-/**
- * Returns true if the bar is docked in a DockArea.
- */
+/// Returns true if the bar is docked in a DockArea.
+/// 
 bool DockBar::isDocked() const
 {
   return m_dockArea != NULL;
 }
 
-/**
- * Returns true if the bar is floating in a DockFrame.
- */
+/// Returns true if the bar is floating in a DockFrame.
+/// 
 bool DockBar::isFloating() const
 {
   return m_dockFrame != NULL;
@@ -354,9 +347,8 @@ void DockBar::onPreferredSize(Size& sz)
 		       isDocked() ? m_dockArea->getSide(): Side());
 }
 
-/**
- * Called when m_dockFrame is closed by its "Close" button.
- */
+/// Called when m_dockFrame is closed by its "Close" button.
+/// 
 void DockBar::onDockFrameClose(CloseEvent& ev)
 {
   Widget::setVisible(false);
@@ -365,19 +357,17 @@ void DockBar::onDockFrameClose(CloseEvent& ev)
     m_owner->updateIndicators();
 }
 
-/**
- * Calls paintGripper().
- */
+/// Calls paintGripper().
+/// 
 void DockBar::onPaint(Graphics& g)
 {
   paintGripper(g);
 }
 
-/**
- * When the gripper is visible in the floating state
- * (m_floatingGripper == true), we must to repaint the DockBar's
- * gripper when the DockBar is resized.
- */
+/// When the gripper is visible in the floating state
+/// (m_floatingGripper == true), we must to repaint the DockBar's
+/// gripper when the DockBar is resized.
+/// 
 void DockBar::onResize(const Size& sz)
 {
   Widget::onResize(sz);
@@ -510,28 +500,25 @@ void DockBar::onCancelMode()
   }
 }
 
-/**
- * Event called when the DockBar is docked in a new DockArea. You can
- * use getDockArea() method to known where the DockBar is docked.
- */
+/// Event called when the DockBar is docked in a new DockArea. You can
+/// use getDockArea() method to known where the DockBar is docked.
+/// 
 void DockBar::onDocking()
 {
   assert(getDockArea() != NULL);
 }
 
-/**
- * Event called when the DockBar was docked and now is floating in
- * some DockFrame.
- */
+/// Event called when the DockBar was docked and now is floating in
+/// some DockFrame.
+/// 
 void DockBar::onFloating()
 {
   // do nothing
 }
 
-/**
- * When the DockBar is floating, and its DockFrame container is
- * resized (DockFrame#onResizing), this event is fired.
- */
+/// When the DockBar is floating, and its DockFrame container is
+/// resized (DockFrame#onResizing), this event is fired.
+/// 
 void DockBar::onResizingFrame(DockFrame* frame, CardinalDirection dir, Rect& rc)
 {
 }
@@ -574,11 +561,10 @@ void DockBar::paintGripper(Graphics& g)
   }
 }
 
-/**
- * @return This must return Size(gripperWidth, 0),
- *         Size(0, gripperHeight), or Size(0, 0) if the gripper is hidden
- *         (use isGripperVisible() to know that).
- */
+/// @return This must return Size(gripperWidth, 0),
+///         Size(0, gripperHeight), or Size(0, 0) if the gripper is hidden
+///         (use isGripperVisible() to know that).
+/// 
 Size DockBar::measureGripper(bool docked, Side dockSide) const
 {
   if (isGripperVisible(docked, dockSide)) {
@@ -616,9 +602,8 @@ bool DockBar::isGripperVisible(bool docked, Side dockSide) const
     return false;
 }
 
-/**
- * Creates the DragInfo to start dragging this DockBar...
- */
+/// Creates the DragInfo to start dragging this DockBar...
+/// 
 void DockBar::beginDrag()
 {
   assert(m_drag == NULL);
@@ -665,9 +650,8 @@ void DockBar::beginDrag()
   //////////////////////////////////////////////////////////////////////
 }
 
-/**
- * Moves the DockBar to the place that indicates the current m_drag information.
- */
+/// Moves the DockBar to the place that indicates the current m_drag information.
+/// 
 void DockBar::dragBar()
 {
   // inside a dock bar
@@ -685,9 +669,8 @@ void DockBar::dragBar()
   }
 }
 
-/**
- * Destroys the DragInfo (m_drag)
- */
+/// Destroys the DragInfo (m_drag)
+/// 
 void DockBar::endDrag()
 {
   assert(m_drag != NULL);
@@ -713,10 +696,9 @@ void DockBar::endDrag()
   releaseMouse();
 }
 
-/**
- * Used to hide the DockBar. It deletes the m_dockFrame and removes
- * this DockBar from m_dockArea (if it isn't NULL).
- */
+/// Used to hide the DockBar. It deletes the m_dockFrame and removes
+/// this DockBar from m_dockArea (if it isn't NULL).
+/// 
 void DockBar::cleanUp()
 {
   // undock
@@ -746,9 +728,8 @@ void DockBar::cleanFrame()
   m_dockFrame = NULL;
 }
 
-/**
- * Focus the owner window.
- */
+/// Focus the owner window.
+/// 
 void DockBar::focusOwner()
 {
   if (m_owner != NULL)
@@ -825,9 +806,8 @@ DockArea* DockBar::xorTracker(Graphics& g)
   }
 }
 
-/**
- * @todo Move this method to DockFrame
- */
+/// @todo Move this method to DockFrame
+/// 
 Size DockBar::getNonClientSizeForADockFrame()
 {
   Rect clientRect(0, 0, 1, 1);

@@ -37,11 +37,10 @@
 
 namespace Vaca {
 
-/**
- * Widget to edit text.
- *
- * @see @ref page_tn_008
- */
+/// Widget to edit text.
+/// 
+/// @see @ref page_tn_008
+/// 
 class VACA_DLL TextEdit : public Widget
 {
 public:

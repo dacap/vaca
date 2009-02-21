@@ -170,12 +170,11 @@ void TreeView::setDragAndDrop(bool state)
     removeStyle(Style(TVS_DISABLEDRAGDROP, 0));
 }
 
-/**
- * Sets the ImageList of icons to be used in the TreeNode.
- *
- * @param imageList
- *   The ImageList to be used. It will not be deleted.
- */
+/// Sets the ImageList of icons to be used in the TreeNode.
+/// 
+/// @param imageList
+///   The ImageList to be used. It will not be deleted.
+/// 
 void TreeView::setNormalImageList(const ImageList& imageList)
 {
   assert(::IsWindow(getHandle()));
@@ -192,19 +191,17 @@ void TreeView::setStateImageList(const ImageList& imageList)
   TreeView_SetImageList(getHandle(), m_stateImageList.getHandle(), LVSIL_STATE);
 }
 
-/**
- * Returns the root node of the tree.
- *
- * The root node is never displayed.
- */
+/// Returns the root node of the tree.
+/// 
+/// The root node is never displayed.
+/// 
 TreeNode* TreeView::getRootNode()
 {
   return &m_root;
 }
 
-/**
- * Adds a node in the root of the tree.
- */
+/// Adds a node in the root of the tree.
+/// 
 void TreeView::addNode(TreeNode* node)
 {
   // the node must be alone (not inside another TreeView)
@@ -214,11 +211,10 @@ void TreeView::addNode(TreeNode* node)
   m_root.addNode(node);
 }
 
-/**
- * Removes the specified node whatever it's inside the tree.
- * 
- * @warning The node must be inside the tree.
- */
+/// Removes the specified node whatever it's inside the tree.
+/// 
+/// @warning The node must be inside the tree.
+/// 
 void TreeView::removeNode(TreeNode* node)
 {
   assert(node != NULL);
@@ -256,11 +252,10 @@ void TreeView::removeNode(TreeNode* node)
   assert(false);
 }
 
-/**
- * Returns the selected node of the tree.
- * 
- * @return The selected node. NULL if there is no selected item in the tree.
- */
+/// Returns the selected node of the tree.
+/// 
+/// @return The selected node. NULL if there is no selected item in the tree.
+/// 
 TreeNode* TreeView::getSelectedNode()
 {
   assert(::IsWindow(getHandle()));
@@ -272,10 +267,9 @@ TreeNode* TreeView::getSelectedNode()
     return NULL;
 }
 
-/**
- * Selects the node in the tree. The @a node must be a children of the
- * tree.
- */
+/// Selects the node in the tree. The @a node must be a children of the
+/// tree.
+/// 
 void TreeView::setSelectedNode(TreeNode* node)
 {
   assert(::IsWindow(getHandle()));
@@ -346,18 +340,16 @@ void TreeView::onMouseUp(MouseEvent& ev)
   }
 }
 
-/**
- * You can cancel this event (Event::cancel).
- */
+/// You can cancel this event (Event::cancel).
+/// 
 void TreeView::onBeforeExpand(TreeViewEvent& ev)
 {
   BeforeExpand(ev);
   ev.getTreeNode()->onBeforeExpand(ev);
 }
 
-/**
- * You can cancel this event (Event::cancel).
- */
+/// You can cancel this event (Event::cancel).
+/// 
 void TreeView::onBeforeCollapse(TreeViewEvent& ev)
 {
   BeforeCollapse(ev);
@@ -372,10 +364,9 @@ void TreeView::onBeforeSelect(TreeViewEvent& ev)
   }
 }
 
-/**
- * You can cancel this event to cancel the label editing.
- * 
- */
+/// You can cancel this event to cancel the label editing.
+/// 
+/// 
 void TreeView::onBeforeLabelEdit(TreeViewEvent& ev)
 {
   BeforeLabelEdit(ev);
@@ -402,10 +393,8 @@ void TreeView::onAfterSelect(TreeViewEvent& ev)
   }
 }
 
-/**
- * You can cancel this event to avoid to change the item text.
- * 
- */
+/// You can cancel this event to avoid to change the item text.
+/// 
 void TreeView::onAfterLabelEdit(TreeViewEvent& ev)
 {
   ev.getTreeNode()->onAfterLabelEdit(ev);

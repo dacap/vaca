@@ -67,9 +67,8 @@ Region::~Region()
 {
 }
 
-/** 
- * Returns true if the Region is empty.
- */
+/// Returns true if the Region is empty.
+/// 
 bool Region::isEmpty() const
 {
   assert(getHandle());
@@ -78,11 +77,10 @@ bool Region::isEmpty() const
   return GetRgnBox(getHandle(), &rc) == NULLREGION;
 }
 
-/** 
- * Returns true if the Region is just a rectangle.
- *
- * @see getBounds
- */
+/// Returns true if the Region is just a rectangle.
+/// 
+/// @see getBounds
+/// 
 bool Region::isSimple() const
 {
   assert(getHandle());
@@ -91,9 +89,8 @@ bool Region::isSimple() const
   return GetRgnBox(getHandle(), &rc) == SIMPLEREGION;
 }
 
-/** 
- * Returns true if the Region is complex (a set of rectangles).
- */
+/// Returns true if the Region is complex (a set of rectangles).
+/// 
 bool Region::isComplex() const
 {
   assert(getHandle());
@@ -122,12 +119,11 @@ Region Region::clone() const
   return copy;
 }
 
-/** 
- * Gets the bounds of the Region.
- * 
- * @return An empty rectangle if the Region is empty (see
- *         Region::isEmpty).
- */
+/// Gets the bounds of the Region.
+/// 
+/// @return An empty rectangle if the Region is empty (see
+///         Region::isEmpty).
+/// 
 Rect Region::getBounds() const
 {
   assert(getHandle());
@@ -223,10 +219,9 @@ Region Region::operator^(const Region& rgn) const
   return res;
 }
 
-/**
- * Makes an union between both regions and leaves the result in
- * @b this region.
- */
+/// Makes an union between both regions and leaves the result in
+/// @b this region.
+/// 
 Region& Region::operator|=(const Region& rgn)
 {
   CombineRgn(this->getHandle(),
@@ -235,19 +230,17 @@ Region& Region::operator|=(const Region& rgn)
   return *this;
 }
 
-/**
- * Makes an union between both regions and leaves the result in
- * @b this region.
- */
+/// Makes an union between both regions and leaves the result in
+/// @b this region.
+/// 
 Region& Region::operator+=(const Region& rgn)
 {
   return operator|=(rgn);
 }
 
-/**
- * Makes the intersection between both regions and leaves
- * the result in @b this region.
- */
+/// Makes the intersection between both regions and leaves
+/// the result in @b this region.
+/// 
 Region& Region::operator&=(const Region& rgn)
 {
   CombineRgn(this->getHandle(),
@@ -256,9 +249,8 @@ Region& Region::operator&=(const Region& rgn)
   return *this;
 }
 
-/**
- * Substracts the speficied region @a rgn from @b this region.
- */
+/// Substracts the speficied region @a rgn from @b this region.
+/// 
 Region& Region::operator-=(const Region& rgn)
 {
   CombineRgn(this->getHandle(),
@@ -267,10 +259,9 @@ Region& Region::operator-=(const Region& rgn)
   return *this;
 }
 
-/**
- * Makes a XOR operation between both regions and leaves the result in
- * @b this region.
- */
+/// Makes a XOR operation between both regions and leaves the result in
+/// @b this region.
+/// 
 Region& Region::operator^=(const Region& rgn)
 {
   CombineRgn(this->getHandle(),
@@ -279,29 +270,26 @@ Region& Region::operator^=(const Region& rgn)
   return *this;
 }
 
-/**
- * Creates a region from a rectangle.
- */
+/// Creates a region from a rectangle.
+/// 
 Region Region::fromRect(const Rect &_rc)
 {
   RECT rc = _rc;
   return Region(CreateRectRgnIndirect(&rc));
 }
 
-/**
- * Creates a region from an ellipse.
- */
+/// Creates a region from an ellipse.
+/// 
 Region Region::fromEllipse(const Rect &_rc)
 {
   RECT rc = _rc;
   return Region(CreateEllipticRgnIndirect(&rc));
 }
 
-/**
- * Creates a region from a rounded rectangle.
- *
- * It uses the CreateRoundRectRgn function of Win32.
- */
+/// Creates a region from a rounded rectangle.
+/// 
+/// It uses the CreateRoundRectRgn function of Win32.
+/// 
 Region Region::fromRoundRect(const Rect& _rc, const Size& ellipseSize)
 {
   RECT rc = _rc;
@@ -310,9 +298,8 @@ Region Region::fromRoundRect(const Rect& _rc, const Size& ellipseSize)
 				   ellipseSize.w, ellipseSize.h));
 }
 
-/**
- * Returns the Win32 region handler.
- */
+/// Returns the Win32 region handler.
+/// 
 HRGN Region::getHandle() const
 {
   return get()->getHandle();

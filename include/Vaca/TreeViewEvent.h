@@ -37,9 +37,8 @@
 
 namespace Vaca {
 
-/**
- * Event where interact a TreeView and TreeNode.
- */
+/// Event where interact a TreeView and TreeNode.
+/// 
 class VACA_DLL TreeViewEvent : public CancelableEvent
 {
   TreeNode* m_treeNode;

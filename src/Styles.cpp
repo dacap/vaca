@@ -37,100 +37,90 @@ using namespace Vaca;
 // Base Styles
 // ===================================================================
 
-/**
- * Without style.
- */
+/// Without style.
+/// 
 const Style Widget::Styles::None =
   Style(0, 0);
 
-/**
- * A widget that should be shown to the user.
- *
- * @win32
- *   It is WS_VISIBLE.
- * @endwin32
- */
+/// A widget that should be shown to the user.
+/// 
+/// @win32
+///   It is WS_VISIBLE.
+/// @endwin32
+/// 
 const Style Widget::Styles::Visible =
   Style(WS_VISIBLE, 0);
 
-/**
- * Indicates that a Widget can receive the focus in Dialogs.
- *
- * @win32
- *   It is WS_TABSTOP.
- * @endwin32
- */
+/// Indicates that a Widget can receive the focus in Dialogs.
+/// 
+/// @win32
+///   It is WS_TABSTOP.
+/// @endwin32
+/// 
 const Style Widget::Styles::Focusable =
   Style(WS_TABSTOP, 0);
 
-/**
- * When the widget needs both scroll bars (horizontal and vertical).
- *
- * @win32
- *   It is WS_HSCROLL | WS_VSCROLL.
- * @endwin32
- */
+/// When the widget needs both scroll bars (horizontal and vertical).
+/// 
+/// @win32
+///   It is WS_HSCROLL | WS_VSCROLL.
+/// @endwin32
+/// 
 const Style Widget::Styles::Scroll =
   Style(WS_HSCROLL | WS_VSCROLL, 0);
 
-/**
- * When the widget needs the horizontal scroll bar.
- *
- * @win32
- *   It is WS_HSCROLL.
- * @endwin32
- */
+/// When the widget needs the horizontal scroll bar.
+/// 
+/// @win32
+///   It is WS_HSCROLL.
+/// @endwin32
+/// 
 const Style Widget::Styles::HorizontalScroll =
   Style(WS_HSCROLL, 0);
 
-/**
- * When the widget needs the veritcal scroll bar.
- *
- * @win32
- *   It is WS_VSCROLL.
- * @endwin32
- */
+/// When the widget needs the veritcal scroll bar.
+/// 
+/// @win32
+///   It is WS_VSCROLL.
+/// @endwin32
+/// 
 const Style Widget::Styles::VerticalScroll =
   Style(WS_VSCROLL, 0);
 
-/**
- * This style makes the widget to have an edge in its client area.
- * E.g.: This style is used by text-fields (TextEdit) to enclose the
- * typed text in a box for example.
- *
- * @win32
- *   It is WS_EX_CLIENTEDGE.
- * @endwin32
- */
+/// This style makes the widget to have an edge in its client area.
+/// E.g.: This style is used by text-fields (TextEdit) to enclose the
+/// typed text in a box for example.
+/// 
+/// @win32
+///   It is WS_EX_CLIENTEDGE.
+/// @endwin32
+/// 
 const Style Widget::Styles::ClientEdge =
   Style(0, WS_EX_CLIENTEDGE);
 
-/**
- * Style used for container widgets, that is, widget that contains
- * children.
- *
- * @win32
- *   It is WS_CLIPCHILDREN | WS_EX_CONTROLPARENT.
- * @endwin32
- */
+/// Style used for container widgets, that is, widget that contains
+/// children.
+/// 
+/// @win32
+///   It is WS_CLIPCHILDREN | WS_EX_CONTROLPARENT.
+/// @endwin32
+/// 
 const Style Widget::Styles::Container =
   Style(WS_CLIPCHILDREN, WS_EX_CONTROLPARENT);
 
-/**
- * Use this style if the user should be able to drop files on your widget.
- *
- * @warning Using this style is the only way to receive the Widget#onDropFiles event.
- *
- * @win32
- *   It is WS_EX_ACCEPTFILES.
- * @endwin32
- */
+/// Use this style if the user should be able to drop files on your widget.
+/// 
+/// @warning Using this style is the only way to receive the Widget#onDropFiles event.
+/// 
+/// @win32
+///   It is WS_EX_ACCEPTFILES.
+/// @endwin32
+/// 
 const Style Widget::Styles::AcceptFiles =
   Style(0, WS_EX_ACCEPTFILES);
 
-/**
- * Default widget style.
- */
+/// Default widget style.
+/// 
 const Style Widget::Styles::Default =
   Widget::Styles::Visible |
   Widget::Styles::Container;
@@ -139,80 +129,73 @@ const Style Widget::Styles::Default =
 // Labels
 // ===================================================================
 
-/**
- * Default style for Label.
- *
- * @win32
- *   It is WS_VISIBLE | SS_NOTIFY
- * @endwin32
- */
+/// Default style for Label.
+/// 
+/// @win32
+///   It is WS_VISIBLE | SS_NOTIFY
+/// @endwin32
+/// 
 const Style Label::Styles::Default =
   Widget::Styles::Visible |
   Style(SS_NOTIFY, 0);
 
-/**
- * A simple label has left-alignment and is not wrapped in multiple lines.
- *
- * @win32
- *   @msdn{SS_SIMPLE}
- * @endwin32
- */
+/// A simple label has left-alignment and is not wrapped in multiple lines.
+/// 
+/// @win32
+///   @msdn{SS_SIMPLE}
+/// @endwin32
+/// 
 const Style Label::Styles::Simple =
   Style(SS_SIMPLE, 0);
 
-/**
- * If the label is too long, ellipsis ("...") is used at the end of
- * each word instead of wrap them.
- *
- * @win32
- *   @msdn{SS_WORDELLIPSIS}
- * @endwin32
- */
+/// If the label is too long, ellipsis ("...") is used at the end of
+/// each word instead of wrap them.
+/// 
+/// @win32
+///   @msdn{SS_WORDELLIPSIS}
+/// @endwin32
+/// 
 const Style Label::Styles::WordEllipsis =
   Style(SS_WORDELLIPSIS, 0);
 
-/**
- * If the label is too long, ellipsis ("...") is used at the end of
- * the text. The text is not wrapped.
- *
- * @win32
- *   @msdn{SS_ENDELLIPSIS}
- * @endwin32
- */
+/// If the label is too long, ellipsis ("...") is used at the end of
+/// the text. The text is not wrapped.
+/// 
+/// @win32
+///   @msdn{SS_ENDELLIPSIS}
+/// @endwin32
+/// 
 const Style Label::Styles::EndEllipsis =
   Style(SS_ENDELLIPSIS, 0);
 
-/**
- * If the label is too long, ellipsis ("...") is used in the middle of
- * the text. It is useful to show file name paths, because the
- * ellipsis is used trying to show the file name part
- * (String#getFileName). The text is not wrapped.
- *
- * @win32
- *   @msdn{SS_PATHELLIPSIS}
- * @endwin32
- */
+/// If the label is too long, ellipsis ("...") is used in the middle of
+/// the text. It is useful to show file name paths, because the
+/// ellipsis is used trying to show the file name part
+/// (String#getFileName). The text is not wrapped.
+/// 
+/// @win32
+///   @msdn{SS_PATHELLIPSIS}
+/// @endwin32
+/// 
 const Style Label::Styles::PathEllipsis =
   Style(SS_PATHELLIPSIS, 0);
 
-/**
- * Default style for CustomLabel.
- */
+/// Default style for CustomLabel.
+/// 
 const Style CustomLabel::Styles::Default =
   Label::Styles::Default |
   Style(SS_OWNERDRAW, 0);
 
-/**
- * Default style for LinkLabel widget.
- * 
- * It contains the following styles:
- * @li CustomLabel::Styles::Default
- * @li Widget::Styles::Focusable
- *
- * @win32
- *   It is 
- * @endwin32
- */
+/// Default style for LinkLabel widget.
+/// 
+/// It contains the following styles:
+/// @li CustomLabel::Styles::Default
+/// @li Widget::Styles::Focusable
+/// 
+/// @win32
+///   It is 
+/// @endwin32
+/// 
 const Style LinkLabel::Styles::Default =
   CustomLabel::Styles::Default |
   Widget::Styles::Focusable;
@@ -221,17 +204,15 @@ const Style LinkLabel::Styles::Default =
 // Buttons
 // ===================================================================
 
-/**
- * Default style for Button widget.
- */
+/// Default style for Button widget.
+/// 
 const Style Button::Styles::Default =
   Widget::Styles::Visible |
   Widget::Styles::Focusable |
   Style(BS_PUSHBUTTON, 0);
 
-/**
- * Default style for CheckBox widget.
- */
+/// Default style for CheckBox widget.
+/// 
 const Style CheckBox::Styles::Default =
   Widget::Styles::Visible |
   Widget::Styles::Focusable |
@@ -248,13 +229,12 @@ const Style ToggleButton::Styles::Default =
   Style(BS_AUTOCHECKBOX |
 	BS_PUSHLIKE, 0);
 
-/**
- * Default style for CustomButton.
- *
- * @win32
- *   WS_VISIBLE | WS_TABSTOP | BS_PUSHBUTTON | BS_OWNERDRAW
- * @endwin32
- */
+/// Default style for CustomButton.
+/// 
+/// @win32
+///   WS_VISIBLE | WS_TABSTOP | BS_PUSHBUTTON | BS_OWNERDRAW
+/// @endwin32
+/// 
 const Style CustomButton::Styles::Default =
   Button::Styles::Default |
   Style(BS_OWNERDRAW, 0);
@@ -275,9 +255,8 @@ const Style TextEdit::Styles::AutoHorizontalScroll =
 const Style TextEdit::Styles::AutoVerticalScroll =
   Style(ES_AUTOVSCROLL, 0);
 
-/**
- * Default style for TextEdit widget.
- */
+/// Default style for TextEdit widget.
+/// 
 const Style TextEdit::Styles::Default =
   Widget::Styles::Visible |
   Widget::Styles::Focusable |
@@ -328,9 +307,8 @@ const Style SciEdit::Styles::Default =
 // ListBox
 // ===================================================================
 
-/**
- * Default style for ListBox.
- */
+/// Default style for ListBox.
+/// 
 const Style ListBox::Styles::Default =
   Widget::Styles::Visible |
   Widget::Styles::Focusable |
@@ -345,32 +323,31 @@ const Style DragListBox::Styles::Default =
 // ComboBox
 // ===================================================================
 
-/**
- * Default style for ComboBox widget. It is the classic ComboBox in
- * which the user can select only items in the list (but can't edit
- * text nor items).
- * 
- * It contains the following styles:
- * @li Widget::Styles::Visible
- * @li Widget::Styles::Focusable
- * @li Widget::Styles::VerticalScroll
- * @li Widget::Styles::ClientEdge
- *
- * Example: 
- * @code
- * Frame frame(...);
- * // Use:
- * ComboBox combo1(&frame);
- * // or:
- * ComboBox combo2(&frame, ComboBox::Styles::Default);
- * @endcode
- *
- * @win32
- *   It is WS_VISIBLE | WS_TABSTOP | WS_VSCROLL,
- *   CBS_HASSTRINGS | CBS_AUTOHSCROLL | CBS_DROPDOWNLIST |
- *   WS_EX_CLIENTEDGE
- * @endwin32
- */
+/// Default style for ComboBox widget. It is the classic ComboBox in
+/// which the user can select only items in the list (but can't edit
+/// text nor items).
+/// 
+/// It contains the following styles:
+/// @li Widget::Styles::Visible
+/// @li Widget::Styles::Focusable
+/// @li Widget::Styles::VerticalScroll
+/// @li Widget::Styles::ClientEdge
+/// 
+/// Example: 
+/// @code
+/// Frame frame(...);
+/// // Use:
+/// ComboBox combo1(&frame);
+/// // or:
+/// ComboBox combo2(&frame, ComboBox::Styles::Default);
+/// @endcode
+/// 
+/// @win32
+///   It is WS_VISIBLE | WS_TABSTOP | WS_VSCROLL,
+///   CBS_HASSTRINGS | CBS_AUTOHSCROLL | CBS_DROPDOWNLIST |
+///   WS_EX_CLIENTEDGE
+/// @endwin32
+/// 
 const Style ComboBox::Styles::Default =
   Widget::Styles::Visible |
   Widget::Styles::Focusable |
@@ -378,22 +355,21 @@ const Style ComboBox::Styles::Default =
   Widget::Styles::VerticalScroll |
   Style(CBS_HASSTRINGS | CBS_AUTOHSCROLL | CBS_DROPDOWNLIST, 0);
 
-/**
- * A simple ComboBox (shows the list-box below the combo-box).
- *
- * @warning A ListBox is recommended instead of this kind of ComboBox.
- *
- * Example: 
- * @code
- * Frame frame(...);
- * ComboBox combo(&frame, ComboBox::Styles::Simple);
- * @endcode
- * 
- * @win32
- *   It is WS_VISIBLE | WS_TABSTOP | WS_VSCROLL |
- *   CBS_HASSTRINGS | CBS_AUTOHSCROLL | CBS_SIMPLE | WS_EX_CLIENTEDGE
- * @endwin32
- */
+/// A simple ComboBox (shows the list-box below the combo-box).
+/// 
+/// @warning A ListBox is recommended instead of this kind of ComboBox.
+/// 
+/// Example: 
+/// @code
+/// Frame frame(...);
+/// ComboBox combo(&frame, ComboBox::Styles::Simple);
+/// @endcode
+/// 
+/// @win32
+///   It is WS_VISIBLE | WS_TABSTOP | WS_VSCROLL |
+///   CBS_HASSTRINGS | CBS_AUTOHSCROLL | CBS_SIMPLE | WS_EX_CLIENTEDGE
+/// @endwin32
+/// 
 const Style ComboBox::Styles::Simple =
   Widget::Styles::Visible |
   Widget::Styles::Focusable |
@@ -401,21 +377,20 @@ const Style ComboBox::Styles::Simple =
   Widget::Styles::VerticalScroll |
   Style(CBS_HASSTRINGS | CBS_AUTOHSCROLL | CBS_SIMPLE, 0);
 
-/**
- * Special style for ComboBox so the user can enter any text (not only
- * the items in the list).
- *
- * Example: 
- * @code
- * Frame frame(...);
- * ComboBox combo(&frame, ComboBox::Styles::Editable);
- * @endcode
- * 
- * @win32
- *   It is WS_VISIBLE | WS_TABSTOP | WS_VSCROLL |
- *   CBS_HASSTRINGS | CBS_AUTOHSCROLL | CBS_DROPDOWN | WS_EX_CLIENTEDGE
- * @endwin32
- */
+/// Special style for ComboBox so the user can enter any text (not only
+/// the items in the list).
+/// 
+/// Example: 
+/// @code
+/// Frame frame(...);
+/// ComboBox combo(&frame, ComboBox::Styles::Editable);
+/// @endcode
+/// 
+/// @win32
+///   It is WS_VISIBLE | WS_TABSTOP | WS_VSCROLL |
+///   CBS_HASSTRINGS | CBS_AUTOHSCROLL | CBS_DROPDOWN | WS_EX_CLIENTEDGE
+/// @endwin32
+/// 
 const Style ComboBox::Styles::Editable =
   Widget::Styles::Visible |
   Widget::Styles::Focusable |
@@ -427,87 +402,79 @@ const Style ComboBox::Styles::Editable =
 // Frames and Dialogs
 // ===================================================================
 
-/**
- * This Frame is a window that as a title bar.
- * 
- * @win32
- *   It is WS_CAPTION
- * @endwin32
- */
+/// This Frame is a window that as a title bar.
+/// 
+/// @win32
+///   It is WS_CAPTION
+/// @endwin32
+/// 
 const Style Frame::Styles::WithCaption =
   Style(WS_CAPTION, 0);
 
-/**
- * @win32
- *   It is WS_SYSMENU
- * @endwin32
- */
+/// @win32
+///   It is WS_SYSMENU
+/// @endwin32
+/// 
 const Style Frame::Styles::WithSystemMenu =
   Style(WS_SYSMENU, 0);
 
-/**
- * @win32
- *   It is WS_MINIMIZEBOX
- * @endwin32
- */
+/// @win32
+///   It is WS_MINIMIZEBOX
+/// @endwin32
+/// 
 const Style Frame::Styles::Minimizable =
   Style(WS_MINIMIZEBOX, 0);
 
-/**
- * @win32
- *   It is WS_MAXIMIZEBOX
- * @endwin32
- */
+/// @win32
+///   It is WS_MAXIMIZEBOX
+/// @endwin32
+/// 
 const Style Frame::Styles::Maximizable =
   Style(WS_MAXIMIZEBOX, 0);
 
-/**
- * The user will be able to change the window's size.
- * 
- * @win32
- *   It is WS_SIZEBOX
- * @endwin32
- */
+/// The user will be able to change the window's size.
+/// 
+/// @win32
+///   It is WS_SIZEBOX
+/// @endwin32
+/// 
 const Style Frame::Styles::Resizable =
   Style(WS_SIZEBOX, 0);
 
-/**
- * The window can be minimized.
- *
- * @win32
- *   It is WS_MINIMIZE
- * @endwin32
- */
+/// The window can be minimized.
+/// 
+/// @win32
+///   It is WS_MINIMIZE
+/// @endwin32
+/// 
 const Style Frame::Styles::InitiallyMinimized =
   Style(WS_MINIMIZE, 0);
 
-/**
- * The window can be maximized.
- *
- * @win32
- *   It is WS_MAXIMIZE
- * @endwin32
- */
+/// The window can be maximized.
+/// 
+/// @win32
+///   It is WS_MAXIMIZE
+/// @endwin32
+/// 
 const Style Frame::Styles::InitiallyMaximized =
   Style(WS_MAXIMIZE, 0);
 
-/**
- * Default style for Frame widget.
- * 
- * It contains the following styles:
- * @li Widget::Styles::Container
- * @li Frame::Styles::WithCaption
- * @li Frame::Styles::WithSystemMenu
- * @li Frame::Styles::Minimizable
- * @li Frame::Styles::Maximizable
- * @li Frame::Styles::Resizable
- * 
- * @win32
- *   It is WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU |
- *   WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SIZEBOX |
- *   WS_EX_CONTROLPARENT
- * @endwin32
- */
+/// Default style for Frame widget.
+/// 
+/// It contains the following styles:
+/// @li Widget::Styles::Container
+/// @li Frame::Styles::WithCaption
+/// @li Frame::Styles::WithSystemMenu
+/// @li Frame::Styles::Minimizable
+/// @li Frame::Styles::Maximizable
+/// @li Frame::Styles::Resizable
+/// 
+/// @win32
+///   It is WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU |
+///   WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SIZEBOX |
+///   WS_EX_CONTROLPARENT
+/// @endwin32
+/// 
 const Style Frame::Styles::Default =
   Widget::Styles::Container |
   Frame::Styles::WithCaption |
@@ -516,15 +483,13 @@ const Style Frame::Styles::Default =
   Frame::Styles::Maximizable |
   Frame::Styles::Resizable;
 
-/**
- * This style is activated by default in Dialogs.
- */
+/// This style is activated by default in Dialogs.
+/// 
 const Style Dialog::Styles::Modal =
   Style(0, WS_EX_DLGMODALFRAME);
 
-/**
- * Default style for Dialogs.
- */
+/// Default style for Dialogs.
+/// 
 const Style Dialog::Styles::Default =
   Frame::Styles::WithCaption |
   Frame::Styles::WithSystemMenu |
@@ -535,9 +500,8 @@ const Style Dialog::Styles::Default =
 // Separators
 // ===================================================================
 
-/**
- * Default style for GroupBox widget.
- */
+/// Default style for GroupBox widget.
+/// 
 const Style GroupBox::Styles::Default =
   Widget::Styles::Visible |
   Widget::Styles::Container |
@@ -551,10 +515,9 @@ const Style SplitBar::Styles::Default =
   Widget::Styles::Visible |
   Widget::Styles::Container;
 
-/**
- * SplitBar position is expressed in percentage by default, but if you
- * specify this style the position will be expressed in pixels.
- */
+/// SplitBar position is expressed in percentage by default, but if you
+/// specify this style the position will be expressed in pixels.
+/// 
 const Style SplitBar::Styles::ByPixels =
   Style(1, 0);
 
@@ -637,15 +600,13 @@ const Style ProgressBar::Styles::Vertical =
 // Tool Bars
 // ===================================================================
 
-/**
- * Default style for DockBar widget.
- */
+/// Default style for DockBar widget.
+/// 
 const Style DockBar::Styles::Default =
   Widget::Styles::Visible;
 
-/**
- * Default style for DockArea widget.
- */
+/// Default style for DockArea widget.
+/// 
 const Style DockArea::Styles::Default =
   Widget::Styles::Visible;
 
@@ -664,15 +625,13 @@ const Style ToolSet::Styles::Flat =
 const Style ToolBar::Styles::Default =
   DockBar::Styles::Default;
 
-/**
- * Default style for BandedDockArea widget.
- */
+/// Default style for BandedDockArea widget.
+/// 
 const Style BandedDockArea::Styles::Default =
   Widget::Styles::Visible;
 
-/**
- * Default style for BasicDockArea widget.
- */
+/// Default style for BasicDockArea widget.
+/// 
 const Style BasicDockArea::Styles::Default =
   Widget::Styles::Visible;
 
@@ -692,9 +651,8 @@ const Style ReBar::Styles::Default =
 // #endif
 // 	, 0);
 
-/**
- * Default style for DockFrame widget.
- */
+/// Default style for DockFrame widget.
+/// 
 const Style DockFrame::Styles::Default =
   Frame::Styles::WithCaption |
   Frame::Styles::WithSystemMenu |
@@ -728,9 +686,8 @@ const Style TreeView::Styles::Default =
 	TVS_HASLINES | TVS_SHOWSELALWAYS |
 	TVS_DISABLEDRAGDROP, 0);
 
-/**
- * With this style in a TreeeView the label of each TreeNode can be edited.
- */
+/// With this style in a TreeeView the label of each TreeNode can be edited.
+/// 
 const Style TreeView::Styles::EditLabel =
   Style(TVS_EDITLABELS, 0);
 

@@ -37,19 +37,18 @@
 
 namespace Vaca {
 
-/**
- * Abstract class to represent a constraint. Constraints are useful to
- * specify conditions to different arrangements using the same Layout
- * manager.
- *
- * Each widget can have a constraint. It's only useful when the parent
- * has a layout manager that known about the constraint of the widget
- * (<b>the child</b>).
- * 
- * A constraint is an object to indicate to the layout manager (of the
- * parent widget) special properties to be used when the layout manager
- * must to arrange the widget.
- */
+/// Abstract class to represent a constraint. Constraints are useful to
+/// specify conditions to different arrangements using the same Layout
+/// manager.
+/// 
+/// Each widget can have a constraint. It's only useful when the parent
+/// has a layout manager that known about the constraint of the widget
+/// (<b>the child</b>).
+/// 
+/// A constraint is an object to indicate to the layout manager (of the
+/// parent widget) special properties to be used when the layout manager
+/// must to arrange the widget.
+/// 
 class VACA_DLL Constraint : public Referenceable
 {
 public:

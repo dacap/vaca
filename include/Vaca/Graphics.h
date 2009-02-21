@@ -55,12 +55,11 @@ struct FillRuleEnum
 
 typedef Enum<FillRuleEnum> FillRule;
 
-/**
- * Class to control a graphics context.
- *
- * @warning
- *   This is a Win32's HDC wrapper.
- */
+/// Class to control a graphics context.
+/// 
+/// @warning
+///   This is a Win32's HDC wrapper.
+/// 
 class VACA_DLL Graphics : private NonCopyable
 {
 
@@ -224,9 +223,8 @@ private:
   
 };
 
-/**
- * Class to draw directly in the screen.
- */
+/// Class to draw directly in the screen.
+/// 
 class VACA_DLL ScreenGraphics : public Graphics
 {
 public:

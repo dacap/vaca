@@ -40,11 +40,10 @@
 
 namespace Vaca {
 
-/**
- * A common dialog box to select files. You shouldn't use directly
- * this class, you must to use the OpenFileDialog and SaveFileDialog
- * classes.
- */
+/// A common dialog box to select files. You shouldn't use directly
+/// this class, you must to use the OpenFileDialog and SaveFileDialog
+/// classes.
+/// 
 class VACA_DLL FileDialog : public CommonDialog
 {
   String m_title;
@@ -80,9 +79,8 @@ private:
   virtual bool showDialog(LPOPENFILENAME lpofn) = 0;
 };
 
-/**
- * The common dialog box to open file(s).
- */
+/// The common dialog box to open file(s).
+/// 
 class VACA_DLL OpenFileDialog : public FileDialog
 {
   bool m_multiselect : 1;
@@ -99,9 +97,8 @@ private:
   virtual bool showDialog(LPOPENFILENAME lpofn);
 };
 
-/**
- * The common dialog box to save a file.
- */
+/// The common dialog box to save a file.
+/// 
 class VACA_DLL SaveFileDialog : public FileDialog
 {
 public:

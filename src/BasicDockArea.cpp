@@ -38,9 +38,8 @@
 
 using namespace Vaca;
 
-/**
- * Information about the docked position of the DockBar in a BasicDockArea.
- */
+/// Information about the docked position of the DockBar in a BasicDockArea.
+/// 
 class BasicDockInfo : public DockInfo
 {
 public:

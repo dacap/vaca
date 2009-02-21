@@ -36,9 +36,8 @@
 
 namespace Vaca {
 
-/**
- * Class to measure elapsed time, like a chronometer.
- */
+/// Class to measure elapsed time, like a chronometer.
+/// 
 class VACA_DLL TimePoint
 {
   LARGE_INTEGER m_point;

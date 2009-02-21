@@ -37,9 +37,8 @@
 
 namespace Vaca {
 
-/**
- * Customized static label control.
- */
+/// Customized static label control.
+/// 
 class VACA_DLL CustomLabel : public Label
 {
   // SS_OWNERDRAW has the bit 1, so we can't use the

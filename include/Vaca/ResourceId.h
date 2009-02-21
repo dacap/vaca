@@ -36,13 +36,12 @@
 
 namespace Vaca {
 
-/**
- * Class to wrap an ID of an object in the resource file (.rc).
- *
- * @win32
- *   Look for @msdn{About Resource Files}.
- * @endwin32
- */
+/// Class to wrap an ID of an object in the resource file (.rc).
+/// 
+/// @win32
+///   Look for @msdn{About Resource Files}.
+/// @endwin32
+/// 
 class VACA_DLL ResourceId
 {
   int m_id;

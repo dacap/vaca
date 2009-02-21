@@ -51,29 +51,27 @@ ButtonBase::~ButtonBase()
 {
 }
 
-/**
- * Returns true if the button is selected or checked. It's useful to
- * see if a CheckBox, RadioButton or ToggleButton is checked.
- *
- * @see setSelected
- */
+/// Returns true if the button is selected or checked. It's useful to
+/// see if a CheckBox, RadioButton or ToggleButton is checked.
+/// 
+/// @see setSelected
+/// 
 bool ButtonBase::isSelected()
 {
 //   return (sendMessage(BM_GETSTATE, 0, 0) & (BST_CHECKED | BST_PUSHED)) != 0;
   return sendMessage(BM_GETCHECK, 0, 0) == BST_CHECKED;
 }
 
-/**
- * Selects or deselects (checks or unchecks) the button depending of
- * @a state parameter. The button is automatically redrawn, you don't
- * need to call #invalidate().
- *
- * @param state
- *     true if you want to check the button, or false if you want
- *     to uncheck.
- * 
- * @see isSelected
- */
+/// Selects or deselects (checks or unchecks) the button depending of
+/// @a state parameter. The button is automatically redrawn, you don't
+/// need to call #invalidate().
+/// 
+/// @param state
+///     true if you want to check the button, or false if you want
+///     to uncheck.
+/// 
+/// @see isSelected
+/// 
 void ButtonBase::setSelected(bool state)
 {
   sendMessage(BM_SETCHECK, state ? BST_CHECKED: BST_UNCHECKED, 0);
@@ -84,9 +82,8 @@ void ButtonBase::setSelected(bool state)
 #  define BCM_GETIDEALSIZE BCM_FIRST+1
 #endif
 
-/**
- * Returns the preferred size for the button.
- */
+/// Returns the preferred size for the button.
+/// 
 void ButtonBase::onPreferredSize(Size& sz)
 {
   assert(::IsWindow(getHandle()));
@@ -154,20 +151,18 @@ void ButtonBase::onPreferredSize(Size& sz)
 #endif
 }
 
-/**
- * Event fired when you should take some responsability. For Button
- * it's fired when the user push the button, for CheckBox and
- * ToggleButton when the button-state is changed, and for RadioButton
- * when one option is selected.
- */
+/// Event fired when you should take some responsability. For Button
+/// it's fired when the user push the button, for CheckBox and
+/// ToggleButton when the button-state is changed, and for RadioButton
+/// when one option is selected.
+/// 
 void ButtonBase::onAction(Event& ev)
 {
   Action(ev);
 }
 
-/**
- * Catches BN_CLICKED to fire onAction event.
- */
+/// Catches BN_CLICKED to fire onAction event.
+/// 
 bool ButtonBase::onReflectedCommand(int id, int code, LRESULT& lResult)
 {
   if (Widget::onReflectedCommand(id, code, lResult))

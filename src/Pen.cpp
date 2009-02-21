@@ -46,13 +46,12 @@ Pen::Pen(const Pen& pen)
 {
 }
 
-/**
- * Creates a pen.
- *
- * @param color Color of the pen.
- * @param width Width of the pen. If it's 1, the pen will be cosmetic,
- *              if width > 0 the pen will be geometric.
- */
+/// Creates a pen.
+/// 
+/// @param color Color of the pen.
+/// @param width Width of the pen. If it's 1, the pen will be cosmetic,
+///              if width > 0 the pen will be geometric.
+/// 
 Pen::Pen(const Color& color, int width)
   : SharedPtr<GdiObject<HPEN> >(new GdiObject<HPEN>(CreatePen(PS_COSMETIC | PS_SOLID, width,
 								 color.getColorRef())))
@@ -104,13 +103,12 @@ Pen::Pen(const Color& color, int width,
   get()->setHandle(handle);
 }
 
-/**
- * Destroys this pen reference.
- *
- * @warning
- *   The last reference to be destroyed will call Win32's DeleteObject to destroy
- *   the HPEN handle.
- */
+/// Destroys this pen reference.
+/// 
+/// @warning
+///   The last reference to be destroyed will call Win32's DeleteObject to destroy
+///   the HPEN handle.
+/// 
 Pen::~Pen()
 {
 }
@@ -121,11 +119,10 @@ Pen& Pen::operator=(const Pen& pen)
   return *this;
 }
 
-/**
- * Gets pen's color.
- * 
- * @return Current pen's color.
- */
+/// Gets pen's color.
+/// 
+/// @return Current pen's color.
+/// 
 Color Pen::getColor() const
 {
   EXTLOGPEN elp;
@@ -134,11 +131,10 @@ Color Pen::getColor() const
   return Color(elp.elpColor);
 }
 
-/**
- * Gets pen's width (in pixels).
- * 
- * @return Current pen's width.
- */
+/// Gets pen's width (in pixels).
+/// 
+/// @return Current pen's width.
+/// 
 int Pen::getWidth() const
 {
   EXTLOGPEN elp;
@@ -147,11 +143,10 @@ int Pen::getWidth() const
   return elp.elpWidth;
 }
 
-/**
- * Gets pen's style.
- *
- * @return Current pen's style.
- */
+/// Gets pen's style.
+/// 
+/// @return Current pen's style.
+/// 
 PenStyle Pen::getStyle() const
 {
   EXTLOGPEN elp;
@@ -201,9 +196,8 @@ PenJoin Pen::getJoin() const
   return join;
 }
 
-/**
- * Returns the Win32's handle.
- */
+/// Returns the Win32's handle.
+/// 
 HPEN Pen::getHandle() const
 {
   return get()->getHandle();

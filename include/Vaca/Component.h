@@ -37,14 +37,13 @@
 
 namespace Vaca {
 
-/**
- * A component is a visual object, such as widgets or menus.
- *
- * Components are non-copyable but are referenceable (e.g. you can
- * use them inside a SharedPtr).
- *
- * @see NonCopyable, Referenceable, SharedPtr
- */
+/// A component is a visual object, such as widgets or menus.
+/// 
+/// Components are non-copyable but are referenceable (e.g. you can
+/// use them inside a SharedPtr).
+/// 
+/// @see NonCopyable, Referenceable, SharedPtr
+/// 
 class VACA_DLL Component : public Referenceable
 {
 public:

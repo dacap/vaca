@@ -58,11 +58,10 @@ void VACA_DLL trace(LPCSTR filename, UINT line, LPCSTR msg, ...);
 void VACA_DLL close_log_file();
 
 #ifndef __GNUC__
-/**
- * @internal
- *    Dirty trick for non-GNU compilers that doesn't support
- *    macros with ellipsis (...).
- */
+/// @internal
+///    Dirty trick for compilers that does not support
+///    macros with ellipsis (...).
+/// 
 struct trace_t {
   LPCSTR filename;
   UINT line;

@@ -36,14 +36,13 @@
 
 using namespace Vaca;
 
-/**
- * Creates a new Label widget.
- * 
- * @warning
- *   Remember that a character with a preceding ampersand (&)
- *   will be underlined. So if you want to show a string with the '&',
- *   you have to use "&&".
- */
+/// Creates a new Label widget.
+/// 
+/// @warning
+///   Remember that a character with a preceding ampersand (&)
+///   will be underlined. So if you want to show a string with the '&',
+///   you have to use "&&".
+/// 
 Label::Label(const String& text, Widget* parent, Style style)
   : Widget(WidgetClassName(WC_STATIC), parent, style)
 {
@@ -59,11 +58,10 @@ Label::~Label()
 {
 }
 
-/**
- * Returns the current text alignment.
- *
- * @return TextAlign#Center, TextAlign#RightAlign, TextAlign#LeftAlign
- */
+/// Returns the current text alignment.
+/// 
+/// @return TextAlign#Center, TextAlign#RightAlign, TextAlign#LeftAlign
+/// 
 TextAlign Label::getTextAlign() const
 {
   int style = getStyle().regular;
@@ -76,13 +74,12 @@ TextAlign Label::getTextAlign() const
     return TextAlign::Left;
 }
 
-/**
- * Sets the text alignment.
- * 
- * @warning
- *   You can't change the text-alignment of a label with the
- *   SimpleLabelStyle style.
- */
+/// Sets the text alignment.
+/// 
+/// @warning
+///   You can't change the text-alignment of a label with the
+///   SimpleLabelStyle style.
+/// 
 void Label::setTextAlign(TextAlign align)
 {
   int type = (getStyle().regular & 31);
@@ -116,9 +113,8 @@ bool Label::useWordWrap()
 	  ((style & SS_ELLIPSISMASK) == 0));
 }
 
-/**
- * @todo the return value is too Win32 specific.
- */
+/// @todo the return value is too Win32 specific.
+/// 
 int Label::getFlagsForDrawString()
 {
   // TODO complete this
@@ -128,9 +124,8 @@ int Label::getFlagsForDrawString()
     return DT_SINGLELINE;
 }
 
-/**
- * Returns the preferred size of the label using Graphics#measureString.
- */
+/// Returns the preferred size of the label using Graphics#measureString.
+/// 
 void Label::onPreferredSize(Size& sz)
 {
   // TODO HTHEME stuff
@@ -144,10 +139,9 @@ void Label::onPreferredSize(Size& sz)
     sz = g.measureString(getText());
 }
 
-/**
- * If the label is resized, we must to redraw it. This is necessary
- * mainly if the Label isn't TextAlign::Left.
- */
+/// If the label is resized, we must to redraw it. This is necessary
+/// mainly if the Label isn't TextAlign::Left.
+/// 
 void Label::onResize(const Size& sz)
 {
   invalidate(true);

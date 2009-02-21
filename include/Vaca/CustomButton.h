@@ -36,35 +36,34 @@
 
 namespace Vaca {
 
-/**
- * Customizable button to draw it with your own Widget#onPaint method.
- *
- * Example: 
- * @code
- * class MyFancyButton : public CustomButton
- * {
- * public:
- *   MyFancyButton(const String& text, Widget* parent)
- *     : CustomButton(text, parent)
- *   {
- *     // ...
- *   }
- *   
- *   // paint event...
- *   virtual void onPaint(Graphics& g)
- *   {
- *     // don't call parent implementation, use your own code to
- *     // paint your customized button
- *   }
- * }
- * @endcode
- * 
- * @win32
- *   It is a button with the @msdn{BS_OWNERDRAW} style, the paint event
- *   is intercepted by the parent of the CustomButton and then reflected
- *   to it (see @ref page_tn_009).
- * @endwin32
- */
+/// Customizable button to draw it with your own Widget#onPaint method.
+/// 
+/// Example: 
+/// @code
+/// class MyFancyButton : public CustomButton
+/// {
+/// public:
+///   MyFancyButton(const String& text, Widget* parent)
+///     : CustomButton(text, parent)
+///   {
+///     // ...
+///   }
+///   
+///   // paint event...
+///   virtual void onPaint(Graphics& g)
+///   {
+///     // don't call parent implementation, use your own code to
+///     // paint your customized button
+///   }
+/// }
+/// @endcode
+/// 
+/// @win32
+///   It is a button with the @msdn{BS_OWNERDRAW} style, the paint event
+///   is intercepted by the parent of the CustomButton and then reflected
+///   to it (see @ref page_tn_009).
+/// @endwin32
+/// 
 class VACA_DLL CustomButton : public Button
 {
   UINT m_itemAction;

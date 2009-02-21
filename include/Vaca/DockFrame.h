@@ -38,9 +38,8 @@
 
 namespace Vaca {
 
-/**
- * Represents the Win32 class used by DockFrame.
- */
+/// Represents the Win32 class used by DockFrame.
+/// 
 class DockFrameClass : public WidgetClass
 {
 public:
@@ -48,26 +47,24 @@ public:
   { return WidgetClassName(L"Vaca.DockFrame"); }
 };
 
-/**
- * A Frame for a DockBar, commondly called "Palette Window".
- *
- * A DockFrame is the container for a floating DockBar, it's a
- * window with a small title-bar.
- *
- * @warning This class is intended to be only
- *          used internally by DockBar.
- *
- * @win32 
- *   This kind of windows has the @msdn{WS_EX_TOOLWINDOW} style.
- * @endwin32
- *
- * @internal 
- */
+/// A Frame for a DockBar, commondly called "Palette Window".
+/// 
+/// A DockFrame is the container for a floating DockBar, it's a
+/// window with a small title-bar.
+/// 
+/// @warning This class is intended to be only
+///          used internally by DockBar.
+/// 
+/// @win32 
+///   This kind of windows has the @msdn{WS_EX_TOOLWINDOW} style.
+/// @endwin32
+/// 
+/// @internal 
+/// 
 class VACA_DLL DockFrame : public Register<DockFrameClass>, public Frame
 {
-  /**
-   * The DockBar that is inside the client area.
-   */
+  /// The DockBar that is inside the client area.
+  /// 
   DockBar* m_dockBar;
 
 public:

@@ -41,9 +41,8 @@ using namespace std;
 //////////////////////////////////////////////////////////////////////
 // HttpRequest::InetHandle
 
-/**
- * @throw HttpRequestException
- */
+/// @throw HttpRequestException
+/// 
 HttpRequest::InetHandle::InetHandle(HINTERNET handle,
 				    const String& errorMsg)
   : handle(handle)
@@ -112,13 +111,12 @@ HttpRequest::~HttpRequest()
 {
 }
 
-/**
- * Sends the HTTP request.
- * 
- * @return
- *   The status code of the HTTP response that comes from the
- *   server.
- */
+/// Sends the HTTP request.
+/// 
+/// @return
+///   The status code of the HTTP response that comes from the
+///   server.
+/// 
 int HttpRequest::send(const String& headers, const char* body)
 {
   if (HttpSendRequest(req.handle,
@@ -131,20 +129,19 @@ int HttpRequest::send(const String& headers, const char* body)
   return 0;
 }
 
-/**
- * Reads the specified amount of bytes from the stream of bytes.
- *
- * @param buf
- *   Where to put the read data. Must have at least @a length bytes.
- *
- * @param length
- *   How many bytes to read. The size of the buffer.
- * 
- * @return
- *   The number of bytes that were read.
- *
- * @throw HttpRequestException
- */
+/// Reads the specified amount of bytes from the stream of bytes.
+/// 
+/// @param buf
+///   Where to put the read data. Must have at least @a length bytes.
+/// 
+/// @param length
+///   How many bytes to read. The size of the buffer.
+/// 
+/// @return
+///   The number of bytes that were read.
+/// 
+/// @throw HttpRequestException
+/// 
 size_t HttpRequest::read(char* buf, size_t length)
 {
   assert(buf != NULL);
@@ -209,13 +206,12 @@ bool HttpRequest::hasHeader(const String& headerName)
     return false;
 }
 
-/**
- * Returns the value of the specified header.
- * 
- * @return
- *   The value of the specified header, or an empty string if the
- *   header is not found.
- */
+/// Returns the value of the specified header.
+/// 
+/// @return
+///   The value of the specified header, or an empty string if the
+///   header is not found.
+/// 
 String HttpRequest::getHeader(const String& headerName)
 {
   DWORD bufLength = headerName.size()+1;

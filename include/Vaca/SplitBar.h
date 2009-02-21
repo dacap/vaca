@@ -39,9 +39,8 @@
 
 namespace Vaca {
 
-/**
- * Represents the Win32 class used by SplitBar.
- */
+/// Represents the Win32 class used by SplitBar.
+/// 
 class SplitBarClass : public WidgetClass
 {
 public:

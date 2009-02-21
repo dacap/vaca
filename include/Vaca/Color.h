@@ -36,9 +36,8 @@
 
 namespace Vaca {
 
-/**
- * A color that can be used to create pens or brushes.
- */
+/// A color that can be used to create pens or brushes.
+/// 
 class VACA_DLL Color
 {
 public:

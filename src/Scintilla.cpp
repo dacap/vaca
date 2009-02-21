@@ -41,11 +41,10 @@ using namespace Vaca;
 
 HINSTANCE SciRegister::hmod = NULL;
 
-/**
- * Tries to load the SciLexer or Scintilla DLLs.
- * 
- * @throw RegisterException If both DLLs are not found.
- */
+/// Tries to load the SciLexer or Scintilla DLLs.
+/// 
+/// @throw RegisterException If both DLLs are not found.
+/// 
 SciRegister::SciRegister()
 {
   if (hmod == NULL) {
@@ -74,11 +73,10 @@ SciEdit::~SciEdit()
 {
 }
 
-/**
- * Sets the font used to paint text inside the editor. WARNING: this
- * sets the default style of the Scintilla editor (see for
- * STYLE_DEFAULT in the Scintilla documentation).
- */
+/// Sets the font used to paint text inside the editor. WARNING: this
+/// sets the default style of the Scintilla editor (see for
+/// STYLE_DEFAULT in the Scintilla documentation).
+/// 
 void SciEdit::setFont(Font font)
 {
   Widget::setFont(font);
@@ -126,10 +124,9 @@ void SciEdit::setSavePoint()
   sendMessage(SCI_SETSAVEPOINT, 0, 0);
 }
 
-/**
- * Returns a lien of text. Line 0 is the first line. The text returned
- * includes the new line character.
- */
+/// Returns a lien of text. Line 0 is the first line. The text returned
+/// includes the new line character.
+/// 
 String SciEdit::getLine(int line) const
 {
   int length = getLineLength(line);
@@ -160,35 +157,31 @@ bool SciEdit::getReadOnly() const
   return const_cast<SciEdit*>(this)->sendMessage(SCI_GETREADONLY, 0, 0) != 0;
 }
 
-/**
- * Adds the first @c length characters of @c str string at the current
- * position of the document.
- */
+/// Adds the first @c length characters of @c str string at the current
+/// position of the document.
+/// 
 void SciEdit::addText(const char* str, int length)
 {
   sendMessage(SCI_ADDTEXT, length, reinterpret_cast<LPARAM>(str));
 }
 
-/**
- * Adds the string @c str at the current position of the document.
- */
+/// Adds the string @c str at the current position of the document.
+/// 
 void SciEdit::addText(const String& str)
 {
   sendMessage(SCI_ADDTEXT, str.size(), reinterpret_cast<LPARAM>(str.c_str()));
 }
 
-/**
- * Adds the first @c length characters of @c str string to the end of
- * the document.
- */
+/// Adds the first @c length characters of @c str string to the end of
+/// the document.
+/// 
 void SciEdit::appendText(const char* str, int length)
 {
   sendMessage(SCI_APPENDTEXT, length, reinterpret_cast<LPARAM>(str));
 }
 
-/**
- * Adds the string @c str to the end of the document.
- */
+/// Adds the string @c str to the end of the document.
+/// 
 void SciEdit::appendText(const String& str)
 {
   sendMessage(SCI_APPENDTEXT, str.size(), reinterpret_cast<LPARAM>(str.c_str()));
@@ -353,11 +346,10 @@ int SciEdit::getTextLength() const
   return const_cast<SciEdit*>(this)->sendMessage(SCI_GETTEXTLENGTH, 0, 0);
 }
 
-/**
- * Returns the number of lines that has the text.
- *
- * @warning The last line doesn't have a end of line (\\n) character.
- */
+/// Returns the number of lines that has the text.
+/// 
+/// @warning The last line doesn't have a end of line (\\n) character.
+/// 
 int SciEdit::getLineCount() const
 {
   return const_cast<SciEdit*>(this)->sendMessage(SCI_GETLINECOUNT, 0, 0);
@@ -419,10 +411,9 @@ int SciEdit::getSelectionEnd() const
   return const_cast<SciEdit*>(this)->sendMessage(SCI_GETSELECTIONEND, 0, 0);
 }
 
-/**
- * Returns the length of the line (including the end of line). The
- * first line is 0.
- */
+/// Returns the length of the line (including the end of line). The
+/// first line is 0.
+/// 
 int SciEdit::getLineLength(int line) const
 {
   return const_cast<SciEdit*>(this)->sendMessage(SCI_LINELENGTH, line, 0);
@@ -458,12 +449,11 @@ String SciEdit::getSelText() const
 // Line endings
 
 
-/**
- * @param eolMode
- * @li SC_EOL_CRLF
- * @li SC_EOL_CR
- * @li SC_EOL_LF
- */
+/// @param eolMode
+/// @li SC_EOL_CRLF
+/// @li SC_EOL_CR
+/// @li SC_EOL_LF
+/// 
 void SciEdit::setEolMode(int eolMode)
 {
   sendMessage(SCI_SETEOLMODE, eolMode, 0);
@@ -637,11 +627,10 @@ bool SciEdit::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult)
   return false;
 }
 
-/**
- * Called when the text or the selection range change
- * (SCN_UPDATEUI). In response to this event you should update your UI
- * elements.  The default implementation fires the UpdateUI signal.
- */
+/// Called when the text or the selection range change
+/// (SCN_UPDATEUI). In response to this event you should update your UI
+/// elements.  The default implementation fires the UpdateUI signal.
+/// 
 void SciEdit::onUpdateUI()
 {
   UpdateUI();

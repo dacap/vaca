@@ -39,10 +39,9 @@
 
 namespace Vaca {
 
-/**
- * An area where you can put @link Vaca::DockBar DockBars@endlink
- * separated by bands.
- */
+/// An area where you can put @link Vaca::DockBar DockBars@endlink
+/// separated by bands.
+/// 
 class VACA_DLL BandedDockArea : public DockArea
 {
   struct BandInfo

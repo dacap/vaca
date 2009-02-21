@@ -37,21 +37,20 @@
 
 namespace Vaca {
 
-/**
- * An object to synchronize threads using mutual exclusion of critical
- * sections.
- *
- * This kind of mutex can be used to synchronize multiple threads of
- * the same process. No multiple processes!
- *
- * @win32
- *   This is a @msdn{CRITICAL_SECTION} wrapper.
- * @endwin32
- *
- * @see ScopedLock, ConditionVariable, Thread,
- *      @wikipedia{Critical_section, Critical Section in Wikipedia}
- *      @wikipedia{Mutex, Mutex in Wikipedia}
- */
+/// An object to synchronize threads using mutual exclusion of critical
+/// sections.
+/// 
+/// This kind of mutex can be used to synchronize multiple threads of
+/// the same process. No multiple processes!
+/// 
+/// @win32
+///   This is a @msdn{CRITICAL_SECTION} wrapper.
+/// @endwin32
+/// 
+/// @see ScopedLock, ConditionVariable, Thread,
+///      @wikipedia{Critical_section, Critical Section in Wikipedia}
+///      @wikipedia{Mutex, Mutex in Wikipedia}
+/// 
 class VACA_DLL Mutex : private NonCopyable
 {
   CRITICAL_SECTION m_cs;

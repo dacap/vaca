@@ -37,9 +37,8 @@
 
 namespace Vaca {
 
-/**
- * Shows progress for a task that is running in background.
- */
+/// Shows progress for a task that is running in background.
+/// 
 class VACA_DLL ProgressBar : public Widget
 {
 public:

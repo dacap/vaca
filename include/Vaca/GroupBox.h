@@ -36,10 +36,9 @@
 
 namespace Vaca {
 
-/**
- * An edge (with a label optionally) that can be used to group
- * sub-widgets.
- */
+/// An edge (with a label optionally) that can be used to group
+/// sub-widgets.
+/// 
 class VACA_DLL GroupBox : public Widget
 {
 public:

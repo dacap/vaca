@@ -39,9 +39,8 @@
 
 namespace Vaca {
 
-/**
- * @see SysCursor
- */
+/// @see SysCursor
+/// 
 struct SysCursorEnum
 {
   enum enumeration {
@@ -68,11 +67,10 @@ struct SysCursorEnum
   static const enumeration default_value = Arrow;
 };
 
-/**
- * System mouse cursors.
- *
- * @see Cursor#Cursor(SysCursor)
- */
+/// System mouse cursors.
+/// 
+/// @see Cursor#Cursor(SysCursor)
+/// 
 typedef Enum<SysCursorEnum> SysCursor;
 
 struct Win32DestroyCursor
@@ -83,17 +81,16 @@ struct Win32DestroyCursor
   }
 };
 
-/**
- * A mouse cursor.
- *
- * This is a SharedPtr, so if you copy instances of cursors they will be
- * referencing to the same place. You can't clone cursors because you can't
- * modify them.
- *
- * @win32
- *   This is a @msdn{HCURSOR} wrapper.
- * @endwin32
- */
+/// A mouse cursor.
+/// 
+/// This is a SharedPtr, so if you copy instances of cursors they will be
+/// referencing to the same place. You can't clone cursors because you can't
+/// modify them.
+/// 
+/// @win32
+///   This is a @msdn{HCURSOR} wrapper.
+/// @endwin32
+/// 
 class VACA_DLL Cursor : private SharedPtr<GdiObject<HCURSOR, Win32DestroyCursor> >
 {
 public:

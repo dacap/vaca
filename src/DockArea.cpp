@@ -74,22 +74,20 @@ Side DockArea::getSide()
   return m_side;
 }
 
-/**
- * Returns true, because DockAreas are controlled by the Frame, not by
- * the Layout manager.
- * 
- * @see Frame::layout
- */
+/// Returns true, because DockAreas are controlled by the Frame, not by
+/// the Layout manager.
+/// 
+/// @see Frame::layout
+/// 
 bool DockArea::isLayoutFree()
 {
   return true;
 }
 
-/**
- * Adds the @a dockBar in this DockArea.
- *
- * @see onAddDockBar
- */
+/// Adds the @a dockBar in this DockArea.
+/// 
+/// @see onAddDockBar
+/// 
 void DockArea::addDockBar(DockBar* dockBar)
 {
   addChild(dockBar);
@@ -97,11 +95,10 @@ void DockArea::addDockBar(DockBar* dockBar)
   onAddDockBar(dockBar);
 }
 
-/**
- * Removes the @a dockBar from this DockArea.
- *
- * @see onRemoveDockBar
- */
+/// Removes the @a dockBar from this DockArea.
+/// 
+/// @see onRemoveDockBar
+/// 
 void DockArea::removeDockBar(DockBar* dockBar)
 {
   removeChild(dockBar);
@@ -109,42 +106,39 @@ void DockArea::removeDockBar(DockBar* dockBar)
   onRemoveDockBar(dockBar);
 }
 
-/**
- * You can use onAddDockBar to hook the addDockBar action.
- *
- * @code
- * void MyDockArea::onAddDockBar(DockBar* dockBar)
- * {
- *   // do something, like add the dockBar in
- *   // some internal structure...
- * }
- * @endcode
- */
+/// You can use onAddDockBar to hook the addDockBar action.
+/// 
+/// @code
+/// void MyDockArea::onAddDockBar(DockBar* dockBar)
+/// {
+///   // do something, like add the dockBar in
+///   // some internal structure...
+/// }
+/// @endcode
+/// 
 void DockArea::onAddDockBar(DockBar* dockBar)
 {
   // do nothing
 }
 
-/**
- * You can use onRemoveDockBar to hook the removeDockBar action.
- *
- * @code
- * void MyDockArea::onRemoveDockBar(DockBar* dockBar)
- * {
- *   // do something, like remove the dockBar from 
- *   // some internal structure...
- * }
- * @endcode
- */
+/// You can use onRemoveDockBar to hook the removeDockBar action.
+/// 
+/// @code
+/// void MyDockArea::onRemoveDockBar(DockBar* dockBar)
+/// {
+///   // do something, like remove the dockBar from 
+///   // some internal structure...
+/// }
+/// @endcode
+/// 
 void DockArea::onRemoveDockBar(DockBar* dockBar)
 {
   // do nothing
 }
 
-/*
- * Event generated when the user start dragging the @a dockBar from
- * this DockArea.
- */
+// Event generated when the user start dragging the @a dockBar from
+// this DockArea.
+// 
 // void DockArea::onBeginDockBarDrag(DockBar* dockBar)
 // {
 // }

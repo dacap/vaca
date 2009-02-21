@@ -37,15 +37,14 @@
 
 using namespace Vaca;
 
-/**
- * Creates a new anchor layout.
- *
- * @param refSize
- *   The size of the imaginary rectangle @c Rect(Point(0,0),refSize).
- *   All @c refRect specified in @link Anchor#Anchor Anchor constructor@endlink
- *   should be inside this rectangle, and the distance of each
- *   anchored side in an Anchor will be kept equal.
- */
+/// Creates a new anchor layout.
+/// 
+/// @param refSize
+///   The size of the imaginary rectangle @c Rect(Point(0,0),refSize).
+///   All @c refRect specified in @link Anchor#Anchor Anchor constructor@endlink
+///   should be inside this rectangle, and the distance of each
+///   anchored side in an Anchor will be kept equal.
+/// 
 AnchorLayout::AnchorLayout(const Size& refSize)
   : m_refSize(refSize)
 {

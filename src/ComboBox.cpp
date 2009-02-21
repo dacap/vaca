@@ -50,9 +50,10 @@ ComboBox::~ComboBox()
 {
 }
 
-/**
- * (CB_ADDSTRING)
- */
+/// @win32
+///   It uses @msdn{CB_ADDSTRING} message.
+/// @endwin32
+/// 
 int ComboBox::addItem(const String& text)
 {
   int index = sendMessage(CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(text.c_str()));
@@ -62,42 +63,46 @@ int ComboBox::addItem(const String& text)
     return index;
 }
 
-/**
- * (CB_INSERTSTRING)
- * 
- */
+/// @win32
+///   It uses @msdn{CB_INSERTSTRING} message.
+/// @endwin32
+/// 
 void ComboBox::insertItem(int itemIndex, const String& text)
 {
   sendMessage(CB_INSERTSTRING, itemIndex, reinterpret_cast<LPARAM>(text.c_str()));
 }
 
-/**
- * (CB_DELETESTRING)
- */
+/// @win32
+///   It uses @msdn{CB_DELETESTRING} message.
+/// @endwin32
+/// 
 void ComboBox::removeItem(int itemIndex)
 {
   sendMessage(CB_DELETESTRING, itemIndex, 0);
 }
 
-/**
- * (CB_RESETCONTENT)
- */
+/// @win32
+///   It uses @msdn{CB_RESETCONTENT)} message.
+/// @endwin32
+/// 
 void ComboBox::removeAllItems()
 {
   sendMessage(CB_RESETCONTENT, 0, 0);
 }
 
-/**
- * (CB_GETCOUNT)
- */
+/// @win32
+///   This event is generated when @msdn{CB_GETCOUNT} message is received.
+/// @endwin32
+/// 
 int ComboBox::getItemCount()
 {
   return sendMessage(CB_GETCOUNT, 0, 0);
 }
 
-/**
- * (CB_GETLBTEXT and CB_GETLBTEXTLEN)
- */
+/// @win32
+///   It uses @msdn{CB_GETLBTEXT} and @msdn{CB_GETLBTEXTLEN} messages.
+/// @endwin32
+/// 
 String ComboBox::getItemText(int itemIndex)
 {
   int len = sendMessage(CB_GETLBTEXTLEN, itemIndex, 0);
@@ -123,10 +128,13 @@ void ComboBox::setItemText(int itemIndex, const String& text)
     setCurrentItem(itemIndex);
 }
 
-/**
- * Returns the current selected item index (CB_GETCURSEL). Returns -1
- * if there aren't selection at all.
- */
+/// Returns the current selected item index. Returns -1
+/// if there aren't selection at all.
+///
+/// @win32
+///   It uses the @msdn{CB_GETCURSEL} message.
+/// @endwin32
+/// 
 int ComboBox::getCurrentItem()
 {
   int index = sendMessage(CB_GETCURSEL, 0, 0);
@@ -136,17 +144,19 @@ int ComboBox::getCurrentItem()
     return index;
 }
 
-/**
- * Changes the current selected item to the @a itemIndex only (CB_SETCURSEL).
- */
+/// Changes the current selected item to the @a itemIndex only.
+///
+/// @win32
+///   It uses the @msdn{CB_SETCURSEL} message.
+/// @endwin32
+/// 
 void ComboBox::setCurrentItem(int itemIndex)
 {
   sendMessage(CB_SETCURSEL, itemIndex, 0);
 }
 
-/**
- * Selects the item which its text begins with @a firstText.
- */
+/// Selects the item which its text begins with @a firstText.
+/// 
 void ComboBox::setCurrentItem(const String& firstText)
 {
   sendMessage(CB_SELECTSTRING,
@@ -219,28 +229,25 @@ void ComboBox::onPreferredSize(Size& sz)
   }
 }
 
-/**
- * When the user press double-click in some item of a Simple combo-box
- * (with the SimpleComboBoxStyle) (Win32 CBN_DBLCLK notification).
- */
+/// When the user press double-click in some item of a Simple combo-box
+/// (with the SimpleComboBoxStyle) (Win32 CBN_DBLCLK notification).
+/// 
 void ComboBox::onAction(Event& ev)
 {
   Action(ev);
 }
 
-/**
- * When the user changes the current selected item (CBN_SELCHANGE).
- */
+/// When the user changes the current selected item (CBN_SELCHANGE).
+/// 
 void ComboBox::onSelChange(Event& ev)
 {
   SelChange(ev);
 }
 
-/**
- * When the user changes the text of the ComboBox. Only for
- * combo-boxes with SimpleComboBoxStyle or EditComboBoxStyle (Win32
- * CBN_EDITCHANGE notification).
- */
+/// When the user changes the text of the ComboBox. Only for
+/// combo-boxes with SimpleComboBoxStyle or EditComboBoxStyle (Win32
+/// CBN_EDITCHANGE notification).
+/// 
 void ComboBox::onEditChange(Event& ev)
 {
   EditChange(ev);

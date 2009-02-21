@@ -51,23 +51,22 @@ namespace Vaca {
 #define VACA_SUB_VERSION 0
 #define VACA_WIP_VERSION 8
 
-/**
- * Defines the name and arguments that the main routine
- * of the program should contain.
- *
- * You can use it as:
- * @code
- * int VACA_MAIN()
- * {
- *   ...
- * }
- * @endcode
- *
- * @win32
- *   It is the signature of @msdn{WinMain}. In other
- *   operating systems this could be @c "main(int argc, char* argv[])".
- * @endwin32
- */
+/// Defines the name and arguments that the main routine
+/// of the program should contain.
+/// 
+/// You can use it as:
+/// @code
+/// int VACA_MAIN()
+/// {
+///   ...
+/// }
+/// @endcode
+/// 
+/// @win32
+///   It is the signature of @msdn{WinMain}. In other
+///   operating systems this could be @c "main(int argc, char* argv[])".
+/// @endwin32
+/// 
 #define VACA_MAIN()				\
   PASCAL WinMain(HINSTANCE hInstance,		\
 		 HINSTANCE hPrevInstance,	\
@@ -84,84 +83,76 @@ namespace Vaca {
   #endif
 #endif
 
-/**
- * Returns the minimum of @a x and @a y.
- *
- * @note It is just like @b std::min, but there are problems
- *       in MSVC++ because a macro named @b min.
- *
- * @see max_value, clamp_value
- */
+/// Returns the minimum of @a x and @a y.
+/// 
+/// @note It is just like @b std::min, but there are problems
+///       in MSVC++ because a macro named @b min.
+/// 
+/// @see max_value, clamp_value
+/// 
 template<typename T>
 inline T min_value(T x, T y)
 {
   return x < y ? x: y;
 }
 
-/**
- * Returns the maximum of @a x and @a y.
- *
- * @note It is just like @b std::max, but there are problems
- *       in MSVC++ because a macro named @b max.
- *
- * @see min_value, clamp_value
- */
+/// Returns the maximum of @a x and @a y.
+/// 
+/// @note It is just like @b std::max, but there are problems
+///       in MSVC++ because a macro named @b max.
+/// 
+/// @see min_value, clamp_value
+/// 
 template<typename T>
 inline T max_value(T x, T y)
 {
   return x > y ? x: y;
 }
 
-/**
- * Limits the posible values of @a x to the speficied range.
- *
- * If @a x is great than @a high, then @a high is returned,
- * if @a x is less than @a low, then @a low is returned.
- * In other case, @a x is in the range, and @a x is returned.
- *
- * @see min_value, max_value
- */
+/// Limits the posible values of @a x to the speficied range.
+/// 
+/// If @a x is great than @a high, then @a high is returned,
+/// if @a x is less than @a low, then @a low is returned.
+/// In other case, @a x is in the range, and @a x is returned.
+/// 
+/// @see min_value, max_value
+/// 
 template<typename T>
 inline T clamp_value(T x, T low, T high)
 {
   return x > high ? high: (x < low ? low: x);
 }
 
-/**
- * A wide character used in a String.
- *
- * @see String, @ref page_tn_008
- */
+/// A wide character used in a String.
+/// 
+/// @see String, @ref page_tn_008
+/// 
 typedef wchar_t Char;
 
-/**
- * String type used through the Vaca API.
- *
- * It is a std::wstring.
- *
- * @see Char, @ref page_tn_008
- */
+/// String type used through the Vaca API.
+/// 
+/// It is a std::wstring.
+/// 
+/// @see Char, @ref page_tn_008
+/// 
 typedef std::wstring String;
 
-/**
- * An identifier for an application's Command.
- *
- * @see Widget#onCommand, Command
- */
+/// An identifier for an application's Command.
+/// 
+/// @see Widget#onCommand, Command
+/// 
 typedef unsigned int CommandId;
 
-/**
- * An identifier for a Thread.
- */
+/// An identifier for a Thread.
+/// 
 typedef unsigned int ThreadId;
 
 //////////////////////////////////////////////////////////////////////
 
-/**
- * It's like a namespace for Orientation.
- * 
- * @see Orientation
- */
+/// It's like a namespace for Orientation.
+/// 
+/// @see Orientation
+/// 
 struct OrientationEnum
 {
   enum enumeration {
@@ -171,22 +162,20 @@ struct OrientationEnum
   static const enumeration default_value = Horizontal;
 };
 
-/**
- * Horizontal or vertical orientation.
- *
- * One of the following values:
- * @li Orientation::Horizontal (default)
- * @li Orientation::Vertical
- */
+/// Horizontal or vertical orientation.
+/// 
+/// One of the following values:
+/// @li Orientation::Horizontal (default)
+/// @li Orientation::Vertical
+/// 
 typedef Enum<OrientationEnum> Orientation;
 
 //////////////////////////////////////////////////////////////////////
 
-/**
- * It's like a namespace for TextAlign.
- * 
- * @see TextAlign
- */
+/// It's like a namespace for TextAlign.
+/// 
+/// @see TextAlign
+/// 
 struct TextAlignEnum
 {
   enum enumeration {
@@ -197,23 +186,21 @@ struct TextAlignEnum
   static const enumeration default_value = Left;
 };
 
-/**
- * Horizontal alignment.
- *
- * One of the following values:
- * @li TextAlign::Left (default)
- * @li TextAlign::Center
- * @li TextAlign::Right
- */
+/// Horizontal alignment.
+/// 
+/// One of the following values:
+/// @li TextAlign::Left (default)
+/// @li TextAlign::Center
+/// @li TextAlign::Right
+/// 
 typedef Enum<TextAlignEnum> TextAlign;
 
 //////////////////////////////////////////////////////////////////////
 
-/**
- * It's like a namespace for VerticalAlign.
- * 
- * @see VerticalAlign
- */
+/// It's like a namespace for VerticalAlign.
+/// 
+/// @see VerticalAlign
+/// 
 struct VerticalAlignEnum
 {
   enum enumeration {
@@ -224,23 +211,21 @@ struct VerticalAlignEnum
   static const enumeration default_value = Top;
 };
 
-/**
- * Vertical alignment.
- *
- * One of the following values:
- * @li VerticalAlign::Top
- * @li VerticalAlign::Middle
- * @li VerticalAlign::Bottom
- */
+/// Vertical alignment.
+/// 
+/// One of the following values:
+/// @li VerticalAlign::Top
+/// @li VerticalAlign::Middle
+/// @li VerticalAlign::Bottom
+/// 
 typedef Enum<VerticalAlignEnum> VerticalAlign;
 
 //////////////////////////////////////////////////////////////////////
 
-/**
- * It's like a namespace for Side.
- * 
- * @see Side
- */
+/// It's like a namespace for Side.
+/// 
+/// @see Side
+/// 
 struct SideEnum
 {
   enum enumeration {
@@ -252,24 +237,22 @@ struct SideEnum
   static const enumeration default_value = Left;
 };
 
-/**
- * A side.
- *
- * One of the following values:
- * @li Side::Left
- * @li Side::Top
- * @li Side::Right
- * @li Side::Bottom
- */
+/// A side.
+/// 
+/// One of the following values:
+/// @li Side::Left
+/// @li Side::Top
+/// @li Side::Right
+/// @li Side::Bottom
+/// 
 typedef Enum<SideEnum> Side;
 
 //////////////////////////////////////////////////////////////////////
 
-/**
- * It's like a namespace for Sides.
- * 
- * @see Sides
- */
+/// It's like a namespace for Sides.
+/// 
+/// @see Sides
+/// 
 struct SidesEnumSet
 {
   enum {
@@ -282,24 +265,22 @@ struct SidesEnumSet
   };
 };
 
-/**
- * A set of sides.
- *
- * Zero or more of the following values:
- * @li Sides::Left
- * @li Sides::Top
- * @li Sides::Right
- * @li Sides::Bottom
- */
+/// A set of sides.
+/// 
+/// Zero or more of the following values:
+/// @li Sides::Left
+/// @li Sides::Top
+/// @li Sides::Right
+/// @li Sides::Bottom
+/// 
 typedef EnumSet<SidesEnumSet> Sides;
 
 //////////////////////////////////////////////////////////////////////
 
-/**
- * It's like a namespace for CardinalDirection.
- * 
- * @see CardinalDirection
- */
+/// It's like a namespace for CardinalDirection.
+/// 
+/// @see CardinalDirection
+/// 
 struct CardinalDirectionEnum
 {
   enum enumeration {
@@ -315,34 +296,32 @@ struct CardinalDirectionEnum
   static const enumeration default_value = North;
 };
 
-/**
- * A cardinal direction.
- *
- * One of the following values:
- * @li CardinalDirection::North
- * @li CardinalDirection::Northeast
- * @li CardinalDirection::East
- * @li CardinalDirection::Southeast
- * @li CardinalDirection::South
- * @li CardinalDirection::Southwest
- * @li CardinalDirection::West
- * @li CardinalDirection::Northwest
- */
+/// A cardinal direction.
+/// 
+/// One of the following values:
+/// @li CardinalDirection::North
+/// @li CardinalDirection::Northeast
+/// @li CardinalDirection::East
+/// @li CardinalDirection::Southeast
+/// @li CardinalDirection::South
+/// @li CardinalDirection::Southwest
+/// @li CardinalDirection::West
+/// @li CardinalDirection::Northwest
+/// 
 typedef Enum<CardinalDirectionEnum> CardinalDirection;
 
 //////////////////////////////////////////////////////////////////////
 
-/**
- * Removes an @a element from the specified STL @a container.
- *
- * This routine removes the first ocurrence of @a element in @a container. 
- * It is just a helper function to avoid cryptic STL code.
- *
- * @tparam ContainerType A STL container type.
- *
- * @param container The container to be modified.
- * @param element The element to be removed from the container.
- */
+/// Removes an @a element from the specified STL @a container.
+/// 
+/// This routine removes the first ocurrence of @a element in @a container. 
+/// It is just a helper function to avoid cryptic STL code.
+/// 
+/// @tparam ContainerType A STL container type.
+/// 
+/// @param container The container to be modified.
+/// @param element The element to be removed from the container.
+/// 
 template<typename ContainerType>
 void remove_from_container(ContainerType& container,
 			   typename ContainerType::const_reference element)

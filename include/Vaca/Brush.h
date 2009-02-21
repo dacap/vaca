@@ -38,19 +38,18 @@
 
 namespace Vaca {
 
-/**
- * A brush can be used to fill rectangles, ellipses, and paths.
- *
- * This is a SharedPtr, so if you copy instances of brushes they will be
- * referencing to the same place. You can't clone brushes because you can't
- * modify them.
- *
- * @win32
- *   This is a @msdn{HBRUSH} wrapper.
- * @endwin32
- *
- * @see Graphics, Graphics#fillRect, Graphics#fillPath
- */
+/// A brush can be used to fill rectangles, ellipses, and paths.
+/// 
+/// This is a SharedPtr, so if you copy instances of brushes they will be
+/// referencing to the same place. You can't clone brushes because you can't
+/// modify them.
+/// 
+/// @win32
+///   This is a @msdn{HBRUSH} wrapper.
+/// @endwin32
+/// 
+/// @see Graphics, Graphics#fillRect, Graphics#fillPath
+/// 
 class VACA_DLL Brush : private SharedPtr<GdiObject<HBRUSH> >
 {
 public:

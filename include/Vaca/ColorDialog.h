@@ -38,9 +38,8 @@
 
 namespace Vaca {
 
-/**
- * A common dialog box to select colors.
- */
+/// A common dialog box to select colors.
+/// 
 class VACA_DLL ColorDialog : public CommonDialog
 {
   Color m_color;

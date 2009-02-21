@@ -43,10 +43,9 @@ StatusBar::~StatusBar()
 {
 }
 
-/**
- * A status bar is arranged by a Frame, but doesn't depend of the
- * current Layout manager in that Frame.
- */
+/// A status bar is arranged by a Frame, but doesn't depend of the
+/// current Layout manager in that Frame.
+/// 
 bool StatusBar::isLayoutFree()
 {
   return true;

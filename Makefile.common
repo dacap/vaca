@@ -48,18 +48,19 @@ LIB_SOURCES = Anchor AnchorLayout Application BandedDockArea		\
 	      ButtonBase CancelableEvent CheckBox ClientLayout		\
 	      Clipboard CloseEvent Color ColorDialog ComboBox Command	\
 	      CommonDialog Component ConditionVariable Constraint	\
-	      Cursor CustomButton CustomLabel Debug Dialog DockArea	\
-	      DockBar DockFrame DropFilesEvent Event Exception		\
-	      FileDialog FindTextDialog Font FontDialog Frame Graphics	\
-	      GraphicsPath GroupBox HttpRequest Icon Image ImageList	\
-	      KeyEvent Keys Label Layout LinkLabel ListBox ListView	\
-	      Mdi Menu MenuItemEvent Message MouseEvent MsgBox Mutex	\
-	      Pen Point ProgressBar RadioButton ReBar Rect		\
-	      Referenceable Region ResourceId RichEdit Scintilla	\
-	      ScrollEvent ScrollInfo Separator Size Slider SpinButton	\
-	      Spinner SplitBar StatusBar String Style Styles System	\
-	      Tab TextEdit Thread TimePoint Timer ToggleButton ToolBar	\
-	      TreeNode TreeView TreeViewEvent Vaca Widget WidgetClass
+	      ConsumableEvent Cursor CustomButton CustomLabel Debug	\
+	      Dialog DockArea DockBar DockFrame DropFilesEvent Event	\
+	      Exception FileDialog FindTextDialog Font FontDialog	\
+	      Frame Graphics GraphicsPath GroupBox HttpRequest Icon	\
+	      Image ImageList KeyEvent Keys Label Layout LinkLabel	\
+	      ListBox ListView Mdi Menu MenuItemEvent Message		\
+	      MouseEvent MsgBox Mutex Pen Point ProgressBar		\
+	      RadioButton ReBar Rect Referenceable Region ResourceId	\
+	      RichEdit Scintilla ScrollEvent ScrollInfo Separator Size	\
+	      Slider SpinButton Spinner SplitBar StatusBar String	\
+	      Style Styles System Tab TextEdit Thread TimePoint Timer	\
+	      ToggleButton ToolBar TreeNode TreeView TreeViewEvent	\
+	      Vaca Widget WidgetClass
 
 ifndef EXAMPLES
 EXAMPLES = AnchorLayouts AutoCompletion Bixes BouncingBalls BoxLayouts	\

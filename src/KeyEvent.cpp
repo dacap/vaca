@@ -35,8 +35,7 @@
 using namespace Vaca;
 
 KeyEvent::KeyEvent(Widget* source, Keys::Type keys, Char charCode)
-  : Event(source)
-  , m_consumed(false)
+  : ConsumableEvent(source)
   , m_keys(keys)
   , m_charCode(charCode)
 {
@@ -44,16 +43,6 @@ KeyEvent::KeyEvent(Widget* source, Keys::Type keys, Char charCode)
 
 KeyEvent::~KeyEvent()
 {
-}
-
-void KeyEvent::consume()
-{
-  m_consumed = true;
-}
-
-bool KeyEvent::isConsumed() const
-{
-  return m_consumed;
 }
 
 Keys::Type KeyEvent::getKeyCode() const

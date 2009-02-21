@@ -36,108 +36,90 @@
 
 namespace Vaca {
 
-/**
- * @see WidgetHitTest
- */
+/// @see WidgetHitTest
+/// 
 struct WidgetHitTestEnum
 {
   enum enumeration {
     Error,
     Transparent,
 
-    /**
-     * When the mouse is in the background of a Widget.
-     */
+    /// When the mouse is in the background of a Widget.
+    ///
     Nowhere,
 
-    /**
-     * When the mouse is in the client area of a Widget.
-     */
+    /// When the mouse is in the client area of a Widget.
+    /// 
+    
     Client,
 
-    /**
-     * When the mouse is in the title bar of a Frame.
-     */
+    ///
+    /// When the mouse is in the title bar of a Frame.
+    ///
     Caption,
 
-    /**
-     * TODO
-     */
+    /// @todo
+    /// 
     SystemMenu,
 
-    /**
-     * TODO
-     */
+    /// @todo
+    /// 
     Size,
 
-    /**
-     * When the mouse is in a menu of a Frame.
-     */
+    /// When the mouse is in a menu of a Frame.
+    /// 
     Menu,
 
-    /**
-     * When the mouse is in a horizontal scroll bar.
-     */
+    /// When the mouse is in a horizontal scroll bar.
+    /// 
     HorizontalScroll,
 
-    /**
-     * When the mouse is in a vertical scroll bar.
-     */
+    /// When the mouse is in a vertical scroll bar.
+    /// 
     VerticalScroll,
 
-    /**
-     * When the mouse is in the minimize button.
-     */
+    /// When the mouse is in the minimize button.
+    /// 
     MinimizeButton,
 
-    /**
-     * When the mouse is in the maximize button.
-     */
+    /// When the mouse is in the maximize button.
+    /// 
     MaximizeButton,
 
-    /**
-     * When the mouse is in the left side to resize a Frame.
-     */
+    /// When the mouse is in the left side to resize a Frame.
+    /// 
     Left,
 
-    /**
-     * When the mouse is in the right side to resize a Frame.
-     */
+    /// When the mouse is in the right side to resize a Frame.
+    /// 
     Right,
 
-    /**
-     * When the mouse is in the top side to resize a Frame.
-     */
+    /// When the mouse is in the top side to resize a Frame.
+    /// 
     Top,
 
-    /**
-     * When the mouse is in the top-left corner to resize a Frame.
-     */
+    /// When the mouse is in the top-left corner to resize a Frame.
+    /// 
     TopLeft,
 
-    /**
-     * When the mouse is in the top-right corner to resize a Frame.
-     */
+    /// When the mouse is in the top-right corner to resize a Frame.
+    /// 
     TopRight,
 
-    /**
-     * When the mouse is in the bottom side to resize a Frame.
-     */
+    /// When the mouse is in the bottom side to resize a Frame.
+    /// 
     Bottom,
 
-    /**
-     * When the mouse is in the bottom-left corner to resize a Frame.
-     */
+    /// When the mouse is in the bottom-left corner to resize a Frame.
+    /// 
     BottomLeft,
 
-    /**
-     * When the mouse is in the bottom-right corner to resize a Frame.
-     */
+    /// When the mouse is in the bottom-right corner to resize a Frame.
+    /// 
     BottomRight,
 
-    /**
-     * The cursor is in a border of the widget that doesn't support.
-     */
+    /// The cursor is in a border of the widget that doesn't support.
+    /// 
     Border,
     
     Object,
@@ -147,36 +129,35 @@ struct WidgetHitTestEnum
   static const enumeration default_value = Nowhere;
 };
 
-/**
- * It indicates a place inside a Widget which the mouse cursor
- * could be.
- *
- * One of the following values:
- * @li WidgetHitTest::Error
- * @li WidgetHitTest::Transparent
- * @li WidgetHitTest::Nowhere
- * @li WidgetHitTest::Client
- * @li WidgetHitTest::Caption
- * @li WidgetHitTest::SystemMenu
- * @li WidgetHitTest::Size
- * @li WidgetHitTest::Menu
- * @li WidgetHitTest::HorizontalScroll
- * @li WidgetHitTest::VerticalScroll
- * @li WidgetHitTest::MinimizeButton
- * @li WidgetHitTest::MaximizeButton
- * @li WidgetHitTest::Left
- * @li WidgetHitTest::Right
- * @li WidgetHitTest::Top
- * @li WidgetHitTest::TopLeft
- * @li WidgetHitTest::TopRight
- * @li WidgetHitTest::Bottom
- * @li WidgetHitTest::BottomLeft
- * @li WidgetHitTest::BottomRight
- * @li WidgetHitTest::Border
- * @li WidgetHitTest::Object
- * @li WidgetHitTest::Close
- * @li WidgetHitTest::Help
- */
+/// It indicates a place inside a Widget which the mouse cursor
+/// could be.
+/// 
+/// One of the following values:
+/// @li WidgetHitTest::Error
+/// @li WidgetHitTest::Transparent
+/// @li WidgetHitTest::Nowhere
+/// @li WidgetHitTest::Client
+/// @li WidgetHitTest::Caption
+/// @li WidgetHitTest::SystemMenu
+/// @li WidgetHitTest::Size
+/// @li WidgetHitTest::Menu
+/// @li WidgetHitTest::HorizontalScroll
+/// @li WidgetHitTest::VerticalScroll
+/// @li WidgetHitTest::MinimizeButton
+/// @li WidgetHitTest::MaximizeButton
+/// @li WidgetHitTest::Left
+/// @li WidgetHitTest::Right
+/// @li WidgetHitTest::Top
+/// @li WidgetHitTest::TopLeft
+/// @li WidgetHitTest::TopRight
+/// @li WidgetHitTest::Bottom
+/// @li WidgetHitTest::BottomLeft
+/// @li WidgetHitTest::BottomRight
+/// @li WidgetHitTest::Border
+/// @li WidgetHitTest::Object
+/// @li WidgetHitTest::Close
+/// @li WidgetHitTest::Help
+/// 
 typedef Enum<WidgetHitTestEnum> WidgetHitTest;
 
 } // namespace Vaca

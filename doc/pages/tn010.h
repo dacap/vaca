@@ -6,7 +6,7 @@ namespace Vaca {
 
 Vaca deletes some objects automatically that you create. This means
 that there are cases where you create the object using the @c new
-operator, but you never deletes it because Vaca makes that job for you.
+operator, but you never deletes it because Vaca does that job for you.
 
 Here is a list of some classes/methods with this behavior:
 

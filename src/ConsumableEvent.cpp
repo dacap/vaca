@@ -29,34 +29,30 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_CANCELABLEEVENT_H
-#define VACA_CANCELABLEEVENT_H
+#include "Vaca/ConsumableEvent.h"
 
-#include "Vaca/Event.h"
+using namespace Vaca;
 
-namespace Vaca {
-
-///
-/// Event that can be canceled.
-///
-/// For example, a CloseEvent can be canceled if you don't want to
-/// close the Frame (or the user cancel the event answering a MsgBox).
-///
-class VACA_DLL CancelableEvent : public Event
+ConsumableEvent::ConsumableEvent(Component* source)
+  : Event(source)
+  , m_consumed(false)
 {
-  /// The event was canceled.
-  bool m_canceled;
+}
 
-public:
+ConsumableEvent::~ConsumableEvent()
+{
+}
 
-  CancelableEvent(Component* source);
-  virtual ~CancelableEvent();
-  
-  void cancel();
-  bool isCanceled() const;
+/// Consumes the event.
+///
+void ConsumableEvent::consume()
+{
+  m_consumed = true;
+}
 
-};
-
-} // namespace Vaca
-
-#endif // VACA_CANCELABLEEVENT_H
+/// The event was consumed.
+///
+bool ConsumableEvent::isConsumed() const
+{
+  return m_consumed;
+}

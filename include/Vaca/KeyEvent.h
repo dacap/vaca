@@ -33,7 +33,7 @@
 #define VACA_KEYEVENT_H
 
 #include "Vaca/base.h"
-#include "Vaca/Event.h"
+#include "Vaca/ConsumableEvent.h"
 #include "Vaca/Keys.h"
 
 namespace Vaca {
@@ -41,34 +41,25 @@ namespace Vaca {
 /**
  * Data for an event that comes from the keyboard.
  */
-class VACA_DLL KeyEvent : public Event
+class VACA_DLL KeyEvent : public ConsumableEvent
 {
-  /**
-   * It indicates if the event was consumed.
-   */
-  bool m_consumed;
-
-  /**
-   * Virtual-key code.
-   *
-   * @see #getKeyCode, Keys
-   */
+  /// Virtual-key code.
+  ///
+  /// @see #getKeyCode, Keys
+  ///
   int m_keys;
 
-  /**
-   * Character-key code.
-   *
-   * @see #getCharCode
-   */
+  ///
+  /// Character-key code.
+  ///
+  /// @see #getCharCode
+  ///
   Char m_charCode;
 
 public:
 
   KeyEvent(Widget* source, Keys::Type keys, Char charCode);
   virtual ~KeyEvent();
-
-  void consume();
-  bool isConsumed() const;
 
   Keys::Type getKeyCode() const;
   Keys::Type getModifiers() const;

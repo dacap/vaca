@@ -59,6 +59,7 @@
 #include "Vaca/Component.h"
 #include "Vaca/ConditionVariable.h"
 #include "Vaca/Constraint.h"
+#include "Vaca/ConsumableEvent.h"
 #include "Vaca/Cursor.h"
 #include "Vaca/CustomButton.h"
 #include "Vaca/CustomLabel.h"

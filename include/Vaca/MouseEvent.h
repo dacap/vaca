@@ -34,7 +34,7 @@
 
 #include "Vaca/base.h"
 #include "Vaca/Enum.h"
-#include "Vaca/Event.h"
+#include "Vaca/ConsumableEvent.h"
 #include "Vaca/Point.h"
 
 namespace Vaca {
@@ -78,7 +78,7 @@ typedef Enum<MouseButtonEnum> MouseButton;
 /// #getButton returns MouseButton::None if the event was produced by
 /// mouse movement (no button was pressed to trigger the event).
 /// 
-class VACA_DLL MouseEvent : public Event
+class VACA_DLL MouseEvent : public ConsumableEvent
 {
   Point m_point;
   int m_clicks;

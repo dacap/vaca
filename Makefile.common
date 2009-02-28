@@ -66,11 +66,11 @@ ifndef EXAMPLES
 EXAMPLES = AnchorLayouts AutoCompletion Bixes BouncingBalls BoxLayouts	\
 	   Buttons ColoredButton ComboBoxes Commands DataGrids		\
 	   DialogResource EditableListBox Edits EyeDropper FontMetrics	\
-	   FreeOfLayout Hashing HelloWorld Images Labels LikeScript	\
-	   Maths MenuResource MiniExplorer Minimal Paths Primitives	\
-	   ProgressBars ReBars Regions Scribble Scrolling Sliders	\
-	   Spinners SplitBars Sudoku SystemImageList Tabs TextEditor	\
-	   Threads Timers ToolBars Trees Undo WebCam
+	   FreeOfLayout Full Hashing HelloWorld Images Labels		\
+	   LikeScript Maths MenuResource MiniExplorer Minimal Paths	\
+	   Primitives ProgressBars ReBars Regions Scribble Scrolling	\
+	   Sliders Spinners SplitBars Sudoku SystemImageList Tabs	\
+	   TextEditor Threads Timers ToolBars Trees Undo WebCam
 endif
 
 ifndef TESTS

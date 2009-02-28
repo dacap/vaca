@@ -479,10 +479,14 @@ void DockBar::onDoubleClick(MouseEvent& ev)
     if (dockArea != NULL && m_dockInfo != NULL)
       dockIn(dockArea);
     else {
-      // do nothing, we can't dock the tool-bar, so it should
+      // do nothing, we cannot dock the tool-bar, so it should
       // continue floating
     }
+
+    ev.consume();
   }
+
+  Widget::onDoubleClick(ev);
 }
 
 void DockBar::onCancelMode()

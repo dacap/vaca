@@ -748,18 +748,19 @@ void Widget::setSize(int w, int h)
   setSize(Size(w, h));
 }
 
-/// Returns the preferred size of the Widget. It checks if the
-/// preferred size is static (it means when it was set through
-/// #setPreferredSize before) or if it's dynamic (this is the
-/// default and is when the #onPreferredSize is used to determined
+/// Returns the preferred size of the Widget.
+///
+/// It checks if the preferred size is static (it means when it was
+/// set through #setPreferredSize before) or if it is dynamic (this is
+/// the default and is when the #onPreferredSize is used to determined
 /// the preferred size).
 /// 
-/// In another words, if you don't use #setPreferredSize to set a
+/// In another words, if you do not use #setPreferredSize to set a
 /// <em>static preferred size</em> for the widget then #onPreferredSize
 /// will be used to calculate it.
 /// 
 /// @see setPreferredSize, onPreferredSize, #getPreferredSize(const Size &)
-/// 
+///
 Size Widget::getPreferredSize()
 {
   if (m_preferredSize != NULL)
@@ -1715,6 +1716,22 @@ void Widget::onMouseUp(MouseEvent& ev)
 /// function to get the cursor position when it is outside the widget's
 /// client area.
 /// 
+/// Overriding:
+/// @code
+/// class MyWidget : public Widget
+/// {
+///   ...
+/// protected:
+///   virtual void onMouseMove(MouseEvent& ev)
+///   {
+///     if (we use this mouse movement event)
+///        ev.consume();
+///
+///     Widget::onMouseMove(ev);
+///   }
+/// };
+/// @endcode
+/// 
 void Widget::onMouseMove(MouseEvent& ev)
 {
   MouseMove(ev);
@@ -1722,6 +1739,22 @@ void Widget::onMouseMove(MouseEvent& ev)
 
 /// The mouse is inside the Widget and the user spin the mouse's
 /// wheel.
+///
+/// Overriding:
+/// @code
+/// class MyWidget : public Widget
+/// {
+///   ...
+/// protected:
+///   virtual void onMouseWheel(MouseEvent& ev)
+///   {
+///     if (we use this mouse wheel event)
+///        ev.consume();
+///
+///     Widget::onMouseWheel(ev);
+///   }
+/// };
+/// @endcode
 /// 
 /// @win32
 ///   This event is generated when @msdn{WM_MOUSEWHEEL} message is received.
@@ -1732,26 +1765,36 @@ void Widget::onMouseWheel(MouseEvent& ev)
   MouseWheel(ev);
 }
 
-/// The user made double click over the widget.
-/// 
-/// The default implementation calls #onMouseDown, so it is like a
-/// single click (converts double-clicks to single-clicks).
-/// 
-/// @warning If you override this event, do not call the base implementation.
+/// Called when the user does double-click over the widget.
+///
+/// If the event is not consumed (by a slot in #DoubleClick signal or
+/// overriding this method), the double-click will be converted to a
+/// #onMouseDown event.
+///
+/// Overriding:
+/// @code
+/// class MyWidget : public Widget
+/// {
+///   ...
+/// protected:
+///   virtual void onDoubleClick(MouseEvent& ev)
+///   {
+///     if (we use this double click event) {
+///        ...
+///        ev.consume(); // <-- consume the event so it is
+///                      //     not converted to MouseDown
+///     }
+///     Widget::onDoubleClick(ev);
+///   }
+/// };
+/// @endcode
 /// 
 /// @see onMouseDown
 /// 
 void Widget::onDoubleClick(MouseEvent& ev)
 {
-  // if there are not slots in DoubleClick...
-  if (DoubleClick.empty()) {
-    // ...by default onDoubleClick to onMouseDown (double-click to
-    // single-click).
-    onMouseDown(ev);
-  }
-  // if not fire DoubleClick signal
-  else
-    DoubleClick(ev);
+  // fire DoubleClick signal
+  DoubleClick(ev);
 }
 
 /// Event generated when the user press ESC in a drag-and-drop operation.
@@ -2414,6 +2457,11 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
 	   message == WM_MBUTTONDBLCLK ? MouseButton::Middle:
 					 MouseButton::None);
       onDoubleClick(ev);
+
+      // if the double-click was not consumed, we can convert it to
+      // mouse-down event
+      if (!ev.isConsumed())
+	onMouseDown(ev);
       break;
     }
 

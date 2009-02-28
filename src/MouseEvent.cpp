@@ -45,7 +45,7 @@ using namespace Vaca;
 /// 
 MouseEvent::MouseEvent(Widget* source, Point point, int clicks,
 		       int flags, MouseButton trigger, int delta)
-  : Event(source)
+  : ConsumableEvent(source)
   , m_point(point)
   , m_clicks(clicks)
   , m_flags(flags)

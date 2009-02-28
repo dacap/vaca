@@ -840,8 +840,6 @@ void GridView::onScroll(ScrollEvent& ev)
 
 void GridView::onDoubleClick(MouseEvent &ev)
 {
-  Widget::onDoubleClick(ev);
-
   // double click to fit header width
   int column = getHotResizingBorder(ev.getPoint());
   if (column >= 0) {
@@ -851,7 +849,11 @@ void GridView::onDoubleClick(MouseEvent &ev)
 
     updateHorizontalScrollBarVisibility();
     invalidate(false);
+
+    ev.consume();
   }
+
+  Widget::onDoubleClick(ev);
 }
 
 // when a mouse's button is pressed

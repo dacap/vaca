@@ -64,8 +64,14 @@ void SplitBar::layout()
 
   Rect rcL, rcR;
   getRects(rcL, rcR);
-  if (m_first) m_first->setBounds(rcL);
-  if (m_second) m_second->setBounds(rcR);
+  if (m_first) {
+    m_first->setBounds(rcL);
+    m_first->layout();
+  }
+  if (m_second) {
+    m_second->setBounds(rcR);
+    m_second->layout();
+  }
 }
 
 void SplitBar::setFirstWidget(Widget* widget)

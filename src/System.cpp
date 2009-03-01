@@ -261,9 +261,9 @@ Size System::getScreenSize()
 /// Returns the work-area of the screen, it is like the desktop area,
 /// that is not overlapped by the task-bar.
 /// 
-/// @warning
-///   Win32: It is a call to @msdn{SystemParametersInfo} using
-///   @msdn{SPI_GETWORKAREA}.
+/// @win32
+///   It is a call to @msdn{SystemParametersInfo} using @msdn{SPI_GETWORKAREA}.
+/// @endwin32
 /// 
 Rect System::getWorkAreaBounds()
 {

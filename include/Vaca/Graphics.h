@@ -70,7 +70,6 @@ class VACA_DLL Graphics : private NonCopyable
   HBRUSH m_nullBrush;
   bool m_autoRelease : 1;
   bool m_autoDelete : 1;
-  bool m_noPaint : 1;
   Font m_font;
   FillRule m_fillRule;
 
@@ -84,9 +83,6 @@ public:
   Graphics(HDC hdc, Image& image);
   Graphics(Widget* widget);
   virtual ~Graphics();
-
-  void noPaint();
-  bool wasPainted();
 
   Rect getClipBounds();
   void getClipRegion(Region& rgn);

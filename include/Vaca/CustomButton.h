@@ -50,7 +50,7 @@ namespace Vaca {
 ///   }
 ///   
 ///   // paint event...
-///   virtual void onPaint(Graphics& g)
+///   virtual void onPaint(PaintEvent& ev)
 ///   {
 ///     // don't call parent implementation, use your own code to
 ///     // paint your customized button

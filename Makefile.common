@@ -54,7 +54,7 @@ LIB_SOURCES = Anchor AnchorLayout Application BandedDockArea		\
 	      Frame Graphics GraphicsPath GroupBox HttpRequest Icon	\
 	      Image ImageList KeyEvent Keys Label Layout LinkLabel	\
 	      ListBox ListView Mdi Menu MenuItemEvent Message		\
-	      MouseEvent MsgBox Mutex Pen Point ProgressBar		\
+	      MouseEvent MsgBox Mutex PaintEvent Pen Point ProgressBar	\
 	      RadioButton ReBar Rect Referenceable Region ResourceId	\
 	      RichEdit Scintilla ScrollEvent ScrollInfo Separator Size	\
 	      Slider SpinButton Spinner SplitBar StatusBar String	\

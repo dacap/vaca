@@ -129,7 +129,7 @@ protected:
   // events
   virtual void onPreferredSize(Size& sz);
   virtual void onDockFrameClose(CloseEvent& ev);
-  virtual void onPaint(Graphics& g);
+  virtual void onPaint(PaintEvent& ev);
   virtual void onResize(const Size& sz);
   virtual void onMouseDown(MouseEvent& ev);
   virtual void onMouseMove(MouseEvent& ev);

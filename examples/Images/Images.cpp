@@ -137,8 +137,9 @@ protected:
       Frame::onSetCursor(hitTest);
   }
 
-  virtual void onPaint(Graphics& g)
+  virtual void onPaint(PaintEvent& ev)
   {
+    Graphics& g = ev.getGraphics();
     m_vacaOrigin =
       Point(getClientBounds().getCenter()) -
       Point(m_vacaImage.getSize()/2);

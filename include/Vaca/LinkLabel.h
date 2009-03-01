@@ -74,7 +74,7 @@ protected:
 
   // events
   virtual void onPreferredSize(Size& sz);
-  virtual void onPaint(Graphics& g);
+  virtual void onPaint(PaintEvent& ev);
   virtual void onMouseEnter(MouseEvent& ev);
   virtual void onMouseMove(MouseEvent& ev);
   virtual void onMouseLeave();

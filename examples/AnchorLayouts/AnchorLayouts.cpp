@@ -68,8 +68,9 @@ protected:
     invalidate(true);
   }
 
-  virtual void onPaint(Graphics &g)
+  virtual void onPaint(PaintEvent& ev)
   {
+    Graphics& g = ev.getGraphics();
     Rect rc(getClientBounds());
 
     Pen pen(getFgColor());
@@ -198,8 +199,9 @@ protected:
     }
   }
 
-  virtual void onPaint(Graphics &g)
+  virtual void onPaint(PaintEvent& ev)
   {
+    Graphics& g = ev.getGraphics();
     Rect rc(getClientBounds());
     Pen pen(getBgColor()*1.2);
 

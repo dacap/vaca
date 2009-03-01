@@ -43,6 +43,7 @@
 #include "Vaca/KeyEvent.h"
 #include "Vaca/Layout.h"
 #include "Vaca/MouseEvent.h"
+#include "Vaca/PaintEvent.h"
 #include "Vaca/Point.h"
 #include "Vaca/Region.h"
 #include "Vaca/System.h"
@@ -1616,24 +1617,25 @@ void Widget::onPreferredSize(Size& sz)
 
 /// Called when the widget have to be painted in the screen.
 /// 
-/// The default implementation calls the Graphics::noPaint to notify that
-/// this widget does not paint the surface. If you override this method,
-/// remember: (1) to draw inside the Widget#getClientBounds limits,
-/// and (2) do not call the base method Widget#onPaint.
+/// If you override this method, remember: (1) to draw inside the
+/// Widget#getClientBounds limits, and (2) do not call the base method
+/// Widget#onPaint.
 /// 
 /// @warning Do not try to override the #onPaint of a system control
-///          (like Button, Edit, etc.). You must to use
-///          CustomButton, CustomEdit, etc. to do that.
-/// 
+///          (like Button, Edit, etc.). You must to use CustomButton,
+///          CustomEdit, etc. to do that.
+///
+/// Overriding:
 /// @code
-/// class MyWidget : public Panel
+/// class MyWidget : public Widget
 /// {
-/// public:
-///   ...
-///   virtual void onPaint(Graphics& g)
+/// protected:
+///   virtual void onPaint(PaintEvent& ev)
 ///   {
-///     Rect rc = getClientBounds();
-///     g.drawEllipse(rc);
+///     Graphics& g = ev.getGraphics();
+///     Rect bounds = getClientBounds();
+///     Rect clip = g.getClipBounds();
+///     ...
 ///   }
 /// };
 /// @endcode
@@ -1644,9 +1646,9 @@ void Widget::onPreferredSize(Size& sz)
 /// 
 /// @see onReflectedDrawItem
 /// 
-void Widget::onPaint(Graphics& g)
+void Widget::onPaint(PaintEvent& ev)
 {
-  g.noPaint();
+  ev.noPaint();
 }
 
 /// Called when the user changes the size of the widget/frame.
@@ -1724,9 +1726,10 @@ void Widget::onMouseUp(MouseEvent& ev)
 /// protected:
 ///   virtual void onMouseMove(MouseEvent& ev)
 ///   {
-///     if (we use this mouse movement event)
+///     if (!ev.isConsumed() && (...this event is useful for us...)) {
+///        ...
 ///        ev.consume();
-///
+///     }
 ///     Widget::onMouseMove(ev);
 ///   }
 /// };
@@ -1748,9 +1751,10 @@ void Widget::onMouseMove(MouseEvent& ev)
 /// protected:
 ///   virtual void onMouseWheel(MouseEvent& ev)
 ///   {
-///     if (we use this mouse wheel event)
+///     if (!ev.isConsumed() && (...this event is useful for us...)) {
+///        ...
 ///        ev.consume();
-///
+///     }
 ///     Widget::onMouseWheel(ev);
 ///   }
 /// };
@@ -1775,11 +1779,10 @@ void Widget::onMouseWheel(MouseEvent& ev)
 /// @code
 /// class MyWidget : public Widget
 /// {
-///   ...
 /// protected:
 ///   virtual void onDoubleClick(MouseEvent& ev)
 ///   {
-///     if (we use this double click event) {
+///     if (!ev.isConsumed() && (...this event is useful for us...)) {
 ///        ...
 ///        ev.consume(); // <-- consume the event so it is
 ///                      //     not converted to MouseDown
@@ -2329,8 +2332,11 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
       break;
 
     case WM_PAINT:
+      // if this is not a wrapped widget (like BUTTON, EDIT, etc.)...
       if (m_baseWndProc == NULL) {
- 	PAINTSTRUCT ps;
+	// ...we have to paint its content through an explicit onPaint event
+
+	PAINTSTRUCT ps;
 	bool painted = false;
 	HDC hdc = ::BeginPaint(m_handle, &ps);
 
@@ -2338,7 +2344,7 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
 	  Graphics g(hdc);
 	  painted = doPaint(g);
 	}
-	
+
 	::EndPaint(m_handle, &ps);
 
 	if (painted) {
@@ -2784,8 +2790,8 @@ bool Widget::doPaint(Graphics& g)
       clipRegion.offset(-clipBounds.x, -clipBounds.y);
       imageG.setClipRegion(clipRegion);
 
-      // special coordinates transformation (to make
-      // transparent the "imageG" to onPaint)
+      // special coordinates transformation (to make the "imageG"
+      // graphics transparent to "onPaint" method)
       SetViewportOrgEx(imageG.getHandle(), -clipBounds.x, -clipBounds.y, NULL);
       
       // clear the background of the image
@@ -2795,8 +2801,9 @@ bool Widget::doPaint(Graphics& g)
       imageG.setFont(getFont());
 
       // paint on imageG
-      onPaint(imageG);
-      painted = imageG.wasPainted();
+      PaintEvent ev(this, imageG);
+      onPaint(ev);
+      painted = ev.isPainted();
 
       // restore the viewport origin (so drawImage works fine)
       SetViewportOrgEx(imageG.getHandle(), 0, 0, NULL);
@@ -2811,8 +2818,9 @@ bool Widget::doPaint(Graphics& g)
     g.setFont(getFont());
 
     // paint on g
-    onPaint(g);
-    painted = g.wasPainted();
+    PaintEvent ev(this, g);
+    onPaint(ev);
+    painted = ev.isPainted();
   }
 
   return painted;

@@ -72,8 +72,10 @@ public:
 
 protected:
 
-  virtual void onPaint(Graphics& g)
+  virtual void onPaint(PaintEvent& ev)
   {
+    Graphics& g = ev.getGraphics();
+
     // this sleep have the purpose to show the invalidated areas 100
     // milliseconds (the background filled by default with the
     // getBgColor, that in this case is Color::Red)

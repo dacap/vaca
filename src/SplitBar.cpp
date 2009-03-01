@@ -34,6 +34,7 @@
 #include "Vaca/Brush.h"
 #include "Vaca/Cursor.h"
 #include "Vaca/MouseEvent.h"
+#include "Vaca/PaintEvent.h"
 #include "Vaca/System.h"
 
 using namespace Vaca;
@@ -162,8 +163,10 @@ void SplitBar::onResize(const Size& sz)
   layout();
 }
 
-void SplitBar::onPaint(Graphics& g)
+void SplitBar::onPaint(PaintEvent& ev)
 {
+  Graphics& g = ev.getGraphics();
+
   if (m_gripperVisible) {
     Rect rcBar(getBarRect());
 
@@ -183,9 +186,6 @@ void SplitBar::onPaint(Graphics& g)
 		   System::getColor(COLOR_3DSHADOW),
 		   System::getColor(COLOR_3DHIGHLIGHT));
     }
-  }
-  else {
-    Widget::onPaint(g);
   }
 }
 

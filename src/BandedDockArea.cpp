@@ -282,9 +282,10 @@ void BandedDockArea::onPreferredSize(Size& sz)
 //     ;
 }
 
-void BandedDockArea::onPaint(Graphics& g)
+void BandedDockArea::onPaint(PaintEvent& ev)
 {
 #if 0
+  Graphics& g = ev.getGraphics();
   Color topLeft = System::getColor(COLOR_3DSHADOW);
   Color bottomRight = System::getColor(COLOR_3DHIGHLIGHT);
   int c, count = m_bandInfo.size();

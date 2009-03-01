@@ -63,8 +63,9 @@ public:
   }
 
   // the paint the calendar
-  virtual void onPaint(Graphics &g)
+  virtual void onPaint(PaintEvent& ev)
   {
+    Graphics& g = ev.getGraphics();
     Rect rc = getClientBounds();
     Pen blue(Color::Blue);
     Pen red(Color::Red);

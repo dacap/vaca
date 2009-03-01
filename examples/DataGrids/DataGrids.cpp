@@ -715,7 +715,7 @@ protected:
   virtual void onKeyDown(KeyEvent& ev);
   virtual void onSetCursor(WidgetHitTest hitTest);
   virtual void onResize(const Size& sz);
-  virtual void onPaint(Graphics& g);
+  virtual void onPaint(PaintEvent& ev);
   
 private:
 
@@ -1065,8 +1065,9 @@ void GridView::onResize(const Size &sz)
   //       updateVerticalScrollBarVisibility();
 }
 
-void GridView::onPaint(Graphics& g)
+void GridView::onPaint(PaintEvent& ev)
 {
+  Graphics& g = ev.getGraphics();
   Color headerFaceColor = Color(212, 208, 200);//System::getColor(COLOR_3DFACE);
   Color headerBorderColor = Color(128, 128, 128);
   Color hotHeaderFaceColor = Color(182, 189, 210);

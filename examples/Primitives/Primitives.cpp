@@ -64,8 +64,9 @@ public:
     invalidate(true);
   }
 
-  virtual void onPaint(Graphics &g)
+  virtual void onPaint(PaintEvent& ev)
   {
+    Graphics& g = ev.getGraphics();
     bool fill = m_fill.isSelected();
     Rect rc = getClientBounds();
 

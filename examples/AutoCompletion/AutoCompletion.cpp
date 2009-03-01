@@ -735,8 +735,9 @@ public:
 
 protected:
 
-  virtual void onPaint(Graphics& g)
+  virtual void onPaint(PaintEvent& ev)
   {
+    Graphics& g = ev.getGraphics();
     Rect rc = getClientBounds(); 
 
     if (m_color != NULL) {

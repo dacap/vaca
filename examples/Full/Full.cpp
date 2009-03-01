@@ -70,8 +70,9 @@ protected:
     sz = Size(64, 64);
     m_console->println(L"onPreferredSize()");
   }
-  virtual void onPaint(Graphics& g)
+  virtual void onPaint(PaintEvent& ev)
   {
+    Graphics& g = ev.getGraphics();
     Brush yellow(Color::Yellow);
     g.fillRect(yellow, getBounds());
     m_console->println(L"onPaint()");

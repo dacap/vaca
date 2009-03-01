@@ -32,6 +32,7 @@
 #include "Vaca/LinkLabel.h"
 #include "Vaca/Point.h"
 #include "Vaca/MouseEvent.h"
+#include "Vaca/PaintEvent.h"
 #include "Vaca/Cursor.h"
 #include "Vaca/Debug.h"
 #include "Vaca/Font.h"
@@ -120,8 +121,9 @@ void LinkLabel::onPreferredSize(Size& sz)
 /// mouse is over the label, it's drawn using the m_underlineFont font and
 /// the getHoverColor() color.
 /// 
-void LinkLabel::onPaint(Graphics& g)
+void LinkLabel::onPaint(PaintEvent& ev)
 {
+  Graphics& g = ev.getGraphics();
   Rect rc = getClientBounds();
   Brush brush(getBgColor());
 

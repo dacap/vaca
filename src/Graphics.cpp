@@ -69,7 +69,6 @@ void Graphics::initialize()
   m_nullPen = ::CreatePen(PS_NULL, 0, 0);
   m_nullBrush = ::CreateBrushIndirect(&lb);
 
-  m_noPaint = false;
   m_fillRule = FillRule::EvenOdd;
 }
 
@@ -134,19 +133,6 @@ Graphics::~Graphics()
     ::ReleaseDC(NULL, m_handle);
   else if (m_autoDelete)
     ::DeleteDC(m_handle);
-}
-
-/// Indicates that the Graphics wasn't touched. It's called by the
-/// default implementation of the Widget::onPaint.
-/// 
-void Graphics::noPaint()
-{
-  m_noPaint = true;
-}
-
-bool Graphics::wasPainted()
-{
-  return !m_noPaint;
 }
 
 Rect Graphics::getClipBounds()

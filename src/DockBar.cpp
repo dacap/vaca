@@ -34,6 +34,7 @@
 #include "Vaca/Debug.h"
 #include "Vaca/Application.h"
 #include "Vaca/MouseEvent.h"
+#include "Vaca/PaintEvent.h"
 #include "Vaca/Debug.h"
 #include "Vaca/System.h"
 
@@ -359,9 +360,9 @@ void DockBar::onDockFrameClose(CloseEvent& ev)
 
 /// Calls paintGripper().
 /// 
-void DockBar::onPaint(Graphics& g)
+void DockBar::onPaint(PaintEvent& ev)
 {
-  paintGripper(g);
+  paintGripper(ev.getGraphics());
 }
 
 /// When the gripper is visible in the floating state

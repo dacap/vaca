@@ -397,8 +397,9 @@ protected:
 //     update();
   }
 
-  void onPaint(Graphics &g)
+  virtual void onPaint(PaintEvent& ev)
   {
+    Graphics &g = ev.getGraphics();
     Rect rc = getClientBounds();
     double a = static_cast<double>(rc.w) / static_cast<double>(900);
     double b = static_cast<double>(rc.h) / static_cast<double>(650);

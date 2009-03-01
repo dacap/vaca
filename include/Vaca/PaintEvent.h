@@ -29,62 +29,37 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_BANDEDDOCKAREA_H
-#define VACA_BANDEDDOCKAREA_H
-
-#include <vector>
+#ifndef VACA_PAINTEVENT_H
+#define VACA_PAINTEVENT_H
 
 #include "Vaca/base.h"
-#include "Vaca/DockArea.h"
+#include "Vaca/Event.h"
 
 namespace Vaca {
 
-/// An area where you can put @link Vaca::DockBar DockBars@endlink
-/// separated by bands.
+/// Event to paint a widget.
 /// 
-class VACA_DLL BandedDockArea : public DockArea
+class VACA_DLL PaintEvent : public Event
 {
-  struct BandInfo
-  {
-    std::vector<DockBar*> bars; // bars in the band
-    int size;			// band's height (or width for vertical bands)
-    BandInfo() : bars()
-	       , size(0) { }
-  };
+  friend class Widget;
 
-  std::vector<BandInfo> m_bandInfo;
+  Graphics& m_graphics;
+  bool m_painted;
 
 public:
 
-  struct VACA_DLL Styles {
-    static const Style Default;
-  };
+  PaintEvent(Widget* source, Graphics& graphics);
+  virtual ~PaintEvent();
 
-  BandedDockArea(Side side, Widget* parent, Style style = Styles::Default);
-  virtual ~BandedDockArea();
+  Graphics& getGraphics();
 
-  virtual bool hitTest(DockBar* bar, const Point& cursor, const Point& anchor, bool fromInside);
-  virtual DockInfo* createDefaultDockInfo(DockBar* bar);
-  virtual DockInfo* createDockInfo(DockBar* bar, const Point& cursor, const Point& anchor);
-  virtual void drawXorTracker(Graphics& g, DockInfo* dockInfo);
-
-  virtual void layout();
-
-protected:
-  // events
-  virtual void onPreferredSize(Size& sz);
-  virtual void onPaint(PaintEvent& ev);
-  virtual void onAddDockBar(DockBar* dockBar);
-  virtual void onRemoveDockBar(DockBar* dockBar);
-  virtual void onRedock(DockBar* dockBar, DockInfo* newDockInfo);
+  bool isPainted() const;
 
 private:
-  void updateBandSize(int bandIndex);
-  Rect getBandBounds(int bandIndex);
-  void fitBounds(int bandIndex, int barIndex1, std::vector<Rect>& bounds);
+  void noPaint();
 
 };
 
 } // namespace Vaca
 
-#endif // VACA_BANDEDDOCKAREA_H
+#endif // VACA_PAINTEVENT_H

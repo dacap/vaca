@@ -348,8 +348,9 @@ public:
 protected:
 
   // paint the client area
-  virtual void onPaint(Graphics &g)
+  virtual void onPaint(PaintEvent& ev)
   {
+    Graphics& g = ev.getGraphics();
     Rect rc = getClientBounds();
 
     int hotDigit = 0;

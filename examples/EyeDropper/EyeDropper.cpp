@@ -61,10 +61,11 @@ public:
 
 protected:
 
-  virtual void onPaint(Graphics &g)
+  virtual void onPaint(PaintEvent& ev)
   {
     // remember not to call the base implementation of onPaint (Widget::onPaint)
-    
+
+    Graphics& g = ev.getGraphics();
     Rect rc = getClientBounds();
     Color bg = getBgColor();
     Pen blackPen(Color::Black);

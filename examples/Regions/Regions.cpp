@@ -65,8 +65,9 @@ public:
 
 protected:
     
-  virtual void onPaint(Graphics &g)
+  virtual void onPaint(PaintEvent& ev)
   {
+    Graphics& g = ev.getGraphics();
     Brush brush(m_readOnly ? Color::Gray: Color::Red);
     g.fillRegion(brush, m_region);
   }

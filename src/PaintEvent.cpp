@@ -29,62 +29,33 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_BANDEDDOCKAREA_H
-#define VACA_BANDEDDOCKAREA_H
+#include "Vaca/PaintEvent.h"
+#include "Vaca/Widget.h"
 
-#include <vector>
+using namespace Vaca;
 
-#include "Vaca/base.h"
-#include "Vaca/DockArea.h"
-
-namespace Vaca {
-
-/// An area where you can put @link Vaca::DockBar DockBars@endlink
-/// separated by bands.
-/// 
-class VACA_DLL BandedDockArea : public DockArea
+PaintEvent::PaintEvent(Widget* source, Graphics& graphics)
+  : Event(source)
+  , m_graphics(graphics)
+  , m_painted(false)
 {
-  struct BandInfo
-  {
-    std::vector<DockBar*> bars; // bars in the band
-    int size;			// band's height (or width for vertical bands)
-    BandInfo() : bars()
-	       , size(0) { }
-  };
+}
 
-  std::vector<BandInfo> m_bandInfo;
+PaintEvent::~PaintEvent()
+{
+}
 
-public:
+Graphics& PaintEvent::getGraphics()
+{
+  return m_graphics;
+}
 
-  struct VACA_DLL Styles {
-    static const Style Default;
-  };
+bool PaintEvent::isPainted() const
+{
+  return m_painted;
+}
 
-  BandedDockArea(Side side, Widget* parent, Style style = Styles::Default);
-  virtual ~BandedDockArea();
-
-  virtual bool hitTest(DockBar* bar, const Point& cursor, const Point& anchor, bool fromInside);
-  virtual DockInfo* createDefaultDockInfo(DockBar* bar);
-  virtual DockInfo* createDockInfo(DockBar* bar, const Point& cursor, const Point& anchor);
-  virtual void drawXorTracker(Graphics& g, DockInfo* dockInfo);
-
-  virtual void layout();
-
-protected:
-  // events
-  virtual void onPreferredSize(Size& sz);
-  virtual void onPaint(PaintEvent& ev);
-  virtual void onAddDockBar(DockBar* dockBar);
-  virtual void onRemoveDockBar(DockBar* dockBar);
-  virtual void onRedock(DockBar* dockBar, DockInfo* newDockInfo);
-
-private:
-  void updateBandSize(int bandIndex);
-  Rect getBandBounds(int bandIndex);
-  void fitBounds(int bandIndex, int barIndex1, std::vector<Rect>& bounds);
-
-};
-
-} // namespace Vaca
-
-#endif // VACA_BANDEDDOCKAREA_H
+void PaintEvent::noPaint()
+{
+  m_painted = false;
+}

@@ -77,8 +77,10 @@ protected:
     invalidate(false);
   }
 
-  virtual void onPaint(Graphics& g)
+  virtual void onPaint(PaintEvent& ev)
   {
+    Graphics& g = ev.getGraphics();
+
     // draw only the clip area
     Rect rc = g.getClipBounds();
     g.drawImage(m_image, rc.getOrigin(), rc);

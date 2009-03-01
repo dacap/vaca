@@ -48,8 +48,9 @@ public:
   }
 
   // paint event
-  virtual void onPaint(Graphics &g)
+  virtual void onPaint(PaintEvent& ev)
   {
+    Graphics& g = ev.getGraphics();
     Rect bounds = getClientBounds();
     bool selected = hasSelectedVisualAspect();
     Color color = getBgColor();

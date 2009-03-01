@@ -79,8 +79,9 @@ protected:
     invalidate(true);
   }
 
-  virtual void onPaint(Graphics &g)
+  virtual void onPaint(PaintEvent& ev)
   {
+    Graphics& g = ev.getGraphics();
     Rect rc = getClientBounds();
     Point origin = rc.getCenter();
 
@@ -199,10 +200,11 @@ protected:
     }
   }
 
-  virtual void onPaint(Graphics &g)
+  virtual void onPaint(PaintEvent& ev)
   {
-    AxisPage::onPaint(g);
+    AxisPage::onPaint(ev);
     
+    Graphics& g = ev.getGraphics();
     Rect rc = getClientBounds();
     Point origin = rc.getCenter();
 
@@ -284,10 +286,11 @@ public:
 
 protected:
 
-  virtual void onPaint(Graphics &g)
+  virtual void onPaint(PaintEvent& ev)
   {
-    AxisPage::onPaint(g);
+    AxisPage::onPaint(ev);
 
+    Graphics& g = ev.getGraphics();
     Rect rc = getClientBounds();
 
     // draw the f(x) = x
@@ -328,10 +331,11 @@ public:
 
 protected:
 
-  virtual void onPaint(Graphics &g)
+  virtual void onPaint(PaintEvent& ev)
   {
-    EditablePointsPage::onPaint(g);
+    EditablePointsPage::onPaint(ev);
 
+    Graphics& g = ev.getGraphics();
     Rect rc = getClientBounds();
 
     // number of points
@@ -377,9 +381,12 @@ public:
 
 protected:
 
-  virtual void onPaint(Graphics &g)
+  virtual void onPaint(PaintEvent& ev)
   {
-    EditablePointsPage::onPaint(g);
+    EditablePointsPage::onPaint(ev);
+
+    // graphics
+    Graphics &g = ev.getGraphics();
 
     // pens
     Pen greenPen(Color(0, 192, 0), 2);

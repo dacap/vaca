@@ -91,7 +91,7 @@ LinkLabel::~LinkLabel()
 
 void LinkLabel::setFont(Font font)
 {
-  Widget::setFont(font);
+  CustomLabel::setFont(font);
 
   // update the underline font
   updateFont(font);
@@ -172,6 +172,7 @@ void LinkLabel::onPaint(PaintEvent& ev)
 void LinkLabel::onMouseEnter(MouseEvent& ev)
 {
   m_state = Inside;
+  CustomLabel::onMouseEnter(ev);
 }
 
 void LinkLabel::onMouseMove(MouseEvent& ev)
@@ -191,14 +192,17 @@ void LinkLabel::onMouseMove(MouseEvent& ev)
       m_state = Inside;
     }
   }
+
+  CustomLabel::onMouseMove(ev);
 }
 
-void LinkLabel::onMouseLeave()
+void LinkLabel::onMouseLeave(MouseEvent& ev)
 {
   if (m_state == Hover)
     invalidate(true);
-
   m_state = Outside;
+
+  CustomLabel::onMouseLeave(ev);
 }
 
 /// Opens the URL (if it's not empty), and calls the onAction event.
@@ -209,7 +213,10 @@ void LinkLabel::onMouseDown(MouseEvent& ev)
     requestFocus();
     
     action();
+    ev.consume();
   }
+
+  CustomLabel::onMouseDown(ev);
 }
 
 /// Uses the Cursor::Hand when the mouse is over the label.
@@ -228,25 +235,25 @@ void LinkLabel::onSetCursor(WidgetHitTest hitTest)
 
 void LinkLabel::onFocusEnter(Event& ev)
 {
-  CustomLabel::onFocusEnter(ev);
   invalidate(true);
+  CustomLabel::onFocusEnter(ev);
 }
 
 void LinkLabel::onFocusLeave(Event& ev)
 {
-  CustomLabel::onFocusLeave(ev);
   invalidate(true);
+  CustomLabel::onFocusLeave(ev);
 }
 
 void LinkLabel::onKeyDown(KeyEvent& ev)
 {
-  CustomLabel::onKeyDown(ev);
-
   if (hasFocus() &&
       (ev.getKeyCode() == Keys::Space ||
        ev.getKeyCode() == Keys::Enter)) {
     action();
+    ev.consume();
   }
+  CustomLabel::onKeyDown(ev);
 }
 
 // If the label is resized, we must to redraw it. This is necessary
@@ -255,6 +262,7 @@ void LinkLabel::onKeyDown(KeyEvent& ev)
 // void LinkLabel::onResize(const Size& sz)
 // {
 //   invalidate(true);
+//   CustomLabel::onResize(sz);
 // }
 
 /// Called when the user press the mouse button down over the label.

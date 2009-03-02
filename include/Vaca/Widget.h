@@ -391,7 +391,7 @@ public:
 
   Signal1<void, const Size&> Resize; ///< @see onResize
   Signal1<void, MouseEvent&> MouseEnter; ///< @see onMouseEnter
-  Signal0<void> MouseLeave; ///< @see onMouseLeave
+  Signal1<void, MouseEvent&> MouseLeave; ///< @see onMouseLeave
   Signal1<void, MouseEvent&> MouseDown; ///< @see onMouseDown
   Signal1<void, MouseEvent&> MouseUp; ///< @see onMouseUp
   Signal1<void, MouseEvent&> MouseMove; ///< @see onMouseMove
@@ -414,7 +414,7 @@ protected:
   virtual void onPaint(PaintEvent& ev);
   virtual void onResize(const Size& sz);
   virtual void onMouseEnter(MouseEvent& ev);
-  virtual void onMouseLeave();
+  virtual void onMouseLeave(MouseEvent& ev);
   virtual void onMouseDown(MouseEvent& ev);
   virtual void onMouseUp(MouseEvent& ev);
   virtual void onMouseMove(MouseEvent& ev);

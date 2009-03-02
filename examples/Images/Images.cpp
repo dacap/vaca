@@ -95,6 +95,8 @@ protected:
     invalidate(Rect(m_mousePoint -
 		    Point(m_mouseImage.getSize()/2),
 		    m_mouseImage.getSize()), false);
+
+    Frame::onMouseMove(ev);
   }
 
   virtual void onMouseDown(MouseEvent &ev)
@@ -117,16 +119,19 @@ protected:
     }
 
     invalidate(false);
+    Frame::onMouseDown(ev);
   }
 
   virtual void onMouseEnter(MouseEvent &ev)
   {
     invalidate(false);
+    Frame::onMouseEnter(ev);
   }
 
-  virtual void onMouseLeave()
+  virtual void onMouseLeave(MouseEvent& ev)
   {
     invalidate(false);
+    Frame::onMouseLeave(ev);
   }
 
   virtual void onSetCursor(WidgetHitTest hitTest)
@@ -158,8 +163,8 @@ protected:
 
   virtual void onResize(const Size& sz)
   {
-    Widget::onResize(sz);
     invalidate(false);
+    Widget::onResize(sz);
   }
 
 };

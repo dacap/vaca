@@ -486,15 +486,18 @@ protected:
 
     if (m_hotCell != oldHot)
       invalidate(true);
+
+    Frame::onMouseMove(ev);
   }
   
   // if the mouse leave the client area, remove the highlight
-  virtual void onMouseLeave()
+  virtual void onMouseLeave(MouseEvent& ev)
   {
     if (m_hotCell != m_puzzle.end()) {
       invalidate(true);
       m_hotCell = m_puzzle.end();
     }
+    Frame::onMouseLeave(ev);
   }
 
   virtual void onMouseDown(MouseEvent &ev)
@@ -528,8 +531,10 @@ protected:
 	m_candidatesEdit.requestFocus();
       }
 
+      ev.consume();
       invalidate(true);
     }
+    Frame::onMouseDown(ev);
   }
 
 private:

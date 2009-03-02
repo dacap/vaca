@@ -10,6 +10,7 @@ namespace Vaca {
 @section page_api_changes_0_0_8 API Changes from 0.0.7 to 0.0.8
 
 @beginChanges
+<!------------------------------------------------------------------------->
 @beginChange{String - Now it is a std::wstring}
 
 There were problems using the old String (a derived class of
@@ -24,6 +25,7 @@ This has two implications:
 The old string class is inside the "Vaca/backward.h" under the name
 of _String. It will be completelly removed in the next version of Vaca.
 @endChange
+<!------------------------------------------------------------------------->
 @beginChange{ChildStyle - Removed}
 Now ChildStyle is deprecated. You should replace all places
 where you were using ChildStyle with Widget::Styles::Visible
@@ -34,6 +36,7 @@ The WS_CHILD style is automatically controlled by Vaca if you
 specify or not a parent when create a Widget. You don't have to
 worry about it.
 @endChange
+<!------------------------------------------------------------------------->
 @beginChange{VACA_MIN/MAX/CLAMP - Renamed}
 
 Now the three macros VACA_MIN, VACA_MAX, and VACA_CLAMP where replaced
@@ -42,17 +45,20 @@ by Vaca::min_value, Vaca::max_value and Vaca::clamp_value inline functions.
 Include "Vaca/backward.h" header file if you were using those macros.
 
 @endChange
+<!------------------------------------------------------------------------->
 @beginChange{Spinner::getEdit - Renamed}
 
 Spinner::getEdit renamed to Spinner::getTextEdit.
 
 @endChange
+<!------------------------------------------------------------------------->
 @beginChange{ToolSet::loadStandardImageList - Removed}
 
 This method was removed (it was too much Win32 specific). Also
 ToolBar::loadStandardImageList was removed.
 
 @endChange
+<!------------------------------------------------------------------------->
 @beginChange{Bix() - Signature Changed}
 Old signature:
 @code
@@ -63,6 +69,7 @@ New signature:
 Bix::Bix(int flags, int matrixColumns)
 @endcode
 @endChange
+<!------------------------------------------------------------------------->
 @beginChange{Thread::setPriority - Renamed/Signature Changed}
 Before the "priority" argument was from Win32 API:
 @code
@@ -89,12 +96,53 @@ Where:
   priority = ThreadPriority::TimeCritical
 @endcode
 @endChange
+<!------------------------------------------------------------------------->
 @beginChange{onGotFocus/onLostFocus - Renamed}
 Now they are onFocusEnter and onFocusLeave (the same for Widget#FocusEnter/Widget#FocusLeave signals).
 @endChange
+<!------------------------------------------------------------------------->
 @beginChange{onBeforePosChange/onAfterPosChange - Removed}
 Use Widget#onResize, and Frame#onResizing.
 @endChange
+<!------------------------------------------------------------------------->
+@beginChange{onPaint - Signature Changed}
+Now onPaint receives a PaintEvent& instead of Graphics&.
+Old signature:
+@code
+virtual void Widget::onPaint(Graphics& g)
+{
+  ...
+}
+@endcode
+New signature:
+@code
+virtual void Widget::onPaint(PaintEvent& ev)
+{
+  Graphics& g = ev.getGraphics();
+  ...
+}
+@endcode
+@endChange
+<!------------------------------------------------------------------------->
+@beginChange{onMouseLeave - Signature Changed}
+Now onMouseLeave receives a MouseEvent&.
+Old signature:
+@code
+virtual void Widget::onMouseLeave()
+{
+  ...
+}
+@endcode
+New signature:
+@code
+virtual void Widget::onMouseLeave(MouseEvent& ev)
+{
+  // the point of the event is not in the client bounds
+  assert(!getClientBounds().contains(ev.getPoint()));
+}
+@endcode
+@endChange
+<!------------------------------------------------------------------------->
 @beginChange{onScroll - Signature Changed}
 
 Old signature:
@@ -113,6 +161,7 @@ ScrollRequest code = ev.getRequest();
 @ref ScrollRequest is a new enumeration to wrap Win32 constants.
 
 @endChange
+<!------------------------------------------------------------------------->
 @beginChange{About Styles}
 
 All style stuff had change. Before there were a lot of macros to

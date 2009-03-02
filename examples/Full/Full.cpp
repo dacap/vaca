@@ -88,10 +88,11 @@ protected:
 				     ev.getX(), ev.getY()));
     Widget::onMouseEnter(ev);
   }
-  virtual void onMouseLeave()
+  virtual void onMouseLeave(MouseEvent& ev)
   {
-    m_console->println(L"onMouseLeave()");
-    Widget::onMouseLeave();
+    m_console->println(format_string(L"onMouseLeave(%d, %d)",
+				     ev.getX(), ev.getY()));
+    Widget::onMouseLeave(ev);
   }
   virtual void onMouseDown(MouseEvent& ev)
   {

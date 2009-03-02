@@ -46,7 +46,7 @@ class AnchoredWidget : public Widget
 {
   Anchor* m_anchor;
   Sides m_hotSides;
-  
+
 public:
 
   AnchoredWidget(Anchor* anchor, Widget* parent)
@@ -64,8 +64,8 @@ protected:
 
   virtual void onResize(const Size &sz)
   {
-    Widget::onResize(sz);
     invalidate(true);
+    Widget::onResize(sz);
   }
 
   virtual void onPaint(PaintEvent& ev)
@@ -87,7 +87,10 @@ protected:
 	m_anchor->setSides(m_anchor->getSides() ^ sides[c]);
 	getParent()->layout();
 	invalidate(true);
+	ev.consume();
       }
+
+    Widget::onMouseDown(ev);
   }
 
   virtual void onMouseMove(MouseEvent &ev)
@@ -104,16 +107,18 @@ protected:
 	invalidate(true);
       }
     }
+    Widget::onMouseDown(ev);
   }
 
-  virtual void onMouseLeave()
+  virtual void onMouseLeave(MouseEvent& ev)
   {
     if (m_hotSides != 0) {
       m_hotSides = 0;
       invalidate(true);
     }
+    Widget::onMouseLeave(ev);
   }
-  
+
 private:
 
   void drawRect(Graphics &g, const Rect &rc, Sides b)
@@ -144,7 +149,7 @@ private:
 
     throw;
   }
-  
+
 };
 
 class MainFrame : public Frame

@@ -711,7 +711,7 @@ protected:
   virtual void onMouseUp(MouseEvent& ev);
   virtual void onMouseMove(MouseEvent& ev);
   virtual void onMouseWheel(MouseEvent& ev);
-  virtual void onMouseLeave();
+  virtual void onMouseLeave(MouseEvent& ev);
   virtual void onKeyDown(KeyEvent& ev);
   virtual void onSetCursor(WidgetHitTest hitTest);
   virtual void onResize(const Size& sz);
@@ -804,8 +804,6 @@ void GridView::setCrudColumnWidth(int width)
 
 void GridView::onScroll(ScrollEvent& ev)
 {
-  Widget::onScroll(ev);
-
   Orientation orien = ev.getOrientation();
   int pos = getScrollPos(orien);
   int oldPos = pos;
@@ -836,6 +834,8 @@ void GridView::onScroll(ScrollEvent& ev)
 		   NULL, NULL, NULL, NULL,
 		   SW_ERASE | SW_INVALIDATE);
   }
+
+  Widget::onScroll(ev);
 }
 
 void GridView::onDoubleClick(MouseEvent &ev)
@@ -996,14 +996,13 @@ void GridView::onMouseWheel(MouseEvent &ev)
   }
 }
 
-void GridView::onMouseLeave()
+void GridView::onMouseLeave(MouseEvent& ev)
 {
-  Widget::onMouseLeave();
-
   if (m_hotCol != NULL_COLUMN_INDEX) {
     invalidate(getColumnBounds(m_hotCol), false);
     m_hotCol = NULL_COLUMN_INDEX;
   }
+  Widget::onMouseLeave(ev);
 }
 
 void GridView::onKeyDown(KeyEvent &ev)

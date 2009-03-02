@@ -77,7 +77,7 @@ protected:
   virtual void onPaint(PaintEvent& ev);
   virtual void onMouseEnter(MouseEvent& ev);
   virtual void onMouseMove(MouseEvent& ev);
-  virtual void onMouseLeave();
+  virtual void onMouseLeave(MouseEvent& ev);
   virtual void onMouseDown(MouseEvent& ev);
   virtual void onSetCursor(WidgetHitTest hitTest);
 //   virtual void onResize(const Size& sz);

@@ -1677,18 +1677,22 @@ void Widget::onMouseEnter(MouseEvent& ev)
 }
 
 /// The mouse leaves the Widget.
-/// 
+///
+/// The @a ev contains the mouse coordinate outside the client bounds
+/// of the widgets (it is relative to client bounds, so you could obtain
+/// negative values for x and/or y).
+///
 /// @win32
 ///   This event is generated when @msdn{WM_MOUSELEAVE} message is received.
 /// @endwin32
-/// 
-void Widget::onMouseLeave()
+///
+void Widget::onMouseLeave(MouseEvent& ev)
 {
-  MouseLeave();
+  MouseLeave(ev);
 }
 
 /// The mouse is inside the Widget and the user press a mouse's button.
-/// 
+///
 /// @win32
 ///   This event is generated when @msdn{WM_LBUTTONDOWN},
 ///   @msdn{WM_MBUTTONDOWN}, or @msdn{WM_RBUTTONDOWN} message is received.
@@ -2510,10 +2514,19 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
       break;
     }
 
-    case WM_MOUSELEAVE:
-	m_hasMouse = false;
-	onMouseLeave();
-	break;
+    case WM_MOUSELEAVE: {
+      Point clientOrigin = getAbsoluteClientBounds().getOrigin();
+      MouseEvent
+	ev(this,				   // widget
+	   System::getCursorPos() - clientOrigin,  // pt
+	   0,					   // clicks
+	   0,					   // flags
+	   MouseButton::None);			   // button
+
+      m_hasMouse = false;
+      onMouseLeave(ev);
+      break;
+    }
 
     case WM_CANCELMODE:
       onCancelMode();

@@ -176,7 +176,7 @@ public:
   void setCandidates(const std::vector<int>& candidates)
   {
     String result;
-    for (int i=0; i<candidates.size(); ++i)
+    for (size_t i=0; i<candidates.size(); ++i)
       result += convert_to<String>(candidates[i]);
     setText(result);
     selectRange(getTextLength(), getTextLength());
@@ -186,7 +186,7 @@ public:
   {
     String text = getText();
     std::vector<int> result;
-    for (int i=0; i<text.size(); ++i)
+    for (size_t i=0; i<text.size(); ++i)
       result.push_back(text[i] - L'0');
     return result;
   }
@@ -435,7 +435,7 @@ protected:
 
 	  Point offset(1, 1);
 
-	  for (int i=0; i<it->candidates.size(); ++i) {
+	  for (size_t i=0; i<it->candidates.size(); ++i) {
 	    String text = convert_to<String>(it->candidates[i]);
 	    Size textSize = g.measureString(text);
 

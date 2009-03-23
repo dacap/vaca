@@ -108,30 +108,15 @@ public:
 /// 
 /// @see @ref page_tn_001
 /// 
-class WidgetClass
+class VACA_DLL WidgetClass
 {
 public:
 
-  /// Returns the class name.
-  /// 
-  /// @win32
-  ///   The class name is used in the lpszClassName field of
-  ///   the @msdn{WNDCLASSEX} structure inside the @link Register#Register Register constructor@endlink.
-  /// @endwin32
-  /// 
-  static WidgetClassName getClassName()
-  { return WidgetClassName(L"Vaca.Widget"); }
-
-  /// Returns the set of CS_ Win32 flags.
-  /// 
-  /// All Widgets by default received double-clicks, so it returns
-  /// CS_DBLCLKS.
-  /// 
-  static int getStyle() { return CS_DBLCLKS; }
-
-  static int getColor() { return COLOR_3DFACE; }
-
-  static int getWndExtra() { return 0; }
+  static WidgetClassName getClassName();
+  static int getStyle();
+  static int getColor();
+  static int getWndExtra();
+  static WNDPROC getWndProc();
 
 };
 

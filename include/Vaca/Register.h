@@ -82,7 +82,7 @@ public:
     if (!GetClassInfoEx(Application::getHandle(), class_name.c_str(), &wcex)) {
       wcex.cbSize        = sizeof(WNDCLASSEX); 
       wcex.style         = T::getStyle();
-      wcex.lpfnWndProc   = Widget::getGlobalWndProc();
+      wcex.lpfnWndProc   = T::getWndProc();
       wcex.cbClsExtra    = 0;
       wcex.cbWndExtra    = T::getWndExtra();
       wcex.hInstance     = Application::getHandle();

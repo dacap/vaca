@@ -76,6 +76,13 @@ Referenceable::~Referenceable()
   assert(m_refCount == 0);
 }
 
+/// Called by SharedPtr to destroy the referenceable.
+///
+void Referenceable::destroy()
+{
+  delete this;
+}
+
 /// Makes a new reference to this object.
 /// 
 /// You are responsible for removing references using the #unref

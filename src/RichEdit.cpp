@@ -36,6 +36,7 @@
 #include "Vaca/WidgetClass.h"
 
 #include <richedit.h>
+#include <memory>
 
 using namespace Vaca;
 

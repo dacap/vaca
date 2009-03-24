@@ -45,6 +45,7 @@ namespace Vaca {
 /// 
 class VACA_DLL Referenceable : private NonCopyable
 {
+  template<class> friend class SharedPtr;
   unsigned m_refCount;
 
 public:
@@ -64,6 +65,9 @@ private:
   static volatile int instanceCounter;
   static std::vector<Referenceable*> list; // TODO rename these variables
 #endif
+
+private:
+  void destroy();
 };
 
 } // namespace Vaca

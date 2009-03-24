@@ -126,7 +126,7 @@ private:
   void unref() {
     if (m_ptr) {
       if (((Referenceable*)m_ptr)->unref() == 0)
-	delete m_ptr;
+	((Referenceable*)m_ptr)->destroy();
       m_ptr = NULL;
     }
   }

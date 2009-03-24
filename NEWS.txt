@@ -1,5 +1,6 @@
 Vaca 0.0.8
 
+- Using CMake as building system.
 - Unicode support is activated by default.
 - Added RichEdit widget.
 - Added Thread::enqueueMessage and Widget::enqueueMessage.

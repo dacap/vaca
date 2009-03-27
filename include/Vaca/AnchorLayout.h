@@ -58,7 +58,7 @@ public:
 
   AnchorLayout(const Size& refSize);
 
-  virtual void layout(Widget* parent, Widget::Container& widgets, const Rect& rc);
+  virtual void layout(Widget* parent, WidgetList& widgets, const Rect& rc);
 
 };
 

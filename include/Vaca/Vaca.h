@@ -140,5 +140,6 @@
 #include "Vaca/Vaca.h"
 #include "Vaca/Widget.h"
 #include "Vaca/WidgetClass.h"
+#include "Vaca/WidgetList.h"
 
 #endif // VACA_VACA_H

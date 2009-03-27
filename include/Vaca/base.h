@@ -32,6 +32,11 @@
 #ifndef VACA_BASE_H
 #define VACA_BASE_H
 
+#pragma warning(disable: 4251)
+#pragma warning(disable: 4275)
+#pragma warning(disable: 4355)
+#pragma warning(disable: 4996)
+
 #include <algorithm>
 #include <stdarg.h>
 #include <windows.h>

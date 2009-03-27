@@ -31,6 +31,7 @@
 
 #include "Vaca/Layout.h"
 #include "Vaca/Debug.h"
+#include "Vaca/Widget.h"
 
 using namespace Vaca;
 
@@ -44,7 +45,7 @@ Layout::~Layout()
   assert(m_HDWP == NULL);
 }
 
-void Layout::beginMovement(const Widget::Container& widgets)
+void Layout::beginMovement(const WidgetList& widgets)
 {
   m_HDWP = BeginDeferWindowPos(widgets.size());
 
@@ -70,7 +71,7 @@ void Layout::endMovement()
     m_HDWP = NULL;
   }
 
-  for (Widget::Container::iterator it=m_relayoutWidgets.begin();
+  for (WidgetList::iterator it=m_relayoutWidgets.begin();
        it!=m_relayoutWidgets.end(); ++it) {
     (*it)->layout();
   }
@@ -78,17 +79,17 @@ void Layout::endMovement()
   m_relayoutWidgets.clear();
 }
 
-// Size Layout::minimumSize(Widget* parent, Widget::Container& widgets)
+// Size Layout::minimumSize(Widget* parent, WidgetList& widgets)
 // {
 //   return Size(0, 0);
 // }
 
-Size Layout::getPreferredSize(Widget* parent, Widget::Container& widgets, const Size& fitIn)
+Size Layout::getPreferredSize(Widget* parent, WidgetList& widgets, const Size& fitIn)
 {
   return Size(0, 0);
 }
 
-// Size Layout::maximumSize(Widget* parent, Widget::Container& widgets)
+// Size Layout::maximumSize(Widget* parent, WidgetList& widgets)
 // {
 //   // TODO use std::numeric_limits<int>::max()
 //   return Size(INT_MAX, INT_MAX);

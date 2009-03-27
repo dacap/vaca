@@ -32,10 +32,10 @@
 #ifndef VACA_DROPFILESEVENT_H
 #define VACA_DROPFILESEVENT_H
 
-#include <vector>
-
 #include "Vaca/base.h"
 #include "Vaca/Event.h"
+
+#include <vector>
 
 namespace Vaca {
 

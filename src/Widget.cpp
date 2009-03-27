@@ -63,13 +63,13 @@ using namespace Vaca;
 static Mutex atomMutex; // used to access atom
 static volatile ATOM atom = 0;
 
-// default callback to destroy a HWND
+// Default callback to destroy a HWND
 static void Widget_DestroyHandleProc(HWND hwnd)
 {
   ::DestroyWindow(hwnd);
 }
 
-// creates the "VacaAtom" (the property name to put the "Widget*"
+// Creates the "VacaAtom" (the property name to put the "Widget*"
 // pointer in the HWNDs)
 static void create_atom()
 {
@@ -84,40 +84,46 @@ static void create_atom()
 // CTOR & DTOR
 // ============================================================
 
-/// Creates a new widget with the specified class name. You can specify
-/// WidgetClassName#None as @a className if you want to call #create
-/// method by your self
-/// (see @ref page_tn_002).
-/// 
-/// You can't create widgets from a HWND, so you can't treat an
-/// existent HWND like a Widget.
+/// Creates a new widget with the specified class name.
+///
+/// You can specify WidgetClassName#None as @a className if you want
+/// to call #create method by your self (see @ref page_tn_002).
 /// 
 /// @param className
 ///     Must be a registered WNDCLASS for Windows.
 /// 
 /// @param parent
-///     It's a Widget (generally a Frame) that will act as the container
+///     It is a Widget (generally a Frame) that will act as the container
 ///     parent of the new widget.
 /// 
 /// @param style
-///     You can specify the style to be used to create the
-///     widget. Generally Vaca handles the styles in this way: If the
-///     class is called @c Button, the default style is @c Button::Styles::Default.
-///     There exist global styles that can be used for
-///     <em>every widget</em> like @c Widget::Styles::Focusable or
-///     @c Widget::Styles::Visible, but the specific styles for a
-///     particular class, e.g. TextEdit, should be in @c TextEdit::Styles::...,
-///     like @c TextEdit::Styles::ReadOnly.
+///     Specifies the @em style that this widget should follow. A style
+///     can be an aspect, behavior or property of the widget.
+///     There are styles for all widgets (like Widget::Styles::Focusable or
+///     Widget::Styles::Visible) and styles for particular widgets (like
+///     TextEdit::Styles::ReadOnly for TextEdit).
 /// 
 Widget::Widget(const WidgetClassName& className, Widget* parent, Style style)
 {
   initialize();
 
-  // create with the specified "className"?
+  // Do we create with the specified "className"?
   if (className != WidgetClassName::None)
     create(className, parent, style);
 }
 
+/// Creates a user control.
+///
+/// This is an empty widget without behavior, so you can use this
+/// routine to create your own user control (a completelly customized
+/// widget).
+///
+/// @param parent
+///     Container where we have to put the add widget.
+///
+/// @param style
+///	Style for the widget.
+///
 Widget::Widget(Widget* parent, Style style)
 {
   initialize();
@@ -128,9 +134,8 @@ Widget::Widget(Widget* parent, Style style)
 /// Creates a widget from an existent Win32 handle that is not
 /// currently managed by Vaca.
 /// 
-/// @warning The handle must be a handle created by yourself. You
-/// cannot create a widget from the handle of another existent
-/// Vaca Widget.
+/// @warning A HWND can be wrapped just one time. You cannot create
+/// a Widget from an existent Vaca Widget.
 /// 
 /// @win32
 ///   This constructor is only for Windows platform.
@@ -138,9 +143,9 @@ Widget::Widget(Widget* parent, Style style)
 /// 
 /// @throw CreateWidgetException
 ///   If the @a handle is NULL. This can occur if a dialog is initialized
-///   with a resource ID and the resource couldn't be loaded.
+///   with a resource ID and the resource could not be loaded.
 ///   Also this exception will be thrown if the widget is already subclassed
-///   by Vaca. This means that you can't do something like the following example:
+///   by Vaca. This means that you cannot do something like the following example:
 ///   @code
 ///     Button button(L"OK", parent);
 ///     Widget wrapper(button.getHandle()); // throws CreateWidgetException
@@ -211,9 +216,9 @@ Widget::~Widget()
 {
   assert(::IsWindow(m_handle));
 
-  // Lost the focus. WARNING: if we don't make this, Dialogs will die
+  // Lost the focus. WARNING: if we do not make this, Dialogs will die
   // suddenly in an infinite loop when TAB key is pressed. It seems
-  // like Win32 can't handle dialog boxes, the keyboard focus, and
+  // like Win32 cannot handle dialog boxes, the keyboard focus, and
   // destroyed HWND at the same time
   if (hasFocus())
     releaseFocus();
@@ -223,15 +228,15 @@ Widget::~Widget()
     ::ShowWindow(m_handle, SW_HIDE);
 
   if (getParent() != NULL) {
-    // this is very important!!! we can't set the parent of the HWND:
+    // this is very important!!! we cannot set the parent of the HWND:
     // MdiChild needs the parent HWND to send WM_MDIDESTROY
-    getParent()->removeChildWin32(this, false); // <-- false means: don't call Win32's SetParent
+    getParent()->removeChildWin32(this, false); // <-- false means: do not call Win32's SetParent
   }
 
   // delete all children (this is the case for children added using
   // "new" operator that were not deleted)
-  Container children = getChildren(); // we need a copy of the children's list because...
-  for (Container::iterator
+  WidgetList children = getChildren(); // we need a copy of the children's list because...
+  for (WidgetList::iterator
 	 it = children.begin(); it != children.end(); ++it) {
     // ...each destructor will modify the m_children collection
     delete (*it);
@@ -279,13 +284,13 @@ Widget* Widget::getParent() const
 /// in other words, does not matter if you add or remove elements
 /// from them, the original list of children will not be modified.
 /// 
-Widget::Container Widget::getChildren() const
+WidgetList Widget::getChildren() const
 {
 #if 0				// do not use this alternative (it
 				// does not work to synchronize Frame)
   assert(::IsWindow(m_handle));
 
-  Container container;
+  WidgetList container;
 
   HWND hwndChild = ::GetWindow(m_handle, GW_CHILD);
   if (hwndChild != NULL) {
@@ -382,7 +387,7 @@ void Widget::setConstraint(ConstraintPtr constraint)
 /// 
 void Widget::layout()
 {
-  Container children = getChildren();
+  WidgetList children = getChildren();
 
   if (m_layout != NULL && !children.empty())
     m_layout->layout(this, children, getLayoutBounds());
@@ -1607,7 +1612,7 @@ void Widget::onPreferredSize(Size& sz)
   // there is a layout?
   if (m_layout != NULL) {
     // get the list of children
-    Container children = getChildren();
+    WidgetList children = getChildren();
 
     // calculate the preferred size through the layout manager
     sz = m_layout->getPreferredSize(this, children, sz);
@@ -1948,7 +1953,7 @@ bool Widget::onCommand(CommandId id)
 /// 
 void Widget::onUpdateIndicators()
 {
-  for (Container::iterator
+  for (WidgetList::iterator
 	 it=m_children.begin(); it!=m_children.end(); ++it) {
     Widget* child = *it;
     child->updateIndicators();
@@ -2216,7 +2221,7 @@ void Widget::subClass()
 ///   create(L"Vaca.MdiChild", parent, style);
 /// }
 /// 
-/// // it's invoked from "create" from the MdiChild's constructor
+/// // it is invoked from "create" from the MdiChild's constructor
 /// HWND MdiChild::createHandle(...) { ... }
 /// @endcode
 /// 
@@ -2705,7 +2710,7 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
 	// the full 32 bits
 	ScrollEvent ev(this, orien, req, pos);
 	
-	// reflect the message? (it's useful for the "Slider" widget)
+	// reflect the message? (it is useful for the "Slider" widget)
 	if (lParam != 0) {
 	  Widget* child = Widget::fromHandle(reinterpret_cast<HWND>(lParam));
 	  if (child != NULL) {
@@ -2773,7 +2778,7 @@ LRESULT Widget::defWndProc(UINT message, WPARAM wParam, LPARAM lParam)
 /// 
 /// This method check the value of #m_doubleBuffered to do the
 /// double-buffering technique (draw in a Graphics of a temporary
-/// Image, and then copy it's content to @a g).
+/// Image, and then copy its content to @a g).
 /// 
 /// @param g Where to draw.
 /// 
@@ -2787,7 +2792,7 @@ bool Widget::doPaint(Graphics& g)
   if (m_doubleBuffered) {
     // get the clip bounds
     Rect clipBounds = g.getClipBounds();
-    // isn't it empty?
+    // is not it empty?
     if (!clipBounds.isEmpty()) {
       // create the image for double-buffering (of the size of
       // the clipping bounds)
@@ -2840,7 +2845,7 @@ bool Widget::doPaint(Graphics& g)
 }
 
 /// Sets the default procedure to be called by #defWndProc when a
-/// message isn't processed.
+/// message is not processed.
 /// 
 /// @internal
 /// 
@@ -2854,7 +2859,7 @@ void Widget::setDefWndProc(WNDPROC proc)
 /// Sets the destroy-procedure associated with this widget.
 /// 
 /// @win32
-///   Each widget has a procedure to be called when it's destroyed, it is
+///   Each widget has a procedure to be called when it is destroyed, it is
 ///   the last procedure to be called in #~Widget() destructor. By
 ///   default it is @msdn{DestroyWindow}.
 /// @endwin32
@@ -2881,7 +2886,7 @@ LRESULT Widget::sendMessage(UINT message, WPARAM wParam, LPARAM lParam)
 
 /// The global procedure for Win32 used in all registered WNDCLASSes.
 /// 
-/// It's unique goal is to get the Widget pointer from HWND
+/// It is unique goal is to get the Widget pointer from HWND
 /// using #fromHandle, and to call its #wndProc method.
 /// 
 LRESULT CALLBACK Widget::globalWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -3155,7 +3160,7 @@ MakeWidgetRef::~MakeWidgetRef()
 }
 
 /// Checks if @a widget should be deleted right now, and if it is, deletes it.
-/// Don't use this function, it's an internal routine that uses Vaca.
+/// Do not use this function, it is an internal routine that uses Vaca.
 /// 
 /// @internal
 /// 
@@ -3171,8 +3176,8 @@ void MakeWidgetRef::safeDelete(Widget* widget)
 
 /// Safe way to delete a widget from memory.
 /// 
-/// It deletes the specified widget if it isn't referenced, or defer
-/// its deletion for a secure point of deletion (e.g. when it's
+/// It deletes the specified widget if it is not referenced, or defer
+/// its deletion for a secure point of deletion (e.g. when it is
 /// completelly unreferenced after an event is processed).
 /// 
 /// @see @ref page_tn_006

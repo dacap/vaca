@@ -104,13 +104,13 @@ public:
   void remove(Bix* subbix);
   void remove(Widget* child);
   
-  virtual Size getPreferredSize(Widget* parent, Widget::Container& widgets, const Size& fitIn);
+  virtual Size getPreferredSize(Widget* parent, WidgetList& widgets, const Size& fitIn);
 
   static Bix* parse(const Char* fmt, ...);
 
 protected:
 
-  virtual void layout(Widget* parent, Widget::Container& widgets, const Rect& rc);
+  virtual void layout(Widget* parent, WidgetList& widgets, const Rect& rc);
 
 private:
   

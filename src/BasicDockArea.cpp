@@ -160,8 +160,8 @@ void BasicDockArea::drawXorTracker(Graphics& g, DockInfo* _dockInfo)
 
 void BasicDockArea::layout()
 {
-  Widget::Container children = getChildren();
-  Widget::Container::iterator it;
+  WidgetList children = getChildren();
+  WidgetList::iterator it;
 
   for (it=children.begin(); it!=children.end(); ++it) {
     DockBar* dockBar = static_cast<DockBar*>(*it);
@@ -176,8 +176,8 @@ void BasicDockArea::layout()
 
 void BasicDockArea::onPreferredSize(Size& sz)
 {
-  Widget::Container children = getChildren();
-  Widget::Container::iterator it;
+  WidgetList children = getChildren();
+  WidgetList::iterator it;
 
   sz = Size(0, 0);
 

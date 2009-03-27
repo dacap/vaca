@@ -32,10 +32,10 @@
 #ifndef VACA_GRAPHICSPATH_H
 #define VACA_GRAPHICSPATH_H
 
-#include <vector>
-
 #include "Vaca/base.h"
 #include "Vaca/Point.h"
+
+#include <vector>
 
 namespace Vaca {
 

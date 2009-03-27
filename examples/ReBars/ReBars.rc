@@ -1,5 +1,4 @@
 #include "resource.h"
 #include "windows.h"
 
-APP_MANIFEST	RT_MANIFEST	"../Example.manifest"
 IDI_VACA	ICON		"../Vaca.ico"

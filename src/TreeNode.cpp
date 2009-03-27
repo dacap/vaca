@@ -59,11 +59,11 @@ TreeNode::~TreeNode()
   // clone "m_children" collection, because when a TreeNode is
   // deleted, it is removed by its self from the m_children of the
   // parent node (see the live of above)
-  Container clone = m_children;
+  TreeNodeList clone = m_children;
 
   // delete all sub-nodes (children), using the cloned collection
-  for (Container::iterator it=clone.begin();
-       it!=clone.end(); ++it)
+  for (TreeNodeList::iterator
+	 it=clone.begin(); it!=clone.end(); ++it)
     delete *it;
 
   // finally, we can remove the node from the Win32 TreeView control
@@ -118,7 +118,7 @@ TreeNode* TreeNode::getParent()
 /// Returns the collection of children.
 /// 
 /// 
-TreeNode::Container TreeNode::getChildren()
+TreeNodeList TreeNode::getChildren()
 {
   return m_children;
 }
@@ -332,8 +332,8 @@ void TreeNode::addToTreeView(TreeView* treeView)
     m_handle = TreeView_InsertItem(treeView->getHandle(), &is);
   }
 
-  for (Container::iterator it=m_children.begin();
-       it!=m_children.end(); ++it) {
+  for (TreeNodeList::iterator
+	 it=m_children.begin(); it!=m_children.end(); ++it) {
     if ((*it)->m_owner == NULL)
       (*it)->addToTreeView(treeView);
   }
@@ -344,8 +344,8 @@ void TreeNode::addToTreeView(TreeView* treeView)
 void TreeNode::removeFromTreeView()
 {
   // remove all children from the TreeView control
-  for (Container::iterator it=m_children.begin();
-       it!=m_children.end(); ++it) {
+  for (TreeNodeList::iterator
+	 it=m_children.begin(); it!=m_children.end(); ++it) {
     (*it)->removeFromTreeView();
   }
 

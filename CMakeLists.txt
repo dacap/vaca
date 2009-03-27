@@ -1,3 +1,7 @@
+# Vaca - Visual Application Components Abstraction
+# Copyright (c) 2005-2009 David Capello
+# All rights reserved.
+
 cmake_minimum_required(VERSION 2.6)
 
 project(Vaca)
@@ -5,12 +9,9 @@ project(Vaca)
 ########################################
 # Options
 
-option(SHARED	"Build shared libraries" off)
-option(DEBUG	"Build with debug information" off)
-option(PROFILE	"Build with profile information" off)
-option(RELEASE	"Build optimized" off)
+option(SHARED	"Build shared libraries" on)
+option(THEMES	"Build examples using WinXP themes" on)
 
-set(SHARED off)
 set(BUILD_SHARED_LIBS ${SHARED})
 
 ########################################
@@ -22,7 +23,7 @@ include_directories(${CMAKE_SOURCE_DIR}/include
 set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
 
 ########################################
-# Library
+# Main target: Vaca Library
 
 set(VACA_SOURCES
 	src/Anchor.cpp
@@ -129,6 +130,22 @@ set(VACA_SOURCES
 
 add_library(Vaca ${VACA_SOURCES})
 
+######################################################################
+# Post-build commands to run examples and tests
+
+add_custom_command(TARGET Vaca
+  POST_BUILD
+  COMMAND "${CMAKE_COMMAND}" -E copy ${CMAKE_CURRENT_SOURCE_DIR}/scintilla/SciLexer.dll ${CMAKE_CURRENT_BINARY_DIR}/examples
+  COMMENT "Copying SciLexer DLL to examples directory")
+
+if(BUILD_SHARED_LIBS)
+  add_custom_command(TARGET Vaca
+    POST_BUILD
+    COMMAND "${CMAKE_COMMAND}" -E copy ${CMAKE_CURRENT_BINARY_DIR}/lib/Vaca.dll ${CMAKE_CURRENT_BINARY_DIR}/examples
+    COMMAND "${CMAKE_COMMAND}" -E copy ${CMAKE_CURRENT_BINARY_DIR}/lib/Vaca.dll ${CMAKE_CURRENT_BINARY_DIR}/tests
+    COMMENT "Copying Vaca DLL to examples and tests directories")
+endif(BUILD_SHARED_LIBS)
+
 ########################################
 # Win32 libraries
 
@@ -146,12 +163,13 @@ if(NOT BUILD_SHARED_LIBS)
 endif(NOT BUILD_SHARED_LIBS)
 
 set(common_flags "${win32_flags} ${unicode_flags} ${static_flags}")
-if(MSVC)
-  set(common_flags "${common_flags} /wd4355 /wd4996")
-endif(MSVC)
 
 set_target_properties(Vaca PROPERTIES
   COMPILE_FLAGS "-DVACA_SRC ${common_flags}")
+
+if(BUILD_SHARED_LIBS)
+  target_link_libraries(Vaca ${win32_libs})
+endif(BUILD_SHARED_LIBS)
 
 ########################################
 # Examples
@@ -160,3 +178,5 @@ add_subdirectory(examples)
 
 ########################################
 # Tests
+
+add_subdirectory(tests)

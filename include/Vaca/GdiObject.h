@@ -32,10 +32,10 @@
 #ifndef VACA_GDIOBJECT_H
 #define VACA_GDIOBJECT_H
 
-#include <cassert>
-
 #include "Vaca/base.h"
 #include "Vaca/Referenceable.h"
+
+#include <cassert>
 
 namespace Vaca {
 

@@ -32,12 +32,12 @@
 #ifndef VACA_SYSTEM_H
 #define VACA_SYSTEM_H
 
-#include <vector>
-#include <shlobj.h>
-
 #include "Vaca/base.h"
 #include "Vaca/Rect.h"
 #include "Vaca/Keys.h"
+
+#include <vector>
+#include <shlobj.h>
 
 namespace Vaca {
 

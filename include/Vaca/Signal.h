@@ -32,10 +32,10 @@
 #ifndef VACA_SIGNAL_H
 #define VACA_SIGNAL_H
 
-#include <vector>
-
 #include "Vaca/base.h"
 #include "Vaca/Slot.h"
+
+#include <vector>
 
 namespace Vaca {
 

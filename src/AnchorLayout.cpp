@@ -34,6 +34,7 @@
 #include "Vaca/Size.h"
 #include "Vaca/Point.h"
 #include "Vaca/Debug.h"
+#include "Vaca/Widget.h"
 
 using namespace Vaca;
 
@@ -50,13 +51,13 @@ AnchorLayout::AnchorLayout(const Size& refSize)
 {
 }
 
-void AnchorLayout::layout(Widget* parent, Widget::Container& widgets, const Rect& parentRc)
+void AnchorLayout::layout(Widget* parent, WidgetList& widgets, const Rect& parentRc)
 {
   Size delta(parentRc.getSize() - m_refSize);
 
   beginMovement(widgets);
 
-  for (Widget::Container::iterator it=widgets.begin(); it!=widgets.end(); ++it) {
+  for (WidgetList::iterator it=widgets.begin(); it!=widgets.end(); ++it) {
     Widget* widget = *it;
 
     if (widget->isLayoutFree())

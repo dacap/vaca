@@ -51,8 +51,8 @@ public:
   ClientLayout(int border);
   virtual ~ClientLayout();
 
-  virtual Size getPreferredSize(Widget* parent, Widget::Container& widgets, const Size& fitIn);
-  virtual void layout(Widget* parent, Widget::Container& widgets, const Rect& rc);
+  virtual Size getPreferredSize(Widget* parent, WidgetList& widgets, const Size& fitIn);
+  virtual void layout(Widget* parent, WidgetList& widgets, const Rect& rc);
 
 };
 

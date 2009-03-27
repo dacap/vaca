@@ -32,11 +32,11 @@
 #ifndef VACA_TOOLBAR_H
 #define VACA_TOOLBAR_H
 
-#include <vector>
-
 #include "Vaca/base.h"
 #include "Vaca/DockBar.h"
 #include "Vaca/ImageList.h"
+
+#include <vector>
 
 namespace Vaca {
 

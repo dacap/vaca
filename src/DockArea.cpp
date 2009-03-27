@@ -47,8 +47,8 @@ DockArea::~DockArea()
 {
 //   dispose();
 
-  Widget::Container children = getChildren();
-  Widget::Container::iterator it;
+  WidgetList children = getChildren();
+  WidgetList::iterator it;
 
   for (it=children.begin(); it!=children.end(); ++it) {
     DockBar* dockBar = static_cast<DockBar*>(*it);

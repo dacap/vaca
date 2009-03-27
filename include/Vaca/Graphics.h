@@ -32,13 +32,13 @@
 #ifndef VACA_GRAPHICS_H
 #define VACA_GRAPHICS_H
 
-#include <list>
-#include <vector>
-
 #include "Vaca/base.h"
 #include "Vaca/NonCopyable.h"
 #include "Vaca/Rect.h"
 #include "Vaca/Font.h"
+
+#include <list>
+#include <vector>
 
 namespace Vaca {
 

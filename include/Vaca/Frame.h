@@ -32,14 +32,14 @@
 #ifndef VACA_FRAME_H
 #define VACA_FRAME_H
 
-#include <vector>
-
 #include "Vaca/base.h"
 #include "Vaca/Widget.h"
 #include "Vaca/WidgetClass.h"
 #include "Vaca/Register.h"
 #include "Vaca/DockArea.h"
 #include "Vaca/Icon.h"
+
+#include <vector>
 
 namespace Vaca {
 
@@ -132,7 +132,7 @@ private:
 
   void initialize(const String& title);
   void updateMenuItem(MenuItem* menuItem);
-  Container getSynchronizedGroup();
+  WidgetList getSynchronizedGroup();
   
 };
 

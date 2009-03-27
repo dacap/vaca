@@ -32,9 +32,9 @@
 #ifndef VACA_DEBUG_H
 #define VACA_DEBUG_H
 
-#include <assert.h>
-
 #include "Vaca/base.h"
+
+#include <cassert>
 
 namespace Vaca {
 

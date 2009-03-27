@@ -32,10 +32,12 @@
 #ifndef VACA_LAYOUT_H
 #define VACA_LAYOUT_H
 
-#include <vector>
-
+#include "Vaca/base.h"
 #include "Vaca/Size.h"
-#include "Vaca/Widget.h"
+#include "Vaca/Referenceable.h"
+#include "Vaca/WidgetList.h"
+
+#include <vector>
 
 namespace Vaca {
 
@@ -55,19 +57,19 @@ namespace Vaca {
 class VACA_DLL Layout : public Referenceable
 {
   HDWP m_HDWP;
-  Widget::Container m_relayoutWidgets;
+  WidgetList m_relayoutWidgets;
 
 public:
 
   Layout();
   virtual ~Layout();
 
-  void beginMovement(const Widget::Container& widgets);
+  void beginMovement(const WidgetList& widgets);
   void moveWidget(Widget* widget, const Rect& rc);
   void endMovement();
 
-  virtual Size getPreferredSize(Widget* parent, Widget::Container& widgets, const Size& fitIn);
-  virtual void layout(Widget* parent, Widget::Container& widgets, const Rect& rc) = 0;
+  virtual Size getPreferredSize(Widget* parent, WidgetList& widgets, const Size& fitIn);
+  virtual void layout(Widget* parent, WidgetList& widgets, const Rect& rc) = 0;
 
 };
 

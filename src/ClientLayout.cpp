@@ -30,6 +30,7 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "Vaca/ClientLayout.h"
+#include "Vaca/Widget.h"
 
 using namespace Vaca;
 
@@ -47,11 +48,11 @@ ClientLayout::~ClientLayout()
 {
 }
 
-// Size ClientLayout::minimumSize(Widget* parent, Widget::Container& widgets)
+// Size ClientLayout::minimumSize(Widget* parent, WidgetList& widgets)
 // {
 //   Size sz(0, 0);
 
-//   for (Widget::Container::iterator it=widgets.begin(); it!=widgets.end(); ++it) {
+//   for (WidgetList::iterator it=widgets.begin(); it!=widgets.end(); ++it) {
 //     Widget* widget = *it;
 //     if (!widget->isLayoutFree()) {
 //       Size pref = widget->minimumSize();
@@ -63,11 +64,11 @@ ClientLayout::~ClientLayout()
 //   return sz;
 // }
 
-Size ClientLayout::getPreferredSize(Widget* parent, Widget::Container& widgets, const Size& fitIn)
+Size ClientLayout::getPreferredSize(Widget* parent, WidgetList& widgets, const Size& fitIn)
 {
   Size sz(0, 0);
 
-  for (Widget::Container::iterator it=widgets.begin(); it!=widgets.end(); ++it) {
+  for (WidgetList::iterator it=widgets.begin(); it!=widgets.end(); ++it) {
     Widget* widget = *it;
     if (!widget->isLayoutFree()) {
       Size pref = widget->getPreferredSize(fitIn);
@@ -79,11 +80,11 @@ Size ClientLayout::getPreferredSize(Widget* parent, Widget::Container& widgets, 
   return sz + m_border;
 }
 
-// Size ClientLayout::maximumSize(Widget* parent, Widget::Container& widgets)
+// Size ClientLayout::maximumSize(Widget* parent, WidgetList& widgets)
 // {
 //   Size sz(0, 0);
 
-//   for (Widget::Container::iterator it=widgets.begin(); it!=widgets.end(); ++it) {
+//   for (WidgetList::iterator it=widgets.begin(); it!=widgets.end(); ++it) {
 //     Widget* widget = *it;
 //     if (!widget->isLayoutFree()) {
 //       Size pref = widget->maximumSize();
@@ -95,14 +96,14 @@ Size ClientLayout::getPreferredSize(Widget* parent, Widget::Container& widgets, 
 //   return sz;
 // }
 
-void ClientLayout::layout(Widget* parent, Widget::Container& widgets, const Rect& rc)
+void ClientLayout::layout(Widget* parent, WidgetList& widgets, const Rect& rc)
 {
   Rect bounds = rc;
   bounds.shrink(m_border);
 
   beginMovement(widgets);
 
-  for (Widget::Container::iterator it=widgets.begin(); it!=widgets.end(); ++it) {
+  for (WidgetList::iterator it=widgets.begin(); it!=widgets.end(); ++it) {
     Widget* widget = *it;
     if (!widget->isLayoutFree())
       moveWidget(widget, bounds);

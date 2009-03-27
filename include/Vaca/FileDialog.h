@@ -32,11 +32,11 @@
 #ifndef VACA_FILEDIALOG_H
 #define VACA_FILEDIALOG_H
 
-#include <vector>
-#include <utility>
-
 #include "Vaca/base.h"
 #include "Vaca/CommonDialog.h"
+
+#include <vector>
+#include <utility>
 
 namespace Vaca {
 

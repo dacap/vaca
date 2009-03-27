@@ -293,8 +293,8 @@ void SplitBar::onAddChild(Widget* child)
 void SplitBar::updateChildrenVisibility()
 {
   // hide children that aren't first or second
-  Container children = getChildren();
-  for (Container::iterator
+  WidgetList children = getChildren();
+  for (WidgetList::iterator
 	 it = children.begin(); it != children.end(); ++it) {
     Widget* child = *it;
     child->setVisible(child == m_first ||

@@ -486,7 +486,7 @@ MenuItem* Menu::insert(int index, MenuItem* menuItem)
 {
   assert(index >= 0 && index <= static_cast<int>(m_container.size()));
 
-  Container::iterator it;
+  MenuItemList::iterator it;
   int c = 0;
 
   for (it=m_container.begin(); it!=m_container.end(); ++it, ++c)
@@ -645,9 +645,9 @@ MenuItem* Menu::getMenuItemById(CommandId id)
     stack.pop();
 
     if (menuItem->isMenu()) {
-      Menu::Container& subMenus(static_cast<Menu*>(menuItem)->m_container);
+      MenuItemList& subMenus(static_cast<Menu*>(menuItem)->m_container);
 
-      for (Menu::Container::iterator it=subMenus.begin();
+      for (MenuItemList::iterator it=subMenus.begin();
 	   it!=subMenus.end(); ++it)
 	stack.push(*it);
     }
@@ -658,7 +658,7 @@ MenuItem* Menu::getMenuItemById(CommandId id)
 
 int Menu::getMenuItemIndex(MenuItem* menuItem)
 {
-  Container::iterator it;
+  MenuItemList::iterator it;
   int c = 0;
 
   for (it=m_container.begin(); it!=m_container.end(); ++it, ++c)
@@ -674,14 +674,14 @@ int Menu::getItemCount()
   return m_container.size();
 }
 
-Menu::Container Menu::getMenuItems()
+MenuItemList Menu::getMenuItems()
 {
   return m_container;
 }
 
 MenuItem* Menu::checkShortcuts(Keys::Type pressedKey)
 {
-  for (Container::iterator it=m_container.begin(); it!=m_container.end(); ++it) {
+  for (MenuItemList::iterator it=m_container.begin(); it!=m_container.end(); ++it) {
     MenuItem* menuItem = (*it)->checkShortcuts(pressedKey);
     if (menuItem != NULL)
       return menuItem;
@@ -715,8 +715,8 @@ bool Menu::isMenu() const
 
 //     stack.pop();
 
-//     Menu::Container& subMenus(lastMenu->m_container);
-//     for (Menu::Container::iterator it=subMenus.begin();
+//     MenuItemList& subMenus(lastMenu->m_container);
+//     for (MenuItemList::iterator it=subMenus.begin();
 // 	 it!=subMenus.end(); ++it) {
 //       if ((*it)->isMenu())
 // 	stack.push(static_cast<Menu*>(*it));
@@ -772,8 +772,8 @@ MdiListMenu* MenuBar::getMdiListMenu()
     if (menuItem->isMdiList())
       return static_cast<MdiListMenu*>(menuItem);
     else if (menuItem->isMenu()) {
-      Container container = static_cast<Menu*>(menuItem)->getMenuItems();
-      for (Container::iterator it=container.begin();
+      MenuItemList container = static_cast<Menu*>(menuItem)->getMenuItems();
+      for (MenuItemList::iterator it=container.begin();
 	   it!=container.end(); ++it)
 	stack.push(*it);
     }

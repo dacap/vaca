@@ -32,10 +32,10 @@
 #ifndef VACA_BANDEDDOCKAREA_H
 #define VACA_BANDEDDOCKAREA_H
 
-#include <vector>
-
 #include "Vaca/base.h"
 #include "Vaca/DockArea.h"
+
+#include <vector>
 
 namespace Vaca {
 

@@ -45,6 +45,7 @@
 #include "Vaca/Style.h"
 #include "Vaca/WidgetClass.h"
 #include "Vaca/WidgetHit.h"
+#include "Vaca/WidgetList.h"
 
 #include <vector>
 
@@ -85,11 +86,6 @@ class VACA_DLL Widget : public Register<WidgetClass>, public Component
   
 public:
 
-  /// Collection of widgets. Used to handle the list of children of
-  /// each widget.
-  /// 
-  typedef std::vector<Widget*> Container;
-
   // ============================================================
   // STYLES
   // ============================================================
@@ -119,7 +115,7 @@ private:
 
   /// Sorted collection of children.
   /// 
-  Container m_children;
+  WidgetList m_children;
 
   /// The parent widget. This could be NULL if the Widget is a Frame or
   /// something like that.
@@ -220,7 +216,7 @@ public:
   // ============================================================
 
   Widget* getParent() const;
-  Container getChildren() const;
+  WidgetList getChildren() const;
 
   void addChild(Widget* child);
   void removeChild(Widget* child);
@@ -472,7 +468,7 @@ private:
 /// 
 class VACA_DLL MakeWidgetRef : private NonCopyable
 {
-  Widget::Container m_container;
+  WidgetList m_container;
 
 public:
   MakeWidgetRef(Widget* widget);

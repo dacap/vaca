@@ -32,13 +32,15 @@
 #ifndef VACA_TREENODE_H
 #define VACA_TREENODE_H
 
-#include <vector>
-
 #include "Vaca/base.h"
 #include "Vaca/Component.h"
 #include "Vaca/NonCopyable.h"
 
+#include <vector>
+
 namespace Vaca {
+
+typedef std::vector<TreeNode*> TreeNodeList;
 
 /// A TreeView node.  It has a text label, an image, a selected image
 /// asociated, and a state (collapsed/expanded). A node can be parent
@@ -46,23 +48,17 @@ namespace Vaca {
 /// 
 class VACA_DLL TreeNode : public Component
 {
-public:
-
-  typedef std::vector<TreeNode*> Container;
-
-private:
-
   friend class TreeView;
   friend class TreeViewIterator;
 
-  String    m_text;
-  int       m_image;
-  int       m_selectedImage;
-  TreeNode* m_parent;
-  Container m_children;
-  HTREEITEM m_handle;
-  TreeView* m_owner;
-  bool      m_deleted;
+  String       m_text;
+  int          m_image;
+  int          m_selectedImage;
+  TreeNode*    m_parent;
+  TreeNodeList m_children;
+  HTREEITEM    m_handle;
+  TreeView*    m_owner;
+  bool         m_deleted;
 
 public:
 
@@ -72,9 +68,9 @@ public:
   void addNode(TreeNode* node);
   void removeNode(TreeNode* node);
 
-  TreeNode* getParent();
-  Container getChildren();
-  TreeView* getTreeView();
+  TreeNode*    getParent();
+  TreeNodeList getChildren();
+  TreeView*    getTreeView();
 
   virtual bool hasChildren();
   virtual String getText();

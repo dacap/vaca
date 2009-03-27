@@ -351,6 +351,11 @@ Tab::~Tab()
 {
 }
 
+/// Returns the page in the specified index.
+///
+/// @param pageIndex
+///   Zero-based index of the page to be returned.
+///
 TabPage* Tab::getPage(int pageIndex)
 {
   assert(pageIndex >= 0 && pageIndex < getPageCount());
@@ -362,13 +367,12 @@ void Tab::onPageChange(Event& ev)
 {
   TabBase::onPageChange(ev);
 
-  Container pages = getChildren();
+  WidgetList pages = getChildren();
   int pageIndex = 0;
   int selectedPage = getActivePage();
 
-  for (Container::iterator it = pages.begin();
-       it != pages.end();
-       ++it, ++pageIndex) {
+  for (WidgetList::iterator
+	 it = pages.begin(); it != pages.end(); ++it, ++pageIndex) {
     TabPage* page = dynamic_cast<TabPage*>(*it);
 
     assert(page != NULL);

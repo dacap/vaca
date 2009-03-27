@@ -309,9 +309,9 @@ public:
   virtual ~MainFrame()
   {
     // delete all TextEditors
-    Widget::Container editors = getMdiClient()->getChildren();
+    WidgetList editors = getMdiClient()->getChildren();
 
-    for (Widget::Container::iterator it=editors.begin(); it!=editors.end(); ++it) {
+    for (WidgetList::iterator it=editors.begin(); it!=editors.end(); ++it) {
       TextEditor* textEditor = dynamic_cast<TextEditor*>(*it);
       delete_widget(textEditor);
     }
@@ -638,8 +638,8 @@ private:
       m_font = dialog.getFont();
 
       // set the font of all editors
-      Container editors = getMdiClient()->getChildren();
-      for (Widget::Container::iterator
+      WidgetList editors = getMdiClient()->getChildren();
+      for (WidgetList::iterator
 	     it=editors.begin(); it!=editors.end(); ++it)
 	dynamic_cast<TextEditor*>(*it)->getEditor().setFont(m_font);
     }
@@ -650,9 +650,9 @@ private:
     m_viewEol = !m_viewEol;
 
     // set the new state of ViewEol to all editors
-    Widget::Container editors = getMdiClient()->getChildren();
+    WidgetList editors = getMdiClient()->getChildren();
 
-    for (Widget::Container::iterator it=editors.begin(); it!=editors.end(); ++it)
+    for (WidgetList::iterator it=editors.begin(); it!=editors.end(); ++it)
       dynamic_cast<TextEditor*>(*it)->getEditor().setViewEol(m_viewEol);
   }
 
@@ -705,10 +705,10 @@ private:
     MdiFrame::onClose(ev);
 
     std::vector<Document*> asked;
-    Widget::Container editors = getMdiClient()->getChildren();
+    WidgetList editors = getMdiClient()->getChildren();
 
     // for each children
-    for (Widget::Container::iterator it=editors.begin(); it!=editors.end(); ++it) {
+    for (WidgetList::iterator it=editors.begin(); it!=editors.end(); ++it) {
       TextEditor* textEditor = dynamic_cast<TextEditor*>(*it);
       Document* document = textEditor->getDocument();
 
@@ -829,8 +829,8 @@ private:
   // returns the first found TextEditor that is editing the "fileName"
   TextEditor* getTextEditorByFileName(const String& fileName)
   {
-    Widget::Container listOfTextEditors = getMdiClient()->getChildren();
-    Widget::Container::iterator it;
+    WidgetList listOfTextEditors = getMdiClient()->getChildren();
+    WidgetList::iterator it;
 
     for (it=listOfTextEditors.begin(); it!=listOfTextEditors.end(); ++it) {
       TextEditor* textEditor = dynamic_cast<TextEditor*>(*it);

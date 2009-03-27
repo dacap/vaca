@@ -36,6 +36,8 @@
 
 namespace Vaca {
 
+typedef std::vector<RadioButton*> RadioButtonList;
+  
 /// Groups a set of @link Vaca::RadioButton RadioButtons@endlink. It's used to known
 /// which RadioButton should be desactived when the user select a
 /// RadioButton of its same group.
@@ -43,8 +45,6 @@ namespace Vaca {
 class VACA_DLL RadioGroup : public NonCopyable
 {
   friend class RadioButton;
-
-  typedef std::vector<RadioButton*> Container;
 
   /// Unique ID of the group.
   /// 
@@ -54,7 +54,7 @@ class VACA_DLL RadioGroup : public NonCopyable
 
   /// Members in the group.
   /// 
-  Container m_members;
+  RadioButtonList m_members;
 
 public:
   RadioGroup();

@@ -33,6 +33,7 @@
 #include "Vaca/BoxConstraint.h"
 #include "Vaca/Size.h"
 #include "Vaca/Debug.h"
+#include "Vaca/Widget.h"
 
 using namespace Vaca;
 
@@ -98,7 +99,7 @@ void BoxLayout::setChildSpacing(int childSpacing)
   m_childSpacing = childSpacing;
 }
 
-Size BoxLayout::getPreferredSize(Widget* parent, Widget::Container& widgets, const Size& fitIn)
+Size BoxLayout::getPreferredSize(Widget* parent, WidgetList& widgets, const Size& fitIn)
 {
 #define GET_CHILD_SIZE(w, h)			\
   {						\
@@ -117,7 +118,7 @@ Size BoxLayout::getPreferredSize(Widget* parent, Widget::Container& widgets, con
   }
 
   int childCount = 0;
-  for (Widget::Container::iterator it=widgets.begin(); it!=widgets.end(); ++it) {
+  for (WidgetList::iterator it=widgets.begin(); it!=widgets.end(); ++it) {
     Widget* widget = *it;
     if (!widget->isLayoutFree())
       childCount++;
@@ -127,7 +128,7 @@ Size BoxLayout::getPreferredSize(Widget* parent, Widget::Container& widgets, con
   Size _fitIn(max_value(0, fitIn.w-m_border*2),
 	      max_value(0, fitIn.h-m_border*2));
 
-  for (Widget::Container::iterator it=widgets.begin(); it!=widgets.end(); ++it) {
+  for (WidgetList::iterator it=widgets.begin(); it!=widgets.end(); ++it) {
     Widget* widget = *it;
 
     if (widget->isLayoutFree())
@@ -160,7 +161,7 @@ Size BoxLayout::getPreferredSize(Widget* parent, Widget::Container& widgets, con
   return sz;
 }
 
-void BoxLayout::layout(Widget* parent, Widget::Container& widgets, const Rect& rc)
+void BoxLayout::layout(Widget* parent, WidgetList& widgets, const Rect& rc)
 {
 #define FIXUP(x, y, w, h)						\
   {									\
@@ -178,7 +179,7 @@ void BoxLayout::layout(Widget* parent, Widget::Container& widgets, const Rect& r
       else if (expandCount > 0) {					\
 	width = rc.w - pref.w;						\
 									\
-	for (Widget::Container::iterator it=widgets.begin(); it!=widgets.end(); ++it) { \
+	for (WidgetList::iterator it=widgets.begin(); it!=widgets.end(); ++it) { \
 	  Widget* widget = *it;						\
 	  if (widget->isLayoutFree())					\
 	    continue;							\
@@ -200,7 +201,7 @@ void BoxLayout::layout(Widget* parent, Widget::Container& widgets, const Rect& r
 	extra = 0;							\
       }									\
 									\
-      for (Widget::Container::iterator it=widgets.begin(); it!=widgets.end(); ++it) { \
+      for (WidgetList::iterator it=widgets.begin(); it!=widgets.end(); ++it) { \
 	Widget* widget = *it;						\
 									\
 	if (widget->isLayoutFree())					\
@@ -253,7 +254,7 @@ void BoxLayout::layout(Widget* parent, Widget::Container& widgets, const Rect& r
   int childCount = 0;
   int expandCount = 0;
 
-  for (Widget::Container::iterator it=widgets.begin(); it!=widgets.end(); ++it) {
+  for (WidgetList::iterator it=widgets.begin(); it!=widgets.end(); ++it) {
     Widget* widget = *it;
     if (!widget->isLayoutFree()) {
       childCount++;

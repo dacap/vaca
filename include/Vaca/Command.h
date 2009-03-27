@@ -32,11 +32,11 @@
 #ifndef VACA_COMMAND_H
 #define VACA_COMMAND_H
 
-#include <vector>
-
 #include "Vaca/base.h"
 #include "Vaca/NonCopyable.h"
 #include "Vaca/Signal.h"
+
+#include <vector>
 
 namespace Vaca {
 

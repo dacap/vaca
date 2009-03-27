@@ -298,10 +298,10 @@ void MdiClient::activatePrevious(MdiChild* mdiChild)
 /// 
 MdiChild* MdiClient::getChildById(int wID)
 {
-  Container children = getChildren();
+  WidgetList children = getChildren();
 
-  for (Container::iterator it=children.begin();
-       it!=children.end(); ++it) {
+  for (WidgetList::iterator
+	 it=children.begin(); it!=children.end(); ++it) {
     HWND hChild = (*it)->getHandle();
     assert(hChild != NULL);
 

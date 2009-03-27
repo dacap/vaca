@@ -32,10 +32,10 @@
 #ifndef VACA_COMBOBOX_H
 #define VACA_COMBOBOX_H
 
-#include <vector>
-
 #include "Vaca/base.h"
 #include "Vaca/Widget.h"
+
+#include <vector>
 
 namespace Vaca {
 

@@ -397,16 +397,16 @@ public:
 
   virtual ~Widgets_Model()
   {
-    Container children = getChildren();
-    Container::iterator it;
+    WidgetList children = getChildren();
+    WidgetList::iterator it;
     for (it = children.begin(); it != children.end(); ++it)
       delete *it;
   }
 
   void selectElement(Element* element)
   {
-    Container children = getChildren();
-    Container::iterator it;
+    WidgetList children = getChildren();
+    WidgetList::iterator it;
     for (it = children.begin(); it != children.end(); ++it) {
       TextEdit_Element* w = dynamic_cast<TextEdit_Element*>(*it);
       assert(w != NULL);
@@ -478,8 +478,8 @@ private:
   void onBeforeRemoveElement(Element* element)
   {
     if (element->getType() == Element::Widget) {
-      Container children = getChildren();
-      Container::iterator it;
+      WidgetList children = getChildren();
+      WidgetList::iterator it;
       for (it = children.begin(); it != children.end(); ++it) {
 	TextEdit_Element* w = dynamic_cast<TextEdit_Element*>(*it);
 	assert(w != NULL);
@@ -497,8 +497,8 @@ private:
       }
     }
     else {
-      Container children = getChildren();
-      Container::iterator it;
+      WidgetList children = getChildren();
+      WidgetList::iterator it;
       for (it = children.begin(); it != children.end(); ++it) {
 	TextEdit_Element* w = dynamic_cast<TextEdit_Element*>(*it);
 	assert(w != NULL);

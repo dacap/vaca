@@ -68,11 +68,10 @@ bool RadioButton::onReflectedCommand(int id, int code, LRESULT& lResult)
 {
   if (code == BN_CLICKED) {
     // deselect all siblings RadioButtons
-    RadioGroup::Container& siblings = m_radioGroup.m_members;
+    RadioButtonList& siblings = m_radioGroup.m_members;
 
-    for (RadioGroup::Container::iterator
-	   it = siblings.begin();
-	 it != siblings.end(); ++it) {
+    for (RadioButtonList::iterator
+	   it = siblings.begin(); it != siblings.end(); ++it) {
       RadioButton* sibling = *it;
       if (sibling->getRadioGroup() == m_radioGroup &&
 	  sibling->isSelected()) {

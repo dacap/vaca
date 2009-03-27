@@ -32,14 +32,16 @@
 #ifndef VACA_MENU_H
 #define VACA_MENU_H
 
-#include <vector>
-
 #include "Vaca/base.h"
 #include "Vaca/Component.h"
 #include "Vaca/Event.h"
 #include "Vaca/Keys.h"
 
+#include <vector>
+
 namespace Vaca {
+
+typedef std::vector<MenuItem*> MenuItemList;
 
 /// A menu item.
 /// 
@@ -125,12 +127,8 @@ public:
 /// 
 class VACA_DLL Menu : public MenuItem
 {
-public:
-  typedef std::vector<MenuItem*> Container;
-
-private:
   HMENU m_handle;
-  Container m_container;
+  MenuItemList m_container;
 
 public:
   Menu();
@@ -156,7 +154,7 @@ public:
   // int getFirstMenuItemIndexByRadio(MenuItem* menuItem);
   // int getLastMenuItemIndexByRadio(MenuItem* menuItem);
   int getItemCount();
-  Container getMenuItems();
+  MenuItemList getMenuItems();
 
   virtual MenuItem* checkShortcuts(Keys::Type pressedKey);
 

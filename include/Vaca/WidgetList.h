@@ -29,45 +29,21 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_LISTITEM_H
-#define VACA_LISTITEM_H
+#ifndef VACA_WIDGETLIST_H
+#define VACA_WIDGETLIST_H
 
 #include "Vaca/base.h"
-#include "Vaca/Component.h"
 
 #include <vector>
 
 namespace Vaca {
 
-class VACA_DLL ListItem : public Component
-{
-  friend class ListView;
-
-  std::vector<String> m_text;
-  // ListItem* m_parent;
-  ListView* m_owner;
-
-public:
-
-  ListItem();
-//   ListItem(const String& text);
-  virtual ~ListItem();
-
-//   void addNode(ListItem* node);
-
-//   ListItem* getParent();
-//   TreeView* getTreeView();
-//   Container getChildren();
-
-  virtual String getText(int columnIndex);
-//   virtual int getImage();
-//   virtual int getSelectedImage();
-
-// private:
-//   void addToListView(ListView* listView);
-
-};
+/// Collection of widgets.
+///
+/// Used to handle the list of children of each widget.
+/// 
+typedef std::vector<Widget*> WidgetList;
 
 } // namespace Vaca
 
-#endif // VACA_LISTITEM_H
+#endif // VACA_WIDGETLIST_H

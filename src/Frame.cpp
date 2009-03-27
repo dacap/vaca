@@ -226,10 +226,10 @@ void Frame::onUpdateIndicators()
 
   // update menu-bar
   if (m_menuBar != NULL) {
-    Menu::Container children = m_menuBar->getMenuItems();
+    MenuItemList children = m_menuBar->getMenuItems();
 
     // update menus
-    for (Menu::Container::iterator it=children.begin(); it!=children.end(); ++it) {
+    for (MenuItemList::iterator it=children.begin(); it!=children.end(); ++it) {
       MenuItem* menuItem = *it;
       updateMenuItem(menuItem);
     }
@@ -267,8 +267,8 @@ void Frame::setVisible(bool visible)
 //   bool oldState = isVisible();
 
   // synchronize all the group
-  Container group = getSynchronizedGroup();
-  for (Container::iterator it=group.begin(); it!=group.end(); ++it)
+  WidgetList group = getSynchronizedGroup();
+  for (WidgetList::iterator it=group.begin(); it!=group.end(); ++it)
     (*it)->setVisible(visible);
   
   // Show the window
@@ -286,9 +286,9 @@ void Frame::setVisible(bool visible)
       ::DrawMenuBar(hwnd);
 
     // search for the StatusBar widget in the Frame
-    Widget::Container children = getChildren();
+    WidgetList children = getChildren();
     m_statusBar = NULL;
-    for (Widget::Container::iterator
+    for (WidgetList::iterator
 	   it=children.begin(); it!=children.end(); ++it) {
       if (StatusBar* statusBar = dynamic_cast<StatusBar*>(*it)) {
 	// a Frame can't have two StatusBar
@@ -652,12 +652,12 @@ void Frame::updateMenuItem(MenuItem* menuItem)
 /// 
 /// @see keepSynchronized
 /// 
-Widget::Container Frame::getSynchronizedGroup()
+WidgetList Frame::getSynchronizedGroup()
 {
-  Container children = getChildren();
-  Container container;
+  WidgetList children = getChildren();
+  WidgetList container;
 
-  for (Container::iterator it=children.begin(); it!=children.end(); ++it) {
+  for (WidgetList::iterator it=children.begin(); it!=children.end(); ++it) {
     Frame* child = dynamic_cast<Frame*>(*it);
     if (child != NULL && child->keepSynchronized())
       container.push_back(child);
@@ -767,10 +767,10 @@ bool Frame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult
 // #endif
 
       if (menu != NULL) {
-	Menu::Container children = menu->getMenuItems();
+	MenuItemList children = menu->getMenuItems();
 
 	// update menus
-	for (Menu::Container::iterator it=children.begin(); it!=children.end(); ++it) {
+	for (MenuItemList::iterator it=children.begin(); it!=children.end(); ++it) {
 	  MenuItem* menuItem = *it;
 	  updateMenuItem(menuItem);
 	}
@@ -812,7 +812,7 @@ bool Frame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult
 
 	for (std::vector<DockArea*>::iterator it=m_dockAreas.begin(); it!=m_dockAreas.end(); ++it) {
 	DockArea* dockArea = *it;
-	// 	    Widget::Container widgets = dockArea->getChildren();
+	// 	    WidgetList widgets = dockArea->getChildren();
 	Size sz = dockArea->preferredSize();
 	    
 	switch (dockArea->getSide()) {
@@ -834,11 +834,11 @@ bool Frame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult
       */
 
     case WM_ENABLE: {
-      Container group = getSynchronizedGroup();
+      WidgetList group = getSynchronizedGroup();
       HWND hParam  = reinterpret_cast<HWND>(lParam);
 
       // synchronize all the group
-      for (Container::iterator it=group.begin(); it!=group.end(); ++it) {
+      for (WidgetList::iterator it=group.begin(); it!=group.end(); ++it) {
 	HWND hwndChild = (*it)->getHandle();
 
 	if (hwndChild != hParam)
@@ -867,13 +867,13 @@ bool Frame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult
 	bool syncGroup = true;
 	HWND hParam = reinterpret_cast<HWND>(lParam);
 
-	Container group = owner->getSynchronizedGroup();
+	WidgetList group = owner->getSynchronizedGroup();
 	group.push_back(owner);
 
 	// if the other window to be activated/desactivated belong to
 	// the synchronized group, we don't need to
 	// synchronize/repaint all the group
-	for (Container::iterator it=group.begin(); it!=group.end(); ++it) {
+	for (WidgetList::iterator it=group.begin(); it!=group.end(); ++it) {
 	  Widget* child = *it;
 	  if (child->getHandle() == hParam) {
 	    keepActive = true;
@@ -884,7 +884,7 @@ bool Frame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult
 
 	// synchronize the group
 	if (syncGroup) {
-	  for (Container::iterator it=group.begin(); it!=group.end(); ++it) {
+	  for (WidgetList::iterator it=group.begin(); it!=group.end(); ++it) {
 	    Widget* child = *it;
 	    if ((child->getHandle() != getHandle()) &&
 		(child->getHandle() != hParam))

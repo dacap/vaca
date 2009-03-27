@@ -32,8 +32,6 @@
 #ifndef VACA_MSGBOX_H
 #define VACA_MSGBOX_H
 
-#include <vector>
-
 #include "Vaca/base.h"
 #include "Vaca/Color.h"
 #include "Vaca/Component.h"
@@ -44,6 +42,8 @@
 #include "Vaca/Signal.h"
 #include "Vaca/Size.h"
 #include "Vaca/Style.h"
+
+#include <vector>
 
 namespace Vaca {
 

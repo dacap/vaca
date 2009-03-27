@@ -32,12 +32,12 @@
 #ifndef VACA_TREEVIEW_H
 #define VACA_TREEVIEW_H
 
-#include <iterator>
-
 #include "Vaca/base.h"
 #include "Vaca/Widget.h"
 #include "Vaca/TreeNode.h"
 #include "Vaca/ImageList.h"
+
+#include <iterator>
 
 namespace Vaca {
 

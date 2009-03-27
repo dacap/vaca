@@ -32,6 +32,7 @@
 #include "Vaca/Bix.h"
 #include "Vaca/Point.h"
 #include "Vaca/ParseException.h"
+#include "Vaca/Widget.h"
 
 #include <stack>
 #include <cassert>
@@ -349,12 +350,12 @@ void Bix::remove(Widget* child)
   assert(false);
 }
 
-Size Bix::getPreferredSize(Widget* parent, Widget::Container& widgets, const Size& fitIn)
+Size Bix::getPreferredSize(Widget* parent, WidgetList& widgets, const Size& fitIn)
 {
   return getPreferredSize(fitIn);
 }
 
-void Bix::layout(Widget* parent, Widget::Container& widgets, const Rect& rc)
+void Bix::layout(Widget* parent, WidgetList& widgets, const Rect& rc)
 {
   beginMovement(widgets);
   layout(this, rc);

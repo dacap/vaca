@@ -32,9 +32,9 @@
 #ifndef VACA_EXCEPTION_H
 #define VACA_EXCEPTION_H
 
-#include <exception>
-
 #include "Vaca/base.h"
+
+#include <exception>
 
 namespace Vaca {
 

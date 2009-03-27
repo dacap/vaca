@@ -241,7 +241,7 @@ void TreeView::removeNode(TreeNode* node)
     else if (parent->hasChildren()) {
       // add all the children of "parent" to "parents" so we can
       // continuing the search...
-      TreeNode::Container children = parent->getChildren();
+      TreeNodeList children = parent->getChildren();
       std::copy(children.begin(),
 		children.end(),
 		std::back_inserter(parents));

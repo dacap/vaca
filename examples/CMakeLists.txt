@@ -2,33 +2,77 @@
 # Copyright (c) 2005-2009 David Capello
 # All rights reserved.
 
-function(add_vaca_example name)
-  file(GLOB example_sources ${name}/*.cpp)
-
-  if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${name}/${name}.rc)
-    set(example_resource ${name}/${name}.rc)
-  else()
-    set(example_resource ${CMAKE_CURRENT_SOURCE_DIR}/Example.rc)
+# Custom rule to compile resources using windres.exe
+if(MINGW)
+  set(example_resource_rc Example.rc)
+  set(example_resource_obj ${CMAKE_CURRENT_BINARY_DIR}/Example.res.obj)
+  set(windres_flags -O coff)
+  if(THEMES)
+    list(APPEND windres_flags -D EXAMPLE_RC_WITH_MANIFEST=1)
   endif()
 
+  add_custom_command(OUTPUT ${example_resource_obj}
+    COMMAND windres.exe ${windres_flags} -i ${example_resource_rc} -o ${example_resource_obj}
+    MAIN_DEPENDENCY ${example_resource_rc}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+endif()
+
+# Function to add examples
+function(add_vaca_example name)
+  # Source files of the target
+  file(GLOB example_sources ${name}/*.cpp)
+
+  # Resource file to be used
+  if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${name}/${name}.rc)
+    # Particular resource file
+    set(example_resource_rc ${CMAKE_CURRENT_SOURCE_DIR}/${name}/${name}.rc)
+    set(example_resource_obj ${CMAKE_CURRENT_BINARY_DIR}/${name}.res.obj)
+
+    # Custom rule to compile resources using windres.exe
+    if(MINGW)
+      add_custom_command(OUTPUT ${example_resource_obj}
+	COMMAND windres.exe ${windres_flags} -i ${name}/${name}.rc -o ${example_resource_obj}
+	MAIN_DEPENDENCY ${example_resource_rc}
+	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+    endif()
+  else()
+    # General resource file
+    set(example_resource_rc ${CMAKE_CURRENT_SOURCE_DIR}/Example.rc)
+    set(example_resource_obj ${CMAKE_CURRENT_BINARY_DIR}/Example.res.obj)
+  endif()
+
+  if(MINGW)
+    set(example_resource ${example_resource_obj})
+  else()
+    set(example_resource ${example_resource_rc})
+  endif()
+
+  # Add the Win32 target
   add_executable(${name} WIN32 ${example_sources} ${example_resource})
 
+  # Setup compilation flags
   set_target_properties(${name} PROPERTIES
     COMPILE_FLAGS "${common_flags}")
 
+  # Dependencies with libraries
   target_link_libraries(${name} Vaca)
   target_link_libraries(${name} ${win32_libs})
 
+  # Custom command to embed our manifest file with MSVC compiler
   if(THEMES AND MSVC)
+    # TODO The following custom command fails with VC solutions
+    #      because we have to known object-output directory for each
+    #      example (e.g. "examples/Buttons.dir/Release" instead of "")
+    get_target_property(example_exe_output ${name} LOCATION)
     add_custom_command(TARGET ${name}
       POST_BUILD
       COMMAND mt.exe -nologo
 		     -manifest ${CMAKE_CURRENT_SOURCE_DIR}/Example.manifest
-			       ${CMAKE_CURRENT_BINARY_DIR}/${name}.exe.embed.manifest
-		     -outputresource:${CMAKE_CURRENT_BINARY_DIR}/${name}.exe;#1
+			       ${CMAKE_CURRENT_BINARY_DIR}/${name}.exe.intermediate.manifest
+		     -outputresource:${example_exe_output};#1
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
       COMMENT "Adding dependecy to themed Common Controls in ${name}.exe")
-  endif(THEMES AND MSVC)
+  endif()
 endfunction(add_vaca_example)
 
 add_vaca_example(AnchorLayouts)

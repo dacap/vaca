@@ -1,32 +1,58 @@
 ----------------------------------------------------------------------
-Overview
+General Instructions
 ----------------------------------------------------------------------
 
-  --- Compiler ---
-  Use "make -f Makefile.mingw" for MinGW
-  Use "nmake -f Makefile.vc" for Microsoft Visual C++
+To build Vaca you will need CMake 2.6:
 
-  --- Macros you can define ---
-  RELEASE=1 ... build for release, without assertions
-  DEBUG=1 ..... build for debug, with debug information
-  STATIC=1 .... build the static version, no DLL
-  PROFILE=1 ... build the version to do profiling, e.g. with gprof
+  http://www.cmake.org/
 
-  --- Macros for Microsoft Visual C ---
-  STATIC_LIBC=1 build using /MT[d] (instead of /MD[d])
+CMake creates Makefiles (GNU Make, NMake) and Visual Studio 2005/2008
+solutions.
 
-  --- Targets ---
-  all: ........ build everything
-  lib: ........ build the library
-  examples: ... build the examples
-  tests: ...... build the tests
-  runtests: ... run all tests
-  clean: ...... remove .o .obj .res files
-  distclean: .. remove .exe .lib .dll files
+To build the project you can create a folder to store all the output
+of the compilation process (so output is not mixed with source code).
+The following example compiles the entire project using NMake (VS8/9).
+First of all you open cmd.exe (Start/Run/cmd) and go to the Vaca
+directory:
 
-  --- Example ---
-  make -f Makefile.mingw DEBUG=1
-  Builds the DLL with debug information in Unicode.
+  C:\...>cd C:\Vaca
+  C:\Vaca>mkdir build-vc9
+  C:\Vaca>cd build-vc9
+  C:\Vaca\build-vc9>vsvars32
+  C:\Vaca\build-vc9>cmake .. -G "NMake Makefiles"
+  C:\Vaca\build-vc9>nmake
+
+That will compile the Debug DLL version of the library.
+You can change the current compilation options using CMake.
+For example, if you want to compile the Release version you
+can do:
+
+  C:\Vaca\build-vc9>cmake .. -DCMAKE_BUILD_TYPE=Release
+  C:\Vaca\build-vc9>nmake
+
+If you want the static version (no DLL):
+
+  C:\Vaca\build-vc9>cmake .. -DSHARED=off
+  C:\Vaca\build-vc9>nmake
+
+Also you can modify compilation variables in C:\Vaca\build-vc9\CMakeCache.txt.
+
+
+----------------------------------------------------------------------
+Available Options
+----------------------------------------------------------------------
+
+  -DCMAKE_BUILD_TYPE=Debug
+    Compiles the Debug version.
+
+  -DCMAKE_BUILD_TYPE=Release
+    Compiles the Release version.
+
+  -DSHARED=off
+    Compiles static linking library (without DLL).
+
+  -DTHEMES=off
+    Compiles examples without using WinXP theme support.
 
 
 ----------------------------------------------------------------------
@@ -35,10 +61,11 @@ Compiling with MinGW
 
 1) Decompress the Vaca-x.x.x.zip in the "C:\Vaca\" directory (you can
    decompress it anywhere).
+
 2) Open a cmd shell (Start/Run/cmd) and check that you have MinGW right
    installed:
 
-     C:\Documents and Settings\Username>cd C:\Vaca
+     C:\...>cd C:\Vaca
      C:\Vaca>g++ --version
      g++ (GCC) 3.4.5 (mingw special)
      ...
@@ -52,75 +79,41 @@ Compiling with MinGW
 
      C:\Vaca>set PATH=c:\mingw\bin;c:\msys\1.0\bin;%PATH%
 
-3) Run make in the Vaca directory:
+3) Create Makefiles
 
-     C:\Vaca>make -f Makefile.mingw [RELEASE=1] [DEBUG=1] [STATIC=1] [PROFILE=1]
+     C:\Vaca>mkdir build-gcc-3.4
+     C:\Vaca>cd build-gcc-3.4
+     C:\Vaca\build-gcc-3.4>cmake .. -G "MSYS Makefiles"
+
+   Or if you do not have MSYS installed, you can use
+
+     C:\Vaca\build-gcc-3.4>cmake .. -G "MinGW Makefiles"
+
+4) Compile the entire project
+
+     C:\Vaca\build-gcc-3.4>make
+
+   Or if you do not have MSYS
+
+     C:\Vaca\build-gcc-3.4>mingw32-make
 
 
 ----------------------------------------------------------------------
-Compiling with Microsoft Visual C
+Compiling with Visual Studio 2005/2008
 ----------------------------------------------------------------------
 
 1) Decompress the Vaca-x.x.x.zip in the "C:\Vaca\" directory (you can
    decompress it anywhere).
-2) Open a cmd shell (Start/Run/cmd) and then execute the vsvars32.bat:
 
-     C:\Documents and Settings\UserName>cd C:\Vaca
-     C:\Vaca>vsvars32.bat
+2) Open a cmd shell (Start/Run/cmd) and then execute the vsvars32:
 
-3) Run nmake in the Vaca directory:
+     C:\...>cd C:\Vaca
+     C:\Vaca>vsvars32
 
-     C:\Vaca>nmake -f Makefile.vc [RELEASE=1] [DEBUG=1] [STATIC=1]
-                                  [STATIC_LIBC=1] [PROFILE=1]
+3) Create VS projects
 
-4) In case that you want to recompile Vaca with another configuration,
-   you should do a "clean" before:
+     C:\Vaca>mkdir build-vs9
+     C:\Vaca>cd build-vs9
+     C:\Vaca\build-vs9>cmake .. -G "Visual Studio 9 2008"
 
-     C:\Vaca>nmake -f Makefile.vc clean
-
-
-----------------------------------------------------------------------
-Compiling manually without Makefiles
-----------------------------------------------------------------------
-
-You have to compile the Vaca sources using some special flags:
-- because Vaca uses dynamic_cast, compile using Run-Time Type
-  information, there are some compilers that doesn't need flags
-  by default (like GCC), but Visual C++ needs the /GR flag;
-- put the "C:\Vaca\include" directory in the include-paths list, to access
-  the "C:\Vaca\include\Vaca\*.hpp" files;
-- you have to define some constants:
-  * -DVACA_SRC (the most important one, all the source code of Vaca
-    library must be compiled using this flag, the examples and
-    applications must be compiled without this flag)
-  * -DVACA_STATIC when you don't want to use the DLL, and you just want to
-    to use the static library
-  * -DWINVER=0x0500
-  * -D_WIN32_IE=0x0500
-  * -D_WIN32_WINNT=0x0500
-  * -DUNICODE and -D_UNICODE for Unicode support
-  * -D_DEBUG when you want debug information
-  * -DNDEBUG when you don't want debug information (and no assertions)
-- finally compile all the *.cpp using that flags and put all the
-  objects files (.o .obj) in a library file (.lib .a).
-
-
-----------------------------------------------------------------------
-Scintilla
-----------------------------------------------------------------------
-
-If you are compiling the source code, remember to put the SciLexer.dll
-in the bin directory.
-
-You will need to decompress the Scintilla zip (scintilla167.zip) in
-the vaca root directory. You should have a directory structure like:
-
-   Vaca
-     bin
-     scintilla
-       bin
-       include
-       ...
-
-Compile Scintilla and move the libraries (SciLexer.dll)
-from "C:\Vaca\scintilla\bin" to "C:\Vaca\bin".
+4) Open the solution "C:\Vaca\build-vs9\Vaca.sln" with Visual Studio 9

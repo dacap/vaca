@@ -9,8 +9,8 @@ project(Vaca)
 ########################################
 # Options
 
-option(SHARED	"Build shared libraries" on)
-option(THEMES	"Build examples using WinXP themes" on)
+option(SHARED "Build shared libraries" on)
+option(THEMES "Build examples using WinXP themes" on)
 
 set(BUILD_SHARED_LIBS ${SHARED})
 
@@ -135,14 +135,15 @@ add_library(Vaca ${VACA_SOURCES})
 
 add_custom_command(TARGET Vaca
   POST_BUILD
-  COMMAND "${CMAKE_COMMAND}" -E copy ${CMAKE_CURRENT_SOURCE_DIR}/scintilla/SciLexer.dll ${CMAKE_CURRENT_BINARY_DIR}/examples
+  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/scintilla/SciLexer.dll ${CMAKE_CURRENT_BINARY_DIR}/examples
   COMMENT "Copying SciLexer DLL to examples directory")
 
 if(BUILD_SHARED_LIBS)
+  get_target_property(vaca_dll_location Vaca LOCATION)
   add_custom_command(TARGET Vaca
     POST_BUILD
-    COMMAND "${CMAKE_COMMAND}" -E copy ${CMAKE_CURRENT_BINARY_DIR}/lib/Vaca.dll ${CMAKE_CURRENT_BINARY_DIR}/examples
-    COMMAND "${CMAKE_COMMAND}" -E copy ${CMAKE_CURRENT_BINARY_DIR}/lib/Vaca.dll ${CMAKE_CURRENT_BINARY_DIR}/tests
+    COMMAND ${CMAKE_COMMAND} -E copy ${vaca_dll_location} ${CMAKE_CURRENT_BINARY_DIR}/examples
+    COMMAND ${CMAKE_COMMAND} -E copy ${vaca_dll_location} ${CMAKE_CURRENT_BINARY_DIR}/tests
     COMMENT "Copying Vaca DLL to examples and tests directories")
 endif(BUILD_SHARED_LIBS)
 

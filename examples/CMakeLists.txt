@@ -12,7 +12,7 @@ if(MINGW)
   endif()
 
   add_custom_command(OUTPUT ${example_resource_obj}
-    COMMAND windres.exe ${windres_flags} -i ${example_resource_rc} -o ${example_resource_obj}
+    COMMAND windres.exe ${windres_flags} -I. -i ${example_resource_rc} -o ${example_resource_obj}
     MAIN_DEPENDENCY ${example_resource_rc}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 endif()
@@ -31,7 +31,7 @@ function(add_vaca_example name)
     # Custom rule to compile resources using windres.exe
     if(MINGW)
       add_custom_command(OUTPUT ${example_resource_obj}
-	COMMAND windres.exe ${windres_flags} -i ${name}/${name}.rc -o ${example_resource_obj}
+	COMMAND windres.exe ${windres_flags} -I${name} -i ${name}/${name}.rc -o ${example_resource_obj}
 	MAIN_DEPENDENCY ${example_resource_rc}
 	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
     endif()

@@ -106,7 +106,7 @@ void RichEdit::setTextLimit(size_t maxChars)
 /// 
 bool RichEdit::canPaste() const
 {
-  return const_cast<RichEdit*>(this)->sendMessage(EM_CANPASTE, 0, 0);
+  return const_cast<RichEdit*>(this)->sendMessage(EM_CANPASTE, 0, 0) != 0 ? true: false;
 }
 
 /// Returns true if the user can undo the last action.

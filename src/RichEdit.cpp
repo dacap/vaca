@@ -109,6 +109,8 @@ bool RichEdit::canPaste() const
   return const_cast<RichEdit*>(this)->sendMessage(EM_CANPASTE, 0, 0);
 }
 
+/// Returns true if the user can undo the last action.
+/// 
 /// @win32
 ///   Sends the @msdn{EM_CANUNDO} message to the widget.
 /// @endwin32
@@ -118,6 +120,8 @@ bool RichEdit::canUndo() const
   return const_cast<RichEdit*>(this)->sendMessage(EM_CANUNDO, 0, 0) != 0;
 }
 
+/// Returns true if the user can redo an action.
+/// 
 /// @win32
 ///   Sends the @msdn{EM_CANREDO} message to the widget.
 /// @endwin32
@@ -127,6 +131,8 @@ bool RichEdit::canRedo() const
   return const_cast<RichEdit*>(this)->sendMessage(EM_CANREDO, 0, 0) != 0;
 }
 
+/// Undoes the last user action.
+/// 
 /// @win32
 ///   Sends the @msdn{EM_UNDO} message to the widget.
 /// @endwin32
@@ -136,6 +142,8 @@ void RichEdit::undo()
   sendMessage(WM_UNDO, 0, 0);
 }
 
+/// Redoes the last undid action.
+/// 
 /// @win32
 ///   Sends the @msdn{EM_REDO} message to the widget.
 /// @endwin32
@@ -154,6 +162,21 @@ void RichEdit::setUndoLimit(int maximumActions)
   sendMessage(EM_SETUNDOLIMIT, 0, 0);
 }
 
+float RichEdit::getZoomFactor()
+{
+  int num, dem;
+  sendMessage(EM_SETZOOM, (WPARAM)&num, (LPARAM)&dem);
+  if (dem != 0)
+    return (float)num / (float)dem;
+  else
+    return 1.0f;
+}
+
+void RichEdit::setZoomFactor(float f)
+{
+  sendMessage(EM_SETZOOM, (WPARAM)(f * 1000), 1000);
+}
+
 /// If you set this to true, all text added in the RichEdit that
 /// contains URLs will be automatically detected and replaced with a
 /// hyperlink.
@@ -162,7 +185,7 @@ void RichEdit::setUndoLimit(int maximumActions)
 ///   Sends the @msdn{EM_AUTOURLDETECT} message to the widget.
 /// @endwin32
 /// 
-void RichEdit::setAutoUrlDetect(bool state)
+void RichEdit::setDetectUrls(bool state)
 {
   sendMessage(EM_AUTOURLDETECT, state ? TRUE: FALSE, 0);
 }
@@ -173,7 +196,7 @@ void RichEdit::setAutoUrlDetect(bool state)
 ///   Sends the @msdn{EM_GETAUTOURLDETECT} message to the widget.
 /// @endwin32
 /// 
-bool RichEdit::isAutoUrlDetect()
+bool RichEdit::isDetectUrls()
 {
   return sendMessage(EM_GETAUTOURLDETECT, 0, 0) != 0 ? true: false;
 }

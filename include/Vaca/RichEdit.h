@@ -75,11 +75,13 @@ public:
   bool canRedo() const;
   void undo();
   void redo();
-
   void setUndoLimit(int maximumActions);
 
-  void setAutoUrlDetect(bool state);
-  bool isAutoUrlDetect();
+  float getZoomFactor();
+  void setZoomFactor(float f);
+
+  void setDetectUrls(bool state);
+  bool isDetectUrls();
   
   void cut();
   void copy();
@@ -88,7 +90,7 @@ public:
   void selectAll();
   void selectRange(int start, int end);
   void deselect();
-  
+
   void getSelection(int& start, int& end);
   String getSelectedText() const;
 

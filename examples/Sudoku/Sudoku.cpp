@@ -135,7 +135,7 @@ public:
 
     m_help.requestFocus();
     m_help.setBgColor(getBgColor());
-    m_help.setAutoUrlDetect(true);
+    m_help.setDetectUrls(true);
     m_help.setText(L"The objective is to fill a 9\x00D7\x0039 grid so that each column, "
 		   L"each row, and each of the nine 3\x00D7\x0033 boxes (also called "
 		   L"blocks or regions) contains the digits from 1 to 9 only one time each. [http://en.wikipedia.org/wiki/Sudoku]");

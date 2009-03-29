@@ -70,8 +70,7 @@ function(add_vaca_example name)
 		     -manifest ${CMAKE_CURRENT_SOURCE_DIR}/Example.manifest
 			       ${CMAKE_CURRENT_BINARY_DIR}/${name}.exe.intermediate.manifest
 		     -outputresource:${example_exe_output};#1
-      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-      COMMENT "Adding dependecy to themed Common Controls in ${name}.exe")
+      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
   endif()
 endfunction(add_vaca_example)
 

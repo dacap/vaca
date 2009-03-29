@@ -103,7 +103,7 @@ public:
 
     me = new TextEdit(L"First Panel", sp1, TextEdit::Styles::TextArea +
 					   Widget::Styles::Scroll);
-    me->setBgColor(Color(120, 224, 120));
+    me->setBgColor(Color(200, 255, 200));
 
     SplitBar* sp2 = new SplitBar(Orientation::Horizontal, sp1,
 				 SplitBar::Styles::Default |
@@ -112,11 +112,11 @@ public:
 
     me = new TextEdit(L"Sub First Panel", sp2, TextEdit::Styles::TextArea +
 					       Widget::Styles::Scroll);
-    me->setBgColor(Color(224, 120, 120));
+    me->setBgColor(Color(255, 200, 200));
 
     me = new TextEdit(L"Sub Second Panel", sp2, TextEdit::Styles::TextArea +
 						Widget::Styles::Scroll);
-    me->setBgColor(Color(120, 120, 224));
+    me->setBgColor(Color(200, 200, 255));
 
     // The following lines aren't necessary (it's done automatically
     // when the two first children are added to the SplitBar)
@@ -157,19 +157,12 @@ private:
 
 };
 
-class MyApp : public Application
-{
-  MainFrame mainWnd;
-
-  virtual void main()
-  {
-    mainWnd.setVisible(true);
-  }
-};
-
 int VACA_MAIN()
 {
-  MyApp app;
+  Application app;
+  MainFrame frm;
+  frm.setIcon(ResourceId(IDI_VACA));
+  frm.setVisible(true);
   app.run();
   return 0;
 }

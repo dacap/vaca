@@ -34,6 +34,7 @@
 using namespace Vaca;
 
 #include "../Console.h"
+#include "../resource.h"
 
 const wchar_t* convert_to_string(MouseButton but)
 {
@@ -479,6 +480,7 @@ int VACA_MAIN()
 {
   Application app;
   MainFrame frm;
+  frm.setIcon(ResourceId(IDI_VACA));
   frm.setVisible(true);
   app.run();
   return 0;

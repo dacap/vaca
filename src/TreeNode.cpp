@@ -39,7 +39,7 @@ using namespace Vaca;
 TreeNode::TreeNode(const String& text, int imageIndex, int selectedImageIndex)
   : m_text(text)
   , m_image(imageIndex)
-  , m_selectedImage(selectedImageIndex)
+  , m_selectedImage(selectedImageIndex >= 0 ? selectedImageIndex: imageIndex)
 {
   m_parent = NULL;
   m_handle = NULL;
@@ -104,12 +104,13 @@ void TreeNode::removeNode(TreeNode* node)
 
   node->m_parent = NULL;
   node->removeFromTreeView();
+
+  assert(node->m_handle == NULL);
 }
 
 TreeNode* TreeNode::getParent()
 {
-  if (m_owner != NULL &&
-      &m_owner->m_root == m_parent)
+  if (m_owner != NULL && &m_owner->m_root == m_parent)
     return NULL;
   else
     return m_parent;
@@ -126,6 +127,21 @@ TreeNodeList TreeNode::getChildren()
 TreeView* TreeNode::getTreeView()
 {
   return m_owner;
+}
+
+bool TreeNode::isAncestorOf(TreeNode* child) const
+{
+  assert(child != NULL);
+
+  child = child->getParent();
+  while (child != NULL) {
+    if (child == this)
+      return true;
+
+    child = child->getParent();
+  }
+
+  return false;
 }
 
 /// Returns true if this node should have the plus sign to be
@@ -238,6 +254,24 @@ void TreeNode::setExpanded(bool state)
   TreeView_Expand(m_owner->getHandle(), m_handle, state ? TVE_EXPAND: TVE_COLLAPSE);
 }
 
+Rect TreeNode::getBounds() const
+{
+  assert(m_handle != NULL && m_owner != NULL);
+
+  RECT rc;
+  TreeView_GetItemRect(m_owner->getHandle(), m_handle, (WPARAM)&rc, TRUE);
+  return Rect(&rc);
+}
+
+Rect TreeNode::getRowBounds() const
+{
+  assert(m_handle != NULL && m_owner != NULL);
+
+  RECT rc;
+  TreeView_GetItemRect(m_owner->getHandle(), m_handle, (WPARAM)&rc, FALSE);
+  return Rect(&rc);
+}
+
 void TreeNode::ensureVisible()
 {
   assert(m_handle != NULL && m_owner != NULL);
@@ -343,13 +377,13 @@ void TreeNode::addToTreeView(TreeView* treeView)
 /// 
 void TreeNode::removeFromTreeView()
 {
-  // remove all children from the TreeView control
+  // Remove all children from the TreeView control
   for (TreeNodeList::iterator
 	 it=m_children.begin(); it!=m_children.end(); ++it) {
     (*it)->removeFromTreeView();
   }
 
-  // remove the node from the Win32 TreeView control (because it
+  // Remove the node from the Win32 TreeView control (because it
   // shouldn't have any children)
   if (m_owner != NULL) {
     assert(m_handle != NULL);
@@ -359,7 +393,6 @@ void TreeNode::removeFromTreeView()
     m_handle = NULL;
     m_owner = NULL;
   }
-  else {
-    assert(m_handle == NULL);
-  }
+
+  assert(m_handle == NULL);
 }

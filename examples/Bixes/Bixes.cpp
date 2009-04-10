@@ -343,13 +343,13 @@ public:
 
 protected:
 
-  virtual void onFocusEnter(Event& ev)
+  virtual void onFocusEnter(FocusEvent& ev)
   {
     TextEdit::onFocusEnter(ev);
     ElementSelected(m_element);
   }
 
-  virtual void onFocusLeave(Event& ev)
+  virtual void onFocusLeave(FocusEvent& ev)
   {
     TextEdit::onFocusLeave(ev);
   }
@@ -769,8 +769,9 @@ int VACA_MAIN()
 {
   try {
     Application app;
-    MainFrame frame;
-    frame.setVisible(true);
+    MainFrame frm;
+    frm.setIcon(ResourceId(IDI_VACA));
+    frm.setVisible(true);
     app.run();
   }
   catch (Exception& e) {

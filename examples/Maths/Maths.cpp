@@ -31,6 +31,7 @@
 
 #include <Vaca/Vaca.h>
 #include <cmath>
+#include "../resource.h"
 
 #ifndef M_PI
 #define M_PI		3.14159265358979323846
@@ -73,10 +74,10 @@ public:
 
 protected:
 
-  virtual void onResize(const Size &sz)
+  virtual void onResize(ResizeEvent& ev)
   {
-    TabPage::onResize(sz);
     invalidate(true);
+    TabPage::onResize(ev);
   }
 
   virtual void onPaint(PaintEvent& ev)
@@ -453,18 +454,12 @@ protected:
 
 //////////////////////////////////////////////////////////////////////
 
-class Example : public Application
-{
-  MainFrame m_mainFrame;
-
-  virtual void main() {
-    m_mainFrame.setVisible(true);
-  }
-};
-
 int VACA_MAIN()
 {
-  Example app;
+  Application app;
+  MainFrame frm;
+  frm.setIcon(ResourceId(IDI_VACA));
+  frm.setVisible(true);
   app.run();
   return 0;
 }

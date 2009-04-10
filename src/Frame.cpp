@@ -45,6 +45,9 @@
 #include "Vaca/Icon.h"
 #include "Vaca/BandedDockArea.h"
 #include "Vaca/StatusBar.h"
+#include "Vaca/ChildEvent.h"
+#include "Vaca/CommandEvent.h"
+#include "Vaca/PreferredSizeEvent.h"
 
 using namespace Vaca;
 
@@ -96,7 +99,7 @@ Frame::~Frame()
   if (m_counted) {
     m_counted = false;
 
-    Thread::removeFrame(this);
+    CurrentThread::details::removeFrame(this);
   }
 }
 
@@ -117,7 +120,8 @@ bool Frame::preTranslateMessage(Message& message)
 	// is menuItem enabled?
 	if (menuItem->isEnabled()) {
 	  // ok, we can do the action
-	  onCommand(menuItem->getId());
+	  CommandEvent ev(menuItem, menuItem->getId());
+	  onCommand(ev);
 	}
 
 	return true;
@@ -132,45 +136,45 @@ bool Frame::preTranslateMessage(Message& message)
 /// 
 /// @see getNonClientSize
 /// 
-void Frame::onPreferredSize(Size& sz)
+void Frame::onPreferredSize(PreferredSizeEvent& ev)
 {
   Size ncSize = getNonClientSize();
 
-  if (sz.w > 0 || sz.h > 0) {
-    sz = Size(max_value(0, sz.w - ncSize.w),
-	      max_value(0, sz.h - ncSize.h));
+  if (ev.fitInWidth() || ev.fitInHeight()) {
+    ev.setPreferredSize(max_value(0, ev.fitInWidth() - ncSize.w),
+			max_value(0, ev.fitInHeight() - ncSize.h));
   }
 
-  Widget::onPreferredSize(sz);
-  sz += ncSize;
+  Widget::onPreferredSize(ev);
+  ev.setPreferredSize(ev.getPreferredSize() + ncSize);
 }
 
 /// Calls the layout() method.
 /// 
-void Frame::onResize(const Size& sz)
+void Frame::onResize(ResizeEvent& ev)
 {
-  Widget::onResize(sz);
   layout();
+  Widget::onResize(ev);
 }
 
-/// Convert a WM_COMMAND notification from a menus to a
-/// MenuItem::onAction event.
+/// Converts a WM_COMMAND notification from a menus to a MenuItem#onClick event.
 /// 
-bool Frame::onCommand(CommandId id)
+void Frame::onCommand(CommandEvent& ev)
 {
-  // use menu bar
-  if (m_menuBar != NULL) {
-    MenuItem* menuItem = m_menuBar->getMenuItemById(id);
+  if (!ev.isConsumed()) {
+    // use menu bar
+    if (m_menuBar != NULL) {
+      MenuItem* menuItem = m_menuBar->getMenuItemById(ev.getCommandId());
 
-    VACA_TRACE("Frame::onCommand(%d), menuItem=%p\n", id, menuItem);
+      VACA_TRACE("Frame::onCommand(%d), menuItem=%p\n", ev.getCommandId(), menuItem);
 
-    if (menuItem != NULL) {
-      MenuItemEvent ev(menuItem);
-      menuItem->onAction(ev);
+      if (menuItem != NULL) {
+	MenuItemEvent ev(menuItem);
+	menuItem->onClick(ev);
+      }
     }
   }
-
-  return Widget::onCommand(id);
+  Widget::onCommand(ev);
 }
 
 void Frame::onActivate(Event& ev)
@@ -247,12 +251,12 @@ void Frame::onUpdateIndicators()
   // }
 }
 
-void Frame::onRemoveChild(Widget* child)
+void Frame::onRemoveChild(ChildEvent& ev)
 {
-  Widget::onRemoveChild(child);
-
-  if (m_statusBar == child)
+  if (m_statusBar == ev.getChild())
     m_statusBar = NULL;
+
+  Widget::onRemoveChild(ev);
 }
 
 /// Hides or shows the window. If visible is true, the window'll be
@@ -289,11 +293,11 @@ void Frame::setVisible(bool visible)
     WidgetList children = getChildren();
     m_statusBar = NULL;
     for (WidgetList::iterator
-	   it=children.begin(); it!=children.end(); ++it) {
+    	   it=children.begin(); it!=children.end(); ++it) {
       if (StatusBar* statusBar = dynamic_cast<StatusBar*>(*it)) {
-	// a Frame can't have two StatusBar
-	assert(!m_statusBar);
-	m_statusBar = statusBar;
+    	// a Frame can't have two StatusBar
+    	assert(!m_statusBar);
+    	m_statusBar = statusBar;
       }
     }
 
@@ -304,7 +308,7 @@ void Frame::setVisible(bool visible)
     if (!m_counted) {
       m_counted = true;
 
-      Thread::addFrame(this);
+      CurrentThread::details::addFrame(this);
     }
   }
   // Hide the window. It looks simple, but the order of the commands
@@ -323,7 +327,7 @@ void Frame::setVisible(bool visible)
     if (m_counted) {
       m_counted = false;
 
-      Thread::removeFrame(this);
+      CurrentThread::details::removeFrame(this);
     }
   }
 }
@@ -437,6 +441,22 @@ Size Frame::getNonClientSize()
 		       GetWindowLong(hwnd, GWL_STYLE),
 		       m_menuBar ? true: false,
 		       GetWindowLong(hwnd, GWL_EXSTYLE));
+
+  // search for the StatusBar widget in the Frame
+  {				// TODO fix this
+    WidgetList children = getChildren();
+    m_statusBar = NULL;
+    for (WidgetList::iterator
+    	   it=children.begin(); it!=children.end(); ++it) {
+      if (StatusBar* statusBar = dynamic_cast<StatusBar*>(*it)) {
+    	// a Frame can't have two StatusBar
+    	assert(!m_statusBar);
+    	m_statusBar = statusBar;
+      }
+    }
+  }
+  if (m_statusBar)
+    nonClientRect.bottom += m_statusBar->getPreferredSize().h;
 
   return Rect(&nonClientRect).getSize() - clientRect.getSize();
 }

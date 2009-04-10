@@ -40,6 +40,8 @@
 #include "Vaca/Pen.h"
 #include "Vaca/KeyEvent.h"
 #include "Vaca/Image.h"
+#include "Vaca/PreferredSizeEvent.h"
+#include "Vaca/SetCursorEvent.h"
 
 using namespace Vaca;
 
@@ -49,8 +51,8 @@ using namespace Vaca;
 ///     If it contains "www", "://", or "@@", the
 ///     LinkLabel'll open the browser when it's clicked.
 ///     If not, it's just like test, and you should hook
-///     the LinkLabel::Action signal or
-///     LinkLabel::onAction event.
+///     the LinkLabel::Click signal or
+///     LinkLabel::onClick event.
 /// 
 /// @param parent
 ///     It's a Widget (generally a Frame) that will act as the container
@@ -107,13 +109,13 @@ Color LinkLabel::getHoverColor()
   return Color(0, 0, 255);
 }
 
-void LinkLabel::onPreferredSize(Size& sz)
+void LinkLabel::onPreferredSize(PreferredSizeEvent& ev)
 {
   // TODO add support for both: text and image
   if (m_image != NULL)
-    sz = m_image->getSize();
+    ev.setPreferredSize(m_image->getSize());
   else
-    CustomLabel::onPreferredSize(sz);
+    CustomLabel::onPreferredSize(ev);
 }
 
 /// Draws the background and the label. By default, the background
@@ -205,14 +207,14 @@ void LinkLabel::onMouseLeave(MouseEvent& ev)
   CustomLabel::onMouseLeave(ev);
 }
 
-/// Opens the URL (if it's not empty), and calls the onAction event.
+/// Opens the URL (if it's not empty), and calls the onClick event.
 /// 
 void LinkLabel::onMouseDown(MouseEvent& ev)
 {
   if (m_state == Hover) {
     requestFocus();
     
-    action();
+    click();
     ev.consume();
   }
 
@@ -221,25 +223,28 @@ void LinkLabel::onMouseDown(MouseEvent& ev)
 
 /// Uses the Cursor::Hand when the mouse is over the label.
 /// 
-void LinkLabel::onSetCursor(WidgetHitTest hitTest)
+void LinkLabel::onSetCursor(SetCursorEvent& ev)
 {
-  switch (m_state) {
-    case Hover:
-      setCursor(Cursor(SysCursor::Hand));
-      break;
-    default:
-      setCursor(Cursor(SysCursor::Arrow));
-      break;
+  if (!ev.isConsumed()) {
+    switch (m_state) {
+      case Hover:
+	ev.setCursor(Cursor(SysCursor::Hand));
+	break;
+      default:
+	ev.setCursor(Cursor(SysCursor::Arrow));
+	break;
+    }
   }
+  CustomLabel::onSetCursor(ev);
 }
 
-void LinkLabel::onFocusEnter(Event& ev)
+void LinkLabel::onFocusEnter(FocusEvent& ev)
 {
   invalidate(true);
   CustomLabel::onFocusEnter(ev);
 }
 
-void LinkLabel::onFocusLeave(Event& ev)
+void LinkLabel::onFocusLeave(FocusEvent& ev)
 {
   invalidate(true);
   CustomLabel::onFocusLeave(ev);
@@ -250,7 +255,7 @@ void LinkLabel::onKeyDown(KeyEvent& ev)
   if (hasFocus() &&
       (ev.getKeyCode() == Keys::Space ||
        ev.getKeyCode() == Keys::Enter)) {
-    action();
+    click();
     ev.consume();
   }
   CustomLabel::onKeyDown(ev);
@@ -259,17 +264,17 @@ void LinkLabel::onKeyDown(KeyEvent& ev)
 // If the label is resized, we must to redraw it. This is necessary
 // mainly if the LinkLabel isn't TextAlign::Left.
 // 
-// void LinkLabel::onResize(const Size& sz)
+// void LinkLabel::onResize(ResizeEvent& ev)
 // {
 //   invalidate(true);
-//   CustomLabel::onResize(sz);
+//   CustomLabel::onResize(ev);
 // }
 
 /// Called when the user press the mouse button down over the label.
 /// 
-void LinkLabel::onAction(Event& ev)
+void LinkLabel::onClick(Event& ev)
 {
-  Action(ev);
+  Click(ev);
 }
 
 void LinkLabel::init(String text, Image* image)
@@ -283,13 +288,13 @@ void LinkLabel::init(String text, Image* image)
   setText(text);
 }
 
-void LinkLabel::action()
+void LinkLabel::click()
 {
   if (!m_url.empty())
     ShellExecute(NULL, L"open", m_url.c_str(), NULL, NULL, SW_SHOW);
 
   Event ev(this);
-  onAction(ev);
+  onClick(ev);
 }
 
 void LinkLabel::updateFont(const Font& font)

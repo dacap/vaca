@@ -30,6 +30,7 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <Vaca/Vaca.h>
+#include "../resource.h"
 
 using namespace Vaca;
 
@@ -55,6 +56,8 @@ public:
     , m_loginButton(L"&Login", IDOK, this)
     , m_cancelButton(L"&Cancel", IDCANCEL, this)
   {
+    setIcon(ResourceId(IDI_VACA));
+
     // if we don't setup a layout manager through this->setLayout(),
     // we are free of layout manager...
 
@@ -68,7 +71,7 @@ public:
 
     m_loginButton.setDefault(true);
 
-    m_administrator.Action.connect(&MainFrame::onAdministrator, this);
+    m_administrator.Click.connect(&MainFrame::onAdministrator, this);
 
     // so because we are not using layout managers we can't use
     // getPreferredSize method, so we have to setup the window

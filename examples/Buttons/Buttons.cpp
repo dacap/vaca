@@ -30,6 +30,7 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <Vaca/Vaca.h>
+#include "../resource.h"
 
 using namespace Vaca;
 
@@ -83,7 +84,7 @@ public:
     bindButton(m_radioButton3);
     bindButton(m_radioButton4);
 
-    m_disableButton.Action.connect(&MainFrame::onToggleDisabled, this);
+    m_disableButton.Click.connect(&MainFrame::onToggleDisabled, this);
 
     setSize(getPreferredSize());
     center();
@@ -93,13 +94,13 @@ private:
 
   void bindButton(ButtonBase& button)
   {
-    button.Action.connect(Bind(&MainFrame::updateLabel, this));
+    button.Click.connect(Bind(&MainFrame::updateLabel, this));
   }
 
   void updateLabel()
   {
     m_actions++;
-    m_label1.setText(format_string(L"Action signal fired %d time(s)", m_actions));
+    m_label1.setText(format_string(L"Click signal fired %d time(s)", m_actions));
     m_label2.setText(format_string(L"CheckBox is %s", m_checkBox.isSelected() ? L"checked":
 										L"unchecked"));
 
@@ -123,18 +124,12 @@ private:
 
 //////////////////////////////////////////////////////////////////////
 
-class Example : public Application
-{
-  MainFrame m_mainFrame;
-
-  virtual void main() {
-    m_mainFrame.setVisible(true);
-  }
-};
-
 int VACA_MAIN()
 {
-  Example app;
+  Application app;
+  MainFrame frm;
+  frm.setIcon(ResourceId(IDI_VACA));
+  frm.setVisible(true);
   app.run();
   return 0;
 }

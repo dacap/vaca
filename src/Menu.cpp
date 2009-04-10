@@ -252,20 +252,20 @@ bool MenuItem::isMenuBar() const { return false; }
 bool MenuItem::isSeparator() const { return false; }
 bool MenuItem::isMdiList() const { return false; }
 
-/// It's called when the menu item is selected. Also it's called when
+/// It is called when the menu item is selected. Also it's called when
 /// some keyboard shortcut of this MenuItem is pressed
-/// (MenuItem::m_shortcuts). Remember that onAction() is called only
+/// (MenuItem::m_shortcuts). Remember that onClick() is called only
 /// after an onUpdate() and only if it leaves the MenuItem enabled (see
 /// setEnabled() method),
-/// 
-void MenuItem::onAction(MenuItemEvent& ev)
+///
+void MenuItem::onClick(MenuItemEvent& ev)
 {
   // do nothing
 }
 
 /// It's called when a menu is shown for first time. Also when the user
 /// press a keyboard shortcut (MenuItem::m_shortcuts) it's called to
-/// known if the item is available after execute onAction().
+/// known if the item is available after execute onClick().
 /// 
 /// Internally, when the WM_INITMENU message is received, a Frame calls
 /// this event.

@@ -64,37 +64,41 @@ public:
 
 private:
 
-  virtual bool onCommand(CommandId id)
+  virtual void onCommand(CommandEvent& ev)
   {
-    // This is the raw way to handle commands, with a switch-case
-    // statement. You can see the "Commands" or "TextEditor" examples
-    // for a more sophisticated way using the "CommandsClient" class.
-    switch (id) {
+    if (!ev.isConsumed()) {
+      // This is the raw way to handle commands, with a switch-case
+      // statement. You can see the "Commands" or "TextEditor" examples
+      // for a more sophisticated way using the "CommandsClient" class.
+      switch (ev.getCommandId()) {
 
-      case IDM_ITEM1:
-	m_console.println(L"Item1 selected");
-	break;
+	case IDM_ITEM1:
+	  m_console.println(L"Item1 selected");
+	  ev.consume();
+	  break;
 
-      case IDM_ITEM2:
-	m_console.println(L"Item2 selected");
-	break;
+	case IDM_ITEM2:
+	  m_console.println(L"Item2 selected");
+	  ev.consume();
+	  break;
 
-      case IDM_ITEM3:
-	m_console.println(L"Item3 selected (change Item2 state)");
+	case IDM_ITEM3:
+	  m_console.println(L"Item3 selected (change Item2 state)");
 
-	// here we modify the selected-state of the MenuItem directly
-	m_menuItem2->setEnabled(!m_menuItem2->isEnabled());
+	  // here we modify the selected-state of the MenuItem directly
+	  m_menuItem2->setEnabled(!m_menuItem2->isEnabled());
 
-	// change the checked-state of IDM_ITEM3
-	m_menuItem3->setChecked(m_menuItem2->isEnabled());
-	break;
+	  // change the checked-state of IDM_ITEM3
+	  m_menuItem3->setChecked(m_menuItem2->isEnabled());
+	  ev.consume();
+	  break;
 
-      default:
-	m_console.println(L"Unknown action");
-	break;
+	default:
+	  m_console.println(L"Unknown action");
+	  break;
+      }
     }
-
-    return true;
+    Frame::onCommand(ev);
   }
 
 };
@@ -105,6 +109,7 @@ int VACA_MAIN()
 {
   Application app;
   MainFrame frm;
+  frm.setIcon(ResourceId(IDI_VACA));
   frm.setVisible(true);
   app.run();
   return 0;

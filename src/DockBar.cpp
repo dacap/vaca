@@ -37,6 +37,7 @@
 #include "Vaca/PaintEvent.h"
 #include "Vaca/Debug.h"
 #include "Vaca/System.h"
+#include "Vaca/PreferredSizeEvent.h"
 
 #define DEF_GRIPPER_SIZE 8
 
@@ -341,11 +342,15 @@ void DockBar::makeFloat(const Rect* rect)
   onFloating();
 }
 
-void DockBar::onPreferredSize(Size& sz)
+void DockBar::onPreferredSize(PreferredSizeEvent& ev)
 {
-  Widget::onPreferredSize(sz);
+  Widget::onPreferredSize(ev);
+  Size sz = ev.getPreferredSize();
+
   sz += measureGripper(isDocked(),
 		       isDocked() ? m_dockArea->getSide(): Side());
+
+  ev.setPreferredSize(sz);
 }
 
 /// Called when m_dockFrame is closed by its "Close" button.
@@ -369,12 +374,12 @@ void DockBar::onPaint(PaintEvent& ev)
 /// (m_floatingGripper == true), we must to repaint the DockBar's
 /// gripper when the DockBar is resized.
 /// 
-void DockBar::onResize(const Size& sz)
+void DockBar::onResize(ResizeEvent& ev)
 {
-  Widget::onResize(sz);
-
   if (m_floatingGripper)
     invalidate(true);
+
+  Widget::onResize(ev);
 }
 
 void DockBar::onMouseDown(MouseEvent& ev)
@@ -490,21 +495,6 @@ void DockBar::onDoubleClick(MouseEvent& ev)
   Widget::onDoubleClick(ev);
 }
 
-void DockBar::onCancelMode()
-{
-  if (m_drag != NULL) {
-    if (!m_fullDrag) {
-      ScreenGraphics g;
-      cleanTracker(g);
-    }
-    else {
-      // TODO
-    }
-
-    endDrag();
-  }
-}
-
 /// Event called when the DockBar is docked in a new DockArea. You can
 /// use getDockArea() method to known where the DockBar is docked.
 /// 
@@ -605,6 +595,30 @@ bool DockBar::isGripperVisible(bool docked, Side dockSide) const
     return true;
   else
     return false;
+}
+
+bool DockBar::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult)
+{
+  if (Widget::wndProc(message, wParam, lParam, lResult))
+    return true;
+
+  switch (message) {
+
+    case WM_CANCELMODE:
+      if (m_drag != NULL) {
+	if (!m_fullDrag) {
+	  ScreenGraphics g;
+	  cleanTracker(g);
+	}
+	else {
+	  // TODO
+	}
+	endDrag();
+      }
+      break;
+  }
+
+  return false;
 }
 
 /// Creates the DragInfo to start dragging this DockBar...

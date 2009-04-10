@@ -33,6 +33,9 @@
 // about what classes are accesible: we have all the classes available
 #include <Vaca/Vaca.h>
 
+// here is defined IDI_VACA = 1
+#include "../resource.h"
+
 // we can use the Vaca namespace by default to avoid writting things
 // like Vaca::Frame, Vaca::LinkLabel, Vaca::Font, etc.
 using namespace Vaca;
@@ -60,6 +63,9 @@ public:
     // construct a font to use in the link label
     , m_linkFont(L"Verdana", 14)
   {
+    // set the frame icon
+    setIcon(ResourceId(IDI_VACA));
+
     // set the layout to the client area, because the link'll use the
     // entire client area
     setLayout(new ClientLayout);

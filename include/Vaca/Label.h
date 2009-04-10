@@ -53,7 +53,6 @@ public:
 
   struct VACA_DLL Styles {
     static const Style Default;
-    static const Style Simple;
     static const Style WordEllipsis;
     static const Style EndEllipsis;
     static const Style PathEllipsis;
@@ -72,8 +71,8 @@ protected:
   int getFlagsForDrawString();
 
   // events
-  virtual void onPreferredSize(Size& sz);
-  virtual void onResize(const Size& sz);
+  virtual void onPreferredSize(PreferredSizeEvent& ev);
+  virtual void onResize(ResizeEvent& ev);
 
 };
 

@@ -54,14 +54,14 @@ public:
   void setSelected(bool state);
 
   // signals
-  Signal1<void, Event&> Action; ///< @see onAction
+  Signal1<void, Event&> Click; ///< @see onClick
 
 protected:
   // events
-  virtual void onPreferredSize(Size& sz);
+  virtual void onPreferredSize(PreferredSizeEvent& ev);
 
   // new events
-  virtual void onAction(Event& ev);
+  virtual void onClick(Event& ev);
 
   // reflection
   virtual bool onReflectedCommand(int id, int code, LRESULT& lResult);

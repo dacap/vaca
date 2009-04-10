@@ -36,6 +36,8 @@
 #include "Vaca/MouseEvent.h"
 #include "Vaca/PaintEvent.h"
 #include "Vaca/System.h"
+#include "Vaca/ChildEvent.h"
+#include "Vaca/SetCursorEvent.h"
 
 using namespace Vaca;
 
@@ -157,10 +159,11 @@ bool SplitBar::isGripperVisible() const
   return m_gripperVisible;
 }
 
-void SplitBar::onResize(const Size& sz)
+void SplitBar::onResize(ResizeEvent& ev)
 {
   invalidate(true);
-  layout();
+  // layout();
+  Widget::onResize(ev);
 }
 
 void SplitBar::onPaint(PaintEvent& ev)
@@ -262,32 +265,34 @@ void SplitBar::onMouseMove(MouseEvent& ev)
   }
 }
 
-void SplitBar::onSetCursor(WidgetHitTest hitTest)
+void SplitBar::onSetCursor(SetCursorEvent& ev)
 {
-  bool isVertical = (m_orientation == Orientation::Vertical);
-  SysCursor modCursor = isVertical ? SysCursor::SizeE : SysCursor::SizeN;
-  SysCursor sysCursor = SysCursor::Arrow;
+  if (!ev.isConsumed()) {
+    bool isVertical = (m_orientation == Orientation::Vertical);
+    SysCursor modCursor = isVertical ? SysCursor::SizeE : SysCursor::SizeN;
+    SysCursor sysCursor = SysCursor::Arrow;
 
-  if (hasCapture()) {
-    sysCursor = modCursor;
-  }
-  else {
-    Point pt = System::getCursorPos() - getAbsoluteBounds().getOrigin();
-    if (getBarRect().contains(pt))
+    if (hasCapture()) {
       sysCursor = modCursor;
+    }
+    else {
+      Point pt = System::getCursorPos() - getAbsoluteBounds().getOrigin();
+      if (getBarRect().contains(pt))
+	sysCursor = modCursor;
+    }
+    ev.setCursor(Cursor(sysCursor));
   }
-
-  setCursor(Cursor(sysCursor));
+  Widget::onSetCursor(ev);
 }
 
-void SplitBar::onAddChild(Widget* child)
+void SplitBar::onAddChild(ChildEvent& ev)
 {
-  Widget::onAddChild(child);
+  Widget::onAddChild(ev);
 
   if (m_first == NULL)
-    setFirstWidget(child);
+    setFirstWidget(ev.getChild());
   else if (m_second == NULL)
-    setSecondWidget(child);
+    setSecondWidget(ev.getChild());
 }
 
 void SplitBar::updateChildrenVisibility()

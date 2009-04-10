@@ -52,6 +52,12 @@
 #include "Vaca/Command.h"
 #include "Vaca/ScrollInfo.h"
 #include "Vaca/ScrollEvent.h"
+#include "Vaca/ChildEvent.h"
+#include "Vaca/FocusEvent.h"
+#include "Vaca/CommandEvent.h"
+#include "Vaca/ResizeEvent.h"
+#include "Vaca/PreferredSizeEvent.h"
+#include "Vaca/SetCursorEvent.h"
 
 // uncomment this if you want message reporting in the "vaca.log"
 // #define REPORT_MESSAGES
@@ -534,6 +540,16 @@ Style Widget::getStyle() const
 	       ::GetWindowLong(m_handle, GWL_EXSTYLE));
 }
 
+/// Returns true if the widget has all the specified styles.
+///
+/// @param style
+///   Set of styles to see if the widget has.
+///
+bool Widget::hasStyle(Style style) const
+{
+  return (getStyle() & style) == style;
+}
+
 /// Replaces all the styles of the Widget with the new ones specified
 /// in @a style parameter.
 /// 
@@ -772,9 +788,9 @@ Size Widget::getPreferredSize()
   if (m_preferredSize != NULL)
     return *m_preferredSize;
   else {
-    Size sz(0, 0);
-    onPreferredSize(sz);
-    return sz;
+    PreferredSizeEvent ev(this, Size(0, 0));
+    onPreferredSize(ev);
+    return ev.getPreferredSize();
   }
 }
 
@@ -797,9 +813,9 @@ Size Widget::getPreferredSize(const Size& fitIn)
   if (m_preferredSize != NULL)
     return *m_preferredSize;
   else {
-    Size sz(fitIn);
-    onPreferredSize(sz);
-    return sz;
+    PreferredSizeEvent ev(this, fitIn);
+    onPreferredSize(ev);
+    return ev.getPreferredSize();
   }
 }
 
@@ -1279,19 +1295,6 @@ bool Widget::hasCapture()
   return m_handle == ::GetCapture();
 }
 
-/// Changes the cursor to be shown when the mouse is above this widget.
-/// 
-/// You should use this method inside #onSetCursor event, or
-/// after capturing the mouse. When the mouse is captured you
-/// don't get #onSetCursor events, even for the same widget
-/// that has captured the mouse.
-/// 
-void Widget::setCursor(const Cursor& cursor)
-{
-  // Cursor::getHandle can be NULL, like the Cursor(SysCursor(NoCursor))
-  ::SetCursor(const_cast<Cursor*>(&cursor)->getHandle());
-}
-
 // ===============================================================
 // WIDGET LAYER
 // ===============================================================
@@ -1607,7 +1610,7 @@ WNDPROC Widget::getGlobalWndProc()
 ///     - sz = Size(width, 0) to calculate the preferred size with restricted &lt;= width.
 ///     - sz = Size(0, height) to calculate the preferred size with restricted &lt;= height.
 /// 
-void Widget::onPreferredSize(Size& sz)
+void Widget::onPreferredSize(PreferredSizeEvent& ev)
 {
   // there is a layout?
   if (m_layout != NULL) {
@@ -1615,7 +1618,7 @@ void Widget::onPreferredSize(Size& sz)
     WidgetList children = getChildren();
 
     // calculate the preferred size through the layout manager
-    sz = m_layout->getPreferredSize(this, children, sz);
+    ev.setPreferredSize(m_layout->getPreferredSize(this, children, ev.getPreferredSize()));
   }
   // else do nothing...
 }
@@ -1662,9 +1665,9 @@ void Widget::onPaint(PaintEvent& ev)
 ///   This event is generated when a @msdn{WM_SIZE} message is received.
 /// @endwin32
 /// 
-void Widget::onResize(const Size& sz)
+void Widget::onResize(ResizeEvent& ev)
 {
-  Resize(sz);
+  Resize(ev);
 
   // Do not call layout() here. The first trigger of layout()
   // method is from Frame::onResize()
@@ -1809,43 +1812,21 @@ void Widget::onDoubleClick(MouseEvent& ev)
   DoubleClick(ev);
 }
 
-/// Event generated when the user press ESC in a drag-and-drop operation.
-/// 
-/// @win32
-///   This event is generated when @msdn{WM_CANCELMODE} message is received.
-/// @endwin32
-/// 
-void Widget::onCancelMode()
-{
-  CancelMode();
-}
-
 /// Requests the mouse cursor to be used in the area
-/// specified by @a hitTest.
-/// 
-/// This event is generated for everytime the mouse moves inside the
-/// widget. If the widget captured the mouse, this event is not
+/// specified by @a SetCursorEvent#getWidgetHit.
+///
+/// This event is generated for everytime the mouse moves over the
+/// widget.
+///
+/// @todo fix this behavior: If the widget captured the mouse, this event is not
 /// generated anymore until the capture is not released.
 /// 
-/// If you override this method, you should not call the base
-/// implementation.
-/// 
-/// @param hitTest Where the mouse is inside the widget.
-/// 
-void Widget::onSetCursor(WidgetHitTest hitTest)
+void Widget::onSetCursor(SetCursorEvent& ev)
 {
-  // if we have a m_baseWndProc, use it
-  if (m_baseWndProc != NULL) {
-    CallWindowProc(m_baseWndProc, m_handle, WM_SETCURSOR, m_wparam, m_lparam);
-  }
-  // if we are not in the client area, maybe the defWndProc known more
-  // about the cursor (like the cursors in Frame to resize the it)
-  else if (hitTest != WidgetHitTest::Client) {
-    defWndProc(WM_SETCURSOR, m_wparam, m_lparam);
-  }
-  // finally, we are in the client area, we can use the normal arrow
-  else {
-    setCursor(Cursor(SysCursor::Arrow));
+  if (!ev.isConsumed()) {
+    if (!m_baseWndProc && ev.getWidgetHit() == WidgetHit::Client) {
+      ev.setCursor(Cursor(SysCursor::Arrow));
+    }
   }
 }
 
@@ -1885,7 +1866,7 @@ void Widget::onKeyUp(KeyEvent& ev)
 ///   This event is generated when @msdn{WM_SETFOCUS} message is received.
 /// @endwin32
 /// 
-void Widget::onFocusEnter(Event& ev)
+void Widget::onFocusEnter(FocusEvent& ev)
 {
   FocusEnter(ev);
 }
@@ -1896,7 +1877,7 @@ void Widget::onFocusEnter(Event& ev)
 ///   This event is generated when @msdn{WM_KILLFOCUS} message is received.
 /// @endwin32
 /// 
-void Widget::onFocusLeave(Event& ev)
+void Widget::onFocusLeave(FocusEvent& ev)
 {
   FocusLeave(ev);
 }
@@ -1921,29 +1902,33 @@ void Widget::onFocusLeave(Event& ev)
 /// 
 /// @see Command
 /// 
-bool Widget::onCommand(CommandId id)
+void Widget::onCommand(CommandEvent& ev)
 {
-  if (Command* cmd = getCommandById(id)) {
-    if (cmd->isEnabled()) {
-      cmd->execute();
-      return true;
-    }
-  }
+  if (!ev.isConsumed()) {
+    CommandId id = ev.getCommandId();
 
-  if (getParent() != NULL) {
-    return getParent()->onCommand(id);
-  }
-  else {
-    // check if the application is a CommandsClient
-    if (CommandsClient* cc = dynamic_cast<CommandsClient*>(Application::getInstance())) {
-      if (Command* cmd = cc->getCommandById(id)) {
-	if (cmd->isEnabled()) {
-	  cmd->execute();
-	  return true;
+    if (Command* cmd = getCommandById(id)) {
+      if (cmd->isEnabled()) {
+	cmd->execute();
+	ev.consume();
+	return;
+      }
+    }
+
+    if (getParent() != NULL) {
+      getParent()->onCommand(ev);
+    }
+    else {
+      // check if the application is a CommandsClient
+      if (CommandsClient* cc = dynamic_cast<CommandsClient*>(Application::getInstance())) {
+	if (Command* cmd = cc->getCommandById(id)) {
+	  if (cmd->isEnabled()) {
+	    cmd->execute();
+	    ev.consume();
+	  }
 	}
       }
     }
-    return false;
   }
 }
 
@@ -1979,12 +1964,12 @@ void Widget::onDropFiles(DropFilesEvent& ev)
   DropFiles(ev);
 }
 
-void Widget::onAddChild(Widget* child)
+void Widget::onAddChild(ChildEvent& ev)
 {
   // do nothing
 }
 
-void Widget::onRemoveChild(Widget* child)
+void Widget::onRemoveChild(ChildEvent& ev)
 {
   // do nothing
 }
@@ -2073,7 +2058,8 @@ void Widget::addChildWin32(Widget* child, bool setParent)
     // sendMessage(WM_UPDATEUISTATE, UIS_SET..., 0);
   }
 
-  onAddChild(child);
+  ChildEvent ev(this, child, true);
+  onAddChild(ev);
 }
 
 /// Removes a child from this widget.
@@ -2093,7 +2079,8 @@ void Widget::removeChildWin32(Widget* child, bool setParent)
   assert(child->m_handle != NULL);
   assert(child->m_parent == this);
 
-  onRemoveChild(child);
+  ChildEvent ev(this, child, false);
+  onRemoveChild(ev);
 
   remove_from_container(m_children, child);
 
@@ -2152,12 +2139,12 @@ void Widget::create(const WidgetClassName& className, Widget* parent, Style styl
 
   // create the HWND handler
   {
-    Widget* outsideWidget = details::get_outside_widget();
+    Widget* outsideWidget = CurrentThread::details::getOutsideWidget();
     assert(outsideWidget == NULL);
     
-    details::set_outside_widget(this);
+    CurrentThread::details::setOutsideWidget(this);
     m_handle = createHandle(className.c_str(), parent, style);
-    details::set_outside_widget(NULL);
+    CurrentThread::details::setOutsideWidget(NULL);
   }
 
   if (m_handle == NULL || !::IsWindow(m_handle))
@@ -2262,7 +2249,6 @@ HWND Widget::createHandle(LPCTSTR className, Widget* parent, Style style)
 ///   <li><tt>WM_MOUSEMOVE</tt> -&gt; Calls #onMouseMove event.</li>
 ///   <li><tt>WM_MOUSEWHEEL</tt> -&gt; Calls #onMouseWheel event.</li>
 ///   <li><tt>WM_MOUSELEAVE</tt> -&gt; Calls #onMouseLeave event.</li>
-///   <li><tt>WM_CANCELMODE</tt> -&gt; Calls #onCancelMode event.</li>
 ///   <li><tt>WM_CHAR</tt> -&gt; Calls #onKeyDown event (use the KeyEvent#getCharCode).</li>
 ///   <li><tt>WM_KEYDOWN</tt> -&gt; Calls #onKeyDown event (use the KeyEvent#getKeyCode).</li>
 ///   <li><tt>WM_KEYUP</tt> -&gt; Calls #onKeyUp event.</li>
@@ -2382,46 +2368,52 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
     }
 
     case WM_SIZE: {
-      Size sz(LOWORD(lParam), HIWORD(lParam));
-      onResize(sz);
+      ResizeEvent ev(this, Size(LOWORD(lParam), HIWORD(lParam)));
+      onResize(ev);
       break;
     }
 
     case WM_SETCURSOR:
       if (hasMouseAbove()) {
-	WidgetHitTest hitTest = WidgetHitTest::Error;
+	WidgetHit hitTest = WidgetHit::Error;
 	switch (LOWORD(lParam)) {
-	  case HTERROR: hitTest = WidgetHitTest::Error; break;
-	  case HTTRANSPARENT: hitTest = WidgetHitTest::Transparent; break;
-	  case HTNOWHERE: hitTest = WidgetHitTest::Nowhere; break;
-	  case HTCLIENT: hitTest = WidgetHitTest::Client; break;
-	  case HTCAPTION: hitTest = WidgetHitTest::Caption; break;
-	  case HTSYSMENU: hitTest = WidgetHitTest::SystemMenu; break;
-	    // case HTGROWBOX: hitTest = WidgetHitTest::Size; break;
-	  case HTSIZE: hitTest = WidgetHitTest::Size; break;
-	  case HTMENU: hitTest = WidgetHitTest::Menu; break;
-	  case HTHSCROLL: hitTest = WidgetHitTest::HorizontalScroll; break;
-	  case HTVSCROLL: hitTest = WidgetHitTest::VerticalScroll; break;
-	  case HTMINBUTTON: hitTest = WidgetHitTest::MinimizeButton; break;
-	  case HTMAXBUTTON: hitTest = WidgetHitTest::MaximizeButton; break;
-	    //case HTREDUCE: hitTest = WidgetHitTest::MinimizeButton; break;
-	    //case HTZOOM: hitTest = WidgetHitTest::MaximizeButton; break;
-	  case HTLEFT: hitTest = WidgetHitTest::Left; break;
-	  case HTRIGHT: hitTest = WidgetHitTest::Right; break;
-	  case HTTOP: hitTest = WidgetHitTest::Top; break;
-	  case HTTOPLEFT: hitTest = WidgetHitTest::TopLeft; break;
-	  case HTTOPRIGHT: hitTest = WidgetHitTest::TopRight; break;
-	  case HTBOTTOM: hitTest = WidgetHitTest::Bottom; break;
-	  case HTBOTTOMLEFT: hitTest = WidgetHitTest::BottomLeft; break;
-	  case HTBOTTOMRIGHT: hitTest = WidgetHitTest::BottomRight; break;
-	  case HTBORDER: hitTest = WidgetHitTest::Border; break;
-	  case HTOBJECT: hitTest = WidgetHitTest::Object; break;
-	  case HTCLOSE: hitTest = WidgetHitTest::Close; break;
-	  case HTHELP: hitTest = WidgetHitTest::Help; break;
+	  case HTERROR: hitTest = WidgetHit::Error; break;
+	  case HTTRANSPARENT: hitTest = WidgetHit::Transparent; break;
+	  case HTNOWHERE: hitTest = WidgetHit::Nowhere; break;
+	  case HTCLIENT: hitTest = WidgetHit::Client; break;
+	  case HTCAPTION: hitTest = WidgetHit::Caption; break;
+	  case HTSYSMENU: hitTest = WidgetHit::SystemMenu; break;
+	    // case HTGROWBOX: hitTest = WidgetHit::Size; break;
+	  case HTSIZE: hitTest = WidgetHit::Size; break;
+	  case HTMENU: hitTest = WidgetHit::Menu; break;
+	  case HTHSCROLL: hitTest = WidgetHit::HorizontalScroll; break;
+	  case HTVSCROLL: hitTest = WidgetHit::VerticalScroll; break;
+	  case HTMINBUTTON: hitTest = WidgetHit::MinimizeButton; break;
+	  case HTMAXBUTTON: hitTest = WidgetHit::MaximizeButton; break;
+	    //case HTREDUCE: hitTest = WidgetHit::MinimizeButton; break;
+	    //case HTZOOM: hitTest = WidgetHit::MaximizeButton; break;
+	  case HTLEFT: hitTest = WidgetHit::Left; break;
+	  case HTRIGHT: hitTest = WidgetHit::Right; break;
+	  case HTTOP: hitTest = WidgetHit::Top; break;
+	  case HTTOPLEFT: hitTest = WidgetHit::TopLeft; break;
+	  case HTTOPRIGHT: hitTest = WidgetHit::TopRight; break;
+	  case HTBOTTOM: hitTest = WidgetHit::Bottom; break;
+	  case HTBOTTOMLEFT: hitTest = WidgetHit::BottomLeft; break;
+	  case HTBOTTOMRIGHT: hitTest = WidgetHit::BottomRight; break;
+	  case HTBORDER: hitTest = WidgetHit::Border; break;
+	  case HTOBJECT: hitTest = WidgetHit::Object; break;
+	  case HTCLOSE: hitTest = WidgetHit::Close; break;
+	  case HTHELP: hitTest = WidgetHit::Help; break;
 	}
-	onSetCursor(hitTest);
-	lResult = TRUE;
-	ret = true;
+
+	Point pt(System::getCursorPos() - getAbsoluteClientBounds().getOrigin());
+	SetCursorEvent ev(this, pt, hitTest);
+	onSetCursor(ev);
+
+	if (ev.isConsumed()) {
+	  lResult = TRUE;
+	  ret = true;
+	}
       }
       break;
 
@@ -2489,17 +2481,23 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
 	   MouseButton::None);			    // button
 
       if (!m_hasMouse) {
-	onMouseEnter(ev);
 	m_hasMouse = true;
+	onMouseEnter(ev);
 
 	TRACKMOUSEEVENT tme;
 	tme.cbSize = sizeof(TRACKMOUSEEVENT);
-	tme.dwFlags = TME_LEAVE;// | TME_HOVER
+	tme.dwFlags = TME_LEAVE;
 	tme.hwndTrack = m_handle;
 	_TrackMouseEvent(&tme);
       }
 
       onMouseMove(ev);
+
+      // WM_SETCURSOR is not generated when we capture the mouse
+      if (hasCapture()) {
+	SetCursorEvent ev2(this, ev.getPoint(), WidgetHit::Client);
+	onSetCursor(ev2);
+      }
       break;
     }
 
@@ -2533,10 +2531,6 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
       break;
     }
 
-    case WM_CANCELMODE:
-      onCancelMode();
-      break;
-
     case WM_KEYDOWN: {
       KeyEvent ev(this, Keys::fromMessageParams(wParam, lParam), 0);
       onKeyDown(ev);
@@ -2569,7 +2563,7 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
       break;
     }
 
-    case WM_COMMAND:
+    case WM_COMMAND: {
       if (reinterpret_cast<HWND>(lParam) != NULL) {
 	HWND hwndCtrl = reinterpret_cast<HWND>(lParam);
 	Widget* child = Widget::fromHandle(hwndCtrl);
@@ -2581,12 +2575,15 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
 	}
       }
 
-      if (!ret && onCommand(static_cast<CommandId>(LOWORD(wParam)))) {
+      CommandEvent ev(this, static_cast<CommandId>(LOWORD(wParam)));
+      onCommand(ev);
+      if (!ret && ev.isConsumed()) {
 	// ...onCommand returns true when processed the command
 	lResult = 0;		// processed
 	ret = true;
       }
       break;
+    }
 
     case WM_NOTIFY: {
       LPNMHDR lpnmhdr = reinterpret_cast<LPNMHDR>(lParam);
@@ -2599,13 +2596,13 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
     }
 
     case WM_SETFOCUS: {
-      Event ev(this);
+      FocusEvent ev(this, wParam == 0 ? NULL: Widget::fromHandle((HWND)wParam), this);
       onFocusEnter(ev);
       break;
     }
 
     case WM_KILLFOCUS: {
-      Event ev(this);
+      FocusEvent ev(this, this, wParam == 0 ? NULL: Widget::fromHandle((HWND)wParam));
       onFocusLeave(ev);
       break;
     }
@@ -3092,31 +3089,22 @@ LRESULT CALLBACK Widget::globalWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARA
   }
   VACA_TRACE((preString + " ("+ msgString + ")\n").c_str());
 #endif
-  
+
   if (widget != NULL) {
     LRESULT lResult;
     bool used = false;
 
     MakeWidgetRef ref(widget);
 
-    WPARAM old_wparam = widget->m_wparam;
-    LPARAM old_lparam = widget->m_lparam;
-    widget->m_wparam = wParam;
-    widget->m_lparam = lParam;
-
     // window procedures
     used = widget->wndProc(msg, wParam, lParam, lResult);
     if (!used)
       lResult = widget->defWndProc(msg, wParam, lParam);
 
-    widget->m_wparam = old_wparam;
-    widget->m_lparam = old_lparam;
-
     return lResult;
   }
   else {
-//     widget = getThreadData()->outsideWidget;
-    widget = details::get_outside_widget();
+    widget = CurrentThread::details::getOutsideWidget();
     if (widget != NULL) {
       assert(hwnd != NULL);
       widget->m_handle = hwnd;

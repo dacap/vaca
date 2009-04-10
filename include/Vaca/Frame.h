@@ -114,11 +114,11 @@ public:
 
 protected:
   // events
-  virtual void onPreferredSize(Size& sz);
-  virtual void onResize(const Size& sz);
-  virtual bool onCommand(CommandId id);
+  virtual void onPreferredSize(PreferredSizeEvent& ev);
+  virtual void onResize(ResizeEvent& ev);
+  virtual void onCommand(CommandEvent& ev);
   virtual void onUpdateIndicators();
-  virtual void onRemoveChild(Widget* child);
+  virtual void onRemoveChild(ChildEvent& ev);
 
   // new events
   virtual void onActivate(Event& ev);

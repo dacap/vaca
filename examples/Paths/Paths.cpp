@@ -30,6 +30,7 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <Vaca/Vaca.h>
+#include "../resource.h"
 
 using namespace Vaca;
 
@@ -41,7 +42,7 @@ enum {
   // commands for popup-menu in a path
   ID_CUT,
   ID_COPY,
-  ID_REMOVE,
+  ID_DELETE,
   ID_FRONT,
   ID_BACK,
   ID_PROPERTIES,
@@ -175,9 +176,9 @@ public:
     m_endCapGroup.Change.connect(Bind(&FigureProperties::onPenChange, this));
     m_joinGroup.Change.connect(Bind(&FigureProperties::onPenChange, this));
 
-    m_penColor.Action.connect(Bind(&FigureProperties::onSelectPenColor, this));
-    m_brushColor.Action.connect(Bind(&FigureProperties::onSelectBrushColor, this));
-    m_closeFigure.Action.connect(Bind(&FigureProperties::onCloseFigure, this));
+    m_penColor.Click.connect(Bind(&FigureProperties::onSelectPenColor, this));
+    m_brushColor.Click.connect(Bind(&FigureProperties::onSelectBrushColor, this));
+    m_closeFigure.Click.connect(Bind(&FigureProperties::onCloseFigure, this));
     
     // center the dialog
     setSize(getPreferredSize());
@@ -436,10 +437,10 @@ protected:
     }
   }
 
-  virtual void onResize(const Size &sz)
+  virtual void onResize(ResizeEvent& ev)
   {
-    Widget::onResize(sz);
     invalidate(true);
+    Widget::onResize(ev);
   }
 
 private:
@@ -581,7 +582,7 @@ private:
     PopupMenu menu;
     menu.add(L"Cu&t", CommandId(ID_CUT));
     menu.add(L"&Copy", CommandId(ID_COPY));
-    menu.add(L"&Remove", CommandId(ID_REMOVE));
+    menu.add(L"&Delete", CommandId(ID_DELETE));
     menu.addSeparator();
     menu.add(L"Send to &Front", CommandId(ID_FRONT));
     menu.add(L"Send to &Back", CommandId(ID_BACK));
@@ -603,7 +604,7 @@ private:
 	  }
 	  break;
 	}
-	case ID_REMOVE:
+	case ID_DELETE:
 	  m_figs.erase(m_selFigure);
 	  m_selFigure = NULLFIGURE;
 	  break;
@@ -664,6 +665,7 @@ int VACA_MAIN()
 {
   Application app;
   MainFrame frm;
+  frm.setIcon(ResourceId(IDI_VACA));
   frm.setVisible(true);
   app.run();
   return 0;

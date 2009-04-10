@@ -31,6 +31,7 @@
 
 #include "Vaca/StatusBar.h"
 #include "Vaca/WidgetClass.h"
+#include "Vaca/PreferredSizeEvent.h"
 
 using namespace Vaca;
 
@@ -51,7 +52,7 @@ bool StatusBar::isLayoutFree()
   return true;
 }
 
-void StatusBar::onPreferredSize(Size& sz)
+void StatusBar::onPreferredSize(PreferredSizeEvent& ev)
 {
-  sz.h = 16;
+  ev.setPreferredSize(0, 24);
 }

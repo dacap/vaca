@@ -36,6 +36,7 @@
 #include "Vaca/Widget.h"
 #include "Vaca/TreeNode.h"
 #include "Vaca/ImageList.h"
+#include "Vaca/Point.h"
 
 #include <iterator>
 
@@ -93,13 +94,15 @@ class VACA_DLL TreeView : public Widget
   friend class TreeNode;
 
   TreeNode m_root;
-  bool     m_deleted;
-  bool     m_isDragging;
-  String   m_tmpBuffer; // to use LPSTR_TEXTCALLBACK we need some space
-                        // to allocate text temporally
+  bool m_deleted;
+  TreeNode* m_dragSource;
   ImageList m_dragImage;
   ImageList m_normalImageList;
   ImageList m_stateImageList;
+
+  /// To use LPSTR_TEXTCALLBACK we need some space
+  /// to allocate text temporally.
+  String m_tmpBuffer;
 
 public:
 
@@ -109,9 +112,14 @@ public:
   typedef TreeViewIterator iterator;
 
   struct VACA_DLL Styles {
-    static const Style Default;
     static const Style EditLabel;
     static const Style ShowSelectionAlways;
+    static const Style WithButtons;
+    static const Style WithLines;
+    static const Style RootWithLines;
+    static const Style FullRowSelect;
+    static const Style NoDragAndDrop;
+    static const Style Default;
   };
 
   TreeView(Widget* parent, Style style = Styles::Default);
@@ -121,19 +129,22 @@ public:
   iterator begin();
   iterator end();
 
-  bool isDragAndDrop();
+  bool isDragAndDrop() const;
   void setDragAndDrop(bool state);
 
-  void setNormalImageList(const ImageList& imageList);
+  void setImageList(const ImageList& imageList);
   void setStateImageList(const ImageList& imageList);
-
-  TreeNode* getRootNode();
 
   void addNode(TreeNode* node);
   void removeNode(TreeNode* node);
 
-  TreeNode* getSelectedNode();
+  TreeNode* getSelectedNode() const;
   void setSelectedNode(TreeNode* node);
+
+  TreeNode* getDropTarget() const;
+  void setDropTarget(TreeNode* node);
+
+  TreeNode* getNodeInPoint(const Point& pt);
 
   virtual void setBgColor(const Color& color);
 
@@ -150,9 +161,10 @@ public:
 //   Signal1<void, TreeViewEvent&> EndDrag;
 
 protected:
-  // evets
+  // events
   virtual void onMouseMove(MouseEvent& ev);
   virtual void onMouseUp(MouseEvent& ev);
+  virtual void onSetCursor(SetCursorEvent& ev);
 
   // new events
   virtual void onBeforeExpand(TreeViewEvent& ev);
@@ -168,8 +180,6 @@ protected:
 
   // reflection
   virtual bool onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult);
-
-  virtual bool wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult);
 
 };
 

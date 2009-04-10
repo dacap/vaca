@@ -126,9 +126,9 @@ void configure_num_editor(TextEdit &edit)
 
 void configure_buttons(Button& ok, Button& cancel)
 {
-  ok.Action.connect(Bind<void>(&msg_ok, ok.getParent()));
-  ok.Action.connect(Bind(&Widget::setVisible, ok.getParent(), false));
-  cancel.Action.connect(Bind(&Widget::setVisible, cancel.getParent(), false));
+  ok.Click.connect(Bind<void>(&msg_ok, ok.getParent()));
+  ok.Click.connect(Bind(&Widget::setVisible, ok.getParent(), false));
+  cancel.Click.connect(Bind(&Widget::setVisible, cancel.getParent(), false));
 }
 
 void filter_num_keys(KeyEvent &ev)

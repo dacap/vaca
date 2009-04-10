@@ -22,12 +22,15 @@ You should include the &lt;Vaca/Vaca.h&gt; file:
 But if you want to make the compilation faster, you can include the
 header file of the class that you use. E.g.:
 @code
-#include <Vaca/String.h>
-void my_routine(const Vaca::String& str);
+#include <Vaca/Color.h>
+void my_routine(const Vaca::Color& color)
+{
+  ...
+}
 @endcode
 
-Also it's a good idea to include the Vaca namespace to get quick access
-to all Vaca classes:
+Also it's a good idea to include the Vaca namespace in .cpp files to
+get quick access to all Vaca classes:
 @code
 using namespace Vaca;
 @endcode
@@ -35,13 +38,13 @@ using namespace Vaca;
 
 @section page_devel_static Static Library
 
-If you are going to use the static version of Vaca (@c libvaca_s.a),
+If you are going to use the static version of Vaca (non-shared),
 remember to compiling your application using the @c -DVACA_STATIC flag.
 
 
 @section page_devel_dynamic Dynamic Library
 
-If you are going to use the dynamic version of Vaca (@c libvaca.a and @c Vaca.dll),
+If you are going to use the dynamic version of Vaca (shared version),
 you have to distribute the @c Vaca.dll with your executable file.
 
 Also, remember to compiling your source code @b without the

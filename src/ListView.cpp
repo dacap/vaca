@@ -450,6 +450,29 @@ bool ListView::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult)
 
   switch (lpnmhdr->code) {
 
+    case LVN_GETDISPINFO: {
+      LPNMLVDISPINFO lplvdi = reinterpret_cast<LPNMLVDISPINFO>(lpnmhdr);
+      ListItem* item = reinterpret_cast<ListItem*>(lplvdi->item.lParam);
+
+      // assert(item != NULL);
+
+      // if (lptvdi->item.mask & TVIF_TEXT) {
+      // 	m_tmpBuffer = node->getText();
+      // 	lptvdi->item.pszText = const_cast<LPTSTR>(m_tmpBuffer.c_str());
+      // }
+
+      // if (lptvdi->item.mask & TVIF_IMAGE)
+      // 	lptvdi->item.iImage = node->getImage();
+
+      // if (lptvdi->item.mask & TVIF_SELECTEDIMAGE)
+      // 	lptvdi->item.iSelectedImage = node->getSelectedImage();
+
+      // if (lptvdi->item.mask & TVIF_CHILDREN)
+      // 	lptvdi->item.cChildren = node->hasChildren();
+
+      return true;
+    }
+
     case LVN_ITEMCHANGING: {
       LPNMLISTVIEW lpnmlv = reinterpret_cast<LPNMLISTVIEW>(lpnmhdr);
       ListViewEvent ev(this, lpnmlv->iItem, lpnmlv->iSubItem);

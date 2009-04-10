@@ -30,8 +30,8 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <Vaca/Vaca.h>
-
 #include <ctime>
+#include "../resource.h"
 
 using namespace Vaca;
 
@@ -54,12 +54,12 @@ public:
   }
 
   // after the size is changed
-  virtual void onResize(const Size &sz)
+  virtual void onResize(ResizeEvent& ev)
   {
-    Frame::onResize(sz);
-
     // when the window is resized, repaint the client area
     invalidate(true);
+
+    Frame::onResize(ev);
   }
 
   // the paint the calendar
@@ -221,6 +221,7 @@ int VACA_MAIN()
 {
   Application app;
   MainFrame frm;
+  frm.setIcon(ResourceId(IDI_VACA));
   frm.setVisible(true);
   app.run();
   return 0;

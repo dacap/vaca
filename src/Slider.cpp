@@ -34,6 +34,7 @@
 #include "Vaca/Event.h"
 #include "Vaca/ScrollEvent.h"
 #include "Vaca/WidgetClass.h"
+#include "Vaca/PreferredSizeEvent.h"
 #include <limits>
 #include <limits.h>
 
@@ -257,9 +258,10 @@ void Slider::setPageSize(int pageSize)
   sendMessage(TBM_SETPAGESIZE, 0, pageSize);
 }
 
-void Slider::onPreferredSize(Size& sz)
+void Slider::onPreferredSize(PreferredSizeEvent& ev)
 {
   int style = getStyle().regular;
+  Size sz;
   
   // without ticks
   if (style & TBS_NOTICKS)
@@ -273,6 +275,8 @@ void Slider::onPreferredSize(Size& sz)
   // with ticks in the bottom or the right side
   else
     sz = Size(30, 30);
+
+  ev.setPreferredSize(sz);
 }
 
 void Slider::onScroll(ScrollEvent& ev)

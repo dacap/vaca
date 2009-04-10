@@ -29,7 +29,10 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
+#error deprecated
+
 #include <Vaca/Vaca.h>
+#include "../resource.h"
 
 using namespace Vaca;
 
@@ -49,10 +52,10 @@ public:
   {
   }
 
-  virtual void onAction()
+  virtual void execute()
   {
-    m_console.println("MyCommand::onAction("+
-		     String::fromInt(getId())+")");
+    m_console.println("MyCommand::execute("+
+		      String::fromInt(getId())+")");
   }
 
 };
@@ -72,10 +75,10 @@ public:
     setLayout(new ClientLayout);
     setMenuBar(new MenuBar);
 
-    // method 1: Hook the command in Command::Action signal
+    // method 1: Hook the command in Command::Execute signal
     Command *command;
     command = new Command(1000);
-    command->Action.connect(Bind(&MainFrame::onCommandSlot, this, command));
+    command->Click.connect(Bind(&MainFrame::onCommandSlot, this, command));
     addCommand(command);
 
     // method 2: Hook the command in MyCommand::onAction event
@@ -131,18 +134,12 @@ protected:
 
 //////////////////////////////////////////////////////////////////////
 
-class Example : public Application
-{
-  MainFrame m_mainFrame;
-
-  virtual void main() {
-    m_mainFrame.setVisible(true);
-  }
-};
-
 int VACA_MAIN()
 {
-  Example app;
+  Application app;
+  MainFrame frm;
+  frm.setIcon(ResourceId(IDI_VACA));
+  frm.setVisible(true);
   app.run();
   return 0;
 }

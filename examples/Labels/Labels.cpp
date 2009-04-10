@@ -30,13 +30,13 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <Vaca/Vaca.h>
+#include "../resource.h"
 
 using namespace Vaca;
 
 class MainFrame : public Frame
 {
   Label m_longLabel;
-  Label m_simpleLabel;
   Label m_ellipsis1Label;
   Label m_ellipsis2Label;
   Label m_ellipsis3Label;
@@ -49,9 +49,6 @@ public:
 			     - Frame::Styles::Maximizable)
     , m_longLabel(L"This is a long label to test the word wrap. Also, see\r\n"
 		  L"how the BoxLayout manager fit all in the right place.", this)
-    , m_simpleLabel(L"A simple label (it's not word wrapped, not text-aligned).",
-		    this, Label::Styles::Default +
-			  Label::Styles::Simple)
     , m_ellipsis1Label(L"A label with word-ellipsis style.",
 		       this, Label::Styles::Default +
 			     Label::Styles::WordEllipsis)
@@ -65,7 +62,7 @@ public:
   {
     setLayout(new BoxLayout(Orientation::Vertical, false));
 
-    m_alignButton.Action.connect(Bind(&MainFrame::onSetAlignment, this));
+    m_alignButton.Click.connect(Bind(&MainFrame::onSetAlignment, this));
 
     setSize(getPreferredSize());
     center();
@@ -82,7 +79,6 @@ protected:
       case TextAlign::Right:  align = TextAlign::Left;   break;
     }
     m_longLabel.setTextAlign(align);
-    m_simpleLabel.setTextAlign(align);
     m_ellipsis1Label.setTextAlign(align);
     m_ellipsis2Label.setTextAlign(align);
     m_ellipsis3Label.setTextAlign(align);
@@ -106,18 +102,12 @@ protected:
 
 //////////////////////////////////////////////////////////////////////
 
-class Example : public Application
-{
-  MainFrame m_mainFrame;
-
-  virtual void main() {
-    m_mainFrame.setVisible(true);
-  }
-};
-
 int VACA_MAIN()
 {
-  Example app;
+  Application app;
+  MainFrame frm;
+  frm.setIcon(ResourceId(IDI_VACA));
+  frm.setVisible(true);
   app.run();
   return 0;
 }

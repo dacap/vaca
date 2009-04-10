@@ -30,6 +30,7 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <Vaca/Vaca.h>
+#include "../resource.h"
 
 using namespace Vaca;
 
@@ -62,8 +63,8 @@ public:
     m_listView.setNormalImageList(m_imageList);
 
     // bindings
-    m_browseButton.Action.connect(Bind(&MainFrame::onBrowse, this));
-    m_refreshButton.Action.connect(Bind(&MainFrame::onRefresh, this));
+    m_browseButton.Click.connect(Bind(&MainFrame::onBrowse, this));
+    m_refreshButton.Click.connect(Bind(&MainFrame::onRefresh, this));
 
     // first refresh
     onRefresh();
@@ -92,18 +93,12 @@ protected:
 
 //////////////////////////////////////////////////////////////////////
 
-class Example : public Application
-{
-  MainFrame m_mainFrame;
-
-  virtual void main() {
-    m_mainFrame.setVisible(true);
-  }
-};
-
 int VACA_MAIN()
 {
-  Example app;
+  Application app;
+  MainFrame frm;
+  frm.setIcon(ResourceId(IDI_VACA));
+  frm.setVisible(true);
   app.run();
   return 0;
 }

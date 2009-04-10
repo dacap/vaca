@@ -34,6 +34,7 @@
 #include "Vaca/Debug.h"
 #include "Vaca/System.h"
 #include "Vaca/WidgetClass.h"
+#include "Vaca/PreferredSizeEvent.h"
 
 using namespace Vaca;
 
@@ -158,10 +159,10 @@ std::vector<int> ListBox::getSelectedItems()
   return items;
 }
 
-void ListBox::onPreferredSize(Size& sz)
+void ListBox::onPreferredSize(PreferredSizeEvent& ev)
 {
   // TODO HTHEME stuff
-  sz = Size(4, 4);
+  Size sz(4, 4);
   
   int i, n = getItemCount();
   Rect rc;
@@ -170,13 +171,15 @@ void ListBox::onPreferredSize(Size& sz)
     rc = getItemBounds(i);
     sz = Size(max_value(sz.w, rc.w), sz.h+rc.h);
   }
+
+  ev.setPreferredSize(sz);
 }
 
 /// When the user press double-click in some item (LBN_DBLCLK).
 /// 
-void ListBox::onAction(Event& ev)
+void ListBox::onItemDoubleClick(Event& ev)
 {
-  Action(ev);
+  ItemDoubleClick(ev);
 }
 
 /// When the user changes the current selected item (LBN_SELCHANGE).
@@ -195,7 +198,7 @@ bool ListBox::onReflectedCommand(int id, int code, LRESULT& lResult)
 
     case LBN_DBLCLK: {
       Event ev(this);
-      onAction(ev);
+      onItemDoubleClick(ev);
       return true;
     }
 

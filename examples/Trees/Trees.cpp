@@ -30,43 +30,47 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <Vaca/Vaca.h>
+#include "resource.h"
 
 using namespace Vaca;
 
-// this is a customized TreeNode
+enum {
+  IMAGE_SPHERE,
+  IMAGE_PYRAMID,
+  IMAGE_CUBE,
+  IMAGE_INFINITE,
+};
+
+// This is a customized TreeNode
 class InfiniteTreeNode : public TreeNode
 {
 public:
 
   InfiniteTreeNode(const String &text)
-    : TreeNode(text)
-  {
-  }
-
-  virtual ~InfiniteTreeNode()
+    : TreeNode(text, IMAGE_INFINITE)
   {
   }
 
   virtual bool hasChildren()
   {
-    // an infinite node always as children
+    // An infinite node always as children
     return true;
   }
 
-  // before expand an we infinite tree node, we should add some children
+  // Before expand an we infinite tree node, we should add some children
   virtual void onBeforeExpand(TreeViewEvent &ev)
   {
     TreeNode::onBeforeExpand(ev);
 
-    // did we add the children already? if not...
+    // Did we add the children already? if not...
     if (getChildren().empty()) {
-      // add ten sub-infinite nodes as children
-      for (int c=0; c<10; c++)
-	addNode(new InfiniteTreeNode(format_string(L"%s %d", getText().c_str(), c)));
+      // Add three sub-infinite nodes as children
+      for (int c=0; c<3; c++)
+	addNode(new InfiniteTreeNode(format_string(L"%s/%d", getText().c_str(), c+1)));
     }
   }
 
-  // how we can avoid to edit one node label?
+  // How we can avoid to edit one node label?
   virtual void onBeforeLabelEdit(TreeViewEvent &ev)
   {
     TreeNode::onBeforeLabelEdit(ev);
@@ -79,6 +83,7 @@ public:
 
 class MainFrame : public Frame
 {
+  ImageList m_imageList;
   CheckBox m_dragAndDrop1;
   CheckBox m_dragAndDrop2;
   TreeView m_treeView1;
@@ -87,12 +92,13 @@ class MainFrame : public Frame
   Button m_deleteItem;
   Button m_from1to2;
   Button m_from2to1;
-  Label m_label;
+  StatusBar m_statusBar;
 
 public:
 
   MainFrame()
     : Frame(L"Trees (WIP)")
+    , m_imageList(ResourceId(IDB_IMAGES), 14, Color::Black)
     , m_dragAndDrop1(L"Drag && Drop", this)
     , m_dragAndDrop2(L"Drag && Drop", this)
     , m_treeView1(this)
@@ -102,44 +108,43 @@ public:
     , m_deleteItem(L"-", this)
     , m_from1to2(L">", this)
     , m_from2to1(L"<", this)
-    , m_label(L"", this)
+    , m_statusBar(this)
   {
+    m_treeView1.setImageList(m_imageList);
+    m_treeView2.setImageList(m_imageList);
+
     // layout
-    setLayout(Bix::parse(L"Y[fX[Y[%,%],fY[%,f%],Y[%,%],fY[%,f%]],%]",
+    setLayout(Bix::parse(L"Y[fX[Y[%,%],fY[%,f%],Y[%,%],fY[%,f%]]]",
 			 &m_addItem, &m_deleteItem,
 			 &m_dragAndDrop1, &m_treeView1,
 			 &m_from1to2, &m_from2to1,
-			 &m_dragAndDrop2, &m_treeView2,
-			 &m_label));
+			 &m_dragAndDrop2, &m_treeView2));
 
     m_addItem.setPreferredSize(Size(32, 16));
     m_deleteItem.setPreferredSize(Size(32, 16));
     m_from1to2.setPreferredSize(Size(32, 16));
     m_from2to1.setPreferredSize(Size(32, 16));
 
-    // add the first node (the most simple node without children)
-    m_treeView1.addNode(new TreeNode(L"Leaf node"));
+    m_dragAndDrop1.setSelected(m_treeView1.isDragAndDrop());
+    m_dragAndDrop2.setSelected(m_treeView2.isDragAndDrop());
 
-    // add a node with three children
-    TreeNode* node = new TreeNode(L"Node with sub-nodes (three children)");
-    addThreeChildren(node);
-    m_treeView1.addNode(node);
-
-    // add the third node (a custom node, the infinite node that we defined)
-    m_treeView1.addNode(new InfiniteTreeNode(L"Infinite Node"));
+    // Add some nodes
+    onAddItem();
+    m_treeView2.addNode(new InfiniteTreeNode(L"Infinite Node"));
 
     // bind some events
-    m_dragAndDrop1.Action.connect(Bind(&MainFrame::onDragAndDrop, this, &m_dragAndDrop1, &m_treeView1));
-    m_dragAndDrop2.Action.connect(Bind(&MainFrame::onDragAndDrop, this, &m_dragAndDrop2, &m_treeView2));
+    m_dragAndDrop1.Click.connect(Bind(&MainFrame::onDragAndDrop, this, &m_dragAndDrop1, &m_treeView1));
+    m_dragAndDrop2.Click.connect(Bind(&MainFrame::onDragAndDrop, this, &m_dragAndDrop2, &m_treeView2));
+
     m_treeView1.AfterExpand.connect(&MainFrame::onAfterExpand, this);
     m_treeView1.AfterCollapse.connect(&MainFrame::onAfterCollapse, this);
     m_treeView1.AfterSelect.connect(&MainFrame::onAfterSelect, this);
     m_treeView1.AfterLabelEdit.connect(&MainFrame::onAfterLabelEdit, this);
 
-    m_addItem.Action.connect(Bind(&MainFrame::onAddItem, this));
-    m_deleteItem.Action.connect(Bind(&MainFrame::onDeleteItem, this));
-    m_from1to2.Action.connect(Bind(&MainFrame::onFromTo, this, &m_treeView1, &m_treeView2));
-    m_from2to1.Action.connect(Bind(&MainFrame::onFromTo, this, &m_treeView2, &m_treeView1));
+    m_addItem.Click.connect(Bind(&MainFrame::onAddItem, this));
+    m_deleteItem.Click.connect(Bind(&MainFrame::onDeleteItem, this));
+    m_from1to2.Click.connect(Bind(&MainFrame::onFromTo, this, &m_treeView1, &m_treeView2));
+    m_from2to1.Click.connect(Bind(&MainFrame::onFromTo, this, &m_treeView2, &m_treeView1));
   }
 
 protected:
@@ -152,9 +157,9 @@ protected:
   // onAfter some event (like onAfterExpand or onAfterCollapse)
   void onAfter(TreeViewEvent& ev, const String& action)
   {
-    m_label.setText(format_string(L"You %s \"%s\" item.",
-				  action.c_str(),
-				  ev.getTreeNode()->getText().c_str()));
+    m_statusBar.setText(format_string(L"You %s \"%s\" item.",
+				      action.c_str(),
+				      ev.getTreeNode()->getText().c_str()));
 
     // the label could be bigger, relayout...
     layout();
@@ -168,10 +173,9 @@ protected:
   // adds three items in the m_treeView1
   void onAddItem()
   {
-    TreeNode* node = m_treeView1.getSelectedNode();
-    addThreeChildren(node != NULL ? node:
-				    m_treeView1.getRootNode());
-
+    m_treeView1.addNode(new TreeNode(L"A", IMAGE_SPHERE));
+    m_treeView1.addNode(new TreeNode(L"B", IMAGE_PYRAMID));
+    m_treeView1.addNode(new TreeNode(L"C", IMAGE_CUBE));
     m_treeView1.requestFocus();
   }
 
@@ -206,15 +210,6 @@ protected:
     }
   }
 
-private:
-
-  void addThreeChildren(TreeNode* container)
-  {
-    container->addNode(new TreeNode(L"A"));
-    container->addNode(new TreeNode(L"B"));
-    container->addNode(new TreeNode(L"C"));
-  }
-
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -223,6 +218,7 @@ int VACA_MAIN()
 {
   Application app;
   MainFrame frm;
+  frm.setIcon(ResourceId(IDI_VACA));
   frm.setVisible(true);
   app.run();
   return 0;

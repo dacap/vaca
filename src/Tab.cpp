@@ -35,6 +35,7 @@
 #include "Vaca/Debug.h"
 #include "Vaca/Event.h"
 #include "Vaca/ClientLayout.h"
+#include "Vaca/PreferredSizeEvent.h"
 
 using namespace Vaca;
 
@@ -307,17 +308,17 @@ void TabBase::onPageChange(Event& ev)
 /// 
 /// @see getNonClientSize
 /// 
-void TabBase::onPreferredSize(Size& sz)
+void TabBase::onPreferredSize(PreferredSizeEvent& ev)
 {
   Size ncSize = getNonClientSize();
 
-  if (sz.w > 0 || sz.h > 0) {
-    sz = Size(max_value(0, sz.w - ncSize.w),
-	      max_value(0, sz.h - ncSize.h));
+  if (ev.fitInWidth() || ev.fitInHeight()) {
+    ev.setPreferredSize(max_value(0, ev.fitInWidth() - ncSize.w),
+			max_value(0, ev.fitInHeight() - ncSize.h));
   }
 
-  Widget::onPreferredSize(sz);
-  sz += ncSize;
+  Widget::onPreferredSize(ev);
+  ev.setPreferredSize(ev.getPreferredSize() + ncSize);
 }
 
 bool TabBase::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult)

@@ -35,6 +35,7 @@
 #include "Vaca/Point.h"
 #include "Vaca/Debug.h"
 #include "Vaca/Pen.h"
+#include "Vaca/PreferredSizeEvent.h"
 
 using namespace Vaca;
 
@@ -174,12 +175,11 @@ void BasicDockArea::layout()
   }
 }
 
-void BasicDockArea::onPreferredSize(Size& sz)
+void BasicDockArea::onPreferredSize(PreferredSizeEvent& ev)
 {
   WidgetList children = getChildren();
   WidgetList::iterator it;
-
-  sz = Size(0, 0);
+  Size sz;
 
   for (it=children.begin(); it!=children.end(); ++it) {
     DockBar* dockBar = static_cast<DockBar*>(*it);
@@ -192,4 +192,6 @@ void BasicDockArea::onPreferredSize(Size& sz)
     else
       sz.w = sz.w < dockInfo->getSize().w ? dockInfo->getSize().w: sz.w;
   }
+
+  ev.setPreferredSize(sz);
 }

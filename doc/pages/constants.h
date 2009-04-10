@@ -13,7 +13,7 @@ namespace Vaca {
   @itemRow{CardinalDirection}
   @itemRow{Side}
   @itemRow{Sides}
-  @itemRow{WidgetHitTest}
+  @itemRow{WidgetHit}
 @titleRow{Keyboard}
   @itemRow{Keys}
 @titleRow{Graphics}

@@ -31,6 +31,7 @@
 
 #include <Vaca/Vaca.h>
 #include <memory>
+#include "../resource.h"
 
 using namespace Vaca;
 
@@ -103,9 +104,9 @@ public:
 
     m_orienGroup.setSelectedIndex(0);
     m_orienGroup.Change.connect(&MainFrame::onStyleChange, this);
-    m_side1.Action.connect(&MainFrame::onStyleChange, this);
-    m_side2.Action.connect(&MainFrame::onStyleChange, this);
-    m_showTicks.Action.connect(&MainFrame::onStyleChange, this);
+    m_side1.Click.connect(&MainFrame::onStyleChange, this);
+    m_side2.Click.connect(&MainFrame::onStyleChange, this);
+    m_showTicks.Click.connect(&MainFrame::onStyleChange, this);
     m_tickFreq.Change.connect(&MainFrame::onStyleChange, this);
 
     onRangesChange();
@@ -187,6 +188,7 @@ int VACA_MAIN()
   try {
     Application app;
     MainFrame frm;
+    frm.setIcon(ResourceId(IDI_VACA));
     frm.setVisible(true);
     app.run();
   }

@@ -134,12 +134,13 @@ protected:
     Frame::onMouseLeave(ev);
   }
 
-  virtual void onSetCursor(WidgetHitTest hitTest)
+  virtual void onSetCursor(SetCursorEvent& ev)
   {
-    if (hitTest == WidgetHitTest::Client)
-      setCursor(Cursor(SysCursor::None));
-    else
-      Frame::onSetCursor(hitTest);
+    if (!ev.isConsumed()) {
+      if (ev.getWidgetHit() == WidgetHit::Client)
+	ev.setCursor(Cursor(SysCursor::None));
+    }
+    Frame::onSetCursor(ev);
   }
 
   virtual void onPaint(PaintEvent& ev)
@@ -161,10 +162,10 @@ protected:
 		  Color::Black);
   }
 
-  virtual void onResize(const Size& sz)
+  virtual void onResize(ResizeEvent& ev)
   {
     invalidate(false);
-    Widget::onResize(sz);
+    Widget::onResize(ev);
   }
 
 };
@@ -177,6 +178,7 @@ int VACA_MAIN()
 
   Application app;
   MainFrame frm;
+  frm.setIcon(ResourceId(IDI_VACA));
   frm.setVisible(true);
   app.run();
   return 0;

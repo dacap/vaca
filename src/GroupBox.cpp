@@ -33,6 +33,7 @@
 #include "Vaca/Point.h"
 #include "Vaca/Brush.h"
 #include "Vaca/WidgetClass.h"
+#include "Vaca/PreferredSizeEvent.h"
 
 using namespace Vaca;
 
@@ -70,17 +71,17 @@ Size GroupBox::getNonClientSize()
   return Size(4+4, sz.h+4);
 }
 
-void GroupBox::onPreferredSize(Size& sz)
+void GroupBox::onPreferredSize(PreferredSizeEvent& ev)
 {
   Size ncSize = getNonClientSize();
   
-  if (sz.w > 0 || sz.h > 0) {
-    sz = Size(max_value(0, sz.w - ncSize.w),
-	      max_value(0, sz.h - ncSize.h));
+  if (ev.fitInWidth() || ev.fitInHeight()) {
+    ev.setPreferredSize(max_value(0, ev.fitInWidth() - ncSize.w),
+			max_value(0, ev.fitInHeight() - ncSize.h));
   }
 
-  Widget::onPreferredSize(sz);
-  sz += ncSize;
+  Widget::onPreferredSize(ev);
+  ev.setPreferredSize(ev.getPreferredSize() + ncSize);
 }
 
 bool GroupBox::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult)

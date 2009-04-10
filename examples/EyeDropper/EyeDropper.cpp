@@ -103,7 +103,6 @@ protected:
     Widget::onMouseDown(ev);
 
     captureMouse();
-    setCursor(m_cursor);
   }
 
   virtual void onMouseMove(MouseEvent &ev)
@@ -127,6 +126,13 @@ protected:
       releaseMouse();
   }
 
+  virtual void onSetCursor(SetCursorEvent &ev)
+  {
+    if (!ev.isConsumed() && hasCapture())
+      ev.setCursor(m_cursor);
+    Widget::onSetCursor(ev);
+  }
+
 };
 
 // the main window
@@ -148,7 +154,7 @@ public:
     , m_hexFormat(L"Hex", this)
   {
     setLayout(new BoxLayout(Orientation::Vertical, false));
-    m_hexFormat.Action.connect(&MainFrame::onHexToggle, this);
+    m_hexFormat.Click.connect(&MainFrame::onHexToggle, this);
     setSize(getPreferredSize());
   }
 
@@ -161,12 +167,12 @@ protected:
 
 };
 
-// entry point of the program
 int VACA_MAIN()
 {
   Application app;
-  MainFrame mainFrame;
-  mainFrame.setVisible(true);
+  MainFrame frm;
+  frm.setIcon(ResourceId(IDI_VACA));
+  frm.setVisible(true);
   app.run();
   return 0;
 }

@@ -33,12 +33,12 @@
 #include <shlobj.h>
 #include <shlwapi.h>
 
+#include "../resource.h"
+
 using namespace Vaca;
 
-namespace globals {
-  LPMALLOC pMalloc = NULL;
-  IShellFolder* pDesktop = NULL;
-}
+static LPMALLOC g_pMalloc = NULL;
+static IShellFolder* g_pDesktop = NULL;
 
 //////////////////////////////////////////////////////////////////////
 
@@ -86,8 +86,8 @@ public:
   {
     // destroy PIDLs using IMalloc...
     if (m_relativePidl != m_pidl)
-      globals::pMalloc->Free(m_relativePidl);
-    globals::pMalloc->Free(m_pidl);
+      g_pMalloc->Free(m_relativePidl);
+    g_pMalloc->Free(m_pidl);
   }
 
   virtual bool hasChildren()
@@ -108,9 +108,9 @@ protected:
 
     // it's the desktop
     if (this->getParent() == NULL)
-      pFolder = globals::pDesktop;
+      pFolder = g_pDesktop;
     else
-      globals::pDesktop->BindToObject(m_pidl, NULL, IID_IShellFolder, (LPVOID *)&pFolder);
+      g_pDesktop->BindToObject(m_pidl, NULL, IID_IShellFolder, (LPVOID *)&pFolder);
 
     if (pFolder != NULL) {
       if (getChildren().empty()) {
@@ -134,7 +134,7 @@ protected:
 	}
       }
 
-      if (pFolder != globals::pDesktop)
+      if (pFolder != g_pDesktop)
 	pFolder->Release();
     }
     else {
@@ -153,19 +153,19 @@ private:
     IShellFolder* pFolder = NULL;
 
     if (this->getParent() == NULL)
-      pFolder = globals::pDesktop;
+      pFolder = g_pDesktop;
     else
-      globals::pDesktop->BindToObject(dynamic_cast<FileTreeNode *>(getParent())->m_pidl,
+      g_pDesktop->BindToObject(dynamic_cast<FileTreeNode *>(getParent())->m_pidl,
 				      NULL, IID_IShellFolder, (LPVOID *)&pFolder);
 
     if (pFolder != NULL) {
       if (pFolder->GetDisplayNameOf(m_relativePidl, SHGDN_INFOLDER, &strDispName) != S_OK) {
-	if (globals::pDesktop->GetDisplayNameOf(m_pidl, SHGDN_INFOLDER, &strDispName) != S_OK) {
+	if (g_pDesktop->GetDisplayNameOf(m_pidl, SHGDN_INFOLDER, &strDispName) != S_OK) {
 	  assert(false);
 	}
       }
 
-      if (pFolder != globals::pDesktop)
+      if (pFolder != g_pDesktop)
 	pFolder->Release();
     }
     
@@ -179,15 +179,15 @@ private:
     IShellFolder *pFolder = NULL;
 
     if (this->getParent() == NULL)
-      pFolder = globals::pDesktop;
+      pFolder = g_pDesktop;
     else
-      globals::pDesktop->BindToObject(dynamic_cast<FileTreeNode *>(getParent())->m_pidl,
+      g_pDesktop->BindToObject(dynamic_cast<FileTreeNode *>(getParent())->m_pidl,
 				      NULL, IID_IShellFolder, (LPVOID *)&pFolder);
 
     if (pFolder != NULL) {
       pFolder->GetAttributesOf(1, (LPCITEMIDLIST *)&m_relativePidl, &attr);
 
-      if (pFolder != globals::pDesktop)
+      if (pFolder != g_pDesktop)
 	pFolder->Release();
     }
 
@@ -202,7 +202,7 @@ private:
     UINT cb1 = getPidlSize(pidlHead) - sizeof(pidlHead->mkid.cb);
     UINT cb2 = getPidlSize(pidlTail);
 
-    LPITEMIDLIST pidlNew = (LPITEMIDLIST)globals::pMalloc->Alloc(cb1 + cb2);
+    LPITEMIDLIST pidlNew = (LPITEMIDLIST)g_pMalloc->Alloc(cb1 + cb2);
     if (pidlNew) {
       CopyMemory(pidlNew, pidlHead, cb1);
       CopyMemory(((LPSTR)pidlNew) + cb1, pidlTail, cb2);
@@ -240,19 +240,22 @@ private:
 class MainFrame : public Frame
 {
   TreeView m_treeView;
+  bool m_isLoading;
 
 public:
 
   MainFrame()
     : Frame(L"MiniExplorer")
     , m_treeView(this, TreeView::Styles::Default
-		       - TreeView::Styles::EditLabel)
+		       - TreeView::Styles::EditLabel
+		       + TreeView::Styles::NoDragAndDrop)
+    , m_isLoading(false)
   {
     // the m_treeView will use all the client area
     setLayout(new ClientLayout);
 
     // set the small system image list for the TreeView
-    m_treeView.setNormalImageList(System::getImageList(true));
+    m_treeView.setImageList(System::getImageList(true));
 
     // get the desktop PIDL
     LPITEMIDLIST pidl = NULL;
@@ -269,14 +272,21 @@ private:
 
   void startLoading()
   {
-    setCursor(Cursor(SysCursor::Wait));
+    m_isLoading = true;
   }
 
   void endLoading()
   {
-    setCursor(Cursor(SysCursor::Arrow));
+    m_isLoading = false;
   }
-    
+
+  virtual void onSetCursor(SetCursorEvent& ev)
+  {
+    if (!ev.isConsumed() && m_isLoading) {
+      ev.setCursor(Cursor(SysCursor::Wait));
+    }
+    Widget::onSetCursor(ev);
+  }
 
 };
 
@@ -293,13 +303,14 @@ public:
     // the Application constructor calls CoInitialize...
 
     // get IMalloc interface
-    SHGetMalloc(&globals::pMalloc);
+    SHGetMalloc(&g_pMalloc);
 
     // get desktop IShellFolder interface
-    SHGetDesktopFolder(&globals::pDesktop);
+    SHGetDesktopFolder(&g_pDesktop);
 
     // create MainFrame
     m_mainFrame = new MainFrame;
+    m_mainFrame->setIcon(ResourceId(IDI_VACA));
   }
 
   virtual ~Example()
@@ -308,11 +319,11 @@ public:
     delete m_mainFrame;
 
     // relase desktop IShellFolder interface
-    globals::pDesktop->Release();
+    g_pDesktop->Release();
     
     // release IMalloc interface
-    globals::pMalloc->Release();
-    globals::pMalloc = NULL;
+    g_pMalloc->Release();
+    g_pMalloc = NULL;
 
     // the Application destructor calls CoUninitialize...
   }

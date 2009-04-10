@@ -90,7 +90,7 @@ public:
 
 protected:
   // events
-  virtual void onAction(MenuItemEvent& ev);
+  virtual void onClick(MenuItemEvent& ev);
   virtual void onUpdate(MenuItemEvent& ev);
 
 private:

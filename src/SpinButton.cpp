@@ -33,6 +33,7 @@
 #include "Vaca/Application.h"
 #include "Vaca/Debug.h"
 #include "Vaca/WidgetClass.h"
+#include "Vaca/PreferredSizeEvent.h"
 
 using namespace Vaca;
 
@@ -146,14 +147,17 @@ void SpinButton::setBuddy(Widget* buddy)
   sendMessage(UDM_SETBUDDY, reinterpret_cast<WPARAM>(buddy->getHandle()), 0);
 }
 
-void SpinButton::onPreferredSize(Size& sz)
+void SpinButton::onPreferredSize(PreferredSizeEvent& ev)
 {
   Widget* buddy = getBuddy();
+  Size sz;
 
   if (buddy != NULL)
     sz = Size(17, buddy->getPreferredSize().h);
   else
     sz = Size(17, 17);
+
+  ev.setPreferredSize(sz);
 }
 
 void SpinButton::onChange(SpinButtonEvent& ev)

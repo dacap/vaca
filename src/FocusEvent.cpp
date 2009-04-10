@@ -29,29 +29,29 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#error No way man
+#include "Vaca/FocusEvent.h"
+#include "Vaca/Widget.h"
 
-#ifndef VACA_ITEM_H
-#define VACA_ITEM_H
+using namespace Vaca;
 
-namespace Vaca {
-
-/// Abstract class to represent an item of any control.
-/// 
-/// TODO it's used?
-/// 
-class Item
+FocusEvent::FocusEvent(Widget* source, Widget* oldFocus, Widget* newFocus)
+  : Event(source)
+  , m_oldFocus(oldFocus)
+  , m_newFocus(newFocus)
 {
-public:
+}
 
-  Item() {
-  }
+FocusEvent::~FocusEvent()
+{
+}
 
-  virtual ~Item() {
-  }
+Widget* FocusEvent::getOldFocus() const
+{
+  return m_oldFocus;
+}
 
-};
+Widget* FocusEvent::getNewFocus() const
+{
+  return m_newFocus;
+}
 
-} // namespace Vaca
-
-#endif // VACA_ITEM_H

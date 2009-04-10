@@ -57,7 +57,7 @@ public:
 protected:
 
   // events
-  virtual void onPreferredSize(Size& sz);
+  virtual void onPreferredSize(PreferredSizeEvent& ev);
 
   virtual bool wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult);
 

@@ -30,6 +30,7 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <Vaca/Vaca.h>
+#include "../resource.h"
 
 using namespace Vaca;
 
@@ -49,6 +50,7 @@ class MainFrame : public Dialog
 
   ProgressBar m_progressBar1;	// normal progress bar
   ProgressBar m_progressBar2;	// smooth progress bar
+  ProgressBar m_progressBar3;	// marquee progress bar
   Button m_start;
   Button m_close;
   State m_state;			// current state
@@ -60,6 +62,8 @@ public:
     , m_progressBar1(this)
     , m_progressBar2(this, ProgressBar::Styles::Default +
 			   ProgressBar::Styles::Smooth)
+    , m_progressBar3(this, ProgressBar::Styles::Default +
+			   ProgressBar::Styles::Marquee)
     , m_start(L"Start", this)
     , m_close(L"Close", this)
   {
@@ -69,15 +73,16 @@ public:
     // set the ranges of the progress bars
     m_progressBar1.setRange(0, 100);
     m_progressBar2.setRange(0, 100);
+    m_progressBar3.setMarquee(0);
 
     // the "Start" button is the default one
     m_start.setDefault(true);
 
     // call "onStart" when the "Start" button is pressed
-    m_start.Action.connect(Bind(&MainFrame::onStart, this));
+    m_start.Click.connect(Bind(&MainFrame::onStart, this));
 
     // the Dialog::onCancel generates an onClose event
-    m_close.Action.connect(Bind(&MainFrame::onCancel, this));
+    m_close.Click.connect(Bind(&MainFrame::onCancel, this));
 
     // the application is waiting to work (the user should press the
     // "Start" button)
@@ -95,15 +100,17 @@ protected:
   {
     switch (m_state) {
 
+      // The user pressed Start/Continue...
       case WaitingToWork:
       case Paused: {
 	m_state = Working;
 	m_start.setText(L"Pause"); // convert the button to "Pause"...
+	m_progressBar3.setMarquee(100);
 
 	// this is "The Loop", where the real work is done
 	do {
 	  // when we pump the message queue, we can get events like onClose()
-	  Thread::pumpMessageQueue();
+	  CurrentThread::pumpMessageQueue();
 
 	  // work done
 	  if (m_progressBar1.getValue() == m_progressBar1.getMaximum()) {
@@ -116,27 +123,32 @@ protected:
 
 	    // in our case, the "real work" is sleep :) ...but for
 	    // your application this could be "loading a file"...
-	    Sleep(10);
+	    Sleep(100);
 	  }
 
 	  // still working?
 	} while (m_state == Working);
+
 	// aborting work? hide the frame...
 	if (m_state == Aborting)
 	  setVisible(false);
+
+	m_progressBar3.setMarquee(0);
 	break;
       }
 
+      // The user pressed Pause...
       case Working:
 	m_state = Paused;
 	m_start.setText(L"Continue"); // convert the button to "Continue"
 	break;
 
-      // the work is done? the user press the "Restart" button
+      // The user pressed Restart...
       case WorkDone:
 	// restart progress bars
 	m_progressBar1.setValue(m_progressBar1.getMinimum());
 	m_progressBar2.setValue(m_progressBar2.getMinimum());
+	m_progressBar3.setMarquee(0);
 	m_start.setText(L"Start"); // convert the button to "Start"
 	m_state = WaitingToWork;
 	break;
@@ -189,18 +201,12 @@ protected:
 
 //////////////////////////////////////////////////////////////////////
 
-class Example : public Application
-{
-  MainFrame m_mainFrame;
-
-  virtual void main() {
-    m_mainFrame.setVisible(true);
-  }
-};
-
 int VACA_MAIN()
 {
-  Example app;
+  Application app;
+  MainFrame frm;
+  frm.setIcon(ResourceId(IDI_VACA));
+  frm.setVisible(true);
   app.run();
   return 0;
 }

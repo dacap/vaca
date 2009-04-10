@@ -31,6 +31,10 @@
 
 #include "Vaca/Vaca.h"
 
+#ifndef PBS_MARQUEE
+#define PBS_MARQUEE 8
+#endif
+
 using namespace Vaca;
 
 // ===================================================================
@@ -138,15 +142,6 @@ const Style Widget::Styles::Default =
 const Style Label::Styles::Default =
   Widget::Styles::Visible |
   Style(SS_NOTIFY, 0);
-
-/// A simple label has left-alignment and is not wrapped in multiple lines.
-/// 
-/// @win32
-///   @msdn{SS_SIMPLE}
-/// @endwin32
-/// 
-const Style Label::Styles::Simple =
-  Style(SS_SIMPLE, 0);
 
 /// If the label is too long, ellipsis ("...") is used at the end of
 /// each word instead of wrap them.
@@ -354,28 +349,6 @@ const Style ComboBox::Styles::Default =
   Widget::Styles::ClientEdge |
   Widget::Styles::VerticalScroll |
   Style(CBS_HASSTRINGS | CBS_AUTOHSCROLL | CBS_DROPDOWNLIST, 0);
-
-/// A simple ComboBox (shows the list-box below the combo-box).
-/// 
-/// @warning A ListBox is recommended instead of this kind of ComboBox.
-/// 
-/// Example: 
-/// @code
-/// Frame frame(...);
-/// ComboBox combo(&frame, ComboBox::Styles::Simple);
-/// @endcode
-/// 
-/// @win32
-///   It is WS_VISIBLE | WS_TABSTOP | WS_VSCROLL |
-///   CBS_HASSTRINGS | CBS_AUTOHSCROLL | CBS_SIMPLE | WS_EX_CLIENTEDGE
-/// @endwin32
-/// 
-const Style ComboBox::Styles::Simple =
-  Widget::Styles::Visible |
-  Widget::Styles::Focusable |
-  Widget::Styles::ClientEdge |
-  Widget::Styles::VerticalScroll |
-  Style(CBS_HASSTRINGS | CBS_AUTOHSCROLL | CBS_SIMPLE, 0);
 
 /// Special style for ComboBox so the user can enter any text (not only
 /// the items in the list).
@@ -596,6 +569,9 @@ const Style ProgressBar::Styles::Smooth =
 const Style ProgressBar::Styles::Vertical =
   Style(PBS_VERTICAL, 0);
 
+const Style ProgressBar::Styles::Marquee =
+  Style(PBS_MARQUEE, 0);
+
 // ===================================================================
 // Tool Bars
 // ===================================================================
@@ -678,14 +654,6 @@ const Style ListView::Styles::ShowSelectionAlways =
 // TreeView
 // ===================================================================
 
-const Style TreeView::Styles::Default =
-  Widget::Styles::Visible |
-  Widget::Styles::Focusable |
-  Widget::Styles::ClientEdge |
-  Style(TVS_LINESATROOT | TVS_HASBUTTONS |
-	TVS_HASLINES | TVS_SHOWSELALWAYS |
-	TVS_DISABLEDRAGDROP, 0);
-
 /// With this style in a TreeeView the label of each TreeNode can be edited.
 /// 
 const Style TreeView::Styles::EditLabel =
@@ -693,3 +661,27 @@ const Style TreeView::Styles::EditLabel =
 
 const Style TreeView::Styles::ShowSelectionAlways =
   Style(TVS_SHOWSELALWAYS, 0);
+
+const Style TreeView::Styles::WithButtons =
+  Style(TVS_HASBUTTONS, 0);
+
+const Style TreeView::Styles::WithLines =
+  Style(TVS_HASLINES, 0);
+
+const Style TreeView::Styles::RootWithLines =
+  Style(TVS_LINESATROOT, 0);
+
+const Style TreeView::Styles::FullRowSelect =
+  Style(TVS_FULLROWSELECT, 0);
+
+const Style TreeView::Styles::NoDragAndDrop =
+  Style(TVS_DISABLEDRAGDROP, 0);
+
+const Style TreeView::Styles::Default =
+  Widget::Styles::Visible |
+  Widget::Styles::Focusable |
+  Widget::Styles::ClientEdge |
+  TreeView::Styles::WithButtons |
+  TreeView::Styles::WithLines |
+  TreeView::Styles::RootWithLines |
+  TreeView::Styles::ShowSelectionAlways;

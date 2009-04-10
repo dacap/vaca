@@ -30,6 +30,7 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "Vaca/Spinner.h"
+#include "Vaca/PreferredSizeEvent.h"
 
 using namespace Vaca;
 
@@ -131,11 +132,11 @@ void Spinner::layout()
 /// Fills @a sz with the size of both controls for the width and the
 /// maximun height of both controls.
 /// 
-void Spinner::onPreferredSize(Size& sz)
+void Spinner::onPreferredSize(PreferredSizeEvent& ev)
 {
   Size edit(m_edit.getPreferredSize());
   Size spin(m_spin.getPreferredSize());
 
-  sz = Size(edit.w - 2 + spin.w,
-	    max_value(edit.h, spin.h));
+  ev.setPreferredSize(edit.w - 2 + spin.w,
+		      max_value(edit.h, spin.h));
 }

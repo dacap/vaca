@@ -34,6 +34,7 @@
 #include "Vaca/Application.h"
 #include "Vaca/CloseEvent.h"
 #include "Vaca/WidgetClass.h"
+#include "Vaca/CommandEvent.h"
 
 using namespace Vaca;
 
@@ -107,8 +108,7 @@ bool Dialog::doModal()
 {
   setVisible(true);
 
-  Thread thread;
-  thread.doMessageLoopFor(this);
+  CurrentThread::doMessageLoopFor(this);
 
   return m_state;
 }
@@ -151,20 +151,20 @@ Widget* Dialog::getPreviousFocusableWidget(Widget* widget)
 /// Hides the dialog, but before changes the return state
 /// (#setReturnState) to true, so #doModal returns true.
 /// 
-/// You can use this to bind the OK button action (Button::Action).
-/// Also, this function is automatically called when the IDOK command
+/// You can use this to bind the OK button action (Button#Click).
+/// Also, this function is automatically called when the Id#Ok command
 /// is processed by the dialog through #onCommand event.
 /// 
 /// Example:
 /// @code
 ///   Dialog dlg(...);
 ///   Button ok("&OK", &dlg);
-///   ok.Action.connect(Bind(&Dialog::onOk, &dlg));
+///   ok.Click.connect(Bind(&Dialog::onOk, &dlg));
 /// @endcode
 /// Or:
 /// @code
 ///   Dialog dlg(...);
-///   Button ok("&OK", IDOK, &dlg);
+///   Button ok("&OK", Dialog::Id::Ok, &dlg);
 /// @endcode
 /// 
 /// @see #onCancel
@@ -181,20 +181,20 @@ void Dialog::onOk()
 /// too.
 /// 
 /// You can use this method to bind the Cancel button action
-/// (Button::Action). Anyway this function is automatically
-/// called when the IDCANCEL command is processed by the dialog
+/// (Button#Click). Anyway this function is automatically
+/// called when the Id#Cancel command is processed by the dialog
 /// through #onCommand event.
 /// 
 /// Example:
 /// @code
 ///   Dialog dlg(...);
 ///   Button cancel("&Cancel", &dlg);
-///   cancel.Action.connect(Bind(&Dialog::onCancel, &dlg));
+///   cancel.Click.connect(Bind(&Dialog::onCancel, &dlg));
 /// @endcode
 /// Or:
 /// @code
 ///   Dialog dlg(...);
-///   Button cancel("&Cancel", IDCANCEL, &dlg);
+///   Button cancel("&Cancel", Dialog::Id::Cancel, &dlg);
 /// @endcode
 /// 
 /// @see #onOk, #onClose
@@ -206,20 +206,23 @@ void Dialog::onCancel()
   sendMessage(WM_CLOSE, 0, 0); // cancel is like if the user close the window
 }
 
-bool Dialog::onCommand(CommandId id)
+void Dialog::onCommand(CommandEvent& ev)
 {
-  switch (id) {
+  if (!ev.isConsumed()) {
+    switch (ev.getCommandId()) {
 
-    case IDOK:
-      onOk();
-      return true;
+      case Dialog::Id::Ok:
+	onOk();
+	ev.consume();
+	break;
 
-    case IDCANCEL:
-      onCancel();
-      return true;
+      case Dialog::Id::Cancel:
+	onCancel();
+	ev.consume();
+	break;
+    }
   }
-
-  return Frame::onCommand(id);
+  Frame::onCommand(ev);
 }
 
 BOOL CALLBACK Dialog::globalDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)

@@ -55,7 +55,7 @@ namespace Vaca {
 namespace details {
 
 void VACA_DLL trace(LPCSTR filename, UINT line, LPCSTR msg, ...);
-void VACA_DLL close_log_file();
+void VACA_DLL closeLogFile();
 
 #ifndef __GNUC__
 /// @internal

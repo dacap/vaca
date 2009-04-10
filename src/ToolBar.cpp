@@ -38,6 +38,8 @@
 #include "Vaca/ImageList.h"
 #include "Vaca/DockFrame.h"
 #include "Vaca/Command.h"
+#include "Vaca/CommandEvent.h"
+#include "Vaca/PreferredSizeEvent.h"
 
 using namespace Vaca;
 
@@ -291,9 +293,9 @@ std::vector<Size> ToolSet::getPreferredSizes() const
   return m_preferredSizes;
 }
 
-void ToolSet::onPreferredSize(Size& sz)
+void ToolSet::onPreferredSize(PreferredSizeEvent& ev)
 {
-  sz = m_preferredSizes[getRows()];
+  ev.setPreferredSize(m_preferredSizes[getRows()]);
 }
 
 void ToolSet::onUpdateIndicators()
@@ -449,9 +451,13 @@ Size ToolBar::getFloatingSize() const
     measureGripper(false, Side::Left);
 }
 
-bool ToolBar::onCommand(CommandId id)
+void ToolBar::onCommand(CommandEvent& ev)
 {
-  return getOwnerFrame()->sendMessage(WM_COMMAND, MAKEWPARAM(id, 0), 0) == 0;
+  if (!ev.isConsumed()) {
+    if (getOwnerFrame()->sendMessage(WM_COMMAND, MAKEWPARAM(ev.getCommandId(), 0), 0) == 0)
+      ev.consume();
+  }
+  DockBar::onCommand(ev);
 }
 
 void ToolBar::onUpdateIndicators()

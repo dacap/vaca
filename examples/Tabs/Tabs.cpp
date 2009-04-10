@@ -30,6 +30,7 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <Vaca/Vaca.h>
+#include "../resource.h"
 
 using namespace Vaca;
 
@@ -66,8 +67,8 @@ class MainFrame : public Frame
       , m_side(side)
       , m_tab(tab) { }
 
-    virtual void onAction(MenuItemEvent& ev) {
-      MenuItem::onAction(ev);
+    virtual void onClick(MenuItemEvent& ev) {
+      MenuItem::onClick(ev);
       m_tab.setSide(m_side);
     }
     
@@ -114,10 +115,10 @@ public:
     m_tab.PageChange.connect(Bind(&MainFrame::onPageChange, this));
 
     // labels
-    m_label0.Action.connect(Bind(&MainFrame::onPageLink, this, 0));
-    m_label1.Action.connect(Bind(&MainFrame::onPageLink, this, 1));
-    m_label2.Action.connect(Bind(&MainFrame::onPageLink, this, 2));
-    m_label3.Action.connect(Bind(&MainFrame::onPageLink, this, 3));
+    m_label0.Click.connect(Bind(&MainFrame::onPageLink, this, 0));
+    m_label1.Click.connect(Bind(&MainFrame::onPageLink, this, 1));
+    m_label2.Click.connect(Bind(&MainFrame::onPageLink, this, 2));
+    m_label3.Click.connect(Bind(&MainFrame::onPageLink, this, 3));
 
     updatePage();
 
@@ -212,18 +213,12 @@ private:
 
 //////////////////////////////////////////////////////////////////////
 
-class Example : public Application
-{
-  MainFrame m_mainFrame;
-
-  virtual void main() {
-    m_mainFrame.setVisible(true);
-  }
-};
-
 int VACA_MAIN()
 {
-  Example app;
+  Application app;
+  MainFrame frm;
+  frm.setIcon(ResourceId(IDI_VACA));
+  frm.setVisible(true);
   app.run();
   return 0;
 }

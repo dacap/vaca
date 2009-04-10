@@ -39,6 +39,7 @@ set(VACA_SOURCES
 	src/ButtonBase.cpp
 	src/CancelableEvent.cpp
 	src/CheckBox.cpp
+	src/ChildEvent.cpp
 	src/ClientLayout.cpp
 	src/Clipboard.cpp
 	src/CloseEvent.cpp
@@ -46,6 +47,7 @@ set(VACA_SOURCES
 	src/ColorDialog.cpp
 	src/ComboBox.cpp
 	src/Command.cpp
+	src/CommandEvent.cpp
 	src/CommonDialog.cpp
 	src/Component.cpp
 	src/ConditionVariable.cpp
@@ -64,6 +66,7 @@ set(VACA_SOURCES
 	src/Exception.cpp
 	src/FileDialog.cpp
 	src/FindTextDialog.cpp
+	src/FocusEvent.cpp
 	src/Font.cpp
 	src/FontDialog.cpp
 	src/Frame.cpp
@@ -97,12 +100,14 @@ set(VACA_SOURCES
 	src/Rect.cpp
 	src/Referenceable.cpp
 	src/Region.cpp
+	src/ResizeEvent.cpp
 	src/ResourceId.cpp
 	src/RichEdit.cpp
 	src/Scintilla.cpp
 	src/ScrollEvent.cpp
 	src/ScrollInfo.cpp
 	src/Separator.cpp
+	src/SetCursorEvent.cpp
 	src/Size.cpp
 	src/Slider.cpp
 	src/SpinButton.cpp
@@ -110,6 +115,7 @@ set(VACA_SOURCES
 	src/SplitBar.cpp
 	src/StatusBar.cpp
 	src/String.cpp
+	src/PreferredSizeEvent.cpp
 	src/Style.cpp
 	src/Styles.cpp
 	src/System.cpp

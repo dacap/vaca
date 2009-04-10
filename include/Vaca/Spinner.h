@@ -94,7 +94,7 @@ public:
 protected:
 
   // events
-  virtual void onPreferredSize(Size& sz);
+  virtual void onPreferredSize(PreferredSizeEvent& ev);
   
 };
 

@@ -31,6 +31,7 @@
 
 #include "Vaca/Separator.h"
 #include "Vaca/WidgetClass.h"
+#include "Vaca/PreferredSizeEvent.h"
 
 using namespace Vaca;
 
@@ -47,8 +48,7 @@ Separator::~Separator()
 /// responsability to make the Separator widget a horizontal or
 /// vertical line (through the Layout of the @link Widget#getParent parent Widget@endlink).
 /// 
-void Separator::onPreferredSize(Size& sz)
+void Separator::onPreferredSize(PreferredSizeEvent& ev)
 {
-  sz.w = 2;
-  sz.h = 2;
+  ev.setPreferredSize(2, 2);
 }

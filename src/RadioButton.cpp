@@ -58,9 +58,9 @@ const RadioGroup& RadioButton::getRadioGroup() const
   return m_radioGroup;
 }
 
-void RadioButton::onAction(Event& ev)
+void RadioButton::onClick(Event& ev)
 {
-  ButtonBase::onAction(ev);
+  ButtonBase::onClick(ev);
   m_radioGroup.onChange(ev);
 }
 

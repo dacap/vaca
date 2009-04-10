@@ -32,6 +32,11 @@
 #include "Vaca/ProgressBar.h"
 #include "Vaca/Debug.h"
 #include "Vaca/WidgetClass.h"
+#include "Vaca/PreferredSizeEvent.h"
+
+#ifndef PBM_SETMARQUEE
+#define PBM_SETMARQUEE 1034
+#endif
 
 using namespace Vaca;
 
@@ -120,8 +125,13 @@ void ProgressBar::addValue(int delta)
   sendMessage(PBM_DELTAPOS, delta, 0);
 }
 
-void ProgressBar::onPreferredSize(Size& sz)
+void ProgressBar::setMarquee(int msecsInterval)
+{
+  sendMessage(PBM_SETMARQUEE, msecsInterval == 0 ? FALSE: TRUE, msecsInterval);
+}
+
+void ProgressBar::onPreferredSize(PreferredSizeEvent& ev)
 {
   // WinXP with themes needs at least 10 pixels of height
-  sz = Size(16, 16);
+  ev.setPreferredSize(16, 16);
 }

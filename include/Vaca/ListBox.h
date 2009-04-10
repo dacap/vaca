@@ -68,15 +68,15 @@ public:
   std::vector<int> getSelectedItems();
 
   // signals
-  Signal1<void, Event&> Action;	   ///< @see onAction
+  Signal1<void, Event&> ItemDoubleClick; ///< @see onItemDoubleClick
   Signal1<void, Event&> SelChange; ///< @see onSelChange
 
 protected:
   // events
-  virtual void onPreferredSize(Size& sz);
+  virtual void onPreferredSize(PreferredSizeEvent& ev);
 
   // new events
-  virtual void onAction(Event& ev);
+  virtual void onItemDoubleClick(Event& ev);
   virtual void onSelChange(Event& ev);
 
   // reflection

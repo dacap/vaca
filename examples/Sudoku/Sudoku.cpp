@@ -34,6 +34,7 @@
 
 #include <Vaca/Vaca.h>
 #include "grid.h"
+#include "resource.h"
 
 using namespace Vaca;
 
@@ -201,6 +202,7 @@ public:
   Signal0<void> Enter;
   
 protected:
+
   virtual void onKeyDown(KeyEvent& ev)
   {
     if ((ev.getCharCode() != 0) &&
@@ -215,7 +217,8 @@ protected:
     else
       TextEdit::onKeyDown(ev);
   }
-  virtual void onFocusLeave(Event& ev)
+
+  virtual void onFocusLeave(FocusEvent& ev)
   {
     TextEdit::onFocusLeave(ev);
     Enter();
@@ -963,6 +966,7 @@ int VACA_MAIN()
 
   Application app;
   MainFrame frm;
+  frm.setIcon(ResourceId(IDI_SUDOKU));
   frm.setVisible(true);
   app.run();
   return 0;

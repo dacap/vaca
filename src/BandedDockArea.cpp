@@ -36,6 +36,7 @@
 #include "Vaca/Debug.h"
 #include "Vaca/System.h"
 #include "Vaca/Pen.h"
+#include "Vaca/PreferredSizeEvent.h"
 
 using namespace Vaca;
 
@@ -260,12 +261,11 @@ void BandedDockArea::layout()
 
 }
 
-void BandedDockArea::onPreferredSize(Size& sz)
+void BandedDockArea::onPreferredSize(PreferredSizeEvent& ev)
 {
   std::vector<BandInfo>::iterator it;
 //   int count = 0;
-
-  sz = Size(0, 0);
+  Size sz;
 
   for (it =m_bandInfo.begin();
        it!=m_bandInfo.end();
@@ -277,6 +277,8 @@ void BandedDockArea::onPreferredSize(Size& sz)
 
 //     count++;
   }
+
+  ev.setPreferredSize(sz);
 
 //   return sz//  + (2*max_value(count-1, 0))
 //     ;

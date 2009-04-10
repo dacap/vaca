@@ -135,19 +135,19 @@ public:
 					    size4.h));
 
     // actions
-    m_button1.Action.connect(Bind(&MainFrame::onDefaultDockAreas, this));
-    m_button2.Action.connect(Bind(&MainFrame::onBasicDockAreas, this));
-    m_button3.Action.connect(Bind(&MainFrame::onClearDockAreas, this));
-    m_button4.Action.connect(Bind(&MainFrame::onShowAll, this));
-    m_button5.Action.connect(Bind(&MainFrame::onToggleFullDrag, this));
-    m_button6.Action.connect(Bind(&MainFrame::onToggleFloatingGripper, this));
+    m_button1.Click.connect(Bind(&MainFrame::onDefaultDockAreas, this));
+    m_button2.Click.connect(Bind(&MainFrame::onBasicDockAreas, this));
+    m_button3.Click.connect(Bind(&MainFrame::onClearDockAreas, this));
+    m_button4.Click.connect(Bind(&MainFrame::onShowAll, this));
+    m_button5.Click.connect(Bind(&MainFrame::onToggleFullDrag, this));
+    m_button6.Click.connect(Bind(&MainFrame::onToggleFloatingGripper, this));
 
     m_console.println(L"You must to setup DockAreas to dock the Tool/DockBars");
   }
 
 protected:
 
-  virtual void onFocusEnter(Event &ev)
+  virtual void onFocusEnter(FocusEvent& ev)
   {
     Frame::onFocusEnter(ev);
     m_console.requestFocus();
@@ -249,6 +249,7 @@ int VACA_MAIN()
 {
   Application app;
   MainFrame frm;
+  frm.setIcon(ResourceId(IDI_VACA));
   frm.setVisible(true);
   app.run();
   return 0;

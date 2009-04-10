@@ -30,6 +30,7 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <Vaca/Vaca.h>
+#include "../resource.h"
 
 #include <cmath>
 #ifndef M_PI
@@ -55,13 +56,13 @@ public:
 
     // when the "Fill" button is pressed, we must to call:
     // ((MainFrame*)this)->invalidate(true);
-    m_fill.Action.connect(Bind(&MainFrame::invalidate, this, true));
+    m_fill.Click.connect(Bind(&MainFrame::invalidate, this, true));
   }
 
-  virtual void onResize(const Size &sz)
+  virtual void onResize(ResizeEvent& ev)
   {
-    Frame::onResize(sz);
     invalidate(true);
+    Frame::onResize(ev);
   }
 
   virtual void onPaint(PaintEvent& ev)
@@ -97,18 +98,12 @@ public:
 
 //////////////////////////////////////////////////////////////////////
 
-class Example : public Application
-{
-  MainFrame m_mainFrame;
-
-  virtual void main() {
-    m_mainFrame.setVisible(true);
-  }
-};
-
 int VACA_MAIN()
 {
-  Example app;
+  Application app;
+  MainFrame frm;
+  frm.setIcon(ResourceId(IDI_VACA));
+  frm.setVisible(true);
   app.run();
   return 0;
 }

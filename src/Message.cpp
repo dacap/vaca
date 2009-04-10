@@ -34,8 +34,6 @@
 
 using namespace Vaca;
 
-static const WPARAM MagicWparam = 0xBACA;
-
 Message::Message()
 {
 }
@@ -48,11 +46,26 @@ Message::Message(const String& name)
 
   m_msg.hwnd = NULL;
   m_msg.message = message;
-  m_msg.wParam = MagicWparam;
-  m_msg.lParam = reinterpret_cast<LPARAM>(this);
+  m_msg.wParam = 0;
+  m_msg.lParam = 0;
+  m_msg.time = 0;
+}
+
+Message::Message(const Message& msg, void* payload)
+{
+  m_msg.hwnd = msg.m_msg.hwnd;
+  m_msg.message = msg.m_msg.message;
+  m_msg.wParam = NULL;
+  m_msg.lParam = reinterpret_cast<LPARAM>(payload);
   m_msg.time = 0;
 }
 
 Message::~Message()
 {
 }
+
+void* Message::getPayload()
+{
+  return reinterpret_cast<void*>(m_msg.lParam);
+}
+

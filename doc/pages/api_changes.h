@@ -99,6 +99,21 @@ Where:
 <!------------------------------------------------------------------------->
 @beginChange{onGotFocus/onLostFocus - Renamed}
 Now they are onFocusEnter and onFocusLeave (the same for Widget#FocusEnter/Widget#FocusLeave signals).
+
+Before:
+@code
+virtual void Widget::onGotFocus(Event& ev);
+virtual void Widget::onLostFocus(Event& ev);
+@endcode
+
+Now:
+@code
+virtual void Widget::onFocusEnter(FocusEvent& ev);
+virtual void Widget::onFocusLeave(FocusEvent& ev);
+@endcode
+
+And now with FocusEvent you have FocusEvent#getOldFocus and FocusEvent#getNewFocus
+to known who lost and who receive the focus.
 @endChange
 <!------------------------------------------------------------------------->
 @beginChange{onBeforePosChange/onAfterPosChange - Removed}
@@ -159,7 +174,68 @@ ScrollRequest code = ev.getRequest();
 @endcode
 
 @ref ScrollRequest is a new enumeration to wrap Win32 constants.
+@endChange
+<!------------------------------------------------------------------------->
+@beginChange{onAction - Signature Changed}
 
+Old signature:
+@code
+virtual void Widget::onAction(Event& ev);
+virtual void MenuItem::onAction(Event& ev);
+virtual void ListBox::onAction(Event& ev);
+@endcode
+
+New signature:
+@code
+virtual void Widget::onClick(Event& ev);
+virtual void MenuItem::onClick(MenuItemEvent& ev);
+virtual void ListBox::onItemDoubleClick(Event& ev);
+@endcode
+@endChange
+<!------------------------------------------------------------------------->
+@beginChange{onAddChild/onRemovedChild - Signature Changed}
+
+Old signature:
+@code
+virtual void Widget::onAddChild(Widget* child);
+virtual void Widget::onRemoveChild(Widget* child);
+@endcode
+
+New signature:
+@code
+virtual void Widget::onAddChild(ChildEvent& ev);
+virtual void Widget::onRemoveChild(ChildEvent& ev);
+@endcode
+@endChange
+<!------------------------------------------------------------------------->
+@beginChange{onCommand - Signature Changed}
+
+Old signature:
+@code
+virtual bool Widget::onCommand(CommandId id);
+@endcode
+
+New signature:
+@code
+virtual void Widget::onCommand(CommandEvent& ev);
+@endcode
+@endChange
+<!------------------------------------------------------------------------->
+@beginChange{onResize - Signature Changed}
+
+Old signature:
+@code
+virtual void Widget::onResize(ResizeEvent& ev);
+@endcode
+
+New signature:
+@code
+virtual void Widget::onResize(ResizeEvent& ev);
+@endcode
+@endChange
+<!------------------------------------------------------------------------->
+@beginChange{onCancelMode - Removed}
+This event was removed.
 @endChange
 <!------------------------------------------------------------------------->
 @beginChange{About Styles}

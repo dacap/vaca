@@ -113,9 +113,14 @@ private:
   virtual HWND createHandle(LPCTSTR className, Widget* parent, Style style);
 };
 
-/// The default implementation to use the MDI interface.  It controls
-/// the MDIClient, and uses the DefFrameProc of the Windows API to
-/// handle messages that aren't processed.
+/// Default implementation to use the MDI interface.
+///
+/// You can use this kind of Frame when you want MDI applications.
+///
+/// @win32
+///   It takes care of a MdiClient and uses the @msdn{DefFrameProc} of
+///   the Windows API as default message handler.
+/// @endwin32
 /// 
 class VACA_DLL MdiFrame : public Frame
 {

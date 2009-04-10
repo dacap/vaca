@@ -48,7 +48,6 @@ public:
 
   struct VACA_DLL Styles {
     static const Style Default;
-    static const Style Simple;
     static const Style Editable;
   };
 
@@ -76,16 +75,14 @@ public:
   virtual void layout();
 
   // signals
-  Signal1<void, Event&> Action;	    ///< @see onAction
   Signal1<void, Event&> SelChange;  ///< @see onSelChange
   Signal1<void, Event&> EditChange; ///< @see onEditChange
 
 protected:
   // events
-  virtual void onPreferredSize(Size& sz);
+  virtual void onPreferredSize(PreferredSizeEvent& ev);
   
   // new events
-  virtual void onAction(Event& ev);
   virtual void onSelChange(Event& ev);
   virtual void onEditChange(Event& ev);
 

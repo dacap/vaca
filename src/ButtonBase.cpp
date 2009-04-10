@@ -34,6 +34,7 @@
 #include "Vaca/Event.h"
 #include "Vaca/System.h"
 #include "Vaca/WidgetClass.h"
+#include "Vaca/PreferredSizeEvent.h"
 
 using namespace Vaca;
 
@@ -84,11 +85,12 @@ void ButtonBase::setSelected(bool state)
 
 /// Returns the preferred size for the button.
 /// 
-void ButtonBase::onPreferredSize(Size& sz)
+void ButtonBase::onPreferredSize(PreferredSizeEvent& ev)
 {
   assert(::IsWindow(getHandle()));
 
   int style = getStyle().regular;
+  Size sz;
 
   bool pushLike =
     ((style & 15) == BS_PUSHBUTTON) ||
@@ -149,19 +151,24 @@ void ButtonBase::onPreferredSize(Size& sz)
 #if 0
   }
 #endif
+
+  ev.setPreferredSize(sz);
 }
 
-/// Event fired when you should take some responsability. For Button
-/// it's fired when the user push the button, for CheckBox and
-/// ToggleButton when the button-state is changed, and for RadioButton
-/// when one option is selected.
+/// Event fired when the user activates the button.
+///
+/// The user can press and release a mouse button or press space-bar
+/// key to activate a button widget. For Button it is fired when the
+/// user push the button, for CheckBox and ToggleButton when the
+/// button-state is changed, and for RadioButton when a different
+/// option is selected.
 /// 
-void ButtonBase::onAction(Event& ev)
+void ButtonBase::onClick(Event& ev)
 {
-  Action(ev);
+  Click(ev);
 }
 
-/// Catches BN_CLICKED to fire onAction event.
+/// Receives BN_CLICKED and fires onClick event.
 /// 
 bool ButtonBase::onReflectedCommand(int id, int code, LRESULT& lResult)
 {
@@ -172,7 +179,7 @@ bool ButtonBase::onReflectedCommand(int id, int code, LRESULT& lResult)
 
     case BN_CLICKED: {
       Event ev(this);
-      onAction(ev);
+      onClick(ev);
       break;
     }
 

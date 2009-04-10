@@ -31,6 +31,7 @@
 
 #include <Vaca/Vaca.h>
 #include <cmath>
+#include "../resource.h"
 
 using namespace Vaca;
 
@@ -713,8 +714,8 @@ protected:
   virtual void onMouseWheel(MouseEvent& ev);
   virtual void onMouseLeave(MouseEvent& ev);
   virtual void onKeyDown(KeyEvent& ev);
-  virtual void onSetCursor(WidgetHitTest hitTest);
-  virtual void onResize(const Size& sz);
+  virtual void onSetCursor(SetCursorEvent& ev);
+  virtual void onResize(ResizeEvent& ev);
   virtual void onPaint(PaintEvent& ev);
   
 private:
@@ -1043,25 +1044,26 @@ void GridView::onKeyDown(KeyEvent &ev)
   }
 }
 
-void GridView::onSetCursor(WidgetHitTest hitTest)
+void GridView::onSetCursor(SetCursorEvent& ev)
 {
-  if (hitTest == WidgetHitTest::Client) {
-    Point pt = System::getCursorPos() - getAbsoluteClientBounds().getOrigin();
-    int colIndex = getHotResizingBorder(pt);
-    if (colIndex != NULL_ROW_INDEX) {
-      setCursor(Cursor(SysCursor::SizeE));
-      return;
+  if (!ev.isConsumed()) {
+    if (ev.getWidgetHit() == WidgetHit::Client) {
+      Point pt = System::getCursorPos() - getAbsoluteClientBounds().getOrigin();
+      int colIndex = getHotResizingBorder(pt);
+      if (colIndex != NULL_ROW_INDEX) {
+	ev.setCursor(Cursor(SysCursor::SizeE));
+      }
     }
   }
-  setCursor(Cursor(SysCursor::Arrow));
+  Widget::onSetCursor(ev);
 }
   
-void GridView::onResize(const Size &sz)
+void GridView::onResize(ResizeEvent& ev)
 {
-  Widget::onResize(sz);
   //       invalidate(true);
   updateHorizontalScrollBarVisibility();
   //       updateVerticalScrollBarVisibility();
+  Widget::onResize(ev);
 }
 
 void GridView::onPaint(PaintEvent& ev)
@@ -1585,6 +1587,7 @@ int VACA_MAIN()
 {
   Application app;
   MainFrame frm;
+  frm.setIcon(ResourceId(IDI_VACA));
   frm.setVisible(true);
   app.run();
   return 0;

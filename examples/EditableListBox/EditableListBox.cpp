@@ -30,6 +30,7 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <Vaca/Vaca.h>
+#include "../resource.h"
 
 using namespace Vaca;
 
@@ -60,17 +61,17 @@ protected:
     }
   }
 
-  // When the user double click in a item of the ListBox
-  virtual void onAction(Event &ev)
+  // When the user double-clicks in a item of the ListBox
+  virtual void onItemDoubleClick(Event &ev)
   {
-    ListBox::onAction(ev);
+    ListBox::onItemDoubleClick(ev);
     beginEdit(getCurrentItem());
   }
 
-  virtual void onResize(const Size& sz)
+  virtual void onResize(ResizeEvent& ev)
   {
-    ListBox::onResize(sz);
     endEdit();
+    ListBox::onResize(ev);
   }
 
   virtual void onScroll(ScrollEvent& ev)
@@ -84,10 +85,10 @@ private:
   void onEditKeyDown(KeyEvent &ev)
   {
     if (ev.getKeyCode() == Keys::Enter)
-      onEditFocusLeave(ev);
+      onEditFocusLeave();
   }
 
-  void onEditFocusLeave(Event& ev)
+  void onEditFocusLeave()
   {
     endEdit();
   }
@@ -99,7 +100,7 @@ private:
       m_edit = new TextEdit(getItemText(index), this, TextEdit::Styles::Default -
 						      Widget::Styles::ClientEdge);
       m_edit->KeyDown.connect(&EditableListBox::onEditKeyDown, this);
-      m_edit->FocusLeave.connect(&EditableListBox::onEditFocusLeave, this);
+      m_edit->FocusLeave.connect(Bind(&EditableListBox::onEditFocusLeave, this));
       m_edit->selectAll();
       m_edit->requestFocus();
 
@@ -161,8 +162,8 @@ public:
     for (int c=0; c<10; c++)
       onAdd();
 
-    m_addButton.Action.connect(Bind(&MainFrame::onAdd, this));
-    m_removeButton.Action.connect(Bind(&MainFrame::onRemove, this));
+    m_addButton.Click.connect(Bind(&MainFrame::onAdd, this));
+    m_removeButton.Click.connect(Bind(&MainFrame::onRemove, this));
 
     setSize(getPreferredSize());
     center();
@@ -195,18 +196,12 @@ private:
 
 //////////////////////////////////////////////////////////////////////
 
-class Example : public Application
-{
-  MainFrame m_mainFrame;
-
-  virtual void main() {
-    m_mainFrame.setVisible(true);
-  }
-};
-
 int VACA_MAIN()
 {
-  Example app;
+  Application app;
+  MainFrame frm;
+  frm.setIcon(ResourceId(IDI_VACA));
+  frm.setVisible(true);
   app.run();
   return 0;
 }

@@ -30,6 +30,7 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <Vaca/Vaca.h>
+#include "../resource.h"
 
 using namespace Vaca;
 
@@ -37,7 +38,6 @@ class MainFrame : public Frame
 {
   Label m_label1; ComboBox m_combo1;
   Label m_label2; ComboBox m_combo2;
-  Label m_label3; ComboBox m_combo3;
   
 public:
 
@@ -45,10 +45,8 @@ public:
     : Frame(L"ComboBoxes")
     , m_label1(L"ComboBox::Styles::Default", this)
     , m_combo1(this)
-    , m_label2(L"ComboBox::Styles::Simple", this)
-    , m_combo2(this, ComboBox::Styles::Simple)
-    , m_label3(L"ComboBox::Styles::Editable", this)
-    , m_combo3(this, ComboBox::Styles::Editable)
+    , m_label2(L"ComboBox::Styles::Editable", this)
+    , m_combo2(this, ComboBox::Styles::Editable)
   {
     setLayout(new BoxLayout(Orientation::Vertical, false));
 
@@ -56,11 +54,9 @@ public:
       String text = format_string(L"Item %d", c);
       m_combo1.addItem(text);
       m_combo2.addItem(text);
-      m_combo3.addItem(text);
     }
 
     m_combo1.SelChange.connect(&MainFrame::onComboChange, this);
-    m_combo2.EditChange.connect(&MainFrame::onEditChange, this);
 
     setSize(getPreferredSize());
     center();
@@ -89,28 +85,17 @@ private:
     m_combo2.setCurrentItem(m_combo1.getCurrentItem());
   }
 
-  void onEditChange(Event& ev)
-  {
-    m_combo3.setText(m_combo2.getText());
-  }
-
 
 };
 
 //////////////////////////////////////////////////////////////////////
 
-class Example : public Application
-{
-  MainFrame m_mainFrame;
-
-  virtual void main() {
-    m_mainFrame.setVisible(true);
-  }
-};
-
 int VACA_MAIN()
 {
-  Example app;
+  Application app;
+  MainFrame frm;
+  frm.setIcon(ResourceId(IDI_VACA));
+  frm.setVisible(true);
   app.run();
   return 0;
 }

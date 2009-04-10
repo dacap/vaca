@@ -100,8 +100,8 @@ public:
     return m_doc;
   }
 
-  virtual void onAction(MenuItemEvent& ev) {
-    MenuItem::onAction(ev);
+  virtual void onClick(MenuItemEvent& ev) {
+    MenuItem::onClick(ev);
     GetApp()->setCurrentDocument(m_doc);
   }
 };

@@ -30,6 +30,7 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <Vaca/Vaca.h>
+#include "../resource.h"
 
 using namespace Vaca;
 
@@ -111,12 +112,12 @@ public:
 
 };
 
-// entry point of the program
 int VACA_MAIN()
 {
   Application app;
-  MainFrame mainFrame;
-  mainFrame.setVisible(true);
+  MainFrame frm;
+  frm.setIcon(ResourceId(IDI_VACA));
+  frm.setVisible(true);
   app.run();
   return 0;
 }

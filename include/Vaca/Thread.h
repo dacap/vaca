@@ -133,32 +133,44 @@ public:
   // ===============================================================
 
   void enqueueMessage(const Message& message);
-  
-  static void doMessageLoop();
-  static void doMessageLoopFor(Widget* widget);
-  static void pumpMessageQueue();
-  static void breakMessageLoop();
-
-  static void yield();
-  static void sleep(int msecs);
-
-  static bool getMessage(Message& msg);
-  static bool peekMessage(Message& msg);
-  static void processMessage(Message& msg);
 
 private:
-  static bool preTranslateMessage(Message& message);
-
   void _Thread(const Slot0<void>& slot);
-  static void addFrame(Frame* frame);
-  static void removeFrame(Frame* frame);
+
+};
+
+namespace CurrentThread
+{
+  VACA_DLL ThreadId getId();
+
+  VACA_DLL void enqueueMessage(const Message& message);
+
+  VACA_DLL void doMessageLoop();
+  VACA_DLL void doMessageLoopFor(Widget* widget);
+  VACA_DLL void pumpMessageQueue();
+  VACA_DLL void breakMessageLoop();
+
+  VACA_DLL void yield();
+  VACA_DLL void sleep(int msecs);
+
+  VACA_DLL bool getMessage(Message& msg);
+  VACA_DLL bool peekMessage(Message& msg);
+  VACA_DLL void processMessage(Message& msg);
+
+  namespace details {
+    VACA_DLL bool preTranslateMessage(Message& message);
+
+    VACA_DLL Widget* getOutsideWidget();
+    VACA_DLL void setOutsideWidget(Widget* widget);
+
+    VACA_DLL void addFrame(Frame* frame);
+    VACA_DLL void removeFrame(Frame* frame);
+  }
 
 };
 
 namespace details {
-  VACA_DLL void remove_all_thread_data();
-  VACA_DLL Widget* get_outside_widget();
-  VACA_DLL void set_outside_widget(Widget* widget);
+  VACA_DLL void removeAllThreadData();
 }
 
 } // namespace Vaca

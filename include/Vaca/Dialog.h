@@ -54,11 +54,11 @@ public:
 /// 
 /// @li When the user press ESC, the #onClose event is generated.
 /// @li If the dialog has a "Cancel" button is a good idea to bind its
-///     Button#Action to #onCancel.
+///     Button#Click to #onCancel.
 /// @li If the dialog has an "OK" button is a good idea to bind its
-///     Button#Action to #onOk.
+///     Button#Click to #onOk.
 /// 
-/// If the Dialog have buttons with the special ids IDOK and/or IDCANCEL,
+/// If the Dialog have buttons with the special ids Id#Ok and/or Id#Cancel,
 /// the #onOk and #onCancel will be called automatically.
 /// 
 /// Example:
@@ -72,8 +72,8 @@ public:
 ///     , ok("OK", this)
 ///     , cnl("Cancel", this)
 ///   {
-///     ok.Action.connect(Bind(&MyDialog::onOk, this));
-///     cnl.Action.connect(Bind(&MyDialog::onCancel, this));
+///     ok.Click.connect(Bind(&MyDialog::onOk, this));
+///     cnl.Click.connect(Bind(&MyDialog::onCancel, this));
 ///     // ...
 ///   }
 /// };
@@ -96,6 +96,28 @@ public:
     static const Style Modal;
   };
 
+  struct VACA_DLL Id {
+    /// It is a CommandId that represents the OK buttons.
+    ///
+    /// A Dialog has as default behavior for Ok command: closes the
+    /// window and doModal returns true.
+    /// 
+    /// @win32
+    ///   It is equal to IDOK.
+    /// @endwin32
+    static const CommandId Ok = 1;
+
+    /// It is a CommandId that represents the Cancel buttons.
+    ///
+    /// A Dialog has as default behavior for Cancel command: closes
+    /// the window and doModal returns false.
+    ///
+    /// @win32
+    ///   It is equal to IDCANCEL.
+    /// @endwin32
+    static const CommandId Cancel = 2;
+  };
+
   Dialog(const String& title, Widget* parent = NULL, Style style = Styles::Default);
   Dialog(const WidgetClassName& className, const String& title, Widget* parent = NULL, Style style = Styles::Default);
   explicit Dialog(ResourceId dialogId, Widget* parent = NULL);
@@ -107,14 +129,6 @@ public:
   virtual bool doModal();
   virtual bool preTranslateMessage(Message& message);
 
-  /// @deprecated Use #onOk instead.
-  /// 
-  void defaultOkAction() { onOk(); }
-
-  /// @deprecated Use #onCancel instead.
-  /// 
-  void defaultCancelAction() { onCancel(); }
-
   Widget* getNextFocusableWidget(Widget* widget);
   Widget* getPreviousFocusableWidget(Widget* widget);
 
@@ -124,7 +138,7 @@ public:
 protected:
   virtual void onOk();
   virtual void onCancel();
-  virtual bool onCommand(CommandId id);
+  virtual void onCommand(CommandEvent& ev);
 
 private:
   static BOOL CALLBACK globalDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);

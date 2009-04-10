@@ -328,5 +328,5 @@ void Timer::fire_timers_for_thread()
     }
   }
 
-  Thread::yield();
+  CurrentThread::yield();
 }

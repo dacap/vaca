@@ -68,7 +68,7 @@ function(add_vaca_example name)
       POST_BUILD
       COMMAND mt.exe -nologo
 		     -manifest ${CMAKE_CURRENT_SOURCE_DIR}/Example.manifest
-			       ${CMAKE_CURRENT_BINARY_DIR}/${name}.exe.intermediate.manifest
+			       ${CMAKE_CURRENT_BINARY_DIR}/${name}.exe.embed.manifest
 		     -outputresource:${example_exe_output};#1
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
   endif()

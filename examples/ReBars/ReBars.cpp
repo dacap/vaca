@@ -83,7 +83,7 @@ public:
   }
 
 protected:
-  virtual void onResize(const Size& sz)	// make sure rebar will resize itself automatic
+  virtual void onResize(ResizeEvent& ev)	// make sure rebar will resize itself automatic
   {
     rebar.sendMessage(WM_SIZE, 0, 0);
   }
@@ -97,18 +97,12 @@ protected:
   }
 };
 
-class MyApp : public Application
-{
-  MainFrame mainWnd;
-
-  virtual void main() {
-    mainWnd.setVisible(true);
-  }
-};
-
 int VACA_MAIN()
 {
-  MyApp app;
+  Application app;
+  MainFrame frm;
+  frm.setIcon(ResourceId(IDI_VACA));
+  frm.setVisible(true);
   app.run();
   return 0;
 }

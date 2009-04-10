@@ -30,6 +30,7 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <Vaca/Vaca.h>
+#include "../resource.h"
 
 using namespace Vaca;
 
@@ -110,7 +111,7 @@ public:
   {
     setLayout(new BoxLayout(Orientation::Vertical, true));
 
-    m_button4.Action.connect(&MainFrame::onSelectColor, this);
+    m_button4.Click.connect(&MainFrame::onSelectColor, this);
 
     setSize(getPreferredSize());
   }
@@ -132,6 +133,7 @@ int VACA_MAIN()
 {
   Application app;
   MainFrame frm;
+  frm.setIcon(ResourceId(IDI_VACA));
   frm.setVisible(true);
   app.run();
   return 0;

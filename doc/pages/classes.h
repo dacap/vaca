@@ -24,7 +24,7 @@ namespace Vaca {
   @itemRow{Component}
   @itemRow{NonCopyable}
   @itemRow{Referenceable}
-  @itemRow{SmartPtr}
+  @itemRow{SharedPtr}
   @itemRow{String}
 @endTable
 
@@ -158,13 +158,19 @@ namespace Vaca {
   @itemRow{Message}
 @titleRow{Events}
   @itemRow{CancelableEvent}
+  @itemRow{ChildEvent}
   @itemRow{CloseEvent}
+  @itemRow{CommandEvent}
+  @itemRow{ConsumableEvent}
   @itemRow{DropFilesEvent}
   @itemRow{Event}
+  @itemRow{FocusEvent}
   @itemRow{KeyEvent}
   @itemRow{ListViewEvent}
   @itemRow{MenuItemEvent}
   @itemRow{MouseEvent}
+  @itemRow{PaintEvent}
+  @itemRow{ScrollEvent}
   @itemRow{SpinButtonEvent}
   @itemRow{TreeViewEvent}
 @titleRow{Signals}

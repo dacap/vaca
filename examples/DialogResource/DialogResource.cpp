@@ -46,8 +46,9 @@ int VACA_MAIN()
 {
   Application app;
   Dialog dlg(ResourceId(IDD_MAIN));
-  Button but(::GetDlgItem(dlg.getHandle(), IDC_MAIN_ABOUT_BUTTON));
-  but.Action.connect(Bind<void>(&show_about, &dlg));
+  // Button but(dlg.getItemHandle(ResourceId(IDC_MAIN_ABOUT_BUTTON)));
+  Button button(::GetDlgItem(dlg.getHandle(), IDC_MAIN_ABOUT_BUTTON));
+  button.Click.connect(Bind<void>(&show_about, &dlg));
 
   dlg.center();
   dlg.doModal();

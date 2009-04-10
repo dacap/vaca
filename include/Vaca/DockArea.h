@@ -130,7 +130,7 @@ private:
 
 protected:
   // events
-  virtual void onPreferredSize(Size& sz) = 0;
+  virtual void onPreferredSize(PreferredSizeEvent& ev) = 0;
 
   // new events
   virtual void onAddDockBar(DockBar* dockBar);

@@ -51,7 +51,7 @@ public:
   virtual bool isLayoutFree();
 
 protected:
-  virtual void onPreferredSize(Size& sz);
+  virtual void onPreferredSize(PreferredSizeEvent& ev);
 };
 
 } // namespace Vaca

@@ -30,6 +30,7 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <Vaca/Vaca.h>
+#include "../resource.h"
 
 using namespace Vaca;
 
@@ -49,32 +50,32 @@ public:
 
 protected:
 
-  virtual void onResize(const Size& size)
+  virtual void onResize(ResizeEvent& ev)
   {
     Size imageSize = getClientBounds().getSize();
-    if (imageSize.w == 0 || imageSize.h == 0)
-      return;
-    
-    Image newImage(imageSize);
+    if (imageSize.w > 0 && imageSize.h > 0) {
+      Image newImage(imageSize);
 
-    Graphics& g = newImage.getGraphics();
+      Graphics& g = newImage.getGraphics();
 
-    // clear the new image with a white background
-    Brush whiteBrush(Color::White);
-    g.fillRect(whiteBrush, 0, 0, imageSize.w, imageSize.h);
+      // clear the new image with a white background
+      Brush whiteBrush(Color::White);
+      g.fillRect(whiteBrush, 0, 0, imageSize.w, imageSize.h);
 
-    // draw the old image in the center of the new image
-    if (m_image.isValid())
-      g.drawImage(m_image, Point(imageSize/2 - m_image.getSize()/2));
+      // draw the old image in the center of the new image
+      if (m_image.isValid())
+	g.drawImage(m_image, Point(imageSize/2 - m_image.getSize()/2));
 
-    // Assign the new image to the member variable m_image. Remember
-    // that Image class is a shared-pointer, so here the old image
-    // referenced by m_image is automatically deleted.  This is the
-    // magic of SharedPtrs!
-    m_image = newImage;
+      // Assign the new image to the member variable m_image. Remember
+      // that Image class is a shared-pointer, so here the old image
+      // referenced by m_image is automatically deleted.  This is the
+      // magic of SharedPtrs!
+      m_image = newImage;
 
-    // redraw all the image
-    invalidate(false);
+      // redraw all the image
+      invalidate(false);
+    }
+    Widget::onResize(ev);
   }
 
   virtual void onPaint(PaintEvent& ev)
@@ -171,18 +172,12 @@ public:
 
 //////////////////////////////////////////////////////////////////////
 
-class Example : public Application
-{
-  MainFrame m_mainFrame;
-
-  virtual void main() {
-    m_mainFrame.setVisible(true);
-  }
-};
-
 int VACA_MAIN()
 {
-  Example app;
+  Application app;
+  MainFrame frm;
+  frm.setIcon(ResourceId(IDI_VACA));
+  frm.setVisible(true);
   app.run();
   return 0;
 }

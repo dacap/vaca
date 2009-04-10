@@ -34,6 +34,7 @@
 #include "Vaca/Debug.h"
 #include "Vaca/System.h"
 #include "Vaca/WidgetClass.h"
+#include "Vaca/PreferredSizeEvent.h"
 
 using namespace Vaca;
 
@@ -209,8 +210,9 @@ int ComboBox::getHeightForAllItems()
   return height*getItemCount()+2;
 }
 
-void ComboBox::onPreferredSize(Size& sz)
+void ComboBox::onPreferredSize(PreferredSizeEvent& ev)
 {
+  Size sz;
 //   sz = Size(4, 4);		// TODO HTHEME stuff
 //   int i, n = getItemCount();
 //   Rect rc;
@@ -227,26 +229,28 @@ void ComboBox::onPreferredSize(Size& sz)
   else {
     sz = Size(60, 23);		// TODO
   }
+
+  ev.setPreferredSize(sz);
 }
 
-/// When the user press double-click in some item of a Simple combo-box
-/// (with the SimpleComboBoxStyle) (Win32 CBN_DBLCLK notification).
-/// 
-void ComboBox::onAction(Event& ev)
-{
-  Action(ev);
-}
-
-/// When the user changes the current selected item (CBN_SELCHANGE).
-/// 
+/// When the user changes the current selected item.
+///
+/// @win32
+/// It is called when CBN_SELCHANGE notification is received.
+/// @endwin32
+///
 void ComboBox::onSelChange(Event& ev)
 {
   SelChange(ev);
 }
 
-/// When the user changes the text of the ComboBox. Only for
-/// combo-boxes with SimpleComboBoxStyle or EditComboBoxStyle (Win32
-/// CBN_EDITCHANGE notification).
+/// When the user changes the text of the ComboBox.
+///
+/// Only for combo-boxes with ComboBox::Styles::Editable.
+///
+/// @win32
+/// It is called when CBN_EDITCHANGE notification is received.
+/// @endwin32
 /// 
 void ComboBox::onEditChange(Event& ev)
 {
@@ -259,12 +263,6 @@ bool ComboBox::onReflectedCommand(int id, int code, LRESULT& lResult)
     return true;
 
   switch (code) {
-
-    case CBN_DBLCLK: {
-      Event ev(this);
-      onAction(ev);
-      return true;
-    }
 
     case CBN_SELCHANGE: {
       Event ev(this);

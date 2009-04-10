@@ -30,6 +30,7 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <Vaca/Vaca.h>
+#include "../resource.h"
 
 using namespace Vaca;
 
@@ -94,13 +95,13 @@ public:
     m_expandEdit.setSelected(true);
 
     // bindings...
-    m_horizontal.Action.connect(&MainFrame::onSetupLayout, this);
-    m_vertical.Action.connect(&MainFrame::onSetupLayout, this);
-    m_homogeneous.Action.connect(&MainFrame::onSetupLayout, this);
-    m_heterogeneous.Action.connect(&MainFrame::onSetupLayout, this);
-    m_expandLabel.Action.connect(&MainFrame::onSetupConstraints, this);
-    m_expandEdit.Action.connect(&MainFrame::onSetupConstraints, this);
-    m_expandButton.Action.connect(&MainFrame::onSetupConstraints, this);
+    m_horizontal.Click.connect(&MainFrame::onSetupLayout, this);
+    m_vertical.Click.connect(&MainFrame::onSetupLayout, this);
+    m_homogeneous.Click.connect(&MainFrame::onSetupLayout, this);
+    m_heterogeneous.Click.connect(&MainFrame::onSetupLayout, this);
+    m_expandLabel.Click.connect(&MainFrame::onSetupConstraints, this);
+    m_expandEdit.Click.connect(&MainFrame::onSetupConstraints, this);
+    m_expandButton.Click.connect(&MainFrame::onSetupConstraints, this);
 
     // relayout when edit the text (to see how Edit::onPreferredSize
     // modifies the BoxLayout behavior)
@@ -151,18 +152,12 @@ protected:
 
 //////////////////////////////////////////////////////////////////////
 
-class Example : public Application
-{
-  MainFrame m_mainFrame;
-
-  virtual void main() {
-    m_mainFrame.setVisible(true);
-  }
-};
-
 int VACA_MAIN()
 {
-  Example app;
+  Application app;
+  MainFrame frm;
+  frm.setIcon(ResourceId(IDI_VACA));
+  frm.setVisible(true);
   app.run();
   return 0;
 }

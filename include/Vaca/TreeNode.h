@@ -72,6 +72,8 @@ public:
   TreeNodeList getChildren();
   TreeView*    getTreeView();
 
+  bool isAncestorOf(TreeNode* child) const;
+
   virtual bool hasChildren();
   virtual String getText();
   virtual int getImage();
@@ -84,6 +86,8 @@ public:
   bool isExpanded();
   void setExpanded(bool state);
 
+  Rect getBounds() const;
+  Rect getRowBounds() const;
   void ensureVisible();
   
   HTREEITEM getHandle();
@@ -91,7 +95,7 @@ public:
   static TreeNode* fromHandle(HWND hwnd, HTREEITEM htreeitem);
 
 protected:
-  
+
   // new events
   virtual void onBeforeExpand(TreeViewEvent& ev);
   virtual void onBeforeCollapse(TreeViewEvent& ev);

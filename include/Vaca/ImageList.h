@@ -65,7 +65,7 @@ struct Win32DestroyImageList
 /// 
 /// @see ListView#setNormalImageList, TreeView#setNormalImageList
 /// 
-class VACA_DLL ImageList : private SharedPtr<GdiObject<HIMAGELIST, Win32DestroyImageList> >
+class VACA_DLL ImageList : public SharedPtr<GdiObject<HIMAGELIST, Win32DestroyImageList> >
 {
 public:
 
@@ -76,9 +76,15 @@ public:
   ImageList(const String& fileName, int widthPerIcon, Color maskColor);
   virtual ~ImageList();
 
-  int getImageCount();
-  
-  HIMAGELIST getHandle();
+  int getImageCount() const;
+  Size getImageSize() const;
+
+  int addImage(Image& image);
+  int addImage(Image& image, Color maskColor);
+  void removeImage(int index);
+  void removeAllImages();
+
+  HIMAGELIST getHandle() const;
 
 };
 

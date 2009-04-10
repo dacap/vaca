@@ -96,13 +96,13 @@ public:
   bool isGripperVisible() const;
 
 protected:
-  virtual void onResize(const Size& sz);
+  virtual void onResize(ResizeEvent& ev);
   virtual void onPaint(PaintEvent& ev);
   virtual void onMouseMove(MouseEvent& ev);
   virtual void onMouseDown(MouseEvent& ev);
   virtual void onMouseUp(MouseEvent& ev);
-  virtual void onSetCursor(WidgetHitTest hitTest);
-  virtual void onAddChild(Widget* child);
+  virtual void onSetCursor(SetCursorEvent& ev);
+  virtual void onAddChild(ChildEvent& ev);
 
 private:
   void updateChildrenVisibility();

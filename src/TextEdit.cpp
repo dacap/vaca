@@ -33,6 +33,7 @@
 #include "Vaca/Event.h"
 #include "Vaca/System.h"
 #include "Vaca/WidgetClass.h"
+#include "Vaca/PreferredSizeEvent.h"
 
 using namespace Vaca;
 
@@ -159,7 +160,7 @@ void TextEdit::getSelection(int& start, int& end)
   end = e;
 }
 
-void TextEdit::onPreferredSize(Size& sz)
+void TextEdit::onPreferredSize(PreferredSizeEvent& ev)
 {
   Size textSize;
   Style style = getStyle();
@@ -194,7 +195,7 @@ void TextEdit::onPreferredSize(Size& sz)
     textSize.h = lines * g.measureString(L"", 32767, 0).h;
   }
 
-  sz = textSize+border;
+  ev.setPreferredSize(textSize + border);
 }
 
 void TextEdit::onChange(Event& ev)

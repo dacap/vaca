@@ -63,10 +63,10 @@ public:
 
 protected:
 
-  virtual void onResize(const Size &sz)
+  virtual void onResize(ResizeEvent& ev)
   {
     invalidate(true);
-    Widget::onResize(sz);
+    Widget::onResize(ev);
   }
 
   virtual void onPaint(PaintEvent& ev)
@@ -180,10 +180,10 @@ public:
 
 protected:
 
-  virtual void onResize(const Size &sz)
+  virtual void onResize(ResizeEvent& ev)
   {
-    Frame::onResize(sz);
     invalidate(true);
+    Frame::onResize(ev);
   }
 
   virtual void onResizing(CardinalDirection dir, Rect &rc)
@@ -224,8 +224,8 @@ int VACA_MAIN()
 {
   Application app;
   MainFrame frm;
-  frm.setVisible(true);
   frm.setIcon(ResourceId(IDI_VACA));
+  frm.setVisible(true);
   app.run();
   return 0;
 }

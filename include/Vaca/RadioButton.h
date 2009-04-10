@@ -103,7 +103,7 @@ public:
 
 protected:
   // events
-  virtual void onAction(Event& ev);
+  virtual void onClick(Event& ev);
 
   // reflection
   virtual bool onReflectedCommand(int id, int code, LRESULT& lResult);

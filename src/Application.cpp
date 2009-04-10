@@ -96,8 +96,8 @@ Application::~Application()
   VACA_TRACE("Program %s finished\n", convert_to<std::string>(System::getArgs()[0]).c_str());
 
   // close the log file
-  details::remove_all_thread_data();
-  details::close_log_file();
+  details::removeAllThreadData();
+  details::closeLogFile();
 
   CoUninitialize();
 
@@ -150,7 +150,7 @@ void Application::setProcessPriority(ProcessPriority priority)
 /// Application.
 ///
 /// The work of this routine is really simple: it calls #main and then
-/// #doMessageLoop. You can make your own class derived from
+/// CurrentThread#doMessageLoop. You can make your own class derived from
 /// Application and override #main so you can customized the
 /// initialization (e.g. show a Frame).
 ///
@@ -189,19 +189,19 @@ void Application::setProcessPriority(ProcessPriority priority)
 /// }
 /// @endcode
 ///
-/// @see Thread#doMessageLoop
+/// @see CurrentThread#doMessageLoop
 ///
 void Application::run()
 {
   main();
-  doMessageLoop();
+  CurrentThread::doMessageLoop();
 }
 
 /// The application entry point.
 ///
 /// After calling #run, #main is executed and when it finishes, the
-/// #doMessageLoop is automatically invoked (to process messages
-/// for visible @link Frame frames@endlink).
+/// CurrentThread#doMessageLoop is automatically invoked (to process
+/// messages for visible @link Frame frames@endlink).
 ///
 void Application::main()
 {

@@ -31,6 +31,7 @@
 
 #include <Vaca/Vaca.h>
 #include <vfw.h>
+#include "../resource.h"
 
 #ifndef WM_CAP_DRIVER_CONNECT
 
@@ -229,9 +230,9 @@ public:
 
     m_rateEdit.setPreferredSize(Size(64, m_rateEdit.getPreferredSize().h));
 
-    m_start.Action.connect(Bind(&MainFrame::onStart, this));
-    m_capture.Action.connect(Bind(&MainFrame::onCapture, this));
-    m_copy.Action.connect(Bind(&WebCam::copy, &m_webcam));
+    m_start.Click.connect(Bind(&MainFrame::onStart, this));
+    m_capture.Click.connect(Bind(&MainFrame::onCapture, this));
+    m_copy.Click.connect(Bind(&WebCam::copy, &m_webcam));
     m_rate.Change.connect(Bind(&MainFrame::onChangeRate, this));
 
     // update m_rateEdit text
@@ -285,6 +286,7 @@ int VACA_MAIN()
 {
   Application app;
   MainFrame frm;
+  frm.setIcon(ResourceId(IDI_VACA));
   frm.setVisible(true);
   app.run();
   return 0;

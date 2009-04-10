@@ -86,7 +86,7 @@ struct ThreadData
 static Mutex data_mutex;
 static std::vector<ThreadData*> dataOfEachThread;
 
-static ThreadData* getThreadData()
+static ThreadData* get_thread_data()
 {
   ScopedLock hold(data_mutex);
   std::vector<ThreadData*>::iterator it, end = dataOfEachThread.end();
@@ -111,33 +111,16 @@ static ThreadData* getThreadData()
   return data;
 }
 
-void Vaca::details::remove_all_thread_data()
-{
-  ScopedLock hold(data_mutex);
-  std::vector<ThreadData*>::iterator it, end = dataOfEachThread.end();
-
-  for (it=dataOfEachThread.begin(); it!=end; ++it) {
-    VACA_TRACE("delete data-thread %d\n", (*it)->threadId);
-    delete *it;
-  }
-
-  dataOfEachThread.clear();
-}
-
-Widget* Vaca::details::get_outside_widget()
-{
-  return getThreadData()->outsideWidget;
-}
-
-void Vaca::details::set_outside_widget(Widget* widget)
-{
-  getThreadData()->outsideWidget = widget;
-}
-
 //////////////////////////////////////////////////////////////////////
 
 static DWORD WINAPI ThreadProxy(LPVOID slot)
 {
+  // Force the creation of a message queue in this new thread...
+  {
+    MSG msg;
+    PeekMessage(&msg, NULL, WM_USER, WM_USER, PM_NOREMOVE);
+  }
+
   std::auto_ptr<Slot0<void> > slot_ptr(reinterpret_cast<Slot0<void>*>(slot));
   (*slot_ptr)();
   return 0;
@@ -145,14 +128,16 @@ static DWORD WINAPI ThreadProxy(LPVOID slot)
 
 Thread::Thread()
 {
-  m_handle = GetCurrentThread();
-  m_id = GetCurrentThreadId();
+  m_handle = ::GetCurrentThread();
+  m_id = ::GetCurrentThreadId();
 
   VACA_TRACE("current Thread (%p, %d)\n", this, m_id);
 }
 
+/// Creates a new thread to execute the specified slot in that thread.
+///
 /// @throw CreateThreadException
-///   If the thread couldn't be created by Win32's @c CreateThread.
+///   If the thread could not be created.
 /// 
 /// @internal
 /// 
@@ -266,7 +251,27 @@ void Thread::setThreadPriority(ThreadPriority priority)
 void Thread::enqueueMessage(const Message& message)
 {
   MSG const* msg = (MSG const*)message;
-  ::PostThreadMessage(m_id, msg->message, msg->wParam, msg->lParam);
+
+  // Post the message
+  while (::PostThreadMessage(m_id, msg->message, msg->wParam, msg->lParam) == 0) {
+    // ...If the routine fail is because the thread does not have a message queue yet...
+    // Wait some time and retry...
+    ::Sleep(10);
+  }
+}
+
+//////////////////////////////////////////////////////////////////////
+// CurrentThread
+
+ThreadId CurrentThread::getId()
+{
+  return ::GetCurrentThreadId();
+}
+
+void CurrentThread::enqueueMessage(const Message& message)
+{
+  Thread currentThread;
+  currentThread.enqueueMessage(message);
 }
 
 /// Does the message loop while there are
@@ -274,7 +279,7 @@ void Thread::enqueueMessage(const Message& message)
 /// 
 /// @see Frame::setVisible
 /// 
-void Thread::doMessageLoop()
+void Vaca::CurrentThread::doMessageLoop()
 {
   // message loop
   Message msg;
@@ -284,7 +289,7 @@ void Thread::doMessageLoop()
 
 /// Does the message loop until the @a widget is hidden.
 /// 
-void Thread::doMessageLoopFor(Widget* widget)
+void Vaca::CurrentThread::doMessageLoopFor(Widget* widget)
 {
   // get widget HWND
   HWND hwnd = widget->getHandle();
@@ -307,25 +312,25 @@ void Thread::doMessageLoopFor(Widget* widget)
     ::EnableWindow(hparent, TRUE);
 }
 
-void Thread::pumpMessageQueue()
+void Vaca::CurrentThread::pumpMessageQueue()
 {
   Message msg;
   while (peekMessage(msg))
     processMessage(msg);
 }
 
-void Thread::breakMessageLoop()
+void Vaca::CurrentThread::breakMessageLoop()
 {
-  getThreadData()->breakLoop = true;
+  get_thread_data()->breakLoop = true;
   ::PostThreadMessage(::GetCurrentThreadId(), WM_NULL, 0, 0);
 }
 
-void Thread::yield()
+void Vaca::CurrentThread::yield()
 {
   ::Sleep(0);
 }
 
-void Thread::sleep(int msecs)
+void Vaca::CurrentThread::sleep(int msecs)
 {
   ::Sleep(msecs);
 }
@@ -338,9 +343,9 @@ void Thread::sleep(int msecs)
 ///   or false if there aren't more visible @link Frame frames@endlink
 ///   to dispatch messages.
 /// 
-bool Thread::getMessage(Message& message)
+bool Vaca::CurrentThread::getMessage(Message& message)
 {
-  ThreadData* data = getThreadData();
+  ThreadData* data = get_thread_data();
 
   // break this loop? (explicit break or no-more visible frames)
   if (data->breakLoop || data->frames.empty())
@@ -386,18 +391,18 @@ bool Thread::getMessage(Message& message)
 ///   Returns true if the @a msg parameter was filled with the next message
 ///   in the queue or false if the queue was empty.
 /// 
-bool Thread::peekMessage(Message& message)
+bool CurrentThread::peekMessage(Message& message)
 {
   LPMSG msg = (LPMSG)message;
   msg->hwnd = NULL;
   return ::PeekMessage(msg, NULL, 0, 0, PM_REMOVE) != FALSE;
 }
 
-void Thread::processMessage(Message& message)
+void CurrentThread::processMessage(Message& message)
 {
   LPMSG msg = (LPMSG)message;
   
-  if (!preTranslateMessage(message)) {
+  if (!CurrentThread::details::preTranslateMessage(message)) {
     // Send preTranslateMessage to the active window (useful for
     // modeless dialogs). WARNING: Don't use GetForegroundWindow
     // because it returns windows from other applications
@@ -416,11 +421,14 @@ void Thread::processMessage(Message& message)
   }
 }
 
+//////////////////////////////////////////////////////////////////////
+// Vaca internals
+
 /// Pretranslates the message. The main function is to retrieve the
 /// Widget pointer (using Widget::fromHandle()) and then (if it isn't
 /// NULL), call its Widget#preTranslateMessage.
 /// 
-bool Thread::preTranslateMessage(Message& message)
+bool CurrentThread::details::preTranslateMessage(Message& message)
 {
   LPMSG msg = (LPMSG)message;
 
@@ -431,7 +439,7 @@ bool Thread::preTranslateMessage(Message& message)
       (msg->message == WM_KILLFOCUS) ||
       (msg->message >= WM_LBUTTONDOWN && msg->message <= WM_MBUTTONDBLCLK) ||
       (msg->message >= WM_KEYDOWN && msg->message <= WM_DEADCHAR)) {
-    ThreadData* data = getThreadData();
+    ThreadData* data = get_thread_data();
     data->updateIndicators = true;
     data->updateIndicatorsMark = TimePoint();
   }
@@ -445,17 +453,44 @@ bool Thread::preTranslateMessage(Message& message)
   return false;
 }
 
-void Thread::addFrame(Frame* frame)
+/// @internal
+Widget* CurrentThread::details::getOutsideWidget()
 {
-  getThreadData()->frames.push_back(frame);
+  return get_thread_data()->outsideWidget;
 }
 
-void Thread::removeFrame(Frame* frame)
+/// @internal
+void CurrentThread::details::setOutsideWidget(Widget* widget)
 {
-  remove_from_container(getThreadData()->frames, frame);
+  get_thread_data()->outsideWidget = widget;
+}
+
+/// @internal
+void CurrentThread::details::addFrame(Frame* frame)
+{
+  get_thread_data()->frames.push_back(frame);
+}
+
+/// @internal
+void CurrentThread::details::removeFrame(Frame* frame)
+{
+  remove_from_container(get_thread_data()->frames, frame);
 
   // when this thread doesn't have more Frames to continue we must to
   // break the current message loop
-  if (getThreadData()->frames.empty())
-    Thread::breakMessageLoop();
+  if (get_thread_data()->frames.empty())
+    CurrentThread::breakMessageLoop();
+}
+
+void details::removeAllThreadData()
+{
+  ScopedLock hold(data_mutex);
+  std::vector<ThreadData*>::iterator it, end = dataOfEachThread.end();
+
+  for (it=dataOfEachThread.begin(); it!=end; ++it) {
+    VACA_TRACE("delete data-thread %d\n", (*it)->threadId);
+    delete *it;
+  }
+
+  dataOfEachThread.clear();
 }

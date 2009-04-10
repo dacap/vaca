@@ -72,7 +72,7 @@ public:
 
 protected:
   // events
-  virtual void onPreferredSize(Size& sz);
+  virtual void onPreferredSize(PreferredSizeEvent& ev);
   virtual void onPaint(PaintEvent& ev);
   virtual void onAddDockBar(DockBar* dockBar);
   virtual void onRemoveDockBar(DockBar* dockBar);

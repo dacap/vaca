@@ -140,7 +140,7 @@ public:
   FileExitCommand() : AppCommand(ID_FILE_EXIT, L"FileExit") { }
   virtual void execute() {
     AppCommand::execute();
-    Thread::breakMessageLoop();
+    CurrentThread::breakMessageLoop();
   }
 };
 
@@ -214,6 +214,7 @@ MainFrame::MainFrame()
 				 ToolSet::Styles::Flat)
   , m_imageList(ResourceId(IDB_TOOLBAR), 16, Color(236, 233, 216))
 {
+  setIcon(ResourceId(IDI_VACA));
   setLayout(new BoxLayout(Orientation::Vertical, true));
   setMenuBar(new MenuBar);
 

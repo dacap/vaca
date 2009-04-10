@@ -37,12 +37,10 @@
 #include "Vaca/WidgetClass.h"
 #include "Vaca/MouseEvent.h"
 #include "Vaca/Cursor.h"
+#include "Vaca/SetCursorEvent.h"
 
 #include "Vaca/Brush.h"
 #include "Vaca/Pen.h"
-
-// Recommended by the MSDN
-#define M_AFTERDRAGANDDROP		(WM_APP+1)
 
 using namespace Vaca;
 
@@ -122,7 +120,7 @@ TreeView::TreeView(Widget* parent, Style style)
 {
   m_root.m_owner = this;
   m_deleted = false;
-  m_isDragging = false;
+  m_dragSource = NULL;
 
   // Widget::setBgColor(Color(TreeView_GetBkColor(getHandle())));
   setBgColor(System::getColor(COLOR_WINDOW));
@@ -133,7 +131,7 @@ TreeView::TreeView(HWND handle)
 {
   m_root.m_owner = this;
   m_deleted = false;
-  m_isDragging = false;
+  m_dragSource = NULL;
 
   // Widget::setBgColor(Color(TreeView_GetBkColor(getHandle())));
   setBgColor(System::getColor(COLOR_WINDOW));
@@ -157,17 +155,17 @@ TreeView::iterator TreeView::end()
   return iterator(&m_root);
 }
 
-bool TreeView::isDragAndDrop()
+bool TreeView::isDragAndDrop() const
 {
-  return (getStyle().regular & TVS_DISABLEDRAGDROP) != 0;
+  return !hasStyle(Styles::NoDragAndDrop);
 }
 
 void TreeView::setDragAndDrop(bool state)
 {
   if (!state)
-    addStyle(Style(TVS_DISABLEDRAGDROP, 0));
+    addStyle(Styles::NoDragAndDrop);
   else
-    removeStyle(Style(TVS_DISABLEDRAGDROP, 0));
+    removeStyle(Styles::NoDragAndDrop);
 }
 
 /// Sets the ImageList of icons to be used in the TreeNode.
@@ -175,7 +173,7 @@ void TreeView::setDragAndDrop(bool state)
 /// @param imageList
 ///   The ImageList to be used. It will not be deleted.
 /// 
-void TreeView::setNormalImageList(const ImageList& imageList)
+void TreeView::setImageList(const ImageList& imageList)
 {
   assert(::IsWindow(getHandle()));
 
@@ -189,15 +187,6 @@ void TreeView::setStateImageList(const ImageList& imageList)
 
   m_stateImageList = imageList;
   TreeView_SetImageList(getHandle(), m_stateImageList.getHandle(), LVSIL_STATE);
-}
-
-/// Returns the root node of the tree.
-/// 
-/// The root node is never displayed.
-/// 
-TreeNode* TreeView::getRootNode()
-{
-  return &m_root;
 }
 
 /// Adds a node in the root of the tree.
@@ -218,45 +207,17 @@ void TreeView::addNode(TreeNode* node)
 void TreeView::removeNode(TreeNode* node)
 {
   assert(node != NULL);
+  assert(node->m_parent != NULL);
+  assert(node->m_owner == this);
 
-  // we must to scan all the nodes to find the direct parent of "node"
-  std::vector<TreeNode*> parents;
-  parents.push_back(&m_root);
-
-  while (!parents.empty()) {
-    // get the last element and remove it from the tail
-    TreeNode* parent = *(parents.end()-1);
-    parents.erase(parents.end()-1);
-
-    // the parent of the node is the current parent
-    if (node->m_parent == parent) {
-      // remove the node from its parent
-      parent->removeNode(node);
-
-      // done
-      return;
-    }
-    // does the parent have children? (it should, but "parent" could
-    // be a leaf of the tree...)?
-    else if (parent->hasChildren()) {
-      // add all the children of "parent" to "parents" so we can
-      // continuing the search...
-      TreeNodeList children = parent->getChildren();
-      std::copy(children.begin(),
-		children.end(),
-		std::back_inserter(parents));
-    }
-  }
-
-  // does the node not belong to the TreeView?
-  assert(false);
+  node->m_parent->removeNode(node);
 }
 
 /// Returns the selected node of the tree.
 /// 
 /// @return The selected node. NULL if there is no selected item in the tree.
 /// 
-TreeNode* TreeView::getSelectedNode()
+TreeNode* TreeView::getSelectedNode() const
 {
   assert(::IsWindow(getHandle()));
 
@@ -274,8 +235,53 @@ void TreeView::setSelectedNode(TreeNode* node)
 {
   assert(::IsWindow(getHandle()));
   assert(node->m_owner == this);
+  assert(node->getHandle() != NULL);
 
   TreeView_SelectItem(getHandle(), node->getHandle());
+}
+
+TreeNode* TreeView::getDropTarget() const
+{
+  assert(::IsWindow(getHandle()));
+
+  HTREEITEM htreeitem = TreeView_GetDropHilight(getHandle());
+  if (htreeitem != NULL)
+    return TreeNode::fromHandle(getHandle(), htreeitem);
+  else
+    return NULL;
+}
+
+void TreeView::setDropTarget(TreeNode* node)
+{
+  assert(::IsWindow(getHandle()));
+
+  if (node) {
+    assert(node->m_owner == this);
+    assert(node->getHandle() != NULL);
+
+    TreeView_SelectDropTarget(getHandle(), node->getHandle());
+  }
+  else
+    TreeView_SelectDropTarget(getHandle(), NULL);
+}
+
+TreeNode* TreeView::getNodeInPoint(const Point& pt)
+{
+  assert(::IsWindow(getHandle()));
+
+  TVHITTESTINFO tvht;
+  ZeroMemory(&tvht, sizeof(TVHITTESTINFO));
+  tvht.flags = TVHT_ONITEM;
+  tvht.pt.x = pt.x;
+  tvht.pt.y = pt.y;
+
+  HTREEITEM htreeitem = reinterpret_cast<HTREEITEM>
+    (sendMessage(TVM_HITTEST, 0, reinterpret_cast<LPARAM>(&tvht)));
+
+  if (htreeitem != NULL)
+    return TreeNode::fromHandle(getHandle(), htreeitem);
+  else
+    return NULL;
 }
 
 void TreeView::setBgColor(const Color& color)
@@ -288,28 +294,17 @@ void TreeView::setBgColor(const Color& color)
 
 void TreeView::onMouseMove(MouseEvent& ev)
 {
-  if (m_isDragging) {
+  if (m_dragSource) {
     ImageList_DragLeave(NULL);
-    
-    TVHITTESTINFO tvht;
-    ZeroMemory(&tvht, sizeof(TVHITTESTINFO));
-    tvht.flags = TVHT_ONITEM;
-    tvht.pt.x = ev.getX();
-    tvht.pt.y = ev.getY();
-    // ScreenToClient(getHandle(), &(tvht.pt));
 
-    HTREEITEM h_item = reinterpret_cast<HTREEITEM>
-      (sendMessage(TVM_HITTEST, 0, reinterpret_cast<LPARAM>(&tvht)));
-    if (h_item) {
-      TreeView_SelectDropTarget(getHandle(), h_item);
-      setCursor(Cursor(SysCursor::Arrow));
-    }
-    else {
-      TreeView_SelectDropTarget(getHandle(), NULL);
-      setCursor(Cursor(SysCursor::Forbidden));
-    }
+    TreeNode* node = getNodeInPoint(ev.getPoint());
+    if (node)
+      setDropTarget(node);
+    else
+      setDropTarget(NULL);
 
-    Point pt = ev.getPoint() + getAbsoluteClientBounds().getOrigin();
+    Point pt = getAbsoluteClientBounds().getOrigin() + ev.getPoint();
+
     ImageList_DragMove(pt.x, pt.y);
     ImageList_DragEnter(NULL, pt.x, pt.y);
   }
@@ -317,27 +312,47 @@ void TreeView::onMouseMove(MouseEvent& ev)
 
 void TreeView::onMouseUp(MouseEvent& ev)
 {
-  if (m_isDragging) {
-    m_isDragging = false;
+  if (m_dragSource) {
     releaseMouse();
-    setCursor(Cursor(SysCursor::Arrow));
-    
-    HTREEITEM h_item = NULL;
-    TVHITTESTINFO tv_ht;
-    TVITEM tv;
-    ZeroMemory(&tv, sizeof(TVITEM));
-    ZeroMemory(&tv_ht, sizeof(TVHITTESTINFO));
-	
+
     ImageList_DragLeave(NULL);
     ImageList_EndDrag();
-    tv_ht.pt = ev.getPoint();
-    tv_ht.flags = TVHT_ONITEM;
-    h_item = (HTREEITEM)sendMessage(TVM_HITTEST, 0, (LPARAM)&tv_ht);
-    if (h_item)
-      PostMessage(getHandle(), M_AFTERDRAGANDDROP, (WPARAM)0, (LPARAM)h_item);
-    else
-      TreeView_SelectDropTarget(getHandle(), NULL);
+
+    TreeNode* dropNode = getDropTarget();
+
+    if (dropNode != NULL &&
+	m_dragSource != dropNode &&
+	!m_dragSource->isAncestorOf(dropNode)) {
+      // Remove the node from the TreeView
+      removeNode(m_dragSource);
+
+      // Add it again in the target node
+      dropNode->addNode(m_dragSource);
+    }
+
+    setDropTarget(NULL);
+
+    // Select the source
+    setSelectedNode(m_dragSource);
+    m_dragSource = NULL;
   }
+}
+
+void TreeView::onSetCursor(SetCursorEvent& ev)
+{
+  if (!ev.isConsumed() && m_dragSource) {
+    TreeNode* dropNode = getDropTarget();
+
+    if (dropNode != NULL &&
+	m_dragSource != dropNode &&
+	!m_dragSource->isAncestorOf(dropNode)) {
+      ev.setCursor(Cursor(SysCursor::Arrow));
+    }
+    else {
+      ev.setCursor(Cursor(SysCursor::Forbidden));
+    }
+  }
+  Widget::onSetCursor(ev);
 }
 
 /// You can cancel this event (Event::cancel).
@@ -582,7 +597,7 @@ bool TreeView::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult)
       TreeNode* node = reinterpret_cast<TreeNode*>(lppnmtv->itemNew.lParam);
 
       captureMouse();
-      m_isDragging = true;
+      m_dragSource = node;
 
 #if 1
       m_dragImage = ImageList(TreeView_CreateDragImage(getHandle(),
@@ -597,31 +612,21 @@ bool TreeView::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult)
       ImageList_Add(m_dragImage.getHandle(), img.getHandle(), NULL);
 #endif
 
-      ImageList_BeginDrag(m_dragImage.getHandle(), 0, 0, 0);
-      setCursor(Cursor(SysCursor::Forbidden));
+      int ex = 0;
+      if (m_normalImageList != NULL)
+	ex += m_normalImageList.getImageSize().w+2;
+
+      ImageList_BeginDrag(m_dragImage.getHandle(), 0,
+			  lppnmtv->ptDrag.x - node->getBounds().x + ex,
+			  lppnmtv->ptDrag.y - node->getBounds().y);
+      //setCursor(Cursor(SysCursor::Forbidden));
+
+      // m_dragStartPoint = Point(lppnmtv->ptDrag.x, lppnmtv->ptDrag.y);
 
       ::ClientToScreen(getHandle(), &(lppnmtv->ptDrag));
       ImageList_DragEnter(NULL, lppnmtv->ptDrag.x, lppnmtv->ptDrag.y);
 
       return true;
-    }
-
-  }
-
-  return false;
-}
-
-bool TreeView::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult)
-{
-  if (Widget::wndProc(message, wParam, lParam, lResult))
-    return true;
-
-  switch (message) {
-
-    case M_AFTERDRAGANDDROP: {
-      TreeView_SelectDropTarget(getHandle(), NULL);
-      TreeView_SelectItem(getHandle(), (HTREEITEM)lParam);
-      break;
     }
 
   }

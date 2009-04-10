@@ -91,11 +91,11 @@ namespace Vaca {
 @section page_examples_eyedropper EyeDropper Example
 
 This example shows how to use the ScreenGraphics class to get pixels
-from the screen. It also shows how you can use Widget#setCursor to
-change the mouse cursor, and how the Clipboard class can be used to
+from the screen. It also shows how you can override Widget#onSetCursor event
+to change the mouse cursor, and how the Clipboard class can be used to
 modify the clipboard content.
 
-It defines a new widget called EyeDropper derived from Panel
+It defines a new widget called EyeDropper derived from Widget
 that is fully functional.
 
 

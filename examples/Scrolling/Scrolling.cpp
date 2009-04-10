@@ -30,6 +30,7 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <Vaca/Vaca.h>
+#include "../resource.h"
 
 using namespace Vaca;
 
@@ -80,7 +81,7 @@ protected:
     // milliseconds (the background filled by default with the
     // getBgColor, that in this case is Color::Red)
     if (m_sleep)
-      Thread::sleep(100);
+      CurrentThread::sleep(100);
 
     // draw the (white) background
     Brush brush(Color::White);
@@ -99,24 +100,22 @@ protected:
     }
   }
 
-  virtual void onResize(const Size& sz)
+  virtual void onResize(ResizeEvent& ev)
   {
-    Widget::onResize(sz);
-
     Point oldScroll = getScrollPoint();
 
     // when the widget is resized we have to reconfigure the scroll
     // information (mainly the page size that depends of the widget
-    // size "sz")
+    // size ev.getSize())
     ScrollInfo si;
     si.setMinPos(0);
     si.setMaxPos(m_fullSize.w-1);
-    si.setPageSize(sz.w);
+    si.setPageSize(ev.getSize().w);
     setScrollInfo(Orientation::Horizontal, si);
 
     si.setMinPos(0);
     si.setMaxPos(m_fullSize.h-1);
-    si.setPageSize(sz.h);
+    si.setPageSize(ev.getSize().h);
     setScrollInfo(Orientation::Vertical, si);
 
     // now we get the difference between both scroll position: the old
@@ -125,6 +124,8 @@ protected:
 
     // and we move the client area contrary to the scroll's direction
     scrollRect(getClientBounds(), -scrollDelta);
+
+    Widget::onResize(ev);
   }
 
   virtual void onMouseEnter(MouseEvent& ev)
@@ -144,10 +145,6 @@ protected:
     if (!hasCapture()) {
       // we capture the mouse
       captureMouse();
-
-      // when we capture the mouse the onSetCursor event isn't
-      // generated, so we can setup the mouse cursor here
-      setCursor(Cursor(SysCursor::Move));
 
       // here we save the current mouse position as a start point of dragging
       m_oldPoint = ev.getPoint();
@@ -203,6 +200,13 @@ protected:
     scrollRect(getClientBounds(), -scrollDelta);
   }
 
+  virtual void onSetCursor(SetCursorEvent& ev)
+  {
+    if (!ev.isConsumed() && hasCapture())
+      ev.setCursor(Cursor(SysCursor::Move));
+    Widget::onSetCursor(ev);
+  }
+
   // this event is generated when the user touches the scroll bar
   virtual void onScroll(ScrollEvent& ev)
   {
@@ -235,10 +239,12 @@ int VACA_MAIN()
   Scrollable wgt(&frm);
   CheckBox sleep(L"Show invalidated areas for some milliseconds", &frm);
 
-  sleep.Action.connect(Bind<void>(&updateSleep, &wgt, &sleep));
+  sleep.Click.connect(Bind<void>(&updateSleep, &wgt, &sleep));
 
-  frm.setLayout(new BoxLayout(Orientation::Vertical, false));
   wgt.setConstraint(new BoxConstraint(true));
+  
+  frm.setLayout(new BoxLayout(Orientation::Vertical, false));
+  frm.setIcon(ResourceId(IDI_VACA));
   frm.setVisible(true);
 
   app.run();

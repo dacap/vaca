@@ -68,7 +68,7 @@ ImageList::ImageList(ResourceId bitmapId, int widthPerIcon, Color maskColor)
 			1,
 			maskColor.getColorRef(),
 			IMAGE_BITMAP,
-			0);
+			LR_CREATEDIBSECTION);
 
   if (himagelist == NULL)
     throw ResourceException(format_string(L"Can't create the image-list resource %d",
@@ -105,15 +105,61 @@ ImageList::~ImageList()
 /// @return
 ///   A number from 0 to n that specified the size of the list.
 /// 
-int ImageList::getImageCount()
+int ImageList::getImageCount() const
 {
   assert(getHandle());
   return ImageList_GetImageCount(getHandle());
 }
 
+Size ImageList::getImageSize() const
+{
+  assert(getHandle());
+  Size sz;
+  ImageList_GetIconSize(getHandle(), &sz.w, &sz.h);
+  return sz;
+}
+
+/// Adds a new image in the list.
+///
+/// @param image
+///   The image to be added.
+///
+/// @return
+///   The index of the new image.
+///
+int ImageList::addImage(Image& image)
+{
+  assert(getHandle());
+  assert(image.getHandle());
+
+  return ImageList_Add(getHandle(), image.getHandle(), NULL);
+}
+
+int ImageList::addImage(Image& image, Color maskColor)
+{
+  assert(getHandle());
+  assert(image.getHandle());
+
+  return ImageList_AddMasked(getHandle(),
+			     image.getHandle(),
+			     maskColor.getColorRef());
+}
+
+void ImageList::removeImage(int index)
+{
+  assert(getHandle());
+  ImageList_Remove(getHandle(), index);
+}
+
+void ImageList::removeAllImages()
+{
+  assert(getHandle());
+  ImageList_RemoveAll(getHandle());
+}
+
 /// Returns the @msdn{HIMAGELIST} handle.
 /// 
-HIMAGELIST ImageList::getHandle()
+HIMAGELIST ImageList::getHandle() const
 {
   return get()->getHandle();
 }

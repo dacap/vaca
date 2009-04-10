@@ -349,11 +349,11 @@ public:
 
 protected:
 
-//   void onResize(const Size &sz)
+//   void onResize(ResizeEvent& ev)
 //   {
-//     Frame::onResize(sz);
 //     Timer::pollTimers();
 //     update();
+//     Frame::onResize(ev);
 //   }
 
   virtual void onResizing(CardinalDirection dir, Rect &rc)

@@ -33,6 +33,7 @@
 #include "Vaca/Font.h"
 #include "Vaca/Debug.h"
 #include "Vaca/WidgetClass.h"
+#include "Vaca/PreferredSizeEvent.h"
 
 using namespace Vaca;
 
@@ -75,10 +76,6 @@ TextAlign Label::getTextAlign() const
 }
 
 /// Sets the text alignment.
-/// 
-/// @warning
-///   You can't change the text-alignment of a label with the
-///   SimpleLabelStyle style.
 /// 
 void Label::setTextAlign(TextAlign align)
 {
@@ -126,23 +123,24 @@ int Label::getFlagsForDrawString()
 
 /// Returns the preferred size of the label using Graphics#measureString.
 /// 
-void Label::onPreferredSize(Size& sz)
+void Label::onPreferredSize(PreferredSizeEvent& ev)
 {
   // TODO HTHEME stuff
 
   ScreenGraphics g;
   g.setFont(getFont());
 
-  if ((sz.w > 0) && useWordWrap())
-    sz = g.measureString(getText(), sz.w);
+  if (ev.fitInWidth() && useWordWrap())
+    ev.setPreferredSize(g.measureString(getText(), ev.fitInWidth()));
   else
-    sz = g.measureString(getText());
+    ev.setPreferredSize(g.measureString(getText()));
 }
 
 /// If the label is resized, we must to redraw it. This is necessary
 /// mainly if the Label isn't TextAlign::Left.
 /// 
-void Label::onResize(const Size& sz)
+void Label::onResize(ResizeEvent& ev)
 {
   invalidate(true);
+  Widget::onResize(ev);
 }

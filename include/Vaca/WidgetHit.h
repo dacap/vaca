@@ -36,9 +36,9 @@
 
 namespace Vaca {
 
-/// @see WidgetHitTest
+/// @see WidgetHit
 /// 
-struct WidgetHitTestEnum
+struct WidgetHitEnum
 {
   enum enumeration {
     Error,
@@ -133,32 +133,32 @@ struct WidgetHitTestEnum
 /// could be.
 /// 
 /// One of the following values:
-/// @li WidgetHitTest::Error
-/// @li WidgetHitTest::Transparent
-/// @li WidgetHitTest::Nowhere
-/// @li WidgetHitTest::Client
-/// @li WidgetHitTest::Caption
-/// @li WidgetHitTest::SystemMenu
-/// @li WidgetHitTest::Size
-/// @li WidgetHitTest::Menu
-/// @li WidgetHitTest::HorizontalScroll
-/// @li WidgetHitTest::VerticalScroll
-/// @li WidgetHitTest::MinimizeButton
-/// @li WidgetHitTest::MaximizeButton
-/// @li WidgetHitTest::Left
-/// @li WidgetHitTest::Right
-/// @li WidgetHitTest::Top
-/// @li WidgetHitTest::TopLeft
-/// @li WidgetHitTest::TopRight
-/// @li WidgetHitTest::Bottom
-/// @li WidgetHitTest::BottomLeft
-/// @li WidgetHitTest::BottomRight
-/// @li WidgetHitTest::Border
-/// @li WidgetHitTest::Object
-/// @li WidgetHitTest::Close
-/// @li WidgetHitTest::Help
+/// @li WidgetHit::Error
+/// @li WidgetHit::Transparent
+/// @li WidgetHit::Nowhere
+/// @li WidgetHit::Client
+/// @li WidgetHit::Caption
+/// @li WidgetHit::SystemMenu
+/// @li WidgetHit::Size
+/// @li WidgetHit::Menu
+/// @li WidgetHit::HorizontalScroll
+/// @li WidgetHit::VerticalScroll
+/// @li WidgetHit::MinimizeButton
+/// @li WidgetHit::MaximizeButton
+/// @li WidgetHit::Left
+/// @li WidgetHit::Right
+/// @li WidgetHit::Top
+/// @li WidgetHit::TopLeft
+/// @li WidgetHit::TopRight
+/// @li WidgetHit::Bottom
+/// @li WidgetHit::BottomLeft
+/// @li WidgetHit::BottomRight
+/// @li WidgetHit::Border
+/// @li WidgetHit::Object
+/// @li WidgetHit::Close
+/// @li WidgetHit::Help
 /// 
-typedef Enum<WidgetHitTestEnum> WidgetHitTest;
+typedef Enum<WidgetHitEnum> WidgetHit;
 
 } // namespace Vaca
 

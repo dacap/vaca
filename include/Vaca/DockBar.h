@@ -127,15 +127,14 @@ public:
 protected:
 
   // events
-  virtual void onPreferredSize(Size& sz);
+  virtual void onPreferredSize(PreferredSizeEvent& ev);
   virtual void onDockFrameClose(CloseEvent& ev);
   virtual void onPaint(PaintEvent& ev);
-  virtual void onResize(const Size& sz);
+  virtual void onResize(ResizeEvent& ev);
   virtual void onMouseDown(MouseEvent& ev);
   virtual void onMouseMove(MouseEvent& ev);
   virtual void onMouseUp(MouseEvent& ev);
   virtual void onDoubleClick(MouseEvent& ev);
-  virtual void onCancelMode();
   // new events
   virtual void onDocking();
   virtual void onFloating();
@@ -145,6 +144,8 @@ protected:
   virtual Size measureGripper(bool docked, Side dockSide) const;
   virtual Side getGripperSide(bool docked, Side dockSide) const;
   virtual bool isGripperVisible(bool docked, Side dockSide) const;
+
+  virtual bool wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult);
 
 private:
 

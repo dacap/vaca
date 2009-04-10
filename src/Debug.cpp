@@ -79,7 +79,7 @@ void Vaca::details::trace(LPCSTR filename, UINT line, LPCSTR fmt, ...)
 #endif
 }
 
-void Vaca::details::close_log_file()
+void Vaca::details::closeLogFile()
 {
 #ifndef NDEBUG
   delete dbg;

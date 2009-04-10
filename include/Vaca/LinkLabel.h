@@ -68,30 +68,30 @@ public:
   virtual Color getLinkColor();
   virtual Color getHoverColor();
 
-  Signal1<void, Event&> Action; ///< @see onAction
+  Signal1<void, Event&> Click; ///< @see onClick
 
 protected:
 
   // events
-  virtual void onPreferredSize(Size& sz);
+  virtual void onPreferredSize(PreferredSizeEvent& ev);
   virtual void onPaint(PaintEvent& ev);
   virtual void onMouseEnter(MouseEvent& ev);
   virtual void onMouseMove(MouseEvent& ev);
   virtual void onMouseLeave(MouseEvent& ev);
   virtual void onMouseDown(MouseEvent& ev);
-  virtual void onSetCursor(WidgetHitTest hitTest);
-//   virtual void onResize(const Size& sz);
-  virtual void onFocusEnter(Event& ev);
-  virtual void onFocusLeave(Event& ev);
+  virtual void onSetCursor(SetCursorEvent& ev);
+//   virtual void onResize(ResizeEvent& ev);
+  virtual void onFocusEnter(FocusEvent& ev);
+  virtual void onFocusLeave(FocusEvent& ev);
   virtual void onKeyDown(KeyEvent& ev);
 
   // new events
-  virtual void onAction(Event& ev);
+  virtual void onClick(Event& ev);
 
 private:
 
   void init(String text, Image* image = NULL);
-  void action();
+  void click();
   void updateFont(const Font& font);
   Rect getLinkBounds(Graphics& g);
 

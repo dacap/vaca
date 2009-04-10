@@ -4,7 +4,7 @@
 
 using namespace Vaca;
 
-void test_double_wrapper()
+void test_double_wrapper_fail()
 {
   Frame a(L"first wrapper");
 
@@ -18,13 +18,13 @@ void test_double_wrapper()
     // expected behavior
   }
   catch (...) {
-    assert(false);		// other exception!!
+    assert(false);		// other kind of exception!!
   }
 }
 
 int main()
 {
   Application app;
-  test_double_wrapper();
+  test_double_wrapper_fail();
   return 0;
 }

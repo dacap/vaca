@@ -47,6 +47,7 @@ public:
     static const Style Default;
     static const Style Smooth;
     static const Style Vertical; // TODO change with set/getOrientation
+    static const Style Marquee;
   };
 
   ProgressBar(Widget* parent, Style style = Styles::Default);
@@ -64,9 +65,11 @@ public:
   void setValue(int value);
   void addValue(int delta);
 
+  void setMarquee(int msecsInterval);
+
 protected:
   // events
-  virtual void onPreferredSize(Size& sz);
+  virtual void onPreferredSize(PreferredSizeEvent& ev);
   
 };
 

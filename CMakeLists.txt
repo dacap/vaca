@@ -1,10 +1,10 @@
 # Vaca - Visual Application Components Abstraction
-# Copyright (c) 2005-2009 David Capello
-# All rights reserved.
+# Copyright (c) 2005-2009 David Capello, Jie Zhang
+# All rights reserved
 
 cmake_minimum_required(VERSION 2.6)
 
-project(Vaca)
+project (Vaca)
 
 ########################################
 # Options
@@ -25,114 +25,7 @@ set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
 ########################################
 # Main target: Vaca Library
 
-set(VACA_SOURCES
-	src/Anchor.cpp
-	src/AnchorLayout.cpp
-	src/Application.cpp
-	src/BandedDockArea.cpp
-	src/BasicDockArea.cpp
-	src/Bix.cpp
-	src/BoxConstraint.cpp
-	src/BoxLayout.cpp
-	src/Brush.cpp
-	src/Button.cpp
-	src/ButtonBase.cpp
-	src/CancelableEvent.cpp
-	src/CheckBox.cpp
-	src/ChildEvent.cpp
-	src/ClientLayout.cpp
-	src/Clipboard.cpp
-	src/CloseEvent.cpp
-	src/Color.cpp
-	src/ColorDialog.cpp
-	src/ComboBox.cpp
-	src/Command.cpp
-	src/CommandEvent.cpp
-	src/CommonDialog.cpp
-	src/Component.cpp
-	src/ConditionVariable.cpp
-	src/Constraint.cpp
-	src/ConsumableEvent.cpp
-	src/Cursor.cpp
-	src/CustomButton.cpp
-	src/CustomLabel.cpp
-	src/Debug.cpp
-	src/Dialog.cpp
-	src/DockArea.cpp
-	src/DockBar.cpp
-	src/DockFrame.cpp
-	src/DropFilesEvent.cpp
-	src/Event.cpp
-	src/Exception.cpp
-	src/FileDialog.cpp
-	src/FindTextDialog.cpp
-	src/FocusEvent.cpp
-	src/Font.cpp
-	src/FontDialog.cpp
-	src/Frame.cpp
-	src/Graphics.cpp
-	src/GraphicsPath.cpp
-	src/GroupBox.cpp
-	src/HttpRequest.cpp
-	src/Icon.cpp
-	src/Image.cpp
-	src/ImageList.cpp
-	src/KeyEvent.cpp
-	src/Keys.cpp
-	src/Label.cpp
-	src/Layout.cpp
-	src/LinkLabel.cpp
-	src/ListBox.cpp
-	src/ListView.cpp
-	src/Mdi.cpp
-	src/Menu.cpp
-	src/MenuItemEvent.cpp
-	src/Message.cpp
-	src/MouseEvent.cpp
-	src/MsgBox.cpp
-	src/Mutex.cpp
-	src/PaintEvent.cpp
-	src/Pen.cpp
-	src/Point.cpp
-	src/ProgressBar.cpp
-	src/RadioButton.cpp
-	src/ReBar.cpp
-	src/Rect.cpp
-	src/Referenceable.cpp
-	src/Region.cpp
-	src/ResizeEvent.cpp
-	src/ResourceId.cpp
-	src/RichEdit.cpp
-	src/Scintilla.cpp
-	src/ScrollEvent.cpp
-	src/ScrollInfo.cpp
-	src/Separator.cpp
-	src/SetCursorEvent.cpp
-	src/Size.cpp
-	src/Slider.cpp
-	src/SpinButton.cpp
-	src/Spinner.cpp
-	src/SplitBar.cpp
-	src/StatusBar.cpp
-	src/String.cpp
-	src/PreferredSizeEvent.cpp
-	src/Style.cpp
-	src/Styles.cpp
-	src/System.cpp
-	src/Tab.cpp
-	src/TextEdit.cpp
-	src/Thread.cpp
-	src/TimePoint.cpp
-	src/Timer.cpp
-	src/ToggleButton.cpp
-	src/ToolBar.cpp
-	src/TreeNode.cpp
-	src/TreeView.cpp
-	src/TreeViewEvent.cpp
-	src/Vaca.cpp
-	src/Widget.cpp
-	src/WidgetClass.cpp
-    )
+aux_source_directory(src VACA_SOURCES)
 
 add_library(Vaca ${VACA_SOURCES})
 

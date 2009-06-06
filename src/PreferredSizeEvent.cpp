@@ -40,7 +40,9 @@ using namespace Vaca;
 ///   The widget that want to know its preferred size.
 ///
 /// @param fitIn
-///   This could be Size(0, 0) that means calculate the preferred size 
+///   This could be Size(0, 0) that means calculate the preferred size
+///   without restrictions. If its width or height is greater than 0,
+///   you could try to fit your widget to that width or height.
 ///
 PreferredSizeEvent::PreferredSizeEvent(Widget* source, const Size& fitIn)
   : Event(source)

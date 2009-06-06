@@ -39,18 +39,20 @@
 #include "Vaca/Mutex.h"
 #include "Vaca/ScopedLock.h"
 
+#include <cstdio>
 #include <lmcons.h>
 
+using namespace std;
 using namespace Vaca;
 
 /// Returns the parameters in the command line.
 /// 
 /// @c System::getArgs()[0] is the name of the executable file.
 /// 
-std::vector<String> System::getArgs()
+vector<String> System::getArgs()
 {
   // Convert the command-line to a vector of arguments...
-  std::vector<String> args;
+  vector<String> args;
 
   Char* cmdline = wcsdup(GetCommandLine());
   Char quote;
@@ -91,7 +93,7 @@ std::vector<String> System::getArgs()
     args.push_back(arg);
   }
 
-  std::free(cmdline);
+  free(cmdline);
   return args;
 }
 

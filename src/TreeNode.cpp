@@ -75,6 +75,27 @@ TreeNode::~TreeNode()
   }
 }
 
+TreeNode* TreeNode::getParent()
+{
+  if (m_owner != NULL && &m_owner->m_root == m_parent)
+    return NULL;
+  else
+    return m_parent;
+}
+
+/// Returns the collection of children.
+/// 
+/// 
+TreeNodeList TreeNode::getChildren()
+{
+  return m_children;
+}
+
+TreeView* TreeNode::getTreeView()
+{
+  return m_owner;
+}
+
 /// Adds a new sub-node (child) to this one. After calling this method
 /// @a node'll have this node as parent.
 /// 
@@ -106,27 +127,6 @@ void TreeNode::removeNode(TreeNode* node)
   node->removeFromTreeView();
 
   assert(node->m_handle == NULL);
-}
-
-TreeNode* TreeNode::getParent()
-{
-  if (m_owner != NULL && &m_owner->m_root == m_parent)
-    return NULL;
-  else
-    return m_parent;
-}
-
-/// Returns the collection of children.
-/// 
-/// 
-TreeNodeList TreeNode::getChildren()
-{
-  return m_children;
-}
-
-TreeView* TreeNode::getTreeView()
-{
-  return m_owner;
 }
 
 bool TreeNode::isAncestorOf(TreeNode* child) const
@@ -366,6 +366,7 @@ void TreeNode::addToTreeView(TreeView* treeView)
     m_handle = TreeView_InsertItem(treeView->getHandle(), &is);
   }
 
+  // Add all children too
   for (TreeNodeList::iterator
 	 it=m_children.begin(); it!=m_children.end(); ++it) {
     if ((*it)->m_owner == NULL)

@@ -65,12 +65,12 @@ public:
   TreeNode(const String& text = L"", int imageIndex = -1, int selectedImageIndex = -1);
   virtual ~TreeNode();
 
+  TreeNode* getParent();
+  TreeNodeList getChildren();
+  TreeView* getTreeView();
+
   void addNode(TreeNode* node);
   void removeNode(TreeNode* node);
-
-  TreeNode*    getParent();
-  TreeNodeList getChildren();
-  TreeView*    getTreeView();
 
   bool isAncestorOf(TreeNode* child) const;
 

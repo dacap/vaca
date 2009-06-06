@@ -12,7 +12,6 @@ function(add_vaca_test name)
   target_link_libraries(${name} ${win32_libs})
 endfunction(add_vaca_test)
 
-add_vaca_test(test_backward)
 add_vaca_test(test_bind)
 add_vaca_test(test_handle)
 add_vaca_test(test_menu)

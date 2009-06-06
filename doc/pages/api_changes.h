@@ -21,9 +21,6 @@ This has two implications:
     Also you can use the convert_to function to convert an
     std::string to a std::wstring (String).
 @li Now Unicode is not optional.
-
-The old string class is inside the "Vaca/backward.h" under the name
-of _String. It will be completelly removed in the next version of Vaca.
 @endChange
 <!------------------------------------------------------------------------->
 @beginChange{ChildStyle - Removed}
@@ -41,8 +38,6 @@ worry about it.
 
 Now the three macros VACA_MIN, VACA_MAX, and VACA_CLAMP where replaced
 by Vaca::min_value, Vaca::max_value and Vaca::clamp_value inline functions.
-
-Include "Vaca/backward.h" header file if you were using those macros.
 
 @endChange
 <!------------------------------------------------------------------------->
@@ -260,9 +255,6 @@ Button ok(L"OK", &dlg, Button::Styles::Default);
 Button cancel(L"Cancel", &dlg); // <-- uses the default style
 ComboBox box(&dlg, ComboBox::Styles::Editable);
 @endcode
-
-You can still use the old style macros including the "Vaca/backward.h"
-header file.
 
 @endChange
 @endChanges

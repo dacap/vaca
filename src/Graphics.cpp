@@ -73,7 +73,7 @@ void Graphics::initialize()
 }
 
 /// Creates a Graphics context for the screen.
-/// 
+///
 Graphics::Graphics()
 {
   m_handle      = ::GetDC(NULL);
@@ -84,6 +84,8 @@ Graphics::Graphics()
 }
 
 /// Creates a Graphics context related to the specified HDC.
+///
+/// @internal
 /// 
 Graphics::Graphics(HDC hdc)
 {
@@ -97,11 +99,13 @@ Graphics::Graphics(HDC hdc)
   initialize();
 }
 
+/// @internal
+///
 Graphics::Graphics(HDC hdc, Image& image)
 {
   assert(hdc != NULL);
 
-  m_handle         = CreateCompatibleDC(hdc);
+  m_handle      = CreateCompatibleDC(hdc);
   m_autoRelease = false;
   m_autoDelete  = true;
   m_font        = NULL;
@@ -110,6 +114,8 @@ Graphics::Graphics(HDC hdc, Image& image)
   initialize();
 }
 
+/// Creates a Graphics to dran inside the widget area.
+///
 Graphics::Graphics(Widget* widget)
 {
   HWND hwnd = widget->getHandle();
@@ -1098,6 +1104,8 @@ Size Graphics::measureString(const String& str, int fitInWidth, int flags)
 }
 
 /// Changes the current raster operation mode (SetROP2).
+///
+/// @todo drawMode should be an enumeration.
 /// 
 /// @param drawMode
 /// @li R2_BLACK

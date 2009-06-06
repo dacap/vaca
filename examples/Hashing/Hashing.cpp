@@ -35,6 +35,9 @@
 #include "md5.h"
 #include "sha1.h"
 
+#include <cstdio>
+
+using namespace std;
 using namespace Vaca;
 
 //////////////////////////////////////////////////////////////////////
@@ -147,14 +150,12 @@ private:
 
   void onDropFilesInFilesList(DropFilesEvent& ev)
   {
-    std::vector<String> files = ev.getFiles();
-    
-    // m_filesList.removeAllItems();
+    vector<String> files = ev.getFiles();
 
-    // add items in the list
-    for (std::vector<String>::iterator
+    // Add items in the list
+    for (vector<String>::iterator
 	   it = files.begin(); it != files.end(); ++it) {
-      // get the what image to use
+      // Get the what image to use
       int imageIndex = System::getFileImageIndex((*it), true);
 
       // add the new item and hold its index

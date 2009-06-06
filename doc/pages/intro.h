@@ -48,8 +48,9 @@ The following are some of the objectives to achieve with Vaca:
 
 There are a lot of libraries to program GUI applications using C++.
 If you have to develop a serious project, I recommend you to use
-<a href="http://www.wxwidgets.org/">wxWidgets</a>, but there are
-a lot of
+<a href="http://www.wxwidgets.org/">wxWidgets</a> or
+<a href="http://www.qtsoftware.com/products/">Qt</a> library,
+but there are a lot of
 @wikipedia{List_of_widget_toolkits, toolkits}
 around.
 

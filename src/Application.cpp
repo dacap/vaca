@@ -47,7 +47,9 @@ Application* Application::m_instance = NULL;
 
 /// Initializes the variables of the Application class.
 ///
-/// It calls Win32's @c CoInitialize and @c InitCommonControls.
+/// @win32 
+///   It calls @msdn{CoInitialize} and @msdn{InitCommonControls}.
+/// @endwin32
 ///
 /// @see run
 ///
@@ -77,7 +79,9 @@ Application::Application()
 
 /// Finishes the application.
 ///
-/// It calls Win32's @c CoUninitialize.
+/// @win32 
+///   It calls @msdn{CoUninitialize}.
+/// @endwin32
 ///
 Application::~Application()
 {
@@ -117,6 +121,10 @@ Application* Application::getInstance()
 }
 
 /// Returns the Win32's @c HINSTANCE.
+///
+/// @win32
+///   HINSTANCE handles are specific of Windows.
+/// @endwin32
 ///
 /// @internal
 ///

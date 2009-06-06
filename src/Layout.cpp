@@ -79,18 +79,7 @@ void Layout::endMovement()
   m_relayoutWidgets.clear();
 }
 
-// Size Layout::minimumSize(Widget* parent, WidgetList& widgets)
-// {
-//   return Size(0, 0);
-// }
-
 Size Layout::getPreferredSize(Widget* parent, WidgetList& widgets, const Size& fitIn)
 {
   return Size(0, 0);
 }
-
-// Size Layout::maximumSize(Widget* parent, WidgetList& widgets)
-// {
-//   // TODO use std::numeric_limits<int>::max()
-//   return Size(INT_MAX, INT_MAX);
-// }

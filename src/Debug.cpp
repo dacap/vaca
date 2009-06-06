@@ -35,6 +35,9 @@
 #include "Vaca/System.h"
 #include "Vaca/Thread.h"
 
+#include <cstdio>
+
+using namespace std;
 using namespace Vaca;
 
 #ifndef NDEBUG

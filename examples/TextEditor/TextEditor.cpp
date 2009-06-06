@@ -33,6 +33,7 @@
 #include "Scintilla.h"
 #include "resource.h"
 
+using namespace std;
 using namespace Vaca;
 
 //////////////////////////////////////////////////////////////////////
@@ -59,9 +60,9 @@ class Document
 {
   String m_fileName;		// current file name for the document
   bool m_hasFileName;		// this document has a file name?
-  std::vector<View*> m_views;	// Views attached to this Document
+  vector<View*> m_views;	// Views attached to this Document
 
-  typedef std::vector<View*>::iterator iterator;
+  typedef vector<View*>::iterator iterator;
 
 public:
   
@@ -448,10 +449,10 @@ private:
 
     if (dlg.doModal()) {
       // selected file names
-      std::vector<String> fileNames = dlg.getFileNames();
+      vector<String> fileNames = dlg.getFileNames();
 
       // for each selected file name
-      for (std::vector<String>::iterator it=fileNames.begin(); it!=fileNames.end(); ++it) {
+      for (vector<String>::iterator it=fileNames.begin(); it!=fileNames.end(); ++it) {
 	String fileName = *it;
 
 	// check if this file is already opened
@@ -704,7 +705,7 @@ private:
   {
     MdiFrame::onClose(ev);
 
-    std::vector<Document*> asked;
+    vector<Document*> asked;
     WidgetList editors = getMdiClient()->getChildren();
 
     // for each children

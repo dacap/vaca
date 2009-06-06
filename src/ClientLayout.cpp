@@ -48,22 +48,6 @@ ClientLayout::~ClientLayout()
 {
 }
 
-// Size ClientLayout::minimumSize(Widget* parent, WidgetList& widgets)
-// {
-//   Size sz(0, 0);
-
-//   for (WidgetList::iterator it=widgets.begin(); it!=widgets.end(); ++it) {
-//     Widget* widget = *it;
-//     if (!widget->isLayoutFree()) {
-//       Size pref = widget->minimumSize();
-//       if (sz.w < pref.w) sz.w = pref.w;
-//       if (sz.h < pref.h) sz.h = pref.h;
-//     }
-//   }
-
-//   return sz;
-// }
-
 Size ClientLayout::getPreferredSize(Widget* parent, WidgetList& widgets, const Size& fitIn)
 {
   Size sz(0, 0);
@@ -79,22 +63,6 @@ Size ClientLayout::getPreferredSize(Widget* parent, WidgetList& widgets, const S
 
   return sz + m_border;
 }
-
-// Size ClientLayout::maximumSize(Widget* parent, WidgetList& widgets)
-// {
-//   Size sz(0, 0);
-
-//   for (WidgetList::iterator it=widgets.begin(); it!=widgets.end(); ++it) {
-//     Widget* widget = *it;
-//     if (!widget->isLayoutFree()) {
-//       Size pref = widget->maximumSize();
-//       if (sz.w < pref.w) sz.w = pref.w;
-//       if (sz.h < pref.h) sz.h = pref.h;
-//     }
-//   }
-
-//   return sz;
-// }
 
 void ClientLayout::layout(Widget* parent, WidgetList& widgets, const Rect& rc)
 {

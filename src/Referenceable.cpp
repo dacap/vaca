@@ -33,16 +33,17 @@
 #include "Vaca/Debug.h"
 
 #ifndef NDEBUG
+#include "Vaca/Mutex.h"
 #include "Vaca/ScopedLock.h"
+#include <vector>
 #include <typeinfo>
 #endif
 
 using namespace Vaca;
 
 #ifndef NDEBUG
-Mutex Referenceable::mutex;
-volatile int Referenceable::instanceCounter = 0;
-std::vector<Referenceable*> Referenceable::list;
+static Mutex s_mutex;
+static std::vector<Referenceable*> s_list;
 #endif
 
 /// Constructs a new referenceable object starting with zero references.
@@ -52,9 +53,9 @@ Referenceable::Referenceable()
   m_refCount = 0;
 #ifndef NDEBUG
   {
-    ScopedLock hold(mutex);
-    VACA_TRACE("new Referenceable (%d, %p)\n", ++instanceCounter, this);
-    list.push_back(this);
+    ScopedLock hold(s_mutex);
+    VACA_TRACE("new Referenceable (%d, %p)\n", s_list.size()+1, this);
+    s_list.push_back(this);
   }
 #endif
 }
@@ -68,9 +69,9 @@ Referenceable::~Referenceable()
 {
 #ifndef NDEBUG
   {
-    ScopedLock hold(mutex);
-    VACA_TRACE("delete Referenceable (%d, %p)\n", --instanceCounter, this);
-    remove_from_container(list, this);
+    ScopedLock hold(s_mutex);
+    VACA_TRACE("delete Referenceable (%d, %p)\n", s_list.size()-1, this);
+    remove_from_container(s_list, this);
   }
 #endif
   assert(m_refCount == 0);
@@ -122,11 +123,11 @@ unsigned Referenceable::getRefCount()
 #ifndef NDEBUG
 void Referenceable::showLeaks()
 {
-  if (!list.empty())
+  if (!s_list.empty())
     ::Beep(400, 100);
 
   for (std::vector<Referenceable*>::iterator
-	 it=list.begin(); it!=list.end(); ++it) {
+	 it=s_list.begin(); it!=s_list.end(); ++it) {
     VACA_TRACE("leak Referenceable %p\n", *it);
   }
 }

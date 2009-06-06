@@ -34,10 +34,6 @@
 
 #include "Vaca/base.h"
 #include "Vaca/NonCopyable.h"
-#ifndef NDEBUG
-#include "Vaca/Mutex.h"
-#include <vector>
-#endif
 
 namespace Vaca {
 
@@ -60,10 +56,6 @@ public:
 
 #ifndef NDEBUG
   static void showLeaks();
-private:
-  static Mutex mutex;
-  static volatile int instanceCounter;
-  static std::vector<Referenceable*> list; // TODO rename these variables
 #endif
 
 private:

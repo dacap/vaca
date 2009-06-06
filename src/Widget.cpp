@@ -89,7 +89,7 @@ static void create_atom()
 // ============================================================
 // CTOR & DTOR
 // ============================================================
-
+
 /// Creates a new widget with the specified class name.
 ///
 /// You can specify WidgetClassName#None as @a className if you want
@@ -272,7 +272,24 @@ Widget::~Widget()
 // ============================================================
 // PARENT & CHILDREN RELATIONSHIP
 // ============================================================
-
+
+/// Returns the root widget (ancestor of all widgets).
+///
+/// The root widget should be the main containing Frame.
+///
+/// @note This routine never returns NULL (at least it will returns
+///       this same widget).
+///
+Widget* Widget::getRoot()
+{
+  Widget* root = this;
+
+  while (root->m_parent != NULL)
+    root = root->m_parent;
+
+  return root;
+}
+
 /// Returns the parent of the widget.
 /// 
 /// @win32
@@ -283,6 +300,44 @@ Widget::~Widget()
 Widget* Widget::getParent() const
 {
   return m_parent;
+}
+
+Widget* Widget::getFirstChild() const
+{
+  return !m_children.empty() ? m_children.front(): NULL;
+}
+
+Widget* Widget::getLastChild() const
+{
+  return !m_children.empty() ? m_children.back(): NULL;
+}
+
+Widget* Widget::getPreviousSibling() const
+{
+  if (m_parent) {
+    WidgetList::iterator it = std::find(m_parent->m_children.begin(),
+					m_parent->m_children.end(), this);
+
+    if (it != m_parent->m_children.end()) {
+      if (it != m_parent->m_children.begin())
+	return *(--it);
+    }
+  }
+  return NULL;
+}
+
+Widget* Widget::getNextSibling() const
+{
+  if (m_parent) {
+    WidgetList::iterator it = std::find(m_parent->m_children.begin(),
+					m_parent->m_children.end(), this);
+
+    if (it != m_parent->m_children.end()) {
+      if ((++it) != m_parent->m_children.end())
+	return *it;
+    }
+  }
+  return NULL;
 }
 
 /// Returns the collection of children. The returned list is a
@@ -333,10 +388,110 @@ void Widget::removeChild(Widget* child)
   removeChildWin32(child, true);
 }
 
+bool Widget::hasChild(const Widget* child) const
+{
+  return std::find(m_children.begin(), m_children.end(), child) != m_children.end();
+}
+
+bool Widget::hasDescendant(const Widget* descendant) const
+{
+  WidgetList remaining;
+
+  remaining.push_back((Widget*)this);
+  while (!remaining.empty()) {
+    Widget* widget = remaining.back();
+    remaining.pop_back();
+
+    if (widget->hasChild(descendant))
+      return true;
+
+    std::copy(m_children.begin(), m_children.end(), std::back_inserter(remaining));
+  }
+}
+
+/// Moves the widget before the specified @a sibling.
+///
+/// @note This routine changes the z-order of children, so the tab-order is
+///       affected.
+/// 
+/// @param sibling
+///   The widget will take the position before @a sibling.
+///   After using this routine, if you call Widget#getNextSibling
+///   you will get this @sibling argument.
+///   This parameter can be NULL (so the widget will take the last position).
+///
+void Widget::moveBeforeWidget(Widget* sibling)
+{
+  assert(this != sibling);
+
+  assert(m_parent != NULL);
+  remove_from_container(m_parent->m_children, this);
+
+  if (sibling != NULL) {
+    WidgetList::iterator it =
+      std::find(m_parent->m_children.begin(),
+		m_parent->m_children.end(), sibling);
+
+    assert(it != m_parent->m_children.end());
+
+    m_parent->m_children.insert(it, this);
+  }
+  else {
+    m_parent->m_children.push_back(this);
+  }
+
+  // Fix HWND handles
+  if (getPreviousSibling())
+    ::SetWindowPos(getHandle(), getPreviousSibling()->getHandle(), 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+  else
+    ::SetWindowPos(getHandle(), HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+
+  assert(getNextSibling() == sibling);
+}
+
+/// Moves the widget after the specified @a sibling.
+/// 
+/// @note This routine changes the z-order of children, so the tab-order is
+/// affected.
+/// 
+/// @param sibling
+///   The widget will take the position after @a sibling.
+///   After using this routine, if you call Widget#getPreviousSibling
+///   you will get this @sibling argument.
+///   This parameter can be NULL (so the widget will take the first position).
+///
+void Widget::moveAfterWidget(Widget* sibling)
+{
+  assert(this != sibling);
+
+  assert(m_parent != NULL);
+  remove_from_container(m_parent->m_children, this);
+
+  if (sibling != NULL) {
+    WidgetList::iterator it =
+      std::find(m_parent->m_children.begin(),
+		m_parent->m_children.end(), sibling);
+
+    assert(it != m_parent->m_children.end());
+
+    m_parent->m_children.insert(++it, this);
+  }
+  else
+    m_parent->m_children.insert(m_parent->m_children.begin(), this);
+
+  // Fix HWND handles
+  if (getPreviousSibling())
+    ::SetWindowPos(getHandle(), getPreviousSibling()->getHandle(), 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+  else
+    ::SetWindowPos(getHandle(), HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+
+  assert(getPreviousSibling() == sibling);
+}
+
 // ===============================================================
 // LAYOUT & CONSTRAINT
 // ===============================================================
-
+
 /// Returns the current Layout that arranges the widget's children.
 /// 
 /// For most widgets, the Layout will be NULL. But for widgets like
@@ -414,7 +569,7 @@ bool Widget::isLayoutFree()
 // ===============================================================
 // TEXT & FONT
 // ===============================================================
-
+
 /// Returns the widget's text, label, or frame's title.
 /// 
 /// @win32
@@ -529,7 +684,7 @@ Command* Widget::findCommandById(CommandId id)
 // ===============================================================
 // WIDGET STYLE
 // ===============================================================
-
+
 /// Returns the current Widget style.
 /// 
 Style Widget::getStyle() const
@@ -597,7 +752,7 @@ void Widget::removeStyle(Style style)
 // ===============================================================
 // SIZE & POSITION
 // ===============================================================
-
+
 /// Gets the dimensions of the entire bounding rectangle that enclose
 /// the Widget.
 /// 
@@ -836,7 +991,7 @@ void Widget::setPreferredSize(int fixedWidth, int fixedHeight)
 // ===============================================================
 // REFRESH ISSUES
 // ===============================================================
-
+
 /// Returns true if the double-buffering technique is activated
 /// in this widget.
 /// 
@@ -968,7 +1123,7 @@ void Widget::updateIndicators()
 // ===============================================================
 // COMMON PROPERTIES
 // ===============================================================
-
+
 /// Returns true if this widget is visible.
 /// 
 /// If this widget or some of its parents has the visibility state,
@@ -1164,7 +1319,6 @@ void Widget::setOpacity(int opacity)
 // ===============================================================
 // FOCUS & MOUSE
 // ===============================================================
-
 
 /// Sets the keyboard focus to this Widget.
 /// 
@@ -1298,7 +1452,7 @@ bool Widget::hasCapture()
 // ===============================================================
 // WIDGET LAYER
 // ===============================================================
-
+
 /// Sends this window to the top.
 /// 
 void Widget::bringToTop()
@@ -1597,7 +1751,6 @@ WNDPROC Widget::getGlobalWndProc()
 // ===============================================================
 // EVENTS
 // ===============================================================
-
 
 /// Calculates the preferred size for the widget.
 /// 

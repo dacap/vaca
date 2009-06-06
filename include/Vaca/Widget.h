@@ -211,11 +211,21 @@ public:
   // PARENT & CHILDREN RELATIONSHIP
   // ============================================================
 
+  Widget* getRoot();
   Widget* getParent() const;
+  Widget* getFirstChild() const;
+  Widget* getLastChild() const;
+  Widget* getPreviousSibling() const;
+  Widget* getNextSibling() const;
   WidgetList getChildren() const;
 
   void addChild(Widget* child);
   void removeChild(Widget* child);
+  bool hasChild(const Widget* child) const;
+  bool hasDescendant(const Widget* descendant) const;
+
+  void moveBeforeWidget(Widget* sibling);
+  void moveAfterWidget(Widget* sibling);
 
   // ===============================================================
   // LAYOUT & CONSTRAINT

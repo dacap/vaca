@@ -189,6 +189,21 @@ void TreeView::setStateImageList(const ImageList& imageList)
   TreeView_SetImageList(getHandle(), m_stateImageList.getHandle(), LVSIL_STATE);
 }
 
+int TreeView::getRowHeight() const
+{
+  assert(::IsWindow(getHandle()));
+
+  return TreeView_GetItemHeight(getHandle());
+}
+
+void TreeView::setRowHeight(int height)
+{
+  assert(::IsWindow(getHandle()));
+  assert(height > 0);
+
+  TreeView_SetItemHeight(getHandle(), height);
+}
+
 /// Adds a node in the root of the tree.
 /// 
 void TreeView::addNode(TreeNode* node)
@@ -211,6 +226,20 @@ void TreeView::removeNode(TreeNode* node)
   assert(node->m_owner == this);
 
   node->m_parent->removeNode(node);
+}
+
+int TreeView::getNodeCount() const
+{
+  assert(::IsWindow(getHandle()));
+
+  return TreeView_GetCount(getHandle());
+}
+
+int TreeView::getVisibleCount() const
+{
+  assert(::IsWindow(getHandle()));
+
+  return TreeView_GetVisibleCount(getHandle());
 }
 
 /// Returns the selected node of the tree.

@@ -135,8 +135,14 @@ public:
   void setImageList(const ImageList& imageList);
   void setStateImageList(const ImageList& imageList);
 
+  int getRowHeight() const;
+  void setRowHeight(int height);
+
   void addNode(TreeNode* node);
   void removeNode(TreeNode* node);
+
+  int getNodeCount() const;
+  int getVisibleCount() const;
 
   TreeNode* getSelectedNode() const;
   void setSelectedNode(TreeNode* node);

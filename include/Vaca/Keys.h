@@ -36,10 +36,30 @@
 
 namespace Vaca {
 
+/// Namespace for keyboard scancodes and modifiers.
 struct Keys {
+
+  /// Type to indicate a combination of one scancode and a set of
+  /// modifiers.
+  ///
+  /// You can use Keys#KeyCode and Keys#Modifiers mask to get the
+  /// corresponding field of a key.
+  /// E.g.:
+  /// @code
+  /// Keys::Type k = Keys::Enter | Keys::Shift;
+  ///
+  /// if ((k & Keys::KeyCode) == Keys::Enter) {
+  ///   // Enter key was pressed
+  /// }
+  ///
+  /// if ((k & Keys::Modifiers) == Keys::Shift) {
+  ///   // Shift modifier pressed (Control and Alt were not pressed)
+  /// }
+  /// @endcode
+  ///
   typedef int Type;
 
-  // codes
+  // Scancodes
   static const int None = 0;
   static const int LButton = VK_LBUTTON;
   static const int RButton = VK_RBUTTON;
@@ -231,11 +251,11 @@ struct Keys {
   static const int Pa1 = VK_PA1;
 //   static const int OemClear = VK_OEM_CLEAR;
 
-  // masks
+  // Masks
   static const int KeyCode   = 0x0000ffff;
   static const int Modifiers = 0xffff0000;
 
-  // modifiers
+  // Modifiers
   static const int Shift     = 0x00010000;
   static const int Control   = 0x00020000;
   static const int Alt       = 0x00040000;

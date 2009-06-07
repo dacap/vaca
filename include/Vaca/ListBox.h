@@ -62,8 +62,8 @@ public:
   String getItemText(int itemIndex);
   void setItemText(int itemIndex, const String& text);
 
-  int getCurrentItem();
-  void setCurrentItem(int itemIndex);
+  int getSelectedItem();
+  void setSelectedItem(int itemIndex);
 
   std::vector<int> getSelectedItems();
 

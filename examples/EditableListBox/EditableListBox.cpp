@@ -56,7 +56,7 @@ protected:
   {
     ListBox::onKeyDown(ev);
     if (ev.getKeyCode() == Keys::Enter) {
-      beginEdit(getCurrentItem());
+      beginEdit(getSelectedItem());
       ev.consume();
     }
   }
@@ -65,7 +65,7 @@ protected:
   virtual void onItemDoubleClick(Event &ev)
   {
     ListBox::onItemDoubleClick(ev);
-    beginEdit(getCurrentItem());
+    beginEdit(getSelectedItem());
   }
 
   virtual void onResize(ResizeEvent& ev)
@@ -174,20 +174,20 @@ private:
   void onAdd()
   {
     int index = m_listBox.addItem(format_string(L"Item number %d", ++m_counter));
-    m_listBox.setCurrentItem(index);
+    m_listBox.setSelectedItem(index);
     m_listBox.requestFocus();
   }
 
   void onRemove()
   {
-    int index = m_listBox.getCurrentItem();
+    int index = m_listBox.getSelectedItem();
     if (index >= 0) {
-      m_listBox.removeItem(m_listBox.getCurrentItem());
+      m_listBox.removeItem(m_listBox.getSelectedItem());
     }
 
-    m_listBox.setCurrentItem(index);
-    if (m_listBox.getCurrentItem() < 0)
-      m_listBox.setCurrentItem(m_listBox.getItemCount()-1);
+    m_listBox.setSelectedItem(index);
+    if (m_listBox.getSelectedItem() < 0)
+      m_listBox.setSelectedItem(m_listBox.getItemCount()-1);
 
     m_listBox.requestFocus();
   }

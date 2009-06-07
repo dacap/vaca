@@ -118,19 +118,19 @@ String ListBox::getItemText(int itemIndex)
 
 void ListBox::setItemText(int itemIndex, const String& text)
 {
-  bool reselect = getCurrentItem() == itemIndex;
+  bool reselect = getSelectedItem() == itemIndex;
 
   removeItem(itemIndex);
   insertItem(itemIndex, text);
 
   if (reselect)
-    setCurrentItem(itemIndex);
+    setSelectedItem(itemIndex);
 }
 
 /// Returns the current selected item index (LB_GETCURSEL). Returns -1
 /// if there aren't selection at all.
 /// 
-int ListBox::getCurrentItem()
+int ListBox::getSelectedItem()
 {
   int index = sendMessage(LB_GETCURSEL, 0, 0);
   if (index != LB_ERR && index >= 0)
@@ -141,7 +141,7 @@ int ListBox::getCurrentItem()
 
 /// Changes the current selected item to the @a itemIndex only (LB_SETCURSEL).
 /// 
-void ListBox::setCurrentItem(int itemIndex)
+void ListBox::setSelectedItem(int itemIndex)
 {
   sendMessage(LB_SETCURSEL, itemIndex, 0);
 }
@@ -151,18 +151,21 @@ void ListBox::setCurrentItem(int itemIndex)
 /// 
 std::vector<int> ListBox::getSelectedItems()
 {
-  std::vector<int> items;
-  int count = sendMessage(LB_GETSELITEMS, 0, 0);
-
-  // TODO
-  
-  return items;
+  size_t count = sendMessage(LB_GETSELCOUNT, 0, 0);
+  if (count > 0) {
+    std::vector<int> items(count);
+    sendMessage(LB_GETSELITEMS, count, (LPARAM)(*items.begin()));
+    return items;
+  }
+  else
+    return std::vector<int>();
 }
 
 void ListBox::onPreferredSize(PreferredSizeEvent& ev)
 {
   // TODO HTHEME stuff
-  Size sz(4, 4);
+  Size sz(2*::GetSystemMetrics(SM_CXEDGE),
+	  2*::GetSystemMetrics(SM_CYEDGE));
   
   int i, n = getItemCount();
   Rect rc;

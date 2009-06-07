@@ -665,7 +665,7 @@ private:
     String text = getText();
     int len1 = text.size();
 
-    setCurrentItem(text);
+    setSelectedItem(text);
     setDropDownVisibile(true);
 
     String new_text = getText();
@@ -687,7 +687,7 @@ private:
 
   void fireSignal()
   {
-    int i = getCurrentItem();
+    int i = getSelectedItem();
     if (i >= 0 && i < ColorNames_size) {
       int rgb = ColorNames[i].rgb;
       SelColor(Color((rgb & 0xff0000) >> 16,

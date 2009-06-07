@@ -92,7 +92,7 @@ public:
       setEnabled(false);
     }
     else {
-      setCurrentItem(0);
+      setSelectedItem(0);
     }
   }
 };
@@ -247,7 +247,7 @@ private:
     if (m_start.isSelected()) {
       m_start.setText(L"Stop");
 
-      m_webcam.setDriver(m_driver.getCurrentItem());
+      m_webcam.setDriver(m_driver.getSelectedItem());
       m_webcam.startPreview();
       m_webcam.setPreviewRate(m_rate.getValue());
     }
@@ -265,7 +265,7 @@ private:
       m_start.setSelected(false);
     }
     else {
-      m_webcam.setDriver(m_driver.getCurrentItem());
+      m_webcam.setDriver(m_driver.getSelectedItem());
     }
     m_webcam.capture();
   }

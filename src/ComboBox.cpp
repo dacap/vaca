@@ -60,8 +60,10 @@ int ComboBox::addItem(const String& text)
   int index = sendMessage(CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(text.c_str()));
   if (index == LB_ERR)
     return -1;
-  else
+  else {
+    updateMaxItemSize(text);
     return index;
+  }
 }
 
 /// @win32
@@ -71,6 +73,7 @@ int ComboBox::addItem(const String& text)
 void ComboBox::insertItem(int itemIndex, const String& text)
 {
   sendMessage(CB_INSERTSTRING, itemIndex, reinterpret_cast<LPARAM>(text.c_str()));
+  updateMaxItemSize(text);
 }
 
 /// @win32
@@ -89,6 +92,8 @@ void ComboBox::removeItem(int itemIndex)
 void ComboBox::removeAllItems()
 {
   sendMessage(CB_RESETCONTENT, 0, 0);
+
+  m_maxItemSize = Size(0, 0);
 }
 
 /// @win32
@@ -120,13 +125,13 @@ String ComboBox::getItemText(int itemIndex)
 
 void ComboBox::setItemText(int itemIndex, const String& text)
 {
-  bool reselect = getCurrentItem() == itemIndex;
+  bool reselect = getSelectedItem() == itemIndex;
 
   removeItem(itemIndex);
   insertItem(itemIndex, text);
 
   if (reselect)
-    setCurrentItem(itemIndex);
+    setSelectedItem(itemIndex);
 }
 
 /// Returns the current selected item index. Returns -1
@@ -136,7 +141,7 @@ void ComboBox::setItemText(int itemIndex, const String& text)
 ///   It uses the @msdn{CB_GETCURSEL} message.
 /// @endwin32
 /// 
-int ComboBox::getCurrentItem()
+int ComboBox::getSelectedItem()
 {
   int index = sendMessage(CB_GETCURSEL, 0, 0);
   if (index != CB_ERR && index >= 0)
@@ -151,14 +156,14 @@ int ComboBox::getCurrentItem()
 ///   It uses the @msdn{CB_SETCURSEL} message.
 /// @endwin32
 /// 
-void ComboBox::setCurrentItem(int itemIndex)
+void ComboBox::setSelectedItem(int itemIndex)
 {
   sendMessage(CB_SETCURSEL, itemIndex, 0);
 }
 
 /// Selects the item which its text begins with @a firstText.
 /// 
-void ComboBox::setCurrentItem(const String& firstText)
+void ComboBox::setSelectedItem(const String& firstText)
 {
   sendMessage(CB_SELECTSTRING,
 	      static_cast<WPARAM>(-1),
@@ -210,25 +215,18 @@ int ComboBox::getHeightForAllItems()
   return height*getItemCount()+2;
 }
 
+void ComboBox::updateMaxItemSize(const String& text)
+{
+  ScreenGraphics g;
+  g.setFont(getFont());
+  m_maxItemSize = m_maxItemSize.createUnion(g.measureString(text));
+}
+
 void ComboBox::onPreferredSize(PreferredSizeEvent& ev)
 {
-  Size sz;
-//   sz = Size(4, 4);		// TODO HTHEME stuff
-//   int i, n = getItemCount();
-//   Rect rc;
-
-//   for (i=0; i<n; ++i) {
-//     rc = getItemBounds(i);
-//     sz = Size(max_value(sz.w, rc.w), sz.h+rc.h);
-//   }
-
-  if ((getStyle().regular & 3) <= 1) { // CBS_SIMPLE = 1
-    // a simple combo-box
-    sz = Size(60, 23+getHeightForAllItems()); // TODO
-  }
-  else {
-    sz = Size(60, 23);		// TODO
-  }
+  Size sz(m_maxItemSize.w + (::GetSystemMetrics(SM_CXEDGE)*4 +
+			     ::GetSystemMetrics(SM_CXVSCROLL)),
+	  m_maxItemSize.h + (::GetSystemMetrics(SM_CYEDGE)*4));
 
   ev.setPreferredSize(sz);
 }

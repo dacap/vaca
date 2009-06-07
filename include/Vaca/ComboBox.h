@@ -44,6 +44,8 @@ namespace Vaca {
 /// 
 class VACA_DLL ComboBox : public Widget
 {
+  Size m_maxItemSize;
+
 public:
 
   struct VACA_DLL Styles {
@@ -64,9 +66,9 @@ public:
   String getItemText(int itemIndex);
   void setItemText(int itemIndex, const String& text);
 
-  int getCurrentItem();
-  void setCurrentItem(int itemIndex);
-  void setCurrentItem(const String& firstText);
+  int getSelectedItem();
+  void setSelectedItem(int itemIndex);
+  void setSelectedItem(const String& firstText);
 
   void setDropDownVisibile(bool visible);
   bool isDropDownVisible();
@@ -91,6 +93,7 @@ protected:
 
 private:
   int getHeightForAllItems();
+  void updateMaxItemSize(const String& text);
   
 };
 

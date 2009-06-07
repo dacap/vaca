@@ -82,7 +82,7 @@ private:
   
   void onComboChange(Event& ev)
   {
-    m_combo2.setCurrentItem(m_combo1.getCurrentItem());
+    m_combo2.setSelectedItem(m_combo1.getSelectedItem());
   }
 
 

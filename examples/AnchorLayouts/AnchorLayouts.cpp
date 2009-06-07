@@ -54,8 +54,8 @@ public:
     : Widget(parent)
     , m_anchor(anchor)
   {
-    setBgColor(Color::White);
-    setFgColor(Color::Black);
+    setBgColor(Color(200, 200, 255));
+    setFgColor(Color(0, 100, 120));
 
     setConstraint(m_anchor);
     setDoubleBuffered(true);
@@ -75,7 +75,7 @@ protected:
     Rect rc(getClientBounds());
 
     Pen pen(getFgColor());
-    g.drawRect(pen, rc);
+    g.drawRoundRect(pen, rc, Size(8, 8));
 
     for (int c=0; c<4; ++c)
       drawRect(g, getSideRect(side[c]), sides[c]);
@@ -129,11 +129,11 @@ private:
     
     if ((m_anchor->getSides() & b) == b) {
       Brush brush(color);
-      g.fillRect(brush, rc);
+      g.fillRoundRect(brush, rc, Size(8, 8));
     }
     else {
       Pen pen(color);
-      g.drawRect(pen, rc);
+      g.drawRoundRect(pen, rc, Size(8, 8));
     }
   }
 

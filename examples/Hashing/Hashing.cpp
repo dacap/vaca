@@ -143,7 +143,7 @@ public:
     m_filesList.AfterSelect.connect(&MainFrame::onSelectFileInList, this);
 
     // get the small image list from the system and put it in the ListView
-    m_filesList.setSmallImageList(System::getImageList(true));
+    m_filesList.setSmallImageList(System::getSmallImageList());
   }
 
 private:

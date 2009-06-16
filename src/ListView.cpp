@@ -38,9 +38,11 @@
 using namespace Vaca;
 
 /// Creates a new ListView.
-/// 
-/// It uses the LVS_SHAREIMAGELISTS to avoid destroying the image-list
-/// that you specified using setImageList().
+///
+/// @win32
+///   It uses the @msdn{LVS_SHAREIMAGELISTS} to avoid destroying the image-list
+///   that you specified using #setImageList.
+/// @endwin32
 /// 
 ListView::ListView(Widget* parent, Style style)
   : Widget(WidgetClassName(WC_LISTVIEW), parent, style + Style(LVS_SHAREIMAGELISTS, 0))
@@ -120,12 +122,12 @@ void ListView::setType(ListViewType type)
 	   + Style(style, 0));
 }
 
-void ListView::setNormalImageList(const ImageList& imageList)
+void ListView::setImageList(const ImageList& imageList)
 {
   assert(::IsWindow(getHandle()));
 
-  m_normalImageList = imageList;
-  ListView_SetImageList(getHandle(), m_normalImageList.getHandle(), LVSIL_NORMAL);
+  m_imageList = imageList;
+  ListView_SetImageList(getHandle(), m_imageList.getHandle(), LVSIL_NORMAL);
 }
 
 void ListView::setSmallImageList(const ImageList& imageList)
@@ -142,6 +144,21 @@ void ListView::setStateImageList(const ImageList& imageList)
 
   m_stateImageList = imageList;
   ListView_SetImageList(getHandle(), m_stateImageList.getHandle(), LVSIL_STATE);
+}
+
+ImageList ListView::getImageList() const
+{
+  return m_imageList;
+}
+ 
+ImageList ListView::getSmallImageList() const
+{
+  return m_smallImageList;
+}
+
+ImageList ListView::getStateImageList() const
+{
+  return m_stateImageList;
 }
 
 int ListView::addColumn(const String& header, TextAlign textAlign)

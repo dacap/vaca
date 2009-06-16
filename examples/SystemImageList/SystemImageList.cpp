@@ -56,11 +56,11 @@ public:
     m_bottom.setLayout(new BoxLayout(Orientation::Horizontal, false));
 
     // get the system image-list
-    m_imageList = System::getImageList(false);
+    m_imageList = System::getImageList();
 
     // setup the ListView
     m_listView.setType(ListViewType::Icon);
-    m_listView.setNormalImageList(m_imageList);
+    m_listView.setImageList(m_imageList);
 
     // bindings
     m_browseButton.Click.connect(Bind(&MainFrame::onBrowse, this));

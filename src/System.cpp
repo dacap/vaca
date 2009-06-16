@@ -225,7 +225,11 @@ String System::getShellFolderPath(int folderCsidl, bool create)
     return L"";
 }
 
-ImageList System::getImageList(bool smallImage)
+/// Returns the system ImageList that contains icons for file-types.
+///
+/// @see System#getSmallImageList
+///
+ImageList System::getImageList()
 {
   HIMAGELIST himl;
   SHFILEINFO shfi;
@@ -233,13 +237,33 @@ ImageList System::getImageList(bool smallImage)
   himl = reinterpret_cast<HIMAGELIST>
     (SHGetFileInfo(L"",
 		   0, &shfi, sizeof(shfi),
-		   SHGFI_SYSICONINDEX |
-		   (smallImage ? SHGFI_SMALLICON:
-				 SHGFI_LARGEICON)));
+		   SHGFI_SYSICONINDEX | SHGFI_LARGEICON));
 
-  return ImageList(himl); // TODO this can't be delete!!!
+  return ImageList(himl);
 }
 
+/// Returns the system ImageList that contains small-icons for file-types.
+///
+/// @see System#getImageList
+///
+ImageList System::getSmallImageList()
+{
+  HIMAGELIST himl;
+  SHFILEINFO shfi;
+
+  himl = reinterpret_cast<HIMAGELIST>
+    (SHGetFileInfo(L"",
+		   0, &shfi, sizeof(shfi),
+		   SHGFI_SYSICONINDEX | SHGFI_SMALLICON));
+
+  return ImageList(himl);
+}
+
+/// Returns the image-index of the system ImageList that corresponds
+/// to the icon of the specified file.
+///
+/// @see System#getImageList
+///
 int System::getFileImageIndex(const String& fileName, bool smallImage)
 {
   SHFILEINFO shfi;

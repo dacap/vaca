@@ -63,7 +63,7 @@ struct Win32DestroyImageList
 ///   This is a @msdn{HIMAGELIST} wrapper.
 /// @endwin32
 /// 
-/// @see ListView#setNormalImageList, TreeView#setNormalImageList
+/// @see ListView#setImageList, TreeView#setImageList
 /// 
 class VACA_DLL ImageList : public SharedPtr<GdiObject<HIMAGELIST, Win32DestroyImageList> >
 {

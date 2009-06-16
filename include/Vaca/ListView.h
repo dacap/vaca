@@ -63,7 +63,7 @@ typedef Enum<ListViewTypeEnum> ListViewType;
 /// 
 class VACA_DLL ListView : public Widget 
 {
-  ImageList m_normalImageList;
+  ImageList m_imageList;
   ImageList m_smallImageList;
   ImageList m_stateImageList;
 
@@ -89,9 +89,12 @@ public:
   ListViewType getType() const;
   void setType(ListViewType type);
 
-  void setNormalImageList(const ImageList& imageList);
+  void setImageList(const ImageList& imageList);
   void setSmallImageList(const ImageList& imageList);
   void setStateImageList(const ImageList& imageList);
+  ImageList getImageList() const;
+  ImageList getSmallImageList() const;
+  ImageList getStateImageList() const;
 
   int addColumn(const String& header, TextAlign textAlign = TextAlign::Left);
   int insertColumn(int columnIndex, const String& header, TextAlign textAlign = TextAlign::Left);

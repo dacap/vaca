@@ -255,7 +255,7 @@ public:
     setLayout(new ClientLayout);
 
     // set the small system image list for the TreeView
-    m_treeView.setImageList(System::getImageList(true));
+    m_treeView.setImageList(System::getSmallImageList());
 
     // get the desktop PIDL
     LPITEMIDLIST pidl = NULL;

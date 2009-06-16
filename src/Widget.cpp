@@ -1226,7 +1226,7 @@ void Widget::setFgColor(const Color& color)
 }
 
 /// Sets the background color. This color is used on WM_ERASEBKGND and
-/// WM_COLORCTL* messages. The default value is the
+/// WM_CTLCOLOR* messages. The default value is the
 /// System::getColor(COLOR_3DFACE).
 /// 
 /// @see getBgColor

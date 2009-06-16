@@ -451,7 +451,7 @@ bool ListView::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult)
   switch (lpnmhdr->code) {
 
     case LVN_GETDISPINFO: {
-      LPNMLVDISPINFO lplvdi = reinterpret_cast<LPNMLVDISPINFO>(lpnmhdr);
+      NMLVDISPINFO* lplvdi = reinterpret_cast<NMLVDISPINFO*>(lpnmhdr);
       ListItem* item = reinterpret_cast<ListItem*>(lplvdi->item.lParam);
 
       // assert(item != NULL);

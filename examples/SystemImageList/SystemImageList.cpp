@@ -36,57 +36,78 @@ using namespace Vaca;
 
 class MainFrame : public Frame
 {
-  ListView m_listView;
-  ImageList m_imageList;
-  Widget m_bottom;
   Button m_browseButton;
-  Button m_refreshButton;
+  Label m_listTypeLabel;
+  ComboBox m_listType;
+  ListView m_listView;
 
 public:
 
   MainFrame()
-    : Frame(L"System_imageList")
+    : Frame(L"System Image List")
+    , m_browseButton(L"Browse to collect more icons...", this)
+    , m_listTypeLabel(L"ListViewType:", this)
+    , m_listType(this)
     , m_listView(this)
-    , m_bottom(this)
-    , m_browseButton(L"Browse to get more icons...", &m_bottom)
-    , m_refreshButton(L"Refresh list", &m_bottom)
   {
-    setLayout(new BoxLayout(Orientation::Vertical, false));
-    m_listView.setConstraint(new BoxConstraint(true));
-    m_bottom.setLayout(new BoxLayout(Orientation::Horizontal, false));
+    setLayout(Bix::parse(L"Y[X[%,%,%],f%]",
+			 &m_browseButton, &m_listTypeLabel,
+			 &m_listType, &m_listView));
 
-    // get the system image-list
-    m_imageList = System::getImageList();
-
-    // setup the ListView
+    // Setup the ListView
     m_listView.setType(ListViewType::Icon);
-    m_listView.setImageList(m_imageList);
+    m_listView.setImageList(System::getImageList());
+    m_listView.setSmallImageList(System::getSmallImageList());
 
-    // bindings
+    ListColumn* column = new ListColumn(L"Image Index");
+    column->setWidth(100);
+    m_listView.addColumn(column);
+
+    // Setup list view type combo
+    m_listType.addItem(L"Icon");
+    m_listType.addItem(L"Report");
+    m_listType.addItem(L"SmallIcon");
+    m_listType.addItem(L"List");
+    m_listType.setSelectedItem(0);
+
+    // Bindings
     m_browseButton.Click.connect(Bind(&MainFrame::onBrowse, this));
-    m_refreshButton.Click.connect(Bind(&MainFrame::onRefresh, this));
+    m_listType.SelChange.connect(Bind(&MainFrame::onListTypeChange, this));
 
-    // first refresh
-    onRefresh();
+    refresh();
   }
 
 protected:
 
   void onBrowse()
   {
-    OpenFileDialog dlg(L"Browse to get more icons...", this);
+    OpenFileDialog dlg(L"Browse to collect more icons...", this);
     dlg.doModal();
+
+    refresh();
   }
 
-  void onRefresh()
+  void onListTypeChange()
+  {
+    int item = m_listType.getSelectedItem();
+    ListViewType type = m_listView.getType();
+    switch (item) {
+      case 0: type = ListViewType::Icon; break;
+      case 1: type = ListViewType::Report; break;
+      case 2: type = ListViewType::SmallIcon; break;
+      case 3: type = ListViewType::List; break;
+    }
+    m_listView.setType(type);
+  }
+
+  void refresh()
   {
     m_listView.removeAllItems();
 
-    // add one item for each image in the system image-list
-    int i, count = m_imageList.getImageCount();
-    for (i = 0; i < count; ++i) {
-      m_listView.addItem(format_string(L"Image #%d", i), i);
-    }
+    // Add one item for each image in the system image-list
+    int i, count = m_listView.getImageList().getImageCount();
+    for (i = 0; i < count; ++i)
+      m_listView.addItem(new ListItem(format_string(L"Image #%d", i), i));
   }
 
 };

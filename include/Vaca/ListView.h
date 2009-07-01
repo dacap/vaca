@@ -37,6 +37,8 @@
 #include "Vaca/CancelableEvent.h"
 #include "Vaca/ImageList.h"
 
+#include <vector>
+
 namespace Vaca {
 
 //////////////////////////////////////////////////////////////////////
@@ -59,13 +61,22 @@ typedef Enum<ListViewTypeEnum> ListViewType;
 
 //////////////////////////////////////////////////////////////////////
 
+typedef std::vector<ListItem*> ListItemList;
+typedef std::vector<ListColumn*> ListColumnList;
+
 /// A ListView control.
 /// 
 class VACA_DLL ListView : public Widget 
 {
+  ListItemList m_items;
+  ListColumnList m_columns;
   ImageList m_imageList;
   ImageList m_smallImageList;
   ImageList m_stateImageList;
+
+  /// To use LPSTR_TEXTCALLBACK we need some space
+  /// to allocate text temporally.
+  String m_tmpBuffer;
 
 public:
 
@@ -96,37 +107,28 @@ public:
   ImageList getSmallImageList() const;
   ImageList getStateImageList() const;
 
-  int addColumn(const String& header, TextAlign textAlign = TextAlign::Left);
-  int insertColumn(int columnIndex, const String& header, TextAlign textAlign = TextAlign::Left);
-  void removeColumn(int columnIndex);
+  int addColumn(ListColumn* column);
+  // int insertColumn(int columnIndex, const String& header, TextAlign textAlign = TextAlign::Left);
+  void removeColumn(ListColumn* column);
+  void removeAllColumns();
 
-  int getColumnCount();
-  Rect getColumnBounds(int columnIndex);
+  int getColumnCount() const;
+  ListColumn* getColumn(int columnIndex) const;
 
-  int getColumnWidth(int columnIndex);
-  void setColumnWidth(int columnIndex, int width);
-  void setPreferredColumnWidth(int columnIndex, bool useHeader = true);
-
-  int addItem(const String& text, int imageIndex = -1);
-  int insertItem(int itemIndex, const String& text, int imageIndex = -1);
-  void removeItem(int itemIndex);
+  int addItem(ListItem* item);
+  // int insertItem(int itemIndex, const String& text, int imageIndex = -1);
+  void removeItem(ListItem* item);
   void removeAllItems();
 
   int getItemCount() const;
-  Rect getItemBounds(int itemIndex, int code = LVIR_BOUNDS);
+  ListItem* getItem(int index) const;
+  // Rect getItemBounds(int itemIndex, int code = LVIR_BOUNDS);
 
-  String getItemText(int itemIndex, int columnIndex = 0);
-  void setItemText(int itemIndex, const String& text, int columnIndex = 0);
-  void editItemText(int itemIndex);
+  // void editItemText(int itemIndex);
 
   int getSelectedItemCount() const;
-  bool isItemSelected(int itemIndex);
-  void setItemSelected(int itemIndex, bool state);
-
-  void ensureVisible(int itemIndex);
 
 //   void sortItems(std::less<ListItem> functor);
-
 //   int getCurrentItem();
 
   // signals
@@ -135,6 +137,9 @@ public:
   Signal1<void, ListViewEvent&> ColumnClick;
 
 protected:
+  // new events
+  virtual void onResize(ResizeEvent& ev);
+
   // new events
   virtual void onBeforeSelect(ListViewEvent& ev);
   virtual void onAfterSelect(ListViewEvent& ev);
@@ -154,20 +159,20 @@ private:
 /// 
 class ListViewEvent : public CancelableEvent
 {
-  int mItemIndex;
-  int mColumnIndex;
+  ListItem* m_item;
+  ListColumn* m_column;
 
 public:
 
-  ListViewEvent(ListView* listView, int itemIndex, int columnIndex)
+  ListViewEvent(ListView* listView, ListItem* item, ListColumn* column)
     : CancelableEvent(listView)
-    , mItemIndex(itemIndex)
-    , mColumnIndex(columnIndex)
+    , m_item(item)
+    , m_column(column)
   {
   }
 
-  int getItemIndex() { return mItemIndex; }
-  int getColumnIndex() { return mColumnIndex; }
+  ListItem* getItem() const { return m_item; }
+  ListColumn* getColumn() const { return m_column; }
 
 };
 

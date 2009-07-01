@@ -95,6 +95,7 @@
 #include "Vaca/Layout.h"
 #include "Vaca/LinkLabel.h"
 #include "Vaca/ListBox.h"
+#include "Vaca/ListColumn.h"
 #include "Vaca/ListItem.h"
 #include "Vaca/ListView.h"
 #include "Vaca/Mdi.h"

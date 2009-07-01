@@ -34,8 +34,14 @@
 #include "Vaca/Debug.h"
 #include "Vaca/ImageList.h"
 #include "Vaca/WidgetClass.h"
+#include "Vaca/ListItem.h"
+#include "Vaca/ListColumn.h"
 
 using namespace Vaca;
+
+#ifndef LVS_EX_DOUBLEBUFFER
+#define LVS_EX_DOUBLEBUFFER 0x00010000
+#endif
 
 /// Creates a new ListView.
 ///
@@ -45,13 +51,19 @@ using namespace Vaca;
 /// @endwin32
 /// 
 ListView::ListView(Widget* parent, Style style)
-  : Widget(WidgetClassName(WC_LISTVIEW), parent, style + Style(LVS_SHAREIMAGELISTS, 0))
+  : Widget(WidgetClassName(WC_LISTVIEW), parent,
+	   style | Style(LVS_SHAREIMAGELISTS | LVS_OWNERDATA, 0))
 {
   setBgColor(System::getColor(COLOR_WINDOW));
+
+  ListView_SetExtendedListViewStyleEx(getHandle(),
+	LVS_EX_DOUBLEBUFFER, LVS_EX_DOUBLEBUFFER);
 }
 
 ListView::~ListView()
 {
+  removeAllItems();
+  removeAllColumns();
 }
 
 void ListView::setBgColor(const Color& color)
@@ -120,6 +132,13 @@ void ListView::setType(ListViewType type)
   setStyle(getStyle()
 	   - Style(LVS_TYPEMASK, 0)
 	   + Style(style, 0));
+
+  // Reconfigure columns
+  int count = getColumnCount();
+  for (int i=0; i<count; ++i) {
+    ListColumn* column = getColumn(i);
+    column->setWidth(column->m_width);
+  }
 }
 
 void ListView::setImageList(const ImageList& imageList)
@@ -161,11 +180,19 @@ ImageList ListView::getStateImageList() const
   return m_stateImageList;
 }
 
-int ListView::addColumn(const String& header, TextAlign textAlign)
+int ListView::addColumn(ListColumn* column)
 {
-  return insertColumn(getColumnCount(), header, textAlign);
+  assert(::IsWindow(getHandle()));
+  assert(column != NULL);
+
+  column->addToListView(this);
+
+  m_columns.push_back(column);
+
+  return column->m_index;
 }
 
+#if 0
 int ListView::insertColumn(int columnIndex, const String& header, TextAlign textAlign)
 {
   assert(::IsWindow(getHandle()));
@@ -202,88 +229,71 @@ int ListView::insertColumn(int columnIndex, const String& header, TextAlign text
 
   return columnIndex;
 }
+#endif
 
-/// Removes the specified column @a columnIndex. 
+/// Removes the specified column. 
 /// 
-void ListView::removeColumn(int columnIndex)
+void ListView::removeColumn(ListColumn* column)
+{
+  assert(column != NULL);
+  assert(column->m_owner == this);
+
+  column->removeFromListView();
+}
+
+void ListView::removeAllColumns()
 {
   assert(::IsWindow(getHandle()));
 
-  // MSDN says that column with columnIndex == 0 can't be deleted, but
-  // I tested it on Win2K and all work just fine
-
-  ListView_DeleteColumn(getHandle(), columnIndex);
+  // Break relation-ship between ListColumns and ListView
+  int count = getColumnCount();
+  for (int i=count-1; i>=0; --i) {
+    ListColumn* column = getColumn(i);
+    delete column;
+  }
+  m_columns.clear();
 }
 
 /// Returns the number of columns. Only for Report views.
 /// 
-int ListView::getColumnCount()
+int ListView::getColumnCount() const
 {
-  assert(::IsWindow(getHandle()));
-
-  HWND hHeader = ListView_GetHeader(getHandle());
-  if (hHeader != NULL)
-    return Header_GetItemCount(hHeader);
-  else
-    return 0;
+  return m_columns.size();
 }
 
-Rect ListView::getColumnBounds(int columnIndex)
+ListColumn* ListView::getColumn(int columnIndex) const
 {
-  assert(::IsWindow(getHandle()));
+  assert(columnIndex >= 0 && columnIndex < m_columns.size());
 
-  HWND hHeader = ListView_GetHeader(getHandle());
-  if (hHeader != NULL) {
-    RECT rc;
-    if (Header_GetItemRect(hHeader, columnIndex, &rc))
-      return Rect(&rc);
-  }
-
-  // empty rectangle
-  return Rect();
-}
-
-/// Returns the width (in pixels) of the specified @a columnIndex.
-/// Only for Report views.
-/// 
-int ListView::getColumnWidth(int columnIndex)
-{
-  assert(::IsWindow(getHandle()));
-
-  return ListView_GetColumnWidth(getHandle(), columnIndex);
-}
-
-/// Sets the @a width (in pixels) of the specified column @a columnIndex.
-/// Only for Report views.
-/// 
-void ListView::setColumnWidth(int columnIndex, int width)
-{
-  assert(::IsWindow(getHandle()));
-
-  ListView_SetColumnWidth(getHandle(), columnIndex, width);
-}
-
-/// Sets the width of the @a columnIndex to its preferred size. If @a useHeader
-/// is true means that in the preferred size must be included the header, not just
-/// the items' text. Only for Report views.
-/// 
-void ListView::setPreferredColumnWidth(int columnIndex, bool useHeader)
-{
-  assert(::IsWindow(getHandle()));
-
-  ListView_SetColumnWidth(getHandle(),
-			  columnIndex,
-			  useHeader ? LVSCW_AUTOSIZE_USEHEADER:
-				      LVSCW_AUTOSIZE);
+  return m_columns[columnIndex];
 }
 
 /// Inserts a new item in the last position.
+///
+/// @param item
+///   The item to be append in the list, this item will be
+///   deleted automatically in ListView destruction. You can
+///   avoid the deletion of the item if you call #removeItem
+///   before ListView destructor.
+///
+/// @see #removeItem
 /// 
-int ListView::addItem(const String& text, int imageIndex)
+int ListView::addItem(ListItem* item)
 {
-  return insertItem(getItemCount(), text, imageIndex);
+  assert(::IsWindow(getHandle()));
+  assert(item != NULL);
+
+  item->addToListView(this);
+  item->m_index = m_items.size();
+
+  m_items.push_back(item);
+
+  ListView_SetItemCountEx(getHandle(), m_items.size(), LVSICF_NOINVALIDATEALL);
+
+  return item->m_index;
 }
 
+#if 0
 /// Inserts a new item in the @a itemIndex position.
 /// 
 /// @return The index (generally @a itemIndex).
@@ -302,79 +312,65 @@ int ListView::insertItem(int itemIndex, const String& text, int imageIndex)
 
   return ListView_InsertItem(getHandle(), &lvi);
 }
+#endif
 
 /// Removes one item from the list.
+///
+/// @param item
+///   The item to be removed from the list. This routine does not
+///   delete the item, so you should delete it.
 /// 
-void ListView::removeItem(int itemIndex)
+void ListView::removeItem(ListItem* item)
 {
   assert(::IsWindow(getHandle()));
+  assert(item != NULL);
 
-  ListView_DeleteItem(getHandle(), itemIndex);
+  item->removeFromListView();
+
+  remove_from_container(m_items, item);
+
+  ListView_SetItemCountEx(getHandle(), m_items.size(), LVSICF_NOINVALIDATEALL);
 }
 
 /// Clears the list.
-/// 
+///
+/// Removes and @b deletes all items in the list.
+///
 void ListView::removeAllItems()
 {
   assert(::IsWindow(getHandle()));
 
-  ListView_DeleteAllItems(getHandle());
+  // Break relation-ship between ListItems and ListView
+  int count = getItemCount();
+  for (int i=0; i<count; ++i) {
+    ListItem* item = getItem(i);
+    delete item;
+  }
+
+  m_items.clear();
+  ListView_SetItemCountEx(getHandle(), 0, 0);
 }
 
 /// Returns the number of items.
 /// 
 int ListView::getItemCount() const
 {
-  assert(::IsWindow(getHandle()));
-  
-  return ListView_GetItemCount(getHandle());
+  return m_items.size();
 }
 
-/// TODO it's absolute or relative?
-/// 
-Rect ListView::getItemBounds(int itemIndex, int code)
+/// Returns the ListItem in the given position.
+///
+/// @param index
+///   Zero-based index of the item
+///
+ListItem* ListView::getItem(int index) const
 {
-  assert(::IsWindow(getHandle()));
+  assert(index >= 0 && index < m_items.size());
 
-  RECT rc;
-  LPRECT prc = &rc; // to avoid a warning with MinGW with the ListView_GetItemRect macro
-  if (ListView_GetItemRect(getHandle(), itemIndex, prc, code))
-    return Rect(prc);
-
-  // empty rectangle
-  return Rect();
+  return m_items[index];
 }
 
-/// Returns the text of the specified item.
-/// 
-String ListView::getItemText(int itemIndex, int columnIndex)
-{
-  assert(::IsWindow(getHandle()));
-
-  int size = 4096;		// TODO how to get the text length of
-				// the item?
-  Char* lpstr = new Char[size];
-
-  ListView_GetItemText(getHandle(), itemIndex, columnIndex, lpstr, size);
-
-  String res(lpstr);
-  delete lpstr;
-  return res;
-}
-
-/// Changes the text of the speficied item. The @a columnIndex can be
-/// used to change the text of the different columns in a Report view.
-/// 
-void ListView::setItemText(int itemIndex, const String& text, int columnIndex)
-{
-  assert(::IsWindow(getHandle()));
-
-  ListView_SetItemText(getHandle(),
-		       itemIndex,
-		       columnIndex,
-		       const_cast<LPTSTR>(text.c_str()));
-}
-
+#if 0
 /// Creates an TextEdit control to edit the specified item.
 /// 
 void ListView::editItemText(int itemIndex)
@@ -384,34 +380,13 @@ void ListView::editItemText(int itemIndex)
   // TODO it returns an HWND for the TextEdit control
   ListView_EditLabel(getHandle(), itemIndex);
 }
+#endif
 
 int ListView::getSelectedItemCount() const
 {
   assert(::IsWindow(getHandle()));
 
   return (int)ListView_GetSelectedCount(getHandle());
-}
-
-bool ListView::isItemSelected(int itemIndex)
-{
-  assert(::IsWindow(getHandle()));
-
-  return ListView_GetItemState(getHandle(), itemIndex, LVIS_SELECTED) ? true: false;
-}
-
-void ListView::setItemSelected(int itemIndex, bool state)
-{
-  assert(::IsWindow(getHandle()));
-
-  ListView_SetItemState(getHandle(), itemIndex,
-			(state ? LVIS_SELECTED: 0), LVIS_SELECTED);
-}
-
-void ListView::ensureVisible(int itemIndex)
-{
-  assert(::IsWindow(getHandle()));
-
-  ListView_EnsureVisible(getHandle(), itemIndex, false);
 }
 
 // Returns the index of the item that has the focus
@@ -445,6 +420,12 @@ void ListView::ensureVisible(int itemIndex)
 // 		     reinterpret_cast<LPARAM>(&functor));
 // }
 
+void ListView::onResize(ResizeEvent& ev)
+{
+  invalidate(false);
+  Widget::onResize(ev);
+}
+
 void ListView::onBeforeSelect(ListViewEvent& ev)
 {
   BeforeSelect(ev);
@@ -469,30 +450,36 @@ bool ListView::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult)
 
     case LVN_GETDISPINFO: {
       NMLVDISPINFO* lplvdi = reinterpret_cast<NMLVDISPINFO*>(lpnmhdr);
-      ListItem* item = reinterpret_cast<ListItem*>(lplvdi->item.lParam);
 
-      // assert(item != NULL);
+      assert(lplvdi->item.iItem >= 0 && lplvdi->item.iItem < m_items.size());
+      
+      ListItem* item = m_items[lplvdi->item.iItem];
+      assert(item != NULL);
 
-      // if (lptvdi->item.mask & TVIF_TEXT) {
-      // 	m_tmpBuffer = node->getText();
-      // 	lptvdi->item.pszText = const_cast<LPTSTR>(m_tmpBuffer.c_str());
-      // }
+      if (lplvdi->item.mask & LVIF_TEXT) {
+      	m_tmpBuffer = item->getText(lplvdi->item.iSubItem);
+      	lplvdi->item.pszText = const_cast<LPTSTR>(m_tmpBuffer.c_str());
+      }
 
-      // if (lptvdi->item.mask & TVIF_IMAGE)
+      if (lplvdi->item.mask & LVIF_IMAGE)
+      	lplvdi->item.iImage = item->getImage();
+
+      // if (lplvdi->item.mask & TVIF_STATE)
       // 	lptvdi->item.iImage = node->getImage();
-
-      // if (lptvdi->item.mask & TVIF_SELECTEDIMAGE)
-      // 	lptvdi->item.iSelectedImage = node->getSelectedImage();
-
-      // if (lptvdi->item.mask & TVIF_CHILDREN)
-      // 	lptvdi->item.cChildren = node->hasChildren();
 
       return true;
     }
 
     case LVN_ITEMCHANGING: {
       LPNMLISTVIEW lpnmlv = reinterpret_cast<LPNMLISTVIEW>(lpnmhdr);
-      ListViewEvent ev(this, lpnmlv->iItem, lpnmlv->iSubItem);
+      ListItem* item;
+
+      if (lpnmlv->iItem >= 0 && lpnmlv->iItem < m_items.size())
+	item = m_items[lpnmlv->iItem];
+      else
+	item = NULL;
+
+      ListViewEvent ev(this, item, NULL);
       onBeforeSelect(ev);
       lResult = ev.isCanceled() ? TRUE: FALSE;
       return true;
@@ -500,18 +487,32 @@ bool ListView::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult)
 
     case LVN_ITEMCHANGED: {
       LPNMLISTVIEW lpnmlv = reinterpret_cast<LPNMLISTVIEW>(lpnmhdr);
-      ListViewEvent ev(this, lpnmlv->iItem, lpnmlv->iSubItem);
+      ListItem* item;
+
+      if (lpnmlv->iItem >= 0 && lpnmlv->iItem < m_items.size())
+	item = m_items[lpnmlv->iItem];
+      else
+	item = NULL;
+
+      ListViewEvent ev(this, item, NULL);
       onAfterSelect(ev);
       break;
     }
 
     case LVN_COLUMNCLICK: {
       LPNMLISTVIEW lpnmlv = reinterpret_cast<LPNMLISTVIEW>(lpnmhdr);
-      ListViewEvent ev(this, lpnmlv->iItem, lpnmlv->iSubItem);
+      ListColumn* column;
+
+      if (lpnmlv->iSubItem >= 0 && lpnmlv->iSubItem < m_columns.size())
+	column = m_columns[lpnmlv->iSubItem];
+      else
+	column = NULL;
+
+      ListViewEvent ev(this, NULL, column);
       onColumnClick(ev);
       break;
     }
-      
+
   }
 
   return false;

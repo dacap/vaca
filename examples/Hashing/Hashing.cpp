@@ -106,8 +106,8 @@ class MainFrame : public Frame
   ListView m_filesList;
   TextEdit m_md5Edit;
   TextEdit m_shaEdit;
-  LinkLabel m_md5Label;
-  LinkLabel m_shaLabel;
+  LinkLabel m_md5Link;
+  LinkLabel m_shaLink;
 
 public:
 
@@ -121,22 +121,22 @@ public:
 			   TextEdit::Styles::ReadOnly)
     , m_shaEdit(L"", this, TextEdit::Styles::Default +
 			   TextEdit::Styles::ReadOnly)
-    , m_md5Label(L"http://www.faqs.org/rfcs/rfc1321.html",
-		 L"RFC 1321 - The MD5 Message-Digest Algorithm", this)
-    , m_shaLabel(L"http://www.faqs.org/rfcs/rfc3174.html",
-		 L"RFC 3174 - US Secure Hash Algorithm 1 (SHA1)", this)
+    , m_md5Link(L"http://www.faqs.org/rfcs/rfc1321.html",
+		L"RFC 1321 - The MD5 Message-Digest Algorithm", this)
+    , m_shaLink(L"http://www.faqs.org/rfcs/rfc3174.html",
+		L"RFC 3174 - US Secure Hash Algorithm 1 (SHA1)", this)
   {
     setLayout(Bix::parse(L"Y[%,f%,XY[%,fx%;%,fx%]]",
 			 &m_helpLabel,
 			 &m_filesList,
-			 &m_md5Label, &m_md5Edit,
-			 &m_shaLabel, &m_shaEdit));
+			 &m_md5Link, &m_md5Edit,
+			 &m_shaLink, &m_shaEdit));
 
     // setup report view
     m_filesList.setType(ListViewType::Report);
-    m_filesList.addColumn(L"Filename");
-    m_filesList.addColumn(L"MD5");
-    m_filesList.addColumn(L"SHA1");
+    m_filesList.addColumn(new ListColumn(L"Filename"));
+    m_filesList.addColumn(new ListColumn(L"MD5"));
+    m_filesList.addColumn(new ListColumn(L"SHA1"));
 
     // signals
     m_filesList.DropFiles.connect(&MainFrame::onDropFilesInFilesList, this);
@@ -158,26 +158,28 @@ private:
       // Get the what image to use
       int imageIndex = System::getFileImageIndex((*it), true);
 
-      // add the new item and hold its index
-      int itemIndex = m_filesList.addItem(file_name(*it), imageIndex);
+      // Create the new item
+      ListItem* item = new ListItem(file_name(*it), imageIndex);
 
-      // calculates the MD5 and SHA1 of the file
-      m_filesList.setItemText(itemIndex, MD5File(*it), 1);
-      m_filesList.setItemText(itemIndex, SHA1File(*it), 2);
+      // Calculates the MD5 and SHA1 of the file
+      item->setText(MD5File(*it), 1);
+      item->setText(SHA1File(*it), 2);
+
+      // Add the item in the ListView
+      m_filesList.addItem(item);
     }
 
     // set preferred with for each column
     int n = m_filesList.getColumnCount();
     for (int i=0; i<n; ++i)
-      m_filesList.setPreferredColumnWidth(i, true);
+      m_filesList.getColumn(i)->setPreferredWidth(true);
   }
 
   void onSelectFileInList(ListViewEvent& ev)
   {
-    int itemIndex = ev.getItemIndex();
-    if (itemIndex >= 0) {
-      m_md5Edit.setText(m_filesList.getItemText(itemIndex, 1));
-      m_shaEdit.setText(m_filesList.getItemText(itemIndex, 2));
+    if (ListItem* item = ev.getItem()) {
+      m_md5Edit.setText(item->getText(1));
+      m_shaEdit.setText(item->getText(2));
     }
   }
   

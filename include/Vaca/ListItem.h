@@ -45,28 +45,36 @@ class VACA_DLL ListItem : public Component
 {
   friend class ListView;
 
-  std::vector<String> m_text;
-  // ListItem* m_parent;
-  ListView* m_owner;
+  int			m_index;
+  std::vector<String>	m_text;
+  int			m_image;
+  ListView*		m_owner;
 
 public:
 
-  ListItem();
-//   ListItem(const String& text);
+  ListItem(const String& text = L"", int imageIndex = -1);
   virtual ~ListItem();
 
-//   void addNode(ListItem* node);
+  ListView* getListView();
+  int getIndex();
+  Rect getBounds() const;
 
-//   ListItem* getParent();
-//   TreeView* getTreeView();
-//   Container getChildren();
+  virtual String getText(int columnIndex = 0);
+  virtual int getImage();
 
-  virtual String getText(int columnIndex);
-//   virtual int getImage();
-//   virtual int getSelectedImage();
+  void setText(const String& text, int columnIndex = 0);
+  void setImage(int image);
 
-// private:
-//   void addToListView(ListView* listView);
+  void update();
+
+  bool isSelected() const;
+  void setSelected(bool state);
+
+  void ensureVisible();
+
+private:
+  void addToListView(ListView* listView);
+  void removeFromListView();
 
 };
 

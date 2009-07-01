@@ -403,6 +403,7 @@ class Label;
 class Layout;
 class LinkLabel;
 class ListBox;
+class ListColumn;
 class ListItem;
 class ListView;
 class ListViewEvent;

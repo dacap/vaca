@@ -30,6 +30,7 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <Vaca/Vaca.h>
+#include <cstdio>
 #include "Scintilla.h"
 #include "resource.h"
 

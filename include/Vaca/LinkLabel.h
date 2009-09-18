@@ -72,7 +72,7 @@ public:
 
 protected:
 
-  // events
+  // Events
   virtual void onPreferredSize(PreferredSizeEvent& ev);
   virtual void onPaint(PaintEvent& ev);
   virtual void onMouseEnter(MouseEvent& ev);
@@ -85,7 +85,7 @@ protected:
   virtual void onFocusLeave(FocusEvent& ev);
   virtual void onKeyDown(KeyEvent& ev);
 
-  // new events
+  // New events
   virtual void onClick(Event& ev);
 
 private:

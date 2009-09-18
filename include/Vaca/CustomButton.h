@@ -80,7 +80,7 @@ public:
 
 protected:
 
-  // reflection
+  // Reflected notifications
   virtual bool onReflectedDrawItem(Graphics& g, LPDRAWITEMSTRUCT lpDrawItem);
 
 public:

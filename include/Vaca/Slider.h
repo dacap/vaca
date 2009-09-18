@@ -79,11 +79,11 @@ public:
   Signal1<void, Event&> Change; ///< @see onChange
 
 protected:
-  // events
+  // Events
   virtual void onPreferredSize(PreferredSizeEvent& ev);
   virtual void onScroll(ScrollEvent& ev);
   
-  // new events
+  // New events
   virtual void onChange(Event& ev);
   
 };

@@ -70,7 +70,7 @@ public:
 
 protected:
 
-  // new events
+  // New events
   virtual void onFindNext(Event& ev);
   virtual void onReplace(Event& ev);
   virtual void onReplaceAll(Event& ev);

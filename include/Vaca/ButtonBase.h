@@ -57,13 +57,13 @@ public:
   Signal1<void, Event&> Click; ///< @see onClick
 
 protected:
-  // events
+  // Events
   virtual void onPreferredSize(PreferredSizeEvent& ev);
 
-  // new events
+  // New events
   virtual void onClick(Event& ev);
 
-  // reflection
+  // Reflected notifications
   virtual bool onReflectedCommand(int id, int code, LRESULT& lResult);
 };
 

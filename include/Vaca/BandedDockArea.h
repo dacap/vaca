@@ -71,7 +71,7 @@ public:
   virtual void layout();
 
 protected:
-  // events
+  // Events
   virtual void onPreferredSize(PreferredSizeEvent& ev);
   virtual void onPaint(PaintEvent& ev);
   virtual void onAddDockBar(DockBar* dockBar);

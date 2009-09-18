@@ -167,12 +167,12 @@ public:
 //   Signal1<void, TreeViewEvent&> EndDrag;
 
 protected:
-  // events
+  // Events
   virtual void onMouseMove(MouseEvent& ev);
   virtual void onMouseUp(MouseEvent& ev);
   virtual void onSetCursor(SetCursorEvent& ev);
 
-  // new events
+  // New events
   virtual void onBeforeExpand(TreeViewEvent& ev);
   virtual void onBeforeCollapse(TreeViewEvent& ev);
   virtual void onBeforeSelect(TreeViewEvent& ev);
@@ -184,7 +184,7 @@ protected:
 //   virtual void onBeginDrag(TreeViewEvent& ev);
 //   virtual void onEndDrag(TreeViewEvent& ev);
 
-  // reflection
+  // Reflected notifications
   virtual bool onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult);
 
 };

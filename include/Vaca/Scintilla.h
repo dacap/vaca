@@ -609,10 +609,10 @@ public:
   Signal0<void> UpdateUI; ///< @see onUpdateUI
 
 protected:
-  // reflection
+  // Reflected notifications
   virtual bool onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult);
 
-  // new events
+  // New events
 // SCN_STYLENEEDED
 // SCN_CHARADDED
 // SCN_SAVEPOINTREACHED

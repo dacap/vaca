@@ -104,16 +104,16 @@ public:
 //   Signal1<void, SpinButtonEvent&> AfterChange;
   
 protected:
-  // events
+  // Events
   virtual void onPreferredSize(PreferredSizeEvent& ev);
 
-  // new events
+  // New events
   virtual void onChange(SpinButtonEvent& ev);
 //   virtual void onBeforeChange(SpinButtonEvent& ev);
 //   virtual void onAfterChange(SpinButtonEvent& ev);
-  // events
+  // Events
 //   virtual void onScroll(ScrollEvent& ev);
-  // reflection
+  // Reflected notifications
   virtual bool onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult);
 
 };

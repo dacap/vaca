@@ -89,7 +89,7 @@ public:
   virtual bool isMdiList() const;
 
 protected:
-  // events
+  // Events
   virtual void onClick(MenuItemEvent& ev);
   virtual void onUpdate(MenuItemEvent& ev);
 

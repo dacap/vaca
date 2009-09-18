@@ -81,14 +81,14 @@ public:
   Signal1<void, Event&> EditChange; ///< @see onEditChange
 
 protected:
-  // events
+  // Events
   virtual void onPreferredSize(PreferredSizeEvent& ev);
   
-  // new events
+  // New events
   virtual void onSelChange(Event& ev);
   virtual void onEditChange(Event& ev);
 
-  // reflection
+  // Reflected notifications
   virtual bool onReflectedCommand(int id, int code, LRESULT& lResult);
 
 private:

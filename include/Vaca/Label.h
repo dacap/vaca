@@ -70,7 +70,7 @@ protected:
   bool useWordWrap();
   int getFlagsForDrawString();
 
-  // events
+  // Events
   virtual void onPreferredSize(PreferredSizeEvent& ev);
   virtual void onResize(ResizeEvent& ev);
 

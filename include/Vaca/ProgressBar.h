@@ -68,7 +68,7 @@ public:
   void setMarquee(int msecsInterval);
 
 protected:
-  // events
+  // Events
   virtual void onPreferredSize(PreferredSizeEvent& ev);
   
 };

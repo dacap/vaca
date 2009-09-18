@@ -69,7 +69,7 @@ public:
   virtual ~MdiChild();
 
 protected:
-  // reflection
+  // Reflected notifications
   // virtual bool onReflectedCommand(int id, int code, LRESULT& lResult);
 
   virtual bool wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult);

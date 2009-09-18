@@ -129,10 +129,10 @@ private:
   void removeDockBar(DockBar* dockBar);
 
 protected:
-  // events
+  // Events
   virtual void onPreferredSize(PreferredSizeEvent& ev) = 0;
 
-  // new events
+  // New events
   virtual void onAddDockBar(DockBar* dockBar);
   virtual void onRemoveDockBar(DockBar* dockBar);
   virtual void onRedock(DockBar* dockBar, DockInfo* newDockInfo);

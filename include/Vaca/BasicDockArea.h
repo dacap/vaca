@@ -58,7 +58,7 @@ public:
   virtual void layout();
 
 protected:
-  // events
+  // Events
   virtual void onPreferredSize(PreferredSizeEvent& ev);
 
 };

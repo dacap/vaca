@@ -110,13 +110,13 @@ public:
   Signal1<void, Event&> Change; ///< @see onChange
 
 protected:
-  // events
+  // Events
   virtual void onPreferredSize(PreferredSizeEvent& ev);
 
-  // new events
+  // New events
   virtual void onChange(Event& ev);
 
-  // reflection
+  // Reflected notifications
   virtual bool onReflectedCommand(int id, int code, LRESULT& lResult);
 
 };

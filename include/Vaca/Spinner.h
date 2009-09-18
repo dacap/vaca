@@ -93,7 +93,7 @@ public:
 
 protected:
 
-  // events
+  // Events
   virtual void onPreferredSize(PreferredSizeEvent& ev);
   
 };

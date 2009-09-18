@@ -81,7 +81,7 @@ public:
 
 protected:
 
-  // events
+  // Events
   virtual void onTick();
 
 private:

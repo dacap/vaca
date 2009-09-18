@@ -126,7 +126,7 @@ public:
 
 protected:
 
-  // events
+  // Events
   virtual void onPreferredSize(PreferredSizeEvent& ev);
   virtual void onDockFrameClose(CloseEvent& ev);
   virtual void onPaint(PaintEvent& ev);
@@ -135,7 +135,7 @@ protected:
   virtual void onMouseMove(MouseEvent& ev);
   virtual void onMouseUp(MouseEvent& ev);
   virtual void onDoubleClick(MouseEvent& ev);
-  // new events
+  // New events
   virtual void onDocking();
   virtual void onFloating();
   virtual void onResizingFrame(DockFrame* frame, CardinalDirection dir, Rect& rc);

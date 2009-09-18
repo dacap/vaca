@@ -137,15 +137,15 @@ public:
   Signal1<void, ListViewEvent&> ColumnClick;
 
 protected:
-  // new events
+  // Events
   virtual void onResize(ResizeEvent& ev);
 
-  // new events
+  // New events
   virtual void onBeforeSelect(ListViewEvent& ev);
   virtual void onAfterSelect(ListViewEvent& ev);
   virtual void onColumnClick(ListViewEvent& ev);
 
-  // reflection
+  // Reflected notifications
   virtual bool onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult);
 
 private:

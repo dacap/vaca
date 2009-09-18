@@ -69,7 +69,7 @@ public:
   Signal1<void, Event&> Change; ///< @see onChange
 
 protected:
-  // new events
+  // New events
   virtual void onChange(Event& ev);
 
 private:
@@ -102,10 +102,10 @@ public:
   const RadioGroup& getRadioGroup() const;
 
 protected:
-  // events
+  // Events
   virtual void onClick(Event& ev);
 
-  // reflection
+  // Reflected notifications
   virtual bool onReflectedCommand(int id, int code, LRESULT& lResult);
 };
 

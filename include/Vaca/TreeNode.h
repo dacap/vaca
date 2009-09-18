@@ -96,7 +96,7 @@ public:
 
 protected:
 
-  // new events
+  // New events
   virtual void onBeforeExpand(TreeViewEvent& ev);
   virtual void onBeforeCollapse(TreeViewEvent& ev);
   virtual void onBeforeSelect(TreeViewEvent& ev);

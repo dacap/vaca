@@ -135,10 +135,10 @@ public:
   void updatePreferredSizes();
 
 protected:
-  // events
+  // Events
   virtual void onPreferredSize(PreferredSizeEvent& ev);
   virtual void onUpdateIndicators();
-  // reflection
+  // Reflected notifications
   virtual bool onReflectedCommand(int id, int code, LRESULT& lResult);
   virtual bool wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult);
 
@@ -173,7 +173,7 @@ public:
   virtual Size getFloatingSize() const;
 
 protected:
-  // events
+  // Events
   virtual void onCommand(CommandEvent& ev);
   virtual void onUpdateIndicators();
   virtual void onDocking();

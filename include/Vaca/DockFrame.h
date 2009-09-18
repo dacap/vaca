@@ -80,7 +80,7 @@ protected:
 
   virtual bool keepSynchronized();
 
-  // events
+  // Events
   virtual void onResizing(CardinalDirection dir, Rect& rc);
 
   virtual bool wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult);

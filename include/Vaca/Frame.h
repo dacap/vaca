@@ -113,14 +113,14 @@ public:
   virtual bool preTranslateMessage(Message& message);
 
 protected:
-  // events
+  // Events
   virtual void onPreferredSize(PreferredSizeEvent& ev);
   virtual void onResize(ResizeEvent& ev);
   virtual void onCommand(CommandEvent& ev);
   virtual void onUpdateIndicators();
   virtual void onRemoveChild(ChildEvent& ev);
 
-  // new events
+  // New events
   virtual void onActivate(Event& ev);
   virtual void onDeactivate(Event& ev);
   virtual void onClose(CloseEvent& ev);

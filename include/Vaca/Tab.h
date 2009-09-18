@@ -97,13 +97,13 @@ public:
   Signal1<void, Event&> PageChange; ///< @see onPageChange
 
 protected:
-  // events
+  // Events
   virtual void onPreferredSize(PreferredSizeEvent& ev);
   
-  // reflection
+  // Reflected notifications
   virtual bool onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult);
 
-  // new events
+  // New events
 //   virtual void onPageChanging(Event& ev);
   virtual void onPageChange(Event& ev);
 

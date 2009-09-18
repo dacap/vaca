@@ -40,6 +40,7 @@
 #include "Vaca/ScopedLock.h"
 
 #include <cstdio>
+#include <cwchar>
 #include <lmcons.h>
 
 using namespace std;

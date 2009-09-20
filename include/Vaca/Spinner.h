@@ -89,12 +89,11 @@ public:
   int getBase();
   void setBase(int base);
 
-  virtual void layout();
-
 protected:
 
   // Events
   virtual void onPreferredSize(PreferredSizeEvent& ev);
+  virtual void onLayout(LayoutEvent& ev);
   
 };
 

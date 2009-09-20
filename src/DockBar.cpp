@@ -29,6 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
+#if 0
+
 #include "Vaca/DockBar.h"
 #include "Vaca/DockFrame.h"
 #include "Vaca/Debug.h"
@@ -145,6 +147,7 @@ void DockBar::setVisible(bool visible)
 
 /// Leaves some space for the gripper (using measureGripper()).
 /// 
+#if 0
 Rect DockBar::getLayoutBounds() const
 {
   Rect rc = Widget::getLayoutBounds();
@@ -176,6 +179,7 @@ Rect DockBar::getLayoutBounds() const
 
   return rc;
 }
+#endif
 
 /*
  * Sets the drag full tool bar mode. If @a state is false, only a
@@ -837,3 +841,6 @@ Size DockBar::getNonClientSizeForADockFrame()
 
   return Rect(&nonClientRect).getSize() - clientRect.getSize();
 }
+
+#endif
+

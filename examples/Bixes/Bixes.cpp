@@ -550,7 +550,7 @@ class MainFrame : public Frame,
   SplitBar m_splitBar;
   TreeView_Model m_treeView;
   Widgets_Model m_widgetsView;
-  ToolBar m_toolBar;
+  //ToolBar m_toolBar;
   ImageList m_imageList;
   int m_widgetCounter;
   bool m_disableReselect;
@@ -564,8 +564,8 @@ public:
     , m_splitBar(Orientation::Vertical, this)
     , m_treeView(&m_model, &m_splitBar)
     , m_widgetsView(&m_model, &m_splitBar)
-    , m_toolBar(L"Standard", this, ToolSet::Styles::Default +
-				   ToolSet::Styles::Flat)
+    // , m_toolBar(L"Standard", this, ToolSet::Styles::Default +
+    // 				   ToolSet::Styles::Flat)
     , m_imageList(ResourceId(IDB_TOOLBAR), 16, Color(192, 192, 192))
     , m_widgetCounter(0)
     , m_disableReselect(false)
@@ -587,22 +587,22 @@ public:
     m_treeView.ElementSelected.connect(&MainFrame::onElementSelectedFromTreeView, this);
     m_widgetsView.ElementSelected.connect(&MainFrame::onElementSelectedFromWidgets, this);
 
-    // setup the tool bar
-    m_toolBar.setImageList(m_imageList);
-    m_toolBar.addButton(new ToolButton(IDM_ADD_COLUMN, 0));
-    m_toolBar.addButton(new ToolButton(IDM_ADD_ROW, 1));
-    m_toolBar.addButton(new ToolButton(IDM_ADD_MATRIX, 2));
-    m_toolBar.addButton(new ToolButton(IDM_ADD_WIDGET, 3));
-    m_toolBar.addSeparator();
-    m_toolBar.addButton(new ToolButton(IDM_REMOVE, 4));
-    m_toolBar.addSeparator();
-    m_toolBar.addButton(new ToolButton(IDM_PROPERTIES, 5));
+    // // setup the tool bar
+    // m_toolBar.setImageList(m_imageList);
+    // m_toolBar.addButton(new ToolButton(IDM_ADD_COLUMN, 0));
+    // m_toolBar.addButton(new ToolButton(IDM_ADD_ROW, 1));
+    // m_toolBar.addButton(new ToolButton(IDM_ADD_MATRIX, 2));
+    // m_toolBar.addButton(new ToolButton(IDM_ADD_WIDGET, 3));
+    // m_toolBar.addSeparator();
+    // m_toolBar.addButton(new ToolButton(IDM_REMOVE, 4));
+    // m_toolBar.addSeparator();
+    // m_toolBar.addButton(new ToolButton(IDM_PROPERTIES, 5));
 
-    // setup the defaults dock areas
-    defaultDockAreas();
+    // // setup the defaults dock areas
+    // defaultDockAreas();
 
-    // put the tool bar in the top dock area
-    m_toolBar.dockIn(getDockArea(Side::Top));
+    // // put the tool bar in the top dock area
+    // m_toolBar.dockIn(getDockArea(Side::Top));
   }
 
 protected:
@@ -737,6 +737,7 @@ private:
 
   void updateToolBarButtons()
   {
+#if 0
     ToolButtonState canAdd =
       ((m_selectedElement == NULL && m_model.getRoot() == NULL) ||
        (m_selectedElement != NULL && m_selectedElement->acceptChildren())) ?
@@ -759,6 +760,7 @@ private:
     m_toolBar.getButtonById(IDM_ADD_WIDGET)->setState(canAdd);
     m_toolBar.getButtonById(IDM_REMOVE)->setState(canRemove);
     m_toolBar.getButtonById(IDM_PROPERTIES)->setState(canShowProperties);
+#endif
   }
 
 };

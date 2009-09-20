@@ -43,7 +43,7 @@ class MainFrame : public Frame
 {
   Console m_editor;
   Console m_console;
-  ToolBar m_toolBar;
+  //ToolBar m_toolBar;
   ImageList m_imageList;
 
 public:
@@ -210,8 +210,8 @@ MainFrame::MainFrame()
   : Frame(L"Commands")
   , m_editor(this)
   , m_console(this)
-  , m_toolBar(L"Standard", this, ToolSet::Styles::Default +
-				 ToolSet::Styles::Flat)
+    //, m_toolBar(L"Standard", this, ToolSet::Styles::Default +
+    //			 ToolSet::Styles::Flat)
   , m_imageList(ResourceId(IDB_TOOLBAR), 16, Color(236, 233, 216))
 {
   setIcon(ResourceId(IDI_VACA));
@@ -252,21 +252,21 @@ MainFrame::MainFrame()
   getMenuBar()->add(editMenu);
   getMenuBar()->add(toolBarMenuItem);
 
-  // setup the tool bar
-  m_toolBar.setImageList(m_imageList);
-  m_toolBar.addButton(new ToolButton(ID_FILE_NEW, 0));
-  m_toolBar.addButton(new ToolButton(ID_FILE_OPEN, 1));
-  m_toolBar.addButton(new ToolButton(ID_FILE_SAVE, 2));
-  m_toolBar.addSeparator();
-  m_toolBar.addButton(new ToolButton(ID_EDIT_CUT, 3));
-  m_toolBar.addButton(new ToolButton(ID_EDIT_COPY, 4));
-  m_toolBar.addButton(new ToolButton(ID_EDIT_PASTE, 5));
+  // // setup the tool bar
+  // m_toolBar.setImageList(m_imageList);
+  // m_toolBar.addButton(new ToolButton(ID_FILE_NEW, 0));
+  // m_toolBar.addButton(new ToolButton(ID_FILE_OPEN, 1));
+  // m_toolBar.addButton(new ToolButton(ID_FILE_SAVE, 2));
+  // m_toolBar.addSeparator();
+  // m_toolBar.addButton(new ToolButton(ID_EDIT_CUT, 3));
+  // m_toolBar.addButton(new ToolButton(ID_EDIT_COPY, 4));
+  // m_toolBar.addButton(new ToolButton(ID_EDIT_PASTE, 5));
 
   // setup the defaults dock areas
-  defaultDockAreas();
+  // defaultDockAreas();
 
   // put the tool bar in the top dock area
-  m_toolBar.dockIn(getDockArea(Side::Top));
+  // m_toolBar.dockIn(getDockArea(Side::Top));
 }
 
 Console* MainFrame::getEditor()
@@ -281,12 +281,13 @@ Console* MainFrame::getConsole()
 
 void MainFrame::showToolBar()
 {
-  m_toolBar.setVisible(true);
+  // m_toolBar.setVisible(true);
 }
 
 bool MainFrame::isToolBarVisible()
 {
-  return m_toolBar.isVisible();
+  // return m_toolBar.isVisible();
+  return true;
 }
 
 //////////////////////////////////////////////////////////////////////

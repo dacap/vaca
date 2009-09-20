@@ -3,7 +3,10 @@ DEVELOPERS
 ----------------------------------------------------------------------
 
   David Capello <davidcapello@gmail.com>
+    Main developer, maintainer.
+
   Jie Zhang <nanothyll@gmail.com>
+    Contributed SplitBar and ReBar classes (with examples).
 
 
 ----------------------------------------------------------------------

@@ -29,30 +29,26 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-//////////////////////////////////////////////////////////////////////////
-/// Warning:
-///   You must define WINVER & _WIN32_WINNT version, otherwise,
-///   addBand will raise an exception!!!
-//////////////////////////////////////////////////////////////////////////
-
-#ifndef WINVER
-#define WINVER		0x0501
-#endif
-
-#ifndef _WIN32_WINNT
-#define _WIN32_WINNT	0x0501
-#endif
-
-#ifndef _WIN32_IE
-#define _WIN32_IE	0x0500
-#endif
-
-//////////////////////////////////////////////////////////////////////////
 
 #include "Vaca/ReBar.h"
 #include "Vaca/Event.h"
 #include "Vaca/ImageList.h"
 #include "Vaca/WidgetClass.h"
+#include "Vaca/LayoutEvent.h"
+#include "Vaca/PreferredSizeEvent.h"
+
+// Warning:
+//   You must define WINVER & _WIN32_WINNT version, otherwise,
+//   addBand will raise an exception!!!
+#ifndef WINVER
+#error You have to define WINVER to compile ReBar
+#endif
+#ifndef _WIN32_WINNT
+#error You have to define _WIN32_WINNT to compile ReBar
+#endif
+#ifndef _WIN32_IE
+#error You have to define _WIN32_IE to compile ReBar
+#endif
 
 using namespace Vaca;
 
@@ -75,7 +71,7 @@ ReBarBand::~ReBarBand()
 {
 }
 
-ReBarBandStyle ReBarBand::getStyle()
+ReBarBandStyle ReBarBand::getStyle() const
 {
   REBARBANDINFO rbbi;
   rbbi.cbSize = sizeof(REBARBANDINFO);
@@ -96,7 +92,7 @@ void ReBarBand::setStyle(ReBarBandStyle style)
   setBand(&rbbi);
 }
 
-void ReBarBand::getColors(Color& fg, Color& bg)
+void ReBarBand::getColors(Color& fg, Color& bg) const
 {
   REBARBANDINFO rbbi;
   rbbi.cbSize = sizeof(REBARBANDINFO);
@@ -120,12 +116,21 @@ void ReBarBand::setColors(Color fg, Color bg)
   setBand(&rbbi);
 }
 
-/*
-  String ReBarBand::getText() const
-  {
+String ReBarBand::getText() const
+{
+  REBARBANDINFO rbbi;
+  String buf;
+  buf.reserve(1024);
 
-  }
-*/
+  rbbi.cbSize = sizeof(REBARBANDINFO);
+  rbbi.fMask  = RBBIM_TEXT;
+  rbbi.lpText = &buf[0];
+  rbbi.cch    = buf.capacity();
+
+  getBand(&rbbi);
+
+  return buf;
+}
 
 void ReBarBand::setText(const String& text)
 {
@@ -138,7 +143,7 @@ void ReBarBand::setText(const String& text)
   setBand(&rbbi);
 }
 
-int ReBarBand::getImageIndex()
+int ReBarBand::getImageIndex() const
 {
   REBARBANDINFO rbbi;
   rbbi.cbSize = sizeof(REBARBANDINFO);
@@ -159,7 +164,7 @@ void ReBarBand::setImageIndex(int index)
   setBand(&rbbi);
 }
 
-Widget* ReBarBand::getChild()
+Widget* ReBarBand::getChild() const
 {
   REBARBANDINFO rbbi;
   rbbi.cbSize = sizeof(REBARBANDINFO);
@@ -170,29 +175,36 @@ Widget* ReBarBand::getChild()
   return Widget::fromHandle(rbbi.hwndChild);
 }
 
-void ReBarBand::setChild(Widget * widget)
+void ReBarBand::setChild(Widget* widget)
 {
+  assert(widget != NULL);
+
+  Size sz = widget->getPreferredSize();
+
   REBARBANDINFO rbbi;
-  rbbi.cbSize    = sizeof(REBARBANDINFO);
-  rbbi.fMask     = RBBIM_CHILD;
-  rbbi.hwndChild = widget->getHandle();
+  rbbi.cbSize     = sizeof(REBARBANDINFO);
+  rbbi.fMask      = RBBIM_CHILD | RBBIM_CHILDSIZE;
+  rbbi.hwndChild  = widget->getHandle();
+  rbbi.cx         = sz.w;
+  rbbi.cxMinChild = sz.w;
+  rbbi.cyMinChild = sz.h;
 
   setBand(&rbbi);
 }
 
-void ReBarBand::setBand(REBARBANDINFO * rbbi)
+void ReBarBand::setBand(REBARBANDINFO* rbbi)
 {
   m_rebar->sendMessage(RB_SETBANDINFO, (WPARAM)m_index, (LPARAM)rbbi);
 }
 
-void ReBarBand::getBand(REBARBANDINFO * rbbi)
+void ReBarBand::getBand(REBARBANDINFO* rbbi) const
 {
   m_rebar->sendMessage(RB_GETBANDINFO, (WPARAM)m_index, (LPARAM)rbbi);
 }
 
 //////////////////////////////////////////////////////////////////////////
 
-ReBar::ReBar(Widget* parent, Style style /* = ReBarStyle */)
+ReBar::ReBar(Widget* parent, Style style)
   : Widget(WidgetClassName(REBARCLASSNAME), parent, style)
 {
   REBARINFO rbi;
@@ -208,9 +220,15 @@ ReBar::ReBar(Widget* parent, Style style /* = ReBarStyle */)
 
 ReBar::~ReBar()
 {
+  // TODO remove children in bands
 }
 
-void ReBar::setImageList(ImageList& imageList)
+bool ReBar::isLayoutFree() const
+{
+  return true;
+}
+
+void ReBar::setImageList(const ImageList& imageList)
 {
   REBARINFO rbi;
   rbi.cbSize = sizeof(REBARINFO);
@@ -240,8 +258,8 @@ ReBarBand ReBar::addBand(Widget* item, ReBarBandStyle style, int position)
   Size sz = item->getPreferredSize();
 
   REBARBANDINFO rbbi;
-  rbbi.cbSize = sizeof(REBARBANDINFO);
-  rbbi.fMask      = RBBIM_STYLE|RBBIM_CHILD|RBBIM_SIZE|RBBIM_CHILDSIZE;
+  rbbi.cbSize     = sizeof(REBARBANDINFO);
+  rbbi.fMask      = RBBIM_STYLE | RBBIM_CHILD | RBBIM_SIZE | RBBIM_CHILDSIZE;
   rbbi.fStyle     = style;
   rbbi.hwndChild  = item->getHandle();
   rbbi.cx         = sz.w;
@@ -292,7 +310,6 @@ Rect ReBar::getBandRect(int index)
 {
   RECT rc;
   sendMessage(RB_GETRECT, (WPARAM)index, (LPARAM)&rc);
-
   return Rect(&rc);
 }
 
@@ -321,6 +338,26 @@ void ReBar::minimizeBand(int index)
   sendMessage(RB_MINIMIZEBAND, (WPARAM)index, (LPARAM)0);
 }
 
+void ReBar::onPreferredSize(PreferredSizeEvent& ev)
+{
+  ev.setPreferredSize(0, getBarHeight());
+}
+
+void ReBar::onLayout(LayoutEvent& ev)
+{
+  Rect rc = ev.getBounds();
+  Size pref = getPreferredSize();
+
+  // set the size of the rebar (top of parent)
+  setBounds(Rect(rc.x, rc.y, rc.w, pref.h));
+
+  // remove the top part of the rectangle for other parent's children
+  rc.y += pref.h;
+  rc.h -= pref.h;
+  ev.setBounds(rc);
+
+  Widget::onLayout(ev);
+}
 
 bool ReBar::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult)
 {
@@ -341,5 +378,9 @@ bool ReBar::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult)
 
 void ReBar::onAutoSize(Event& ev)
 {
+  // Relayout parent
+  if (getParent())
+    getParent()->layout();
+
   AutoSize(ev);
 }

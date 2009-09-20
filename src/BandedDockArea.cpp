@@ -29,6 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
+#if 0
+
 #include "Vaca/BandedDockArea.h"
 #include "Vaca/DockBar.h"
 #include "Vaca/Frame.h"
@@ -533,3 +535,6 @@ void BandedDockArea::fitBounds(int bandIndex, int barIndex1, std::vector<Rect> &
     }
   }
 }
+
+#endif
+

@@ -36,6 +36,7 @@
 #include "Vaca/Event.h"
 #include "Vaca/ClientLayout.h"
 #include "Vaca/PreferredSizeEvent.h"
+#include "Vaca/LayoutEvent.h"
 
 using namespace Vaca;
 
@@ -65,19 +66,6 @@ void TabBase::setFont(Font font)
 {
   m_userFont = font;
   updateFont();
-}
-
-/// Returns the area where the pages should be positioned. It's like
-/// Win32 TabCtrl_AdjustRect.
-/// 
-Rect TabBase::getLayoutBounds() const
-{
-  RECT rc;
-  assert(::IsWindow(getHandle()));
-
-  rc = getBounds();
-  TabCtrl_AdjustRect(getHandle(), FALSE, &rc);
-  return Rect(&rc).offset(-getBounds().getOrigin());
 }
 
 void TabBase::updateFont()
@@ -319,6 +307,25 @@ void TabBase::onPreferredSize(PreferredSizeEvent& ev)
 
   Widget::onPreferredSize(ev);
   ev.setPreferredSize(ev.getPreferredSize() + ncSize);
+}
+
+/// Adjust the area where the pages should be positioned.
+///
+/// @win32 
+///   It uses @msdn{TabCtrl_AdjustRect} to known how to adjust the bounds.
+/// @endwin32
+/// 
+void TabBase::onLayout(LayoutEvent& ev)
+{
+  RECT rc;
+  assert(::IsWindow(getHandle()));
+
+  rc = ev.getBounds();
+  TabCtrl_AdjustRect(getHandle(), FALSE, &rc);
+  ev.setBounds(Rect(&rc).offset(-getBounds().getOrigin()));
+
+  // Call base implementation
+  Widget::onLayout(ev);
 }
 
 bool TabBase::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult)

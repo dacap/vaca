@@ -36,6 +36,8 @@ using namespace Vaca;
 
 #include "../Console.h"
 
+#if 0
+
 //////////////////////////////////////////////////////////////////////
 
 class MainFrame : public Frame
@@ -245,12 +247,15 @@ private:
 
 //////////////////////////////////////////////////////////////////////
 
+#endif
+
 int VACA_MAIN()
 {
   Application app;
-  MainFrame frm;
-  frm.setIcon(ResourceId(IDI_VACA));
-  frm.setVisible(true);
-  app.run();
+  // TODO rewrite me
+  // MainFrame frm;
+  // frm.setIcon(ResourceId(IDI_VACA));
+  // frm.setVisible(true);
+  // app.run();
   return 0;
 }

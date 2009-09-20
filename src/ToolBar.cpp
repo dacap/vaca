@@ -47,9 +47,8 @@ using namespace Vaca;
 // ToolButton
 
 ToolButton::ToolButton(CommandId id, int imageIndex, ToolButtonState state)
-  : // m_set(NULL)
-  // , 
-    m_buttonIndex(-1)
+  : m_set(NULL)
+  , m_buttonIndex(-1)
   , m_imageIndex(imageIndex)
   , m_commandId(id)
   , m_state(state)
@@ -57,12 +56,21 @@ ToolButton::ToolButton(CommandId id, int imageIndex, ToolButtonState state)
 }
 
 ToolButton::ToolButton(const ToolButton& button)
-  : // m_set(NULL)
-  // , 
-    m_buttonIndex(button.m_buttonIndex)
+  : m_set(NULL)
+  , m_buttonIndex(button.m_buttonIndex)
   , m_imageIndex(button.m_imageIndex)
   , m_commandId(button.m_commandId)
   , m_state(button.m_state)
+{
+}
+
+ToolButton::ToolButton(CommandId commandId, int imageIndex, const String& text, ToolButtonState state)
+  : m_set(NULL)
+  , m_buttonIndex(-1)
+  , m_imageIndex(imageIndex)
+  , m_commandId(commandId)
+  , m_state(state)
+  , m_text(text)
 {
 }
 
@@ -70,16 +78,18 @@ ToolButton::~ToolButton()
 {
 }
 
-// void ToolButton::setSet(ToolSet* set)
-// {
-//   m_set = set;
-// }
-
 void ToolButton::setState(ToolButtonState state)
 {
   m_state = state;
-  // if (m_set)
-  //   m_set->updateButton(this);
+  if (m_set)
+    m_set->updateButton(this);
+}
+
+void ToolButton::setText(const String& text)
+{
+  m_text = text;
+  if (m_set)
+    m_set->updateButton(this);
 }
 
 int ToolButton::getTBSTATE() const
@@ -91,6 +101,13 @@ int ToolButton::getTBSTATE() const
   if (m_state & ToolButtonState::Hidden) state |= TBSTATE_HIDDEN;
 
   return state;
+}
+
+int ToolButton::getTBSTYLE() const
+{
+  return BTNS_BUTTON
+    // | (m_text.empty() ? 0: BTNS_SHOWTEXT)
+    ;
 }
 
 // void ToolButton::setTBSTATE(int tbstate)
@@ -112,6 +129,10 @@ int ToolButton::getTBSTATE() const
 ToolSet::ToolSet(Widget* parent, Style style)
   : Widget(WidgetClassName(TOOLBARCLASSNAME), parent, style)
 {
+  // sendMessage(TB_SETEXTENDEDSTYLE, 0,
+  // 	      TBSTYLE_EX_MIXEDBUTTONS
+  // 	      // | TBSTYLE_EX_DOUBLEBUFFER
+  // 	      );
 }
 
 ToolSet::~ToolSet()
@@ -123,23 +144,41 @@ ToolSet::~ToolSet()
   }
 }
 
-/// (TB_BUTTONCOUNT).
-/// 
+/// Returns the number of buttons in the set.
+///
+/// @win32
+/// This function uses @msdn{TB_BUTTONCOUNT} message.
+/// @endwin32
+///
 int ToolSet::getButtonCount() const
 {
   return const_cast<ToolSet*>(this)->sendMessage(TB_BUTTONCOUNT, 0, 0);
 }
 
-/// (TB_GETROWS)
-/// 
+/** 
+ * Returns the number of rows in the set.
+ *
+ * @win32
+ * This function uses @msdn{TB_GETROWS} message.
+ * @endwin32
+ */
 int ToolSet::getRows() const
 {
   return const_cast<ToolSet*>(this)->sendMessage(TB_GETROWS, 0, 0);
 }
 
-/// (TB_SETROWS)
-/// 
-/// 
+/** 
+ * Changes the number of rows in the ToolSet.
+ *
+ * @win32
+ * This function uses the @msdn{TB_SETROWS} message.
+ * @endwin32
+ * 
+ * @param rows 
+ * @param expand 
+ * 
+ * @return 
+ */
 Rect ToolSet::setRows(int rows, bool expand)
 {
   RECT rect;
@@ -153,7 +192,7 @@ Rect ToolSet::setRows(int rows, bool expand)
 /// (TB_SETIMAGELIST)
 /// 
 /// 
-void ToolSet::setImageList(ImageList& imageList)
+void ToolSet::setImageList(const ImageList& imageList)
 {
   sendMessage(TB_SETIMAGELIST, 0, reinterpret_cast<LPARAM>(imageList.getHandle()));
   m_imageList = imageList;
@@ -187,11 +226,11 @@ void ToolSet::addButton(ToolButton* button)
   tbb.iBitmap = button->getImageIndex();
   tbb.idCommand = button->getCommandId();
   tbb.fsState = button->getTBSTATE();
-  tbb.fsStyle = BTNS_BUTTON;	// TODO add ToolButtonStyles
+  tbb.fsStyle = button->getTBSTYLE();
   tbb.iString = 0;
   tbb.dwData = reinterpret_cast<DWORD_PTR>(button);
 
-  // button->setSet(this);
+  button->m_set = this;
   button->setButtonIndex(getButtonCount()-1);
 
   sendMessage(TB_INSERTBUTTON,
@@ -224,12 +263,26 @@ void ToolSet::addSeparator(int width)
 void ToolSet::updateButton(ToolButton* button)
 {
   TBBUTTONINFO tbbi;
+  String text = button->getText();
 
   tbbi.cbSize = sizeof(TBBUTTONINFO);
-  tbbi.dwMask = TBIF_COMMAND | TBIF_IMAGE | TBIF_STATE;
+  tbbi.dwMask = TBIF_COMMAND | TBIF_STATE;
   tbbi.idCommand = button->getCommandId();
-  tbbi.iImage = button->getImageIndex();
   tbbi.fsState = button->getTBSTATE();
+  tbbi.fsStyle = button->getTBSTYLE();
+
+  if (button->getImageIndex() >= 0) {
+    tbbi.dwMask = TBIF_IMAGE;
+    tbbi.iImage = button->getImageIndex();
+  }
+
+  if (!text.empty()) {
+    tbbi.dwMask = TBIF_TEXT;
+    tbbi.pszText = &text[0];
+    tbbi.cchText = text.size();
+
+    addStyle(Style(TBSTYLE_LIST, 0)); 
+  }
 
   sendMessage(TB_SETBUTTONINFO,
 	      button->getCommandId(),
@@ -295,7 +348,12 @@ std::vector<Size> ToolSet::getPreferredSizes() const
 
 void ToolSet::onPreferredSize(PreferredSizeEvent& ev)
 {
-  ev.setPreferredSize(m_preferredSizes[getRows()]);
+  int rows = getRows();
+  if (rows < m_preferredSizes.size()) {
+    ev.setPreferredSize(m_preferredSizes[rows]);
+  }
+  else
+    ev.setPreferredSize(Size(0, 0));
 }
 
 void ToolSet::onUpdateIndicators()
@@ -399,6 +457,8 @@ void ToolSet::updatePreferredSizes()
     setRows(origRows, false);
   }
 }
+
+#if 0
 
 //////////////////////////////////////////////////////////////////////
 // ToolBar
@@ -545,3 +605,6 @@ void ToolBar::onResizingFrame(DockFrame* frame, CardinalDirection dir, Rect& rc)
   // no resize
   rc = frame->getAbsoluteBounds();
 }
+
+#endif
+

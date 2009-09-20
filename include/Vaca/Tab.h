@@ -67,8 +67,6 @@ public:
   virtual Font getFont() const;
   virtual void setFont(Font font);
 
-  virtual Rect getLayoutBounds() const;
-
   Side getSide();
   void setSide(Side side);
 
@@ -92,13 +90,14 @@ public:
 
   Size getNonClientSize();
 
-  // signals
+  // Signals
 //   Signal1<void, Event&> PageChanging;
   Signal1<void, Event&> PageChange; ///< @see onPageChange
 
 protected:
   // Events
   virtual void onPreferredSize(PreferredSizeEvent& ev);
+  virtual void onLayout(LayoutEvent& ev);
   
   // Reflected notifications
   virtual bool onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult);

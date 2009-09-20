@@ -237,8 +237,9 @@ public:
   ConstraintPtr getConstraint();
   void setConstraint(ConstraintPtr constraint);
 
-  virtual void layout();
-  virtual bool isLayoutFree();
+  virtual bool isLayoutFree() const;
+
+  void layout();
 
   // ===============================================================
   // TEXT & FONT
@@ -279,9 +280,6 @@ public:
   Rect getAbsoluteBounds() const;
   Rect getClientBounds() const;
   Rect getAbsoluteClientBounds() const;
-
-  // TODO public virtual
-  virtual Rect getLayoutBounds() const;
 
   void setBounds(const Rect& rc);
   void setBounds(int x, int y, int w, int h);
@@ -412,6 +410,7 @@ protected:
   // ===============================================================
 
   virtual void onPreferredSize(PreferredSizeEvent& ev);
+  virtual void onLayout(LayoutEvent& ev);
   virtual void onPaint(PaintEvent& ev);
   virtual void onResize(ResizeEvent& ev);
   virtual void onMouseEnter(MouseEvent& ev);

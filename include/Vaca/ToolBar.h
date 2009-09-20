@@ -60,14 +60,18 @@ typedef EnumSet<ToolButtonStateEnumSet> ToolButtonState;
 /// 
 class VACA_DLL ToolButton
 {
-  // ToolSet* m_set;
+  friend class ToolSet;
+
+  ToolSet* m_set;
   int m_buttonIndex;
   int m_imageIndex;
   CommandId m_commandId;
   ToolButtonState m_state;
+  String m_text;
 
 public:
   ToolButton(CommandId commandId, int imageIndex, ToolButtonState state = ToolButtonState::Enabled);
+  ToolButton(CommandId commandId, int imageIndex, const String& text, ToolButtonState state = ToolButtonState::Enabled);
   ToolButton(const ToolButton& button);
   virtual ~ToolButton();
 
@@ -76,14 +80,17 @@ public:
   int getImageIndex() const { return m_imageIndex; }
   CommandId getCommandId() const { return m_commandId; }
   ToolButtonState getState() const { return m_state; }
+  String getText() const { return m_text; }
 
   // void setSet(ToolSet* set);
   void setButtonIndex(int buttonIndex) { m_buttonIndex = buttonIndex; }
   void setImageIndex(int imageIndex) { m_imageIndex = imageIndex; }
   void setCommandId(CommandId commandId) { m_commandId = commandId; }
   void setState(ToolButtonState state);
+  void setText(const String& text);
 
   int getTBSTATE() const;
+  int getTBSTYLE() const;
   // void setTBSTATE(int tbstate);
 
 };
@@ -119,7 +126,7 @@ public:
   int getRows() const;
   Rect setRows(int rows, bool expand);
 
-  void setImageList(ImageList& imageList);
+  void setImageList(const ImageList& imageList);
 
   void addButton(ToolButton* button);
   void addSeparator(int width = 6);
@@ -200,7 +207,7 @@ public:
   }
 
   /// @see ToolSet#setImageList
-  void setImageList(ImageList& imageList) {
+  void setImageList(const ImageList& imageList) {
     return m_set.setImageList(imageList);
   }
 

@@ -43,8 +43,6 @@
 #include "Vaca/Mdi.h"
 #include "Vaca/Thread.h"
 #include "Vaca/Icon.h"
-#include "Vaca/BandedDockArea.h"
-#include "Vaca/StatusBar.h"
 #include "Vaca/ChildEvent.h"
 #include "Vaca/CommandEvent.h"
 #include "Vaca/PreferredSizeEvent.h"
@@ -80,7 +78,6 @@ Frame::Frame(HWND handle)
 void Frame::initialize(const String& title)
 {
   m_menuBar = NULL;
-  m_statusBar = NULL;
   m_counted = false;
 
   // we can set the title of the window now if we have the HWND (for
@@ -93,8 +90,6 @@ void Frame::initialize(const String& title)
 Frame::~Frame()
 {
   delete m_menuBar;
-
-  deleteDockAreas();
 
   if (m_counted) {
     m_counted = false;
@@ -146,6 +141,7 @@ void Frame::onPreferredSize(PreferredSizeEvent& ev)
   }
 
   Widget::onPreferredSize(ev);
+
   ev.setPreferredSize(ev.getPreferredSize() + ncSize);
 }
 
@@ -240,23 +236,6 @@ void Frame::onUpdateIndicators()
 
     ::DrawMenuBar(getHandle());
   }
-
-  // // update tool-bars
-  // for (std::vector<DockArea*>::iterator it=m_dockAreas.begin(); it!=m_dockAreas.end(); ++it) {
-  //   DockArea* dockArea = *it;
-  //   Container dockBars = dockArea->getChildren();
-  //   for (std::vector<Widget*>::iterator it=dockBars.begin(); it!=dockBars.end(); ++it) {
-  //     (*it)->updateIndicators();
-  //   }
-  // }
-}
-
-void Frame::onRemoveChild(ChildEvent& ev)
-{
-  if (m_statusBar == ev.getChild())
-    m_statusBar = NULL;
-
-  Widget::onRemoveChild(ev);
 }
 
 /// Hides or shows the window. If visible is true, the window'll be
@@ -288,18 +267,6 @@ void Frame::setVisible(bool visible)
     ::UpdateWindow(hwnd);
     if (m_menuBar != NULL)
       ::DrawMenuBar(hwnd);
-
-    // search for the StatusBar widget in the Frame
-    WidgetList children = getChildren();
-    m_statusBar = NULL;
-    for (WidgetList::iterator
-    	   it=children.begin(); it!=children.end(); ++it) {
-      if (StatusBar* statusBar = dynamic_cast<StatusBar*>(*it)) {
-    	// a Frame can't have two StatusBar
-    	assert(!m_statusBar);
-    	m_statusBar = statusBar;
-      }
-    }
 
     // layout children
     layout();
@@ -388,7 +355,9 @@ MenuBar* Frame::setMenuBar(MenuBar* menuBar)
 
 /// Sets the Icon used in the title bar.
 /// 
-/// @warning It's like the Win32 WM_SETICON message.
+/// @win32
+///   It uses @msdn{WM_SETICON} message.
+/// @endwin32
 /// 
 /// @see #setBigIcon, #setIcon
 /// 
@@ -401,7 +370,9 @@ void Frame::setSmallIcon(const Icon& icon)
 
 /// Sets the Icon used in the ALT+TAB dialog box.
 /// 
-/// @warning It's like the Win32 WM_SETICON message.
+/// @win32
+///   It uses @msdn{WM_SETICON} message.
+/// @endwin32
 /// 
 /// @see #setSmallIcon, #setIcon
 /// 
@@ -442,206 +413,10 @@ Size Frame::getNonClientSize()
 		       m_menuBar ? true: false,
 		       GetWindowLong(hwnd, GWL_EXSTYLE));
 
-  // search for the StatusBar widget in the Frame
-  {				// TODO fix this
-    WidgetList children = getChildren();
-    m_statusBar = NULL;
-    for (WidgetList::iterator
-    	   it=children.begin(); it!=children.end(); ++it) {
-      if (StatusBar* statusBar = dynamic_cast<StatusBar*>(*it)) {
-    	// a Frame can't have two StatusBar
-    	assert(!m_statusBar);
-    	m_statusBar = statusBar;
-      }
-    }
-  }
-  if (m_statusBar)
-    nonClientRect.bottom += m_statusBar->getPreferredSize().h;
-
   return Rect(&nonClientRect).getSize() - clientRect.getSize();
 }
 
-/// The area where the Layout must arrange the children don't include
-/// the dock areas.
-/// 
-/// @see Widget::getLayoutBounds
-/// 
-Rect Frame::getLayoutBounds() const
-{
-  Rect rc = Widget::getLayoutBounds();
-
-  // if the Frame has a StatusBar the layout-bounds are reduced in the bottom
-  if (m_statusBar)
-    rc.h -= m_statusBar->getPreferredSize().h;
-
-  for (std::vector<DockArea*>::const_iterator
-	 it=m_dockAreas.begin(); it!=m_dockAreas.end(); ++it) {
-    DockArea* dockArea = *it;
-    Size dockSize = dockArea->getPreferredSize();
-
-    switch (dockArea->getSide()) {
-      case Side::Left:
-	rc.x += dockSize.w;
-	rc.w -= dockSize.w;
-	break;
-      case Side::Top:
-	rc.y += dockSize.h;
-	rc.h -= dockSize.h;
-	break;
-      case Side::Right:
-	rc.w -= dockSize.w;
-	break;
-      case Side::Bottom:
-	rc.h -= dockSize.h;
-	break;
-    }
-  }
-
-  return rc;
-}
-
-/// Adds a new DockArea in the Frame.
-/// 
-/// @param dockArea It'll be automatically deleted in Frame's
-///                 destructor or deleteDockAreas. (if you don't
-///                 want it, you should use removeDockArea).
-/// 
-/// @see @ref page_tn_010
-/// 
-void Frame::addDockArea(DockArea* dockArea)
-{
-  m_dockAreas.push_back(dockArea);
-}
-
-/// Remove the @a dockArea from the Frame. You should delete
-/// the @a dockArea pointer.
-/// 
-void Frame::removeDockArea(DockArea* dockArea)
-{
-  remove_from_container(m_dockAreas, dockArea);
-}
-
-/// Setups the default dock areas for the Frame window.
-/// 
-/// @warning This isn't called automatically in the Frame's
-///          constructor.  If you want to use dockable ToolBars, you
-///          @b must to call this routine before (or you can setup your
-///          own DockAreas with addDockArea())
-/// 
-void Frame::defaultDockAreas()
-{
-  deleteDockAreas();
-
-  addDockArea(new BandedDockArea(Side::Top, this));
-  addDockArea(new BandedDockArea(Side::Bottom, this));
-  addDockArea(new BandedDockArea(Side::Left, this));
-  addDockArea(new BandedDockArea(Side::Right, this));
-}
-
-/// Deletes all the registered DockAreas.
-/// 
-void Frame::deleteDockAreas()
-{
-  for (std::vector<DockArea*>::iterator it=m_dockAreas.begin(); it!=m_dockAreas.end(); ++it) {
-    DockArea* dockArea = *it;
-    removeChild(dockArea);
-    delete dockArea;
-  }
-
-  m_dockAreas.clear();
-}
-
-/// Returns the collection of registered DockAreas in the Frame.
-/// 
-std::vector<DockArea*> Frame::getDockAreas()
-{
-  return m_dockAreas;
-}
-
-/// Returns the first DockArea in the specified @a side. Returns NULL
-/// if there aren't registered a DockArea for the specified @a side.
-/// 
-DockArea* Frame::getDockArea(Side side)
-{
-  for (std::vector<DockArea*>::iterator it=m_dockAreas.begin(); it!=m_dockAreas.end(); ++it) {
-    DockArea* dockArea = *it;
-
-    if (dockArea->getSide() == side)
-      return dockArea;
-  }
-
-  return NULL;
-}
-
-/// Returns a default DockArea for the floating DockBar that want to be
-/// docked by double-click by first-time. The default implementation
-/// returns the first DockArea that you added using addDockArea(); if
-/// you use defaultDockAreas(), it will be the bar from the top side.
-/// 
-DockArea* Frame::getDefaultDockArea()
-{
-  if (!m_dockAreas.empty())
-    return m_dockAreas.front();
-  else
-    return NULL;
-}
-
-void Frame::layout()
-{
-  Widget::layout();
-
-  // get the bounding rectangle where is the layout
-  Rect clientRect = getClientBounds();
-  Rect layoutRect = getLayoutBounds();
-
-  // if the Frame has a StatusBar the clientRect is reduced in the bottom
-  if (m_statusBar) {
-    Size pref = m_statusBar->getPreferredSize();
-
-    m_statusBar->setBounds(Rect(clientRect.x,
-    				clientRect.y+clientRect.h-pref.h,
-    				clientRect.w,
-				pref.h));
-
-    clientRect.h -= pref.h;
-  }
-
-  // put the dock areas arround the layout bounds
-  for (std::vector<DockArea*>::const_iterator
-	 it=m_dockAreas.begin(); it!=m_dockAreas.end(); ++it) {
-    DockArea* dockArea = *it;
-    // Size dockSize = dockArea->getBounds().getSize();
-    Size dockSize = dockArea->getPreferredSize();
-
-    switch (dockArea->getSide()) {
-
-      case Side::Left:
-	dockArea->setBounds(Rect(Point(clientRect.x, layoutRect.y),
-				 Size(dockSize.w, layoutRect.h)));
-	break;
-
-      case Side::Top:
-	dockArea->setBounds(Rect(Point(clientRect.x, clientRect.y),
-				 Size(clientRect.w, dockSize.h)));
-	break;
-
-      case Side::Right:
-	dockArea->setBounds(Rect(Point(layoutRect.x+layoutRect.w, layoutRect.y),
-				 Size(dockSize.w, layoutRect.h)));
-	break;
-
-      case Side::Bottom:
-	dockArea->setBounds(Rect(Point(clientRect.x, layoutRect.y+layoutRect.h),
-				 Size(clientRect.w, dockSize.h)));
-	break;
-    }
-
-    // dockArea->onResize(dockArea->getBounds().getSize());
-    dockArea->layout();
-  }
-}
-
-bool Frame::isLayoutFree()
+bool Frame::isLayoutFree() const
 {
   return true;
 }
@@ -686,40 +461,6 @@ WidgetList Frame::getSynchronizedGroup()
   return container;
 }
 
-// // Used when WM_INITMENU or WM_INITMENUPOPUP message is received to
-// // find the Menu of the m_menuBar, known only its HMENU.
-// Menu* Frame::getMenuByHMENU(HMENU hmenu)
-// {
-//   MenuBar* menuBar = getMenuBar();
-//   Menu* lastMenu = NULL;
-
-//   std::stack<Menu*> stack;
-//   stack.push(menuBar);
-
-//   while (!stack.empty()) {
-//     lastMenu = stack.top();
-//     if (lastMenu->getHandle() == hmenu)
-//       return lastMenu;
-
-//     stack.pop();
-
-//     Menu::Container subMenus = lastMenu->getMenuItems();
-//     for (Menu::Container::iterator it=subMenus.begin(); it!=subMenus.end(); ++it) {
-//       if ((*it)->isMenu())
-// 	stack.push(static_cast<Menu*>(*it));
-//     }
-//   }
-
-//   return NULL;
-// }
-
-// #ifdef MINGW
-// typedef struct {
-//   RECT rgrc[3];
-//   PWINDOWPOS lppos;
-// } NCCALCSIZE_PARAMS, *LPNCCALCSIZE_PARAMS;
-// #endif
-
 /// This method converts next messages to events:
 /// @li @c WM_ACTIVATE -&gt; onActivate()
 /// @li @c WM_CLOSE -&gt; onClose()
@@ -736,11 +477,11 @@ bool Frame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult
   switch (message) {
 
     case WM_CLOSE: {
-      // fire onClose event
+      // Fire onClose event
       CloseEvent ev(this);
       onClose(ev);
 
-      // default behaviour: when the event isn't cancelled, we must to
+      // Default behaviour: when the event isn't cancelled, we must to
       // hide the Frame
       if (!ev.isCanceled())
 	setVisible(false);
@@ -769,27 +510,16 @@ bool Frame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult
 
       Menu* menu = NULL;
 
-// #if 0
-//       // work arround for Win95, Win98, WinMe...
-//       if (System::isWin95_98_Me()) {
-// 	menu = m_menuBar != NULL ? m_menuBar->getMenuByHMENU(hmenu): NULL;
-//       }
-//       // in Win2K, WinXP, we can use MENUITEMINFO
-//       else if (System::isWinNT_2K_XP()) {
-// #endif
-	MENUINFO mi;
-	mi.cbSize = sizeof(MENUINFO);
-	mi.fMask = MIM_MENUDATA;
-	if (::GetMenuInfo(hmenu, &mi))
-	  menu = reinterpret_cast<Menu* >(mi.dwMenuData);
-// #if 0
-//       }
-// #endif
+      MENUINFO mi;
+      mi.cbSize = sizeof(MENUINFO);
+      mi.fMask = MIM_MENUDATA;
+      if (::GetMenuInfo(hmenu, &mi))
+	menu = reinterpret_cast<Menu* >(mi.dwMenuData);
 
       if (menu != NULL) {
 	MenuItemList children = menu->getMenuItems();
 
-	// update menus
+	// Update menus
 	for (MenuItemList::iterator it=children.begin(); it!=children.end(); ++it) {
 	  MenuItem* menuItem = *it;
 	  updateMenuItem(menuItem);
@@ -819,39 +549,6 @@ bool Frame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult
       lResult = TRUE;
       return true;
     }
-	
-      /*
-	case WM_NCCALCSIZE:
-	if (wParam) {
-	LPNCCALCSIZE_PARAMS lpncsp = (LPNCCALCSIZE_PARAMS)lParam;
-	int left, top, right, bottom;
-
-	lResult = DefWindowProc(getHandle(), message, wParam, lParam);
-
-	left = top = right = bottom = 0;
-
-	for (std::vector<DockArea*>::iterator it=m_dockAreas.begin(); it!=m_dockAreas.end(); ++it) {
-	DockArea* dockArea = *it;
-	// 	    WidgetList widgets = dockArea->getChildren();
-	Size sz = dockArea->preferredSize();
-	    
-	switch (dockArea->getSide()) {
-	case LeftSide:   left   += sz.w; break;
-	case TopSide:    top    += sz.h; break;
-	case RightSide:  right  += sz.w; break;
-	case BottomSide: bottom += sz.h; break;
-	}
-	}
-
-	lpncsp->rgrc[0].left   += left;
-	lpncsp->rgrc[0].top    += top;
-	lpncsp->rgrc[0].right  -= right;
-	lpncsp->rgrc[0].bottom -= bottom;
-
-	return true;
-	}
-	break;
-      */
 
     case WM_ENABLE: {
       WidgetList group = getSynchronizedGroup();
@@ -877,7 +574,7 @@ bool Frame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult
       else {
 	Frame* owner = keepSynchronized() ? dynamic_cast<Frame*>(getParent()): this;
 
-	// this can happend in the last WM_NCACTIVATE message (when
+	// This can happend in the last WM_NCACTIVATE message (when
 	// the widget is destroyed)
 // 	if (owner == reinterpret_cast<Frame*>(NULL))
 // 	  return false;

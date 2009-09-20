@@ -29,6 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
+#if 0
+
 #include "Vaca/BasicDockArea.h"
 #include "Vaca/DockBar.h"
 #include "Vaca/Frame.h"
@@ -195,3 +197,5 @@ void BasicDockArea::onPreferredSize(PreferredSizeEvent& ev)
 
   ev.setPreferredSize(sz);
 }
+
+#endif

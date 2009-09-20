@@ -84,7 +84,7 @@ public:
 
   Side getSide();
 
-  virtual bool isLayoutFree();
+  virtual bool isLayoutFree() const;
 
   /// Returns true if the point @a pt is inside a valid rectangle to dock
   /// in this DockArea.

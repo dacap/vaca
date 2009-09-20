@@ -29,6 +29,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
+#if 0
+
 #include "Vaca/DockFrame.h"
 #include "Vaca/DockBar.h"
 #include "Vaca/ClientLayout.h"
@@ -141,3 +143,6 @@ bool DockFrame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lRe
 
   return false;
 }
+
+#endif
+

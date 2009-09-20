@@ -68,6 +68,8 @@ public:
   virtual ~ReBarException() throw() { }
 };
 
+/// A band of a ReBar.
+///
 class VACA_DLL ReBarBand
 {
   ReBar* m_rebar;
@@ -78,19 +80,19 @@ public:
   ReBarBand(const ReBarBand& band);
   virtual ~ReBarBand();
 
-  ReBarBandStyle getStyle();
+  ReBarBandStyle getStyle() const;
   void setStyle(ReBarBandStyle style);
 
-  void getColors(Color& fg, Color& bg);
+  void getColors(Color& fg, Color& bg) const;
   void setColors(Color fg, Color bg);
 
-  // String getText() const;
+  String getText() const;
   void setText(const String& text);
 
-  int getImageIndex();
+  int getImageIndex() const;
   void setImageIndex(int index);
 
-  Widget* getChild();
+  Widget* getChild() const;
   void setChild(Widget* widget);
 
   inline void operator=(const ReBarBand& rbb) {
@@ -100,9 +102,10 @@ public:
 
 protected:
   void setBand(REBARBANDINFO* rbbi);
-  void getBand(REBARBANDINFO* rbbi);
+  void getBand(REBARBANDINFO* rbbi) const;
 };
 
+/// Wrapper for ReBar Win32
 class VACA_DLL ReBar : public Widget
 {
   ImageList m_imageList;
@@ -116,7 +119,9 @@ public:
   ReBar(Widget* parent, Style style = ReBar::Styles::Default);
   virtual ~ReBar();
 
-  void setImageList(ImageList& imageList);
+  virtual bool isLayoutFree() const;
+
+  void setImageList(const ImageList& imageList);
 
   int getBandCount();
   int getBarHeight();
@@ -141,9 +146,13 @@ public:
   void minimizeBand(int index);
 
 public:
+  // Signals
   Signal1<void, Event&> AutoSize;
 
 protected:
+  // Events
+  virtual void onPreferredSize(PreferredSizeEvent& ev);
+  virtual void onLayout(LayoutEvent& ev);
   virtual bool onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult);
   virtual void onAutoSize(Event& ev);
 

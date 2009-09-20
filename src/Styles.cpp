@@ -576,6 +576,8 @@ const Style ProgressBar::Styles::Marquee =
 // Tool Bars
 // ===================================================================
 
+#if 0
+
 /// Default style for DockBar widget.
 /// 
 const Style DockBar::Styles::Default =
@@ -586,6 +588,8 @@ const Style DockBar::Styles::Default =
 const Style DockArea::Styles::Default =
   Widget::Styles::Visible;
 
+#endif
+
 const Style ToolSet::Styles::Default =
   Widget::Styles::Visible |
   Style(CCS_NODIVIDER | CCS_NOPARENTALIGN |
@@ -594,6 +598,8 @@ const Style ToolSet::Styles::Default =
 	| CCS_NOMOVEX
 #endif
 	, 0);
+
+#if 0
 
 const Style ToolSet::Styles::Flat =
   Style(TBSTYLE_FLAT, 0);
@@ -611,6 +617,8 @@ const Style BandedDockArea::Styles::Default =
 const Style BasicDockArea::Styles::Default =
   Widget::Styles::Visible;
 
+#endif
+
 // same as ATL_SIMPLE_REBAR_STYLE - WS_CLIPSIBLINGS
 const Style ReBar::Styles::Default =
   Widget::Styles::Visible |
@@ -627,6 +635,8 @@ const Style ReBar::Styles::Default =
 // #endif
 // 	, 0);
 
+#if 0
+
 /// Default style for DockFrame widget.
 /// 
 const Style DockFrame::Styles::Default =
@@ -634,6 +644,8 @@ const Style DockFrame::Styles::Default =
   Frame::Styles::WithSystemMenu |
   Frame::Styles::Resizable |
   Style(WS_POPUP, WS_EX_TOOLWINDOW);
+
+#endif
 
 // ===================================================================
 // ListView

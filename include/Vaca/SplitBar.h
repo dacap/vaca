@@ -72,8 +72,6 @@ public:
   SplitBar(Orientation orientation, Widget* parent, Style style = Styles::Default);
   virtual ~SplitBar();
 
-  virtual void layout();
-
   void setFirstWidget(Widget* widget);
   void setSecondWidget(Widget* widget);
 
@@ -96,6 +94,8 @@ public:
   bool isGripperVisible() const;
 
 protected:
+  // Events
+  virtual void onLayout(LayoutEvent& ev);
   virtual void onResize(ResizeEvent& ev);
   virtual void onPaint(PaintEvent& ev);
   virtual void onMouseMove(MouseEvent& ev);

@@ -102,7 +102,6 @@ public:
   virtual ~DockBar();
 
   virtual void setVisible(bool visible);
-  virtual Rect getLayoutBounds() const;
 
   void setFullDrag(bool state);
   bool isFullDrag() const;
@@ -130,6 +129,7 @@ protected:
   virtual void onPreferredSize(PreferredSizeEvent& ev);
   virtual void onDockFrameClose(CloseEvent& ev);
   virtual void onPaint(PaintEvent& ev);
+  virtual void onLayout(LayoutEvent& ev);
   virtual void onResize(ResizeEvent& ev);
   virtual void onMouseDown(MouseEvent& ev);
   virtual void onMouseMove(MouseEvent& ev);

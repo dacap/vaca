@@ -36,7 +36,6 @@
 #include "Vaca/Widget.h"
 #include "Vaca/WidgetClass.h"
 #include "Vaca/Register.h"
-#include "Vaca/DockArea.h"
 #include "Vaca/Icon.h"
 
 #include <vector>
@@ -57,8 +56,6 @@ public:
 class VACA_DLL Frame : public Register<FrameClass>, public Widget
 {
   MenuBar* m_menuBar;		       // The menu bar.
-  StatusBar* m_statusBar;	       // The status bar.
-  std::vector<DockArea*> m_dockAreas;  // Areas where you can dock a tool-bar.
   bool m_counted;		       // true if this Frame is counted in the frames' list
   Icon m_smallIcon;
   Icon m_bigIcon;
@@ -90,19 +87,9 @@ public:
   void setBigIcon(const Icon& icon);
   void setIcon(ResourceId iconId);
 
-  Size getNonClientSize();
-  virtual Rect getLayoutBounds() const;
-  
-  void addDockArea(DockArea* dockArea);
-  void removeDockArea(DockArea* dockArea);
-  void defaultDockAreas();
-  void deleteDockAreas();
-  std::vector<DockArea*> getDockAreas();
-  DockArea* getDockArea(Side side);
-  virtual DockArea* getDefaultDockArea();
+  virtual Size getNonClientSize();
 
-  virtual void layout();
-  virtual bool isLayoutFree();
+  virtual bool isLayoutFree() const;
   virtual bool keepSynchronized();
 
   Signal1<void, Event&> Activate;     ///< @see onActivate
@@ -118,7 +105,6 @@ protected:
   virtual void onResize(ResizeEvent& ev);
   virtual void onCommand(CommandEvent& ev);
   virtual void onUpdateIndicators();
-  virtual void onRemoveChild(ChildEvent& ev);
 
   // New events
   virtual void onActivate(Event& ev);

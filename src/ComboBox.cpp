@@ -187,27 +187,6 @@ Rect ComboBox::getDropDownBounds()
   return Rect(&rc);
 }
 
-void ComboBox::layout()
-{
-  Widget::layout();
-  
-  if ((getStyle().regular & 3) <= 1) { // CBS_SIMPLE = 1
-    // do nothing
-  }
-  else {
-    Rect rc = getBounds();
-    Rect arc = getAbsoluteBounds();
-    Rect wa = System::getWorkAreaBounds();
-    int maxHeightTop = arc.y-wa.y;
-    int maxHeightBottom = wa.h-(arc.y-wa.y+arc.h);
-  
-    setBounds(rc.x, rc.y, rc.w,
-	      min_value(rc.h + getHeightForAllItems(),
-			max_value(maxHeightTop,
-				  maxHeightBottom)));
-  }
-}
-
 int ComboBox::getHeightForAllItems()
 {
   // TODO CBS_OWNERDRAWVARIABLE, see the MSDN doc of CB_GETITEMHEIGHT
@@ -229,6 +208,28 @@ void ComboBox::onPreferredSize(PreferredSizeEvent& ev)
 	  m_maxItemSize.h + (::GetSystemMetrics(SM_CYEDGE)*4));
 
   ev.setPreferredSize(sz);
+}
+
+void ComboBox::onLayout(LayoutEvent& ev)
+{
+  Widget::onLayout(ev);
+  
+  if ((getStyle().regular & 3) <= 1) { // CBS_SIMPLE = 1
+    // do nothing
+  }
+  else {
+    Rect rc = getBounds();
+    Rect arc = getAbsoluteBounds();
+    Rect wa = System::getWorkAreaBounds();
+    int maxHeightTop = arc.y-wa.y;
+    int maxHeightBottom = wa.h-(arc.y-wa.y+arc.h);
+
+    // TODO setBounds or ev.setBounds
+    setBounds(rc.x, rc.y, rc.w,
+	      min_value(rc.h + getHeightForAllItems(),
+			max_value(maxHeightTop,
+				  maxHeightBottom)));
+  }
 }
 
 /// When the user changes the current selected item.

@@ -61,22 +61,6 @@ SplitBar::~SplitBar()
 {
 }
 
-void SplitBar::layout()
-{
-  Widget::layout();
-
-  Rect rcL, rcR;
-  getRects(rcL, rcR);
-  if (m_first) {
-    m_first->setBounds(rcL);
-    m_first->layout();
-  }
-  if (m_second) {
-    m_second->setBounds(rcR);
-    m_second->layout();
-  }
-}
-
 void SplitBar::setFirstWidget(Widget* widget)
 {
   m_first = widget;
@@ -157,6 +141,21 @@ void SplitBar::setGripperVisible(bool state)
 bool SplitBar::isGripperVisible() const
 {
   return m_gripperVisible;
+}
+
+void SplitBar::onLayout(LayoutEvent& ev)
+{
+  Rect rcL, rcR;
+  getRects(rcL, rcR);
+  if (m_first) {
+    m_first->setBounds(rcL);
+    m_first->layout();
+  }
+  if (m_second) {
+    m_second->setBounds(rcR);
+    m_second->layout();
+  }
+  Widget::onLayout(ev);
 }
 
 void SplitBar::onResize(ResizeEvent& ev)
@@ -260,8 +259,10 @@ void SplitBar::onMouseMove(MouseEvent& ev)
 
     if (!isFullDrag())
       drawTracker(g);
-    else
+    else {
       layout();
+      invalidate(true);
+    }
   }
 }
 

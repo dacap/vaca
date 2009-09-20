@@ -38,25 +38,30 @@ using namespace Vaca;
 
 class MainFrame : public Frame
 {
-private:
   ReBar rebar;
   TextEdit ed;
 
 public:
+
   MainFrame()
     : Frame(L"Hello, ReBar!")
     , rebar(this)
     , ed(L"Hello,world!", this, TextEdit::Styles::TextArea)
   {
-    // maybe we should add a Frame::setReBar(ReBar* rebar) function
-    // if we use setLayout (new ClientLayout), 
-    // then ed control will fill the whole client bound and cover the rebar controls
+    setLayout(new ClientLayout);
 
-    ReBarBand rb = rebar.addBand(new ComboBox(&rebar));
-    rb.setText(L"Wow~~~ , do you like it? ");
-    rb.setColors(Color::Green, Color::Yellow);
+    ComboBox* comboBox = new ComboBox(&rebar);
+    comboBox->addItem(L"First element");
+    comboBox->addItem(L"Second element");
+    comboBox->addItem(L"Third element");
 
-    rb = rebar.addBand(new Label(L" I am a fixed pane! ", &rebar), 
+    ReBarBand rb = rebar.addBand(comboBox);
+    rb.setText(L"Wow~~~ , do you like it?"); // TODO fix me
+    rb.setColors(Color::Green, Color::Yellow); // TODO fix me
+
+    rb = rebar.addBand(new Label(L"A Label in a ReBarBand", &rebar));
+
+    rb = rebar.addBand(new Label(L"I am a fixed pane!", &rebar),
 		       ReBarBandStyle::Simple |
 		       ReBarBandStyle::FixedSize |
 		       ReBarBandStyle::NoGripper);
@@ -67,42 +72,27 @@ public:
     rb.setText(L"Another band!!!");
     rb.setColors(Color::Blue, Color::Red);
 
-    //		ToolSet * toolset = new ToolSet(&rebar);
-    //		toolset->setImageList (ImageList(ResourceId(IDR_TOOLBAR1), 16, System::getColor(COLOR_BTNFACE)));
-    //		toolset->updatePreferredSizes();
-    // rebar will throw an exception as rebar need ToolSet::getPreferredSize() function work
-    // but the function of toolset is not working correctly !!!
-    //		rb = rebar.addBand (toolset);
-    rebar.AutoSize.connect(&MainFrame::onAutoSize, this);
+    // TODO fix me
+    ToolSet* toolset = new ToolSet(&rebar);
+    toolset->addButton(new ToolButton(CommandId(1), -1, L"Hi"));
+    toolset->addButton(new ToolButton(CommandId(2), -1, L"Bye"));
+    // toolset->setImageList(ImageList(ResourceId(IDR_TOOLBAR), 16, System::getColor(COLOR_BTNFACE)));
+    rb = rebar.addBand(toolset);
   }
 
-public:
-  void onAutoSize(Event& ev)
-  {
-    layoutReBar();
-  }
-
-protected:
-  virtual void onResize(ResizeEvent& ev)	// make sure rebar will resize itself automatic
-  {
-    rebar.sendMessage(WM_SIZE, 0, 0);
-  }
-
-  void layoutReBar()	// layout the real client widget
-  {
-    Rect rc = getClientBounds();
-    invalidate(rc, TRUE);
-    rc.y += rebar.getBarHeight();
-    ed.setBounds(rc);
-  }
 };
 
 int VACA_MAIN()
 {
-  Application app;
-  MainFrame frm;
-  frm.setIcon(ResourceId(IDI_VACA));
-  frm.setVisible(true);
-  app.run();
+  try {
+    Application app;
+    MainFrame frm;
+    frm.setIcon(ResourceId(IDI_VACA));
+    frm.setVisible(true);
+    app.run();
+  }
+  catch (Exception& e) {
+    e.show();
+  }
   return 0;
 }

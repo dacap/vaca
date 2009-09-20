@@ -74,15 +74,14 @@ public:
   bool isDropDownVisible();
   Rect getDropDownBounds();
 
-  virtual void layout();
-
-  // signals
+  // Signals
   Signal1<void, Event&> SelChange;  ///< @see onSelChange
   Signal1<void, Event&> EditChange; ///< @see onEditChange
 
 protected:
   // Events
   virtual void onPreferredSize(PreferredSizeEvent& ev);
+  virtual void onLayout(LayoutEvent& ev);
   
   // New events
   virtual void onSelChange(Event& ev);

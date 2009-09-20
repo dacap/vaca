@@ -58,6 +58,7 @@
 #include "Vaca/ResizeEvent.h"
 #include "Vaca/PreferredSizeEvent.h"
 #include "Vaca/SetCursorEvent.h"
+#include "Vaca/LayoutEvent.h"
 
 // uncomment this if you want message reporting in the "vaca.log"
 // #define REPORT_MESSAGES
@@ -535,34 +536,31 @@ void Widget::setConstraint(ConstraintPtr constraint)
   m_constraint = constraint;
 }
 
-/// Must arranges the children bounds. The default implementation calls
-/// the Layout::layout method of the Widget's layout manager
-/// (Widget::m_layout), but you can override this to obtain your own
-/// behavior (you can avoid to use Layout manager if you want).
-/// <p>
-/// This method is called from Widget::onResize by default, so when the
-/// Widget is shown for first time or it's resized, this method is
-/// called.
+/// Arranges the position/size of children widgets.
 /// 
-/// @see getLayout, setLayout, getLayoutBounds.
-/// 
+/// This method is called from Widget#onResize, so when the
+/// Widget is shown for first time or it is resized, the
+/// children are automatically positioned.
+///
 void Widget::layout()
 {
-  WidgetList children = getChildren();
-
-  if (m_layout != NULL && !children.empty())
-    m_layout->layout(this, children, getLayoutBounds());
+  LayoutEvent ev(this, getClientBounds());
+  onLayout(ev);
 }
 
-/// Returns true if the widget is layout-free, that means the Layout
-/// shouldn't arrange this widget. The default implementation looks for
-/// the VisibleStyle (if it's hidden, it's free of layout).
+/// Returns true if the widget is layout-free: widget's bounds are not
+/// controled by the layout manager of the parent.
+///
+/// The default implementation looks for the VisibleStyle (if it is
+/// hidden, it is free of layout). You should override this method and
+/// return true if your widget set its position by itself (like a
+/// StatusBar).
+///
+/// @see getLayout, setLayout, onParentLayout
 /// 
-/// @see getLayout, setLayout
-/// 
-bool Widget::isLayoutFree()
+bool Widget::isLayoutFree() const
 {
-  // a widget is free of layout if it's hidden
+  // A widget is free of layout if it's hidden
   return ((getStyle().regular & WS_VISIBLE) == WS_VISIBLE) ? false: true;
 }
 
@@ -826,17 +824,6 @@ Rect Widget::getAbsoluteClientBounds() const
   RECT rc = getClientBounds();
   ::MapWindowPoints(m_handle, NULL, (POINT*)&rc, 2);
   return Rect(&rc);
-}
-
-/// Returns the area where the Layout must arrange the collection of
-/// children. It's generally the client bounds, but other widgets (like
-/// Tab) could use a small area inside the widget.
-/// 
-/// @see getClientBounds
-/// 
-Rect Widget::getLayoutBounds() const
-{
-  return getClientBounds();
 }
 
 /// Sets the boundary rectangle for the widget. The rectangle must be
@@ -1753,27 +1740,70 @@ WNDPROC Widget::getGlobalWndProc()
 // ===============================================================
 
 /// Calculates the preferred size for the widget.
-/// 
-/// @param sz
-///     It is for input and output. You should put the preferred
-///     size in this value, but also you should read the input value to
-///     know if you must to fit the widget in some size. The possible
-///     values for @a sz are:
-///     - sz = Size(0, 0) to calculate the preferred size without restrictions.
-///     - sz = Size(width, 0) to calculate the preferred size with restricted &lt;= width.
-///     - sz = Size(0, height) to calculate the preferred size with restricted &lt;= height.
-/// 
+///
+/// The default implementation get the preferred size of the current
+/// layout manager. Also, if there exists layout-free widgets inside
+/// this parent (like a StatusBar), they preferred-sizes are
+/// accumulated.
+///
+/// @see Layout#getPreferredSize, 
+///
 void Widget::onPreferredSize(PreferredSizeEvent& ev)
 {
+  Size sz;
+
   // there is a layout?
   if (m_layout != NULL) {
     // get the list of children
     WidgetList children = getChildren();
 
     // calculate the preferred size through the layout manager
-    ev.setPreferredSize(m_layout->getPreferredSize(this, children, ev.getPreferredSize()));
+    sz = m_layout->getPreferredSize(this, children, ev.fitInSize());
   }
-  // else do nothing...
+
+  // Search for layout-free widgets
+  for (WidgetList::iterator
+	 it=m_children.begin(); it!=m_children.end(); ++it) {
+    Widget* child = *it;
+    if (child->isLayoutFree()) {
+      PreferredSizeEvent ev2(this, Size(0, 0));
+      child->onPreferredSize(ev2);
+      sz += ev2.getPreferredSize();
+    }
+  }
+
+  ev.setPreferredSize(sz);
+}
+
+/// Event generated to arrange the position and size of children widgets.
+///
+/// The default implementation calls the Layout#layout method of the
+/// Widget's layout manager, but you can override this event to obtain
+/// your own behavior (you can avoid to use layout manager at all if
+/// you want).
+///
+/// When #isLayoutFree is overloaded to return true, #onLayout must to
+/// arrange the widget by itself in its parent bounds (e.g. StatusBar
+/// changes its own size and position to the bottom of the parent
+/// bounds).
+/// 
+/// @see getLayout, setLayout.
+/// 
+void Widget::onLayout(LayoutEvent& ev)
+{
+  // Call onLayout() method for layout-free children (they know
+  // how to layout theirself). Generally, these widgets will
+  // modify the bounds of LayoutEvent
+  for (WidgetList::iterator
+	 it=m_children.begin(); it!=m_children.end(); ++it) {
+    Widget* child = *it;
+    if (child->isLayoutFree())
+      child->onLayout(ev);
+  }
+
+  // Now we can use the layout manager with the bounds of LayoutEvent
+  if (m_layout != NULL && !m_children.empty())
+    m_layout->layout(this, m_children, ev.getBounds());
 }
 
 /// Called when the widget have to be painted in the screen.
@@ -2117,6 +2147,13 @@ void Widget::onDropFiles(DropFilesEvent& ev)
   DropFiles(ev);
 }
 
+/// Fired when a child is added to this widget.
+///
+/// @warning If you override this event, remember that the child
+/// widget may not be fully created when the event is fired (e.g. you
+/// cannot do a dynamic_cast<> to your specific widget).
+/// Generally you should not override this event.
+///
 void Widget::onAddChild(ChildEvent& ev)
 {
   // do nothing

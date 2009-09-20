@@ -50,14 +50,13 @@ public:
   GroupBox(const String& text, Widget* parent, Style style = Styles::Default);
   virtual ~GroupBox();
 
-  virtual Rect getLayoutBounds() const;
-
   Size getNonClientSize();
 
 protected:
 
   // Events
   virtual void onPreferredSize(PreferredSizeEvent& ev);
+  virtual void onLayout(LayoutEvent& ev);
 
   virtual bool wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult);
 

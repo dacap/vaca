@@ -48,10 +48,12 @@ public:
   StatusBar(Widget* parent, Style style = Styles::Default);
   virtual ~StatusBar();
 
-  virtual bool isLayoutFree();
+  virtual bool isLayoutFree() const;
 
 protected:
+  // Events
   virtual void onPreferredSize(PreferredSizeEvent& ev);
+  virtual void onLayout(LayoutEvent& ev);
 };
 
 } // namespace Vaca

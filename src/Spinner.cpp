@@ -31,6 +31,7 @@
 
 #include "Vaca/Spinner.h"
 #include "Vaca/PreferredSizeEvent.h"
+#include "Vaca/LayoutEvent.h"
 
 using namespace Vaca;
 
@@ -110,25 +111,6 @@ void Spinner::setBase(int base)
   m_spin.setBase(base);
 }
 
-/// Positions the children: the spin button at the right of the edit
-/// control to connect theirs edges and to see it like a whole control.
-/// 
-void Spinner::layout()
-{
-  Rect bounds = getLayoutBounds();
-  Size spin = m_spin.getPreferredSize();
-
-  m_edit.setBounds(Rect(bounds.x,
-		       bounds.y,
-		       bounds.w-spin.w+2,
-		       bounds.h));
-
-  m_spin.setBounds(Rect(bounds.x+bounds.w-spin.w,
-		       bounds.y,
-		       spin.w,
-		       bounds.h));
-}
-
 /// Fills @a sz with the size of both controls for the width and the
 /// maximun height of both controls.
 /// 
@@ -139,4 +121,23 @@ void Spinner::onPreferredSize(PreferredSizeEvent& ev)
 
   ev.setPreferredSize(edit.w - 2 + spin.w,
 		      max_value(edit.h, spin.h));
+}
+
+/// Positions the children: the spin button at the right of the edit
+/// control to connect theirs edges and to see it like a whole control.
+/// 
+void Spinner::onLayout(LayoutEvent& ev)
+{
+  Rect bounds = ev.getBounds();
+  Size spin = m_spin.getPreferredSize();
+
+  m_edit.setBounds(Rect(bounds.x,
+			bounds.y,
+			bounds.w-spin.w+2,
+			bounds.h));
+
+  m_spin.setBounds(Rect(bounds.x+bounds.w-spin.w,
+			bounds.y,
+			spin.w,
+			bounds.h));
 }

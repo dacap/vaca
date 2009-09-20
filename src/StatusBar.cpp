@@ -32,6 +32,7 @@
 #include "Vaca/StatusBar.h"
 #include "Vaca/WidgetClass.h"
 #include "Vaca/PreferredSizeEvent.h"
+#include "Vaca/LayoutEvent.h"
 
 using namespace Vaca;
 
@@ -47,7 +48,7 @@ StatusBar::~StatusBar()
 /// A status bar is arranged by a Frame, but doesn't depend of the
 /// current Layout manager in that Frame.
 /// 
-bool StatusBar::isLayoutFree()
+bool StatusBar::isLayoutFree() const
 {
   return true;
 }
@@ -55,4 +56,17 @@ bool StatusBar::isLayoutFree()
 void StatusBar::onPreferredSize(PreferredSizeEvent& ev)
 {
   ev.setPreferredSize(0, 24);
+}
+
+void StatusBar::onLayout(LayoutEvent& ev)
+{
+  Rect rc = ev.getBounds();
+  Size pref = getPreferredSize();
+
+  setBounds(Rect(rc.x, rc.y+rc.h-pref.h, rc.w, pref.h));
+
+  rc.h -= pref.h;
+  ev.setBounds(rc);
+
+  Widget::onLayout(ev);
 }

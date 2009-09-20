@@ -29,75 +29,37 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/GroupBox.h"
-#include "Vaca/Point.h"
-#include "Vaca/Brush.h"
-#include "Vaca/WidgetClass.h"
-#include "Vaca/PreferredSizeEvent.h"
 #include "Vaca/LayoutEvent.h"
+#include "Vaca/Widget.h"
 
 using namespace Vaca;
 
-GroupBox::GroupBox(const String& text, Widget* parent, Style style)
-  : Widget(WidgetClassName(WC_BUTTON), parent, style)
-{
-  setText(text);
-}
-
-GroupBox::~GroupBox()
+LayoutEvent::LayoutEvent(Widget* source, const Rect& bounds)
+  : Event(source)
+  , m_bounds(bounds)
 {
 }
 
-Size GroupBox::getNonClientSize()
+/// Destroys the LayoutEvent.
+///
+LayoutEvent::~LayoutEvent()
 {
-  ScreenGraphics g;
-
-  g.setFont(getFont());
-  Size sz =
-    g.measureString(getText());
-  
-  return Size(4+4, sz.h+4);
 }
 
-void GroupBox::onPreferredSize(PreferredSizeEvent& ev)
+/// Returns the area where Widget#onLayout method should put children
+/// widgets.
+///
+/// It is generally the client bounds, but other widgets (like Tab)
+/// could reduce this rectangle to use a small area inside the widget.
+/// 
+/// @see Widget#getClientBounds
+/// 
+Rect LayoutEvent::getBounds() const
 {
-  Size ncSize = getNonClientSize();
-  
-  if (ev.fitInWidth() || ev.fitInHeight()) {
-    ev.setPreferredSize(max_value(0, ev.fitInWidth() - ncSize.w),
-			max_value(0, ev.fitInHeight() - ncSize.h));
-  }
-
-  Widget::onPreferredSize(ev);
-  ev.setPreferredSize(ev.getPreferredSize() + ncSize);
+  return m_bounds;
 }
 
-void GroupBox::onLayout(LayoutEvent& ev)
+void LayoutEvent::setBounds(const Rect& bounds)
 {
-  ScreenGraphics g;
-
-  g.setFont(getFont());
-  Size sz = g.measureString(getText());
-
-  Rect rc(ev.getBounds());
-  ev.setBounds(Rect(rc.x+4, rc.y+sz.h, rc.w-8, rc.h-sz.h-4));
-
-  Widget::onLayout(ev);
-}
-
-bool GroupBox::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult)
-{
-  // fix a bug with group-boxes: they don't clear the background
-  if (message == WM_ERASEBKGND) {
-    HDC hdc = reinterpret_cast<HDC>(wParam);
-    Graphics g(hdc);
-    Brush brush(getBgColor());
-    
-    g.fillRect(brush, g.getClipBounds());
-
-    lResult = TRUE;
-    return true;
-  }
-  
-  return Widget::wndProc(message, wParam, lParam, lResult);
+  m_bounds = bounds;
 }

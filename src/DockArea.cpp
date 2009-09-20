@@ -79,7 +79,7 @@ Side DockArea::getSide()
 /// 
 /// @see Frame::layout
 /// 
-bool DockArea::isLayoutFree()
+bool DockArea::isLayoutFree() const
 {
   return true;
 }

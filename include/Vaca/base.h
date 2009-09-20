@@ -401,6 +401,7 @@ class ImageList;
 class KeyEvent;
 class Label;
 class Layout;
+class LayoutEvent;
 class LinkLabel;
 class ListBox;
 class ListColumn;

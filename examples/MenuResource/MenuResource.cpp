@@ -94,7 +94,8 @@ private:
 	  break;
 
 	default:
-	  m_console.println(L"Unknown action");
+	  m_console.println(format_string(L"Unknown action (ID = %d)",
+					  ev.getCommandId()));
 	  break;
       }
     }

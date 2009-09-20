@@ -76,7 +76,7 @@ public:
 
   static void pollTimers();
 
-  // signals
+  // Signals
   Signal0<void> Tick;   ///< @see onTick
 
 protected:

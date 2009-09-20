@@ -106,7 +106,7 @@ public:
   // SIGNALS
   // ============================================================
 
-  // signals
+  // Signals
   Signal1<void, Event&> Change; ///< @see onChange
 
 protected:

@@ -605,7 +605,7 @@ public:
   //////////////////////////////////////////////////////////////////////
   // Notifications
 
-  // signals
+  // Signals
   Signal0<void> UpdateUI; ///< @see onUpdateUI
 
 protected:

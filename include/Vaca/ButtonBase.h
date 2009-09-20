@@ -53,7 +53,7 @@ public:
   bool isSelected();
   void setSelected(bool state);
 
-  // signals
+  // Signals
   Signal1<void, Event&> Click; ///< @see onClick
 
 protected:

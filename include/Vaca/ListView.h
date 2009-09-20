@@ -131,7 +131,7 @@ public:
 //   void sortItems(std::less<ListItem> functor);
 //   int getCurrentItem();
 
-  // signals
+  // Signals
   Signal1<void, ListViewEvent&> BeforeSelect;
   Signal1<void, ListViewEvent&> AfterSelect;
   Signal1<void, ListViewEvent&> ColumnClick;

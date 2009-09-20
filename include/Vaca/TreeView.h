@@ -154,7 +154,7 @@ public:
 
   virtual void setBgColor(const Color& color);
 
-  // signals
+  // Signals
   Signal1<void, TreeViewEvent&> BeforeExpand;
   Signal1<void, TreeViewEvent&> BeforeCollapse;
   Signal1<void, TreeViewEvent&> BeforeSelect;

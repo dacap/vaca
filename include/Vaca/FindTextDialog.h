@@ -63,7 +63,7 @@ public:
   bool isBackward();
   bool isForward();
 
-  // signals
+  // Signals
   Signal1<void, Event&> FindNext;
   Signal1<void, Event&> Replace;
   Signal1<void, Event&> ReplaceAll;

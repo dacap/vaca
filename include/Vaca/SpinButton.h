@@ -98,7 +98,7 @@ public:
   Widget* getBuddy();
   void setBuddy(Widget* buddy);
 
-  // signals
+  // Signals
   Signal1<void, SpinButtonEvent&> Change;
 //   Signal1<void, SpinButtonEvent&> BeforeChange;
 //   Signal1<void, SpinButtonEvent&> AfterChange;

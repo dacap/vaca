@@ -43,15 +43,17 @@ ConsumableEvent::~ConsumableEvent()
 {
 }
 
-/// Consumes the event.
-///
+/**
+   Consumes the event.
+*/
 void ConsumableEvent::consume()
 {
   m_consumed = true;
 }
 
-/// The event was consumed.
-///
+/**
+   The event was consumed.
+*/
 bool ConsumableEvent::isConsumed() const
 {
   return m_consumed;

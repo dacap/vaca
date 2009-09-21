@@ -36,27 +36,30 @@
 
 namespace Vaca {
 
-/// Namespace for keyboard scancodes and modifiers.
+/**
+   Namespace for keyboard scancodes and modifiers.
+*/
 struct Keys {
 
-  /// Type to indicate a combination of one scancode and a set of
-  /// modifiers.
-  ///
-  /// You can use Keys#KeyCode and Keys#Modifiers mask to get the
-  /// corresponding field of a key.
-  /// E.g.:
-  /// @code
-  /// Keys::Type k = Keys::Enter | Keys::Shift;
-  ///
-  /// if ((k & Keys::KeyCode) == Keys::Enter) {
-  ///   // Enter key was pressed
-  /// }
-  ///
-  /// if ((k & Keys::Modifiers) == Keys::Shift) {
-  ///   // Shift modifier pressed (Control and Alt were not pressed)
-  /// }
-  /// @endcode
-  ///
+  /**
+     Type to indicate a combination of one scancode and a set of
+     modifiers.
+
+     You can use Keys#KeyCode and Keys#Modifiers mask to get the
+     corresponding field of a key.
+     E.g.:
+     @code
+     Keys::Type k = Keys::Enter | Keys::Shift;
+
+     if ((k & Keys::KeyCode) == Keys::Enter) {
+       // Enter key was pressed
+     }
+
+     if ((k & Keys::Modifiers) == Keys::Shift) {
+       // Shift modifier pressed (Control and Alt were not pressed)
+     }
+     @endcode
+  */
   typedef int Type;
 
   // Scancodes
@@ -261,7 +264,7 @@ struct Keys {
   static const int Alt       = 0x00040000;
 
   static Keys::Type VACA_DLL fromMessageParams(WPARAM wParam, LPARAM lParam);
-  
+
 };
 
 } // namespace Vaca

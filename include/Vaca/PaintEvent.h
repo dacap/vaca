@@ -37,8 +37,9 @@
 
 namespace Vaca {
 
-/// Event to paint a widget.
-/// 
+/**
+   Event to paint a widget.
+*/
 class VACA_DLL PaintEvent : public Event
 {
   friend class Widget;

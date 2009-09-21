@@ -37,8 +37,9 @@
 
 namespace Vaca {
 
-/// Class that counts references and can be wrapped by a SharedPtr.
-/// 
+/**
+   Class that counts references and can be wrapped by a SharedPtr.
+*/
 class VACA_DLL Referenceable : private NonCopyable
 {
   template<class> friend class SharedPtr;

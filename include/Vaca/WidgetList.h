@@ -38,10 +38,11 @@
 
 namespace Vaca {
 
-/// Collection of widgets.
-///
-/// Used to handle the list of children of each widget.
-/// 
+/**
+   Collection of widgets.
+
+   Used to handle the list of children of each widget.
+*/
 typedef std::vector<Widget*> WidgetList;
 
 } // namespace Vaca

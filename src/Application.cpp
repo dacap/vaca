@@ -45,14 +45,15 @@ using namespace Vaca;
 HINSTANCE Application::m_HINSTANCE = NULL;
 Application* Application::m_instance = NULL;
 
-/// Initializes the variables of the Application class.
-///
-/// @win32 
-///   It calls @msdn{CoInitialize} and @msdn{InitCommonControls}.
-/// @endwin32
-///
-/// @see run
-///
+/**
+   Initializes the variables of the Application class.
+
+   @win32
+     It calls @msdn{CoInitialize} and @msdn{InitCommonControls}.
+   @endwin32
+
+   @see run
+*/
 Application::Application()
   : Thread()
 {
@@ -77,12 +78,13 @@ Application::Application()
   VACA_TRACE("Program %s started\n", convert_to<std::string>(System::getArgs()[0]).c_str());
 }
 
-/// Finishes the application.
-///
-/// @win32 
-///   It calls @msdn{CoUninitialize}.
-/// @endwin32
-///
+/**
+   Finishes the application.
+
+   @win32
+     It calls @msdn{CoUninitialize}.
+   @endwin32
+*/
 Application::~Application()
 {
   assert(Application::m_HINSTANCE != NULL);
@@ -110,34 +112,37 @@ Application::~Application()
 #endif
 }
 
-/// Returns the Application's singleton.
-///
-/// A program using Vaca must have one instance of Applicaton or a
-/// class derived from it.
-///
+/**
+   Returns the Application's singleton.
+
+   A program using Vaca must have one instance of Applicaton or a
+   class derived from it.
+*/
 Application* Application::getInstance()
 {
   return m_instance;
 }
 
-/// Returns the Win32's @c HINSTANCE.
-///
-/// @win32
-///   HINSTANCE handles are specific of Windows.
-/// @endwin32
-///
-/// @internal
-///
+/**
+   Returns the Win32's @c HINSTANCE.
+
+   @win32
+     HINSTANCE handles are specific of Windows.
+   @endwin32
+
+   @internal
+*/
 HINSTANCE Application::getHandle()
 {
   return Application::m_HINSTANCE;
 }
 
-/// Changes the priority of the process respecting to all other
-/// processes currently running on the operating system.
-///
-/// @see Thread#setThreadPriority
-///
+/**
+   Changes the priority of the process respecting to all other
+   processes currently running on the operating system.
+
+   @see Thread#setThreadPriority
+*/
 void Application::setProcessPriority(ProcessPriority priority)
 {
   int nPriority;
@@ -153,64 +158,66 @@ void Application::setProcessPriority(ProcessPriority priority)
   ::SetPriorityClass(::GetCurrentProcess(), nPriority);
 }
 
-/// The common way to start the application. You should call this
-/// method from @e main or @e WinMain, using the instance of
-/// Application.
-///
-/// The work of this routine is really simple: it calls #main and then
-/// CurrentThread#doMessageLoop. You can make your own class derived from
-/// Application and override #main so you can customized the
-/// initialization (e.g. show a Frame).
-///
-/// Example:
-/// @code
-/// int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
-///                    LPSTR lpCmdLine, int nCmdShow)
-/// {
-///   Application app;
-///   Frame frm("My frame");
-///   frm.setVisible(true);
-///   app.run();
-///   return 0;
-/// }
-/// @endcode
-///
-/// The same example with a variation:
-/// @code
-/// class MyApp : public Application
-/// {
-///   Frame frm;
-/// public:
-///   MyApp() : frm("My frame") { }
-///   
-///   virtual void main() {
-///     frm.setVisible(true);
-///   }
-/// };
-/// 
-/// int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
-///                    LPSTR lpCmdLine, int nCmdShow)
-/// {
-///   MyApp app;
-///   app.run();
-///   return 0;
-/// }
-/// @endcode
-///
-/// @see CurrentThread#doMessageLoop
-///
+/**
+   The common way to start the application. You should call this
+   method from @e main or @e WinMain, using the instance of
+   Application.
+
+   The work of this routine is really simple: it calls #main and then
+   CurrentThread#doMessageLoop. You can make your own class derived from
+   Application and override #main so you can customized the
+   initialization (e.g. show a Frame).
+
+   Example:
+   @code
+   int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
+		      LPSTR lpCmdLine, int nCmdShow)
+   {
+     Application app;
+     Frame frm("My frame");
+     frm.setVisible(true);
+     app.run();
+     return 0;
+   }
+   @endcode
+
+   The same example with a variation:
+   @code
+   class MyApp : public Application
+   {
+     Frame frm;
+   public:
+     MyApp() : frm("My frame") { }
+
+     virtual void main() {
+       frm.setVisible(true);
+     }
+   };
+
+   int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
+		      LPSTR lpCmdLine, int nCmdShow)
+   {
+     MyApp app;
+     app.run();
+     return 0;
+   }
+   @endcode
+
+   @see CurrentThread#doMessageLoop
+*/
 void Application::run()
 {
   main();
   CurrentThread::doMessageLoop();
 }
 
-/// The application entry point.
-///
-/// After calling #run, #main is executed and when it finishes, the
-/// CurrentThread#doMessageLoop is automatically invoked (to process
-/// messages for visible @link Frame frames@endlink).
-///
+/**
+   The application entry point.
+
+   After calling #run, #main is executed and when it finishes, the
+   CurrentThread#doMessageLoop is automatically invoked (to process
+   messages for visible @link Frame frames@endlink).
+*/
 void Application::main()
 {
   // do nothing

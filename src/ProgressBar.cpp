@@ -53,7 +53,7 @@ ProgressBar::ProgressBar(int minValue, int maxValue,
   : Widget(WidgetClassName(PROGRESS_CLASS), parent, style)
 {
   assert(minValue <= maxValue);
-  
+
   setRange(minValue, maxValue);
   setValue(minValue);	// default value
 }
@@ -62,8 +62,9 @@ ProgressBar::~ProgressBar()
 {
 }
 
-/// PBM_SETBKCOLOR
-/// 
+/**
+   PBM_SETBKCOLOR
+*/
 void ProgressBar::setBgColor(const Color& color)
 {
   assert(::IsWindow(getHandle()));
@@ -86,8 +87,9 @@ int ProgressBar::getMaximum()
   return sendMessage(PBM_GETRANGE, FALSE, 0);
 }
 
-/// PBM_GETRANGE
-/// 
+/**
+   PBM_GETRANGE
+*/
 void ProgressBar::getRange(int& minValue, int& maxValue)
 {
   PBRANGE pbr;
@@ -96,30 +98,34 @@ void ProgressBar::getRange(int& minValue, int& maxValue)
   maxValue = pbr.iHigh;
 }
 
-/// PBM_SETRANGE32
-/// 
+/**
+   PBM_SETRANGE32
+*/
 void ProgressBar::setRange(int minValue, int maxValue)
 {
   sendMessage(PBM_SETRANGE32, minValue, maxValue);
 }
 
-/// PBM_GETPOS
-/// 
+/**
+   PBM_GETPOS
+*/
 int ProgressBar::getValue()
 {
   return sendMessage(PBM_GETPOS, 0, 0);
 }
 
-/// PBM_SETPOS
-/// 
+/**
+   PBM_SETPOS
+*/
 void ProgressBar::setValue(int value)
 {
   sendMessage(PBM_SETPOS, value, 0);
 }
 
-/// Increments the current progress bar value (position), in @a delta
-/// units (PBM_DELTAPOS).
-/// 
+/**
+   Increments the current progress bar value (position), in @a delta
+   units (PBM_DELTAPOS).
+*/
 void ProgressBar::addValue(int delta)
 {
   sendMessage(PBM_DELTAPOS, delta, 0);

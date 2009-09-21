@@ -37,8 +37,9 @@
 
 namespace Vaca {
 
-/// A column in a ListView.
-///
+/**
+   A column in a ListView.
+*/
 class VACA_DLL ListColumn : public Component
 {
   friend class ListView;

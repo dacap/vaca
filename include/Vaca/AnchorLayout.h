@@ -37,21 +37,23 @@
 
 namespace Vaca {
 
-/// An AnchorLayout tries to maintain the same aspect of the widgets
-/// using references rectangles. It uses Anchor contraints to known
-/// which side of a child must be "anchored" (to maintain the same
-/// distance) to which side of the parent.
-/// 
-/// @image html AnchorLayout.png
-/// 
-/// @see AnchorLayout#AnchorLayout, Anchor
-/// 
+/**
+   An AnchorLayout tries to maintain the same aspect of the widgets
+   using references rectangles. It uses Anchor contraints to known
+   which side of a child must be "anchored" (to maintain the same
+   distance) to which side of the parent.
+
+   @image html AnchorLayout.png
+
+   @see AnchorLayout#AnchorLayout, Anchor
+*/
 class VACA_DLL AnchorLayout : public Layout
 {
-  /// The size of the imaginary rectangle @c Rect(Point(0,0),refSize).
-  /// 
-  /// @see AnchorLayout#AnchorLayout
-  /// 
+  /**
+     The size of the imaginary rectangle @c Rect(Point(0,0),refSize).
+
+     @see AnchorLayout#AnchorLayout
+   */
   Size m_refSize;
 
 public:
@@ -65,4 +67,3 @@ public:
 } // namespace Vaca
 
 #endif // VACA_ANCHORLAYOUT_H
-

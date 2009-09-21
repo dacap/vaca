@@ -46,7 +46,7 @@
 
 #include <cmath>
 #ifndef M_PI
-#  define M_PI 3.14159265358979323846 
+#  define M_PI 3.14159265358979323846
 #endif
 
 #ifndef GRADIENT_FILL_RECT_H
@@ -56,7 +56,7 @@
 
 using namespace Vaca;
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // Graphics
 
 void Graphics::initialize()
@@ -72,8 +72,9 @@ void Graphics::initialize()
   m_fillRule = FillRule::EvenOdd;
 }
 
-/// Creates a Graphics context for the screen.
-///
+/**
+   Creates a Graphics context for the screen.
+*/
 Graphics::Graphics()
 {
   m_handle      = ::GetDC(NULL);
@@ -83,10 +84,11 @@ Graphics::Graphics()
   initialize();
 }
 
-/// Creates a Graphics context related to the specified HDC.
-///
-/// @internal
-/// 
+/**
+   Creates a Graphics context related to the specified HDC.
+
+   @internal
+*/
 Graphics::Graphics(HDC hdc)
 {
   assert(hdc != NULL);
@@ -99,8 +101,9 @@ Graphics::Graphics(HDC hdc)
   initialize();
 }
 
-/// @internal
-///
+/**
+   @internal
+*/
 Graphics::Graphics(HDC hdc, Image& image)
 {
   assert(hdc != NULL);
@@ -109,13 +112,14 @@ Graphics::Graphics(HDC hdc, Image& image)
   m_autoRelease = false;
   m_autoDelete  = true;
   m_font        = NULL;
-  
+
   SelectObject(m_handle, image.getHandle());
   initialize();
 }
 
-/// Creates a Graphics to dran inside the widget area.
-///
+/**
+   Creates a Graphics to dran inside the widget area.
+*/
 Graphics::Graphics(Widget* widget)
 {
   HWND hwnd = widget->getHandle();
@@ -301,7 +305,7 @@ void Graphics::tracePath(const GraphicsPath& path, const Point& pt)
 
   BeginPath(m_handle);
   MoveToEx(m_handle, pt.x, pt.y, NULL);
-  
+
   for (; it != end; ++it) {
     switch (it->getType()) {
       case GraphicsPath::MoveTo:
@@ -387,7 +391,7 @@ Region Graphics::getRegionFromPath() const
   else
     return Region();
 }
-  
+
 void Graphics::strokePath(const Pen& pen)
 {
   assert(m_handle);
@@ -466,7 +470,7 @@ void Graphics::drawString(const String& str, const Color& color, int x, int y)
   TextOut(m_handle, x, y, str.c_str(), static_cast<int>(str.size()));
   SelectObject(m_handle, oldFont);
 
-  SetBkMode(m_handle, oldMode); 
+  SetBkMode(m_handle, oldMode);
   SetTextColor(m_handle, oldColor);
 }
 
@@ -483,7 +487,7 @@ void Graphics::drawString(const String& str, const Color& color, const Rect& _rc
   DrawText(m_handle, str.c_str(), static_cast<int>(str.size()), &rc, flags);
   SelectObject(m_handle, oldFont);
 
-  SetBkMode(m_handle, oldMode); 
+  SetBkMode(m_handle, oldMode);
   SetTextColor(m_handle, oldColor);
 }
 
@@ -505,7 +509,7 @@ void Graphics::drawImage(Image& image, int dstX, int dstY, int srcX, int srcY, i
   Graphics& source = image.getGraphics();
 
   assert(source.getHandle());
-  
+
   BitBlt(m_handle, dstX, dstY, width, height, source.getHandle(), srcX, srcY, SRCCOPY);
 }
 
@@ -527,15 +531,15 @@ void Graphics::drawImage(Image& image, int dstX, int dstY, int srcX, int srcY, i
 		   source.getHandle(), srcX, srcY, width, height,
 		   bgColor.getColorRef());
 #else
-    
+
   HDC maskHDC = CreateCompatibleDC(m_handle);
   HBITMAP theMask = CreateBitmap(width, height, 1, 1, NULL);
   HGDIOBJ oldMask = SelectObject(maskHDC, theMask);
   COLORREF oldBkColor = SetBkColor(source.getHandle(), bgColor.getColorRef());
-  
+
   BitBlt(maskHDC, 0, 0, width, height,
 	 source.getHandle(), srcX, srcY, SRCCOPY);
-  
+
   MaskBlt(m_handle, dstX, dstY, width, height,
 	  source.getHandle(), srcX, srcY,
 	  theMask, 0, 0, MAKEROP4(0x00AA0029, SRCCOPY)); // 0x00AA0029 is NOP
@@ -567,33 +571,34 @@ void Graphics::drawImage(Image& image, const Point& pt, const Rect& rc, const Co
   drawImage(image, pt.x, pt.y, rc.x, rc.y, rc.w, rc.h, bgColor);
 }
 
-/// Draws the specified image of the ImageList.
-/// 
-/// @param imageList
-///     List of image to get the specified image.
-/// 
-/// @param imageIndex
-///     Specific image to draw. This must be a valid index of the image
-///     list. You can check the size of the ImageList using ImageList#getImageCount(),
-///     so the index must be between @c 0 and @c getImageCount-1.
-/// 
-/// @param x
-///     TODO
-/// 
-/// @param y
-///     TODO
-/// 
-/// @param style
-///     One of the following values:
-///     @li ILD_BLEND25
-///     @li ILD_FOCUS
-///     @li ILD_BLEND50
-///     @li ILD_SELECTED
-///     @li ILD_BLEND
-///     @li ILD_MASK
-///     @li ILD_NORMAL
-///     @li ILD_TRANSPARENT
-/// 
+/**
+   Draws the specified image of the ImageList.
+
+   @param imageList
+       List of image to get the specified image.
+
+   @param imageIndex
+       Specific image to draw. This must be a valid index of the image
+       list. You can check the size of the ImageList using ImageList#getImageCount(),
+       so the index must be between @c 0 and @c getImageCount-1.
+
+   @param x
+       TODO
+
+   @param y
+       TODO
+
+   @param style
+       One of the following values:
+       @li ILD_BLEND25
+       @li ILD_FOCUS
+       @li ILD_BLEND50
+       @li ILD_SELECTED
+       @li ILD_BLEND
+       @li ILD_MASK
+       @li ILD_NORMAL
+       @li ILD_TRANSPARENT
+*/
 void Graphics::drawImageList(ImageList& imageList, int imageIndex, int x, int y, int style)
 {
   assert(m_handle);
@@ -735,9 +740,10 @@ void Graphics::draw3dRect(int x, int y, int w, int h, const Color& topLeft, cons
   DeleteObject(pen2);
 }
 
-/// Draws the outline of an ellipse. It uses the current selected color
-/// (see setColor), and doesn't paint the background.
-/// 
+/**
+   Draws the outline of an ellipse. It uses the current selected color
+   (see setColor), and doesn't paint the background.
+*/
 void Graphics::drawEllipse(const Pen& pen, const Rect& rc)
 {
   drawEllipse(pen, rc.x, rc.y, rc.w, rc.h);
@@ -756,11 +762,12 @@ void Graphics::drawEllipse(const Pen& pen, int x, int y, int w, int h)
   SelectObject(m_handle, oldBrush);
 }
 
-/// Draws an arc with rc as a bounding rectangle for the ellipse that
-/// encloses the arc. The arc start in the startAngle (a value between
-/// -360 and 360), and as a arc length of sweepAngle (in
-/// counter-clockwise).
-/// 
+/**
+   Draws an arc with rc as a bounding rectangle for the ellipse that
+   encloses the arc. The arc start in the startAngle (a value between
+   -360 and 360), and as a arc length of sweepAngle (in
+   counter-clockwise).
+*/
 void Graphics::drawArc(const Pen& pen, const Rect& rc, double startAngle, double sweepAngle)
 {
   drawArc(pen, rc.x, rc.y, rc.w, rc.h, startAngle, sweepAngle);
@@ -968,7 +975,7 @@ void Graphics::fillGradientRect(int x, int y, int w, int h,
 				Orientation orientation)
 {
   assert(m_handle);
-  
+
   TRIVERTEX vert[2] ;
   GRADIENT_RECT gRect;
 
@@ -1076,9 +1083,10 @@ void Graphics::drawFocus(const Rect& rc)
   ::DrawFocusRect(m_handle, &_rc);
 }
 
-/// @warning
-///   In Win98, 32767 is the limit for @a fitInWidth.
-/// 
+/**
+   @warning
+     In Win98, 32767 is the limit for @a fitInWidth.
+*/
 Size Graphics::measureString(const String& str, int fitInWidth, int flags)
 {
   assert(m_handle);
@@ -1103,28 +1111,29 @@ Size Graphics::measureString(const String& str, int fitInWidth, int flags)
   return Rect(&rc).getSize();
 }
 
-/// Changes the current raster operation mode (SetROP2).
-///
-/// @todo drawMode should be an enumeration.
-/// 
-/// @param drawMode
-/// @li R2_BLACK
-/// @li R2_COPYPEN
-/// @li R2_MASKNOTPEN
-/// @li R2_MASKPEN
-/// @li R2_MASKPENNOT
-/// @li R2_MERGENOTPEN
-/// @li R2_MERGEPEN
-/// @li R2_MERGEPENNOT
-/// @li R2_NOP
-/// @li R2_NOT
-/// @li R2_NOTCOPYPEN
-/// @li R2_NOTMASKPEN
-/// @li R2_NOTMERGEPEN
-/// @li R2_NOTXORPEN
-/// @li R2_WHITE
-/// @li R2_XORPEN
-/// 
+/**
+   Changes the current raster operation mode (SetROP2).
+
+   @todo drawMode should be an enumeration.
+
+   @param drawMode
+   @li R2_BLACK
+   @li R2_COPYPEN
+   @li R2_MASKNOTPEN
+   @li R2_MASKPEN
+   @li R2_MASKPENNOT
+   @li R2_MERGENOTPEN
+   @li R2_MERGEPEN
+   @li R2_MERGEPENNOT
+   @li R2_NOP
+   @li R2_NOT
+   @li R2_NOTCOPYPEN
+   @li R2_NOTMASKPEN
+   @li R2_NOTMERGEPEN
+   @li R2_NOTXORPEN
+   @li R2_WHITE
+   @li R2_XORPEN
+*/
 void Graphics::setRop2(int drawMode)
 {
   assert(m_handle);
@@ -1164,11 +1173,12 @@ void Graphics::drawPolyline(const Pen& pen, CONST POINT* lppt, int numPoints)
   SelectObject(m_handle, oldPen);
 }
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // ScreenGraphics
 
-/// Creates a Graphics instance to draw in the screen (anywhere).
-/// 
+/**
+   Creates a Graphics instance to draw in the screen (anywhere).
+*/
 ScreenGraphics::ScreenGraphics()
   : Graphics()
 {

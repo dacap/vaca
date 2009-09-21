@@ -50,10 +50,11 @@ ListColumn::~ListColumn()
     removeFromListView();
 }
 
-/// Returns the width (in pixels) of the column.
-/// 
-/// @note Useful for ListView of report type (ListViewType#Report).
-/// 
+/**
+   Returns the width (in pixels) of the column.
+
+   @note Useful for ListView of report type (ListViewType#Report).
+*/
 int ListColumn::getWidth() const
 {
   if (m_owner != NULL) {
@@ -66,10 +67,11 @@ int ListColumn::getWidth() const
     return m_width;
 }
 
-/// Sets the @a width (in pixels) of the column.
-/// 
-/// @note Useful for ListView of report type (ListViewType#Report).
-/// 
+/**
+   Sets the @a width (in pixels) of the column.
+
+   @note Useful for ListView of report type (ListViewType#Report).
+*/
 void ListColumn::setWidth(int width)
 {
   if (m_owner != NULL) {
@@ -81,14 +83,15 @@ void ListColumn::setWidth(int width)
   m_width = width;
 }
 
-/// Sets the width of the column to its preferred size.
-///
-/// @param useHeader
-///    True means that in the preferred size must be included the
-///    header, not just the items' text.
-/// 
-/// @note Useful for ListView of report type (ListViewType#Report).
-/// 
+/**
+   Sets the width of the column to its preferred size.
+
+   @param useHeader
+      True means that in the preferred size must be included the
+      header, not just the items' text.
+
+   @note Useful for ListView of report type (ListViewType#Report).
+*/
 void ListColumn::setPreferredWidth(bool useHeader)
 {
   if (m_owner != NULL) {

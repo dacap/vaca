@@ -36,13 +36,14 @@
 
 namespace Vaca {
 
-/// Event generated when a Frame is being closed.
-///
-/// This is a CancelableEvent, so you can call #cancel to abort the
-/// close operation (it is useful to show a MsgBox like "Do you want
-/// to save your changes before close?" before the Frame is finally
-/// closed).
-///
+/**
+   Event generated when a Frame is being closed.
+
+   This is a CancelableEvent, so you can call #cancel to abort the
+   close operation (it is useful to show a MsgBox like "Do you want
+   to save your changes before close?" before the Frame is finally
+   closed).
+*/
 class VACA_DLL CloseEvent : public CancelableEvent
 {
 public:

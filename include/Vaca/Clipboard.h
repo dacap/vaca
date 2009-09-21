@@ -36,8 +36,9 @@
 
 namespace Vaca {
 
-/// Handles the global clipboard.
-/// 
+/**
+   Handles the global clipboard.
+*/
 class VACA_DLL Clipboard
 {
   Widget* m_owner;

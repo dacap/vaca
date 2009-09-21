@@ -71,62 +71,68 @@ bool CustomButton::onReflectedDrawItem(Graphics& g, LPDRAWITEMSTRUCT lpDrawItem)
   return doPaint(g);
 }
 
-/// Returns true if you should draw the entire widget.
-/// 
+/**
+   Returns true if you should draw the entire widget.
+*/
 bool CustomButton::isDrawEntire()
 {
   return (m_itemAction & ODA_DRAWENTIRE) == ODA_DRAWENTIRE;
 }
 
-/// Returns true if you should draw only the focus change (check
-/// CustomButton::drawEntire first). Use CustomButton::isStateFocus to
-/// known if the Widget has or not the focus.
-/// 
+/**
+   Returns true if you should draw only the focus change (check
+   CustomButton::drawEntire first). Use CustomButton::isStateFocus to
+   known if the Widget has or not the focus.
+*/
 bool CustomButton::isFocusChanged()
 {
   return (m_itemAction & ODA_FOCUS) == ODA_FOCUS;
 }
 
-/// Returns true if you should draw only the selection state change
-/// (check CustomButton::drawEntire first). Use
-/// CustomButton::isStateSelected to known if the Widget is or not
-/// selected.
-/// 
+/**
+   Returns true if you should draw only the selection state change
+   (check CustomButton::drawEntire first). Use
+   CustomButton::isStateSelected to known if the Widget is or not
+   selected.
+*/
 bool CustomButton::isSelectionChanged()
 {
   return (m_itemAction & ODA_SELECT) == ODA_SELECT;
 }
 
 // /// Returns true if the widget is checked. (only for CustomMenuItem)
-// /// 
+// ///
 // bool CustomButton::isStateChecked()
 // {
 //   return m_itemState & ODS_CHECKED;
 // }
 
-/// Returns true if this button is the default one.
-/// 
+/**
+   Returns true if this button is the default one.
+*/
 bool CustomButton::hasDefaultOptionVisualAspect()
 {
   return (m_itemState & ODS_DEFAULT) == ODS_DEFAULT;
 }
 
-/// Returns true if this widget must be drawn disabled.
-/// 
+/**
+   Returns true if this widget must be drawn disabled.
+*/
 bool CustomButton::hasDisabledVisualAspect()
 {
   return (m_itemState & ODS_DISABLED) == ODS_DISABLED;
 }
 
-/// Returns true if this widget must be drawn with the focus.
-/// 
+/**
+   Returns true if this widget must be drawn with the focus.
+*/
 bool CustomButton::hasFocusVisualAspect()
 {
   return (m_itemState & ODS_FOCUS) == ODS_FOCUS;
 }
 
 // /// Returns true if this menu item must be drawn grayed. (Only for CustomMenuItem)
-// /// 
+// ///
 // bool CustomButton::hasGrayedVisualAspect()
 // {
 //   return m_itemState & ODS_GRAYED;
@@ -142,17 +148,19 @@ bool CustomButton::hasFocusVisualAspect()
 //   return m_itemState & ODS_INACTIVE;
 // }
 
-/// Indicates that you shouldn't draw the accelerator character
-/// underscored.
-/// 
+/**
+   Indicates that you shouldn't draw the accelerator character
+   underscored.
+*/
 bool CustomButton::hasNoAccelVisualAspect()
 {
   return (m_itemState & ODS_NOACCEL) == ODS_NOACCEL;
 }
 
-/// Indicates that you shouldn't draw the focus even when the button
-/// has the focus (CustomButton::hasFocusVisualAspect is true).
-/// 
+/**
+   Indicates that you shouldn't draw the focus even when the button
+   has the focus (CustomButton::hasFocusVisualAspect is true).
+*/
 bool CustomButton::hasNoFocusRectVisualAspect()
 {
   return (m_itemState & ODS_NOFOCUSRECT) == ODS_NOFOCUSRECT;

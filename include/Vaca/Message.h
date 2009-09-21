@@ -38,8 +38,9 @@
 
 namespace Vaca {
 
-/// Thrown when a Message cannot be registered/created.
-/// 
+/**
+   Thrown when a Message cannot be registered/created.
+*/
 class MessageException : public Exception
 {
 public:
@@ -50,12 +51,13 @@ public:
 
 };
 
-/// A message that comes from the operating system.
-/// 
-/// @win32
-///   This is a wrapper for a @msdn{MSG}.
-/// @endwin32
-/// 
+/**
+   A message that comes from the operating system.
+
+   @win32
+     This is a wrapper for a @msdn{MSG}.
+   @endwin32
+*/
 class VACA_DLL Message : private NonCopyable
 {
   friend class Thread;

@@ -39,8 +39,9 @@ using namespace Vaca;
 
 #define GdiObj GdiObject<HCURSOR, Win32DestroyCursor>
 
-/// Creates the null cursor (NoCursor).
-/// 
+/**
+   Creates the null cursor (NoCursor).
+*/
 Cursor::Cursor()
   : SharedPtr<GdiObj>(new GdiObj)
 {
@@ -51,9 +52,10 @@ Cursor::Cursor(const Cursor& cursor)
 {
 }
 
-/// @throw ResourceException
-///   When the resource with ID @a cursorId wasn't found.
-/// 
+/**
+   @throw ResourceException
+     When the resource with ID @a cursorId wasn't found.
+*/
 Cursor::Cursor(ResourceId cursorId)
   : SharedPtr<GdiObj>(new GdiObj)
 {
@@ -64,9 +66,10 @@ Cursor::Cursor(ResourceId cursorId)
   get()->setHandle(handle);
 }
 
-/// @throw ResourceException
-///   When the specified system @a cursor couldn't be loaded.
-/// 
+/**
+   @throw ResourceException
+     When the specified system @a cursor couldn't be loaded.
+*/
 Cursor::Cursor(SysCursor cursor)
   : SharedPtr<GdiObj>(new GdiObj)
 {
@@ -97,7 +100,7 @@ Cursor::Cursor(SysCursor cursor)
     case SysCursor::Wait:      winCursor = IDC_WAIT; break;
     case SysCursor::WaitBg:    winCursor = IDC_APPSTARTING; break;
   }
-  
+
   HCURSOR handle = ::LoadCursor(NULL, winCursor);
   if (handle == NULL)
     throw ResourceException(format_string(L"Can't load the SysCursor %d", int(cursor)));
@@ -105,9 +108,10 @@ Cursor::Cursor(SysCursor cursor)
   get()->setHandle(handle);
 }
 
-/// @throw ResourceException
-///   When the cursor couldn't be loaded from the specified @a fileName.
-/// 
+/**
+   @throw ResourceException
+     When the cursor couldn't be loaded from the specified @a fileName.
+*/
 Cursor::Cursor(const String& fileName)
   : SharedPtr<GdiObj>(new GdiObj)
 {

@@ -68,8 +68,9 @@ public:
   virtual ~ReBarException() throw() { }
 };
 
-/// A band of a ReBar.
-///
+/**
+   A band of a ReBar.
+*/
 class VACA_DLL ReBarBand
 {
   ReBar* m_rebar;
@@ -105,7 +106,9 @@ protected:
   void getBand(REBARBANDINFO* rbbi) const;
 };
 
-/// Wrapper for ReBar Win32
+/**
+   Wrapper for ReBar Win32
+*/
 class VACA_DLL ReBar : public Widget
 {
   ImageList m_imageList;
@@ -115,7 +118,7 @@ public:
   struct VACA_DLL Styles {
     static const Style Default;
   };
-  
+
   ReBar(Widget* parent, Style style = ReBar::Styles::Default);
   virtual ~ReBar();
 
@@ -139,7 +142,7 @@ public:
   Rect getBandRect(int index);
   int getRowCount();
   int getRowHeight(int nRow);
-  
+
   void showBand(int index, bool show);
 
   void maximizeBand(int index, bool ideal = false);

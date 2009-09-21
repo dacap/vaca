@@ -38,16 +38,17 @@
 
 using namespace Vaca;
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // ListBox
 
-/// Creates a ListBox.
-/// 
-/// The default background color for a ListBox is System::getColor(COLOR_WINDOW).
-/// 
-/// @param parent The parent Widget.
-/// @param style Add the LBS_MULTIPLESEL if you want a multiselection ListBox.
-/// 
+/**
+   Creates a ListBox.
+
+   The default background color for a ListBox is System::getColor(COLOR_WINDOW).
+
+   @param parent The parent Widget.
+   @param style Add the LBS_MULTIPLESEL if you want a multiselection ListBox.
+*/
 ListBox::ListBox(Widget* parent, Style style)
   : Widget(WidgetClassName(WC_LISTBOX), parent, style)
 {
@@ -58,8 +59,9 @@ ListBox::~ListBox()
 {
 }
 
-/// (LB_ADDSTRING)
-/// 
+/**
+   (LB_ADDSTRING)
+*/
 int ListBox::addItem(const String& text)
 {
   int index = sendMessage(LB_ADDSTRING, 0, reinterpret_cast<LPARAM>(text.c_str()));
@@ -69,9 +71,10 @@ int ListBox::addItem(const String& text)
     return index;
 }
 
-/// (LB_INSERTSTRING)
-/// 
-/// 
+/**
+   (LB_INSERTSTRING)
+
+*/
 void ListBox::insertItem(int itemIndex, const String& text)
 {
   sendMessage(LB_INSERTSTRING, itemIndex, reinterpret_cast<LPARAM>(text.c_str()));
@@ -82,17 +85,19 @@ void ListBox::removeItem(int itemIndex)
   sendMessage(LB_DELETESTRING, itemIndex, 0);
 }
 
-/// (LB_GETCOUNT)
-/// 
+/**
+   (LB_GETCOUNT)
+*/
 int ListBox::getItemCount()
 {
   return sendMessage(LB_GETCOUNT, 0, 0);
 }
 
-/// Returns the rectangle that the item @a itemIndex uses (LB_GETITEMRECT).
-/// 
-/// @a itemIndex is zero-based.
-/// 
+/**
+   Returns the rectangle that the item @a itemIndex uses (LB_GETITEMRECT).
+
+   @a itemIndex is zero-based.
+*/
 Rect ListBox::getItemBounds(int itemIndex)
 {
   RECT rc;
@@ -100,8 +105,9 @@ Rect ListBox::getItemBounds(int itemIndex)
   return Rect(&rc);
 }
 
-/// (LB_GETTEXT and LB_GETTEXTLEN)
-/// 
+/**
+   (LB_GETTEXT and LB_GETTEXTLEN)
+*/
 String ListBox::getItemText(int itemIndex)
 {
   int len = sendMessage(LB_GETTEXTLEN, itemIndex, 0);
@@ -127,9 +133,10 @@ void ListBox::setItemText(int itemIndex, const String& text)
     setSelectedItem(itemIndex);
 }
 
-/// Returns the current selected item index (LB_GETCURSEL). Returns -1
-/// if there aren't selection at all.
-/// 
+/**
+   Returns the current selected item index (LB_GETCURSEL). Returns -1
+   if there aren't selection at all.
+*/
 int ListBox::getSelectedItem()
 {
   int index = sendMessage(LB_GETCURSEL, 0, 0);
@@ -139,16 +146,18 @@ int ListBox::getSelectedItem()
     return index;
 }
 
-/// Changes the current selected item to the @a itemIndex only (LB_SETCURSEL).
-/// 
+/**
+   Changes the current selected item to the @a itemIndex only (LB_SETCURSEL).
+*/
 void ListBox::setSelectedItem(int itemIndex)
 {
   sendMessage(LB_SETCURSEL, itemIndex, 0);
 }
 
-/// Returns the set of selected items (it's useful for ListBoxes with
-/// the LBS_MULTIPLESEL style).
-/// 
+/**
+   Returns the set of selected items (it's useful for ListBoxes with
+   the LBS_MULTIPLESEL style).
+*/
 std::vector<int> ListBox::getSelectedItems()
 {
   size_t count = sendMessage(LB_GETSELCOUNT, 0, 0);
@@ -166,7 +175,7 @@ void ListBox::onPreferredSize(PreferredSizeEvent& ev)
   // TODO HTHEME stuff
   Size sz(2*::GetSystemMetrics(SM_CXEDGE),
 	  2*::GetSystemMetrics(SM_CYEDGE));
-  
+
   int i, n = getItemCount();
   Rect rc;
 
@@ -178,15 +187,17 @@ void ListBox::onPreferredSize(PreferredSizeEvent& ev)
   ev.setPreferredSize(sz);
 }
 
-/// When the user press double-click in some item (LBN_DBLCLK).
-/// 
+/**
+   When the user press double-click in some item (LBN_DBLCLK).
+*/
 void ListBox::onItemDoubleClick(Event& ev)
 {
   ItemDoubleClick(ev);
 }
 
-/// When the user changes the current selected item (LBN_SELCHANGE).
-/// 
+/**
+   When the user changes the current selected item (LBN_SELCHANGE).
+*/
 void ListBox::onSelChange(Event& ev)
 {
   SelChange(ev);
@@ -216,7 +227,7 @@ bool ListBox::onReflectedCommand(int id, int code, LRESULT& lResult)
   return false;
 }
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // DragListBox
 
 DragListBox::DragListBox(Widget* parent, Style style)
@@ -225,6 +236,6 @@ DragListBox::DragListBox(Widget* parent, Style style)
   BOOL res;
 
   res = MakeDragList(getHandle());
-  
+
   assert(res != FALSE);	// TODO throw exception
 }

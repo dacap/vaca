@@ -38,10 +38,11 @@
 
 namespace Vaca {
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 
-/// @see FontStyle
-/// 
+/**
+   @see FontStyle
+*/
 struct FontStyleEnumSet
 {
   enum enumeration {
@@ -53,21 +54,23 @@ struct FontStyleEnumSet
   };
 };
 
-/// A FontStyle can be one of the following values:
-/// @li FontStyle::Regular
-/// @li FontStyle::Bold
-/// @li FontStyle::Italic
-/// @li FontStyle::Underline
-/// @li FontStyle::Strikeout
-/// 
+/**
+   A FontStyle can be one of the following values:
+   @li FontStyle::Regular
+   @li FontStyle::Bold
+   @li FontStyle::Italic
+   @li FontStyle::Underline
+   @li FontStyle::Strikeout
+*/
 typedef EnumSet<FontStyleEnumSet> FontStyle;
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 
-/// Dimensions of a Font.
-/// 
-/// @see Graphics#getFontMetrics
-/// 
+/**
+   Dimensions of a Font.
+
+   @see Graphics#getFontMetrics
+*/
 class VACA_DLL FontMetrics
 {
   friend class Graphics;
@@ -85,19 +88,20 @@ public:
   int getLeading() const { return m_textMetric.tmInternalLeading; }
 };
 
-/// A shared pointer to a font that can be used in Graphics or Widget to
-/// draw text.
-/// 
-/// This is a SharedPtr, so if you copy instances of fonts they will be
-/// referencing to the same place. You can't clone fonts because you
-/// can't modify them.
-/// 
-/// @win32
-///   This is a @msdn{HFONT} wrapper.
-/// @endwin32
-/// 
-/// @see Graphics#setFont, Graphics#drawString
-/// 
+/**
+   A shared pointer to a font that can be used in Graphics or Widget to
+   draw text.
+
+   This is a SharedPtr, so if you copy instances of fonts they will be
+   referencing to the same place. You can't clone fonts because you
+   can't modify them.
+
+   @win32
+     This is a @msdn{HFONT} wrapper.
+   @endwin32
+
+   @see Graphics#setFont, Graphics#drawString
+*/
 class VACA_DLL Font : private SharedPtr<GdiObject<HFONT> >
 {
   friend class Application;

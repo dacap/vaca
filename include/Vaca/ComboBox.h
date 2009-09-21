@@ -39,9 +39,10 @@
 
 namespace Vaca {
 
-/// Combo box control. Widget to select an option from a drop down
-/// list.
-/// 
+/**
+   Combo box control. Widget to select an option from a drop down
+   list.
+*/
 class VACA_DLL ComboBox : public Widget
 {
   Size m_maxItemSize;
@@ -82,7 +83,7 @@ protected:
   // Events
   virtual void onPreferredSize(PreferredSizeEvent& ev);
   virtual void onLayout(LayoutEvent& ev);
-  
+
   // New events
   virtual void onSelChange(Event& ev);
   virtual void onEditChange(Event& ev);
@@ -93,7 +94,7 @@ protected:
 private:
   int getHeightForAllItems();
   void updateMaxItemSize(const String& text);
-  
+
 };
 
 } // namespace Vaca

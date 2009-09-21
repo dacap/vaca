@@ -61,12 +61,13 @@ public:
 
 };
 
-/// A couple of buttons to up or down a value.
-/// 
-/// @win32
-///   This is a wrapper for the @msdn{Up-Down} control.
-/// @endwin32
-/// 
+/**
+   A couple of buttons to up or down a value.
+
+   @win32
+     This is a wrapper for the @msdn{Up-Down} control.
+   @endwin32
+*/
 class VACA_DLL SpinButton : public Widget
 {
 public:
@@ -102,7 +103,7 @@ public:
   Signal1<void, SpinButtonEvent&> Change;
 //   Signal1<void, SpinButtonEvent&> BeforeChange;
 //   Signal1<void, SpinButtonEvent&> AfterChange;
-  
+
 protected:
   // Events
   virtual void onPreferredSize(PreferredSizeEvent& ev);

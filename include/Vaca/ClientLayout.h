@@ -37,10 +37,11 @@
 
 namespace Vaca {
 
-/// The more simplest Layout manager: positions all the widgets in the
-/// full client area. It's useful only if you have one child in the
-/// parent widget.
-/// 
+/**
+   The more simplest Layout manager: positions all the widgets in the
+   full client area. It's useful only if you have one child in the
+   parent widget.
+*/
 class VACA_DLL ClientLayout : public Layout
 {
   int m_border;
@@ -59,4 +60,3 @@ public:
 } // namespace Vaca
 
 #endif // VACA_CLIENTLAYOUT_H
-

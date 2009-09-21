@@ -38,7 +38,7 @@
 
 using namespace Vaca;
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // ComboBox
 
 ComboBox::ComboBox(Widget* parent, Style style)
@@ -51,10 +51,11 @@ ComboBox::~ComboBox()
 {
 }
 
-/// @win32
-///   It uses @msdn{CB_ADDSTRING} message.
-/// @endwin32
-/// 
+/**
+   @win32
+     It uses @msdn{CB_ADDSTRING} message.
+   @endwin32
+*/
 int ComboBox::addItem(const String& text)
 {
   int index = sendMessage(CB_ADDSTRING, 0, reinterpret_cast<LPARAM>(text.c_str()));
@@ -66,29 +67,32 @@ int ComboBox::addItem(const String& text)
   }
 }
 
-/// @win32
-///   It uses @msdn{CB_INSERTSTRING} message.
-/// @endwin32
-/// 
+/**
+   @win32
+     It uses @msdn{CB_INSERTSTRING} message.
+   @endwin32
+*/
 void ComboBox::insertItem(int itemIndex, const String& text)
 {
   sendMessage(CB_INSERTSTRING, itemIndex, reinterpret_cast<LPARAM>(text.c_str()));
   updateMaxItemSize(text);
 }
 
-/// @win32
-///   It uses @msdn{CB_DELETESTRING} message.
-/// @endwin32
-/// 
+/**
+   @win32
+     It uses @msdn{CB_DELETESTRING} message.
+   @endwin32
+*/
 void ComboBox::removeItem(int itemIndex)
 {
   sendMessage(CB_DELETESTRING, itemIndex, 0);
 }
 
-/// @win32
-///   It uses @msdn{CB_RESETCONTENT)} message.
-/// @endwin32
-/// 
+/**
+   @win32
+     It uses @msdn{CB_RESETCONTENT)} message.
+   @endwin32
+*/
 void ComboBox::removeAllItems()
 {
   sendMessage(CB_RESETCONTENT, 0, 0);
@@ -96,19 +100,21 @@ void ComboBox::removeAllItems()
   m_maxItemSize = Size(0, 0);
 }
 
-/// @win32
-///   This event is generated when @msdn{CB_GETCOUNT} message is received.
-/// @endwin32
-/// 
+/**
+   @win32
+     This event is generated when @msdn{CB_GETCOUNT} message is received.
+   @endwin32
+*/
 int ComboBox::getItemCount()
 {
   return sendMessage(CB_GETCOUNT, 0, 0);
 }
 
-/// @win32
-///   It uses @msdn{CB_GETLBTEXT} and @msdn{CB_GETLBTEXTLEN} messages.
-/// @endwin32
-/// 
+/**
+   @win32
+     It uses @msdn{CB_GETLBTEXT} and @msdn{CB_GETLBTEXTLEN} messages.
+   @endwin32
+*/
 String ComboBox::getItemText(int itemIndex)
 {
   int len = sendMessage(CB_GETLBTEXTLEN, itemIndex, 0);
@@ -134,13 +140,14 @@ void ComboBox::setItemText(int itemIndex, const String& text)
     setSelectedItem(itemIndex);
 }
 
-/// Returns the current selected item index. Returns -1
-/// if there aren't selection at all.
-///
-/// @win32
-///   It uses the @msdn{CB_GETCURSEL} message.
-/// @endwin32
-/// 
+/**
+   Returns the current selected item index. Returns -1
+   if there aren't selection at all.
+
+   @win32
+     It uses the @msdn{CB_GETCURSEL} message.
+   @endwin32
+*/
 int ComboBox::getSelectedItem()
 {
   int index = sendMessage(CB_GETCURSEL, 0, 0);
@@ -150,19 +157,21 @@ int ComboBox::getSelectedItem()
     return index;
 }
 
-/// Changes the current selected item to the @a itemIndex only.
-///
-/// @win32
-///   It uses the @msdn{CB_SETCURSEL} message.
-/// @endwin32
-/// 
+/**
+   Changes the current selected item to the @a itemIndex only.
+
+   @win32
+     It uses the @msdn{CB_SETCURSEL} message.
+   @endwin32
+*/
 void ComboBox::setSelectedItem(int itemIndex)
 {
   sendMessage(CB_SETCURSEL, itemIndex, 0);
 }
 
-/// Selects the item which its text begins with @a firstText.
-/// 
+/**
+   Selects the item which its text begins with @a firstText.
+*/
 void ComboBox::setSelectedItem(const String& firstText)
 {
   sendMessage(CB_SELECTSTRING,
@@ -213,7 +222,7 @@ void ComboBox::onPreferredSize(PreferredSizeEvent& ev)
 void ComboBox::onLayout(LayoutEvent& ev)
 {
   Widget::onLayout(ev);
-  
+
   if ((getStyle().regular & 3) <= 1) { // CBS_SIMPLE = 1
     // do nothing
   }
@@ -232,25 +241,27 @@ void ComboBox::onLayout(LayoutEvent& ev)
   }
 }
 
-/// When the user changes the current selected item.
-///
-/// @win32
-/// It is called when CBN_SELCHANGE notification is received.
-/// @endwin32
-///
+/**
+   When the user changes the current selected item.
+
+   @win32
+   It is called when CBN_SELCHANGE notification is received.
+   @endwin32
+*/
 void ComboBox::onSelChange(Event& ev)
 {
   SelChange(ev);
 }
 
-/// When the user changes the text of the ComboBox.
-///
-/// Only for combo-boxes with ComboBox::Styles::Editable.
-///
-/// @win32
-/// It is called when CBN_EDITCHANGE notification is received.
-/// @endwin32
-/// 
+/**
+   When the user changes the text of the ComboBox.
+
+   Only for combo-boxes with ComboBox::Styles::Editable.
+
+   @win32
+   It is called when CBN_EDITCHANGE notification is received.
+   @endwin32
+*/
 void ComboBox::onEditChange(Event& ev)
 {
   EditChange(ev);

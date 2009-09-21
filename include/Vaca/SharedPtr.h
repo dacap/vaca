@@ -37,22 +37,23 @@
 
 namespace Vaca {
 
-/// A pointer which maintains reference counting and
-/// automatically deletes the pointed object when it is
-/// no longer referenced.
-/// 
-/// What is a shared pointer? It is a class that wraps a pointer to a
-/// dynamically allocated object. Various shared pointers can share
-/// the same object counting references for that object. When the
-/// last shared pointer is destroyed, the object is automatically
-/// deleted.
-/// 
-/// The SharedPtr is mainly used to wrap classes that handle
-/// graphics resources (like Brush, Pen, Image, Icon, etc.).
-/// 
-/// @tparam T Must be of Referenceable type, because Referenceable has
-///           the reference counter.
-/// 
+/**
+   A pointer which maintains reference counting and
+   automatically deletes the pointed object when it is
+   no longer referenced.
+
+   What is a shared pointer? It is a class that wraps a pointer to a
+   dynamically allocated object. Various shared pointers can share
+   the same object counting references for that object. When the
+   last shared pointer is destroyed, the object is automatically
+   deleted.
+
+   The SharedPtr is mainly used to wrap classes that handle
+   graphics resources (like Brush, Pen, Image, Icon, etc.).
+
+   @tparam T Must be of Referenceable type, because Referenceable has
+	     the reference counter.
+*/
 template<class T>
 class SharedPtr
 {
@@ -132,20 +133,22 @@ private:
   }
 };
 
-/// Compares if two shared-pointers points to the same place (object, memory address).
-/// 
-/// @see @ref SharedPtr
-/// 
+/**
+   Compares if two shared-pointers points to the same place (object, memory address).
+
+   @see @ref SharedPtr
+*/
 template<class T>
 bool operator==(const SharedPtr<T>& ptr1, const SharedPtr<T>& ptr2)
 {
   return ptr1.get() == ptr2.get();
 }
 
-/// Compares if two shared-pointers points to different places (objects, memory addresses).
-/// 
-/// @see @ref SharedPtr
-/// 
+/**
+   Compares if two shared-pointers points to different places (objects, memory addresses).
+
+   @see @ref SharedPtr
+*/
 template<class T>
 bool operator!=(const SharedPtr<T>& ptr1, const SharedPtr<T>& ptr2)
 {

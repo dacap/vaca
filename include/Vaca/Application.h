@@ -37,12 +37,13 @@
 
 namespace Vaca {
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 
-/// It's like a namespace for ProcessPriority.
-/// 
-/// @see ProcessPriority
-/// 
+/**
+   It's like a namespace for ProcessPriority.
+
+   @see ProcessPriority
+*/
 struct ProcessPriorityEnum
 {
   enum enumeration {
@@ -54,37 +55,41 @@ struct ProcessPriorityEnum
   static const enumeration default_value = Normal;
 };
 
-/// Process priority.
-/// 
-/// One of the following values:
-/// @li ProcessPriority::Idle
-/// @li ProcessPriority::Normal
-/// @li ProcessPriority::High
-/// @li ProcessPriority::RealTime
-/// 
+/**
+   Process priority.
+
+   One of the following values:
+   @li ProcessPriority::Idle
+   @li ProcessPriority::Normal
+   @li ProcessPriority::High
+   @li ProcessPriority::RealTime
+*/
 typedef Enum<ProcessPriorityEnum> ProcessPriority;
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 
-/// The main class of Vaca: initializes and destroys the GUI library
-/// resources.
-/// 
-/// A program that uses Vaca library must to create one instance of
-/// this class, or an instance of a derived class.
-/// 
+/**
+   The main class of Vaca: initializes and destroys the GUI library
+   resources.
+
+   A program that uses Vaca library must to create one instance of
+   this class, or an instance of a derived class.
+*/
 class VACA_DLL Application : public Thread
 {
 private:
 
-  /// The @msdn{HINSTANCE}.
-  /// 
-  /// @internal
-  /// 
+  /**
+     The @msdn{HINSTANCE}.
+
+     @internal
+   */
   static HINSTANCE m_HINSTANCE;
 
-  /// The singleton, the only instance of Application (or a class
-  /// derived from Application) that a program can contain.
-  /// 
+  /**
+     The singleton, the only instance of Application (or a class
+     derived from Application) that a program can contain.
+   */
   static Application* m_instance;
 
 public:

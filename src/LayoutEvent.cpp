@@ -40,20 +40,22 @@ LayoutEvent::LayoutEvent(Widget* source, const Rect& bounds)
 {
 }
 
-/// Destroys the LayoutEvent.
-///
+/**
+   Destroys the LayoutEvent.
+*/
 LayoutEvent::~LayoutEvent()
 {
 }
 
-/// Returns the area where Widget#onLayout method should put children
-/// widgets.
-///
-/// It is generally the client bounds, but other widgets (like Tab)
-/// could reduce this rectangle to use a small area inside the widget.
-/// 
-/// @see Widget#getClientBounds
-/// 
+/**
+   Returns the area where Widget#onLayout method should put children
+   widgets.
+
+   It is generally the client bounds, but other widgets (like Tab)
+   could reduce this rectangle to use a small area inside the widget.
+
+   @see Widget#getClientBounds
+*/
 Rect LayoutEvent::getBounds() const
 {
   return m_bounds;

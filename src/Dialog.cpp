@@ -38,10 +38,11 @@
 
 using namespace Vaca;
 
-/// Creates a dialog using the default DialogClass.
-/// 
-/// @see doModal(), DialogStyle
-/// 
+/**
+   Creates a dialog using the default DialogClass.
+
+   @see doModal(), DialogStyle
+*/
 Dialog::Dialog(const String& title, Widget* parent, Style style)
   : Frame(WidgetClassName::None, title, parent, style)
 {
@@ -56,14 +57,15 @@ Dialog::Dialog(const String& title, Widget* parent, Style style)
   m_state = false;
 }
 
-/// Creates a dialog with a custom WNDCLASS. @a className can be NULL
-/// if you want to call Widget::create() by your self.
-/// 
+/**
+   Creates a dialog with a custom WNDCLASS. @a className can be NULL
+   if you want to call Widget::create() by your self.
+*/
 Dialog::Dialog(const WidgetClassName& className, const String& title, Widget* parent, Style style)
   : Frame(WidgetClassName::None, title, parent, style)
 {
   setDefWndProc(DefDlgProc);
-  
+
   if (className != WidgetClassName::None) {
     create(className, parent, style);
     setText(title);
@@ -91,19 +93,21 @@ Dialog::~Dialog()
 {
 }
 
-/// You can use this to set the doModal()'s return value.
-/// 
+/**
+   You can use this to set the doModal()'s return value.
+*/
 void Dialog::setReturnState(bool state)
 {
   m_state = state;
 }
 
-/// Executes the dialog in a local message loop, disabling the parent
-/// widget.
-/// 
-/// @return Should returns true if the user press the OK button, or
-///         false if the user press the Cancel/Close buttons.
-/// 
+/**
+   Executes the dialog in a local message loop, disabling the parent
+   widget.
+
+   @return Should returns true if the user press the OK button, or
+	   false if the user press the Cancel/Close buttons.
+*/
 bool Dialog::doModal()
 {
   setVisible(true);
@@ -113,8 +117,9 @@ bool Dialog::doModal()
   return m_state;
 }
 
-/// Calls Win32's IsDialogMessage.
-/// 
+/**
+   Calls Win32's IsDialogMessage.
+*/
 bool Dialog::preTranslateMessage(Message& message)
 {
   if (Frame::preTranslateMessage(message))
@@ -148,27 +153,28 @@ Widget* Dialog::getPreviousFocusableWidget(Widget* widget)
   return hwnd != NULL ? Widget::fromHandle(hwnd): NULL;
 }
 
-/// Hides the dialog, but before changes the return state
-/// (#setReturnState) to true, so #doModal returns true.
-/// 
-/// You can use this to bind the OK button action (Button#Click).
-/// Also, this function is automatically called when the Id#Ok command
-/// is processed by the dialog through #onCommand event.
-/// 
-/// Example:
-/// @code
-///   Dialog dlg(...);
-///   Button ok("&OK", &dlg);
-///   ok.Click.connect(Bind(&Dialog::onOk, &dlg));
-/// @endcode
-/// Or:
-/// @code
-///   Dialog dlg(...);
-///   Button ok("&OK", Dialog::Id::Ok, &dlg);
-/// @endcode
-/// 
-/// @see #onCancel
-/// 
+/**
+   Hides the dialog, but before changes the return state
+   (#setReturnState) to true, so #doModal returns true.
+
+   You can use this to bind the OK button action (Button#Click).
+   Also, this function is automatically called when the Id#Ok command
+   is processed by the dialog through #onCommand event.
+
+   Example:
+   @code
+     Dialog dlg(...);
+     Button ok("&OK", &dlg);
+     ok.Click.connect(Bind(&Dialog::onOk, &dlg));
+   @endcode
+   Or:
+   @code
+     Dialog dlg(...);
+     Button ok("&OK", Dialog::Id::Ok, &dlg);
+   @endcode
+
+   @see #onCancel
+*/
 void Dialog::onOk()
 {
   Ok();
@@ -176,29 +182,30 @@ void Dialog::onOk()
   setVisible(false);
 }
 
-/// Generates a #onClose event for the dialog, but before changes the
-/// return state (setReturnState) to false, so #doModal returns false
-/// too.
-/// 
-/// You can use this method to bind the Cancel button action
-/// (Button#Click). Anyway this function is automatically
-/// called when the Id#Cancel command is processed by the dialog
-/// through #onCommand event.
-/// 
-/// Example:
-/// @code
-///   Dialog dlg(...);
-///   Button cancel("&Cancel", &dlg);
-///   cancel.Click.connect(Bind(&Dialog::onCancel, &dlg));
-/// @endcode
-/// Or:
-/// @code
-///   Dialog dlg(...);
-///   Button cancel("&Cancel", Dialog::Id::Cancel, &dlg);
-/// @endcode
-/// 
-/// @see #onOk, #onClose
-/// 
+/**
+   Generates a #onClose event for the dialog, but before changes the
+   return state (setReturnState) to false, so #doModal returns false
+   too.
+
+   You can use this method to bind the Cancel button action
+   (Button#Click). Anyway this function is automatically
+   called when the Id#Cancel command is processed by the dialog
+   through #onCommand event.
+
+   Example:
+   @code
+     Dialog dlg(...);
+     Button cancel("&Cancel", &dlg);
+     cancel.Click.connect(Bind(&Dialog::onCancel, &dlg));
+   @endcode
+   Or:
+   @code
+     Dialog dlg(...);
+     Button cancel("&Cancel", Dialog::Id::Cancel, &dlg);
+   @endcode
+
+   @see #onOk, #onClose
+*/
 void Dialog::onCancel()
 {
   Cancel();

@@ -42,8 +42,8 @@
 
 namespace Vaca {
 
-//////////////////////////////////////////////////////////////////////
-  
+// ======================================================================
+
 struct FillRuleEnum
 {
   enum enumeration {
@@ -55,11 +55,12 @@ struct FillRuleEnum
 
 typedef Enum<FillRuleEnum> FillRule;
 
-/// Class to control a graphics context.
-/// 
-/// @warning
-///   This is a Win32's HDC wrapper.
-/// 
+/**
+   Class to control a graphics context.
+
+   @warning
+     This is a Win32's HDC wrapper.
+*/
 class VACA_DLL Graphics : private NonCopyable
 {
 
@@ -74,7 +75,7 @@ class VACA_DLL Graphics : private NonCopyable
   FillRule m_fillRule;
 
 protected:
-  
+
   Graphics();			// accessible through ScreenGraphics
 
 public:
@@ -97,22 +98,22 @@ public:
   bool isVisible(const Point& pt);
   bool isVisible(const Rect& rc);
 
-  //////////////////////////////////////////////////////////////////////
+  // ======================================================================
   // Font
 
   Font getFont() const;
   void setFont(Font font);
   void getFontMetrics(FontMetrics& fontMetrics);
 
-  //////////////////////////////////////////////////////////////////////
+  // ======================================================================
   // Pîxel
-  
+
   Color getPixel(const Point& pt);
   Color getPixel(int x, int y);
   void setPixel(const Point& pt, const Color& color);
   void setPixel(int x, int y, const Color& color);
 
-  //////////////////////////////////////////////////////////////////////
+  // ======================================================================
   // Low-level path routines
 
   double getMiterLimit() const;
@@ -129,14 +130,14 @@ public:
   void fillPath(const Brush& brush);
   void strokeAndFillPath(const Pen& pen, const Brush& brush);
 
-  //////////////////////////////////////////////////////////////////////
+  // ======================================================================
   // High-level path routines
 
   void strokePath(const GraphicsPath& path, const Pen& pen, const Point& pt);
   void fillPath(const GraphicsPath& path, const Brush& brush, const Point& pt);
   void strokeAndFillPath(const GraphicsPath& path, const Pen& pen, const Brush& brush, const Point& pt);
 
-  //////////////////////////////////////////////////////////////////////
+  // ======================================================================
 
   void drawString(const String& str, const Color& color, const Point& pt);
   void drawString(const String& str, const Color& color, int x, int y);
@@ -176,7 +177,7 @@ public:
   void drawChord(const Pen& pen, const Rect& rc, double startAngle, double sweepAngle);
   void drawChord(const Pen& pen, int x, int y, int w, int h, double startAngle, double sweepAngle);
   void drawPolyline(const Pen& pen, const std::vector<Point>& points);
-  
+
   void fillRect(const Brush& brush, const Rect& rc);
   void fillRect(const Brush& brush, int x, int y, int w, int h);
   void fillRoundRect(const Brush& brush, const Rect& rc, const Size& ellipse);
@@ -212,15 +213,16 @@ public:
 private:
 
   void initialize();
-  
+
   void drawBezier(const Pen& pen, CONST POINT* lppt, int numPoints);
   void drawBezierTo(const Pen& pen, CONST POINT* lppt, int numPoints);
   void drawPolyline(const Pen& pen, CONST POINT* lppt, int numPoints);
-  
+
 };
 
-/// Class to draw directly in the screen.
-/// 
+/**
+   Class to draw directly in the screen.
+*/
 class VACA_DLL ScreenGraphics : public Graphics
 {
 public:

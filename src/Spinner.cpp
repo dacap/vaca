@@ -96,24 +96,27 @@ void Spinner::setValue(int posValue)
   m_spin.setValue(posValue);
 }
 
-/// Returns the radix base used in TextEdit widget.
-/// 
+/**
+   Returns the radix base used in TextEdit widget.
+*/
 int Spinner::getBase()
 {
   return m_spin.getBase();
 }
 
-/// Sets the radix base to be used in the TextEdit widget. This can be
-/// 10 for decimal or 16 for hexadecimal.
-/// 
+/**
+   Sets the radix base to be used in the TextEdit widget. This can be
+   10 for decimal or 16 for hexadecimal.
+*/
 void Spinner::setBase(int base)
 {
   m_spin.setBase(base);
 }
 
-/// Fills @a sz with the size of both controls for the width and the
-/// maximun height of both controls.
-/// 
+/**
+   Fills @a sz with the size of both controls for the width and the
+   maximun height of both controls.
+*/
 void Spinner::onPreferredSize(PreferredSizeEvent& ev)
 {
   Size edit(m_edit.getPreferredSize());
@@ -123,9 +126,10 @@ void Spinner::onPreferredSize(PreferredSizeEvent& ev)
 		      max_value(edit.h, spin.h));
 }
 
-/// Positions the children: the spin button at the right of the edit
-/// control to connect theirs edges and to see it like a whole control.
-/// 
+/**
+   Positions the children: the spin button at the right of the edit
+   control to connect theirs edges and to see it like a whole control.
+*/
 void Spinner::onLayout(LayoutEvent& ev)
 {
   Rect bounds = ev.getBounds();

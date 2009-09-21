@@ -44,8 +44,9 @@ using namespace Vaca;
 #define BIX_DEFAULT_BORDER		0
 #define BIX_DEFAULT_CHILD_SPACING	4
 
-/// @internal Internal element
-/// 
+/**
+   @internal Internal element
+*/
 struct Bix::Element
 {
   virtual ~Element() { }
@@ -55,8 +56,9 @@ struct Bix::Element
   virtual void setBounds(Bix* bix, const Rect& rc) = 0;
 };
 
-/// @internal Internal matrix element
-/// 
+/**
+   @internal Internal matrix element
+*/
 struct Bix::SubBixElement : public Bix::Element
 {
   Bix* bix;
@@ -68,8 +70,9 @@ struct Bix::SubBixElement : public Bix::Element
   virtual void setBounds(Bix* parentBix, const Rect& rc) { bix->layout(parentBix, rc); }
 };
 
-/// @internal Internal widget element
-/// 
+/**
+   @internal Internal widget element
+*/
 struct Bix::WidgetElement : public Bix::Element
 {
   Widget* widget;
@@ -86,8 +89,9 @@ struct Bix::WidgetElement : public Bix::Element
   virtual void setBounds(Bix* parentBix, const Rect& rc) { parentBix->moveWidget(widget, rc); }
 };
 
-/// @internal Internal matrix to arrange elements
-/// 
+/**
+   @internal Internal matrix to arrange elements
+*/
 struct Bix::Matrix
 {
   int cols, rows;
@@ -137,7 +141,7 @@ struct Bix::Matrix
     if (e->getFlags() & BixFillY) row_fill[y] = true;
   }
 
-  
+
   int getColFillsCount()
   {
     register int x, count = 0;
@@ -163,7 +167,7 @@ struct Bix::Matrix
   void calcCellsSize(const Size& fitIn)
   {
     register int x, y;
-  
+
     // get the preferred size of each element in the matrix
     for (y=0; y<rows; ++y)
       for (x=0; x<cols; ++x)
@@ -185,7 +189,7 @@ struct Bix::Matrix
 
 };
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // Bix
 
 Bix::Bix(int flags, int matrixColumns)
@@ -204,22 +208,25 @@ Bix::~Bix()
   m_elements.clear();
 }
 
-/// Returns true if it's a horizontal Bix (row vector).
-/// 
+/**
+   Returns true if it's a horizontal Bix (row vector).
+*/
 bool Bix::isRow()
 {
   return (m_flags & BixTypeMask) == BixRow;
 }
 
-/// Returns true if it's a vertical Bix (column vector).
-/// 
+/**
+   Returns true if it's a vertical Bix (column vector).
+*/
 bool Bix::isCol()
 {
   return (m_flags & BixTypeMask) == BixCol;
 }
 
-/// Returns true if this Bix is a matrix.
-/// 
+/**
+   Returns true if this Bix is a matrix.
+*/
 bool Bix::isMat()
 {
   return (m_flags & BixTypeMask) == BixMat;
@@ -265,19 +272,21 @@ void Bix::setBorder(int border)
   m_border = border;
 }
 
-/// Returns the space between each child.
-/// 
+/**
+   Returns the space between each child.
+*/
 int Bix::getChildSpacing()
 {
   return m_childSpacing;
 }
 
-/// Sets the space between each child.
-/// 
-/// @param childSpacing
-/// 	Spacing between one child and another (specified
-/// 	in pixels)
-/// 
+/**
+   Sets the space between each child.
+
+   @param childSpacing
+   	Spacing between one child and another (specified
+   	in pixels)
+*/
 void Bix::setChildSpacing(int childSpacing)
 {
   m_childSpacing = childSpacing;
@@ -293,17 +302,18 @@ void Bix::setMatrixColumns(int matrixColumns)
   m_cols = matrixColumns;
 }
 
-/// Adds a subbix (a child) with the specified flags.
-/// 
-/// @param flags
-/// 	TODO docme
-/// 
-/// @param matrixColumns
-/// 	TODO docme
-/// 
-/// @warning The returned Bix can't be deleted (it's automatically
-///          deleted by the parent bix).
-/// 
+/**
+   Adds a subbix (a child) with the specified flags.
+
+   @param flags
+   	TODO docme
+
+   @param matrixColumns
+   	TODO docme
+
+   @warning The returned Bix can't be deleted (it's automatically
+	    deleted by the parent bix).
+*/
 Bix* Bix::add(int flags, int matrixColumns)
 {
   Bix* subbix = new Bix(flags, matrixColumns);
@@ -367,7 +377,7 @@ Size Bix::getPreferredSize(const Size& fitIn)
   Size matDim = getMatrixDimension();
   if (matDim.w > 0 && matDim.h > 0) {
     Matrix mat(matDim.w, matDim.h);
-    
+
     fillMatrix(mat);
     mat.calcCellsSize(fitIn);
 
@@ -496,7 +506,7 @@ void Bix::layout(Bix* parentBix, const Rect& rc)
 	}
       }
     }
-    
+
     // setup child bounds
     Point pt(0, rc.y+m_border);
 
@@ -579,7 +589,7 @@ void Bix::fillMatrix(Matrix& mat)
     // a row
     case BixRow: {
       int x = 0;
-      
+
       for (Elements::iterator it=m_elements.begin(); it!=m_elements.end(); ++it) {
 	if (!(*it)->isLayoutFree())
 	  mat.setElementAt(x++, 0, *it);
@@ -626,59 +636,60 @@ void Bix::fillMatrix(Matrix& mat)
 //                         String Parser
 // ==================================================================
 
-/// @brief Creates a complete Bix with a specific formatted-string and
-///        a list of widgets.
-/// 
-/// Format of the string:
-/// @li "X[...]"    Creates a row-vector to distribute components in horizontal way, each one separated by comma (,).
-/// @li "Y[...]"    Creates a column-vector to distribute components in vertical way.
-/// @li "XY[...]"   Creates a matrix to distribute components in a matricial way (each column separated with ',' and each row with ';').
-/// @li "%"         Gets a widget from the @c ... paramenters.
-/// @li "f..."      Activates the BixFill flag for the next element (e.g.: "fX[...]" or "f%").
-/// @li "fx..."     Activates the BixFillX flag for the next element.
-/// @li "fy..."     Activates the BixFillY flag for the next element.
-/// @li "e..."      Activates the BixEven flag for the next element (e.g.: "eY[...]" or "e%").
-/// @li "ex..."     Activates the BixEvenX flag for the next element.
-/// @li "ey..."     Activates the BixEvenY flag for the next element.
-/// 
-/// Example:
-/// @code
-/// Dialog dlg("Test");
-/// Label nameL("Username:", &dlg);
-/// Label passL("Password:", &dlg);
-/// TextEdit name("", &dlg);
-/// TextEdit pass("", &dlg, TextEdit::Styles::Password);
-/// Button ok("OK", &dlg);
-/// Button cancel("Cancel", &dlg);
-/// 
-/// name.setPreferredSize(128, name.getPreferredSize().h);
-/// pass.setPreferredSize(128, pass.getPreferredSize().h);
-/// 
-/// // See explanation below 
-/// dlg.setLayout(Bix::parse("Y[XY[%,f%;%,f%],X[fX[],eX[%,%]]]",
-///                          &nameL, &name,
-///                          &passL, &pass,
-///                          &ok, &cancel));
-/// 
-/// dlg.setSize(dlg.getPreferredSize());
-/// dlg.setVisible(true);
-/// @endcode
-/// In this case the @a fmt = @c "Y[XY[%,f%;%,f%],X[fX[],eX[%,%]]]", which
-/// means:
-/// @li the first "Y[...]" is a column, so the next two elements ("XY[...],X[...]")
-///     will be arranged one below the other.
-/// @li then "XY[%,f%;%,f%]" is a grid of 2x2, where each '%' is a reference
-///     to the next widget in the ... arguments (in this case @c nameL,
-///     @c name, @c passL, and @c pass)
-/// @li "X[fX[],eX[%,%]]" is a row with two elements, the first one is
-///     a dummy filler "fX[]", that "eats" the left-side available space,
-///     then "eX[%,%]" is a sub-row that arranges two widgets (@c ok, @c cancel)
-///     with same width and height ('e' means BixEven), so both buttons will
-///     have the same size.
-/// 
-/// @throw ParseException
-///   Thrown when the syntax of the string @a fmt is ill-formed.
-/// 
+/**
+   @brief Creates a complete Bix with a specific formatted-string and
+	  a list of widgets.
+
+   Format of the string:
+   @li "X[...]"    Creates a row-vector to distribute components in horizontal way, each one separated by comma (,).
+   @li "Y[...]"    Creates a column-vector to distribute components in vertical way.
+   @li "XY[...]"   Creates a matrix to distribute components in a matricial way (each column separated with ',' and each row with ';').
+   @li "%"         Gets a widget from the @c ... paramenters.
+   @li "f..."      Activates the BixFill flag for the next element (e.g.: "fX[...]" or "f%").
+   @li "fx..."     Activates the BixFillX flag for the next element.
+   @li "fy..."     Activates the BixFillY flag for the next element.
+   @li "e..."      Activates the BixEven flag for the next element (e.g.: "eY[...]" or "e%").
+   @li "ex..."     Activates the BixEvenX flag for the next element.
+   @li "ey..."     Activates the BixEvenY flag for the next element.
+
+   Example:
+   @code
+   Dialog dlg("Test");
+   Label nameL("Username:", &dlg);
+   Label passL("Password:", &dlg);
+   TextEdit name("", &dlg);
+   TextEdit pass("", &dlg, TextEdit::Styles::Password);
+   Button ok("OK", &dlg);
+   Button cancel("Cancel", &dlg);
+
+   name.setPreferredSize(128, name.getPreferredSize().h);
+   pass.setPreferredSize(128, pass.getPreferredSize().h);
+
+   // See explanation below
+   dlg.setLayout(Bix::parse("Y[XY[%,f%;%,f%],X[fX[],eX[%,%]]]",
+			    &nameL, &name,
+			    &passL, &pass,
+			    &ok, &cancel));
+
+   dlg.setSize(dlg.getPreferredSize());
+   dlg.setVisible(true);
+   @endcode
+   In this case the @a fmt = @c "Y[XY[%,f%;%,f%],X[fX[],eX[%,%]]]", which
+   means:
+   @li the first "Y[...]" is a column, so the next two elements ("XY[...],X[...]")
+       will be arranged one below the other.
+   @li then "XY[%,f%;%,f%]" is a grid of 2x2, where each '%' is a reference
+       to the next widget in the ... arguments (in this case @c nameL,
+       @c name, @c passL, and @c pass)
+   @li "X[fX[],eX[%,%]]" is a row with two elements, the first one is
+       a dummy filler "fX[]", that "eats" the left-side available space,
+       then "eX[%,%]" is a sub-row that arranges two widgets (@c ok, @c cancel)
+       with same width and height ('e' means BixEven), so both buttons will
+       have the same size.
+
+   @throw ParseException
+     Thrown when the syntax of the string @a fmt is ill-formed.
+*/
 Bix* Bix::parse(const Char* fmt, ...)
 {
 #define PARSE_ASSERT(condition, error)				\
@@ -697,7 +708,7 @@ Bix* Bix::parse(const Char* fmt, ...)
   ++n_column, ++p
 
   // ----------------------------------------
-  
+
   Bix* mainBix = NULL;		// first Bix created
   Bix* newBix = NULL;		// current new Bix
   std::stack<Bix*> bixes;	// current stack of bixes
@@ -782,7 +793,7 @@ Bix* Bix::parse(const Char* fmt, ...)
 	    }
 	    fill = 0;
 	    break;
-	
+
 	    // column
 	  case L'Y':
 	    if (mainBix != NULL)
@@ -801,7 +812,7 @@ Bix* Bix::parse(const Char* fmt, ...)
 
 	    delete columns.top();
 	    columns.pop();
-	  
+
 	    expectClose = true;
 	    break;
 

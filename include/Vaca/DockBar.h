@@ -41,8 +41,9 @@
 
 namespace Vaca {
 
-/// Represents the Win32 class used by DockBar.
-/// 
+/**
+   Represents the Win32 class used by DockBar.
+*/
 class DockBarClass : public WidgetClass
 {
 public:
@@ -50,12 +51,13 @@ public:
   { return WidgetClassName(L"Vaca.DockBar"); }
 };
 
-/// A dockable bar. Each dock bar as two possible states: docked or
-/// floating. When it's floating, the DockBar is inside a DockFrame,
-/// when the DockBar is docked, it's inside a DockArea.
-/// 
-/// @see ToolBar
-/// 
+/**
+   A dockable bar. Each dock bar as two possible states: docked or
+   floating. When it's floating, the DockBar is inside a DockFrame,
+   when the DockBar is docked, it's inside a DockArea.
+
+   @see ToolBar
+*/
 class VACA_DLL DockBar : public Register<DockBarClass>, public Widget
 {
   // TODO less friendship here
@@ -64,29 +66,34 @@ class VACA_DLL DockBar : public Register<DockBarClass>, public Widget
 
   struct DragInfo;
 
-  /// In what DockArea is the DockBar docked? It's != NULL only if the
-  /// DockBar is docked.
-  /// 
+  /**
+     In what DockArea is the DockBar docked? It's != NULL only if the
+     DockBar is docked.
+  */
   DockArea* m_dockArea;
 
-  /// The DockFrame that contains the DockBar when it's floating. It's
-  /// != NULL only if the DockBar is floating.
-  /// 
+  /**
+     The DockFrame that contains the DockBar when it's floating. It's
+     != NULL only if the DockBar is floating.
+  */
   DockFrame* m_dockFrame;
 
-  /// Drag stuff. Not NULL means that the user is dragging the DockBar.
-  /// 
+  /**
+     Drag stuff. Not NULL means that the user is dragging the DockBar.
+  */
   DragInfo* m_drag;
 
-  /// The Frame that own the DockBar. This owner generally should have
-  /// some DockArea to dock the DockBar, but isn't obligatory.
-  /// 
+  /**
+     The Frame that own the DockBar. This owner generally should have
+     some DockArea to dock the DockBar, but isn't obligatory.
+  */
   Frame* m_owner;
 
-  /// Information of the DockBar when it's docked (or the information
-  /// about the last docked position). This can be a derived class of
-  /// DockInfo, used by your own DockArea (like BandedDockArea does).
-  /// 
+  /**
+     Information of the DockBar when it's docked (or the information
+     about the last docked position). This can be a derived class of
+     DockInfo, used by your own DockArea (like BandedDockArea does).
+  */
   DockInfo* m_dockInfo;
 
   bool m_fullDrag;
@@ -155,7 +162,7 @@ private:
   void beginDrag();
   void dragBar();
   void endDrag();
-  
+
   void cleanUp();
   void cleanFrame();
   void focusOwner();

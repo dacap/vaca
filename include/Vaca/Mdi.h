@@ -37,13 +37,15 @@
 
 namespace Vaca {
 
-/// ID for the first MdiChild. These IDs are used internally by Win32
-/// and the MdiListMenu.
-/// 
+/**
+   ID for the first MdiChild. These IDs are used internally by Win32
+   and the MdiListMenu.
+*/
 #define VACA_FIRST_MDICHILD 0xff00
 
-/// Represents the Win32 class used by MdiChild.
-/// 
+/**
+   Represents the Win32 class used by MdiChild.
+*/
 class MdiChildClass : public WidgetClass
 {
 public:
@@ -51,9 +53,10 @@ public:
   { return WidgetClassName(L"Vaca.MdiChild"); }
 };
 
-/// Controls a child window for a MdiClient. Represent a Frame inside a
-/// MdiClient.
-/// 
+/**
+   Controls a child window for a MdiClient. Represent a Frame inside a
+   MdiClient.
+*/
 class VACA_DLL MdiChild : public Register<MdiChildClass>, public Frame
 {
   void initialize();
@@ -79,8 +82,9 @@ private:
 //   virtual void destroyHWND(HWND hwnd);
 };
 
-/// Widget which its client area contains MdiChild windows.
-/// 
+/**
+   Widget which its client area contains MdiChild windows.
+*/
 class VACA_DLL MdiClient : public Widget
 {
 public:
@@ -113,15 +117,16 @@ private:
   virtual HWND createHandle(LPCTSTR className, Widget* parent, Style style);
 };
 
-/// Default implementation to use the MDI interface.
-///
-/// You can use this kind of Frame when you want MDI applications.
-///
-/// @win32
-///   It takes care of a MdiClient and uses the @msdn{DefFrameProc} of
-///   the Windows API as default message handler.
-/// @endwin32
-/// 
+/**
+   Default implementation to use the MDI interface.
+
+   You can use this kind of Frame when you want MDI applications.
+
+   @win32
+     It takes care of a MdiClient and uses the @msdn{DefFrameProc} of
+     the Windows API as default message handler.
+   @endwin32
+*/
 class VACA_DLL MdiFrame : public Frame
 {
   friend class Frame;

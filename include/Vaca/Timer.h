@@ -39,17 +39,18 @@
 
 namespace Vaca {
 
-/// Class to schedule events every @e x milliseconds.
-/// 
-/// @warning
-///   The Tick event is generated in the same thread which was
-///   created the Timer.
-/// 
-/// @win32
-///   It doesn't use @msdn{WM_TIMER} message. In Vaca all timers
-///   are controlled in a separated thread for this specific purpose.
-/// @endwin32
-/// 
+/**
+   Class to schedule events every @e x milliseconds.
+
+   @warning
+     The Tick event is generated in the same thread which was
+     created the Timer.
+
+   @win32
+     It doesn't use @msdn{WM_TIMER} message. In Vaca all timers
+     are controlled in a separated thread for this specific purpose.
+   @endwin32
+*/
 class VACA_DLL Timer : private NonCopyable
 {
   friend class Application;
@@ -91,7 +92,7 @@ private:
   static void stop_timer_thread();
   static void remove_timer(Timer* t);
   static void fire_timers_for_thread();
-  
+
 };
 
 } // namespace Vaca

@@ -39,8 +39,9 @@ ResizeEvent::ResizeEvent(Component* source, const Size& size)
 {
 }
 
-/// Destroys the ResizeEvent.
-///
+/**
+   Destroys the ResizeEvent.
+*/
 ResizeEvent::~ResizeEvent()
 {
 }

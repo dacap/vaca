@@ -38,21 +38,23 @@
 
 namespace Vaca {
 
-/// Data for an event that comes from the keyboard.
-/// 
+/**
+   Data for an event that comes from the keyboard.
+*/
 class VACA_DLL KeyEvent : public ConsumableEvent
 {
-  /// Virtual-key code.
-  ///
-  /// @see #getKeyCode, Keys
-  ///
+  /**
+     Virtual-key code.
+
+     @see #getKeyCode, Keys
+  */
   int m_keys;
 
-  ///
-  /// Character-key code.
-  ///
-  /// @see #getCharCode
-  ///
+  /**
+     Character-key code.
+
+     @see #getCharCode
+  */
   Char m_charCode;
 
 public:

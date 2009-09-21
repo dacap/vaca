@@ -38,10 +38,11 @@
 
 namespace Vaca {
 
-/// A common dialog box to select fonts.
-/// 
-/// @see Font
-/// 
+/**
+   A common dialog box to select fonts.
+
+   @see Font
+*/
 class VACA_DLL FontDialog : public CommonDialog
 {
   Font m_font;

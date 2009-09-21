@@ -43,15 +43,17 @@ CancelableEvent::~CancelableEvent()
 {
 }
 
-/// Cancels the event.
-/// 
+/**
+   Cancels the event.
+*/
 void CancelableEvent::cancel()
 {
   m_canceled = true;
 }
 
-/// The event was canceled.
-/// 
+/**
+   The event was canceled.
+*/
 bool CancelableEvent::isCanceled() const
 {
   return m_canceled;

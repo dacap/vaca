@@ -34,16 +34,17 @@
 
 using namespace Vaca;
 
-/// Creates a new ChildEvent specifying that @a child was added or
-/// removed in @a source.
-///
-/// @param source
-///   Parent widget.
-/// @param child
-///   Child widget that was added or removed from the parent @a source widget.
-/// @param add
-///   True if the @a child was added, or false if it was removed from @a source.
-///
+/**
+   Creates a new ChildEvent specifying that @a child was added or
+   removed in @a source.
+
+   @param source
+     Parent widget.
+   @param child
+     Child widget that was added or removed from the parent @a source widget.
+   @param add
+     True if the @a child was added, or false if it was removed from @a source.
+*/
 ChildEvent::ChildEvent(Widget* source, Widget* child, bool add)
   : Event(source)
   , m_child(child)
@@ -51,36 +52,40 @@ ChildEvent::ChildEvent(Widget* source, Widget* child, bool add)
 {
 }
 
-/// Destroys the ChildEvent.
-///
+/**
+   Destroys the ChildEvent.
+*/
 ChildEvent::~ChildEvent()
 {
 }
 
-/// Returns true if this event specifies that child widget was added in
-/// the source.
-/// 
-/// @see Event#getSource, #getChild
-///
+/**
+   Returns true if this event specifies that child widget was added in
+   the source.
+
+   @see Event#getSource, #getChild
+*/
 bool ChildEvent::isAdd() const
 {
   return m_add;
 }
 
-/// Returns true if this event specifies that child widget was removed
-/// from the source.
-///
-/// @see Event#getSource, #getChild
-///
+/**
+   Returns true if this event specifies that child widget was removed
+   from the source.
+
+   @see Event#getSource, #getChild
+*/
 bool ChildEvent::isRemove() const
 {
   return !m_add;
 }
 
-/// Returns the widget that was added or removed from the source of the event.
-///
-/// @see Event#getSource
-///
+/**
+   Returns the widget that was added or removed from the source of the event.
+
+   @see Event#getSource
+*/
 Widget* ChildEvent::getChild() const
 {
   return m_child;

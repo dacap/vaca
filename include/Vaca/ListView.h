@@ -41,10 +41,11 @@
 
 namespace Vaca {
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 
-/// @see ListViewType
-/// 
+/**
+   @see ListViewType
+*/
 struct ListViewTypeEnum
 {
   enum enumeration {
@@ -56,17 +57,20 @@ struct ListViewTypeEnum
   static const enumeration default_value = List;
 };
 
-/// 
+/**
+   Kind of ListView.
+ */
 typedef Enum<ListViewTypeEnum> ListViewType;
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 
 typedef std::vector<ListItem*> ListItemList;
 typedef std::vector<ListColumn*> ListColumnList;
 
-/// A ListView control.
-/// 
-class VACA_DLL ListView : public Widget 
+/**
+   A ListView control.
+*/
+class VACA_DLL ListView : public Widget
 {
   ListItemList m_items;
   ListColumnList m_columns;
@@ -74,8 +78,9 @@ class VACA_DLL ListView : public Widget
   ImageList m_smallImageList;
   ImageList m_stateImageList;
 
-  /// To use LPSTR_TEXTCALLBACK we need some space
-  /// to allocate text temporally.
+  /**
+     To use LPSTR_TEXTCALLBACK we need some space to allocate text temporally.
+  */
   String m_tmpBuffer;
 
 public:
@@ -155,8 +160,9 @@ private:
 
 };
 
-/// Event where interact a ListView.
-/// 
+/**
+   Event where interact a ListView.
+*/
 class ListViewEvent : public CancelableEvent
 {
   ListItem* m_item;

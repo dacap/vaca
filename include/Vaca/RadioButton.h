@@ -37,23 +37,26 @@
 namespace Vaca {
 
 typedef std::vector<RadioButton*> RadioButtonList;
-  
-/// Groups a set of @link Vaca::RadioButton RadioButtons@endlink. It's used to known
-/// which RadioButton should be desactived when the user select a
-/// RadioButton of its same group.
-/// 
+
+/**
+   Groups a set of @link Vaca::RadioButton RadioButtons@endlink. It's used to known
+   which RadioButton should be desactived when the user select a
+   RadioButton of its same group.
+*/
 class VACA_DLL RadioGroup : public NonCopyable
 {
   friend class RadioButton;
 
-  /// Unique ID of the group.
-  /// 
-  /// @internal You never use (get or set) this value.
-  /// 
+  /**
+     Unique ID of the group.
+
+     @internal You never use (get or set) this value.
+  */
   unsigned int m_groupId;
 
-  /// Members in the group.
-  /// 
+  /**
+     Members in the group.
+  */
   RadioButtonList m_members;
 
 public:
@@ -77,14 +80,15 @@ private:
   void removeMember(RadioButton* currentMember);
 };
 
-/// A radio button.
-/// 
-/// @image html RadioButton.png
-/// 
-/// @warning
-///   Win32: It is not a BS_AUTORADIOBUTTON, it's only an
-///   BS_RADIOBUTTON (so you can't get @msdn{Q261192} bug).
-/// 
+/**
+   A radio button.
+
+   @image html RadioButton.png
+
+   @warning
+     Win32: It is not a BS_AUTORADIOBUTTON, it's only an
+     BS_RADIOBUTTON (so you can't get @msdn{Q261192} bug).
+*/
 class VACA_DLL RadioButton : public ButtonBase
 {
   RadioGroup& m_radioGroup;

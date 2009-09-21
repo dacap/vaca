@@ -50,7 +50,7 @@ static bool WidgetIsExpansive(Widget* widget)
   return boxConstraint->isExpansive();
 }
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // BoxLayout
 
 BoxLayout::BoxLayout(Orientation orientation,

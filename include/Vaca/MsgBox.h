@@ -47,8 +47,9 @@
 
 namespace Vaca {
 
-/// Class to show a message box.
-/// 
+/**
+   Class to show a message box.
+*/
 class VACA_DLL MsgBox
 {
 public:
@@ -91,7 +92,7 @@ public:
   typedef Enum<TypeEnum> Type;
   typedef Enum<IconEnum> Icon;
   typedef Enum<ResultEnum> Result;
-  
+
 public:
 
   static Result show(Widget* parent,

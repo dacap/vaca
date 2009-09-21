@@ -43,8 +43,9 @@ namespace Vaca {
 
 typedef std::vector<MenuItem*> MenuItemList;
 
-/// A menu item.
-/// 
+/**
+   A menu item.
+*/
 class VACA_DLL MenuItem : public Component
 {
   friend class Frame;
@@ -97,8 +98,9 @@ private:
   void updateFromCommand(Command* cmd);
 };
 
-/// A separator for menu items.
-/// 
+/**
+   A separator for menu items.
+*/
 class VACA_DLL MenuSeparator : public MenuItem
 {
 public:
@@ -123,8 +125,9 @@ public:
 //     virtual ~RadioButtonMenuItem();
 //   };
 
-/// A container of menu items.
-/// 
+/**
+   A container of menu items.
+*/
 class VACA_DLL Menu : public MenuItem
 {
   HMENU m_handle;
@@ -170,8 +173,9 @@ private:
   void subClass();
 };
 
-/// A menu bar, has a collection of Menus.
-/// 
+/**
+   A menu bar, has a collection of Menus.
+*/
 class VACA_DLL MenuBar : public Menu
 {
   friend class Frame;
@@ -207,8 +211,9 @@ public:
 
 };
 
-/// A menu that has the list of all MdiChild.
-/// 
+/**
+   A menu that has the list of all MdiChild.
+*/
 class VACA_DLL MdiListMenu : public Menu
 {
 public:

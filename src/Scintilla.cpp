@@ -41,10 +41,11 @@ using namespace Vaca;
 
 HINSTANCE SciRegister::hmod = NULL;
 
-/// Tries to load the SciLexer or Scintilla DLLs.
-/// 
-/// @throw RegisterException If both DLLs are not found.
-/// 
+/**
+   Tries to load the SciLexer or Scintilla DLLs.
+
+   @throw RegisterException If both DLLs are not found.
+*/
 SciRegister::SciRegister()
 {
   if (hmod == NULL) {
@@ -73,10 +74,11 @@ SciEdit::~SciEdit()
 {
 }
 
-/// Sets the font used to paint text inside the editor. WARNING: this
-/// sets the default style of the Scintilla editor (see for
-/// STYLE_DEFAULT in the Scintilla documentation).
-/// 
+/**
+   Sets the font used to paint text inside the editor. WARNING: this
+   sets the default style of the Scintilla editor (see for
+   STYLE_DEFAULT in the Scintilla documentation).
+*/
 void SciEdit::setFont(Font font)
 {
   Widget::setFont(font);
@@ -97,9 +99,9 @@ void SciEdit::setFont(Font font)
   }
 }
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // Text retrieval and modification
-
+
 String SciEdit::getText() const
 {
   int length = const_cast<SciEdit*>(this)->sendMessage(SCI_GETLENGTH, 0, 0);
@@ -124,9 +126,10 @@ void SciEdit::setSavePoint()
   sendMessage(SCI_SETSAVEPOINT, 0, 0);
 }
 
-/// Returns a lien of text. Line 0 is the first line. The text returned
-/// includes the new line character.
-/// 
+/**
+   Returns a lien of text. Line 0 is the first line. The text returned
+   includes the new line character.
+*/
 String SciEdit::getLine(int line) const
 {
   int length = getLineLength(line);
@@ -157,31 +160,35 @@ bool SciEdit::getReadOnly() const
   return const_cast<SciEdit*>(this)->sendMessage(SCI_GETREADONLY, 0, 0) != 0;
 }
 
-/// Adds the first @c length characters of @c str string at the current
-/// position of the document.
-/// 
+/**
+   Adds the first @c length characters of @c str string at the current
+   position of the document.
+*/
 void SciEdit::addText(const char* str, int length)
 {
   sendMessage(SCI_ADDTEXT, length, reinterpret_cast<LPARAM>(str));
 }
 
-/// Adds the string @c str at the current position of the document.
-/// 
+/**
+   Adds the string @c str at the current position of the document.
+*/
 void SciEdit::addText(const String& str)
 {
   sendMessage(SCI_ADDTEXT, str.size(), reinterpret_cast<LPARAM>(str.c_str()));
 }
 
-/// Adds the first @c length characters of @c str string to the end of
-/// the document.
-/// 
+/**
+   Adds the first @c length characters of @c str string to the end of
+   the document.
+*/
 void SciEdit::appendText(const char* str, int length)
 {
   sendMessage(SCI_APPENDTEXT, length, reinterpret_cast<LPARAM>(str));
 }
 
-/// Adds the string @c str to the end of the document.
-/// 
+/**
+   Adds the string @c str to the end of the document.
+*/
 void SciEdit::appendText(const String& str)
 {
   sendMessage(SCI_APPENDTEXT, str.size(), reinterpret_cast<LPARAM>(str.c_str()));
@@ -202,9 +209,8 @@ char SciEdit::getCharAt(int pos) const
   return (char)const_cast<SciEdit*>(this)->sendMessage(SCI_GETCHARAT, pos, 0);
 }
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // Searching
-
 
 void SciEdit::searchAnchor()
 {
@@ -224,9 +230,9 @@ bool SciEdit::searchPrev(int flags, String& str)
 		     reinterpret_cast<LPARAM>(str.c_str())) >= 0;
 }
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // Searching and replace using target
-
+
 // bool SciEdit::findText(const String& str, bool matchCase, bool wholeWord)
 // {
 //   int pos = sendMessage(SCI_SEARCHNEXT,
@@ -257,9 +263,9 @@ bool SciEdit::searchPrev(int flags, String& str)
 // //   return true;
 // }
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // Overtype (overwrite-mode)
-
+
 void SciEdit::setOverwriteMode(bool state)
 {
   sendMessage(SCI_SETOVERTYPE, state, 0);
@@ -270,9 +276,8 @@ bool SciEdit::getOverwriteMode() const
   return const_cast<SciEdit*>(this)->sendMessage(SCI_GETOVERTYPE, 0, 0) != 0;
 }
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // Cut, copy and paste
-
 
 void SciEdit::cutTextToClipboard()
 {
@@ -294,13 +299,11 @@ void SciEdit::clearText()
   sendMessage(SCI_CLEAR, 0, 0);
 }
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // Error handling
-
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // Undo and redo
-
 
 void SciEdit::undo()
 {
@@ -337,19 +340,19 @@ void SciEdit::endUndoAction()
   sendMessage(SCI_ENDUNDOACTION, 0, 0);
 }
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // Selection and information
-
 
 int SciEdit::getTextLength() const
 {
   return const_cast<SciEdit*>(this)->sendMessage(SCI_GETTEXTLENGTH, 0, 0);
 }
 
-/// Returns the number of lines that has the text.
-/// 
-/// @warning The last line doesn't have a end of line (\\n) character.
-/// 
+/**
+   Returns the number of lines that has the text.
+
+   @warning The last line doesn't have a end of line (\\n) character.
+*/
 int SciEdit::getLineCount() const
 {
   return const_cast<SciEdit*>(this)->sendMessage(SCI_GETLINECOUNT, 0, 0);
@@ -411,9 +414,10 @@ int SciEdit::getSelectionEnd() const
   return const_cast<SciEdit*>(this)->sendMessage(SCI_GETSELECTIONEND, 0, 0);
 }
 
-/// Returns the length of the line (including the end of line). The
-/// first line is 0.
-/// 
+/**
+   Returns the length of the line (including the end of line). The
+   first line is 0.
+*/
 int SciEdit::getLineLength(int line) const
 {
   return const_cast<SciEdit*>(this)->sendMessage(SCI_LINELENGTH, line, 0);
@@ -429,31 +433,27 @@ String SciEdit::getSelText() const
   return str;
 }
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // Scrolling and automatic scrolling
-
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // White space
-
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // Cursor
-
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // Mouse capture
-
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // Line endings
-
 
-/// @param eolMode
-/// @li SC_EOL_CRLF
-/// @li SC_EOL_CR
-/// @li SC_EOL_LF
-/// 
+/**
+   @param eolMode
+   @li SC_EOL_CRLF
+   @li SC_EOL_CR
+   @li SC_EOL_LF
+*/
 void SciEdit::setEolMode(int eolMode)
 {
   sendMessage(SCI_SETEOLMODE, eolMode, 0);
@@ -479,81 +479,63 @@ bool SciEdit::getViewEol() const
   return const_cast<SciEdit*>(this)->sendMessage(SCI_GETVIEWEOL, 0, 0) != 0;
 }
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // Styling
-
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // Style definition
-
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // Caret, selection, and hotspot styles
-
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // Margins
-
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // Other settings
-
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // Brace highlighting
-
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // Tabs and Indentation Guides
-
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // Markers
-
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // Indicators
-
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // Autocompletion
-
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // User lists
-
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // Call tips
-
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // Keyboard commands
-
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // Key bindings
-
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // Popup edit menu
-
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // Macro recording
-
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // Printing
-
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // Direct access
-
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // Multiple views
-
+
 void* SciEdit::getDocPointer()
 {
   return reinterpret_cast<void*>(sendMessage(SCI_GETDOCPOINTER, 0, 0));
@@ -564,17 +546,14 @@ void SciEdit::setDocPointer(void* doc)
   sendMessage(SCI_SETDOCPOINTER, 0, reinterpret_cast<LPARAM>(doc));
 }
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // Folding
-
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // Line wrapping
-
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // Zooming
-
 
 void SciEdit::zoomIn()
 {
@@ -596,17 +575,15 @@ int SciEdit::getZoom()
   return sendMessage(SCI_GETZOOM, 0, 0);
 }
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // Long lines
-
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // Lexer
-
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // Notifications
-
+
 bool SciEdit::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult)
 {
   if (Widget::onReflectedNotify(lpnmhdr, lResult))
@@ -627,10 +604,11 @@ bool SciEdit::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult)
   return false;
 }
 
-/// Called when the text or the selection range change
-/// (SCN_UPDATEUI). In response to this event you should update your UI
-/// elements.  The default implementation fires the UpdateUI signal.
-/// 
+/**
+   Called when the text or the selection range change
+   (SCN_UPDATEUI). In response to this event you should update your UI
+   elements.  The default implementation fires the UpdateUI signal.
+*/
 void SciEdit::onUpdateUI()
 {
   UpdateUI();

@@ -40,10 +40,11 @@
 
 namespace Vaca {
 
-/// A command, action or function of the application.
-/// 
-/// @see CommandId
-/// 
+/**
+   A command, action or function of the application.
+
+   @see CommandId
+*/
 class VACA_DLL Command : private NonCopyable
 {
   CommandId m_id;
@@ -60,10 +61,11 @@ public:
   virtual bool isChecked() { return false; }
 };
 
-/// Specialization of Command class to handle the
-/// Command#execute and Command#isEnabled
-/// as @link page_mess_signals signals@endlink.
-/// 
+/**
+   Specialization of Command class to handle the
+   Command#execute and Command#isEnabled
+   as @link page_mess_signals signals@endlink.
+*/
 class SignalCommand : public Command
 {
 public:
@@ -96,8 +98,9 @@ public:
   Signal0<bool> Checked;
 };
 
-/// An object that contains commands (Application).
-/// 
+/**
+   An object that contains commands (Application).
+*/
 class VACA_DLL CommandsClient
 {
   std::vector<Command*> m_commands;

@@ -52,7 +52,7 @@
 
 using namespace Vaca;
 
-//////////////////////////////////////////////////////////////////////////
+// ======================================================================
 // ReBarBand class
 
 ReBarBand::ReBarBand(ReBar* parent, int index)
@@ -202,7 +202,7 @@ void ReBarBand::getBand(REBARBANDINFO* rbbi) const
   m_rebar->sendMessage(RB_GETBANDINFO, (WPARAM)m_index, (LPARAM)rbbi);
 }
 
-//////////////////////////////////////////////////////////////////////////
+// ======================================================================
 
 ReBar::ReBar(Widget* parent, Style style)
   : Widget(WidgetClassName(REBARCLASSNAME), parent, style)

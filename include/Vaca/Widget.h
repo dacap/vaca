@@ -51,13 +51,14 @@
 
 namespace Vaca {
 
-/// This exception is thrown when the operating system can't create the Widget.
-/// 
-/// @win32 
-///   In Win32, it is thrown when the Widget#createHandle method fails,
-///   generally because of @msdn{CreateWindowEx} that returns NULL.
-/// @endwin32
-/// 
+/**
+   This exception is thrown when the operating system can't create the Widget.
+
+   @win32
+     In Win32, it is thrown when the Widget#createHandle method fails,
+     generally because of @msdn{CreateWindowEx} that returns NULL.
+   @endwin32
+*/
 class CreateWidgetException : public Exception
 {
 public:
@@ -66,24 +67,25 @@ public:
   virtual ~CreateWidgetException() throw() { }
 };
 
-/// Base class for widgets.
-/// 
-/// What is a widget? Widgets are @link Frame windows@endlink,
-/// @link Button buttons@endlink, @link Edit text-fields@endlink,
-/// @link ComboBox combo-boxes@endlink, etc. Each element in a
-/// window is a widget.
-/// 
-/// @win32
-///   This is a wrapper for @msdn{HWND}. Calls @msdn{CreateWindowEx}
-///   and @msdn{DestroyWindow}, and its #wndProc method converts the
-///   messages (@c "WM_*") to events.
-/// @endwin32
-/// 
+/**
+   Base class for widgets.
+
+   What is a widget? Widgets are @link Frame windows@endlink,
+   @link Button buttons@endlink, @link Edit text-fields@endlink,
+   @link ComboBox combo-boxes@endlink, etc. Each element in a
+   window is a widget.
+
+   @win32
+     This is a wrapper for @msdn{HWND}. Calls @msdn{CreateWindowEx}
+     and @msdn{DestroyWindow}, and its #wndProc method converts the
+     messages (@c "WM_*") to events.
+   @endwin32
+*/
 class VACA_DLL Widget : public Register<WidgetClass>, public Component
 {
   friend class MakeWidgetRef;
   friend VACA_DLL void delete_widget(Widget* widget);
-  
+
 public:
 
   // ============================================================
@@ -109,93 +111,110 @@ private:
   // PRIVATE MEMBERS
   // ============================================================
 
-  /// The window handler to use with the Windows API.
-  /// 
+  /**
+     The window handler to use with the Windows API.
+  */
   HWND m_handle;
 
-  /// Sorted collection of children.
-  /// 
+  /**
+     Sorted collection of children.
+  */
   WidgetList m_children;
 
-  /// The parent widget. This could be NULL if the Widget is a Frame or
-  /// something like that.
-  /// 
+  /**
+     The parent widget. This could be NULL if the Widget is a Frame or
+     something like that.
+  */
   Widget* m_parent;
 
-  /// Foreground color, generally borders and text color.
-  /// 
+  /**
+     Foreground color, generally borders and text color.
+  */
   Color m_fgColor;
 
-  /// Background color of the widget.
-  /// 
+  /**
+     Background color of the widget.
+  */
   Color m_bgColor;
 
-  /// Constraint used by the layout manager that own the parent widget.
-  /// 
+  /**
+     Constraint used by the layout manager that own the parent widget.
+  */
   ConstraintPtr m_constraint;
 
-  /// Layout manager of this widget used to arrange its children.
-  /// 
+  /**
+     Layout manager of this widget used to arrange its children.
+  */
   LayoutPtr m_layout;
 
-  /// Flag to indicate if this widget has the mouse.
-  /// 
+  /**
+     Flag to indicate if this widget has the mouse.
+  */
   bool m_hasMouse : 1;
 
-  /// Flag to indicate if we must delete the widget after the current
-  /// event/message is processed.
-  /// 
+  /**
+     Flag to indicate if we must delete the widget after the current
+     event/message is processed.
+  */
   bool m_deleteAfterEvent : 1;
 
-  /// Use an automatic double-buffering technique to call the #onPaint event.
-  /// 
-  /// @see #setDoubleBuffered, #doPaint
-  /// 
+  /**
+     Use an automatic double-buffering technique to call the #onPaint event.
+
+     @see #setDoubleBuffered, #doPaint
+  */
   bool m_doubleBuffered : 1;
 
-  /// Current font of the Widget (used mainly to draw the text of the widget).
-  /// 
-  /// @see #setText, #setFont
-  /// 
+  /**
+     Current font of the Widget (used mainly to draw the text of the widget).
+
+     @see #setText, #setFont
+  */
   Font m_font;
 
-  /// Manually set preferred size. If it's equal to NULL (by default it
-  /// is) the preferred size is automatically calculated, if not this size
-  /// is returned by #getPreferredSize.
-  /// 
-  /// @see #setPreferredSize
-  /// 
+  /**
+     Manually set preferred size. If it's equal to NULL (by default it
+     is) the preferred size is automatically calculated, if not this size
+     is returned by #getPreferredSize.
+
+     @see #setPreferredSize
+  */
   Size* m_preferredSize;
 
-  // TODO Try to remove this field (it's only needed for WM_CTLCOLOR* events)
+  /**
+     @todo Try to remove this field (it's only needed for WM_CTLCOLOR* events)
+  */
   HBRUSH m_hbrush;
 
   // ============================================================
   // Special hooks...
   // ============================================================
 
-  /// Procedure of the original Win32's control (like @msdn{BUTTON} or @msdn{EDIT}).
-  /// 
-  /// It's set in #subClass method.
-  /// 
+  /**
+     Procedure of the original Win32's control (like @msdn{BUTTON} or @msdn{EDIT}).
+
+     It's set in #subClass method.
+  */
   WNDPROC m_baseWndProc;
 
-  /// The default Win32's window procedure to be called if a
-  /// @link Message message@endlink isn't used.
-  /// 
-  /// By default it is Win32's @msdn{DefWindowProc}, but you can change it
-  /// using #setDefWndProc to replace it with other procedure like
-  /// Win32's @msdn{DefFrameProc}.
-  /// 
-  /// @see #setDefWndProc, #defWndProc
-  /// 
+  /**
+     The default Win32's window procedure to be called if a
+     @link Message message@endlink isn't used.
+
+     By default it is Win32's @msdn{DefWindowProc}, but you can change it
+     using #setDefWndProc to replace it with other procedure like
+     Win32's @msdn{DefFrameProc}.
+
+     @see #setDefWndProc, #defWndProc
+  */
   WNDPROC m_defWndProc;
 
-  /// Used by MdiChild to send a WM_MDIDESTROY instead of calling
-  /// Win32's DestroyWindow function.
-  /// 
+  /**
+     Used by MdiChild to send a WM_MDIDESTROY instead of calling
+     Win32's DestroyWindow function.
+  */
   void (*m_destroyHandleProc)(HWND hwnd);
-  
+
 public:
 
   // ============================================================
@@ -294,7 +313,7 @@ public:
   Size getPreferredSize(const Size& fitIn);
   void setPreferredSize(const Size& fixedSize);
   void setPreferredSize(int fixedWidth, int fixedHeight);
-  
+
   // ===============================================================
   // REFRESH ISSUES
   // ===============================================================
@@ -365,7 +384,7 @@ public:
   void hideScrollBar(Orientation orientation);
 
   void scrollRect(const Rect& rect, const Point& delta);
-  
+
   // ===============================================================
   // MESSAGES
   // ===============================================================
@@ -382,7 +401,7 @@ public:
 
   static Widget* fromHandle(HWND hwnd);
   static WNDPROC getGlobalWndProc();
-  
+
   LRESULT sendMessage(UINT message, WPARAM wParam, LPARAM lParam);
 
   // ===============================================================
@@ -466,9 +485,10 @@ private:
 
 };
 
-/// Makes a reference to the specified widget. Reference lives in the
-/// scope of the MakeWidgetRef's instance.
-/// 
+/**
+   Makes a reference to the specified widget. Reference lives in the
+   scope of the MakeWidgetRef's instance.
+*/
 class VACA_DLL MakeWidgetRef : private NonCopyable
 {
   WidgetList m_container;

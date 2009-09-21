@@ -41,8 +41,9 @@
 
 namespace Vaca {
 
-/// Represents the Win32 class used by Spinner.
-/// 
+/**
+   Represents the Win32 class used by Spinner.
+*/
 class SpinnerClass : public WidgetClass
 {
 public:
@@ -50,16 +51,17 @@ public:
   { return WidgetClassName(L"Vaca.Spinner"); }
 };
 
-/// A Spinner is a couple of Widgets: an Edit and a SpinButton at the
-/// right side.
-/// 
-/// The default range is from 0 to 100. The default position is 0.
-/// 
+/**
+   A Spinner is a couple of Widgets: an Edit and a SpinButton at the
+   right side.
+
+   The default range is from 0 to 100. The default position is 0.
+*/
 class VACA_DLL Spinner : public Register<SpinnerClass>, public Widget
 {
   TextEdit m_edit;
   SpinButton m_spin;
-  
+
 public:
 
   struct VACA_DLL Styles {
@@ -94,7 +96,7 @@ protected:
   // Events
   virtual void onPreferredSize(PreferredSizeEvent& ev);
   virtual void onLayout(LayoutEvent& ev);
-  
+
 };
 
 } // namespace Vaca

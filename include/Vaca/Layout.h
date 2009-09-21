@@ -41,19 +41,20 @@
 
 namespace Vaca {
 
-/// A Layout setups the position of a collection of widgets. It's used
-/// to arrange the widgets quickly without worrying about the exact
-/// position of them.
-/// 
-/// Each widget can have a layout manager, but it's only useful when
-/// the widget has children.
-/// 
-/// @warning If the parent widget doesn't have a layout manager
-///          specified, the children bounds aren't modified (see the
-///          @c FreeOfLayout example).
-/// 
-/// @see @ref page_tn_011
-/// 
+/**
+   A Layout setups the position of a collection of widgets. It's used
+   to arrange the widgets quickly without worrying about the exact
+   position of them.
+
+   Each widget can have a layout manager, but it's only useful when
+   the widget has children.
+
+   @warning If the parent widget doesn't have a layout manager
+	    specified, the children bounds aren't modified (see the
+	    @c FreeOfLayout example).
+
+   @see @ref page_tn_011
+*/
 class VACA_DLL Layout : public Referenceable
 {
   HDWP m_HDWP;
@@ -76,4 +77,3 @@ public:
 } // namespace Vaca
 
 #endif // VACA_LAYOUT_H
-

@@ -38,11 +38,12 @@
 using namespace Vaca;
 using namespace std;
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // HttpRequest::InetHandle
 
-/// @throw HttpRequestException
-/// 
+/**
+   @throw HttpRequestException
+*/
 HttpRequest::InetHandle::InetHandle(HINTERNET handle,
 				    const String& errorMsg)
   : handle(handle)
@@ -57,7 +58,7 @@ HttpRequest::InetHandle::~InetHandle()
     InternetCloseHandle(handle);
 }
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // HttpRequest::InetConnection
 
 HttpRequest::InetConnection::InetConnection(const String& agentName)
@@ -68,7 +69,7 @@ HttpRequest::InetConnection::InetConnection(const String& agentName)
 {
 }
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // HttpRequest::InetSession
 
 HttpRequest::InetSession::InetSession(InetConnection& conn,
@@ -81,7 +82,7 @@ HttpRequest::InetSession::InetSession(InetConnection& conn,
 {
 }
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // HttpRequest::InetRequest
 
 HttpRequest::InetRequest::InetRequest(InetSession& ses,
@@ -96,7 +97,7 @@ HttpRequest::InetRequest::InetRequest(InetSession& ses,
 {
 }
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // HttpRequest
 
 HttpRequest::HttpRequest(const String& url,
@@ -111,12 +112,13 @@ HttpRequest::~HttpRequest()
 {
 }
 
-/// Sends the HTTP request.
-/// 
-/// @return
-///   The status code of the HTTP response that comes from the
-///   server.
-/// 
+/**
+   Sends the HTTP request.
+
+   @return
+     The status code of the HTTP response that comes from the
+     server.
+*/
 int HttpRequest::send(const String& headers, const char* body)
 {
   if (HttpSendRequest(req.handle,
@@ -129,24 +131,25 @@ int HttpRequest::send(const String& headers, const char* body)
   return 0;
 }
 
-/// Reads the specified amount of bytes from the stream of bytes.
-/// 
-/// @param buf
-///   Where to put the read data. Must have at least @a length bytes.
-/// 
-/// @param length
-///   How many bytes to read. The size of the buffer.
-/// 
-/// @return
-///   The number of bytes that were read.
-/// 
-/// @throw HttpRequestException
-/// 
+/**
+   Reads the specified amount of bytes from the stream of bytes.
+
+   @param buf
+     Where to put the read data. Must have at least @a length bytes.
+
+   @param length
+     How many bytes to read. The size of the buffer.
+
+   @return
+     The number of bytes that were read.
+
+   @throw HttpRequestException
+*/
 size_t HttpRequest::read(char* buf, size_t length)
 {
   assert(buf != NULL);
   assert(length > 0);
-  
+
   DWORD bytes = 0;
   if (!InternetReadFile(req.handle, buf, length, &bytes))
     throw HttpRequestException();
@@ -163,7 +166,7 @@ int HttpRequest::getStatusCode()
   if (HttpQueryInfo(req.handle,
 		    HTTP_QUERY_STATUS_CODE | HTTP_QUERY_FLAG_NUMBER,
 		    &statusCode,
-		    &bufLength, 
+		    &bufLength,
 		    &index)) {
     return statusCode;
   }
@@ -180,7 +183,7 @@ size_t HttpRequest::getContentLength()
   if (HttpQueryInfo(req.handle,
 		    HTTP_QUERY_CONTENT_LENGTH | HTTP_QUERY_FLAG_NUMBER,
 		    &contentLength,
-		    &bufLength, 
+		    &bufLength,
 		    &index)) {
     return contentLength;
   }
@@ -206,12 +209,13 @@ bool HttpRequest::hasHeader(const String& headerName)
     return false;
 }
 
-/// Returns the value of the specified header.
-/// 
-/// @return
-///   The value of the specified header, or an empty string if the
-///   header is not found.
-/// 
+/**
+   Returns the value of the specified header.
+
+   @return
+     The value of the specified header, or an empty string if the
+     header is not found.
+*/
 String HttpRequest::getHeader(const String& headerName)
 {
   DWORD bufLength = headerName.size()+1;

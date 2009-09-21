@@ -36,11 +36,14 @@
 
 namespace Vaca {
 
-/// Event that can be consumed.
-///
+/**
+   Event that can be consumed.
+*/
 class VACA_DLL ConsumableEvent : public Event
 {
-  /// The event was consumed.
+  /**
+     The event was consumed.
+  */
   bool m_consumed;
 
 public:

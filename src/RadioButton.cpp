@@ -37,7 +37,7 @@
 
 using namespace Vaca;
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // RadioButton
 
 RadioButton::RadioButton(const String& text, RadioGroup& group, Widget* parent, Style style)
@@ -86,7 +86,7 @@ bool RadioButton::onReflectedCommand(int id, int code, LRESULT& lResult)
   return ButtonBase::onReflectedCommand(id, code, lResult);
 }
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // RadioGroup
 
 static Mutex mutex;

@@ -42,10 +42,11 @@ namespace Vaca {
 
 typedef std::vector<TreeNode*> TreeNodeList;
 
-/// A TreeView node.  It has a text label, an image, a selected image
-/// asociated, and a state (collapsed/expanded). A node can be parent
-/// of sub-TreeNodes.
-/// 
+/**
+   A TreeView node.  It has a text label, an image, a selected image
+   asociated, and a state (collapsed/expanded). A node can be parent
+   of sub-TreeNodes.
+*/
 class VACA_DLL TreeNode : public Component
 {
   friend class TreeView;
@@ -89,7 +90,7 @@ public:
   Rect getBounds() const;
   Rect getRowBounds() const;
   void ensureVisible();
-  
+
   HTREEITEM getHandle();
 
   static TreeNode* fromHandle(HWND hwnd, HTREEITEM htreeitem);
@@ -107,7 +108,7 @@ protected:
   virtual void onAfterLabelEdit(TreeViewEvent& ev);
 
 private:
-  
+
   void addToTreeView(TreeView* treeView);
   void removeFromTreeView();
 

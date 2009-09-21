@@ -52,9 +52,9 @@
 
 using namespace Vaca;
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // MenuItem
-
+
 MenuItem::MenuItem()
 {
   m_parent = NULL;
@@ -63,12 +63,13 @@ MenuItem::MenuItem()
   m_checked = false;
 }
 
-/// Creates a new menu item.
-/// 
-/// @param text You can use the \& character to underline a letter (e.g.: "&New")
-/// @param defaultShortcut The default keyboard shortcut for this menu item.
-/// @param id You can use an specified CommandId for the menu.
-/// 
+/**
+   Creates a new menu item.
+
+   @param text You can use the \& character to underline a letter (e.g.: "&New")
+   @param defaultShortcut The default keyboard shortcut for this menu item.
+   @param id You can use an specified CommandId for the menu.
+*/
 MenuItem::MenuItem(const String& text, CommandId id, Keys::Type defaultShortcut)
 {
   m_parent = NULL;
@@ -200,9 +201,10 @@ void MenuItem::setChecked(bool state)
   }
 }
 
-/// Radio MenuItem groups are automatically delimited by MenuSeparator
-/// or by the beginning and the end of the menu.
-/// 
+/**
+   Radio MenuItem groups are automatically delimited by MenuSeparator
+   or by the beginning and the end of the menu.
+*/
 void MenuItem::setRadio(bool state)
 {
   if (state) {
@@ -252,28 +254,30 @@ bool MenuItem::isMenuBar() const { return false; }
 bool MenuItem::isSeparator() const { return false; }
 bool MenuItem::isMdiList() const { return false; }
 
-/// It is called when the menu item is selected. Also it's called when
-/// some keyboard shortcut of this MenuItem is pressed
-/// (MenuItem::m_shortcuts). Remember that onClick() is called only
-/// after an onUpdate() and only if it leaves the MenuItem enabled (see
-/// setEnabled() method),
-///
+/**
+   It is called when the menu item is selected. Also it's called when
+   some keyboard shortcut of this MenuItem is pressed
+   (MenuItem::m_shortcuts). Remember that onClick() is called only
+   after an onUpdate() and only if it leaves the MenuItem enabled (see
+   setEnabled() method),
+*/
 void MenuItem::onClick(MenuItemEvent& ev)
 {
   // do nothing
 }
 
-/// It's called when a menu is shown for first time. Also when the user
-/// press a keyboard shortcut (MenuItem::m_shortcuts) it's called to
-/// known if the item is available after execute onClick().
-/// 
-/// Internally, when the WM_INITMENU message is received, a Frame calls
-/// this event.
-/// 
-/// The default implementation search for a Command with ID equal to
-/// MenuItem#getId, so the Command#isEnabled routine will be called to
-/// change the state of this MenuItem.
-/// 
+/**
+   It's called when a menu is shown for first time. Also when the user
+   press a keyboard shortcut (MenuItem::m_shortcuts) it's called to
+   known if the item is available after execute onClick().
+
+   Internally, when the WM_INITMENU message is received, a Frame calls
+   this event.
+
+   The default implementation search for a Command with ID equal to
+   MenuItem#getId, so the Command#isEnabled routine will be called to
+   change the state of this MenuItem.
+*/
 void MenuItem::onUpdate(MenuItemEvent& ev)
 {
   // does this menu item have an associated command-id?
@@ -303,9 +307,9 @@ void MenuItem::updateFromCommand(Command* cmd)
   setChecked(cmd->isChecked());
 }
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // MenuSeparator
-
+
 MenuSeparator::MenuSeparator()
 {
 }
@@ -319,9 +323,9 @@ bool MenuSeparator::isSeparator() const
   return true;
 }
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // Menu
-
+
 Menu::Menu()
 {
   m_handle = ::CreateMenu();
@@ -353,7 +357,7 @@ Menu::Menu(CommandId menuId)
 Menu::Menu(HMENU hmenu)
 {
   assert(hmenu != NULL);
-  
+
   m_handle = hmenu;
   subClass();
 }
@@ -437,51 +441,55 @@ void Menu::subClass()
   }
 }
 
-/// Adds a MenuItem at the end of the Menu.
-/// 
-/// @warning The @a menuItem is deleted automatically if you don't
-///          remove it before to destroy the Menu.
-/// 
-/// @see insert(int, MenuItem*), remove(MenuItem*)
-/// 
+/**
+   Adds a MenuItem at the end of the Menu.
+
+   @warning The @a menuItem is deleted automatically if you don't
+	    remove it before to destroy the Menu.
+
+   @see insert(int, MenuItem*), remove(MenuItem*)
+*/
 MenuItem* Menu::add(MenuItem* menuItem)
 {
   insert(m_container.size(), menuItem);
   return menuItem;
 }
 
-/// Adds a new MenuItem with the specified @a text and @a defaultShortcut
-/// at the end of the Menu.
-/// 
-/// @warning The returned MenuItem is deleted automatically when the
-///          Menu is destroyed.
-/// @warning If you use the Menu::remove method with the returned
-///          MenuItem, you will be responsible to delete it.
-/// 
-/// @see add(MenuItem*), remove(MenuItem*)
-/// 
+/**
+   Adds a new MenuItem with the specified @a text and @a defaultShortcut
+   at the end of the Menu.
+
+   @warning The returned MenuItem is deleted automatically when the
+	    Menu is destroyed.
+   @warning If you use the Menu::remove method with the returned
+	    MenuItem, you will be responsible to delete it.
+
+   @see add(MenuItem*), remove(MenuItem*)
+*/
 MenuItem* Menu::add(const String& string, CommandId id, Keys::Type defaultShortcut)
 {
   MenuItem* menuItem = add(new MenuItem(string, id, defaultShortcut));
   return menuItem;
 }
 
-/// Adds a new MenuSeparator at the end of the Menu.
-/// 
-/// @see add(MenuItem*), remove(MenuItem*)
-/// 
+/**
+   Adds a new MenuSeparator at the end of the Menu.
+
+   @see add(MenuItem*), remove(MenuItem*)
+*/
 void Menu::addSeparator()
 {
   MenuItem* menuItem = add(new MenuSeparator());
 }
 
-/// Inserts a MenuItem at the @a index position of the Menu.
-/// 
-/// @warning The inserted @a menuItem is deleted automatically if you don't
-///          remove it before to destroy the Menu.
-/// 
-/// @see remove(MenuItem*), insert(int, const String &)
-/// 
+/**
+   Inserts a MenuItem at the @a index position of the Menu.
+
+   @warning The inserted @a menuItem is deleted automatically if you don't
+	    remove it before to destroy the Menu.
+
+   @see remove(MenuItem*), insert(int, const String &)
+*/
 MenuItem* Menu::insert(int index, MenuItem* menuItem)
 {
   assert(index >= 0 && index <= static_cast<int>(m_container.size()));
@@ -512,7 +520,7 @@ MenuItem* Menu::insert(int index, MenuItem* menuItem)
   mii.wID = menuItem->getId();
 
   if (menuItem->isSeparator()) {
-    mii.fType = MFT_SEPARATOR; 
+    mii.fType = MFT_SEPARATOR;
   }
   else if (menuItem->isMenu()) {
     mii.fMask |= MIIM_STRING | MIIM_SUBMENU;
@@ -526,9 +534,9 @@ MenuItem* Menu::insert(int index, MenuItem* menuItem)
     mii.fMask |= MIIM_STRING;
     mii.fType = MFT_STRING;
     mii.dwTypeData = buf;
-    mii.cch = len; 
-    // HBITMAP hbmpChecked; 
-    // HBITMAP hbmpUnchecked; 
+    mii.cch = len;
+    // HBITMAP hbmpChecked;
+    // HBITMAP hbmpUnchecked;
     // HBITMAP hbmpItem;
   }
 
@@ -541,36 +549,39 @@ MenuItem* Menu::insert(int index, MenuItem* menuItem)
   return menuItem;
 }
 
-/// Inserts a new MenuItem with the specified @a text at the @a index
-/// position of the Menu.
-/// 
-/// @warning The returned MenuItem is deleted automatically when the
-///          Menu is destroyed.
-/// @warning If you use the Menu::remove method with the returned
-///          MenuItem, you will be responsible to delete it.
-/// 
-/// @see insert(int, MenuItem*), remove(MenuItem*)
-/// 
+/**
+   Inserts a new MenuItem with the specified @a text at the @a index
+   position of the Menu.
+
+   @warning The returned MenuItem is deleted automatically when the
+	    Menu is destroyed.
+   @warning If you use the Menu::remove method with the returned
+	    MenuItem, you will be responsible to delete it.
+
+   @see insert(int, MenuItem*), remove(MenuItem*)
+*/
 MenuItem* Menu::insert(int index, const String& text, CommandId id, Keys::Type defaultShortcut)
 {
   MenuItem* menuItem = insert(index, new MenuItem(text, id, defaultShortcut));
   return menuItem;
 }
 
-/// Inserts a new MenuSeparator at the @a index position of the Menu.
-/// 
+/**
+   Inserts a new MenuSeparator at the @a index position of the Menu.
+*/
 void Menu::insertSeparator(int index)
 {
   MenuItem* menuItem = insert(index, new MenuSeparator());
 }
 
-/// Removes the @a menuItem from the menu.
-/// 
-/// @warning You must to delete the specified @a menuItem after this
-///          (because it'll not be under the control of the Menu any more).
-/// 
-/// @return The same pointer to the specified parameter @a menuItem
-/// 
+/**
+   Removes the @a menuItem from the menu.
+
+   @warning You must to delete the specified @a menuItem after this
+	    (because it'll not be under the control of the Menu any more).
+
+   @return The same pointer to the specified parameter @a menuItem
+*/
 MenuItem* Menu::remove(MenuItem* menuItem)
 {
   assert(m_handle != NULL);
@@ -594,27 +605,28 @@ MenuItem* Menu::remove(MenuItem* menuItem)
   return menuItem;
 }
 
-/// Removes the menu item that is the specified position by the @a
-/// index.
-/// 
-/// @warning You should delete the returned pointer or save it
-///          to destroy it in the future.
-/// 
-/// @code
-/// Menu* menu = ...
-/// MenuItem* menuItem = menu->getMenuItemByIndex(2);
-/// menu->remove(menuItem);
-/// delete menuItem;
-/// @endcode
-/// 
-/// It's the same as:
-/// 
-/// @code
-/// delete menu->remove(2);
-/// @endcode
-/// 
-/// @see remove(MenuItem*)
-/// 
+/**
+   Removes the menu item that is the specified position by the @a
+   index.
+
+   @warning You should delete the returned pointer or save it
+	    to destroy it in the future.
+
+   @code
+   Menu* menu = ...
+   MenuItem* menuItem = menu->getMenuItemByIndex(2);
+   menu->remove(menuItem);
+   delete menuItem;
+   @endcode
+
+   It's the same as:
+
+   @code
+   delete menu->remove(2);
+   @endcode
+
+   @see remove(MenuItem*)
+*/
 MenuItem* Menu::remove(int index)
 {
   MenuItem* menuItem = getMenuItemByIndex(index);
@@ -731,9 +743,9 @@ HMENU Menu::getHandle()
   return m_handle;
 }
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // MenuBar
-
+
 MenuBar::MenuBar()
   : Menu()
   , m_frame(NULL)
@@ -784,9 +796,8 @@ MdiListMenu* MenuBar::getMdiListMenu()
 
 bool MenuBar::isMenuBar() const { return true; }
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // PopupMenu
-
 
 PopupMenu::PopupMenu()
   : Menu(String())		// creates a Menu with an empty label
@@ -797,24 +808,25 @@ PopupMenu::~PopupMenu()
 {
 }
 
-/// Displays the popup-menu in the screen at the specified location.
-/// 
-/// @param widget The widget to be locked by the menu, can be NULL.
-/// @param pt The location where to show the menu, it's relative to the
-///   client area of the specified @a widget, or if @a widget is NULL, it
-///   is absolute position in the screen.
-/// @param horzAlign Where to align the menu .
-/// @param vertAlign
-/// 
-/// @return The ID of the selected MenuItem, or zero if no item was selected.
-/// 
+/**
+   Displays the popup-menu in the screen at the specified location.
+
+   @param widget The widget to be locked by the menu, can be NULL.
+   @param pt The location where to show the menu, it's relative to the
+     client area of the specified @a widget, or if @a widget is NULL, it
+     is absolute position in the screen.
+   @param horzAlign Where to align the menu .
+   @param vertAlign
+
+   @return The ID of the selected MenuItem, or zero if no item was selected.
+*/
 CommandId PopupMenu::doModal(Widget* widget,
 			     const Point& pt,
 			     TextAlign horzAlign,
 			     VerticalAlign vertAlign)
 {
   assert(getHandle());
-  
+
   Point absPt = pt;
   if (widget)
     absPt += widget->getAbsoluteClientBounds().getOrigin();
@@ -842,9 +854,9 @@ CommandId PopupMenu::doModal(Widget* widget,
   return id;
 }
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // MdiListMenu
-
+
 MdiListMenu::MdiListMenu(const String& text)
  : Menu(text)
 {

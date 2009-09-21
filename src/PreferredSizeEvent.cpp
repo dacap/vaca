@@ -34,16 +34,17 @@
 
 using namespace Vaca;
 
-/// Event generated to calculate the preferred size of a widget.
-///
-/// @param source
-///   The widget that want to know its preferred size.
-///
-/// @param fitIn
-///   This could be Size(0, 0) that means calculate the preferred size
-///   without restrictions. If its width or height is greater than 0,
-///   you could try to fit your widget to that width or height.
-///
+/**
+   Event generated to calculate the preferred size of a widget.
+
+   @param source
+     The widget that want to know its preferred size.
+
+   @param fitIn
+     This could be Size(0, 0) that means calculate the preferred size
+     without restrictions. If its width or height is greater than 0,
+     you could try to fit your widget to that width or height.
+*/
 PreferredSizeEvent::PreferredSizeEvent(Widget* source, const Size& fitIn)
   : Event(source)
   , m_fitIn(fitIn)
@@ -51,8 +52,9 @@ PreferredSizeEvent::PreferredSizeEvent(Widget* source, const Size& fitIn)
 {
 }
 
-/// Destroys the PreferredSizeEvent.
-///
+/**
+   Destroys the PreferredSizeEvent.
+*/
 PreferredSizeEvent::~PreferredSizeEvent()
 {
 }
@@ -82,8 +84,9 @@ void PreferredSizeEvent::setPreferredSize(const Size& preferredSize)
   m_preferredSize = preferredSize;
 }
 
-/// Sets the preferred size for the widget.
-///
+/**
+   Sets the preferred size for the widget.
+*/
 void PreferredSizeEvent::setPreferredSize(int w, int h)
 {
   m_preferredSize.w = w;

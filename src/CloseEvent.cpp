@@ -34,18 +34,20 @@
 
 using namespace Vaca;
 
-/// Creates a new CloseEvent for the specified Frame.
-///
-/// @param source
-///    Frame that is being closed.
-///
+/**
+   Creates a new CloseEvent for the specified Frame.
+
+   @param source
+      Frame that is being closed.
+*/
 CloseEvent::CloseEvent(Frame* source)
   : CancelableEvent(source)
 {
 }
 
-/// Destroys the CloseEvent.
-///
+/**
+   Destroys the CloseEvent.
+*/
 CloseEvent::~CloseEvent()
 {
 }

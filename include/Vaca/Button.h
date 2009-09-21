@@ -36,11 +36,12 @@
 
 namespace Vaca {
 
-/// Handles a pusheable button. These are the more common buttons, like
-/// "OK" or "Cancel".
-/// 
-/// @image html Button.png
-/// 
+/**
+   Handles a pusheable button. These are the more common buttons, like
+   "OK" or "Cancel".
+
+   @image html Button.png
+*/
 class VACA_DLL Button : public ButtonBase
 {
 public:

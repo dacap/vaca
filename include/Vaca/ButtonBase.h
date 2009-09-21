@@ -36,12 +36,13 @@
 
 namespace Vaca {
 
-/// Base for every button.
-/// 
-/// @win32
-///   It's a wrapper for the @msdn{BUTTON} class.
-/// @endwin32
-/// 
+/**
+   Base for every button.
+
+   @win32
+     It's a wrapper for the @msdn{BUTTON} class.
+   @endwin32
+*/
 class VACA_DLL ButtonBase : public Widget
 {
 public:

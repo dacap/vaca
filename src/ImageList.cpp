@@ -56,8 +56,9 @@ ImageList::ImageList(HIMAGELIST hImageList)
 {
 }
 
-/// Loads a ImageList from a @msdn{BITMAP} resource.
-/// 
+/**
+   Loads a ImageList from a @msdn{BITMAP} resource.
+*/
 ImageList::ImageList(ResourceId bitmapId, int widthPerIcon, Color maskColor)
   : SharedPtr<GdiObj>(new GdiObj())
 {
@@ -77,14 +78,15 @@ ImageList::ImageList(ResourceId bitmapId, int widthPerIcon, Color maskColor)
   get()->setHandle(himagelist);
 }
 
-/// Loads a ImageList from a file.
-/// 
+/**
+   Loads a ImageList from a file.
+*/
 ImageList::ImageList(const String& fileName, int widthPerIcon, Color maskColor)
   : SharedPtr<GdiObj>(new GdiObj())
 {
   HIMAGELIST himagelist =
     ImageList_LoadImage(Application::getHandle(),
-			fileName.c_str(), 
+			fileName.c_str(),
 			widthPerIcon,
 			1,
 			maskColor.getColorRef(),
@@ -100,11 +102,12 @@ ImageList::~ImageList()
 {
 }
 
-/// Returns how many images has this image list.
-/// 
-/// @return
-///   A number from 0 to n that specified the size of the list.
-/// 
+/**
+   Returns how many images has this image list.
+
+   @return
+     A number from 0 to n that specified the size of the list.
+*/
 int ImageList::getImageCount() const
 {
   assert(getHandle());
@@ -119,14 +122,15 @@ Size ImageList::getImageSize() const
   return sz;
 }
 
-/// Adds a new image in the list.
-///
-/// @param image
-///   The image to be added.
-///
-/// @return
-///   The index of the new image.
-///
+/**
+   Adds a new image in the list.
+
+   @param image
+     The image to be added.
+
+   @return
+     The index of the new image.
+*/
 int ImageList::addImage(Image& image)
 {
   assert(getHandle());
@@ -157,8 +161,9 @@ void ImageList::removeAllImages()
   ImageList_RemoveAll(getHandle());
 }
 
-/// Returns the @msdn{HIMAGELIST} handle.
-/// 
+/**
+   Returns the @msdn{HIMAGELIST} handle.
+*/
 HIMAGELIST ImageList::getHandle() const
 {
   return get()->getHandle();

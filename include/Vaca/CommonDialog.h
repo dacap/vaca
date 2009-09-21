@@ -39,8 +39,9 @@
 
 namespace Vaca {
 
-/// Base class for common dialogs.
-/// 
+/**
+   Base class for common dialogs.
+*/
 class VACA_DLL CommonDialog : public Component
 {
   Widget* m_parent;

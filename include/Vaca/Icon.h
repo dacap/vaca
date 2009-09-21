@@ -40,10 +40,11 @@
 
 namespace Vaca {
 
-/// Used to destroy the HICON handle from GdiObject.
-/// 
-/// @internal
-/// 
+/**
+   Used to destroy the HICON handle from GdiObject.
+
+   @internal
+*/
 struct Win32DestroyIcon
 {
   static void destroy(HICON handle)
@@ -52,23 +53,24 @@ struct Win32DestroyIcon
   }
 };
 
-/// A shared pointer to an icon.
-/// 
-/// This is a SharedPtr, so if you copy instances of icons they will be
-/// referencing to the same place. You can't clone icons because you can't
-/// modify them.
-/// 
-/// Example
-/// @code
-/// Icon icon1(Size(32, 32));
-/// Icon icon2 = icon1;       // icon1 and icon2 references to the same Icon
-/// assert(icon1 == icon2);
-/// @endcode
-/// 
-/// @win32
-///   This is a @msdn{HICON} wrapper.
-/// @endwin32
-/// 
+/**
+   A shared pointer to an icon.
+
+   This is a SharedPtr, so if you copy instances of icons they will be
+   referencing to the same place. You can't clone icons because you can't
+   modify them.
+
+   Example
+   @code
+   Icon icon1(Size(32, 32));
+   Icon icon2 = icon1;       // icon1 and icon2 references to the same Icon
+   assert(icon1 == icon2);
+   @endcode
+
+   @win32
+     This is a @msdn{HICON} wrapper.
+   @endwin32
+*/
 class VACA_DLL Icon : private SharedPtr<GdiObject<HICON, Win32DestroyIcon> >
 {
 public:

@@ -52,12 +52,13 @@ enum {
   BixFill = BixFillX | BixFillY,
 };
 
-/// A Bix is a <em>layout manager</em> which allows you to arrange widgets
-/// in a matricial way or horizontally/vertically (like a row/column vector
-/// respectively).
-/// 
-/// All matrices and vectors can be inner one inside the other.
-/// 
+/**
+   A Bix is a <em>layout manager</em> which allows you to arrange widgets
+   in a matricial way or horizontally/vertically (like a row/column vector
+   respectively).
+
+   All matrices and vectors can be inner one inside the other.
+*/
 class VACA_DLL Bix : public Layout
 {
 
@@ -73,7 +74,7 @@ class VACA_DLL Bix : public Layout
   int m_border;
   int m_childSpacing;
   Elements m_elements;
-  
+
 public:
 
   Bix(int flags, int matrixColumns = 0);
@@ -103,7 +104,7 @@ public:
 
   void remove(Bix* subbix);
   void remove(Widget* child);
-  
+
   virtual Size getPreferredSize(Widget* parent, WidgetList& widgets, const Size& fitIn);
 
   static Bix* parse(const Char* fmt, ...);
@@ -113,11 +114,11 @@ protected:
   virtual void layout(Widget* parent, WidgetList& widgets, const Rect& rc);
 
 private:
-  
+
   Size getPreferredSize(const Size& fitIn);
   Size getPreferredSize(Matrix& mat);
   void layout(Bix* parentBix, const Rect& rc);
-  
+
   Size getMatrixDimension();
   void fillMatrix(Matrix& mat);
 

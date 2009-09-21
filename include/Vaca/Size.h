@@ -36,8 +36,9 @@
 
 namespace Vaca {
 
-/// A 2D size.
-/// 
+/**
+   A 2D size.
+*/
 class VACA_DLL Size
 {
 public:
@@ -78,4 +79,3 @@ public:
 } // namespace Vaca
 
 #endif // VACA_SIZE_H
-

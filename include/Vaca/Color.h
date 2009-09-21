@@ -36,8 +36,9 @@
 
 namespace Vaca {
 
-/// A color that can be used to create pens or brushes.
-/// 
+/**
+   A color that can be used to create pens or brushes.
+*/
 class VACA_DLL Color
 {
 public:
@@ -85,7 +86,7 @@ public:
   Color operator/(int value) const;
   Color operator*(double value) const;
   Color operator/(double value) const;
-  
+
   explicit Color(COLORREF rgb);
   COLORREF getColorRef() const;
 

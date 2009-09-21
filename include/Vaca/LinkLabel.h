@@ -37,8 +37,9 @@
 
 namespace Vaca {
 
-/// A link to Internet (or whatever you want).
-/// 
+/**
+   A link to Internet (or whatever you want).
+*/
 class VACA_DLL LinkLabel : public CustomLabel
 {
   enum State {

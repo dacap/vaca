@@ -39,12 +39,13 @@
 
 namespace Vaca {
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 
-/// It's like a namespace for PenStyle.
-/// 
-/// @see PenStyle
-/// 
+/**
+   It's like a namespace for PenStyle.
+
+   @see PenStyle
+*/
 struct PenStyleEnum
 {
   enum enumeration {
@@ -59,24 +60,26 @@ struct PenStyleEnum
   static const enumeration default_value = Solid;
 };
 
-/// Speficies the style to be used when draw a line. One of the
-/// following values:
-/// @li PenStyle::Solid
-/// @li PenStyle::Dash
-/// @li PenStyle::Dot
-/// @li PenStyle::DashDot
-/// @li PenStyle::DashDotDot
-/// @li PenStyle::Null
-/// @li PenStyle::InsideFram
-/// 
+/**
+   Speficies the style to be used when draw a line. One of the
+   following values:
+   @li PenStyle::Solid
+   @li PenStyle::Dash
+   @li PenStyle::Dot
+   @li PenStyle::DashDot
+   @li PenStyle::DashDotDot
+   @li PenStyle::Null
+   @li PenStyle::InsideFram
+*/
 typedef Enum<PenStyleEnum> PenStyle;
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 
-/// It's like a namespace for PenEndCap.
-/// 
-/// @see PenEndCap
-/// 
+/**
+   It's like a namespace for PenEndCap.
+
+   @see PenEndCap
+*/
 struct PenEndCapEnum
 {
   enum enumeration {
@@ -87,21 +90,23 @@ struct PenEndCapEnum
   static const enumeration default_value = Round;
 };
 
-/// Speficies how to end the lines of an open GraphicsPath. One of the
-/// following values:
-/// @li PenEndCap::Round (default)
-/// @li PenEndCap::Square
-/// @li PenEndCap::Flat
-/// 
+/**
+   Speficies how to end the lines of an open GraphicsPath. One of the
+   following values:
+   @li PenEndCap::Round (default)
+   @li PenEndCap::Square
+   @li PenEndCap::Flat
+*/
 typedef Enum<PenEndCapEnum> PenEndCap;
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // Pen Join
 
-/// It's like a namespace for PenJoin.
-/// 
-/// @see PenJoin
-/// 
+/**
+   It's like a namespace for PenJoin.
+
+   @see PenJoin
+*/
 struct PenJoinEnum
 {
   enum enumeration {
@@ -112,29 +117,31 @@ struct PenJoinEnum
   static const enumeration default_value = Round;
 };
 
-/// Specifies how to join the corners of a GraphicsPath. One of the
-/// following values:
-/// @li PenJoin::Round (default)
-/// @li PenJoin::Bevel
-/// @li PenJoin::Miter
-/// 
+/**
+   Specifies how to join the corners of a GraphicsPath. One of the
+   following values:
+   @li PenJoin::Round (default)
+   @li PenJoin::Bevel
+   @li PenJoin::Miter
+*/
 typedef Enum<PenJoinEnum> PenJoin;
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 
-/// A pen can be used to draw lines, edges of rectangles, ellipses, and
-/// paths.
-/// 
-/// This is a SharedPtr, so if you copy instances of pens they will be
-/// referencing to the same place. You can't clone pens because you can't
-/// modify them.
-/// 
-/// @win32
-///   This is a @msdn{HPEN} wrapper.
-/// @endwin32
-/// 
-/// @see Graphics, Graphics#drawLine, Graphics#drawRect, Graphics#strokePath
-/// 
+/**
+   A pen can be used to draw lines, edges of rectangles, ellipses, and
+   paths.
+
+   This is a SharedPtr, so if you copy instances of pens they will be
+   referencing to the same place. You can't clone pens because you can't
+   modify them.
+
+   @win32
+     This is a @msdn{HPEN} wrapper.
+   @endwin32
+
+   @see Graphics, Graphics#drawLine, Graphics#drawRect, Graphics#strokePath
+*/
 class VACA_DLL Pen : private SharedPtr<GdiObject<HPEN> >
 {
 public:
@@ -157,7 +164,7 @@ public:
   PenJoin getJoin() const;
 
   HPEN getHandle() const;
-  
+
 };
 
 } // namespace Vaca

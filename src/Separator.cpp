@@ -44,10 +44,11 @@ Separator::~Separator()
 {
 }
 
-/// The preferred size of a separator is a 2x2 box. It is your
-/// responsability to make the Separator widget a horizontal or
-/// vertical line (through the Layout of the @link Widget#getParent parent Widget@endlink).
-/// 
+/**
+   The preferred size of a separator is a 2x2 box. It is your
+   responsability to make the Separator widget a horizontal or
+   vertical line (through the Layout of the @link Widget#getParent parent Widget@endlink).
+*/
 void Separator::onPreferredSize(PreferredSizeEvent& ev)
 {
   ev.setPreferredSize(2, 2);

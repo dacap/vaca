@@ -38,9 +38,8 @@
 
 using namespace Vaca;
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 //
-
 
 GraphicsPath::Node::Node(int type, const Point& point)
   : m_flags(type & TypeMask)
@@ -76,9 +75,9 @@ const Point& GraphicsPath::Node::getPoint() const
   return m_point;
 }
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // GraphicsPath
-
+
 GraphicsPath::GraphicsPath()
 {
 }

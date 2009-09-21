@@ -33,41 +33,45 @@
 
 using namespace Vaca;
 
-/// Creates a new TimePoint starting the chronometer from this point.
-/// 
-/// @see #elapsed
-/// 
+/**
+   Creates a new TimePoint starting the chronometer from this point.
+
+   @see #elapsed
+*/
 TimePoint::TimePoint()
 {
   QueryPerformanceFrequency(&m_freq);
   reset();
 }
 
-/// Destroys the TimePoint.
-/// 
+/**
+   Destroys the TimePoint.
+*/
 TimePoint::~TimePoint()
 {
 }
 
-/// Resets the chronometer.
-/// 
-/// Next calls to #elapsed will return the time elapsed from the
-/// last call of #reset.
-/// 
-/// @see #elapsed
-/// 
+/**
+   Resets the chronometer.
+
+   Next calls to #elapsed will return the time elapsed from the
+   last call of #reset.
+
+   @see #elapsed
+*/
 void TimePoint::reset()
 {
   QueryPerformanceCounter(&m_point);
 }
 
-/// Returns the life-time in seconds of this object.
-/// 
-/// The life-time is the elapsed time from the construction of the
-/// object (or from the last call to #reset method).
-/// 
-/// @see reset
-/// 
+/**
+   Returns the life-time in seconds of this object.
+
+   The life-time is the elapsed time from the construction of the
+   object (or from the last call to #reset method).
+
+   @see reset
+*/
 double TimePoint::elapsed() const
 {
   LARGE_INTEGER now;

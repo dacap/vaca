@@ -38,7 +38,7 @@
 
 using namespace Vaca;
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 
 ImageHandle::ImageHandle()
 {
@@ -58,16 +58,17 @@ ImageHandle::~ImageHandle()
   delete m_graphics;
 }
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 
 Image::Image()
   : SharedPtr<ImageHandle>(new ImageHandle())
 {
 }
 
-/// Loads an image from the resource specified by @a imageId. This
-/// constructor uses Win32 LoadBitmap.
-/// 
+/**
+   Loads an image from the resource specified by @a imageId. This
+   constructor uses Win32 LoadBitmap.
+*/
 Image::Image(ResourceId imageId)
   : SharedPtr<ImageHandle>(new ImageHandle())
 {
@@ -167,7 +168,7 @@ Image::Image(const Image& image)
 
 Image::~Image()
 {
-}  
+}
 
 int Image::getWidth() const
 {
@@ -199,8 +200,9 @@ int Image::getDepth() const
   return bc.bcBitCount;
 }
 
-/// Returns a Graphics context to draw inside the image.
-/// 
+/**
+   Returns a Graphics context to draw inside the image.
+*/
 Graphics& Image::getGraphics()
 {
   ImageHandle* ptr = get();

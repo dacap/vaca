@@ -54,9 +54,10 @@ DockFrame::~DockFrame()
 {
 }
 
-/// The DockFrame are synchronized with its parents (generally a
-/// Frame).
-/// 
+/**
+   The DockFrame are synchronized with its parents (generally a
+   Frame).
+*/
 bool DockFrame::keepSynchronized()
 {
   return true;
@@ -69,8 +70,9 @@ bool DockFrame::keepSynchronized()
 //   Frame::onDestroy();
 // }
 
-/// Generates the DockBar#onResizingFrame event for m_dockBar member.
-/// 
+/**
+   Generates the DockBar#onResizingFrame event for m_dockBar member.
+*/
 void DockFrame::onResizing(CardinalDirection dir, Rect& rc)
 {
   Frame::onResizing(dir, rc);
@@ -145,4 +147,3 @@ bool DockFrame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lRe
 }
 
 #endif
-

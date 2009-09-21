@@ -40,12 +40,13 @@
 
 using namespace Vaca;
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // TabBase
 
-/// Creates a new tab control. A tab is a set of pages, each page has a
-/// group of widgets, so you can navigate through the pages.
-/// 
+/**
+   Creates a new tab control. A tab is a set of pages, each page has a
+   group of widgets, so you can navigate through the pages.
+*/
 TabBase::TabBase(Widget* parent, Style style)
   : Widget(WidgetClassName(WC_TABCONTROL), parent, style)
 {
@@ -115,14 +116,15 @@ Side TabBase::getSide()
   }
 }
 
-/// Sets the side of the pages.
-/// 
-/// @warning You can't use LeftSide and RightSide sides in a Tab
-///          with isMultiline() == false. This routine will set the Tab
-///          in a multiline style automatically if you try this.
-/// 
-/// @see #setMultiline
-/// 
+/**
+   Sets the side of the pages.
+
+   @warning You can't use LeftSide and RightSide sides in a Tab
+	    with isMultiline() == false. This routine will set the Tab
+	    in a multiline style automatically if you try this.
+
+   @see #setMultiline
+*/
 void TabBase::setSide(Side side)
 {
   int style = 0;
@@ -185,7 +187,7 @@ int TabBase::insertPage(int pageIndex, const String& text)
 
   if (pageIndex < 0)
     pageIndex = getPageCount();
-  
+
   return TabCtrl_InsertItem(getHandle(), pageIndex, &tci);
 }
 
@@ -261,8 +263,9 @@ void TabBase::setPageText(int pageIndex, const String& text)
 //   TabCtrl_SetPadding(getHandle(), padding.w, padding.h);
 // }
 
-/// @warning This function couldn't work for Tab with getSide() != TopSide.
-/// 
+/**
+   @warning This function couldn't work for Tab with getSide() != TopSide.
+*/
 Size TabBase::getNonClientSize()
 {
   assert(::IsWindow(getHandle()));
@@ -276,26 +279,28 @@ Size TabBase::getNonClientSize()
 }
 
 // /// TCN_SELCHANGING
-// /// 
+// ///
 // void TabBase::onPageChanging(Event& ev)
 // {
 //   PageChanging(ev);
 // }
 
-/// Event generated when the user select a new page. Use
-/// getActivePage() to known which page was selected.
-/// 
-/// TCN_SELCHANGE
-/// 
+/**
+   Event generated when the user select a new page. Use
+   getActivePage() to known which page was selected.
+
+   TCN_SELCHANGE
+*/
 void TabBase::onPageChange(Event& ev)
 {
   PageChange(ev);
 }
 
-/// Adds space for the non-client size.
-/// 
-/// @see getNonClientSize
-/// 
+/**
+   Adds space for the non-client size.
+
+   @see getNonClientSize
+*/
 void TabBase::onPreferredSize(PreferredSizeEvent& ev)
 {
   Size ncSize = getNonClientSize();
@@ -309,12 +314,13 @@ void TabBase::onPreferredSize(PreferredSizeEvent& ev)
   ev.setPreferredSize(ev.getPreferredSize() + ncSize);
 }
 
-/// Adjust the area where the pages should be positioned.
-///
-/// @win32 
-///   It uses @msdn{TabCtrl_AdjustRect} to known how to adjust the bounds.
-/// @endwin32
-/// 
+/**
+   Adjust the area where the pages should be positioned.
+
+   @win32
+     It uses @msdn{TabCtrl_AdjustRect} to known how to adjust the bounds.
+   @endwin32
+*/
 void TabBase::onLayout(LayoutEvent& ev)
 {
   RECT rc;
@@ -346,7 +352,7 @@ bool TabBase::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult)
   return false;
 }
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // Tab
 
 Tab::Tab(Widget* parent, Style style)
@@ -359,15 +365,16 @@ Tab::~Tab()
 {
 }
 
-/// Returns the page in the specified index.
-///
-/// @param pageIndex
-///   Zero-based index of the page to be returned.
-///
+/**
+   Returns the page in the specified index.
+
+   @param pageIndex
+     Zero-based index of the page to be returned.
+*/
 TabPage* Tab::getPage(int pageIndex)
 {
   assert(pageIndex >= 0 && pageIndex < getPageCount());
-  
+
   return dynamic_cast<TabPage*>(getChildren().at(pageIndex));
 }
 
@@ -391,7 +398,7 @@ void Tab::onPageChange(Event& ev)
   layout();
 }
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // TabPage
 
 TabPage::TabPage(const String& text, Tab* parent, Style style)

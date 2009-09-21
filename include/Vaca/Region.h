@@ -38,9 +38,10 @@
 
 namespace Vaca {
 
-/// A region, it can be simple as a rectangle, complex as any shape,
-/// but also can be empty.
-/// 
+/**
+   A region, it can be simple as a rectangle, complex as any shape,
+   but also can be empty.
+*/
 class VACA_DLL Region : private SharedPtr<GdiObject<HRGN> >
 {
 public:
@@ -86,10 +87,9 @@ public:
   static Region fromRoundRect(const Rect& rc, const Size& ellipseSize);
 
   HRGN getHandle() const;
-  
+
 };
 
 } // namespace Vaca
 
 #endif // VACA_REGION_H
-

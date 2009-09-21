@@ -43,13 +43,14 @@ using namespace Vaca;
 #define LVS_EX_DOUBLEBUFFER 0x00010000
 #endif
 
-/// Creates a new ListView.
-///
-/// @win32
-///   It uses the @msdn{LVS_SHAREIMAGELISTS} to avoid destroying the image-list
-///   that you specified using #setImageList.
-/// @endwin32
-/// 
+/**
+   Creates a new ListView.
+
+   @win32
+     It uses the @msdn{LVS_SHAREIMAGELISTS} to avoid destroying the image-list
+     that you specified using #setImageList.
+   @endwin32
+*/
 ListView::ListView(Widget* parent, Style style)
   : Widget(WidgetClassName(WC_LISTVIEW), parent,
 	   style | Style(LVS_SHAREIMAGELISTS | LVS_OWNERDATA, 0))
@@ -169,7 +170,7 @@ ImageList ListView::getImageList() const
 {
   return m_imageList;
 }
- 
+
 ImageList ListView::getSmallImageList() const
 {
   return m_smallImageList;
@@ -198,7 +199,7 @@ int ListView::insertColumn(int columnIndex, const String& header, TextAlign text
   assert(::IsWindow(getHandle()));
 
   bool withDummyColumn = false;
-  
+
   if (columnIndex == 0 && textAlign != TextAlign::Left) {
     // the first column can't have a textAlign != LeftAlign (Win32
     // limitation), so we can use a dummy-column (MSDN solution)
@@ -231,8 +232,9 @@ int ListView::insertColumn(int columnIndex, const String& header, TextAlign text
 }
 #endif
 
-/// Removes the specified column. 
-/// 
+/**
+   Removes the specified column.
+*/
 void ListView::removeColumn(ListColumn* column)
 {
   assert(column != NULL);
@@ -254,8 +256,9 @@ void ListView::removeAllColumns()
   m_columns.clear();
 }
 
-/// Returns the number of columns. Only for Report views.
-/// 
+/**
+   Returns the number of columns. Only for Report views.
+*/
 int ListView::getColumnCount() const
 {
   return m_columns.size();
@@ -268,16 +271,17 @@ ListColumn* ListView::getColumn(int columnIndex) const
   return m_columns[columnIndex];
 }
 
-/// Inserts a new item in the last position.
-///
-/// @param item
-///   The item to be append in the list, this item will be
-///   deleted automatically in ListView destruction. You can
-///   avoid the deletion of the item if you call #removeItem
-///   before ListView destructor.
-///
-/// @see #removeItem
-/// 
+/**
+   Inserts a new item in the last position.
+
+   @param item
+     The item to be append in the list, this item will be
+     deleted automatically in ListView destruction. You can
+     avoid the deletion of the item if you call #removeItem
+     before ListView destructor.
+
+   @see #removeItem
+*/
 int ListView::addItem(ListItem* item)
 {
   assert(::IsWindow(getHandle()));
@@ -294,10 +298,11 @@ int ListView::addItem(ListItem* item)
 }
 
 #if 0
-/// Inserts a new item in the @a itemIndex position.
-/// 
-/// @return The index (generally @a itemIndex).
-/// 
+/**
+   Inserts a new item in the @a itemIndex position.
+
+   @return The index (generally @a itemIndex).
+*/
 int ListView::insertItem(int itemIndex, const String& text, int imageIndex)
 {
   assert(::IsWindow(getHandle()));
@@ -314,12 +319,13 @@ int ListView::insertItem(int itemIndex, const String& text, int imageIndex)
 }
 #endif
 
-/// Removes one item from the list.
-///
-/// @param item
-///   The item to be removed from the list. This routine does not
-///   delete the item, so you should delete it.
-/// 
+/**
+   Removes one item from the list.
+
+   @param item
+     The item to be removed from the list. This routine does not
+     delete the item, so you should delete it.
+*/
 void ListView::removeItem(ListItem* item)
 {
   assert(::IsWindow(getHandle()));
@@ -332,10 +338,11 @@ void ListView::removeItem(ListItem* item)
   ListView_SetItemCountEx(getHandle(), m_items.size(), LVSICF_NOINVALIDATEALL);
 }
 
-/// Clears the list.
-///
-/// Removes and @b deletes all items in the list.
-///
+/**
+   Clears the list.
+
+   Removes and @b deletes all items in the list.
+*/
 void ListView::removeAllItems()
 {
   assert(::IsWindow(getHandle()));
@@ -351,18 +358,20 @@ void ListView::removeAllItems()
   ListView_SetItemCountEx(getHandle(), 0, 0);
 }
 
-/// Returns the number of items.
-/// 
+/**
+   Returns the number of items.
+*/
 int ListView::getItemCount() const
 {
   return m_items.size();
 }
 
-/// Returns the ListItem in the given position.
-///
-/// @param index
-///   Zero-based index of the item
-///
+/**
+   Returns the ListItem in the given position.
+
+   @param index
+     Zero-based index of the item
+*/
 ListItem* ListView::getItem(int index) const
 {
   assert(index >= 0 && index < m_items.size());
@@ -371,8 +380,9 @@ ListItem* ListView::getItem(int index) const
 }
 
 #if 0
-/// Creates an TextEdit control to edit the specified item.
-/// 
+/**
+   Creates an TextEdit control to edit the specified item.
+*/
 void ListView::editItemText(int itemIndex)
 {
   assert(::IsWindow(getHandle()));
@@ -391,7 +401,7 @@ int ListView::getSelectedItemCount() const
 
 // Returns the index of the item that has the focus
 // (LVM_GETSELECTIONMARK).
-// 
+//
 // int ListView::getCurrentItem()
 // {
 //   assert(::IsWindow(getHandle()));
@@ -452,7 +462,7 @@ bool ListView::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult)
       NMLVDISPINFO* lplvdi = reinterpret_cast<NMLVDISPINFO*>(lpnmhdr);
 
       assert(lplvdi->item.iItem >= 0 && lplvdi->item.iItem < m_items.size());
-      
+
       ListItem* item = m_items[lplvdi->item.iItem];
       assert(item != NULL);
 

@@ -63,12 +63,12 @@ static HHOOK dragHook = NULL;
 static bool isControlPressed = false;
 static HWND hwndDockWnd = NULL;
 
-// Based on the code of J Brown (http://www.catch22.net)
+// Based on the code of J Brown (http://www.catch22.net/)
 static LRESULT CALLBACK dragHookProc(int code, WPARAM wParam, LPARAM lParam)
 {
   ULONG state = (ULONG)lParam;
 
-  if (code < 0) 
+  if (code < 0)
     return CallNextHookEx(dragHook, code, wParam, lParam);
 
   if (wParam == VK_CONTROL) {
@@ -80,7 +80,7 @@ static LRESULT CALLBACK dragHookProc(int code, WPARAM wParam, LPARAM lParam)
     // the cursor position isn't gotten from lParam
     // and the control state isn't gotten from wParam
     SendMessage(hwndDockWnd, WM_MOUSEMOVE, 0, 0);
-    
+
     return -1;
   }
 
@@ -92,8 +92,9 @@ static LRESULT CALLBACK dragHookProc(int code, WPARAM wParam, LPARAM lParam)
   return CallNextHookEx(dragHook, code, wParam, lParam);
 }
 
-/// Creates a new DockBar
-/// 
+/**
+   Creates a new DockBar
+*/
 DockBar::DockBar(const String& title, Frame* parent, Style style)
   : Widget(DockBarClass::getClassName(), parent, style)
 {
@@ -128,10 +129,11 @@ DockBar::~DockBar()
   delete m_dockInfo;
 }
 
-/// You can use setVisible() to hide or show the DockBar. If you hide
-/// the DockBar, this method deletes the #Vaca::DockFrame if it exist, or
-/// remove the DockBar from the #Vaca::DockArea. All is automatic.
-/// 
+/**
+   You can use setVisible() to hide or show the DockBar. If you hide
+   the DockBar, this method deletes the #Vaca::DockFrame if it exist, or
+   remove the DockBar from the #Vaca::DockArea. All is automatic.
+*/
 void DockBar::setVisible(bool visible)
 {
   Widget::setVisible(visible);
@@ -145,8 +147,9 @@ void DockBar::setVisible(bool visible)
   }
 }
 
-/// Leaves some space for the gripper (using measureGripper()).
-/// 
+/**
+   Leaves some space for the gripper (using measureGripper()).
+*/
 #if 0
 Rect DockBar::getLayoutBounds() const
 {
@@ -182,9 +185,9 @@ Rect DockBar::getLayoutBounds() const
 #endif
 
 /*
- * Sets the drag full tool bar mode. If @a state is false, only a
- * border is moved when the tool bar is dragged.  By default the full
- * drag mode is disabled.
+   Sets the drag full tool bar mode. If @a state is false, only a
+   border is moved when the tool bar is dragged.  By default the full
+   drag mode is disabled.
  */
 void DockBar::setFullDrag(bool state)
 {
@@ -196,9 +199,10 @@ bool DockBar::isFullDrag() const
   return m_fullDrag;
 }
 
-/// If @a state is true, the gripper is drawn on floating mode too. By
-/// default, the gripper is not drawn in floating mode.
-/// 
+/**
+   If @a state is true, the gripper is drawn on floating mode too. By
+   default, the gripper is not drawn in floating mode.
+*/
 void DockBar::setFloatingGripper(bool state)
 {
   m_floatingGripper = state;
@@ -209,22 +213,25 @@ void DockBar::setFloatingGripper(bool state)
   }
 }
 
-/// Default value: false.
-/// 
+/**
+   Default value: false.
+*/
 bool DockBar::isFloatingGripper() const
 {
   return m_floatingGripper;
 }
 
-/// Returns true if the bar is docked in a DockArea.
-/// 
+/**
+   Returns true if the bar is docked in a DockArea.
+*/
 bool DockBar::isDocked() const
 {
   return m_dockArea != NULL;
 }
 
-/// Returns true if the bar is floating in a DockFrame.
-/// 
+/**
+   Returns true if the bar is floating in a DockFrame.
+*/
 bool DockBar::isFloating() const
 {
   return m_dockFrame != NULL;
@@ -233,7 +240,7 @@ bool DockBar::isFloating() const
 void DockBar::dockIn(DockArea* dockArea)
 {
   assert(dockArea != NULL);
-  
+
   // does it have DockInfo?
   if (m_dockInfo == NULL) {
     // create the default one
@@ -285,7 +292,7 @@ void DockBar::makeDock(DockArea* dockArea, DockInfo* dockInfo)
   // redock in the same dock area?
   if (m_dockArea != NULL && dockArea == m_dockArea) {
     Widget::setVisible(false);
-    
+
     redock = true;
     m_dockArea->onRedock(this, m_drag->dockIn);
     m_dockArea->removeDockBar(this);
@@ -357,8 +364,9 @@ void DockBar::onPreferredSize(PreferredSizeEvent& ev)
   ev.setPreferredSize(sz);
 }
 
-/// Called when m_dockFrame is closed by its "Close" button.
-/// 
+/**
+   Called when m_dockFrame is closed by its "Close" button.
+*/
 void DockBar::onDockFrameClose(CloseEvent& ev)
 {
   Widget::setVisible(false);
@@ -367,17 +375,19 @@ void DockBar::onDockFrameClose(CloseEvent& ev)
     m_owner->updateIndicators();
 }
 
-/// Calls paintGripper().
-/// 
+/**
+   Calls paintGripper().
+*/
 void DockBar::onPaint(PaintEvent& ev)
 {
   paintGripper(ev.getGraphics());
 }
 
-/// When the gripper is visible in the floating state
-/// (m_floatingGripper == true), we must to repaint the DockBar's
-/// gripper when the DockBar is resized.
-/// 
+/**
+   When the gripper is visible in the floating state
+   (m_floatingGripper == true), we must to repaint the DockBar's
+   gripper when the DockBar is resized.
+*/
 void DockBar::onResize(ResizeEvent& ev)
 {
   if (m_floatingGripper)
@@ -424,7 +434,7 @@ void DockBar::onMouseMove(MouseEvent& ev)
   if (hasCapture()) {
     assert(m_drag != NULL);
 
-    //////////////////////////////////////////////////////////////////////
+    // ======================================================================
     // does the mouse or the control key change?
     Point newPos = System::getCursorPos();
     bool newCtrl = System::getKeyState(Keys::ControlKey);
@@ -435,7 +445,7 @@ void DockBar::onMouseMove(MouseEvent& ev)
 
     m_drag->oldMousePos = newPos;
     m_drag->oldCtrlState = newCtrl;
-    //////////////////////////////////////////////////////////////////////
+    // ======================================================================
 
     ScreenGraphics g;
 
@@ -499,38 +509,41 @@ void DockBar::onDoubleClick(MouseEvent& ev)
   Widget::onDoubleClick(ev);
 }
 
-/// Event called when the DockBar is docked in a new DockArea. You can
-/// use getDockArea() method to known where the DockBar is docked.
-/// 
+/**
+   Event called when the DockBar is docked in a new DockArea. You can
+   use getDockArea() method to known where the DockBar is docked.
+*/
 void DockBar::onDocking()
 {
   assert(getDockArea() != NULL);
 }
 
-/// Event called when the DockBar was docked and now is floating in
-/// some DockFrame.
-/// 
+/**
+   Event called when the DockBar was docked and now is floating in
+   some DockFrame.
+*/
 void DockBar::onFloating()
 {
   // do nothing
 }
 
-/// When the DockBar is floating, and its DockFrame container is
-/// resized (DockFrame#onResizing), this event is fired.
-/// 
+/**
+   When the DockBar is floating, and its DockFrame container is
+   resized (DockFrame#onResizing), this event is fired.
+*/
 void DockBar::onResizingFrame(DockFrame* frame, CardinalDirection dir, Rect& rc)
 {
 }
 
 void DockBar::paintGripper(Graphics& g)
 {
-  if (isGripperVisible(isDocked(), 
+  if (isGripperVisible(isDocked(),
 		       isDocked() ? m_dockArea->getSide():
 				    Side())) {
     Color topLeft = System::getColor(COLOR_3DHIGHLIGHT);
     Color bottomRight = System::getColor(COLOR_3DSHADOW);
     Rect rc = getClientBounds();
-    Side gripperSide = getGripperSide(isDocked(), 
+    Side gripperSide = getGripperSide(isDocked(),
 				      isDocked() ? m_dockArea->getSide():
 						   Side());
 
@@ -560,10 +573,11 @@ void DockBar::paintGripper(Graphics& g)
   }
 }
 
-/// @return This must return Size(gripperWidth, 0),
-///         Size(0, gripperHeight), or Size(0, 0) if the gripper is hidden
-///         (use isGripperVisible() to know that).
-/// 
+/**
+   @return This must return Size(gripperWidth, 0),
+	   Size(0, gripperHeight), or Size(0, 0) if the gripper is hidden
+	   (use isGripperVisible() to know that).
+*/
 Size DockBar::measureGripper(bool docked, Side dockSide) const
 {
   if (isGripperVisible(docked, dockSide)) {
@@ -625,17 +639,18 @@ bool DockBar::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResu
   return false;
 }
 
-/// Creates the DragInfo to start dragging this DockBar...
-/// 
+/**
+   Creates the DragInfo to start dragging this DockBar...
+*/
 void DockBar::beginDrag()
 {
   assert(m_drag == NULL);
-  
+
   // install the keyboard hook (to hook the CONTROL key changes, and
   // the ESC key)
   assert(hwndDockWnd == NULL && dragHook == NULL);
   hwndDockWnd = getHandle();
-  dragHook = SetWindowsHookEx(WH_KEYBOARD, dragHookProc, NULL, ::GetCurrentThreadId()); 
+  dragHook = SetWindowsHookEx(WH_KEYBOARD, dragHookProc, NULL, ::GetCurrentThreadId());
 
 //   if (m_dockArea != NULL)
 //     m_dockArea->onBeginDockBarDrag(this);
@@ -644,7 +659,7 @@ void DockBar::beginDrag()
   if (m_dockFrame != NULL)
     m_dockFrame->bringToTop();
 
-  //////////////////////////////////////////////////////////////////////
+  // ======================================================================
   // create the DragInfo...
   m_drag = new DragInfo;
   m_drag->startDocked = isDocked();
@@ -670,11 +685,12 @@ void DockBar::beginDrag()
   m_drag->dockIn = calcDestination(dummy);
   m_drag->inArea = m_dockArea;
   // ...done.
-  //////////////////////////////////////////////////////////////////////
+  // ======================================================================
 }
 
-/// Moves the DockBar to the place that indicates the current m_drag information.
-/// 
+/**
+   Moves the DockBar to the place that indicates the current m_drag information.
+*/
 void DockBar::dragBar()
 {
   // inside a dock bar
@@ -692,12 +708,13 @@ void DockBar::dragBar()
   }
 }
 
-/// Destroys the DragInfo (m_drag)
-/// 
+/**
+   Destroys the DragInfo (m_drag)
+*/
 void DockBar::endDrag()
 {
   assert(m_drag != NULL);
-  
+
   // destroy the DragInfo...
   delete m_drag->dockIn;
   delete m_drag;
@@ -719,9 +736,10 @@ void DockBar::endDrag()
   releaseMouse();
 }
 
-/// Used to hide the DockBar. It deletes the m_dockFrame and removes
-/// this DockBar from m_dockArea (if it isn't NULL).
-/// 
+/**
+   Used to hide the DockBar. It deletes the m_dockFrame and removes
+   this DockBar from m_dockArea (if it isn't NULL).
+*/
 void DockBar::cleanUp()
 {
   // undock
@@ -751,8 +769,9 @@ void DockBar::cleanFrame()
   m_dockFrame = NULL;
 }
 
-/// Focus the owner window.
-/// 
+/**
+   Focus the owner window.
+*/
 void DockBar::focusOwner()
 {
   if (m_owner != NULL)
@@ -817,7 +836,7 @@ DockArea* DockBar::xorTracker(Graphics& g)
     DockArea* dockArea = m_owner->getDockArea(m_drag->dockIn->getSide());
 
     assert(dockArea != NULL);
-    
+
     dockArea->drawXorTracker(g, m_drag->dockIn);
 
     return dockArea;
@@ -829,8 +848,9 @@ DockArea* DockBar::xorTracker(Graphics& g)
   }
 }
 
-/// @todo Move this method to DockFrame
-/// 
+/**
+   @todo Move this method to DockFrame
+*/
 Size DockBar::getNonClientSizeForADockFrame()
 {
   Rect clientRect(0, 0, 1, 1);
@@ -843,4 +863,3 @@ Size DockBar::getNonClientSizeForADockFrame()
 }
 
 #endif
-

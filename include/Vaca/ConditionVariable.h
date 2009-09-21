@@ -38,8 +38,9 @@
 
 namespace Vaca {
 
-/// This exception is thrown when a ConditionVariable couldn't be created.
-/// 
+/**
+   This exception is thrown when a ConditionVariable couldn't be created.
+*/
 class CreateConditionVariableException : public Exception
 {
 public:

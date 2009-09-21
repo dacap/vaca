@@ -42,10 +42,11 @@ using namespace Vaca;
 
 HINSTANCE RichEditRegister::hmod = NULL;
 
-/// Tries to load the Riched20 DLL.
-/// 
-/// @throw RegisterException If the DLL is not found.
-/// 
+/**
+   Tries to load the Riched20 DLL.
+
+   @throw RegisterException If the DLL is not found.
+*/
 RichEditRegister::RichEditRegister()
 {
   if (hmod == NULL) {
@@ -95,68 +96,74 @@ void RichEdit::setTextLimit(size_t maxChars)
   //sendMessage(EM_EXLIMITTEXT, 0, maxChars);
 }
 
-/// Returns true if the current content in the clipboard can be pasted
-/// in the RichEdit widget.
-/// 
-/// @win32
-///   Sends the @msdn{EM_CANPASTE} message to the widget.
-/// @endwin32
-/// 
-/// @todo It should support a Clipboard::Format parameter
-/// 
+/**
+   Returns true if the current content in the clipboard can be pasted
+   in the RichEdit widget.
+
+   @win32
+     Sends the @msdn{EM_CANPASTE} message to the widget.
+   @endwin32
+
+   @todo It should support a Clipboard::Format parameter
+*/
 bool RichEdit::canPaste() const
 {
   return const_cast<RichEdit*>(this)->sendMessage(EM_CANPASTE, 0, 0) != 0 ? true: false;
 }
 
-/// Returns true if the user can undo the last action.
-/// 
-/// @win32
-///   Sends the @msdn{EM_CANUNDO} message to the widget.
-/// @endwin32
-/// 
+/**
+   Returns true if the user can undo the last action.
+
+   @win32
+     Sends the @msdn{EM_CANUNDO} message to the widget.
+   @endwin32
+*/
 bool RichEdit::canUndo() const
 {
   return const_cast<RichEdit*>(this)->sendMessage(EM_CANUNDO, 0, 0) != 0;
 }
 
-/// Returns true if the user can redo an action.
-/// 
-/// @win32
-///   Sends the @msdn{EM_CANREDO} message to the widget.
-/// @endwin32
-/// 
+/**
+   Returns true if the user can redo an action.
+
+   @win32
+     Sends the @msdn{EM_CANREDO} message to the widget.
+   @endwin32
+*/
 bool RichEdit::canRedo() const
 {
   return const_cast<RichEdit*>(this)->sendMessage(EM_CANREDO, 0, 0) != 0;
 }
 
-/// Undoes the last user action.
-/// 
-/// @win32
-///   Sends the @msdn{EM_UNDO} message to the widget.
-/// @endwin32
-/// 
+/**
+   Undoes the last user action.
+
+   @win32
+     Sends the @msdn{EM_UNDO} message to the widget.
+   @endwin32
+*/
 void RichEdit::undo()
 {
   sendMessage(WM_UNDO, 0, 0);
 }
 
-/// Redoes the last undid action.
-/// 
-/// @win32
-///   Sends the @msdn{EM_REDO} message to the widget.
-/// @endwin32
-/// 
+/**
+   Redoes the last undid action.
+
+   @win32
+     Sends the @msdn{EM_REDO} message to the widget.
+   @endwin32
+*/
 void RichEdit::redo()
 {
   sendMessage(EM_REDO, 0, 0);
 }
 
-/// @win32
-///   Sends the @msdn{EM_SETUNDOLIMIT} message to the widget.
-/// @endwin32
-/// 
+/**
+   @win32
+     Sends the @msdn{EM_SETUNDOLIMIT} message to the widget.
+   @endwin32
+*/
 void RichEdit::setUndoLimit(int maximumActions)
 {
   sendMessage(EM_SETUNDOLIMIT, 0, 0);
@@ -177,25 +184,27 @@ void RichEdit::setZoomFactor(float f)
   sendMessage(EM_SETZOOM, (WPARAM)(f * 1000), 1000);
 }
 
-/// If you set this to true, all text added in the RichEdit that
-/// contains URLs will be automatically detected and replaced with a
-/// hyperlink.
-/// 
-/// @win32
-///   Sends the @msdn{EM_AUTOURLDETECT} message to the widget.
-/// @endwin32
-/// 
+/**
+   If you set this to true, all text added in the RichEdit that
+   contains URLs will be automatically detected and replaced with a
+   hyperlink.
+
+   @win32
+     Sends the @msdn{EM_AUTOURLDETECT} message to the widget.
+   @endwin32
+*/
 void RichEdit::setDetectUrls(bool state)
 {
   sendMessage(EM_AUTOURLDETECT, state ? TRUE: FALSE, 0);
 }
 
-/// Returns true if the autodetection of URLs is activated.
-/// 
-/// @win32
-///   Sends the @msdn{EM_GETAUTOURLDETECT} message to the widget.
-/// @endwin32
-/// 
+/**
+   Returns true if the autodetection of URLs is activated.
+
+   @win32
+     Sends the @msdn{EM_GETAUTOURLDETECT} message to the widget.
+   @endwin32
+*/
 bool RichEdit::isDetectUrls()
 {
   return sendMessage(EM_GETAUTOURLDETECT, 0, 0) != 0 ? true: false;
@@ -216,8 +225,9 @@ void RichEdit::paste()
   sendMessage(WM_PASTE, 0, 0);
 }
 
-/// Selects all the text in the Edit widget.
-/// 
+/**
+   Selects all the text in the Edit widget.
+*/
 void RichEdit::selectAll()
 {
   CHARRANGE cr;
@@ -226,8 +236,9 @@ void RichEdit::selectAll()
   sendMessage(EM_EXSETSEL, 0, (LPARAM)&cr);
 }
 
-/// Selects a range of text.
-/// 
+/**
+   Selects a range of text.
+*/
 void RichEdit::selectRange(int start, int end)
 {
   CHARRANGE cr;
@@ -236,19 +247,21 @@ void RichEdit::selectRange(int start, int end)
   sendMessage(EM_EXSETSEL, 0, (LPARAM)&cr);
 }
 
-/// Removes the text's selection.
-/// 
+/**
+   Removes the text's selection.
+*/
 void RichEdit::deselect()
 {
   sendMessage(EM_SETSEL, static_cast<WPARAM>(-1), 0);
 }
 
-/// Returns the current selected range in the text-box.
-/// 
-/// @win32
-///   Sends the @msdn{EM_EXGETSEL} message to the widget.
-/// @endwin32
-/// 
+/**
+   Returns the current selected range in the text-box.
+
+   @win32
+     Sends the @msdn{EM_EXGETSEL} message to the widget.
+   @endwin32
+*/
 void RichEdit::getSelection(int& start, int& end)
 {
   CHARRANGE cr;
@@ -257,12 +270,13 @@ void RichEdit::getSelection(int& start, int& end)
   end = cr.cpMax;
 }
 
-/// Returns the current selected text.
-/// 
-/// @win32
-///   Sends the @msdn{EM_GETSELTEXT} message to the widget.
-/// @endwin32
-/// 
+/**
+   Returns the current selected text.
+
+   @win32
+     Sends the @msdn{EM_GETSELTEXT} message to the widget.
+   @endwin32
+*/
 String RichEdit::getSelectedText() const
 {
   size_t length = getTextLength();

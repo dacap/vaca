@@ -40,12 +40,13 @@
 
 namespace Vaca {
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 
-/// It's like a namespace for ThreadPriority.
-/// 
-/// @see ThreadPriority
-/// 
+/**
+   It's like a namespace for ThreadPriority.
+
+   @see ThreadPriority
+*/
 struct ThreadPriorityEnum
 {
   enum enumeration {
@@ -60,23 +61,25 @@ struct ThreadPriorityEnum
   static const enumeration default_value = Normal;
 };
 
-/// Thread priority.
-/// 
-/// One of the following values:
-/// @li ThreadPriority::Idle
-/// @li ThreadPriority::Lowest
-/// @li ThreadPriority::Low
-/// @li ThreadPriority::Normal
-/// @li ThreadPriority::High
-/// @li ThreadPriority::Highest
-/// @li ThreadPriority::TimeCritical
-/// 
+/**
+   Thread priority.
+
+   One of the following values:
+   @li ThreadPriority::Idle
+   @li ThreadPriority::Lowest
+   @li ThreadPriority::Low
+   @li ThreadPriority::Normal
+   @li ThreadPriority::High
+   @li ThreadPriority::Highest
+   @li ThreadPriority::TimeCritical
+*/
 typedef Enum<ThreadPriorityEnum> ThreadPriority;
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 
-/// This exception is thrown when a new Thread couldn't be created.
-/// 
+/**
+   This exception is thrown when a new Thread couldn't be created.
+*/
 class CreateThreadException : public Exception
 {
 public:
@@ -87,16 +90,17 @@ public:
 
 };
 
-/// A thread of execution.
-/// 
-/// Each thread that has widgets has a queue of messages, each message
-/// represent an event that the user generated with the input devices
-/// or a signal from the operating system (OS). The #doMessageLoop is
-/// the method that gets messages from the OS and distributes them to
-/// widgets.
-/// 
-/// @see doMessageLoop
-/// 
+/**
+   A thread of execution.
+
+   Each thread that has widgets has a queue of messages, each message
+   represent an event that the user generated with the input devices
+   or a signal from the operating system (OS). The #doMessageLoop is
+   the method that gets messages from the OS and distributes them to
+   widgets.
+
+   @see doMessageLoop
+*/
 class VACA_DLL Thread : public NonCopyable
 {
   friend class Frame;
@@ -111,11 +115,12 @@ public:
   Thread();
   ~Thread();
 
-  /// Creates a new thread running the specified function or functor @a f.
-  /// 
-  /// @throw CreateThreadException
-  ///   If the thread couldn't be created by Win32's @c CreateThread.
-  /// 
+  /**
+     Creates a new thread running the specified function or functor @a f.
+
+     @throw CreateThreadException
+       If the thread couldn't be created by Win32's @c CreateThread.
+  */
   template<typename F>
   explicit Thread(F f) {
     _Thread(Slot0_fun<void, F>(f));

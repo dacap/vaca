@@ -118,16 +118,18 @@ void SpinButton::setValue(int posValue)
   sendMessage(UDM_SETPOS32, 0, posValue);
 }
 
-/// Returns the radix base used in the buddy widget (an TextEdit generally).
-/// 
+/**
+   Returns the radix base used in the buddy widget (an TextEdit generally).
+*/
 int SpinButton::getBase()
 {
   return sendMessage(UDM_GETBASE, 0, 0);
 }
 
-/// Sets the radix base to be used in the buddy widget (an TextEdit
-/// generally). This can be 10 for decimal or 16 for hexadecimal.
-/// 
+/**
+   Sets the radix base to be used in the buddy widget (an TextEdit
+   generally). This can be 10 for decimal or 16 for hexadecimal.
+*/
 void SpinButton::setBase(int base)
 {
   sendMessage(UDM_SETBASE, base, 0);

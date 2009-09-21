@@ -34,23 +34,25 @@
 
 using namespace Vaca;
 
-/// Creates a new component.
-/// 
-/// With the debug version of the library, you will get in the
-/// @ref page_debug_log a line specifying when the component
-/// was created.
-/// 
+/**
+   Creates a new component.
+
+   With the debug version of the library, you will get in the
+   @ref page_debug_log a line specifying when the component
+   was created.
+*/
 Component::Component()
 {
   VACA_TRACE("new Component (%p)\n", this);
 }
 
-/// Destroys the component.
-/// 
-/// With the debug version of the library, you will get in the
-/// @ref page_debug_log a line specifying when the component
-/// was destroyed.
-/// 
+/**
+   Destroys the component.
+
+   With the debug version of the library, you will get in the
+   @ref page_debug_log a line specifying when the component
+   was destroyed.
+*/
 Component::~Component()
 {
   VACA_TRACE("delete Component (%p)\n", this);

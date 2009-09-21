@@ -39,8 +39,9 @@
 
 namespace Vaca {
 
-/// List box control. Widget to manage a list of strings.
-/// 
+/**
+   List box control. Widget to manage a list of strings.
+*/
 class VACA_DLL ListBox : public Widget
 {
 public:
@@ -93,7 +94,7 @@ public:
   };
 
   DragListBox(Widget* parent, Style style = Styles::Default);
-  
+
 };
 
 } // namespace Vaca

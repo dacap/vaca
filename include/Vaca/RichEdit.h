@@ -37,8 +37,9 @@
 
 namespace Vaca {
 
-/// Loads the RichEdit DLL.
-/// 
+/**
+   Loads the RichEdit DLL.
+*/
 class VACA_DLL RichEditRegister
 {
   static HINSTANCE hmod;
@@ -47,8 +48,9 @@ public:
   RichEditRegister();
 };
 
-/// Widget to edit rich-text.
-/// 
+/**
+   Widget to edit rich-text.
+*/
 class VACA_DLL RichEdit : public RichEditRegister, public Widget
 {
 public:
@@ -69,7 +71,7 @@ public:
   size_t getTextLength() const;
   size_t getTextLimit() const;
   void setTextLimit(size_t textLimit);
-  
+
   bool canPaste() const;
   bool canUndo() const;
   bool canRedo() const;
@@ -82,7 +84,7 @@ public:
 
   void setDetectUrls(bool state);
   bool isDetectUrls();
-  
+
   void cut();
   void copy();
   void paste();

@@ -193,28 +193,30 @@ template<> String Vaca::convert_to(const double& from)
   return format_string(L"%.16g", from);
 }
 
-/// Commondly used to give strings to Win32 API or from Win32 API (in
-/// structures and messages).
-/// 
+/**
+   Commondly used to give strings to Win32 API or from Win32 API (in
+   structures and messages).
+*/
 void Vaca::copy_string_to(const String& src, Char* dest, int size)
 {
   std::wcsncpy(dest, src.c_str(), size);
   dest[size-1] = L'\0';
 }
 
-/// Concatenates two path components.
-/// 
-/// It is useful if the string represent a path and we have to add a
-/// file name. For example:
-/// @code
-/// String path(L"C:\\myproject\\src");
-/// assert(path / L"main.h" == L"C:\\myproject\\src\\main.h");
-/// @endcode
-/// 
-/// @param component
-///   The string to be added at the end of the string
-///   (separated by a slash).
-/// 
+/**
+   Concatenates two path components.
+
+   It is useful if the string represent a path and we have to add a
+   file name. For example:
+   @code
+   String path(L"C:\\myproject\\src");
+   assert(path / L"main.h" == L"C:\\myproject\\src\\main.h");
+   @endcode
+
+   @param component
+     The string to be added at the end of the string
+     (separated by a slash).
+*/
 String Vaca::operator/(const String& path, const String& comp)
 {
   String res(path);
@@ -226,20 +228,21 @@ String Vaca::operator/(const String& path, const String& comp)
   return res;
 }
 
-/// Adds a path component at the end of the path.
-/// 
-/// It is useful if the string represent a path and we have to add a
-/// file name. For example:
-/// @code
-/// String path(L"C:\\myproject\\src");
-/// path /= L"main.h";
-/// assert(path == L"C:\\myproject\\src\\main.h");
-/// @endcode
-/// 
-/// @param component
-///   The string to be added at the end of the string
-///   (separated by a slash).
-/// 
+/**
+   Adds a path component at the end of the path.
+
+   It is useful if the string represent a path and we have to add a
+   file name. For example:
+   @code
+   String path(L"C:\\myproject\\src");
+   path /= L"main.h";
+   assert(path == L"C:\\myproject\\src\\main.h");
+   @endcode
+
+   @param component
+     The string to be added at the end of the string
+     (separated by a slash).
+*/
 String& Vaca::operator/=(String& path, const String& comp)
 {
   if (!path.empty() && *(path.end()-1) != L'/' && *(path.end()-1) != L'\\')
@@ -249,11 +252,12 @@ String& Vaca::operator/=(String& path, const String& comp)
   return path;
 }
 
-/// Returns the file path (the path of "C:\foo\main.cpp" is "C:\foo"
-/// without the file name).
-/// 
-/// @see file_name
-/// 
+/**
+   Returns the file path (the path of "C:\foo\main.cpp" is "C:\foo"
+   without the file name).
+
+   @see file_name
+*/
 String Vaca::file_path(const String& fullpath)
 {
   String::const_reverse_iterator rit;
@@ -272,11 +276,12 @@ String Vaca::file_path(const String& fullpath)
   return res;
 }
 
-/// Returns the file name (the file name of "C:\foo\main.cpp" is
-/// "main.cpp", without the path).
-/// 
-/// @see file_path, file_title
-/// 
+/**
+   Returns the file name (the file name of "C:\foo\main.cpp" is
+   "main.cpp", without the path).
+
+   @see file_path, file_title
+*/
 String Vaca::file_name(const String& fullpath)
 {
   String::const_reverse_iterator rit;
@@ -292,14 +297,15 @@ String Vaca::file_name(const String& fullpath)
   return res;
 }
 
-/// Returns the file extension (the extension of "C:\foo\main.cpp" is
-/// "cpp", without the path and its title).
-/// 
-/// @warning
-///   For a file name like "pack.tar.gz" the extension is "gz".
-/// 
-/// @see file_path, file_title
-/// 
+/**
+   Returns the file extension (the extension of "C:\foo\main.cpp" is
+   "cpp", without the path and its title).
+
+   @warning
+     For a file name like "pack.tar.gz" the extension is "gz".
+
+   @see file_path, file_title
+*/
 String Vaca::file_extension(const String& fullpath)
 {
   String::const_reverse_iterator rit;
@@ -321,14 +327,15 @@ String Vaca::file_extension(const String& fullpath)
   return res;
 }
 
-/// Returns the file title (the title of "C:\foo\main.cpp" is "main",
-/// without the path and without the extension).
-/// 
-/// @warning
-///   For a file name like "pack.tar.gz" the title is "pack.tar".
-/// 
-/// @see file_path, file_extension
-/// 
+/**
+   Returns the file title (the title of "C:\foo\main.cpp" is "main",
+   without the path and without the extension).
+
+   @warning
+     For a file name like "pack.tar.gz" the title is "pack.tar".
+
+   @see file_path, file_extension
+*/
 String Vaca::file_title(const String& fullpath)
 {
   String::const_reverse_iterator rit;

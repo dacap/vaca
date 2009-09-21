@@ -52,27 +52,29 @@ ButtonBase::~ButtonBase()
 {
 }
 
-/// Returns true if the button is selected or checked. It's useful to
-/// see if a CheckBox, RadioButton or ToggleButton is checked.
-/// 
-/// @see setSelected
-/// 
+/**
+   Returns true if the button is selected or checked. It's useful to
+   see if a CheckBox, RadioButton or ToggleButton is checked.
+
+   @see setSelected
+*/
 bool ButtonBase::isSelected()
 {
 //   return (sendMessage(BM_GETSTATE, 0, 0) & (BST_CHECKED | BST_PUSHED)) != 0;
   return sendMessage(BM_GETCHECK, 0, 0) == BST_CHECKED;
 }
 
-/// Selects or deselects (checks or unchecks) the button depending of
-/// @a state parameter. The button is automatically redrawn, you don't
-/// need to call #invalidate().
-/// 
-/// @param state
-///     true if you want to check the button, or false if you want
-///     to uncheck.
-/// 
-/// @see isSelected
-/// 
+/**
+   Selects or deselects (checks or unchecks) the button depending of
+   @a state parameter. The button is automatically redrawn, you don't
+   need to call #invalidate().
+
+   @param state
+       true if you want to check the button, or false if you want
+       to uncheck.
+
+   @see isSelected
+*/
 void ButtonBase::setSelected(bool state)
 {
   sendMessage(BM_SETCHECK, state ? BST_CHECKED: BST_UNCHECKED, 0);
@@ -83,8 +85,9 @@ void ButtonBase::setSelected(bool state)
 #  define BCM_GETIDEALSIZE BCM_FIRST+1
 #endif
 
-/// Returns the preferred size for the button.
-/// 
+/**
+   Returns the preferred size for the button.
+*/
 void ButtonBase::onPreferredSize(PreferredSizeEvent& ev)
 {
   assert(::IsWindow(getHandle()));
@@ -155,21 +158,23 @@ void ButtonBase::onPreferredSize(PreferredSizeEvent& ev)
   ev.setPreferredSize(sz);
 }
 
-/// Event fired when the user activates the button.
-///
-/// The user can press and release a mouse button or press space-bar
-/// key to activate a button widget. For Button it is fired when the
-/// user push the button, for CheckBox and ToggleButton when the
-/// button-state is changed, and for RadioButton when a different
-/// option is selected.
-/// 
+/**
+   Event fired when the user activates the button.
+
+   The user can press and release a mouse button or press space-bar
+   key to activate a button widget. For Button it is fired when the
+   user push the button, for CheckBox and ToggleButton when the
+   button-state is changed, and for RadioButton when a different
+   option is selected.
+*/
 void ButtonBase::onClick(Event& ev)
 {
   Click(ev);
 }
 
-/// Receives BN_CLICKED and fires onClick event.
-/// 
+/**
+   Receives BN_CLICKED and fires onClick event.
+*/
 bool ButtonBase::onReflectedCommand(int id, int code, LRESULT& lResult)
 {
   if (Widget::onReflectedCommand(id, code, lResult))

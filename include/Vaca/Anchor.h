@@ -38,11 +38,12 @@
 
 namespace Vaca {
 
-/// Anchor constraint. You should setup an Anchor contraint for every
-/// widget controled by an AnchorLayout.
-///
-/// @see AnchorLayout.
-///
+/**
+   Anchor constraint. You should setup an Anchor contraint for every
+   widget controled by an AnchorLayout.
+
+   @see AnchorLayout.
+*/
 class VACA_DLL Anchor : public Constraint
 {
   Rect m_refRect;

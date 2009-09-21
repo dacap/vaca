@@ -41,11 +41,12 @@
 
 namespace Vaca {
 
-/// Class to access to operating system information.
-/// 
-/// It is more like a namespace than a class, because all methods are
-/// static.
-/// 
+/**
+   Class to access to operating system information.
+
+   It is more like a namespace than a class, because all methods are
+   static.
+*/
 class VACA_DLL System
 {
 public:
@@ -68,7 +69,7 @@ public:
   static Rect getWorkAreaBounds();
 
   static Color getColor(int index);
-  
+
   static bool getKeyState(Keys::Type);
   static Point getCursorPos();
   static void setCursorPos(const Point& pt);

@@ -42,8 +42,9 @@
 
 namespace Vaca {
 
-/// @internal You should use @link Vaca::TreeView::iterator TreeView::iterator @endlink.
-/// 
+/**
+   @internal You should use @link Vaca::TreeView::iterator TreeView::iterator @endlink.
+*/
 class VACA_DLL TreeViewIterator
   : public std::iterator<std::bidirectional_iterator_tag,
 			 TreeNode*>
@@ -86,9 +87,10 @@ private:
   bool equal(TreeViewIterator const& other) const;
 };
 
-/// Handles a TreeView control.  A TreeView (internally) has a root
-/// TreeNode that is the parent of the first-level's nodes.
-/// 
+/**
+   Handles a TreeView control.  A TreeView (internally) has a root
+   TreeNode that is the parent of the first-level's nodes.
+*/
 class VACA_DLL TreeView : public Widget
 {
   friend class TreeNode;
@@ -100,15 +102,18 @@ class VACA_DLL TreeView : public Widget
   ImageList m_normalImageList;
   ImageList m_stateImageList;
 
-  /// To use LPSTR_TEXTCALLBACK we need some space
-  /// to allocate text temporally.
+  /**
+     To use LPSTR_TEXTCALLBACK we need some space
+     to allocate text temporally.
+  */
   String m_tmpBuffer;
 
 public:
 
-  /// Iterator to go through all the nodes of the tree (it does a deep
-  /// scan).
-  /// 
+  /**
+     Iterator to go through all the nodes of the tree (it does a deep
+     scan).
+  */
   typedef TreeViewIterator iterator;
 
   struct VACA_DLL Styles {

@@ -48,8 +48,9 @@ static std::vector<Timer*> timers;              // list of timers to be processe
 static bool                timer_break = false; // break the loop in timer_thread_proc()
 static ConditionVariable   wakeup_condition;    // wake-up the timer thread loop
 
-/// @param interval In milliseconds.
-/// 
+/**
+   @param interval In milliseconds.
+*/
 Timer::Timer(int interval)
   : m_threadOwnerId(::GetCurrentThreadId())
   , m_running(false)
@@ -65,17 +66,19 @@ Timer::~Timer()
   stop();
 }
 
-/// Returns the period of time which is waited to generate tick events.
-/// 
-/// @see #onTick
-/// 
+/**
+   Returns the period of time which is waited to generate tick events.
+
+   @see #onTick
+*/
 int Timer::getInterval()
 {
   return m_interval;
 }
 
-/// Sets the period of time to wait to reach each tick.
-/// 
+/**
+   Sets the period of time to wait to reach each tick.
+*/
 void Timer::setInterval(int interval)
 {
   assert(interval > 0);
@@ -88,17 +91,19 @@ void Timer::setInterval(int interval)
   if (running) start();
 }
 
-/// Returns true if the timer is running (generating ticks).
-/// 
+/**
+   Returns true if the timer is running (generating ticks).
+*/
 bool Timer::isRunning()
 {
   return m_running;
 }
 
-/// Starts the ticks generation.
-/// 
-/// You can use this method even when timer is running (to restart it).
-/// 
+/**
+   Starts the ticks generation.
+
+   You can use this method even when timer is running (to restart it).
+*/
 void Timer::start()
 {
   // start/create timer thread (if this is the first Timer started)
@@ -122,8 +127,9 @@ void Timer::start()
   }
 }
 
-/// Stops the timer if it's running, in other case, it does nothing.
-/// 
+/**
+   Stops the timer if it's running, in other case, it does nothing.
+*/
 void Timer::stop()
 {
   if (m_running) {
@@ -135,34 +141,37 @@ void Timer::stop()
   }
 }
 
-/// Polls all timers for the current thread.
-/// 
-/// Fires all events for each Timer that belong to the current thread.
-/// It's used from Thread#getMessage when process the WM_NULL message,
-/// but it's safe to call this routine from anywhere (for example, in a
-/// do-while block).
-/// 
+/**
+   Polls all timers for the current thread.
+
+   Fires all events for each Timer that belong to the current thread.
+   It's used from Thread#getMessage when process the WM_NULL message,
+   but it's safe to call this routine from anywhere (for example, in a
+   do-while block).
+*/
 void Timer::pollTimers()
 {
   Timer::fire_timers_for_thread();
 }
 
-/// When the timer is running, this event is generated for each tick.
-/// 
+/**
+   When the timer is running, this event is generated for each tick.
+*/
 void Timer::onTick()
 {
   // fire the signal
   Tick();
 }
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 
-/// Thread to control Timers. This thread is created when the first
-/// Timer is started. Then it continues running until ~Application stop
-/// it.
-/// 
-/// @internal 
-/// 
+/**
+   Thread to control Timers. This thread is created when the first
+   Timer is started. Then it continues running until ~Application stop
+   it.
+
+   @internal
+*/
 void Timer::run_timer_thread()
 {
   ScopedLock hold(timer_mutex);
@@ -229,7 +238,7 @@ void Timer::run_timer_thread()
 	  delay > static_cast<unsigned int>(timer->m_timeCounter))
 	delay = static_cast<unsigned int>(timer->m_timeCounter);
     }
-      
+
     // wait wake-up condition or the "delay" to process the next timer-event
     if (delay == inf)
       wakeup_condition.wait(hold);
@@ -238,8 +247,9 @@ void Timer::run_timer_thread()
   }
 }
 
-/// @internal
-/// 
+/**
+   @internal
+*/
 void Timer::start_timer_thread()
 {
   ScopedLock hold(timer_mutex);
@@ -248,14 +258,15 @@ void Timer::start_timer_thread()
     timer_thread = new Thread(&run_timer_thread);
 }
 
-/// Stops the timer_thread (called from ~Application()).
-/// 
-/// @internal
-/// 
+/**
+   Stops the timer_thread (called from ~Application()).
+
+   @internal
+*/
 void Timer::stop_timer_thread()
 {
   Thread* thrd = NULL;
-  
+
   {
     ScopedLock hold(timer_mutex);
 
@@ -275,8 +286,9 @@ void Timer::stop_timer_thread()
   thrd = NULL;
 }
 
-/// @internal
-/// 
+/**
+   @internal
+*/
 void Timer::remove_timer(Timer* t)
 {
   ScopedLock hold(timer_mutex);
@@ -284,8 +296,9 @@ void Timer::remove_timer(Timer* t)
   remove_from_container(timers, t);
 }
 
-/// @internal
-/// 
+/**
+   @internal
+*/
 void Timer::fire_timers_for_thread()
 {
   ThreadId currentThreadId = ::GetCurrentThreadId();

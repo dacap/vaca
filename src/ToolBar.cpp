@@ -43,7 +43,7 @@
 
 using namespace Vaca;
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // ToolButton
 
 ToolButton::ToolButton(CommandId id, int imageIndex, ToolButtonState state)
@@ -119,7 +119,7 @@ int ToolButton::getTBSTYLE() const
 //   setState(newState);
 // }
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // ToolSet
 
 // WARNING! if we use TB_ADDBITMAP or TB_ADDBUTTONS, we MUST TO send
@@ -144,41 +144,42 @@ ToolSet::~ToolSet()
   }
 }
 
-/// Returns the number of buttons in the set.
-///
-/// @win32
-/// This function uses @msdn{TB_BUTTONCOUNT} message.
-/// @endwin32
-///
+/**
+   Returns the number of buttons in the set.
+
+   @win32
+   This function uses @msdn{TB_BUTTONCOUNT} message.
+   @endwin32
+*/
 int ToolSet::getButtonCount() const
 {
   return const_cast<ToolSet*>(this)->sendMessage(TB_BUTTONCOUNT, 0, 0);
 }
 
-/** 
- * Returns the number of rows in the set.
- *
- * @win32
- * This function uses @msdn{TB_GETROWS} message.
- * @endwin32
- */
+/**
+   Returns the number of rows in the set.
+
+   @win32
+   This function uses @msdn{TB_GETROWS} message.
+   @endwin32
+*/
 int ToolSet::getRows() const
 {
   return const_cast<ToolSet*>(this)->sendMessage(TB_GETROWS, 0, 0);
 }
 
-/** 
- * Changes the number of rows in the ToolSet.
- *
- * @win32
- * This function uses the @msdn{TB_SETROWS} message.
- * @endwin32
- * 
- * @param rows 
- * @param expand 
- * 
- * @return 
- */
+/**
+   Changes the number of rows in the ToolSet.
+
+   @win32
+   This function uses the @msdn{TB_SETROWS} message.
+   @endwin32
+
+   @param rows
+   @param expand
+
+   @return
+*/
 Rect ToolSet::setRows(int rows, bool expand)
 {
   RECT rect;
@@ -189,9 +190,10 @@ Rect ToolSet::setRows(int rows, bool expand)
   return Rect(&rect);
 }
 
-/// (TB_SETIMAGELIST)
-/// 
-/// 
+/**
+   (TB_SETIMAGELIST)
+
+*/
 void ToolSet::setImageList(const ImageList& imageList)
 {
   sendMessage(TB_SETIMAGELIST, 0, reinterpret_cast<LPARAM>(imageList.getHandle()));
@@ -202,23 +204,24 @@ void ToolSet::setImageList(const ImageList& imageList)
 // 	      reinterpret_cast<LPARAM>(imageList.getHandle()));
 }
 
-/// Adds a button to the ToolSet.
-/// 
-/// It uses Win32's TB_INSERTBUTTON with BTNS_BUTTON.
-/// 
-/// @param imageIndex The images to use for this button from the
-///                   ImageList that you specified to setImageList().
-/// 
-/// @param id
-///      Identifier of the command. This is the identifier that will be
-///      sent to Widget#onCommand.
-/// 
-/// @param buttonState
-///      One of the following values:
-///      @li TBState::Checked
-///      @li TBState::Enabled
-///      @li TBState::Hidden
-/// 
+/**
+   Adds a button to the ToolSet.
+
+   It uses Win32's TB_INSERTBUTTON with BTNS_BUTTON.
+
+   @param imageIndex The images to use for this button from the
+		     ImageList that you specified to setImageList().
+
+   @param id
+	Identifier of the command. This is the identifier that will be
+	sent to Widget#onCommand.
+
+   @param buttonState
+	One of the following values:
+	@li TBState::Checked
+	@li TBState::Enabled
+	@li TBState::Hidden
+*/
 void ToolSet::addButton(ToolButton* button)
 {
   TBBUTTON tbb;
@@ -240,10 +243,11 @@ void ToolSet::addButton(ToolButton* button)
   updatePreferredSizes();
 }
 
-/// Adds a separator in the ToolSet.
-/// 
-/// It uses Win32's TB_INSERTBUTTON with BTNS_SEP.
-/// 
+/**
+   Adds a separator in the ToolSet.
+
+   It uses Win32's TB_INSERTBUTTON with BTNS_SEP.
+*/
 void ToolSet::addSeparator(int width)
 {
   TBBUTTON tbb;
@@ -281,7 +285,7 @@ void ToolSet::updateButton(ToolButton* button)
     tbbi.pszText = &text[0];
     tbbi.cchText = text.size();
 
-    addStyle(Style(TBSTYLE_LIST, 0)); 
+    addStyle(Style(TBSTYLE_LIST, 0));
   }
 
   sendMessage(TB_SETBUTTONINFO,
@@ -327,12 +331,13 @@ ToolButton* ToolSet::getButtonByIndex(int index) const
     return NULL;
 }
 
-/// Returns the index of the button that is above the point @a pt
-/// (relative to client area). Returns a negative index if the point is
-/// inside a (or the nearest of) a separator button.
-/// 
-/// It uses Win32's TB_HITTEST.
-/// 
+/**
+   Returns the index of the button that is above the point @a pt
+   (relative to client area). Returns a negative index if the point is
+   inside a (or the nearest of) a separator button.
+
+   It uses Win32's TB_HITTEST.
+*/
 int ToolSet::hitTest(const Point& pt) const
 {
   POINT point = pt;
@@ -342,7 +347,7 @@ int ToolSet::hitTest(const Point& pt) const
 }
 
 std::vector<Size> ToolSet::getPreferredSizes() const
-{ 
+{
   return m_preferredSizes;
 }
 
@@ -430,9 +435,10 @@ bool ToolSet::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResu
   return Widget::wndProc(message, wParam, lParam, lResult);
 }
 
-/// Updates the preferred sizes of the tool-set when it has different
-/// number of rows.
-/// 
+/**
+   Updates the preferred sizes of the tool-set when it has different
+   number of rows.
+*/
 void ToolSet::updatePreferredSizes()
 {
   m_preferredSizes.clear();
@@ -441,11 +447,11 @@ void ToolSet::updatePreferredSizes()
   int origRows = getRows();
 
   if (maxRows > 0) {
-    //////////////////////////////////////////////////////////////////////
+    // ======================================================================
     setRows(maxRows, false); // unbelievably true!!! we need to do
 			     // this before to get a correct result
 			     // with "setRows(1, false).getSize()"
-    //////////////////////////////////////////////////////////////////////
+    // ======================================================================
 
     // add a null preferred size (for rows=0)
     m_preferredSizes.push_back(Size(0, 0));
@@ -460,7 +466,7 @@ void ToolSet::updatePreferredSizes()
 
 #if 0
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // ToolBar
 
 ToolBar::ToolBar(const String& title, Frame* parent, Style toolSetStyle, Style style)
@@ -485,10 +491,11 @@ ToolBar::~ToolBar()
 //   return m_set;
 // }
 
-/// Returns the size of the ToolBar when it should be docked in the
-/// specified @a side.
-/// 
-/// 
+/**
+   Returns the size of the ToolBar when it should be docked in the
+   specified @a side.
+
+*/
 Size ToolBar::getDockedSize(Side side) const
 {
   Size size(0, 0);
@@ -525,12 +532,13 @@ void ToolBar::onUpdateIndicators()
   m_set.updateIndicators();
 }
 
-/// When the ToolBar is docked in the top or bottom side, we must to
-/// set the rows to 1, if it's docked in the left or right side we must
-/// to make it vertical (set the rows to the maximum number).
-/// 
-/// @see ToolSet::setRows
-/// 
+/**
+   When the ToolBar is docked in the top or bottom side, we must to
+   set the rows to 1, if it's docked in the left or right side we must
+   to make it vertical (set the rows to the maximum number).
+
+   @see ToolSet::setRows
+*/
 void ToolBar::onDocking()
 {
   DockBar::onDocking();
@@ -558,7 +566,7 @@ void ToolBar::onResizingFrame(DockFrame* frame, CardinalDirection dir, Rect& rc)
   int rows, maxRows = preferredSizes.size()-1;
 
   for (rows=1; rows<=maxRows; rows++) {
-    //////////////////////////////////////////////////////////////////////
+    // ======================================================================
     // East
     if (dir == CardinalDirection::East &&
 	preferredSizes[rows].w+extraSize.w <= rc.w) {
@@ -567,7 +575,7 @@ void ToolBar::onResizingFrame(DockFrame* frame, CardinalDirection dir, Rect& rc)
       rc.setSize(prefSize);
       return;
     }
-    //////////////////////////////////////////////////////////////////////
+    // ======================================================================
     // West
     else if (dir == CardinalDirection::West &&
 	     preferredSizes[rows].w+extraSize.w <= rc.w) {
@@ -578,7 +586,7 @@ void ToolBar::onResizingFrame(DockFrame* frame, CardinalDirection dir, Rect& rc)
       rc = Rect(Point(rc.x+rc.w-prefSize.w, rc.y), prefSize);
       return;
     }
-    //////////////////////////////////////////////////////////////////////
+    // ======================================================================
     // South
     else if (dir == CardinalDirection::South &&
 	     preferredSizes[rows].h+extraSize.h >= rc.h) {
@@ -589,7 +597,7 @@ void ToolBar::onResizingFrame(DockFrame* frame, CardinalDirection dir, Rect& rc)
       rc.setSize(prefSize);
       return;
     }
-    //////////////////////////////////////////////////////////////////////
+    // ======================================================================
     // North
     else if (dir == CardinalDirection::North &&
 	     preferredSizes[rows].h+extraSize.h >= rc.h) {
@@ -607,4 +615,3 @@ void ToolBar::onResizingFrame(DockFrame* frame, CardinalDirection dir, Rect& rc)
 }
 
 #endif
-

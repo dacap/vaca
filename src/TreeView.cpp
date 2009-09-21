@@ -44,9 +44,8 @@
 
 using namespace Vaca;
 
-//////////////////////////////////////////////////////////////////////
+// ======================================================================
 // TreeViewIterator
-
 
 TreeViewIterator::TreeViewIterator()
 {
@@ -71,7 +70,7 @@ TreeViewIterator& TreeViewIterator::operator=(const TreeViewIterator& other)
 
 void TreeViewIterator::increment()
 {
-  // does the node have children? 
+  // does the node have children?
   if (!m_currentNode->m_children.empty()) {
     // return the first one
     m_currentNode = m_currentNode->m_children.front();
@@ -111,10 +110,10 @@ bool TreeViewIterator::equal(TreeViewIterator const& other) const
 {
   return (this->m_currentNode == other.m_currentNode);
 }
-    
-//////////////////////////////////////////////////////////////////////
+
+// ======================================================================
 // TreeView
-
+
 TreeView::TreeView(Widget* parent, Style style)
   : Widget(WidgetClassName(WC_TREEVIEW), parent, style)
 {
@@ -168,11 +167,12 @@ void TreeView::setDragAndDrop(bool state)
     removeStyle(Styles::NoDragAndDrop);
 }
 
-/// Sets the ImageList of icons to be used in the TreeNode.
-/// 
-/// @param imageList
-///   The ImageList to be used. It will not be deleted.
-/// 
+/**
+   Sets the ImageList of icons to be used in the TreeNode.
+
+   @param imageList
+     The ImageList to be used. It will not be deleted.
+*/
 void TreeView::setImageList(const ImageList& imageList)
 {
   assert(::IsWindow(getHandle()));
@@ -204,8 +204,9 @@ void TreeView::setRowHeight(int height)
   TreeView_SetItemHeight(getHandle(), height);
 }
 
-/// Adds a node in the root of the tree.
-/// 
+/**
+   Adds a node in the root of the tree.
+*/
 void TreeView::addNode(TreeNode* node)
 {
   // the node must be alone (not inside another TreeView)
@@ -215,10 +216,11 @@ void TreeView::addNode(TreeNode* node)
   m_root.addNode(node);
 }
 
-/// Removes the specified node whatever it's inside the tree.
-/// 
-/// @warning The node must be inside the tree.
-/// 
+/**
+   Removes the specified node whatever it's inside the tree.
+
+   @warning The node must be inside the tree.
+*/
 void TreeView::removeNode(TreeNode* node)
 {
   assert(node != NULL);
@@ -242,10 +244,11 @@ int TreeView::getVisibleCount() const
   return TreeView_GetVisibleCount(getHandle());
 }
 
-/// Returns the selected node of the tree.
-/// 
-/// @return The selected node. NULL if there is no selected item in the tree.
-/// 
+/**
+   Returns the selected node of the tree.
+
+   @return The selected node. NULL if there is no selected item in the tree.
+*/
 TreeNode* TreeView::getSelectedNode() const
 {
   assert(::IsWindow(getHandle()));
@@ -257,9 +260,10 @@ TreeNode* TreeView::getSelectedNode() const
     return NULL;
 }
 
-/// Selects the node in the tree. The @a node must be a children of the
-/// tree.
-/// 
+/**
+   Selects the node in the tree. The @a node must be a children of the
+   tree.
+*/
 void TreeView::setSelectedNode(TreeNode* node)
 {
   assert(::IsWindow(getHandle()));
@@ -384,16 +388,18 @@ void TreeView::onSetCursor(SetCursorEvent& ev)
   Widget::onSetCursor(ev);
 }
 
-/// You can cancel this event (Event::cancel).
-/// 
+/**
+   You can cancel this event (Event::cancel).
+*/
 void TreeView::onBeforeExpand(TreeViewEvent& ev)
 {
   BeforeExpand(ev);
   ev.getTreeNode()->onBeforeExpand(ev);
 }
 
-/// You can cancel this event (Event::cancel).
-/// 
+/**
+   You can cancel this event (Event::cancel).
+*/
 void TreeView::onBeforeCollapse(TreeViewEvent& ev)
 {
   BeforeCollapse(ev);
@@ -408,9 +414,10 @@ void TreeView::onBeforeSelect(TreeViewEvent& ev)
   }
 }
 
-/// You can cancel this event to cancel the label editing.
-/// 
-/// 
+/**
+   You can cancel this event to cancel the label editing.
+
+*/
 void TreeView::onBeforeLabelEdit(TreeViewEvent& ev)
 {
   BeforeLabelEdit(ev);
@@ -437,8 +444,9 @@ void TreeView::onAfterSelect(TreeViewEvent& ev)
   }
 }
 
-/// You can cancel this event to avoid to change the item text.
-/// 
+/**
+   You can cancel this event to avoid to change the item text.
+*/
 void TreeView::onAfterLabelEdit(TreeViewEvent& ev)
 {
   ev.getTreeNode()->onAfterLabelEdit(ev);
@@ -479,7 +487,7 @@ bool TreeView::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult)
       return true;
     }
 
-      //////////////////////////////////////////////////////////////////////
+      // ======================================================================
       // TVN_ITEMEXPANDING
 
     case TVN_ITEMEXPANDING: {
@@ -512,7 +520,7 @@ bool TreeView::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult)
       return false;
     }
 
-      //////////////////////////////////////////////////////////////////////
+      // ======================================================================
       // TVN_SELCHANGING
 
     case TVN_SELCHANGING: {
@@ -534,7 +542,7 @@ bool TreeView::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult)
       return false;
     }
 
-      //////////////////////////////////////////////////////////////////////
+      // ======================================================================
       // TVN_ITEMEXPANDED
 
     case TVN_ITEMEXPANDED: {
@@ -558,7 +566,7 @@ bool TreeView::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult)
       return true;
     }
 
-      //////////////////////////////////////////////////////////////////////
+      // ======================================================================
       // TVN_SELCHANGED
 
     case TVN_SELCHANGED: {

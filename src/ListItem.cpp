@@ -77,8 +77,9 @@ int ListItem::getImage()
   return m_image;
 }
 
-/// @todo is it absolute or relative?
-/// 
+/**
+   @todo is it absolute or relative?
+*/
 Rect ListItem::getBounds() const
 {
   assert(::IsWindow(m_owner->getHandle()));
@@ -156,8 +157,9 @@ void ListItem::ensureVisible()
 //     return NULL;
 // }
 
-/// Connects the item to the Win32 ListView.
-/// 
+/**
+   Connects the item to the Win32 ListView.
+*/
 void ListItem::addToListView(ListView* listView)
 {
   assert(m_owner == NULL);
@@ -177,8 +179,9 @@ void ListItem::addToListView(ListView* listView)
 //   }
 }
 
-/// Disconnects the item from the Win32 ListView.
-/// 
+/**
+   Disconnects the item from the Win32 ListView.
+*/
 void ListItem::removeFromListView()
 {
   if (m_owner != NULL) {

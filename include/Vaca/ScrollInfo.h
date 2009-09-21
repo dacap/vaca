@@ -36,13 +36,14 @@
 
 namespace Vaca {
 
-/// Auxiliary structure to get and set scroll information.
-/// 
-/// Scroll information includes: the valid range where the scroll
-/// position can be, and the page size.
-/// 
-/// @see Widget#getScrollInfo, Widget#getScrollPos
-/// 
+/**
+   Auxiliary structure to get and set scroll information.
+
+   Scroll information includes: the valid range where the scroll
+   position can be, and the page size.
+
+   @see Widget#getScrollInfo, Widget#getScrollPos
+*/
 class VACA_DLL ScrollInfo
 {
   int m_minPos;
@@ -67,4 +68,3 @@ public:
 } // namespace Vaca
 
 #endif // VACA_SCROLLINFO_H
-

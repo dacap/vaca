@@ -38,6 +38,16 @@ Message::Message()
 {
 }
 
+/**
+   Creates a custom message that can be sent to a specific Widget.
+   
+   Messages can be sent through widgets of differents threads. To catch
+   a customized message you have to overload the Widget#preTranslateMessage
+   method.
+
+   @see Widget#enqueueMessage, Widget#preTranslateMessage,
+	@ref page_tn_015, @link page_examples Threads example@endlink
+*/
 Message::Message(const String& name)
 {
   UINT message = ::RegisterWindowMessage(name.c_str());
@@ -51,6 +61,19 @@ Message::Message(const String& name)
   m_msg.time = 0;
 }
 
+/**
+   Creates a copy of the specified message with the specified user
+   data as payload.
+
+   @param msg
+     A custom message previously created with Message(const String&) constructor.
+
+   @param payload
+     User data that can be obtained later by the destination using
+     Message#getPayload method.
+
+   @see Message#Message(const String&)
+*/
 Message::Message(const Message& msg, void* payload)
 {
   m_msg.hwnd = msg.m_msg.hwnd;
@@ -60,10 +83,24 @@ Message::Message(const Message& msg, void* payload)
   m_msg.time = 0;
 }
 
+/**
+   Destroys the event.
+
+   Does nothing.
+*/
 Message::~Message()
 {
 }
 
+/**
+   Returns the user data specified in the creation of this message.
+
+   @win32
+   The payload is saved in the lParam field of the @msdn{MSG} structure.
+   @endwin32
+
+   @see Message#Message(const Message&, void*)
+*/
 void* Message::getPayload()
 {
   return reinterpret_cast<void*>(m_msg.lParam);

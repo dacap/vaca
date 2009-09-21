@@ -1756,7 +1756,9 @@ bool Widget::preTranslateMessage(Message& message)
 }
 
 /**
-   Enqueue a message for the widget to be processed by its thread.
+   Enqueues a message to the widget to be processed in its own thread.
+
+   @see @ref page_tn_015, @link page_examples Threads example@endlink
 */
 void Widget::enqueueMessage(const Message& message)
 {

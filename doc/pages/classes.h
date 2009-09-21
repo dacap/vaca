@@ -87,17 +87,14 @@ Classes that represent visual components (widgets, controls, windows).
   @itemRow{CheckBox}
   @itemRow{ComboBox}
   @itemRow{DragListBox}
-  @itemRow{Edit}
   @itemRow{Frame}
   @itemRow{Label}
   @itemRow{LinkLabel}
   @itemRow{ListBox}
-  @itemRow{MultilineEdit}
-  @itemRow{Panel}
-  @itemRow{PasswordEdit}
   @itemRow{RadioButton}
   @itemRow{Slider}
   @itemRow{StatusBar}
+  @itemRow{TextEdit}
   @itemRow{ToggleButton}
 @titleRow{Basic Helpers}
   @itemRow{MakeWidgetRef}
@@ -292,7 +289,6 @@ Internal classes in the Win32 implementation.
   @itemRow{DockFrameClass}
   @itemRow{FrameClass}
   @itemRow{MdiChildClass}
-  @itemRow{PanelClass}
   @itemRow{SciRegister}
   @itemRow{SpinnerClass}
   @itemRow{TabPageClass}

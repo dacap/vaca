@@ -19,6 +19,8 @@ namespace Vaca {
 
 @section page_classes_base Base
 
+General purpose classes.
+
 @beginOverviewTable
 @titleRow{Classes}
   @itemRow{Component}
@@ -30,6 +32,8 @@ namespace Vaca {
 
 
 @section page_classes_app Application and System
+
+Classes for any kind of application (with GUI and without GUI).
 
 @beginOverviewTable
 @titleRow{Classes}
@@ -43,6 +47,8 @@ namespace Vaca {
 
 
 @section page_classes_graphics Graphics
+
+Classes to draw onto the screen.
 
 @beginOverviewTable
 @titleRow{Base Classes}
@@ -69,6 +75,8 @@ namespace Vaca {
 
 
 @section page_classes_widgets Widgets
+
+Classes that represent visual components (widgets, controls, windows).
 
 @beginOverviewTable
 @titleRow{Base}
@@ -153,6 +161,8 @@ namespace Vaca {
 
 @section page_classes_mess MESS
 
+Base classes of the MESS architecture.
+
 @beginOverviewTable
 @titleRow{Messages}
   @itemRow{Message}
@@ -188,6 +198,8 @@ namespace Vaca {
 
 @section page_classes_cmds Commands
 
+Classes to handle user-level commands.
+
 @beginOverviewTable
 @titleRow{Classes}
   @itemRow{Command}
@@ -197,6 +209,8 @@ namespace Vaca {
 
 
 @section page_classes_menus Menus
+
+Classes to handle menus.
 
 @beginOverviewTable
 @titleRow{Classes}
@@ -209,6 +223,8 @@ namespace Vaca {
 
 
 @section page_classes_layout Layout Managers
+
+Classes to control the position of your widgets.
 
 @beginOverviewTable
 @titleRow{Base}
@@ -227,6 +243,8 @@ namespace Vaca {
 
 @section page_classes_thread Multithreading Support
 
+Classes for multithreading and resource sharing.
+
 @beginOverviewTable
 @titleRow{Classes}
   @itemRow{ConditionVariable}
@@ -237,6 +255,8 @@ namespace Vaca {
 
 
 @section page_classes_error Error Handling
+
+Classes to handle errors and exceptions.
 
 @beginOverviewTable
 @titleRow{Base}
@@ -254,7 +274,7 @@ namespace Vaca {
 
 @section page_classes_win32 Win32 Specific
 
-These classes are internal to the Win32 implementation.
+Internal classes in the Win32 implementation.
 
 @beginOverviewTable
 @titleRow{Base}

@@ -39,7 +39,7 @@ using namespace Vaca;
 @section page_devel_static Static Library
 
 If you are going to use the static version of Vaca (non-shared),
-remember to compiling your application using the @c -DVACA_STATIC flag.
+remember to compile your application using the @c -DVACA_STATIC flag.
 
 
 @section page_devel_dynamic Dynamic Library
@@ -47,7 +47,7 @@ remember to compiling your application using the @c -DVACA_STATIC flag.
 If you are going to use the dynamic version of Vaca (shared version),
 you have to distribute the @c Vaca.dll with your executable file.
 
-Also, remember to compiling your source code @b without the
+Also, remember to compile your source code @b without the
 @c -DVACA_STATIC flag. When VACA_STATIC is not defined, &lt;Vaca/base.h&gt;
 defines VACA_DLL as @c __declspec(dllimport) to import each class from the @c DLL.
 

@@ -859,11 +859,13 @@ Rect Widget::getAbsoluteClientBounds() const
 }
 
 /**
-   Sets the boundary rectangle for the widget. The rectangle must be
-   in absolute coordinates for widgets without parent, and relative
-   otherwise.
+   Sets the boundary rectangle for the widget.
 
-   @see getBounds
+
+   The rectangle must be in absolute coordinates for widgets without
+   parent, and relative to the parent's client area otherwise.
+
+   @see Widget#setBounds(int,int,int,int), getBounds
 */
 void Widget::setBounds(const Rect& rc)
 {
@@ -879,7 +881,13 @@ void Widget::setBounds(const Rect& rc)
 }
 
 /**
-   @todo docme
+   Sets the boundary rectangle for the widget.
+
+
+   The rectangle must be in absolute coordinates for widgets without
+   parent, and relative to the parent's client area otherwise.
+
+   @see Widget#setBounds(const Rect&), getBounds
 */
 void Widget::setBounds(int x, int y, int w, int h)
 {
@@ -887,9 +895,14 @@ void Widget::setBounds(int x, int y, int w, int h)
 }
 
 /**
-   Sets the bounds to the screen center.
+   Moves the center of the widget to the center of the parent window
+   or the screen if does not have a parent.
 
-   @see setOrigin, setBounds
+   The center of the widget is Widget::getBounds().getCenter(),
+   this method moves the widget to the center of its parent
+   or the work-area bounds.
+
+   @see setOrigin, setBounds, System#getWorkAreaBounds
 */
 void Widget::center()
 {
@@ -903,7 +916,7 @@ void Widget::center()
     refBounds = workArea;
 
   newBounds = Rect(Point(refBounds.x+refBounds.w/2-sz.w/2,
-			 refBounds.y+refBounds.h/2-sz.h/2), sz);
+                         refBounds.y+refBounds.h/2-sz.h/2), sz);
 
   if (newBounds.x < workArea.x) newBounds.x = workArea.x;
   if (newBounds.y < workArea.y) newBounds.y = workArea.y;
@@ -912,9 +925,13 @@ void Widget::center()
 }
 
 /**
-   Sets the origin position of the widget. It does not affect the size.
+   Sets the position of the widget.
 
-   @see setBounds, center
+   This method does not affect the size of the widget. The coordinates
+   are relative to the parent's client area. If the widget does not
+   have a parent, the position is an absolute screen position.
+
+   @see setOrigin(int,int), setBounds, center
 */
 void Widget::setOrigin(const Point& pt)
 {
@@ -924,7 +941,13 @@ void Widget::setOrigin(const Point& pt)
 }
 
 /**
-   @todo docme
+   Sets the position of the widget.
+
+   This method does not affect the size of the widget. The coordinates
+   are relative to the parent's client area. If the widget does not
+   have a parent, the position is an absolute screen position.
+
+   @see setOrigin(const Point& pt)
 */
 void Widget::setOrigin(int x, int y)
 {
@@ -932,7 +955,9 @@ void Widget::setOrigin(int x, int y)
 }
 
 /**
-   Sets the size of the widget. It does not affect the origin position.
+   Sets the size of the widget.
+
+   It does not affect the origin position.
 
    @see setSize(int,int)
 */
@@ -944,7 +969,11 @@ void Widget::setSize(const Size& sz)
 }
 
 /**
-   @todo docme
+   Sets the size of the widget.
+
+   It does not affect the origin position.
+
+   @see setSize(const Size&)
 */
 void Widget::setSize(int w, int h)
 {
@@ -1505,60 +1534,8 @@ bool Widget::hasCapture()
 }
 
 // ===============================================================
-// WIDGET LAYER
+// SCROLL
 // ===============================================================
-
-/**
-   Sends this window to the top.
-*/
-void Widget::bringToTop()
-{
-  assert(::IsWindow(m_handle));
-//   BringWindowToTop(m_handle);
-  ::SetWindowPos(m_handle, HWND_TOP, 0, 0, 0, 0,
-		 SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
-
-}
-
-/**
-   Sends this window to the bottom.
-*/
-void Widget::sendToBack()
-{
-  assert(::IsWindow(m_handle));
-  SetWindowPos(m_handle, HWND_BOTTOM, 0, 0, 0, 0,
-	       SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
-}
-
-/**
-   @todo docme
-*/
-void Widget::moveAfter(Widget* brother)
-{
-  assert(m_handle != NULL && brother != NULL && brother->m_handle != NULL);
-  assert(m_parent == brother->m_parent);
-
-  SetWindowPos(m_handle, brother->getHandle(), 0, 0, 0, 0,
-	       SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
-}
-
-/**
-   @todo docme
-*/
-void Widget::moveBefore(Widget* brother)
-{
-  assert(m_handle != NULL && brother != NULL && brother->m_handle != NULL);
-  assert(m_parent == brother->m_parent);
-
-  HWND hPrev = GetWindow(brother->m_handle, GW_HWNDPREV);
-  if (hPrev != NULL)
-    brother = Widget::fromHandle(hPrev);
-  else
-    brother = NULL;
-
-  SetWindowPos(m_handle, (brother != NULL ? brother->getHandle(): HWND_TOP),
-	       0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
-}
 
 /**
    Retrieves the scroll information in the specified @a orientation.

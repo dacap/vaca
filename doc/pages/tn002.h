@@ -62,9 +62,9 @@ Here is an example that shows you how to override @c createHandle:
 class MyWidgetClass : public WidgetClass
 {
 public:
-  // This returns the name of your class for the Win32's API
+  // This returns the name of your class for the Win32 API
   static MyWidgetClass getClassName()
-  { return MyWidgetClass("Vaca.MyWidgetClass"); }
+  { return MyWidgetClass(L"Vaca.MyWidgetClass"); }
 };
 
 class MyWidget : public Register<MyWidgetClass>
@@ -86,7 +86,7 @@ protected:
                             Widget* parent,
                             Style style)
   {
-    return CreateWindowEx(style.extended, className, _T(""),
+    return CreateWindowEx(style.extended, className, L"",
 			  style.regular,
 			  CW_USEDEFAULT, CW_USEDEFAULT,
 			  CW_USEDEFAULT, CW_USEDEFAULT,

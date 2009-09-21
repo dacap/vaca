@@ -37,7 +37,7 @@
 namespace Vaca {
 
 /**
-   @defgroup slot_group Slot classes
+   @defgroup slot_group Slot Classes
    @{
  */
 

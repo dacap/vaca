@@ -36,6 +36,11 @@
 
 namespace Vaca {
 
+/**
+   @defgroup string_utils String Utilities
+   @{
+*/
+
   // ============================================================
   // UTILITARY
   // ============================================================
@@ -103,6 +108,8 @@ namespace Vaca {
 
   VACA_DLL String encode_url(const String& url);
   VACA_DLL String decode_url(const String& url);
+
+/** @} */
 
 } // namespace Vaca
 

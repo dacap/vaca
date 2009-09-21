@@ -35,7 +35,7 @@
 namespace Vaca {
 
 /**
-   @defgroup bind_group Bind classes and functions
+   @defgroup bind_group Bind Classes and Functions
    @{
  */
 

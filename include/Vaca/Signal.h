@@ -40,7 +40,7 @@
 namespace Vaca {
 
 /**
-   @defgroup signal_group Signal classes
+   @defgroup signal_group Signal Classes
    @{
  */
 

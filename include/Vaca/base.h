@@ -498,7 +498,12 @@ template<class T>
 class SharedPtr;
 
 // ======================================================================
-// Pointers
+// Smart Pointers
+
+/**
+   @defgroup smart_pointers Smart Pointers
+   @{
+ */
 
 typedef SharedPtr<Anchor> AnchorPtr;
 typedef SharedPtr<AnchorLayout> AnchorLayoutPtr;
@@ -567,6 +572,8 @@ typedef SharedPtr<ToolSet> ToolSetPtr;
 typedef SharedPtr<TreeNode> TreeNodePtr;
 typedef SharedPtr<TreeView> TreeViewPtr;
 typedef SharedPtr<Widget> WidgetPtr;
+
+/** @} */
 
 } // namespace Vaca
 

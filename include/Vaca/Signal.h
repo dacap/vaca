@@ -39,6 +39,11 @@
 
 namespace Vaca {
 
+/**
+   @defgroup signal_group Signal classes
+   @{
+ */
+
 // ======================================================================
 // Signal0_base<R>
 
@@ -494,6 +499,8 @@ public:
   }
 
 };
+
+/** @} */
 
 } // namespace Vaca
 

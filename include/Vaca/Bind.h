@@ -34,6 +34,11 @@
 
 namespace Vaca {
 
+/**
+   @defgroup bind_group Bind classes and functions
+   @{
+ */
+
 // ======================================================================
 // BindAdapter0_fun
 
@@ -630,6 +635,8 @@ RefWrapper<T> Ref(T& ref)
 {
   return RefWrapper<T>(ref);
 }
+
+/** @} */
 
 } // namespace Vaca
 

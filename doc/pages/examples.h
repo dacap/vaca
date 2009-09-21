@@ -190,6 +190,12 @@ memory leaks (Image is a SmartPtr).
 
 @section page_examples_threads Threads Example
 
+This example shows how you can create and stop threads,
+and how to send message from a working thread to a widget
+in the main GUI thread.
+
+@see @ref page_tn_015 
+
 
 @section page_examples_timers Timers Example
 

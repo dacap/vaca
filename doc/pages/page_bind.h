@@ -29,7 +29,7 @@ For example, the following code:
 
 int func(int a, int b)
 {
-  return a+b;
+  return a + b;
 }
 
 int main()
@@ -44,19 +44,54 @@ Prints the value
 3
 @endcode
 
-Why? There are two things in the example above:
+Why? There are two things in the example:
 
-@li The @em Bind<int>(&func, 1, 2) call which creates a BindAdapter object.
-@li A call to the @em operator()(double, const char*, int) of that BindAdapter.
-
-Bind() creates the BindAdapter that allocates memory
-to hold the address of @em func and the values 1 and 2.
-Then, when the BindAdapter::operator() is used, the parameters
-are completelly ignored (@c 2.3, @c "Hello", and @c 200 in this
-case) and a call to @em func(1, 2) is made instead.
+@li First we call @em Bind<int>(&func, 1, 2) constructor, which creates
+    a BindAdapter object that allocates memory to hold the address of 
+    @em func and two integers (1 and 2 in this case).
+@li Then we are calling the @em operator()(double, const char*, int) of
+    that new BindAdapter. The BindAdapter completelly ignores those
+    arguments (2.3, "Hello", 200) and a call to @em func(1, 2) is made
+    instead.
 
 Is the same to call BindAdapter::operator() without parameters or
-with any kind and number of parameters, they will be ignored.
+with any kind and number of parameters, they will be ignored anyway.
+The BindAdapter object (created with @link Vaca::Bind Bind@endlink function)
+always will remember the arguments specified in its constructor, and these arguments
+will be used in each operator() call.
+
+The following example shows you how to create an adapter directly (without
+the help of @link Vaca::Bind Bind@endlink function):
+@code
+#include <iostream>
+#include "Vaca/Bind.h"
+
+int func(int a, int b)
+{
+  return a + b;
+}
+
+int main()
+{
+  Vaca::BindAdapter2_fun<int, int(*)(int,int), int, int>
+    adapter(&func, 1, 2);
+
+  std::cout << adapter() << std::endl;
+  std::cout << adapter(2.3) << std::endl;
+  std::cout << adapter("Hello") << std::endl;
+  std::cout << adapter(200, 2.3) << std::endl;
+  return 0;
+}
+@endcode
+It will print:
+@code
+3
+3
+3
+3
+@endcode
+Arguments in each call are ignored, just the values passed in the
+constructor of BindAdapter2_fun() are used.
 
 
 @section page_bind_signals How to Use Bind With Signals?

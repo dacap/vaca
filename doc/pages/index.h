@@ -13,7 +13,7 @@ Report bugs, errors, and mistakes to <a href="mailto:davidcapello@gmail.com">dav
 
 <div style="color:red;border:1px solid red;background-color:#ffe;padding:8px;width:50%;margin:8px auto;">
   Vaca is an experimental project, the API is unstable. @n
-  Use it at your own risk.
+  Use it at your own risk or contribute to its development.
 </div>
 </div>
 

@@ -565,12 +565,23 @@ h2 a.anchor {
 }
 
 .memproto {
-	background-color: #f0f0f0;
-	width: 100%;
-	border: none;
-	border-top: 4px solid #000;
-	padding-top: 4px;
+	background-color: #eee;
+	border-bottom: none;
+	border-top: 4px solid #bbb;
+	border-left: 1px solid #bbb;
+	border-right: 1px solid #bbb;
+	padding: 8px;
 	font-weight: bold;
+	-webkit-border-top-left-radius: 0px;
+	-webkit-border-top-right-radius: 0px;
+	-webkit-border-bottom-left-radius: 0px;
+	-webkit-border-bottom-right-radius: 0px;
+        -webkit-box-shadow: none;
+	-moz-border-radius-topleft: 0px;
+	-moz-border-radius-topright: 0px;
+	-moz-border-radius-bottomleft: 0px;
+	-moz-border-radius-bottomright: 0px;
+        -moz-box-shadow: none;
 }
 
 .memname td.memname {
@@ -579,7 +590,17 @@ h2 a.anchor {
 
 .memdoc {
 	background-color: #fff;
-	border: none;
+	border: 1px solid #bbb;
+	-webkit-border-top-left-radius: 0px;
+	-webkit-border-top-right-radius: 0px;
+	-webkit-border-bottom-left-radius: 8px;
+	-webkit-border-bottom-right-radius: 8px;
+        -webkit-box-shadow: none;
+	-moz-border-radius-topleft: 0px;
+	-moz-border-radius-topright: 0px;
+	-moz-border-radius-bottomleft: 8px;
+	-moz-border-radius-bottomright: 8px;
+        -moz-box-shadow: none;
 }
 
 table.memname tr td.memname code {

@@ -11,8 +11,9 @@ namespace Vaca {
 Licensed under the terms of the @ref page_license "New BSD license". @n
 Report bugs, errors, and mistakes to <a href="mailto:davidcapello@gmail.com">davidcapello@gmail.com</a>.
 
-<div style="color:red;border:1px solid red;background-color:#ffe;padding:8px;width:50%;">
-Vaca is an experimental project, the API is unstable. Use it at your own risk.
+<div style="color:red;border:1px solid red;background-color:#ffe;padding:8px;width:50%;margin:8px auto;">
+  Vaca is an experimental project, the API is unstable. @n
+  Use it at your own risk.
 </div>
 </div>
 

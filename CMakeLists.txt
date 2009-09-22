@@ -72,6 +72,17 @@ if(BUILD_SHARED_LIBS)
 endif(BUILD_SHARED_LIBS)
 
 ########################################
+# Installation commands
+
+FILE(GLOB vaca_h_files "${CMAKE_CURRENT_SOURCE_DIR}/include/Vaca/*.h")
+INSTALL(FILES ${vaca_h_files} DESTINATION include/Vaca)
+
+INSTALL(TARGETS Vaca
+  RUNTIME DESTINATION bin
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib)
+
+########################################
 # Examples
 
 add_subdirectory(examples)

@@ -47,6 +47,11 @@ namespace Vaca {
 */
 struct Win32DestroyIcon
 {
+  /**
+     @win32
+     Calls @msdn{DestroyIcon}.
+     @endwin32
+  */
   static void destroy(HICON handle)
   {
     ::DestroyIcon(handle);

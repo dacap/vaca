@@ -75,8 +75,18 @@ struct SysCursorEnum
 */
 typedef Enum<SysCursorEnum> SysCursor;
 
+/**
+   Used to destroy the HCURSOR handle from GdiObject.
+
+   @internal
+*/
 struct Win32DestroyCursor
 {
+  /**
+     @win32
+     Calls @msdn{DestroyCursor}.
+     @endwin32
+  */
   static void destroy(HCURSOR handle)
   {
     ::DestroyCursor(handle);

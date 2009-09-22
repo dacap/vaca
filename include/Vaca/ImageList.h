@@ -48,6 +48,11 @@ namespace Vaca {
 */
 struct Win32DestroyImageList
 {
+  /**
+     @win32
+     Calls @msdn{ImageList_Destroy}.
+     @endwin32
+  */
   static void destroy(HIMAGELIST handle)
   {
     ::ImageList_Destroy(handle);

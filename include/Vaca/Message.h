@@ -58,7 +58,7 @@ public:
      This is a wrapper for a @msdn{MSG}.
    @endwin32
 */
-class VACA_DLL Message : private NonCopyable
+class VACA_DLL Message
 {
   friend class Thread;
   friend class Widget;

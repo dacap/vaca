@@ -738,3 +738,13 @@ const Style TreeView::Styles::Default =
   TreeView::Styles::WithLines |
   TreeView::Styles::RootWithLines |
   TreeView::Styles::ShowSelectionAlways;
+
+// ===================================================================
+// Vaca special widgets
+// ===================================================================
+
+const Style ScrollableWidget::Styles::Default =
+  Widget::Styles::Default |
+  Widget::Styles::Scroll |     // to show both scroll bars
+  Widget::Styles::ClientEdge | // to show an edge arround the client area
+  Widget::Styles::Focusable;   // to receive onMouseWheel

@@ -127,6 +127,7 @@
 #include "Vaca/ScopedLock.h"
 #include "Vaca/ScrollEvent.h"
 #include "Vaca/ScrollInfo.h"
+#include "Vaca/ScrollableWidget.h"
 #include "Vaca/Separator.h"
 #include "Vaca/SetCursorEvent.h"
 #include "Vaca/SharedPtr.h"

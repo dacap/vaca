@@ -76,6 +76,7 @@
 #include "Vaca/Event.h"
 #include "Vaca/Exception.h"
 #include "Vaca/FileDialog.h"
+#include "Vaca/FindFiles.h"
 #include "Vaca/FindTextDialog.h"
 #include "Vaca/FocusEvent.h"
 #include "Vaca/Font.h"

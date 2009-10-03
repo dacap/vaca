@@ -77,12 +77,12 @@ typedef Enum<ProcessPriorityEnum> ProcessPriority;
 */
 class VACA_DLL Application : public Thread
 {
-private:
-
   /**
-     The @msdn{HINSTANCE}.
-
      @internal
+
+     @win32
+       Program @msdn{HINSTANCE}.
+     @endwin32
    */
   static HINSTANCE m_HINSTANCE;
 

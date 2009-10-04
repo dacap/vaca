@@ -51,6 +51,7 @@ public:
   bool next();
 
   String getFileName() const;
+  String getFullFileName() const;
   bool isFile() const;
   bool isDirectory() const;
 

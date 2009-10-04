@@ -30,6 +30,7 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "Vaca/FindFiles.h"
+#include "Vaca/String.h"
 
 using namespace Vaca;
 
@@ -59,6 +60,11 @@ bool FindFiles::next()
 String FindFiles::getFileName() const
 {
     return m_data.cFileName;
+}
+
+String FindFiles::getFullFileName() const
+{
+  return file_path(m_pattern) / m_data.cFileName;
 }
 
 bool FindFiles::isFile() const

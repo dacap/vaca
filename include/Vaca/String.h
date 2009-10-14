@@ -50,6 +50,9 @@ namespace Vaca {
   VACA_DLL String trim_string(const String& str);
   VACA_DLL String trim_string(const Char* str);
 
+  VACA_DLL std::string to_utf8(const String& string);
+  VACA_DLL String from_utf8(const std::string& string);
+
   // ============================================================
   // CONVERSION
   // ============================================================

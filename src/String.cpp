@@ -37,6 +37,7 @@
 #include <cstdarg>
 #include <cstdlib>
 #include <cctype>
+#include <vector>
 #include <wininet.h>
 
 #include <algorithm>
@@ -87,6 +88,45 @@ String Vaca::trim_string(const Char* str)
     res.erase(res.end()-1);
 
   return res;
+}
+
+std::string Vaca::to_utf8(const String& string)
+{
+  int required_size =
+    WideCharToMultiByte(CP_UTF8, 0,
+			string.c_str(), string.size(),
+			NULL, 0, NULL, NULL);
+
+  if (required_size == 0)
+    return std::string();
+
+  std::vector<char> buf(++required_size);
+
+  WideCharToMultiByte(CP_UTF8, 0, 
+		      string.c_str(), string.size(),
+		      &buf[0], required_size,
+		      NULL, NULL);
+
+  return std::string(&buf[0]);
+}
+
+String Vaca::from_utf8(const std::string& string)
+{
+  int required_size =
+    MultiByteToWideChar(CP_UTF8, 0,
+			string.c_str(), string.size(),
+			NULL, 0);
+
+  if (required_size == 0)
+    return String();
+
+  std::vector<wchar_t> buf(++required_size);
+
+  MultiByteToWideChar(CP_UTF8, 0,
+		      string.c_str(), string.size(),
+		      &buf[0], required_size);
+
+  return String(&buf[0]);
 }
 
 template<> std::string Vaca::convert_to(const Char* const& from)

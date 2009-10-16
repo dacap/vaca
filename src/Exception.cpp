@@ -69,8 +69,8 @@ Exception::~Exception() throw()
    Returns a printable C-string of the error.
 
    If the Exception(const String&) constructor was used to
-   create the exception, this method returns the same string
-   as #getMessage but in ASCII format.
+   create the exception, this member function returns the
+   same string as #getMessage but in ASCII format.
 */
 const char* Exception::what() const throw()
 {

@@ -149,7 +149,7 @@ void Frame::onPreferredSize(PreferredSizeEvent& ev)
 }
 
 /**
-   Calls the layout() method.
+   Calls the #layout member function.
 */
 void Frame::onResize(ResizeEvent& ev)
 {
@@ -436,7 +436,7 @@ bool Frame::isLayoutFree() const
 }
 
 /**
-   You can customize this method to return true, so the Frame's
+   You can override this member function to return true, so the Frame's
    enabled-and-visible-state will keep synchronized to the
    enabled-and-visible-state of its parent.
 
@@ -478,7 +478,9 @@ WidgetList Frame::getSynchronizedGroup()
 }
 
 /**
-   This method converts next messages to events:
+   Converts messages to events.
+
+   It converts the following messages to events:
    @li @c WM_ACTIVATE -&gt; onActivate()
    @li @c WM_CLOSE -&gt; onClose()
    @li @c WM_SIZING -&gt; onResizing()

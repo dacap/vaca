@@ -187,7 +187,7 @@ void Dialog::onOk()
    return state (setReturnState) to false, so #doModal returns false
    too.
 
-   You can use this method to bind the Cancel button action
+   You can use this member function to bind the Cancel button action
    (Button#Click). Anyway this function is automatically
    called when the Id#Cancel command is processed by the dialog
    through #onCommand event.

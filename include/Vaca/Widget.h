@@ -55,7 +55,7 @@ namespace Vaca {
    This exception is thrown when the operating system can't create the Widget.
 
    @win32
-     In Win32, it is thrown when the Widget#createHandle method fails,
+     It is thrown when the Widget#createHandle member function fails,
      generally because of @msdn{CreateWindowEx} that returns NULL.
    @endwin32
 */
@@ -77,8 +77,8 @@ public:
 
    @win32
      This is a wrapper for @msdn{HWND}. Calls @msdn{CreateWindowEx}
-     and @msdn{DestroyWindow}, and its #wndProc method converts the
-     messages (@c "WM_*") to events.
+     and @msdn{DestroyWindow}, and its #wndProc member function
+     converts the messages (@c "WM_*") to events.
    @endwin32
 */
 class VACA_DLL Widget : public Register<WidgetClass>, public Component
@@ -193,7 +193,7 @@ private:
   /**
      Procedure of the original Win32's control (like @msdn{BUTTON} or @msdn{EDIT}).
 
-     It's set in #subClass method.
+     It's set in #subClass member function.
   */
   WNDPROC m_baseWndProc;
 

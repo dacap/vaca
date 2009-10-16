@@ -98,8 +98,9 @@ TreeView* TreeNode::getTreeView()
 }
 
 /**
-   Adds a new sub-node (child) to this one. After calling this method
-   @a node'll have this node as parent.
+   Adds a new sub-node (child) to this one.
+
+   After calling this member function @a node'll have this node as parent.
 */
 void TreeNode::addNode(TreeNode* node)
 {
@@ -150,8 +151,8 @@ bool TreeNode::isAncestorOf(TreeNode* child) const
 /**
    Returns true if this node should have the plus sign to be
    expanded. The default implementation returns true if the m_children
-   member has elements. If you override this method isn't necessary to
-   call the base implementation.
+   member has elements. If you override this member function isn't
+   necessary to call the base implementation.
 
    @code
    class MyTreeNode : public TreeNode
@@ -169,7 +170,7 @@ bool TreeNode::hasChildren()
 }
 
 /**
-   Returns the label's text for the node. If you override this method
+   Returns the label's text for the node. If you override this member function
    isn't necessary to call the base implementation.
 
    @code
@@ -189,8 +190,8 @@ String TreeNode::getText()
 
 /**
    Returns the index of the image that uses this node from the
-   ImageList. If you override this method isn't necessary to call the
-   base implementation.
+   ImageList. If you override this member function isn't necessary
+   to call the base implementation.
 
    @code
    class MyTreeNode : public TreeNode
@@ -211,8 +212,8 @@ int TreeNode::getImage()
 
 /**
    Returns the index of the image in selected-state that uses this
-   node from the ImageList. If you override this method isn't
-   necessary to call the base implementation.
+   node from the ImageList. If you override this member function
+   is not necessary to call the base implementation.
 
    @see getImage()
 */

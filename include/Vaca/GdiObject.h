@@ -64,7 +64,7 @@ struct Win32DestroyGdiObject
      Type of handle (e.g. HCURSOR, HBRUSH, etc.).
 
    @tparam Destroyer
-     A class with a static method @c destroy to be used
+     A class with a static member function @c destroy to be used
      in the destructor of GdiObject (to free the @a T handle).
 */
 template<typename T, class Destroyer = Win32DestroyGdiObject>
@@ -115,7 +115,7 @@ public:
 
      @warning
        The current handle (#getHandle) must be NULL. This means
-       that you can use this method just one time.
+       that you can use this member function just one time.
 
      @param handle
        The handle to be wrapped. It will be delete in the

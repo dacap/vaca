@@ -44,8 +44,8 @@ namespace Vaca {
 /**
    Class to access to operating system information.
 
-   It is more like a namespace than a class, because all methods are
-   static.
+   It is more like a namespace than a class, because all member
+   functions are static.
 */
 class VACA_DLL System
 {

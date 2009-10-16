@@ -95,7 +95,7 @@ static void create_atom()
    Creates a new widget with the specified class name.
 
    You can specify WidgetClassName#None as @a className if you want
-   to call #create method by your self (see @ref page_tn_002).
+   to call #create member function by your self (see @ref page_tn_002).
 
    @param className
        Must be a registered WNDCLASS for Windows.
@@ -300,8 +300,8 @@ Widget* Widget::getRoot()
    Returns the parent of the widget.
 
    @win32
-     This method does not use the @msdn{GetParent}. Widget has a m_parent
-     member to hold its parent.
+     This member function does not use the @msdn{GetParent}.
+	 Widget has a m_parent member to hold its parent.
    @endwin32
 */
 Widget* Widget::getParent() const
@@ -554,7 +554,7 @@ void Widget::setConstraint(ConstraintPtr constraint)
 /**
    Arranges the position/size of children widgets.
 
-   This method is called from Widget#onResize, so when the
+   This member function is called from Widget#onResize, so when the
    Widget is shown for first time or it is resized, the
    children are automatically positioned.
 */
@@ -569,8 +569,8 @@ void Widget::layout()
    controled by the layout manager of the parent.
 
    The default implementation looks for the VisibleStyle (if it is
-   hidden, it is free of layout). You should override this method and
-   return true if your widget set its position by itself (like a
+   hidden, it is free of layout). You should override this member function
+   and return true if your widget set its position by itself (like a
    StatusBar).
 
    @see getLayout, setLayout, onParentLayout
@@ -679,7 +679,7 @@ Command* Widget::getCommandById(CommandId id)
 
    The command is searched in this instance if the Widget is a
    CommandsClient (a @c dynamic_cast is used for this), then it looks
-   for the parent (using this same method), and finally in the
+   for the parent (using this same member function), and finally in the
    @link Application#getInstance Application instance@endlink (if the
    Application is a CommandsClient).
 */
@@ -899,7 +899,7 @@ void Widget::setBounds(int x, int y, int w, int h)
    or the screen if does not have a parent.
 
    The center of the widget is Widget::getBounds().getCenter(),
-   this method moves the widget to the center of its parent
+   this member function moves the widget to the center of its parent
    or the work-area bounds.
 
    @see setOrigin, setBounds, System#getWorkAreaBounds
@@ -927,7 +927,7 @@ void Widget::center()
 /**
    Sets the position of the widget.
 
-   This method does not affect the size of the widget. The coordinates
+   This member function does not affect the size of the widget. The coordinates
    are relative to the parent's client area. If the widget does not
    have a parent, the position is an absolute screen position.
 
@@ -943,7 +943,7 @@ void Widget::setOrigin(const Point& pt)
 /**
    Sets the position of the widget.
 
-   This method does not affect the size of the widget. The coordinates
+   This member function does not affect the size of the widget. The coordinates
    are relative to the parent's client area. If the widget does not
    have a parent, the position is an absolute screen position.
 
@@ -1128,7 +1128,7 @@ void Widget::invalidate(bool eraseBg)
    When the next round of <em>paint messages</em> is processed by the
    operating system the specified area will be redrawn. This means
    that the area will not be repainted immediately (you should call
-   #update method to do this).
+   #update member function to do this).
 
    @param rc
        Area to repaint.
@@ -1228,8 +1228,7 @@ void Widget::setVisible(bool visible)
    Returns true if the widget is enabled.
 
    @win32
-     It's like to ask if the widget hasn't the @msdn{WS_DISABLED} style.
-     Really, this method calls the @msdn{IsWindowEnabled} function.
+     This member function calls @msdn{IsWindowEnabled}.
    @endwin32
 */
 bool Widget::isEnabled()
@@ -1713,8 +1712,8 @@ void Widget::scrollRect(const Rect& rc, const Point& delta)
 /**
    This routine is called before to dispatch the message.
 
-   You can hook this virtual method to receive custom messages from
-   another threads.
+   You can override this virtual member function to receive custom
+   messages from another threads.
 
    @win32
      For example, it is used by Dialog to call @msdn{IsDialogMessage}.
@@ -1844,7 +1843,7 @@ void Widget::onPreferredSize(PreferredSizeEvent& ev)
 /**
    Event generated to arrange the position and size of children widgets.
 
-   The default implementation calls the Layout#layout method of the
+   The default implementation calls the Layout#layout member function of the
    Widget's layout manager, but you can override this event to obtain
    your own behavior (you can avoid to use layout manager at all if
    you want).
@@ -1858,9 +1857,9 @@ void Widget::onPreferredSize(PreferredSizeEvent& ev)
 */
 void Widget::onLayout(LayoutEvent& ev)
 {
-  // Call onLayout() method for layout-free children (they know
-  // how to layout theirself). Generally, these widgets will
-  // modify the bounds of LayoutEvent
+  // Call onLayout() member function for layout-free children (they know
+  // how to layout theirself). Generally, these widgets will modify the
+  // bounds of LayoutEvent
   for (WidgetList::iterator
 	 it=m_children.begin(); it!=m_children.end(); ++it) {
     Widget* child = *it;
@@ -1876,9 +1875,9 @@ void Widget::onLayout(LayoutEvent& ev)
 /**
    Called when the widget have to be painted in the screen.
 
-   If you override this method, remember: (1) to draw inside the
-   Widget#getClientBounds limits, and (2) do not call the base method
-   Widget#onPaint.
+   If you override this member function, remember: (1) to draw inside the
+   Widget#getClientBounds limits, and (2) do not call the base member
+   function Widget#onPaint.
 
    @warning Do not try to override the #onPaint of a system control
 	    (like Button, Edit, etc.). You must to use CustomButton,
@@ -1922,7 +1921,7 @@ void Widget::onResize(ResizeEvent& ev)
   Resize(ev);
 
   // Do not call layout() here. The first trigger of layout()
-  // method is from Frame::onResize()
+  // member function is from Frame::onResize()
 }
 
 /**
@@ -2043,8 +2042,8 @@ void Widget::onMouseWheel(MouseEvent& ev)
    Called when the user does double-click over the widget.
 
    If the event is not consumed (by a slot in #DoubleClick signal or
-   overriding this method), the double-click will be converted to a
-   #onMouseDown event.
+   overriding this member function), the double-click will be converted
+   to a #onMouseDown event.
 
    Overriding:
    @code
@@ -2251,7 +2250,7 @@ void Widget::onRemoveChild(ChildEvent& ev)
 }
 
 /**
-   This method can be used to handle command notifications
+   This member function can be used to handle command notifications
    (@msdn{WM_COMMAND}) reflected from the parent.
 
    @param id
@@ -2261,13 +2260,12 @@ void Widget::onRemoveChild(ChildEvent& ev)
      Notification code.
 
    @param lResult
-     Result to return by the #wndProc method.
+     Result to be returned by the #wndProc member function.
 
    @win32
-     Do not confuse with #onCommand: #onReflectedCommand is used to handle
-     commands that this widget by self generated, were sent to the
-     parent, and finally were reflected to this widget again by
-     the parent.
+     You should not confuse this member function with #onCommand. #onReflectedCommand
+	 is used to handle commands that this widget by self generated, were sent to the
+     parent, and finally were reflected to this widget again by the parent.
    @endwin32
 */
 bool Widget::onReflectedCommand(int id, int code, LRESULT& lResult)
@@ -2276,14 +2274,14 @@ bool Widget::onReflectedCommand(int id, int code, LRESULT& lResult)
 }
 
 /**
-   This method can be used to handle notifications (@msdn{WM_NOTIFY})
+   This member function can be used to handle notifications (@msdn{WM_NOTIFY})
    reflected from the parent.
 
    @param lpnmhdr
      Information about the notification message.
 
    @param lResult
-     Result to return by the #wndProc method.
+     Result to be returned by the #wndProc member function.
 
    @return
      False if it does not use the notification.
@@ -2380,16 +2378,17 @@ void Widget::removeChildWin32(Widget* child, bool setParent)
    It creates the handle to be used in the Widget.
 
    The only way to customize this routine is overloading the Widget#createHandle
-   method, calling Widget#Widget with WidgetClassName#None as @c className, and
-   finally calling Widget#create from the constructor of your own
+   member function, calling Widget#Widget with WidgetClassName#None as @c className,
+   and finally calling Widget#create from the constructor of your own
    widget class (for example as MdiClient#MdiClient does).
 
-   This method @em "must be" called in one constructor (in Widget#Widget or
-   in your own class if you used a WidgetClassName#None as @c className
+   This member function @em "must be" called in one constructor (in Widget#Widget
+   or in your own class if you used a WidgetClassName#None as @c className
    in Widget's constructor).
 
    @throw CreateWidgetException
-     If the handle couldn't be created through the #createHandle method.
+     If the handle couldn't be created through the #createHandle member
+	 function.
 
    @win32
      The widget handle is the @msdn{HWND}.
@@ -2445,7 +2444,7 @@ void Widget::create(const WidgetClassName& className, Widget* parent, Style styl
 
    In the @msdn{GWLP_WNDPROC} property of all @msdn{HWND} is the @msdn{WNDPROC}
    procedure that is called each time a message is arrived/processed by the Win32's
-   message-queue. So this method changes that procedure by #globalWndProc
+   message-queue. So this member function changes that procedure by #globalWndProc
    to hook all messages that come from Windows.
 
    @see getGlobalWndProc, wndProc, @ref page_tn_002, #m_baseWndProc
@@ -2472,14 +2471,14 @@ void Widget::subClass()
 }
 
 /**
-   This method creates the @msdn{HWND} handler for the Widget.
+   This member function creates the @msdn{HWND} handler for the Widget.
 
    It is called inside Widget#create, so if you overload
    #createHandle, you must to call the Widget's constructor with
    WidgetClassName#None as @c className, and then use
    Widget#create in your own class's constructor. An example
-   is the MdiChild class, which overwrites the #createHandle method, so it
-   does something like the following code:
+   is the MdiChild class, which overwrites the #createHandle member
+   function, so it does something like the following code:
    @code
    MdiChild::MdiChild(const String& title,
 		      MdiClient* parent,
@@ -2517,12 +2516,12 @@ HWND Widget::createHandle(LPCTSTR className, Widget* parent, Style style)
    This is called from Widget#globalWndProc. It should returns true when
    the #defWndProc does not need to be called.
 
-   This method is called to intercept any message after the creation
-   of the widget, and before the destruction. To intercept messages
-   outside that range (before creation, and after disposition), you
-   should customize defWndProc().
+   This member function is called to intercept any message after the
+   creation of the widget, and before the destruction. To intercept
+   messages outside that range (before creation, and after
+   disposition), you should customize #defWndProc.
 
-   This method mainly converts a message to a event:
+   This member function mainly converts a message to a event:
    <ul>
      <li><tt>WM_ERASEBKGND</tt> -&gt; Clears the background with #getBgColor.</li>
      <li><tt>WM_PAINT</tt> -&gt; Calls #onPaint event.</li>
@@ -2557,7 +2556,7 @@ HWND Widget::createHandle(LPCTSTR className, Widget* parent, Style style)
        child</b> is called.</li>
    </ul>
 
-   How to extend widget#wndProc method?
+   How to extend widget#wndProc member function?
 
    @code
    class MyWidget : public Widget {
@@ -3060,7 +3059,7 @@ LRESULT Widget::defWndProc(UINT message, WPARAM wParam, LPARAM lParam)
 /**
    Paints the widgets calling the #onPaint event.
 
-   This method check the value of #m_doubleBuffered to do the
+   This member function check the value of #m_doubleBuffered to do the
    double-buffering technique (draw in a Graphics of a temporary
    Image, and then copy its content to @a g).
 
@@ -3093,7 +3092,7 @@ bool Widget::doPaint(Graphics& g)
       imageG.setClipRegion(clipRegion);
 
       // special coordinates transformation (to make the "imageG"
-      // graphics transparent to "onPaint" method)
+      // graphics transparent to "onPaint" member function)
       SetViewportOrgEx(imageG.getHandle(), -clipBounds.x, -clipBounds.y, NULL);
 
       // clear the background of the image
@@ -3175,7 +3174,7 @@ LRESULT Widget::sendMessage(UINT message, WPARAM wParam, LPARAM lParam)
    The global procedure for Win32 used in all registered WNDCLASSes.
 
    It is unique goal is to get the Widget pointer from HWND
-   using #fromHandle, and to call its #wndProc method.
+   using #fromHandle, and to call its #wndProc member function.
 */
 LRESULT CALLBACK Widget::globalWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {

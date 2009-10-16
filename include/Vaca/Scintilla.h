@@ -52,8 +52,7 @@ public:
 };
 
 /**
-   Controls a Scintilla text editor. This is the class with more
-   methods, but each method only wrap an Scintilla (@c SCI_) message.
+   Controls a Scintilla text editor.
 */
 class VACA_DLL SciEdit : public SciRegister, public Widget
 {

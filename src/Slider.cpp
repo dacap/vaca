@@ -214,7 +214,8 @@ int Slider::getValue()
 
    @param value
      Must be inside the slider's range. You can obtain the
-     current minimum and maximum values using the #getRange method.
+     current minimum and maximum values using the #getRange
+	 member function.
 */
 void Slider::setValue(int value)
 {

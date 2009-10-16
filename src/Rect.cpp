@@ -113,7 +113,7 @@ Rect::Rect(const Point& point, const Size& size)
    #h = MAX(point1.x, point2.x) - #y
    @endcode
    See that @a point2 isn't included in the rectangle, it's
-   like the point returned by #getPoint2 method.
+   like the point returned by #getPoint2 member function.
 
    @see #getPoint2
 */
@@ -337,7 +337,7 @@ bool Rect::contains(const Point& pt) const
    Returns true if this rectangle entirely contains the @a rc rectangle.
 
    @warning
-     If some rectangle is empty, this method returns false.
+     If some rectangle is empty, this member function returns false.
 */
 bool Rect::contains(const Rect& rc) const
 {
@@ -354,7 +354,7 @@ bool Rect::contains(const Rect& rc) const
    rectangle is not empty.
 
    @warning
-     If some rectangle is empty, this method returns false.
+     If some rectangle is empty, this member function returns false.
 */
 bool Rect::intersects(const Rect& rc) const
 {
@@ -370,7 +370,7 @@ bool Rect::intersects(const Rect& rc) const
    Returns the union rectangle between this and @c rc rectangle.
 
    @warning
-     If some rectangle is empty, this method will return the
+     If some rectangle is empty, this member function will return the
      other rectangle.
 */
 Rect Rect::createUnion(const Rect& rc) const

@@ -43,7 +43,7 @@ Message::Message()
    
    Messages can be sent through widgets of differents threads. To catch
    a customized message you have to overload the Widget#preTranslateMessage
-   method.
+   member function.
 
    @see Widget#enqueueMessage, Widget#preTranslateMessage,
 	@ref page_tn_015, @link page_examples Threads example@endlink
@@ -70,7 +70,7 @@ Message::Message(const String& name)
 
    @param payload
      User data that can be obtained later by the destination using
-     Message#getPayload method.
+     Message#getPayload member function.
 
    @see Message#Message(const String&)
 */

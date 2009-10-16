@@ -91,7 +91,7 @@ void Referenceable::destroy()
    Makes a new reference to this object.
 
    You are responsible for removing references using the #unref
-   method. Remember that for each call to #ref that you made,
+   member function. Remember that for each call to #ref that you made,
    there should be a corresponding #unref.
 
    @see unref

@@ -70,6 +70,9 @@ Anchor::Anchor(const Rect& refRect, Sides sides)
 {
 }
 
+/**
+   Destroys the Anchor contraint.
+ */
 Anchor::~Anchor()
 {
 }

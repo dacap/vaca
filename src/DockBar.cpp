@@ -130,9 +130,11 @@ DockBar::~DockBar()
 }
 
 /**
-   You can use setVisible() to hide or show the DockBar. If you hide
-   the DockBar, this method deletes the #Vaca::DockFrame if it exist, or
-   remove the DockBar from the #Vaca::DockArea. All is automatic.
+   Hides or shows the DockBar.
+
+   If you hide the DockBar, this member function deletes the
+   #Vaca::DockFrame if it exist, or remove the DockBar from the
+   #Vaca::DockArea. All is automatic.
 */
 void DockBar::setVisible(bool visible)
 {
@@ -510,8 +512,10 @@ void DockBar::onDoubleClick(MouseEvent& ev)
 }
 
 /**
-   Event called when the DockBar is docked in a new DockArea. You can
-   use getDockArea() method to known where the DockBar is docked.
+   Event called when the DockBar is docked in a new DockArea.
+
+   You can use #getDockArea member function to known where the DockBar
+   is docked.
 */
 void DockBar::onDocking()
 {
@@ -849,7 +853,7 @@ DockArea* DockBar::xorTracker(Graphics& g)
 }
 
 /**
-   @todo Move this method to DockFrame
+   @todo Move this member function to DockFrame
 */
 Size DockBar::getNonClientSizeForADockFrame()
 {

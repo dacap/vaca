@@ -259,7 +259,7 @@ bool MenuItem::isMdiList() const { return false; }
    some keyboard shortcut of this MenuItem is pressed
    (MenuItem::m_shortcuts). Remember that onClick() is called only
    after an onUpdate() and only if it leaves the MenuItem enabled (see
-   setEnabled() method),
+   #setEnabled member function),
 */
 void MenuItem::onClick(MenuItemEvent& ev)
 {
@@ -461,7 +461,7 @@ MenuItem* Menu::add(MenuItem* menuItem)
 
    @warning The returned MenuItem is deleted automatically when the
 	    Menu is destroyed.
-   @warning If you use the Menu::remove method with the returned
+   @warning If you use the Menu::remove member function with the returned
 	    MenuItem, you will be responsible to delete it.
 
    @see add(MenuItem*), remove(MenuItem*)
@@ -555,7 +555,7 @@ MenuItem* Menu::insert(int index, MenuItem* menuItem)
 
    @warning The returned MenuItem is deleted automatically when the
 	    Menu is destroyed.
-   @warning If you use the Menu::remove method with the returned
+   @warning If you use the Menu::remove member function with the returned
 	    MenuItem, you will be responsible to delete it.
 
    @see insert(int, MenuItem*), remove(MenuItem*)

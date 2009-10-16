@@ -68,7 +68,7 @@ void TimePoint::reset()
    Returns the life-time in seconds of this object.
 
    The life-time is the elapsed time from the construction of the
-   object (or from the last call to #reset method).
+   object (or from the last call to #reset member function).
 
    @see reset
 */

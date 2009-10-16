@@ -159,9 +159,10 @@ void Application::setProcessPriority(ProcessPriority priority)
 }
 
 /**
-   The common way to start the application. You should call this
-   method from @e main or @e WinMain, using the instance of
-   Application.
+   The common way to start the application.
+
+   You should call this member function from @e main or @e WinMain,
+   using the instance of Application.
 
    The work of this routine is really simple: it calls #main and then
    CurrentThread#doMessageLoop. You can make your own class derived from

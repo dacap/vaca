@@ -69,13 +69,41 @@ public:
 class SignalCommand : public Command
 {
 public:
+
+  /**
+     Creates a new SignalCommand without slots in signals.
+
+     \param id
+       Command ID that will be handled by this SignalCommand.
+   */
   SignalCommand(CommandId id) : Command(id) { }
 
+  /**
+     Creates a new SignalCommand with the specified functor .
+
+     \param id
+       Command ID that will be handled by this SignalCommand.
+
+     \param f
+       Functor to be called when the command is executed.
+   */
   template<typename F>
   SignalCommand(CommandId id, const F& f) : Command(id) {
     Execute.connect(f);
   }
 
+  /**
+     Creates a new SignalCommand with the specified functor .
+
+     \param id
+       Command ID that will be handled by this SignalCommand.
+
+     \param m
+       Member function of the T class to be called when the command is executed.
+
+     \param t
+       Instance of T class to be used when the member function is called.
+   */
   template<class T>
   SignalCommand(CommandId id, void (T::*m)(), T* t) : Command(id) {
     Execute.connect(m, t);

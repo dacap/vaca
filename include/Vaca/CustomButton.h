@@ -37,7 +37,7 @@
 namespace Vaca {
 
 /**
-   Customizable button to draw it with your own Widget#onPaint method.
+   Customizable button to draw it with your own Widget#onPaint member function.
 
    Example:
    @code

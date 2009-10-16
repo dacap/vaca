@@ -96,8 +96,8 @@ public:
    Each thread that has widgets has a queue of messages, each message
    represent an event that the user generated with the input devices
    or a signal from the operating system (OS). The #doMessageLoop is
-   the method that gets messages from the OS and distributes them to
-   widgets.
+   the member function that gets messages from the OS and distributes
+   them to widgets.
 
    @see doMessageLoop
 */

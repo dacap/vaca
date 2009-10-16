@@ -102,7 +102,7 @@ bool Timer::isRunning()
 /**
    Starts the ticks generation.
 
-   You can use this method even when timer is running (to restart it).
+   You can use this member function even when timer is running (to restart it).
 */
 void Timer::start()
 {

@@ -48,8 +48,8 @@ LayoutEvent::~LayoutEvent()
 }
 
 /**
-   Returns the area where Widget#onLayout method should put children
-   widgets.
+   Returns the area where Widget#onLayout member function should
+   put children widgets.
 
    It is generally the client bounds, but other widgets (like Tab)
    could reduce this rectangle to use a small area inside the widget.

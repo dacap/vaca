@@ -219,9 +219,9 @@ bool Thread::isJoinable() const
    Thread priority is relative to the other threads of the same
    process. If you want to change the priority of the entire process
    (respecting to all other processes) you have to use the
-   Application#setProcessPriority method. In other words, you should
-   use this method only if you have more than one thread in your
-   application and you want to make run faster one thread than other.
+   Application#setProcessPriority member function. In other words,
+   you should use this member function only if you have more than one thread in
+   your application and you want to make run faster one thread than other.
 
    @param priority
      Can be one of the following values:
@@ -396,7 +396,7 @@ bool Vaca::CurrentThread::getMessage(Message& message)
 
 /**
    Gets a message without waiting for it, if the queue is empty, this
-   method returns false.
+   member function returns false.
 
    The message is removed from the queue.
 

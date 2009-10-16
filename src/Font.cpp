@@ -138,8 +138,9 @@ FontStyle Font::getStyle() const
 }
 
 /**
-   Makes a copy of @a font. You can safely delete the @a font after
-   this method.
+   Makes a copy of @a font.
+
+   You can safely delete the @a font after calling this member function.
 */
 Font& Font::operator=(const Font& font)
 {

@@ -59,9 +59,9 @@ public:
 /**
    A shared pointer to an image.
 
-   This is a SharedPtr, so if you copy instances of images they will be
-   referencing to the same place. You have to use Image#clone method
-   to create real copies of the Image.
+   This is a SharedPtr, so if you copy instances of images they will
+   be referencing to the same place. You have to use Image#clone
+   member function to create real copies of the Image.
 
    Example
    @code

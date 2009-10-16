@@ -42,8 +42,6 @@ namespace Vaca {
 */
 class VACA_DLL PaintEvent : public Event
 {
-  friend class Widget;
-
   Graphics& m_graphics;
   bool m_painted;
 
@@ -55,10 +53,6 @@ public:
   Graphics& getGraphics();
 
   bool isPainted() const;
-
-private:
-  void noPaint();
-
 };
 
 } // namespace Vaca

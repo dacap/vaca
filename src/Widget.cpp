@@ -1879,7 +1879,7 @@ void Widget::onLayout(LayoutEvent& ev)
    Widget#getClientBounds limits, and (2) do not call the base member
    function Widget#onPaint.
 
-   @warning Do not try to override the #onPaint of a system control
+   @warning You cannot override the #onPaint of a system control
 	    (like Button, Edit, etc.). You must to use CustomButton,
 	    CustomEdit, etc. to do that.
 
@@ -1906,7 +1906,7 @@ void Widget::onLayout(LayoutEvent& ev)
 */
 void Widget::onPaint(PaintEvent& ev)
 {
-  ev.noPaint();
+  // Do nothing
 }
 
 /**

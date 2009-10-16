@@ -47,15 +47,11 @@ PaintEvent::~PaintEvent()
 
 Graphics& PaintEvent::getGraphics()
 {
+  m_painted = true;
   return m_graphics;
 }
 
 bool PaintEvent::isPainted() const
 {
   return m_painted;
-}
-
-void PaintEvent::noPaint()
-{
-  m_painted = false;
 }

@@ -83,6 +83,7 @@ public:
   explicit Image(ResourceId imageId);
   explicit Image(const String& fileName);
   explicit Image(const Size& sz);
+  Image(int width, int height);
   Image(const Size& sz, int depth);
   Image(const Size& sz, Graphics& g);
   Image(const Image& image);

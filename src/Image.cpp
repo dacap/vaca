@@ -117,6 +117,17 @@ Image::Image(const Size& sz)
   // TODO handle error
 }
 
+Image::Image(int width, int height)
+  : SharedPtr<ImageHandle>(new ImageHandle())
+{
+  assert(width > 0 && height > 0);
+
+  get()->m_hdc = GetDC(GetDesktopWindow());
+  get()->setHandle(CreateCompatibleBitmap(get()->m_hdc, width, height));
+
+  // TODO handle error
+}
+
 Image::Image(const Size& sz, int depth)
   : SharedPtr<ImageHandle>(new ImageHandle())
 {

@@ -14,6 +14,7 @@ endfunction(add_vaca_test)
 
 add_vaca_test(test_bind)
 add_vaca_test(test_handle)
+add_vaca_test(test_image)
 add_vaca_test(test_menu)
 add_vaca_test(test_point)
 add_vaca_test(test_rect)

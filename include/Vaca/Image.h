@@ -37,6 +37,7 @@
 #include "Vaca/Size.h"
 #include "Vaca/GdiObject.h"
 #include "Vaca/SharedPtr.h"
+#include "Vaca/ImagePixels.h"
 
 namespace Vaca {
 
@@ -65,11 +66,11 @@ public:
 
    Example
    @code
-   Image img1(Size(32, 32));
+   Image img1(32, 32);
    Image img2 = img1;		// img1 and img2 references the same Image
    Image img3 = img1.clone();
-   assert(img == img2);
-   assert(img != img3);
+   assert(img1 == img2);
+   assert(img1 != img3);
    @endcode
 
    @win32
@@ -84,6 +85,7 @@ public:
   explicit Image(const String& fileName);
   explicit Image(const Size& sz);
   Image(int width, int height);
+  Image(int width, int height, int depth);
   Image(const Size& sz, int depth);
   Image(const Size& sz, Graphics& g);
   Image(const Image& image);
@@ -98,14 +100,22 @@ public:
 
   Graphics& getGraphics();
 
+  ImagePixels getPixels() const;
+  void setPixels(ImagePixels imagePixels);
+
   HBITMAP getHandle() const;
 
   Image& operator=(const Image& image);
 
   Image clone() const;
 
+  bool operator==(const Image& image) const { return get() == image.get(); }
+  bool operator!=(const Image& image) const { return get() != image.get(); }
+
 private:
 
+  void init(int width, int height);
+  void init(int width, int height, int depth);
   void copyTo(Image& image) const;
 
 };

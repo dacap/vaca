@@ -419,6 +419,7 @@ class Icon;
 class Image;
 class ImageHandle;
 class ImageList;
+class ImagePixels;
 class KeyEvent;
 class Label;
 class Layout;

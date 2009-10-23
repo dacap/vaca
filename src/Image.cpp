@@ -109,56 +109,25 @@ Image::Image(const String& fileName)
 Image::Image(const Size& sz)
   : SharedPtr<ImageHandle>(new ImageHandle())
 {
-  assert(sz.w > 0 && sz.h > 0);
-
-  get()->m_hdc = GetDC(GetDesktopWindow());
-  get()->setHandle(CreateCompatibleBitmap(get()->m_hdc, sz.w, sz.h));
-
-  // TODO handle error
+  init(sz.w, sz.h);
 }
 
 Image::Image(int width, int height)
   : SharedPtr<ImageHandle>(new ImageHandle())
 {
-  assert(width > 0 && height > 0);
+  init(width, height);
+}
 
-  get()->m_hdc = GetDC(GetDesktopWindow());
-  get()->setHandle(CreateCompatibleBitmap(get()->m_hdc, width, height));
-
-  // TODO handle error
+Image::Image(int width, int height, int depth)
+  : SharedPtr<ImageHandle>(new ImageHandle())
+{
+  init(width, height, depth);
 }
 
 Image::Image(const Size& sz, int depth)
   : SharedPtr<ImageHandle>(new ImageHandle())
 {
-  assert(sz.w > 0 && sz.h > 0);
-
-  BITMAPINFOHEADER bhdr;
-  bhdr.biSize = sizeof(BITMAPINFOHEADER);
-  bhdr.biWidth = sz.w;
-  bhdr.biHeight = -sz.h;
-  bhdr.biPlanes = 1;
-  bhdr.biBitCount = depth;
-  bhdr.biCompression = BI_RGB;
-  bhdr.biSizeImage = 0;
-  bhdr.biXPelsPerMeter = 0;
-  bhdr.biYPelsPerMeter = 0;
-  bhdr.biClrUsed = 0;
-  bhdr.biClrImportant = 0;
-
-  BITMAPINFO binf;
-  RGBQUAD dummy = { 0, 0, 0, 0 };
-  binf.bmiColors[0] = dummy;
-  binf.bmiHeader = bhdr;
-
-  char* bits = NULL;
-
-  get()->m_hdc = GetDC(GetDesktopWindow());
-  get()->setHandle(CreateDIBSection(get()->m_hdc, &binf, DIB_RGB_COLORS,
-				    reinterpret_cast<void**>(&bits),
-				    NULL, 0));
-
-  // TODO handle error
+  init(sz.w, sz.h, depth);
 }
 
 Image::Image(const Size& sz, Graphics& g)
@@ -226,6 +195,32 @@ Graphics& Image::getGraphics()
   return *ptr->m_graphics;
 }
 
+ImagePixels Image::getPixels() const
+{
+  BITMAPCOREHEADER bc;
+  ZeroMemory(&bc, sizeof(bc));
+  bc.bcSize = sizeof(bc);
+  GetDIBits(get()->m_hdc, getHandle(), 0, 0, NULL,
+	    reinterpret_cast<BITMAPINFO*>(&bc), 0);
+
+  ImagePixels imagePixels(bc.bcWidth,
+			  bc.bcHeight < 0 ? -bc.bcHeight: bc.bcHeight);
+
+  bc.bcBitCount = 32; // TODO is it right? there are alpha channel?
+
+  GetDIBits(get()->m_hdc, getHandle(),
+	    0, getHeight(),
+	    reinterpret_cast<LPVOID>(&imagePixels[0]),
+	    reinterpret_cast<BITMAPINFO*>(&bc), 0);
+
+  return imagePixels;
+}
+
+void Image::setPixels(ImagePixels imagePixels)
+{
+  // TODO
+}
+
 HBITMAP Image::getHandle() const
 {
   return get()->getHandle();
@@ -242,6 +237,48 @@ Image Image::clone() const
   Image image(getSize(), getDepth());
   this->copyTo(image);
   return image;
+}
+
+void Image::init(int width, int height)
+{
+  assert(width > 0 && height > 0);
+
+  get()->m_hdc = GetDC(GetDesktopWindow());
+  get()->setHandle(CreateCompatibleBitmap(get()->m_hdc, width, height));
+
+  // TODO handle error
+}
+
+void Image::init(int width, int height, int depth)
+{
+  assert(width > 0 && height > 0);
+
+  BITMAPINFOHEADER bhdr;
+  bhdr.biSize = sizeof(BITMAPINFOHEADER);
+  bhdr.biWidth = width;
+  bhdr.biHeight = -height;
+  bhdr.biPlanes = 1;
+  bhdr.biBitCount = depth;
+  bhdr.biCompression = BI_RGB;
+  bhdr.biSizeImage = 0;
+  bhdr.biXPelsPerMeter = 0;
+  bhdr.biYPelsPerMeter = 0;
+  bhdr.biClrUsed = 0;
+  bhdr.biClrImportant = 0;
+
+  BITMAPINFO binf;
+  RGBQUAD dummy = { 0, 0, 0, 0 };
+  binf.bmiColors[0] = dummy;
+  binf.bmiHeader = bhdr;
+
+  char* bits = NULL;
+
+  get()->m_hdc = GetDC(GetDesktopWindow());
+  get()->setHandle(CreateDIBSection(get()->m_hdc, &binf, DIB_RGB_COLORS,
+				    reinterpret_cast<void**>(&bits),
+				    NULL, 0));
+
+  // TODO handle error
 }
 
 void Image::copyTo(Image& image) const

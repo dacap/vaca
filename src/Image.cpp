@@ -213,12 +213,29 @@ ImagePixels Image::getPixels() const
 	    reinterpret_cast<LPVOID>(&imagePixels[0]),
 	    reinterpret_cast<BITMAPINFO*>(&bc), 0);
 
+  imagePixels.invertScanlines();
+
   return imagePixels;
 }
 
 void Image::setPixels(ImagePixels imagePixels)
 {
-  // TODO
+  BITMAPCOREHEADER bc;
+  ZeroMemory(&bc, sizeof(bc));
+  bc.bcSize = sizeof(bc);
+  GetDIBits(get()->m_hdc, getHandle(), 0, 0, NULL,
+	    reinterpret_cast<BITMAPINFO*>(&bc), 0);
+
+  bc.bcBitCount = 32;
+
+  ImagePixels copy = imagePixels.clone();
+  copy.invertScanlines();
+
+  SetDIBits(get()->m_hdc,
+	    getHandle(),
+	    0, getHeight(),
+	    reinterpret_cast<LPVOID>(&copy[0]),
+	    reinterpret_cast<BITMAPINFO*>(&bc), DIB_RGB_COLORS);
 }
 
 HBITMAP Image::getHandle() const

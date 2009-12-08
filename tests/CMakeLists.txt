@@ -26,4 +26,3 @@ add_vaca_test(test_string)
 add_vaca_test(test_tab)
 add_vaca_test(test_thread)
 add_vaca_test(test_widget)
-

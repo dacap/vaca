@@ -33,6 +33,7 @@
 #define VACA_IMAGEPIXELS_H
 
 #include <vector>
+#include <algorithm>
 
 #include "Vaca/base.h"
 #include "Vaca/Size.h"
@@ -58,6 +59,7 @@ public:
   ImagePixelsHandle(const Size& sz) { init(sz.w, sz.h); }
   virtual ~ImagePixelsHandle() { }
 
+  Size getSize() const { return Size(m_width, m_height); }
   int getWidth() const { return m_width; }
   int getHeight() const { return m_height; }
   int getScanlineSize() const { return m_scanline; }
@@ -80,6 +82,31 @@ public:
   void setPixel(int x, int y, pixel_type color) {
     assert(x >= 0 && y >= 0 && x < m_width && y < m_height);
     m_buffer[y*m_scanline + x] = color;
+  }
+
+  void invertScanlines()
+  {
+    std::vector<pixel_type> scanline(m_scanline);
+    int top = 0;
+    int bottom = (m_height-1)*m_scanline;
+    for (int y=0; y<m_height/2; ++y) {
+      // Top to temporary buffer
+      std::copy(m_buffer.begin()+top, m_buffer.begin()+top+m_scanline, scanline.begin());
+
+      // Bottom to top
+      std::copy(m_buffer.begin()+bottom, m_buffer.begin()+bottom+m_scanline, m_buffer.begin()+top);
+
+      // Temporary to bottom
+      std::copy(scanline.begin(), scanline.end(), m_buffer.begin()+bottom);
+
+      top += m_scanline;
+      bottom -= m_scanline;
+    }
+  }
+
+  void copyTo(ImagePixelsHandle& other) const
+  {
+    std::copy(m_buffer.begin(), m_buffer.begin(), other.m_buffer.begin());
   }
 
 private:
@@ -122,6 +149,14 @@ public:
   {
   }
 
+  ImagePixels clone() const
+  {
+    ImagePixels copy(getSize());
+    get()->copyTo(*copy.get());
+    return copy;
+  }
+
+  Size getSize() const { return get()->getSize(); }
   int getWidth() const { return get()->getWidth(); }
   int getHeight() const { return get()->getHeight(); }
   int getScanlineSize() const { return get()->getScanlineSize(); }
@@ -142,10 +177,22 @@ public:
     get()->setPixel(x, y, color);
   }
 
+  void invertScanlines() {
+    get()->invertScanlines();
+  }
+
   static int getR(pixel_type color) { return (color & 0x00ff0000) >> 16; }
   static int getG(pixel_type color) { return (color & 0x0000ff00) >> 8; }
   static int getB(pixel_type color) { return (color & 0x000000ff); }
   static int getA(pixel_type color) { return (color & 0xff000000) >> 24; }
+
+  static pixel_type makePixel(int r, int g, int b, int a) {
+    return
+      ((a & 0xff) << 24) |
+      ((r & 0xff) << 16) |
+      ((g & 0xff) << 8) |
+      ((b & 0xff));
+  }
 
 };
 

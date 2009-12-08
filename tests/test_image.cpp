@@ -27,13 +27,26 @@ void test_pointers()
 void test_pixels()
 {
   Image img(32, 32);
+
   Graphics& g = img.getGraphics();
   g.fillRect(Brush(Color(64, 128, 255)), g.getClipBounds());
-
   ImagePixels pixels = img.getPixels();
   for (int y=0; y<pixels.getHeight(); ++y)
     for (int x=0; x<pixels.getWidth(); ++x)
       assert_pixel(pixels, x, y, 64, 128, 255);
+
+  g.setPixel(0, 0, Color(255, 0, 0));
+  g.setPixel(1, 0, Color(0, 255, 0));
+  g.setPixel(2, 0, Color(0, 0, 255));
+
+  assert(g.getPixel(0, 0) == Color(255, 0, 0));
+  assert(g.getPixel(1, 0) == Color(0, 255, 0));
+  assert(g.getPixel(2, 0) == Color(0, 0, 255));
+
+  pixels = img.getPixels();
+  assert_pixel(pixels, 0, 0, 255, 0, 0);
+  assert_pixel(pixels, 1, 0, 0, 255, 0);
+  assert_pixel(pixels, 2, 0, 0, 0, 255);
 }
 
 int main()

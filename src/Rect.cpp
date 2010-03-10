@@ -414,6 +414,8 @@ bool Rect::operator!=(const Rect& rc) const
     y != rc.y || h != rc.h;
 }
 
+#ifdef VACA_WINDOWS
+
 /**
    Converts a Win32's rectangle (RECT structure) to a Vaca's rectangle
    (Rect class).
@@ -443,3 +445,5 @@ Rect::operator RECT() const
   rc.bottom = y+h;
   return rc;
 }
+
+#endif

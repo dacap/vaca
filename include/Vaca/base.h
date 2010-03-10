@@ -32,6 +32,11 @@
 #ifndef VACA_BASE_H
 #define VACA_BASE_H
 
+// Windows is the default Vaca platform
+#if !defined(VACA_ALLEGRO) && !defined(VACA_GTK)
+  #define VACA_WINDOWS
+#endif
+
 #pragma warning(disable: 4251)
 #pragma warning(disable: 4275)
 #pragma warning(disable: 4355)
@@ -39,9 +44,12 @@
 
 #include <algorithm>
 #include <stdarg.h>
-#include <windows.h>
-#include <commctrl.h>
 #include <string>
+
+#ifdef VACA_WINDOWS
+  #include <windows.h>
+  #include <commctrl.h>
+#endif
 
 #include "Vaca/Enum.h"
 
@@ -57,7 +65,8 @@ namespace Vaca {
 #define VACA_WIP_VERSION 8
 
 /**
-   Defines the name and arguments that the main routine
+   @def VACA_MAIN()
+   @brief Defines the name and arguments that the main routine
    of the program should contain.
 
    You can use it as:
@@ -73,20 +82,33 @@ namespace Vaca {
      operating systems this could be @c "main(int argc, char* argv[])".
    @endwin32
 */
-#define VACA_MAIN()				\
-  PASCAL WinMain(HINSTANCE hInstance,		\
-		 HINSTANCE hPrevInstance,	\
-		 LPSTR lpCmdLine,		\
-		 int nCmdShow)
-
-#ifdef VACA_STATIC
-  #define VACA_DLL
+#ifdef VACA_WINDOWS
+  #define VACA_MAIN()				\
+    PASCAL WinMain(HINSTANCE hInstance,		\
+		   HINSTANCE hPrevInstance,	\
+		   LPSTR lpCmdLine,		\
+		   int nCmdShow)
 #else
-  #ifdef VACA_SRC
-    #define VACA_DLL __declspec(dllexport)
+  #define VACA_MAIN()				\
+    int main(int argc, char* argv[])
+#endif
+
+/**
+   @def VACA_DLL
+   @brief Used to export/import symbols to/from the dynamic library.
+ */
+#ifdef VACA_WINDOWS
+  #ifdef VACA_STATIC
+    #define VACA_DLL
   #else
-    #define VACA_DLL __declspec(dllimport)
+    #ifdef VACA_SRC
+      #define VACA_DLL __declspec(dllexport)
+    #else
+      #define VACA_DLL __declspec(dllimport)
+    #endif
   #endif
+#else
+  #define VACA_DLL
 #endif
 
 /**

@@ -77,7 +77,7 @@ namespace Vaca {
     return convert_to<std::string, const Char*>(from);
   }
 
-  // convert to String
+  // Convert to String
   template<> VACA_DLL String convert_to(const std::string& from);
   template<> VACA_DLL String convert_to(const int& from);
   template<> VACA_DLL String convert_to(const long& from);
@@ -91,7 +91,7 @@ namespace Vaca {
     return convert_to<String, const char*>(from);
   }
 
-  // copy to a raw string
+  // Copy to a raw string
   VACA_DLL void copy_string_to(const String& src, Char* dest, int size);
 
   // ============================================================

@@ -9,16 +9,16 @@ void test_double_wrapper_fail()
   Frame a(L"first wrapper");
 
   try {
-    Widget b(a.getHandle());	// second wrapper
+    Widget b(a.getHandle());	// Second wrapper
 
     // CreateWidgetException wasn't throw
     assert(false);
   }
-  catch (CreateWidgetException& e) {
-    // expected behavior
+  catch (const CreateWidgetException&) {
+    // Expected behavior
   }
   catch (...) {
-    assert(false);		// other kind of exception!!
+    assert(false);		// Other kind of exception!!
   }
 }
 

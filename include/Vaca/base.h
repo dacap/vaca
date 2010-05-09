@@ -111,6 +111,20 @@ namespace Vaca {
   #define VACA_DLL
 #endif
 
+// ============================================================
+// CONVERSION
+// ============================================================
+
+// you have to use a specialization
+template<typename To, typename From>
+To convert_to(const From& from) {
+  enum { not_supported = 1/(1 == 0) }; // static_assert(false)
+}
+
+// ============================================================
+// ALGORITHMS
+// ============================================================
+
 /**
    Returns the minimum of @a x and @a y.
 

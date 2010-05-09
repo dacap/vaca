@@ -57,12 +57,6 @@ namespace Vaca {
   // CONVERSION
   // ============================================================
 
-  // you have to use a specialization
-  template<typename To, typename From>
-  To convert_to(const From& from) {
-    enum { not_supported = 1/(1 == 0) }; // static_assert(false)
-  }
-
   // convert from String
   template<> VACA_DLL std::string   convert_to(const String& from);
   template<> VACA_DLL int           convert_to(const String& from);

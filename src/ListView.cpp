@@ -264,7 +264,7 @@ int ListView::getColumnCount() const
   return m_columns.size();
 }
 
-ListColumn* ListView::getColumn(int columnIndex) const
+ListColumn* ListView::getColumn(size_t columnIndex) const
 {
   assert(columnIndex >= 0 && columnIndex < m_columns.size());
 
@@ -372,7 +372,7 @@ int ListView::getItemCount() const
    @param index
      Zero-based index of the item
 */
-ListItem* ListView::getItem(int index) const
+ListItem* ListView::getItem(size_t index) const
 {
   assert(index >= 0 && index < m_items.size());
 
@@ -460,10 +460,11 @@ bool ListView::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult)
 
     case LVN_GETDISPINFO: {
       NMLVDISPINFO* lplvdi = reinterpret_cast<NMLVDISPINFO*>(lpnmhdr);
+      size_t i = lplvdi->item.iItem;
 
-      assert(lplvdi->item.iItem >= 0 && lplvdi->item.iItem < m_items.size());
+      assert(i >= 0 && i < m_items.size());
 
-      ListItem* item = m_items[lplvdi->item.iItem];
+      ListItem* item = m_items[i];
       assert(item != NULL);
 
       if (lplvdi->item.mask & LVIF_TEXT) {
@@ -482,10 +483,11 @@ bool ListView::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult)
 
     case LVN_ITEMCHANGING: {
       LPNMLISTVIEW lpnmlv = reinterpret_cast<LPNMLISTVIEW>(lpnmhdr);
+      size_t i = lpnmlv->iItem;
       ListItem* item;
 
-      if (lpnmlv->iItem >= 0 && lpnmlv->iItem < m_items.size())
-	item = m_items[lpnmlv->iItem];
+      if (i >= 0 && i < m_items.size())
+	item = m_items[i];
       else
 	item = NULL;
 
@@ -497,10 +499,11 @@ bool ListView::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult)
 
     case LVN_ITEMCHANGED: {
       LPNMLISTVIEW lpnmlv = reinterpret_cast<LPNMLISTVIEW>(lpnmhdr);
+      size_t i = lpnmlv->iItem;
       ListItem* item;
 
-      if (lpnmlv->iItem >= 0 && lpnmlv->iItem < m_items.size())
-	item = m_items[lpnmlv->iItem];
+      if (i >= 0 && i < m_items.size())
+	item = m_items[i];
       else
 	item = NULL;
 
@@ -511,10 +514,11 @@ bool ListView::onReflectedNotify(LPNMHDR lpnmhdr, LRESULT& lResult)
 
     case LVN_COLUMNCLICK: {
       LPNMLISTVIEW lpnmlv = reinterpret_cast<LPNMLISTVIEW>(lpnmhdr);
+      size_t i = lpnmlv->iSubItem;
       ListColumn* column;
 
-      if (lpnmlv->iSubItem >= 0 && lpnmlv->iSubItem < m_columns.size())
-	column = m_columns[lpnmlv->iSubItem];
+      if (i >= 0 && i < m_columns.size())
+	column = m_columns[i];
       else
 	column = NULL;
 

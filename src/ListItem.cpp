@@ -62,7 +62,7 @@ int ListItem::getIndex()
   return m_index;
 }
 
-String ListItem::getText(int columnIndex)
+String ListItem::getText(size_t columnIndex)
 {
   assert(columnIndex >= 0);
 
@@ -94,7 +94,7 @@ Rect ListItem::getBounds() const
   return Rect();
 }
 
-void ListItem::setText(const String& text, int columnIndex)
+void ListItem::setText(const String& text, size_t columnIndex)
 {
   assert(columnIndex >= 0);
 

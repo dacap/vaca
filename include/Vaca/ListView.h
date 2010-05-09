@@ -118,7 +118,7 @@ public:
   void removeAllColumns();
 
   int getColumnCount() const;
-  ListColumn* getColumn(int columnIndex) const;
+  ListColumn* getColumn(size_t columnIndex) const;
 
   int addItem(ListItem* item);
   // int insertItem(int itemIndex, const String& text, int imageIndex = -1);
@@ -126,7 +126,7 @@ public:
   void removeAllItems();
 
   int getItemCount() const;
-  ListItem* getItem(int index) const;
+  ListItem* getItem(size_t index) const;
   // Rect getItemBounds(int itemIndex, int code = LVIR_BOUNDS);
 
   // void editItemText(int itemIndex);

@@ -64,12 +64,12 @@ public:
   int getHeight() const { return m_height; }
   int getScanlineSize() const { return m_scanline; }
 
-  const pixel_type& operator[](int index) const {
+  const pixel_type& operator[](size_t index) const {
     assert(index >= 0 && index < m_buffer.size());
     return m_buffer[index];
   }
 
-  pixel_type& operator[](int index) {
+  pixel_type& operator[](size_t index) {
     assert(index >= 0 && index < m_buffer.size());
     return m_buffer[index];
   }

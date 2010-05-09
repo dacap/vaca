@@ -60,10 +60,10 @@ public:
   int getIndex();
   Rect getBounds() const;
 
-  virtual String getText(int columnIndex = 0);
+  virtual String getText(size_t columnIndex = 0);
   virtual int getImage();
 
-  void setText(const String& text, int columnIndex = 0);
+  void setText(const String& text, size_t columnIndex = 0);
   void setImage(int image);
 
   void update();

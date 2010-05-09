@@ -33,6 +33,7 @@
 #define VACA_STRING_H
 
 #include "Vaca/base.h"
+#include <vector>
 
 namespace Vaca {
 
@@ -52,6 +53,9 @@ namespace Vaca {
 
   VACA_DLL std::string to_utf8(const String& string);
   VACA_DLL String from_utf8(const std::string& string);
+
+  // Split a string in parts
+  VACA_DLL void split_string(const String& string, std::vector<String>& parts, const String& separators);
 
   // ============================================================
   // CONVERSION

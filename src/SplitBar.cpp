@@ -315,17 +315,17 @@ Rect SplitBar::getBarRect() const
 
   if (m_orientation == Orientation::Vertical) {
     if (byPixels)
-      rcBar.x = clamp_value(m_barPos, 0.0, (double)rcBar.w-m_barSize);
+      rcBar.x = (int)clamp_value(m_barPos, 0.0, (double)rcBar.w-m_barSize);
     else
-      rcBar.x = clamp_value(rcBar.w * m_barPos / 100, 0.0, (double)rcBar.w-m_barSize);
+      rcBar.x = (int)clamp_value(rcBar.w * m_barPos / 100, 0.0, (double)rcBar.w-m_barSize);
 
     rcBar.w = m_barSize;
   }
   else {
     if (byPixels)
-      rcBar.y = clamp_value(m_barPos, 0.0, (double)rcBar.h-m_barSize);
+      rcBar.y = (int)clamp_value(m_barPos, 0.0, (double)rcBar.h-m_barSize);
     else
-      rcBar.y = clamp_value(rcBar.h * m_barPos / 100.0, 0.0, (double)rcBar.h-m_barSize);
+      rcBar.y = (int)clamp_value(rcBar.h * m_barPos / 100.0, 0.0, (double)rcBar.h-m_barSize);
 
     rcBar.h = m_barSize;
   }

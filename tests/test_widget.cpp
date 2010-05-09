@@ -46,7 +46,7 @@ void test_nonexistent_class()
     // CreateWidgetException wasn't throw
     assert(false);
   }
-  catch (CreateWidgetException& e) {
+  catch (const CreateWidgetException&) {
     // expected behavior
   }
 }

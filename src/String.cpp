@@ -178,7 +178,7 @@ template<> float Vaca::convert_to(const String& from)
 
 template<> double Vaca::convert_to(const String& from)
 {
-  return std::wcstod(from.c_str(), NULL);
+  return (float)std::wcstod(from.c_str(), NULL);
 }
 
 template<> String Vaca::convert_to(const char* const& from)

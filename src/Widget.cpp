@@ -417,6 +417,8 @@ bool Widget::hasDescendant(const Widget* descendant) const
 
     std::copy(m_children.begin(), m_children.end(), std::back_inserter(remaining));
   }
+
+  return false;
 }
 
 /**

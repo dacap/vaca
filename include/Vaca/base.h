@@ -397,7 +397,7 @@ void remove_from_container(ContainerType& container,
 }
 
 // ======================================================================
-// Classes
+// Forward declarations
 
 class Anchor;
 class AnchorLayout;
@@ -487,6 +487,7 @@ class Point;
 class PopupMenu;
 class PreferredSizeEvent;
 class ProgressBar;
+class Property;
 class RadioButton;
 class RadioGroup;
 class ReBar;
@@ -588,6 +589,7 @@ typedef SharedPtr<MenuSeparator> MenuSeparatorPtr;
 typedef SharedPtr<OpenFileDialog> OpenFileDialogPtr;
 typedef SharedPtr<PopupMenu> PopupMenuPtr;
 typedef SharedPtr<ProgressBar> ProgressBarPtr;
+typedef SharedPtr<Property> PropertyPtr;
 typedef SharedPtr<RadioButton> RadioButtonPtr;
 typedef SharedPtr<ReBar> ReBarPtr;
 typedef SharedPtr<SaveFileDialog> SaveFileDialogPtr;

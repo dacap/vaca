@@ -29,65 +29,27 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/Component.h"
-#include "Vaca/SharedPtr.h"
 #include "Vaca/Property.h"
 #include "Vaca/Debug.h"
 
 using namespace Vaca;
 
 /**
-   Creates a new component.
-
-   With the debug version of the library, you will get in the
-   @ref page_debug_log a line specifying when the component
-   was created.
+   Creates a new named property.
 */
-Component::Component()
+Property::Property(const String& name)
+  : m_name(name)
 {
-  VACA_TRACE("new Component (%p)\n", this);
 }
 
 /**
-   Destroys the component.
-
-   With the debug version of the library, you will get in the
-   @ref page_debug_log a line specifying when the component
-   was destroyed.
+   Destroys the property.
 */
-Component::~Component()
+Property::~Property()
 {
-  VACA_TRACE("delete Component (%p)\n", this);
 }
 
-PropertyPtr Component::getProperty(const String& name)
+String Property::getName() const
 {
-  Properties::iterator it = m_properties.find(name);
-  if (it != m_properties.end())
-    return it->second;
-  else
-    return PropertyPtr();
-}
-
-void Component::setProperty(PropertyPtr property)
-{
-  m_properties[property->getName()] = property;
-}
-
-bool Component::hasProperty(const String& name)
-{
-  Properties::iterator it = m_properties.find(name);
-  return it != m_properties.end();
-}
-
-void Component::removeProperty(const String& name)
-{
-  Properties::iterator it = m_properties.find(name);
-  if (it != m_properties.end())
-    m_properties.erase(it);
-}
-
-const Component::Properties& Component::getProperties() const
-{
-  return m_properties;
+  return m_name;
 }

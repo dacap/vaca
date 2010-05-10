@@ -32,15 +32,39 @@
 #ifndef VACA_BASE_H
 #define VACA_BASE_H
 
-// Windows is the default Vaca platform
-#if !defined(VACA_ALLEGRO) && !defined(VACA_GTK)
-  #define VACA_WINDOWS
+// If there are not a defined target (like VACA_WINDOWS)...
+#if !defined(VACA_WINDOWS) &&			\
+    !defined(VACA_ALLEGRO)
+  // ...we define VACA_DEFAULT_PLATFORM to specify that the default
+  // target will be used
+  #define VACA_DEFAULT_TARGET
 #endif
 
-#pragma warning(disable: 4251)
-#pragma warning(disable: 4275)
-#pragma warning(disable: 4355)
-#pragma warning(disable: 4996)
+// If we are in Windows compiler
+#if defined(_MSC_VER) || \
+    defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || \
+    defined(WIN64) || defined(_WIN64) || defined(__WIN64__)
+  #ifdef VACA_DEFAULT_TARGET
+    #define VACA_WINDOWS
+  #endif
+
+  // We define a macro to know that we can use Windows API
+  #define VACA_ON_WINDOWS
+#else
+  #ifdef VACA_DEFAULT_TARGET
+    #define VACA_ALLEGRO
+  #endif
+
+  // We define a macro to know that we are in a Unix-like environment
+  #define VACA_ON_UNIXLIKE
+#endif
+
+#ifdef _MSC_VER
+  #pragma warning(disable: 4251)
+  #pragma warning(disable: 4275)
+  #pragma warning(disable: 4355)
+  #pragma warning(disable: 4996)
+#endif
 
 #include <algorithm>
 #include <stdarg.h>

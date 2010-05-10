@@ -63,7 +63,6 @@ set(VACA_SOURCES
     src/CommandEvent.cpp
     src/CommonDialog.cpp 
     src/Component.cpp 
-    src/Component.cpp.bak
     src/ConditionVariable.cpp 
     src/Constraint.cpp 
     src/ConsumableEvent.cpp

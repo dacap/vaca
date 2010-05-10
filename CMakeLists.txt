@@ -1,5 +1,5 @@
 # Vaca - Visual Application Components Abstraction
-# Copyright (c) 2005-2009 David Capello, Jie Zhang
+# Copyright (c) 2005-2010 David Capello, Jie Zhang
 # All rights reserved
 
 cmake_minimum_required(VERSION 2.6)
@@ -11,6 +11,19 @@ project(Vaca)
 
 option(SHARED "Build shared libraries" on)
 option(THEMES "Build examples using WinXP themes" on)
+
+set(VACA_PLATFORM "Windows" CACHE STRING
+  "Vaca as Win32 API wrapper or Allegro 4.2 wrapper")
+set_property(CACHE VACA_PLATFORM PROPERTY STRINGS
+  "Windows" "Allegro")
+
+if(VACA_PLATFORM STREQUAL "Windows")
+  set(VACA_WINDOWS 1)
+  set(vaca_platform_def "-DVACA_WINDOWS")
+elseif(VACA_PLATFORM STREQUAL "Allegro")
+  set(VACA_ALLEGRO 1)
+  set(vaca_platform_def "-DVACA_ALLEGRO")
+endif()
 
 set(BUILD_SHARED_LIBS ${SHARED})
 
@@ -65,7 +78,7 @@ endif(NOT BUILD_SHARED_LIBS)
 set(common_flags "${win32_flags} ${unicode_flags} ${static_flags}")
 
 set_target_properties(Vaca PROPERTIES
-  COMPILE_FLAGS "-DVACA_SRC ${common_flags}")
+  COMPILE_FLAGS "-DVACA_SRC ${common_flags} ${vaca_platform_def}")
 
 if(BUILD_SHARED_LIBS)
   target_link_libraries(Vaca ${win32_libs})

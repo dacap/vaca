@@ -31,6 +31,14 @@
 
 #include "Vaca/Mutex.h"
 
+#if defined(VACA_ON_WINDOWS)
+  #include "win32/MutexImpl.h"
+#elif defined(VACA_ON_UNIXLIKE)
+  #include "unix/MutexImpl.h"
+#else
+  #error Your platform does not support mutexes
+#endif 
+
 using namespace Vaca;
 
 /**
@@ -42,7 +50,7 @@ using namespace Vaca;
 */
 Mutex::Mutex()
 {
-  InitializeCriticalSection(&m_cs);
+  m_pimpl = new MutexImpl();
 }
 
 /**
@@ -54,7 +62,7 @@ Mutex::Mutex()
 */
 Mutex::~Mutex()
 {
-  DeleteCriticalSection(&m_cs);
+  delete m_pimpl;
 }
 
 /**
@@ -71,7 +79,7 @@ Mutex::~Mutex()
 */
 void Mutex::lock()
 {
-  EnterCriticalSection(&m_cs);
+  return m_pimpl->lock();
 }
 
 /**
@@ -85,7 +93,7 @@ void Mutex::lock()
 */
 bool Mutex::tryLock()
 {
-  return TryEnterCriticalSection(&m_cs) ? true: false;
+  return m_pimpl->tryLock();
 }
 
 /**
@@ -103,5 +111,5 @@ bool Mutex::tryLock()
 */
 void Mutex::unlock()
 {
-  LeaveCriticalSection(&m_cs);
+  return m_pimpl->unlock();
 }

@@ -29,45 +29,45 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_MUTEX_H
-#define VACA_MUTEX_H
+#ifndef _WIN32_WINNT
+#define _WIN32_WINNT 0x0400
+#endif
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
 
-#include "Vaca/base.h"
-#include "Vaca/NonCopyable.h"
-
-namespace Vaca {
-
-/**
-   An object to synchronize threads using mutual exclusion of critical
-   sections.
-
-   This kind of mutex can be used to synchronize multiple threads of
-   the same process. No multiple processes!
-
-   @win32
-     This is a @msdn{CRITICAL_SECTION} wrapper.
-   @endwin32
-
-   @see ScopedLock, ConditionVariable, Thread,
-	@wikipedia{Critical_section, Critical Section in Wikipedia}
-	@wikipedia{Mutex, Mutex in Wikipedia}
-*/
-class VACA_DLL Mutex : private NonCopyable
+class Vaca::Mutex::MutexImpl
 {
-  class MutexImpl;
-  MutexImpl* m_pimpl;
+  CRITICAL_SECTION m_handle;
 
 public:
 
-  Mutex();
-  ~Mutex();
+  MutexImpl()
+  {
+    InitializeCriticalSection(&m_handle);
+  }
 
-  void lock();
-  bool tryLock();
-  void unlock();
+  ~MutexImpl()
+  {
+    DeleteCriticalSection(&m_handle);
+  }
+
+  void lock()
+  {
+    EnterCriticalSection(&m_handle);
+  }
+
+  bool tryLock()
+  {
+#if(_WIN32_WINNT >= 0x0400)
+    return TryEnterCriticalSection(&m_handle) ? true: false;
+#else
+    return false;
+#endif
+  }
+
+  void unlock()
+  {
+    LeaveCriticalSection(&m_handle);
+  }
 
 };
-
-} // namespace Vaca
-
-#endif // VACA_MUTEX_H

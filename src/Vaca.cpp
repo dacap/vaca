@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005-2009 David Capello
+// Copyright (c) 2005-2010 David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -29,16 +29,13 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/base.h"
+#include "Vaca/MainArgs.h"
+#include "Vaca/Application.h"
 
 using namespace Vaca;
 
-// this file can be used to generated precompiled headers in Visual C++
-
-// BOOL APIENTRY DllMain( HANDLE hModule, 
-//                        DWORD  ul_reason_for_call, 
-//                        LPVOID lpReserved
-// 					 )
-// {
-//     return TRUE;
-// }
+#if defined(VACA_WINDOWS)
+  #include "win32/MainArgs.h"
+#else
+  #include "std/MainArgs.h"
+#endif

@@ -217,7 +217,7 @@ private:
 
 //////////////////////////////////////////////////////////////////////
 
-int VACA_MAIN()
+int vaca_main()
 {
   Application app;
   MainFrame frm;
@@ -226,3 +226,5 @@ int VACA_MAIN()
   app.run();
   return 0;
 }
+
+#include "Vaca/main.h"

@@ -98,7 +98,7 @@ void updateSleep(ScrollableTest* s, CheckBox* cb)
   s->setSleep(cb->isSelected());
 }
 
-int VACA_MAIN()
+int vaca_main()
 {
   Application app;
   Frame frm(L"Scrolling");
@@ -116,3 +116,5 @@ int VACA_MAIN()
   app.run();
   return 0;
 }
+
+#include "Vaca/main.h"

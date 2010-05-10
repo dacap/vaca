@@ -337,9 +337,11 @@ private:
   
 };
 
-int VACA_MAIN()
+int vaca_main()
 {
   Example app;
   app.run();
   return 0;
 }
+
+#include "Vaca/main.h"

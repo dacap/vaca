@@ -40,7 +40,7 @@ void configure_buttons(Button& ok, Button& cancel);
 void filter_num_keys(KeyEvent& ev);
 void msg_ok(Widget* owner);
 
-int VACA_MAIN()
+int vaca_main()
 {
   Application application;
 
@@ -144,3 +144,5 @@ void msg_ok(Widget* owner)
 {
   MsgBox::show(owner, L"OK", L"You press the OK button");
 }
+
+#include "Vaca/main.h"

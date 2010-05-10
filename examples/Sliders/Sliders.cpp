@@ -183,7 +183,7 @@ private:
 
 };
 
-int VACA_MAIN()
+int vaca_main()
 {
   try {
     Application app;
@@ -197,3 +197,5 @@ int VACA_MAIN()
   }
   return 0;
 }
+
+#include "Vaca/main.h"

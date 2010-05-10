@@ -29,55 +29,21 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include <Vaca/Vaca.h>
-#include "../resource.h"
+#ifndef VACA_MAINARGS_H
+#define VACA_MAINARGS_H
 
-using namespace Vaca;
+#include "Vaca/base.h"
 
-class MainFrame : public Frame
-{
-  TextEdit m_edit1;
-  TextEdit m_edit2;
-  TextEdit m_edit3;
-  TextEdit m_edit4;
+namespace Vaca {
 
-public:
-
-  MainFrame()
-    : Frame(L"Edits")
-    , m_edit1(L"Default TextEdit widget with some text that you can edit.", this)
-    , m_edit2(L"A TextEdit widget without client-edge and right-aligned.", this,
-	      TextEdit::Styles::Default +
-	      TextEdit::Styles::RightAligned
-	      - Widget::Styles::ClientEdge)
-    , m_edit3(L"A read-only TextEdit widget without client-edge and with modified bgColor", this,
-	      TextEdit::Styles::Default
-	      - Widget::Styles::ClientEdge)
-    , m_edit4(L"A TextEdit widget with TextArea style.\r\nIt has multiple lines\r\nof text...", this,
-	      TextEdit::Styles::TextArea +
-	      Widget::Styles::Scroll)
-  {
-    setLayout(new BoxLayout(Orientation::Vertical, false));
-    m_edit4.setConstraint(new BoxConstraint(true));
-
-    m_edit3.setReadOnly(true);
-    m_edit3.setBgColor(System::getColor(COLOR_3DFACE));
-
-    setSize(getPreferredSize());
+  namespace details {
+    class VACA_DLL MainArgs
+    {
+    public:
+      static void setArgs(int, char**);
+    };
   }
 
-};
+} // namespace Vaca
 
-//////////////////////////////////////////////////////////////////////
-
-int vaca_main()
-{
-  Application app;
-  MainFrame frm;
-  frm.setIcon(ResourceId(IDI_VACA));
-  frm.setVisible(true);
-  app.run();
-  return 0;
-}
-
-#include "Vaca/main.h"
+#endif // VACA_MAINARGS_H

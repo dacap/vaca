@@ -88,34 +88,9 @@ namespace Vaca {
 #define VACA_SUB_VERSION 0
 #define VACA_WIP_VERSION 8
 
-/**
-   @def VACA_MAIN()
-   @brief Defines the name and arguments that the main routine
-   of the program should contain.
-
-   You can use it as:
-   @code
-   int VACA_MAIN()
-   {
-     ...
-   }
-   @endcode
-
-   @win32
-     It is the signature of @msdn{WinMain}. In other
-     operating systems this could be @c "main(int argc, char* argv[])".
-   @endwin32
-*/
-#ifdef VACA_WINDOWS
-  #define VACA_MAIN()				\
-    PASCAL WinMain(HINSTANCE hInstance,		\
-		   HINSTANCE hPrevInstance,	\
-		   LPSTR lpCmdLine,		\
-		   int nCmdShow)
-#else
-  #define VACA_MAIN()				\
-    int main(int argc, char* argv[])
-#endif
+// ============================================================
+// DLL
+// ============================================================
 
 /**
    @def VACA_DLL

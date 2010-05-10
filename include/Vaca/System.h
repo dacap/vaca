@@ -51,8 +51,6 @@ class VACA_DLL System
 {
 public:
 
-  static std::vector<String> getArgs();
-
   static void println(String line);
   static void printf(LPCTSTR fmt, ...);
   static void print(String buf);

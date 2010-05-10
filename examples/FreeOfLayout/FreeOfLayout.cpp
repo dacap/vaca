@@ -99,7 +99,7 @@ protected:
 
 };
 
-int VACA_MAIN()
+int vaca_main()
 {
   Application app;
   MainFrame dlg;
@@ -116,3 +116,5 @@ int VACA_MAIN()
 		 MsgBox::Icon::Information);
   return 0;
 }
+
+#include "Vaca/main.h"

@@ -44,6 +44,7 @@ using namespace Vaca;
 
 HINSTANCE Application::m_HINSTANCE = NULL;
 Application* Application::m_instance = NULL;
+std::vector<String> Application::m_args;
 
 /**
    Initializes the variables of the Application class.
@@ -75,7 +76,7 @@ Application::Application()
 
   InitCommonControlsEx(&icce);
 
-  VACA_TRACE("Program %s started\n", convert_to<std::string>(System::getArgs()[0]).c_str());
+  VACA_TRACE("Program %s started\n", convert_to<std::string>(m_args[0]).c_str());
 }
 
 /**
@@ -99,7 +100,7 @@ Application::~Application()
   Referenceable::showLeaks();
 #endif
 
-  VACA_TRACE("Program %s finished\n", convert_to<std::string>(System::getArgs()[0]).c_str());
+  VACA_TRACE("Program %s finished\n", convert_to<std::string>(m_args[0]).c_str());
 
   // close the log file
   details::removeAllThreadData();
@@ -110,6 +111,31 @@ Application::~Application()
 #ifdef MEMORY_LEAK_DETECTOR
   atexit(check_leaks);
 #endif
+}
+
+size_t Application::getArgc()
+{
+  return m_args.size();
+}
+
+const String& Application::getArgv(size_t i)
+{
+  return m_args[i];
+}
+
+/**
+   Returns the parameters in the command line.
+
+   @c Application::getArgs()[0] is the name of the executable file.
+*/
+const std::vector<String>& Application::getArgs()
+{
+  return m_args;
+}
+
+void Application::setArgs(const std::vector<String>& args)
+{
+  m_args = args;
 }
 
 /**
@@ -161,8 +187,8 @@ void Application::setProcessPriority(ProcessPriority priority)
 /**
    The common way to start the application.
 
-   You should call this member function from @e main or @e WinMain,
-   using the instance of Application.
+   You should call this member function from @e vaca_main,
+   using the Application instance.
 
    The work of this routine is really simple: it calls #main and then
    CurrentThread#doMessageLoop. You can make your own class derived from
@@ -171,8 +197,7 @@ void Application::setProcessPriority(ProcessPriority priority)
 
    Example:
    @code
-   int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
-		      LPSTR lpCmdLine, int nCmdShow)
+   int vaca_main()
    {
      Application app;
      Frame frm("My frame");
@@ -180,6 +205,7 @@ void Application::setProcessPriority(ProcessPriority priority)
      app.run();
      return 0;
    }
+   #include <Vaca/main.h>
    @endcode
 
    The same example with a variation:
@@ -194,14 +220,13 @@ void Application::setProcessPriority(ProcessPriority priority)
        frm.setVisible(true);
      }
    };
-
-   int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
-		      LPSTR lpCmdLine, int nCmdShow)
+   int vaca_main()
    {
      MyApp app;
      app.run();
      return 0;
    }
+   #include <Vaca/main.h>
    @endcode
 
    @see CurrentThread#doMessageLoop

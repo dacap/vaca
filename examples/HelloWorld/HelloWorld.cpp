@@ -105,7 +105,7 @@ class Example : public Application
 };
 
 // the WinMain, every Windows application should have this function
-int VACA_MAIN()
+int vaca_main()
 {
   try {
     // create the example application
@@ -123,3 +123,5 @@ int VACA_MAIN()
   }
   return 0;
 }
+
+#include "Vaca/main.h"

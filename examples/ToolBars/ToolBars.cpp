@@ -249,7 +249,7 @@ private:
 
 #endif
 
-int VACA_MAIN()
+int vaca_main()
 {
   Application app;
   // TODO rewrite me
@@ -259,3 +259,5 @@ int VACA_MAIN()
   // app.run();
   return 0;
 }
+
+#include "Vaca/main.h"

@@ -29,55 +29,54 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include <Vaca/Vaca.h>
-#include "../resource.h"
+#ifndef VACA_MAIN_H
+#define VACA_MAIN_H
 
-using namespace Vaca;
-
-class MainFrame : public Frame
-{
-  TextEdit m_edit1;
-  TextEdit m_edit2;
-  TextEdit m_edit3;
-  TextEdit m_edit4;
-
-public:
-
-  MainFrame()
-    : Frame(L"Edits")
-    , m_edit1(L"Default TextEdit widget with some text that you can edit.", this)
-    , m_edit2(L"A TextEdit widget without client-edge and right-aligned.", this,
-	      TextEdit::Styles::Default +
-	      TextEdit::Styles::RightAligned
-	      - Widget::Styles::ClientEdge)
-    , m_edit3(L"A read-only TextEdit widget without client-edge and with modified bgColor", this,
-	      TextEdit::Styles::Default
-	      - Widget::Styles::ClientEdge)
-    , m_edit4(L"A TextEdit widget with TextArea style.\r\nIt has multiple lines\r\nof text...", this,
-	      TextEdit::Styles::TextArea +
-	      Widget::Styles::Scroll)
-  {
-    setLayout(new BoxLayout(Orientation::Vertical, false));
-    m_edit4.setConstraint(new BoxConstraint(true));
-
-    m_edit3.setReadOnly(true);
-    m_edit3.setBgColor(System::getColor(COLOR_3DFACE));
-
-    setSize(getPreferredSize());
-  }
-
-};
+#include "Vaca/MainArgs.h"
 
 //////////////////////////////////////////////////////////////////////
+// WinMain for Win32
 
-int vaca_main()
-{
-  Application app;
-  MainFrame frm;
-  frm.setIcon(ResourceId(IDI_VACA));
-  frm.setVisible(true);
-  app.run();
-  return 0;
-}
+#if defined(VACA_WINDOWS)
 
-#include "Vaca/main.h"
+  #define WIN32_LEAN_AND_MEAN
+  #include <windows.h>
+
+  int PASCAL WinMain(HINSTANCE hInstance,
+		     HINSTANCE hPrevInstance,
+		     LPSTR lpCmdLine,
+		     int nCmdShow)
+  {
+    Vaca::details::MainArgs::setArgs(NULL, NULL);
+    return vaca_main();
+  }
+
+//////////////////////////////////////////////////////////////////////
+// main()/END_OF_MAIN() for Allegro 4.2
+
+#elif defined(VACA_ALLEGRO)
+
+  #include <allegro.h>
+
+  int main(int argc, char* argv[])
+  {
+    Vaca::details::MainArgs::setArgs(argc, argv);
+    return vaca_main();
+  }
+
+  END_OF_MAIN();
+
+//////////////////////////////////////////////////////////////////////
+// main() for standard implementation
+
+#else
+
+  int main(int argc, char* argv[])
+  {
+    Vaca::details::MainArgs::setArgs(argc, argv);
+    return vaca_main();
+  }
+
+#endif
+
+#endif // VACA_MAIN_H

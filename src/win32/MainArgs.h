@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005-2009 David Capello
+// Copyright (c) 2005-2010 David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -29,55 +29,23 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include <Vaca/Vaca.h>
-#include "../resource.h"
+#include <windows.h>
 
-using namespace Vaca;
-
-class MainFrame : public Frame
+void Vaca::details::MainArgs::setArgs(int, char**)
 {
-  TextEdit m_edit1;
-  TextEdit m_edit2;
-  TextEdit m_edit3;
-  TextEdit m_edit4;
+  // Convert the command-line to a vector of arguments using Win32 API
+  std::vector<String> args;
+  LPWSTR* arglist;
+  int argc;
 
-public:
+  arglist = ::CommandLineToArgvW(::GetCommandLineW(), &argc);
+  if (arglist != NULL) {
+    args.reserve(argc);
+    for (int i=0; i<argc; ++i)
+      args.push_back(arglist[i]);
 
-  MainFrame()
-    : Frame(L"Edits")
-    , m_edit1(L"Default TextEdit widget with some text that you can edit.", this)
-    , m_edit2(L"A TextEdit widget without client-edge and right-aligned.", this,
-	      TextEdit::Styles::Default +
-	      TextEdit::Styles::RightAligned
-	      - Widget::Styles::ClientEdge)
-    , m_edit3(L"A read-only TextEdit widget without client-edge and with modified bgColor", this,
-	      TextEdit::Styles::Default
-	      - Widget::Styles::ClientEdge)
-    , m_edit4(L"A TextEdit widget with TextArea style.\r\nIt has multiple lines\r\nof text...", this,
-	      TextEdit::Styles::TextArea +
-	      Widget::Styles::Scroll)
-  {
-    setLayout(new BoxLayout(Orientation::Vertical, false));
-    m_edit4.setConstraint(new BoxConstraint(true));
-
-    m_edit3.setReadOnly(true);
-    m_edit3.setBgColor(System::getColor(COLOR_3DFACE));
-
-    setSize(getPreferredSize());
+    ::LocalFree(arglist);
   }
 
-};
-
-//////////////////////////////////////////////////////////////////////
-
-int vaca_main()
-{
-  Application app;
-  MainFrame frm;
-  frm.setIcon(ResourceId(IDI_VACA));
-  frm.setVisible(true);
-  app.run();
-  return 0;
+  Application::setArgs(args);
 }
-
-#include "Vaca/main.h"

@@ -172,7 +172,7 @@ protected:
 
 //////////////////////////////////////////////////////////////////////
 
-int VACA_MAIN()
+int vaca_main()
 {
   srand(static_cast<unsigned int>(time(NULL)));
 
@@ -183,3 +183,5 @@ int VACA_MAIN()
   app.run();
   return 0;
 }
+
+#include "Vaca/main.h"

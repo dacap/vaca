@@ -34,8 +34,12 @@
 
 #include "Vaca/base.h"
 #include "Vaca/Thread.h"
+#include <vector>
 
 namespace Vaca {
+
+  // Forward declarations
+  namespace details { class MainArgs; }
 
 // ======================================================================
 
@@ -77,6 +81,29 @@ typedef Enum<ProcessPriorityEnum> ProcessPriority;
 */
 class VACA_DLL Application : public Thread
 {
+public:
+
+  Application();
+  virtual ~Application();
+
+  static size_t getArgc();
+  static const String& getArgv(size_t i);
+  static const std::vector<String>& getArgs();
+
+  static Application* getInstance();
+  static HINSTANCE getHandle();
+  static void setProcessPriority(ProcessPriority priority);
+
+  virtual void run();
+
+protected:
+
+  virtual void main();
+
+private:
+
+  friend class details::MainArgs;
+
   /**
      @internal
 
@@ -92,20 +119,9 @@ class VACA_DLL Application : public Thread
    */
   static Application* m_instance;
 
-public:
+  static std::vector<String> m_args;
 
-  Application();
-  virtual ~Application();
-
-  static Application* getInstance();
-  static HINSTANCE getHandle();
-  static void setProcessPriority(ProcessPriority priority);
-
-  virtual void run();
-
-protected:
-
-  virtual void main();
+  static void setArgs(const std::vector<String>& args);
 
 };
 

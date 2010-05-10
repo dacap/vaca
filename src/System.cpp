@@ -47,59 +47,6 @@ using namespace std;
 using namespace Vaca;
 
 /**
-   Returns the parameters in the command line.
-
-   @c System::getArgs()[0] is the name of the executable file.
-*/
-vector<String> System::getArgs()
-{
-  // Convert the command-line to a vector of arguments...
-  vector<String> args;
-
-  Char* cmdline = wcsdup(GetCommandLine());
-  Char quote;
-
-  for (int i = 0; cmdline[i] != 0; ) {
-    // eat spaces
-    while (cmdline[i] != 0 && iswspace(cmdline[i]))
-      ++i;
-
-    // string with quotes?
-    if (cmdline[i] == '\"' || cmdline[i] == '\'')
-      quote = cmdline[i++];
-    else if (cmdline[i] == 0)
-      break;
-    else
-      quote = 0;
-
-    // read the string
-    String arg;
-
-    for (; cmdline[i] != 0; ++i) {
-      // with quotes
-      if (quote != 0) {
-	if (cmdline[i] == quote) {
-	  ++i;
-	  break;
-	}
-	else if (cmdline[i] == '\\' && cmdline[i+1] == quote)
-	  ++i;
-      }
-      // without quotes
-      else if (iswspace(cmdline[i]))
-	break;
-
-      arg.push_back(cmdline[i]);
-    }
-
-    args.push_back(arg);
-  }
-
-  free(cmdline);
-  return args;
-}
-
-/**
    Prints a line in the console.
 */
 void System::println(String line)

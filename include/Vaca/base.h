@@ -387,13 +387,16 @@ template<typename ContainerType>
 void remove_from_container(ContainerType& container,
 			   typename ContainerType::const_reference element)
 {
-  typename ContainerType::iterator
-    it = std::find(container.begin(),
-		   container.end(),
-		   element);
-
-  if (it != container.end())
-    container.erase(it);
+  for (typename ContainerType::iterator
+	 it = container.begin(),
+	 end = container.end(); it != end; ) {
+    if (*it == element) {
+      it = container.erase(it);
+      end = container.end();
+    }
+    else
+      ++it;
+  }
 }
 
 // ======================================================================

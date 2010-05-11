@@ -36,6 +36,7 @@
 #include "Vaca/WidgetClass.h"
 #include "Vaca/LayoutEvent.h"
 #include "Vaca/PreferredSizeEvent.h"
+#include "Vaca/win32.h"
 
 // Warning:
 //   You must define WINVER & _WIN32_WINNT version, otherwise,
@@ -100,8 +101,8 @@ void ReBarBand::getColors(Color& fg, Color& bg) const
 	
   getBand(&rbbi);
 
-  fg = Color(rbbi.clrFore);
-  bg = Color(rbbi.clrBack);
+  fg = convert_to<Color>(rbbi.clrFore);
+  bg = convert_to<Color>(rbbi.clrBack);
 }
 
 void ReBarBand::setColors(Color fg, Color bg)
@@ -110,8 +111,8 @@ void ReBarBand::setColors(Color fg, Color bg)
   rbbi.cbSize = sizeof(REBARBANDINFO);
   rbbi.fMask  = RBBIM_COLORS;
 
-  rbbi.clrBack = bg.getColorRef();
-  rbbi.clrFore = fg.getColorRef();
+  rbbi.clrBack = convert_to<COLORREF>(bg);
+  rbbi.clrFore = convert_to<COLORREF>(fg);
 
   setBand(&rbbi);
 }
@@ -288,22 +289,22 @@ void ReBar::removeBand(int index)
 
 Color ReBar::getBgColor()
 {
-  return Color((COLORREF)sendMessage(RB_GETBKCOLOR, (WPARAM)0, (LPARAM)0));
+  return convert_to<Color>((COLORREF)sendMessage(RB_GETBKCOLOR, (WPARAM)0, (LPARAM)0));
 }
 
 Color ReBar::getFgColor()
 {
-  return Color((COLORREF)sendMessage(RB_GETTEXTCOLOR, (WPARAM)0, (LPARAM)0));
+  return convert_to<Color>((COLORREF)sendMessage(RB_GETTEXTCOLOR, (WPARAM)0, (LPARAM)0));
 }
 
 void ReBar::setBgColor(const Color& color)
 {
-  sendMessage(RB_SETBKCOLOR, (WPARAM)0, (LPARAM)color.getColorRef());
+  sendMessage(RB_SETBKCOLOR, (WPARAM)0, (LPARAM)convert_to<COLORREF>(color));
 }
 
 void ReBar::setFgColor(const Color& color)
 {
-  sendMessage(RB_SETTEXTCOLOR, (WPARAM)0, (LPARAM)color.getColorRef());
+  sendMessage(RB_SETTEXTCOLOR, (WPARAM)0, (LPARAM)convert_to<COLORREF>(color));
 }
 
 Rect ReBar::getBandRect(int index)

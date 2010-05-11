@@ -57,12 +57,6 @@ public:
   static const Color Cyan;
   static const Color Blue;
 
-private:
-
-  COLORREF m_colorRef;
-
-public:
-
   Color();
   Color(const Color& color);
   Color(int r, int g, int b);
@@ -87,9 +81,8 @@ public:
   Color operator*(double value) const;
   Color operator/(double value) const;
 
-  explicit Color(COLORREF rgb);
-  COLORREF getColorRef() const;
-
+private:
+  unsigned int m_raw;
 };
 
 } // namespace Vaca

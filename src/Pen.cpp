@@ -31,6 +31,7 @@
 
 #include "Vaca/Pen.h"
 #include "Vaca/Color.h"
+#include "Vaca/win32.h"
 #include <cassert>
 
 using namespace Vaca;
@@ -55,7 +56,7 @@ Pen::Pen(const Pen& pen)
 */
 Pen::Pen(const Color& color, int width)
   : SharedPtr<GdiObject<HPEN> >(new GdiObject<HPEN>(CreatePen(PS_COSMETIC | PS_SOLID, width,
-								 color.getColorRef())))
+							      convert_to<COLORREF>(color))))
 {
 }
 
@@ -92,7 +93,7 @@ Pen::Pen(const Color& color, int width,
 
   LOGBRUSH lb;
   lb.lbStyle = BS_SOLID;
-  lb.lbColor = color.getColorRef();
+  lb.lbColor = convert_to<COLORREF>(color);
   lb.lbHatch = 0;
 
   HPEN handle;
@@ -131,7 +132,7 @@ Color Pen::getColor() const
   EXTLOGPEN elp;
   assert(getHandle());
   ::GetObject(getHandle(), sizeof(EXTLOGPEN), &elp);
-  return Color(elp.elpColor);
+  return convert_to<Color>(elp.elpColor);
 }
 
 /**

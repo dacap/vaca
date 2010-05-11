@@ -34,6 +34,7 @@
 #include "Vaca/Debug.h"
 #include "Vaca/ResourceException.h"
 #include "Vaca/String.h"
+#include "Vaca/win32.h"
 
 using namespace Vaca;
 
@@ -67,7 +68,7 @@ ImageList::ImageList(ResourceId bitmapId, int widthPerIcon, Color maskColor)
 			bitmapId.toLPTSTR(),
 			widthPerIcon,
 			1,
-			maskColor.getColorRef(),
+			convert_to<COLORREF>(maskColor),
 			IMAGE_BITMAP,
 			LR_CREATEDIBSECTION);
 
@@ -89,7 +90,7 @@ ImageList::ImageList(const String& fileName, int widthPerIcon, Color maskColor)
 			fileName.c_str(),
 			widthPerIcon,
 			1,
-			maskColor.getColorRef(),
+			convert_to<COLORREF>(maskColor),
 			IMAGE_BITMAP,
 			LR_LOADFROMFILE);
   if (himagelist == NULL)
@@ -146,7 +147,7 @@ int ImageList::addImage(Image& image, Color maskColor)
 
   return ImageList_AddMasked(getHandle(),
 			     image.getHandle(),
-			     maskColor.getColorRef());
+			     convert_to<COLORREF>(maskColor));
 }
 
 void ImageList::removeImage(int index)

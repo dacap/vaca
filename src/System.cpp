@@ -38,6 +38,7 @@
 #include "Vaca/ImageList.h"
 #include "Vaca/Mutex.h"
 #include "Vaca/ScopedLock.h"
+#include "Vaca/win32.h"
 
 #include <cstdio>
 #include <cwchar>
@@ -303,7 +304,7 @@ Rect System::getWorkAreaBounds()
 */
 Color System::getColor(int index)
 {
-  return Color(GetSysColor(index));
+  return convert_to<Color>(GetSysColor(index));
 }
 
 bool System::getKeyState(Keys::Type keyCode)

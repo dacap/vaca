@@ -43,6 +43,7 @@
 #include "Vaca/Pen.h"
 #include "Vaca/Brush.h"
 #include "Vaca/GraphicsPath.h"
+#include "Vaca/win32.h"
 
 #include <cmath>
 #ifndef M_PI
@@ -243,28 +244,28 @@ Color Graphics::getPixel(const Point& pt)
 {
   assert(m_handle);
 
-  return Color(GetPixel(m_handle, pt.x, pt.y));
+  return convert_to<Color>(GetPixel(m_handle, pt.x, pt.y));
 }
 
 Color Graphics::getPixel(int x, int y)
 {
   assert(m_handle);
 
-  return Color(GetPixel(m_handle, x, y));
+  return convert_to<Color>(GetPixel(m_handle, x, y));
 }
 
 void Graphics::setPixel(const Point& pt, const Color& color)
 {
   assert(m_handle);
 
-  SetPixel(m_handle, pt.x, pt.y, color.getColorRef());
+  SetPixel(m_handle, pt.x, pt.y, convert_to<COLORREF>(color));
 }
 
 void Graphics::setPixel(int x, int y, const Color& color)
 {
   assert(m_handle);
 
-  SetPixel(m_handle, x, y, color.getColorRef());
+  SetPixel(m_handle, x, y, convert_to<COLORREF>(color));
 }
 
 double Graphics::getMiterLimit() const
@@ -464,7 +465,7 @@ void Graphics::drawString(const String& str, const Color& color, int x, int y)
   assert(m_handle);
 
   int oldMode = SetBkMode(m_handle, TRANSPARENT);
-  int oldColor = SetTextColor(m_handle, color.getColorRef());
+  int oldColor = SetTextColor(m_handle, convert_to<COLORREF>(color));
 
   HGDIOBJ oldFont = SelectObject(m_handle, reinterpret_cast<HGDIOBJ>(m_font.getHandle()));
   TextOut(m_handle, x, y, str.c_str(), static_cast<int>(str.size()));
@@ -479,7 +480,7 @@ void Graphics::drawString(const String& str, const Color& color, const Rect& _rc
   assert(m_handle);
 
   int oldMode = SetBkMode(m_handle, TRANSPARENT);
-  int oldColor = SetTextColor(m_handle, color.getColorRef());
+  int oldColor = SetTextColor(m_handle, convert_to<COLORREF>(color));
 
   RECT rc = _rc;
 
@@ -529,13 +530,13 @@ void Graphics::drawImage(Image& image, int dstX, int dstY, int srcX, int srcY, i
 #if 0				// WinCE
   TransparentImage(m_handle, dstX, dstY, width, height,
 		   source.getHandle(), srcX, srcY, width, height,
-		   bgColor.getColorRef());
+		   convert_to<COLORREF>(bgColor));
 #else
 
   HDC maskHDC = CreateCompatibleDC(m_handle);
   HBITMAP theMask = CreateBitmap(width, height, 1, 1, NULL);
   HGDIOBJ oldMask = SelectObject(maskHDC, theMask);
-  COLORREF oldBkColor = SetBkColor(source.getHandle(), bgColor.getColorRef());
+  COLORREF oldBkColor = SetBkColor(source.getHandle(), convert_to<COLORREF>(bgColor));
 
   BitBlt(maskHDC, 0, 0, width, height,
 	 source.getHandle(), srcX, srcY, SRCCOPY);
@@ -720,8 +721,8 @@ void Graphics::draw3dRect(int x, int y, int w, int h, const Color& topLeft, cons
 {
   assert(m_handle);
 
-  HPEN pen1 = CreatePen(PS_SOLID, 1, topLeft.getColorRef());
-  HPEN pen2 = CreatePen(PS_SOLID, 1, bottomRight.getColorRef());
+  HPEN pen1 = CreatePen(PS_SOLID, 1, convert_to<COLORREF>(topLeft));
+  HPEN pen2 = CreatePen(PS_SOLID, 1, convert_to<COLORREF>(bottomRight));
 
   POINT oldPos;
   HGDIOBJ oldPen = SelectObject(m_handle, pen1);

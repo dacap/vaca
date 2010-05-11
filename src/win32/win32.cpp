@@ -29,52 +29,21 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/ColorDialog.h"
-#include "Vaca/Application.h"
 #include "Vaca/win32.h"
+#include "Vaca/Color.h"
 
 using namespace Vaca;
 
-ColorDialog::ColorDialog(const Color& color, Widget* parent)
-  : CommonDialog(parent)
-  , m_color(color)
+template<> COLORREF Vaca::convert_to(const Color& color)
 {
-  for (int i=0; i<16; ++i)
-    m_customColors[i] = RGB(255, 255, 255);
+  return RGB(color.getR(),
+	     color.getG(),
+	     color.getB());
 }
 
-ColorDialog::~ColorDialog()
+template<> Color Vaca::convert_to(const COLORREF& colorref)
 {
-}
-
-bool ColorDialog::doModal()
-{
-  CHOOSECOLOR cc;
-
-  cc.lStructSize = sizeof(CHOOSECOLOR);
-  cc.hwndOwner = getParentHandle();
-  cc.hInstance = NULL;
-  cc.rgbResult = convert_to<COLORREF>(m_color);
-  cc.lpCustColors = m_customColors;
-  cc.Flags = 0
-    | CC_ANYCOLOR
-    | CC_FULLOPEN
-    | CC_RGBINIT
-    | CC_SOLIDCOLOR
-    ;
-//   cc.lCustData;
-//   cc.lpfnHook;
-//   cc.lpTemplateName;
-
-  if (ChooseColor(&cc)) {
-    m_color = convert_to<Color>(cc.rgbResult);
-    return true;
-  }
-  else
-    return false;
-}
-
-Color ColorDialog::getColor() const
-{
-  return m_color;
+  return Color(GetRValue(colorref),
+	       GetGValue(colorref),
+	       GetBValue(colorref));
 }

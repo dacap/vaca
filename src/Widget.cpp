@@ -59,6 +59,7 @@
 #include "Vaca/PreferredSizeEvent.h"
 #include "Vaca/SetCursorEvent.h"
 #include "Vaca/LayoutEvent.h"
+#include "Vaca/win32.h"
 
 // uncomment this if you want message reporting in the "vaca.log"
 // #define REPORT_MESSAGES
@@ -2904,8 +2905,8 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
       HWND hwndCtrl = reinterpret_cast<HWND>(lParam);
       Widget* child = Widget::fromHandle(hwndCtrl);
       if (child != NULL) {
-	COLORREF fgColor = child->getFgColor().getColorRef();
-	COLORREF bgColor = child->getBgColor().getColorRef();
+	COLORREF fgColor = convert_to<COLORREF>(child->getFgColor());
+	COLORREF bgColor = convert_to<COLORREF>(child->getBgColor());
 
 	SetTextColor(hdc, fgColor);
 	SetBkColor(hdc, bgColor);

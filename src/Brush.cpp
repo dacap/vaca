@@ -31,6 +31,7 @@
 
 #include "Vaca/Brush.h"
 #include "Vaca/Color.h"
+#include "Vaca/win32.h"
 #include <cassert>
 
 using namespace Vaca;
@@ -46,7 +47,7 @@ Brush::Brush(const Brush& brush)
 }
 
 Brush::Brush(const Color& color)
-  : SharedPtr<GdiObject<HBRUSH> >(new GdiObject<HBRUSH>(CreateSolidBrush(color.getColorRef())))
+  : SharedPtr<GdiObject<HBRUSH> >(new GdiObject<HBRUSH>(CreateSolidBrush(convert_to<COLORREF>(color))))
 {
 }
 
@@ -65,7 +66,7 @@ Color Brush::getColor() const
   LOGBRUSH lb;
   assert(getHandle());
   ::GetObject(getHandle(), sizeof(LOGBRUSH), &lb); 
-  return Color(lb.lbColor);
+  return convert_to<Color>(lb.lbColor);
 }
 
 HBRUSH Brush::getHandle() const

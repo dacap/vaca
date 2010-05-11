@@ -33,6 +33,7 @@
 #include "Vaca/Debug.h"
 #include "Vaca/WidgetClass.h"
 #include "Vaca/PreferredSizeEvent.h"
+#include "Vaca/win32.h"
 
 #ifndef PBM_SETMARQUEE
 #define PBM_SETMARQUEE 1034
@@ -70,7 +71,7 @@ void ProgressBar::setBgColor(const Color& color)
   assert(::IsWindow(getHandle()));
 
   Widget::setBgColor(color);
-  sendMessage(PBM_SETBKCOLOR, 0, color.getColorRef());
+  sendMessage(PBM_SETBKCOLOR, 0, convert_to<COLORREF>(color));
 }
 
 // void ProgressBar::setBarColor(const Color& color)

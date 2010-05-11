@@ -34,6 +34,7 @@
 #include "Vaca/System.h"
 #include "Vaca/Register.h"
 #include "Vaca/WidgetClass.h"
+#include "Vaca/win32.h"
 
 #include <richedit.h>
 #include <memory>
@@ -72,7 +73,7 @@ void RichEdit::setBgColor(const Color& color)
 {
   Widget::setBgColor(color);
 
-  sendMessage(EM_SETBKGNDCOLOR, 0, color.getColorRef());
+  sendMessage(EM_SETBKGNDCOLOR, 0, convert_to<COLORREF>(color));
 }
 
 size_t RichEdit::getTextLength() const

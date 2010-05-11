@@ -41,6 +41,7 @@
 
 #include "Vaca/Brush.h"
 #include "Vaca/Pen.h"
+#include "Vaca/win32.h"
 
 using namespace Vaca;
 
@@ -322,7 +323,7 @@ void TreeView::setBgColor(const Color& color)
   assert(::IsWindow(getHandle()));
 
   Widget::setBgColor(color);
-  TreeView_SetBkColor(getHandle(), color.getColorRef());
+  TreeView_SetBkColor(getHandle(), convert_to<COLORREF>(color));
 }
 
 void TreeView::onMouseMove(MouseEvent& ev)

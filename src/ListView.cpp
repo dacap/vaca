@@ -36,6 +36,7 @@
 #include "Vaca/WidgetClass.h"
 #include "Vaca/ListItem.h"
 #include "Vaca/ListColumn.h"
+#include "Vaca/win32.h"
 
 using namespace Vaca;
 
@@ -72,35 +73,35 @@ void ListView::setBgColor(const Color& color)
   assert(::IsWindow(getHandle()));
 
   Widget::setBgColor(color);
-  ListView_SetBkColor(getHandle(), color.getColorRef());
+  ListView_SetBkColor(getHandle(), convert_to<COLORREF>(color));
 }
 
 Color ListView::getTextColor() const
 {
   assert(::IsWindow(getHandle()));
 
-  return Color(ListView_GetTextColor(getHandle()));
+  return convert_to<Color>(ListView_GetTextColor(getHandle()));
 }
 
 void ListView::setTextColor(const Color& color)
 {
   assert(::IsWindow(getHandle()));
 
-  ListView_SetTextColor(getHandle(), color.getColorRef());
+  ListView_SetTextColor(getHandle(), convert_to<COLORREF>(color));
 }
 
 Color ListView::getTextBgColor() const
 {
   assert(::IsWindow(getHandle()));
 
-  return Color(ListView_GetTextBkColor(getHandle()));
+  return convert_to<Color>(ListView_GetTextBkColor(getHandle()));
 }
 
 void ListView::setTextBgColor(const Color& color)
 {
   assert(::IsWindow(getHandle()));
 
-  ListView_SetTextBkColor(getHandle(), color.getColorRef());
+  ListView_SetTextBkColor(getHandle(), convert_to<COLORREF>(color));
 }
 
 ListViewType ListView::getType() const

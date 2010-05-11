@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005-2009 David Capello
+// Copyright (c) 2005-2010 David Capello
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -29,52 +29,25 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Vaca/ColorDialog.h"
-#include "Vaca/Application.h"
-#include "Vaca/win32.h"
+#ifndef VACA_WIN32_H
+#define VACA_WIN32_H
 
-using namespace Vaca;
+#include "Vaca/base.h"
 
-ColorDialog::ColorDialog(const Color& color, Widget* parent)
-  : CommonDialog(parent)
-  , m_color(color)
-{
-  for (int i=0; i<16; ++i)
-    m_customColors[i] = RGB(255, 255, 255);
+#ifndef VACA_ON_WINDOWS
+  #error You cannot use this header file outside Windows platform.
+#endif
+
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+
+namespace Vaca {
+
+  class Color;
+
+  template<> VACA_DLL COLORREF convert_to(const Color& color);
+  template<> VACA_DLL Color convert_to(const COLORREF& colorref);
+
 }
 
-ColorDialog::~ColorDialog()
-{
-}
-
-bool ColorDialog::doModal()
-{
-  CHOOSECOLOR cc;
-
-  cc.lStructSize = sizeof(CHOOSECOLOR);
-  cc.hwndOwner = getParentHandle();
-  cc.hInstance = NULL;
-  cc.rgbResult = convert_to<COLORREF>(m_color);
-  cc.lpCustColors = m_customColors;
-  cc.Flags = 0
-    | CC_ANYCOLOR
-    | CC_FULLOPEN
-    | CC_RGBINIT
-    | CC_SOLIDCOLOR
-    ;
-//   cc.lCustData;
-//   cc.lpfnHook;
-//   cc.lpTemplateName;
-
-  if (ChooseColor(&cc)) {
-    m_color = convert_to<Color>(cc.rgbResult);
-    return true;
-  }
-  else
-    return false;
-}
-
-Color ColorDialog::getColor() const
-{
-  return m_color;
-}
+#endif // VACA_WIN32_H

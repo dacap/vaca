@@ -152,6 +152,10 @@ set(VACA_SOURCES
     src/Widget.cpp 
     src/WidgetClass.cpp)
 
+if(VACA_WINDOWS)
+  set(VACA_SOURCES ${VACA_SOURCES} src/win32/win32.cpp)
+endif(VACA_WINDOWS)
+
 add_library(Vaca ${VACA_SOURCES})
 
 ######################################################################

@@ -76,7 +76,7 @@ Application::Application()
 
   InitCommonControlsEx(&icce);
 
-  VACA_TRACE("Program %s started\n", convert_to<std::string>(m_args[0]).c_str());
+  VACA_TRACE("Application started\n");
 }
 
 /**
@@ -100,7 +100,7 @@ Application::~Application()
   Referenceable::showLeaks();
 #endif
 
-  VACA_TRACE("Program %s finished\n", convert_to<std::string>(m_args[0]).c_str());
+  VACA_TRACE("Application finished\n");
 
   // close the log file
   details::removeAllThreadData();

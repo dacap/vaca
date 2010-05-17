@@ -1,4 +1,4 @@
-#include <cassert>
+#include <gtest/gtest.h>
 #include <vector>
 
 #include "Vaca/Thread.h"
@@ -23,8 +23,9 @@ namespace test1 {
     ::Sleep(100);
   }
 
-  void test_highload(int n)
+  TEST(Thread, Highload)
   {
+    const int n = 100;
     vector<Thread*> threads;
     for (int c=0; c<n; c++) threads.push_back(new Thread(&do_it));
     for (int c=0; c<n; c++) threads[c]->join();
@@ -32,10 +33,4 @@ namespace test1 {
     assert(counter == n);
   }
 
-}
-
-int main()
-{
-  test1::test_highload(100);
-  return 0;
 }

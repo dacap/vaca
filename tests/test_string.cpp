@@ -1,153 +1,169 @@
-#include <cassert>
+#include <gtest/gtest.h>
 #include <climits>
 
 #include "Vaca/String.h"
 
 using namespace Vaca;
 
-void test_basic()
+TEST(String, Basic)
 {
   String a, b;
-  assert(a == b);
-  assert(String() == L"");
-  assert(a == String());
+
+  EXPECT_EQ(L"", a);
+  EXPECT_EQ(0, a.size());
+
+  EXPECT_TRUE(a == b);
+  EXPECT_TRUE(a == String());
+
+  EXPECT_TRUE(String() == L"");
 }
 
-void test_equal()
+TEST(String, Equal)
 {
-  assert(String(L"Hello") == L"Hello");
-  assert(String(L"abc") == String(L"abc"));
-  assert(String(L"abc") != String(L"abcd"));
-  assert(String(L"abcd") != String(L"abc"));
+  EXPECT_TRUE(String(L"Hello") == L"Hello");
+  EXPECT_TRUE(String(L"abc") == String(L"abc"));
+  EXPECT_TRUE(String(L"abc") != String(L"abcd"));
+  EXPECT_TRUE(String(L"abcd") != String(L"abc"));
 }
 
-void test_convert_to()
+TEST(String, Conversion)
 {
-  assert(convert_to<String>(32039) == L"32039");
-  assert(convert_to<String>(-32994) == L"-32994");
-  assert(convert_to<String>(0.324) == L"0.324");
-  assert(convert_to<String>(0xff00) == L"65280");
+  EXPECT_EQ(L"32039",  convert_to<String>(32039));
+  EXPECT_EQ(L"-32994", convert_to<String>(-32994));
+  EXPECT_EQ(L"0.324",  convert_to<String>(0.324));
+  EXPECT_EQ(L"65280",  convert_to<String>(0xff00));
 
   String a = convert_to<String>(-32);
   String b = convert_to<String>(32);
   String c = convert_to<String>(0x10);
-  assert(convert_to<int>(a) == -32);
-  assert(convert_to<int>(b) == 32);
-  assert(convert_to<int>(c) == 0x10);
+  EXPECT_EQ(-32,  convert_to<int>(a));
+  EXPECT_EQ(32,   convert_to<int>(b));
+  EXPECT_EQ(0x10, convert_to<int>(c));
 
-  String a_int = convert_to<String, int>(INT_MIN);
-  String b_int = convert_to<String, int>(INT_MAX);
-  String a_uint = convert_to<String, unsigned int>(0U);
-  String b_uint = convert_to<String, unsigned int>(UINT_MAX);
-  String a_long = convert_to<String, long>(LONG_MIN);
-  String b_long = convert_to<String, long>(LONG_MAX);
+  String a_int	 = convert_to<String, int>(INT_MIN);
+  String b_int	 = convert_to<String, int>(INT_MAX);
+  String a_uint	 = convert_to<String, unsigned int>(0U);
+  String b_uint	 = convert_to<String, unsigned int>(UINT_MAX);
+  String a_long	 = convert_to<String, long>(LONG_MIN);
+  String b_long	 = convert_to<String, long>(LONG_MAX);
   String a_ulong = convert_to<String, unsigned long>(0UL);
   String b_ulong = convert_to<String, unsigned long>(ULONG_MAX);
 
-  assert(convert_to<int>(a_int) == INT_MIN);
-  assert(convert_to<int>(b_int) == INT_MAX);
-  assert(convert_to<long>(a_long) == LONG_MIN);
-  assert(convert_to<long>(b_long) == LONG_MAX);
-  assert(convert_to<unsigned int>(a_uint) == 0U);
-  assert(convert_to<unsigned int>(b_uint) == UINT_MAX);
-  assert(convert_to<unsigned long>(a_ulong) == 0UL);
-  assert(convert_to<unsigned long>(b_ulong) == ULONG_MAX);
-
+  EXPECT_EQ(INT_MIN,   convert_to<int>(a_int));
+  EXPECT_EQ(INT_MAX,   convert_to<int>(b_int));
+  EXPECT_EQ(LONG_MIN,  convert_to<long>(a_long));
+  EXPECT_EQ(LONG_MAX,  convert_to<long>(b_long));
+  EXPECT_EQ(0U,        convert_to<unsigned int>(a_uint));
+  EXPECT_EQ(UINT_MAX,  convert_to<unsigned int>(b_uint));
+  EXPECT_EQ(0UL,       convert_to<unsigned long>(a_ulong));
+  EXPECT_EQ(ULONG_MAX, convert_to<unsigned long>(b_ulong));
 }
 
-void test_filename()
+TEST(String, FilePath)
 {
-  assert(file_path(L"C:\\foo\\main.cpp") == L"C:\\foo");
-  assert(file_path(L"C:/foo/pack.tar.gz") == L"C:/foo");
-  assert(file_path(L"./main.cpp") == L".");
-  assert(file_path(L".\\main.cpp") == L".");
-  assert(file_path(L"\\main.cpp") == L"");
-  assert(file_path(L"main.cpp") == L"");
-  assert(file_path(L"main.") == L"");
-  assert(file_path(L"main") == L"");
-  assert(file_path(L"C:/foo/") == L"C:/foo");
-  assert(file_path(L"C:\\") == L"C:");
-  assert(file_path(L"C:\\.cpp") == L"C:");
-  assert(file_path(L".cpp") == L"");
-  assert(file_path(L"") == L"");
+  EXPECT_EQ(L"C:\\foo", file_path(L"C:\\foo\\main.cpp"));
+  EXPECT_EQ(L"C:/foo",	file_path(L"C:/foo/pack.tar.gz"));
+  EXPECT_EQ(L".",	file_path(L"./main.cpp"));
+  EXPECT_EQ(L".",	file_path(L".\\main.cpp"));
+  EXPECT_EQ(L"",	file_path(L"\\main.cpp"));
+  EXPECT_EQ(L"",	file_path(L"main.cpp"));
+  EXPECT_EQ(L"",	file_path(L"main."));
+  EXPECT_EQ(L"",	file_path(L"main"));
+  EXPECT_EQ(L"C:/foo",	file_path(L"C:/foo/"));
+  EXPECT_EQ(L"C:",	file_path(L"C:\\"));
+  EXPECT_EQ(L"C:",	file_path(L"C:\\.cpp"));
+  EXPECT_EQ(L"",	file_path(L".cpp"));
+  EXPECT_EQ(L"",	file_path(L""));
+}
 
-  assert(file_name(L"C:\\foo\\main.cpp") == L"main.cpp");
-  assert(file_name(L"C:/foo/pack.tar.gz") == L"pack.tar.gz");
-  assert(file_name(L"./main.cpp") == L"main.cpp");
-  assert(file_name(L".\\main.cpp") == L"main.cpp");
-  assert(file_name(L"\\main.cpp") == L"main.cpp");
-  assert(file_name(L"main.cpp") == L"main.cpp");
-  assert(file_name(L"main.") == L"main.");
-  assert(file_name(L"main") == L"main");
-  assert(file_name(L"C:/foo/") == L"");
-  assert(file_name(L"C:\\") == L"");
-  assert(file_name(L"C:\\.cpp") == L".cpp");
-  assert(file_name(L".cpp") == L".cpp");
-  assert(file_name(L"") == L"");
+TEST(String, FileName)
+{
+  EXPECT_EQ(L"main.cpp",	file_name(L"C:\\foo\\main.cpp"));
+  EXPECT_EQ(L"pack.tar.gz",	file_name(L"C:/foo/pack.tar.gz"));
+  EXPECT_EQ(L"main.cpp",	file_name(L"./main.cpp"));
+  EXPECT_EQ(L"main.cpp",	file_name(L".\\main.cpp"));
+  EXPECT_EQ(L"main.cpp",	file_name(L"\\main.cpp"));
+  EXPECT_EQ(L"main.cpp",	file_name(L"main.cpp"));
+  EXPECT_EQ(L"main.",		file_name(L"main."));
+  EXPECT_EQ(L"main",		file_name(L"main"));
+  EXPECT_EQ(L"",		file_name(L"C:/foo/"));
+  EXPECT_EQ(L"",		file_name(L"C:\\"));
+  EXPECT_EQ(L".cpp",		file_name(L"C:\\.cpp"));
+  EXPECT_EQ(L".cpp",		file_name(L".cpp"));
+  EXPECT_EQ(L"",		file_name(L""));
+}
 
-  assert(file_extension(L"C:\\foo\\main.cpp") == L"cpp");
-  assert(file_extension(L"C:/foo/pack.tar.gz") == L"gz");
-  assert(file_extension(L"./main.cpp") == L"cpp");
-  assert(file_extension(L".\\main.cpp") == L"cpp");
-  assert(file_extension(L"\\main.cpp") == L"cpp");
-  assert(file_extension(L"main.cpp") == L"cpp");
-  assert(file_extension(L"main.") == L"");
-  assert(file_extension(L"main") == L"");
-  assert(file_extension(L"C:/foo/") == L"");
-  assert(file_extension(L"C:\\") == L"");
-  assert(file_extension(L"C:\\.cpp") == L"cpp");
-  assert(file_extension(L".cpp") == L"cpp");
-  assert(file_extension(L"") == L"");
+TEST(String, FileExtension)
+{
+  EXPECT_EQ(L"cpp",	file_extension(L"C:\\foo\\main.cpp"));
+  EXPECT_EQ(L"gz",	file_extension(L"C:/foo/pack.tar.gz"));
+  EXPECT_EQ(L"cpp",	file_extension(L"./main.cpp"));
+  EXPECT_EQ(L"cpp",	file_extension(L".\\main.cpp"));
+  EXPECT_EQ(L"cpp",	file_extension(L"\\main.cpp"));
+  EXPECT_EQ(L"cpp",	file_extension(L"main.cpp"));
+  EXPECT_EQ(L"",	file_extension(L"main."));
+  EXPECT_EQ(L"",	file_extension(L"main"));
+  EXPECT_EQ(L"",	file_extension(L"C:/foo/"));
+  EXPECT_EQ(L"",	file_extension(L"C:\\"));
+  EXPECT_EQ(L"cpp",	file_extension(L"C:\\.cpp"));
+  EXPECT_EQ(L"cpp",	file_extension(L".cpp"));
+  EXPECT_EQ(L"",	file_extension(L""));
+}
 
-  assert(file_title(L"C:\\foo\\main.cpp") == L"main");
-  assert(file_title(L"C:/foo/pack.tar.gz") == L"pack.tar");
-  assert(file_title(L"./main.cpp") == L"main");
-  assert(file_title(L".\\main.cpp") == L"main");
-  assert(file_title(L"\\main.cpp") == L"main");
-  assert(file_title(L"main.cpp") == L"main");
-  assert(file_title(L"main.") == L"main");
-  assert(file_title(L"main") == L"main");
-  assert(file_title(L"C:/foo/") == L"");
-  assert(file_title(L"C:\\") == L"");
-  assert(file_title(L"C:\\.cpp") == L"");
-  assert(file_title(L".cpp") == L"");
-  assert(file_title(L"") == L"");
+TEST(String, FileTitle)
+{
+  EXPECT_EQ(L"main",		file_title(L"C:\\foo\\main.cpp"));
+  EXPECT_EQ(L"pack.tar",	file_title(L"C:/foo/pack.tar.gz"));
+  EXPECT_EQ(L"main",		file_title(L"./main.cpp"));
+  EXPECT_EQ(L"main",		file_title(L".\\main.cpp"));
+  EXPECT_EQ(L"main",		file_title(L"\\main.cpp"));
+  EXPECT_EQ(L"main",		file_title(L"main.cpp"));
+  EXPECT_EQ(L"main",		file_title(L"main."));
+  EXPECT_EQ(L"main",		file_title(L"main"));
+  EXPECT_EQ(L"",		file_title(L"C:/foo/"));
+  EXPECT_EQ(L"",		file_title(L"C:\\"));
+  EXPECT_EQ(L"",		file_title(L"C:\\.cpp"));
+  EXPECT_EQ(L"",		file_title(L".cpp"));
+  EXPECT_EQ(L"",		file_title(L""));
+}
 
+TEST(String, Slash)
+{
   String path(L"C:\\foo");
-  assert(path / L"src" == L"C:\\foo\\src");
+  EXPECT_EQ(L"C:\\foo\\src", path / L"src");
 
   path /= L"include";
-  assert(path == L"C:\\foo\\include");
+  EXPECT_EQ(L"C:\\foo\\include", path);
 
   path /= L"main.h";
-  assert(path == L"C:\\foo\\include\\main.h");
+  EXPECT_EQ(L"C:\\foo\\include\\main.h", path);
 }
 
-void test_trim()
+TEST(String, TrimAlgorithm)
 {
-  assert(trim_string(String()) == L"");
-  assert(trim_string(L"No trim") == L"No trim");
-  assert(trim_string(L"Front    ") == L"Front");
-  assert(trim_string(L"   End") == L"End");
-  assert(trim_string(L"       ") == L"");
-  assert(trim_string(L" \n \r  \t \r \n \r\n \t   ") == L"");
-  assert(trim_string(L" \n \r Word \t   ") == L"Word");
-  assert(trim_string(L"\tNo \n \r \ttrim \n ") == L"No \n \r \ttrim");
+  EXPECT_EQ(L"",		trim_string(String()));
+  EXPECT_EQ(L"No trim",		trim_string(L"No trim"));
+  EXPECT_EQ(L"Front",		trim_string(L"Front    "));
+  EXPECT_EQ(L"End",		trim_string(L"   End"));
+  EXPECT_EQ(L"",		trim_string(L"       "));
+  EXPECT_EQ(L"",		trim_string(L" \n \r  \t \r \n \r\n \t   "));
+  EXPECT_EQ(L"Word",		trim_string(L" \n \r Word \t   "));
+  EXPECT_EQ(L"No \n \r \ttrim", trim_string(L"\tNo \n \r \ttrim \n "));
 }
 
-void test_format()
+TEST(String, Format)
 {
-  assert(format_string(L"") == L"");
-  assert(format_string(L"Hello") == L"Hello");
-  assert(format_string(L"%d", 2) == L"2");
-  assert(format_string(L"%.02f", 20.3248) == L"20.32");
-  assert(format_string(L"%5d", 202) == L"  202");
-  assert(format_string(L"%05d", 202) == L"00202");
-  assert(format_string(L"%04x", 0xff00) == L"ff00");
-  assert(format_string(L"%0.2g", 0.324) == L"0.32");
+  EXPECT_EQ(L"",	format_string(L""));
+  EXPECT_EQ(L"Hello",	format_string(L"Hello"));
+  EXPECT_EQ(L"2",	format_string(L"%d", 2));
+  EXPECT_EQ(L"20.32",	format_string(L"%.02f", 20.3248));
+  EXPECT_EQ(L"  202",	format_string(L"%5d", 202));
+  EXPECT_EQ(L"00202",	format_string(L"%05d", 202));
+  EXPECT_EQ(L"ff00",	format_string(L"%04x", 0xff00));
+  EXPECT_EQ(L"0.32",	format_string(L"%0.2g", 0.324));
 }
 
-void test_format_overflow()
+TEST(String, FormatOverflow)
 {
   for (int n=1024; n<1026; ++n) {
     wchar_t* buf(new wchar_t[n]);
@@ -159,21 +175,9 @@ void test_format_overflow()
       buf[n-2] = L'd';
       buf[n-1] = 0;
 
-      assert(format_string(buf, d) == String(n-3, L'x')+convert_to<String>(d));
+      EXPECT_TRUE(format_string(buf, d) == String(n-3, L'x')+convert_to<String>(d));
     }
 
     delete buf;
   }
-}
-
-int main()
-{
-  test_basic();
-  test_equal();
-  test_convert_to();
-  test_filename();
-  test_trim();
-  test_format();
-  test_format_overflow();
-  return 0;
 }

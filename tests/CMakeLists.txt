@@ -1,6 +1,11 @@
 # Vaca - Visual Application Components Abstraction
-# Copyright (c) 2005-2009 David Capello
+# Copyright (c) 2005-2010 David Capello
 # All rights reserved.
+
+include_directories(.)
+add_library(gtest STATIC gtest/gtest-all.cc)
+add_library(gtest_main STATIC gtest/gtest_main.cc)
+target_link_libraries(gtest_main gtest)
 
 function(add_vaca_test name)
   add_executable(${name} ${name}.cpp)
@@ -8,8 +13,7 @@ function(add_vaca_test name)
   set_target_properties(${name} PROPERTIES
     COMPILE_FLAGS "${common_flags}")
 
-  target_link_libraries(${name} Vaca)
-  target_link_libraries(${name} ${win32_libs})
+  target_link_libraries(${name} gtest_main Vaca ${win32_libs})
 endfunction(add_vaca_test)
 
 add_vaca_test(test_bind)

@@ -1,4 +1,4 @@
-#include <cassert>
+#include <gtest/gtest.h>
 
 #include "Vaca/Vaca.h"
 
@@ -13,48 +13,34 @@ void test_basic()
     T a(L"caption", &parent);
     T b(L"caption", &parent, T::Styles::Default);
 
-    assert(a.getParent() == &parent);
-    assert(b.getParent() == &parent);
-    assert(a.getStyle() == b.getStyle());
-    assert(a.getId() == 0);
-    assert(b.getId() == 0);
+    EXPECT_TRUE(a.getParent() == &parent);
+    EXPECT_TRUE(b.getParent() == &parent);
+    EXPECT_TRUE(a.getStyle() == b.getStyle());
+    EXPECT_EQ(0, a.getId());
+    EXPECT_EQ(0, b.getId());
 
     // check if get/setText work
     a.setText(L"bbb");
-    assert(a.getText() == L"bbb");
+    EXPECT_EQ(L"bbb", a.getText());
 
     // check if get/setId work
     a.setId(32);
     b.setId(33);
-    assert(a.getId() == 32);
-    assert(b.getId() == 33);
+    EXPECT_EQ(32, a.getId());
+    EXPECT_EQ(33, b.getId());
   }
 
   // create without parent
   {
     T a(L"caption", NULL, T::Styles::Default - Widget::Styles::Visible);
-    assert(a.getText() == L"caption");
-    assert(a.getParent() == NULL);
+    EXPECT_EQ(L"caption", a.getText());
+    EXPECT_EQ(NULL, a.getParent());
   }
 }
 
-void test_nonexistent_class()
-{
-  try {
-    Widget a(WidgetClassName(L"Vaca.NonExistentClass"), NULL, Widget::Styles::None);
-
-    // CreateWidgetException wasn't throw
-    assert(false);
-  }
-  catch (const CreateWidgetException&) {
-    // expected behavior
-  }
-}
-
-int main()
+TEST(Widget, BasicBehavior)
 {
   Application app;
-
   test_basic<Label>();
   test_basic<Button>();
   test_basic<TextEdit>();
@@ -62,8 +48,12 @@ int main()
   test_basic<ToggleButton>();
   test_basic<GroupBox>();
   test_basic<LinkLabel>();
+}
 
-  test_nonexistent_class();
+TEST(Widget, NonExistentClass)
+{
+  Application app;
 
-  return 0;
+  EXPECT_THROW(Widget a(WidgetClassName(L"Vaca.NonExistentClass"), NULL, Widget::Styles::None),
+	       CreateWidgetException);
 }

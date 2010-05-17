@@ -1,4 +1,4 @@
-#include <cassert>
+#include <gtest/gtest.h>
 
 #include "Vaca/Bind.h"
 #include "Vaca/Signal.h"
@@ -6,6 +6,7 @@
 using namespace Vaca;
 
 //////////////////////////////////////////////////////////////////////
+// Global variables to count function hits
 
 int void0fun_hits;
 int void1fun_hits;
@@ -28,31 +29,29 @@ int int0mem_hits;
 int int1mem_hits;
 int int2mem_hits;
 
-int ctor_hits;
-int copy_ctor_hits;
-
-void reset_hits()
-{
-  void0fun_hits = void1fun_hits = void2fun_hits = 0;
-  void0cal_hits = void1cal_hits = void2cal_hits = 0;
-  void0mem_hits = void1mem_hits = void2mem_hits = 0;
-  int0fun_hits = int1fun_hits = int2fun_hits = 0;
-  int0cal_hits = int1cal_hits = int2cal_hits = 0;
-  int0mem_hits = int1mem_hits = int2mem_hits = 0;
-  ctor_hits = copy_ctor_hits = 0;
-}
+class BindTest : public testing::Test {
+protected:
+  virtual void SetUp() {
+    void0fun_hits = void1fun_hits = void2fun_hits = 0;
+    void0cal_hits = void1cal_hits = void2cal_hits = 0;
+    void0mem_hits = void1mem_hits = void2mem_hits = 0;
+    int0fun_hits = int1fun_hits = int2fun_hits = 0;
+    int0cal_hits = int1cal_hits = int2cal_hits = 0;
+    int0mem_hits = int1mem_hits = int2mem_hits = 0;
+  }
+};
 
 //////////////////////////////////////////////////////////////////////
 
 namespace test1 {
 
 void f0() { ++void0fun_hits; }
-void f1(int a) { ++void1fun_hits; assert(a == 5); }
-void f2(int a, int b) { ++void2fun_hits; assert(a == b); }
+void f1(int a) { ++void1fun_hits; EXPECT_EQ(5, a); }
+void f2(int a, int b) { ++void2fun_hits; EXPECT_TRUE(a == b); }
 
 int f0_int() { ++int0fun_hits; return 0; }
-int f1_int(int a) { ++int1fun_hits; assert(a == 5); return 0; }
-int f2_int(int a, int b) { ++int2fun_hits; assert(a == b); return 0; }
+int f1_int(int a) { ++int1fun_hits; EXPECT_EQ(5, a); return 0; }
+int f2_int(int a, int b) { ++int2fun_hits; EXPECT_TRUE(a == b); return 0; }
 
 struct T0 {
   void operator()() { ++void0cal_hits; }
@@ -61,16 +60,16 @@ struct T0_int {
   int operator()() { ++int0cal_hits; return 0; }
 };
 struct T1 {
-  void operator()(int a) { ++void1cal_hits; assert(a == 5); }
+  void operator()(int a) { ++void1cal_hits; EXPECT_EQ(5, a); }
 };
 struct T1_int {
-  int operator()(int a) { ++int1cal_hits; assert(a == 5); return a; }
+  int operator()(int a) { ++int1cal_hits; EXPECT_EQ(5, a); return a; }
 };
 struct T2 {
-  void operator()(int a, int b) { ++void2cal_hits; assert(a == b); }
+  void operator()(int a, int b) { ++void2cal_hits; EXPECT_TRUE(a == b); }
 };
 struct T2_int {
-  int operator()(int a, int b) { ++int2cal_hits; assert(a == b); return a+b; }
+  int operator()(int a, int b) { ++int2cal_hits; EXPECT_TRUE(a == b); return a+b; }
 };
 struct T3 {
   void method0() { ++void0mem_hits; }
@@ -81,7 +80,7 @@ struct T3 {
   int method2_int(int a, int b) { ++int2mem_hits; assert(a == b); return a+b; }
 };
 
-void test0_void()
+TEST_F(BindTest, test0_void)
 {
   Signal0<void> s0;
   s0.connect(&f0);		// direct connection (Slot0_fun)
@@ -108,27 +107,27 @@ void test0_void()
   s0.connect(Bind(&T3::method2_int, &a, 5, 5));
   s0();
 
-  assert(void0fun_hits == 2);
-  assert(void1fun_hits == 1);
-  assert(void2fun_hits == 1);
-  assert(int0fun_hits == 1);
-  assert(int1fun_hits == 1);
-  assert(int2fun_hits == 1);
-  assert(void0cal_hits == 2);
-  assert(void1cal_hits == 1);
-  assert(void2cal_hits == 1);
-  assert(int0cal_hits == 1);
-  assert(int1cal_hits == 1);
-  assert(int2cal_hits == 1);
-  assert(void0mem_hits == 2);
-  assert(void1mem_hits == 1);
-  assert(void2mem_hits == 1);
-  assert(int0mem_hits == 1);
-  assert(int1mem_hits == 1);
-  assert(int2mem_hits == 1);
+  EXPECT_EQ(2, void0fun_hits);
+  EXPECT_EQ(1, void1fun_hits);
+  EXPECT_EQ(1, void2fun_hits);
+  EXPECT_EQ(1, int0fun_hits);
+  EXPECT_EQ(1, int1fun_hits);
+  EXPECT_EQ(1, int2fun_hits);
+  EXPECT_EQ(2, void0cal_hits);
+  EXPECT_EQ(1, void1cal_hits);
+  EXPECT_EQ(1, void2cal_hits);
+  EXPECT_EQ(1, int0cal_hits);
+  EXPECT_EQ(1, int1cal_hits);
+  EXPECT_EQ(1, int2cal_hits);
+  EXPECT_EQ(2, void0mem_hits);
+  EXPECT_EQ(1, void1mem_hits);
+  EXPECT_EQ(1, void2mem_hits);
+  EXPECT_EQ(1, int0mem_hits);
+  EXPECT_EQ(1, int1mem_hits);
+  EXPECT_EQ(1, int2mem_hits);
 }
 
-void test0_int()
+TEST_F(BindTest, test0_int)
 {
   Signal0<int> s0;
   s0.connect(&f0_int);		  // direct connection (Slot0_fun)
@@ -146,27 +145,27 @@ void test0_int()
   s0.connect(Bind(&T3::method2_int, &a, 5, 5));
   s0();
 
-  assert(void0fun_hits == 0);
-  assert(void1fun_hits == 0);
-  assert(void2fun_hits == 0);
-  assert(int0fun_hits == 2);
-  assert(int1fun_hits == 1);
-  assert(int2fun_hits == 1);
-  assert(void0cal_hits == 0);
-  assert(void1cal_hits == 0);
-  assert(void2cal_hits == 0);
-  assert(int0cal_hits == 2);
-  assert(int1cal_hits == 1);
-  assert(int2cal_hits == 1);
-  assert(void0mem_hits == 0);
-  assert(void1mem_hits == 0);
-  assert(void2mem_hits == 0);
-  assert(int0mem_hits == 2);
-  assert(int1mem_hits == 1);
-  assert(int2mem_hits == 1);
+  EXPECT_EQ(0, void0fun_hits);
+  EXPECT_EQ(0, void1fun_hits);
+  EXPECT_EQ(0, void2fun_hits);
+  EXPECT_EQ(2, int0fun_hits);
+  EXPECT_EQ(1, int1fun_hits);
+  EXPECT_EQ(1, int2fun_hits);
+  EXPECT_EQ(0, void0cal_hits);
+  EXPECT_EQ(0, void1cal_hits);
+  EXPECT_EQ(0, void2cal_hits);
+  EXPECT_EQ(2, int0cal_hits);
+  EXPECT_EQ(1, int1cal_hits);
+  EXPECT_EQ(1, int2cal_hits);
+  EXPECT_EQ(0, void0mem_hits);
+  EXPECT_EQ(0, void1mem_hits);
+  EXPECT_EQ(0, void2mem_hits);
+  EXPECT_EQ(2, int0mem_hits);
+  EXPECT_EQ(1, int1mem_hits);
+  EXPECT_EQ(1, int2mem_hits);
 }
 
-void test1_void()
+TEST_F(BindTest, test1_void)
 {
   Signal1<void, int> s1;
   s1.connect(&f1);		// direct connection (Slot1_fun)
@@ -193,27 +192,27 @@ void test1_void()
   s1.connect(Bind(&T3::method2_int, &a, 5, 5));
   s1(5);
 
-  assert(void0fun_hits == 1);
-  assert(void1fun_hits == 2);
-  assert(void2fun_hits == 1);
-  assert(int0fun_hits == 1);
-  assert(int1fun_hits == 1);
-  assert(int2fun_hits == 1);
-  assert(void0cal_hits == 1);
-  assert(void1cal_hits == 2);
-  assert(void2cal_hits == 1);
-  assert(int0cal_hits == 1);
-  assert(int1cal_hits == 1);
-  assert(int2cal_hits == 1);
-  assert(void0mem_hits == 1);
-  assert(void1mem_hits == 2);
-  assert(void2mem_hits == 1);
-  assert(int0mem_hits == 1);
-  assert(int1mem_hits == 1);
-  assert(int2mem_hits == 1);
+  EXPECT_EQ(1, void0fun_hits);
+  EXPECT_EQ(2, void1fun_hits);
+  EXPECT_EQ(1, void2fun_hits);
+  EXPECT_EQ(1, int0fun_hits);
+  EXPECT_EQ(1, int1fun_hits);
+  EXPECT_EQ(1, int2fun_hits);
+  EXPECT_EQ(1, void0cal_hits);
+  EXPECT_EQ(2, void1cal_hits);
+  EXPECT_EQ(1, void2cal_hits);
+  EXPECT_EQ(1, int0cal_hits);
+  EXPECT_EQ(1, int1cal_hits);
+  EXPECT_EQ(1, int2cal_hits);
+  EXPECT_EQ(1, void0mem_hits);
+  EXPECT_EQ(2, void1mem_hits);
+  EXPECT_EQ(1, void2mem_hits);
+  EXPECT_EQ(1, int0mem_hits);
+  EXPECT_EQ(1, int1mem_hits);
+  EXPECT_EQ(1, int2mem_hits);
 }
 
-void test1_int()
+TEST_F(BindTest, test1_int)
 {
   Signal1<int, int> s1;
   s1.connect(&f1_int);		// direct connection (Slot1_fun)
@@ -231,27 +230,27 @@ void test1_int()
   s1.connect(Bind(&T3::method2_int, &a, 5, 5));
   s1(5);
 
-  assert(void0fun_hits == 0);
-  assert(void1fun_hits == 0);
-  assert(void2fun_hits == 0);
-  assert(int0fun_hits == 1);
-  assert(int1fun_hits == 2);
-  assert(int2fun_hits == 1);
-  assert(void0cal_hits == 0);
-  assert(void1cal_hits == 0);
-  assert(void2cal_hits == 0);
-  assert(int0cal_hits == 1);
-  assert(int1cal_hits == 2);
-  assert(int2cal_hits == 1);
-  assert(void0mem_hits == 0);
-  assert(void1mem_hits == 0);
-  assert(void2mem_hits == 0);
-  assert(int0mem_hits == 1);
-  assert(int1mem_hits == 2);
-  assert(int2mem_hits == 1);
+  EXPECT_EQ(0, void0fun_hits);
+  EXPECT_EQ(0, void1fun_hits);
+  EXPECT_EQ(0, void2fun_hits);
+  EXPECT_EQ(1, int0fun_hits);
+  EXPECT_EQ(2, int1fun_hits);
+  EXPECT_EQ(1, int2fun_hits);
+  EXPECT_EQ(0, void0cal_hits);
+  EXPECT_EQ(0, void1cal_hits);
+  EXPECT_EQ(0, void2cal_hits);
+  EXPECT_EQ(1, int0cal_hits);
+  EXPECT_EQ(2, int1cal_hits);
+  EXPECT_EQ(1, int2cal_hits);
+  EXPECT_EQ(0, void0mem_hits);
+  EXPECT_EQ(0, void1mem_hits);
+  EXPECT_EQ(0, void2mem_hits);
+  EXPECT_EQ(1, int0mem_hits);
+  EXPECT_EQ(2, int1mem_hits);
+  EXPECT_EQ(1, int2mem_hits);
 }
 
-void test2_void()
+TEST_F(BindTest, test2_void)
 {
   Signal2<void, int, int> s2;
   s2.connect(&f2);		     // direct connection (Slot2_fun)
@@ -278,27 +277,27 @@ void test2_void()
   s2.connect(Bind(&T3::method2_int, &a, 5, 5));
   s2(5, 5);
 
-  assert(void0fun_hits == 1);
-  assert(void1fun_hits == 1);
-  assert(void2fun_hits == 2);
-  assert(int0fun_hits == 1);
-  assert(int1fun_hits == 1);
-  assert(int2fun_hits == 1);
-  assert(void0cal_hits == 1);
-  assert(void1cal_hits == 1);
-  assert(void2cal_hits == 2);
-  assert(int0cal_hits == 1);
-  assert(int1cal_hits == 1);
-  assert(int2cal_hits == 1);
-  assert(void0mem_hits == 1);
-  assert(void1mem_hits == 1);
-  assert(void2mem_hits == 2);
-  assert(int0mem_hits == 1);
-  assert(int1mem_hits == 1);
-  assert(int2mem_hits == 1);
+  EXPECT_EQ(1, void0fun_hits);
+  EXPECT_EQ(1, void1fun_hits);
+  EXPECT_EQ(2, void2fun_hits);
+  EXPECT_EQ(1, int0fun_hits);
+  EXPECT_EQ(1, int1fun_hits);
+  EXPECT_EQ(1, int2fun_hits);
+  EXPECT_EQ(1, void0cal_hits);
+  EXPECT_EQ(1, void1cal_hits);
+  EXPECT_EQ(2, void2cal_hits);
+  EXPECT_EQ(1, int0cal_hits);
+  EXPECT_EQ(1, int1cal_hits);
+  EXPECT_EQ(1, int2cal_hits);
+  EXPECT_EQ(1, void0mem_hits);
+  EXPECT_EQ(1, void1mem_hits);
+  EXPECT_EQ(2, void2mem_hits);
+  EXPECT_EQ(1, int0mem_hits);
+  EXPECT_EQ(1, int1mem_hits);
+  EXPECT_EQ(1, int2mem_hits);
 }
 
-void test2_int()
+TEST_F(BindTest, test2_int)
 {
   Signal2<int, int, int> s2;
   s2.connect(&f2_int);		// direct connection (Slot2_fun)
@@ -316,29 +315,40 @@ void test2_int()
   s2.connect(Bind(&T3::method2_int, &a, 5, 5));
   s2(5, 5);
 
-  assert(void0fun_hits == 0);
-  assert(void1fun_hits == 0);
-  assert(void2fun_hits == 0);
-  assert(int0fun_hits == 1);
-  assert(int1fun_hits == 1);
-  assert(int2fun_hits == 2);
-  assert(void0cal_hits == 0);
-  assert(void1cal_hits == 0);
-  assert(void2cal_hits == 0);
-  assert(int0cal_hits == 1);
-  assert(int1cal_hits == 1);
-  assert(int2cal_hits == 2);
-  assert(void0mem_hits == 0);
-  assert(void1mem_hits == 0);
-  assert(void2mem_hits == 0);
-  assert(int0mem_hits == 1);
-  assert(int1mem_hits == 1);
-  assert(int2mem_hits == 2);
+  EXPECT_EQ(0, void0fun_hits);
+  EXPECT_EQ(0, void1fun_hits);
+  EXPECT_EQ(0, void2fun_hits);
+  EXPECT_EQ(1, int0fun_hits);
+  EXPECT_EQ(1, int1fun_hits);
+  EXPECT_EQ(2, int2fun_hits);
+  EXPECT_EQ(0, void0cal_hits);
+  EXPECT_EQ(0, void1cal_hits);
+  EXPECT_EQ(0, void2cal_hits);
+  EXPECT_EQ(1, int0cal_hits);
+  EXPECT_EQ(1, int1cal_hits);
+  EXPECT_EQ(2, int2cal_hits);
+  EXPECT_EQ(0, void0mem_hits);
+  EXPECT_EQ(0, void1mem_hits);
+  EXPECT_EQ(0, void2mem_hits);
+  EXPECT_EQ(1, int0mem_hits);
+  EXPECT_EQ(1, int1mem_hits);
+  EXPECT_EQ(2, int2mem_hits);
 }
 
 } // test1
 
 //////////////////////////////////////////////////////////////////////
+
+int ctor_hits;
+int copy_ctor_hits;
+
+class RefTest : public BindTest {
+protected:
+  virtual void SetUp() {
+    BindTest::SetUp();
+    ctor_hits = copy_ctor_hits = 0;
+  }
+};
 
 namespace test2 {
 
@@ -346,40 +356,46 @@ class Int
 {
   int a;
 public:
-  Int(int a) : a(a) { ++ctor_hits; }
+  explicit Int(int a) : a(a) { ++ctor_hits; }
   Int(const Int& b) : a(b.a) { ++copy_ctor_hits; }
   int value() const { return a; }
-  bool operator==(int a) const { return this->a == a; }
-  bool operator==(const Int& b) const { return a == b.a; }
   int operator+(const Int& b) const { return a + b.a; }
 };
 
-void f1(const Int& a) { ++void1fun_hits; assert(a == 5); }
-void f2(const Int& a, const Int& b) { ++void2fun_hits; assert(a == b); }
+inline bool operator==(const Int& a, int b) { return a.value() == b; }
+inline bool operator==(int a, const Int& b) { return a == b.value(); }
+inline bool operator==(const Int& a, const Int& b) { return a.value() == b.value(); }
 
-int f1_int(const Int& a) { ++int1fun_hits; assert(a == 5); return 0; }
-int f2_int(const Int& a, const Int& b) { ++int2fun_hits; assert(a == b); return 0; }
+inline std::ostream& operator<<(std::ostream& os, const Int& a) {
+  return os << "Int(" << a.value() << ")\n";
+}
+
+void f1(const Int& a) { ++void1fun_hits; EXPECT_EQ(5, a); }
+void f2(const Int& a, const Int& b) { ++void2fun_hits; EXPECT_TRUE(a == b); }
+
+int f1_int(const Int& a) { ++int1fun_hits; EXPECT_EQ(5, a); return 0; }
+int f2_int(const Int& a, const Int& b) { ++int2fun_hits; EXPECT_TRUE(a == b); return 0; }
 
 struct T1 {
-  void operator()(const Int& a) { ++void1cal_hits; assert(a == 5); }
+  void operator()(const Int& a) { ++void1cal_hits; EXPECT_TRUE(a == 5); }
 };
 struct T1_int {
-  int operator()(const Int& a) { ++int1cal_hits; assert(a == 5); return a.value(); }
+  int operator()(const Int& a) { ++int1cal_hits; EXPECT_TRUE(a == 5); return a.value(); }
 };
 struct T2 {
-  void operator()(const Int& a, const Int& b) { ++void2cal_hits; assert(a == b); }
+  void operator()(const Int& a, const Int& b) { ++void2cal_hits; EXPECT_TRUE(a == b); }
 };
 struct T2_int {
-  int operator()(const Int& a, const Int& b) { ++int2cal_hits; assert(a == b); return a+b; }
+  int operator()(const Int& a, const Int& b) { ++int2cal_hits; EXPECT_TRUE(a == b); return a+b; }
 };
 struct T3 {
-  void method1(const Int& a) { ++void1mem_hits; assert(a == 5); }
-  void method2(const Int& a, const Int& b) { ++void2mem_hits; assert(a == b); }
-  int method1_int(const Int& a) { ++int1mem_hits; assert(a == 5); return a.value(); }
-  int method2_int(const Int& a, const Int& b) { ++int2mem_hits; assert(a == b); return a+b; }
+  void method1(const Int& a) { ++void1mem_hits; EXPECT_EQ(5, a); }
+  void method2(const Int& a, const Int& b) { ++void2mem_hits; EXPECT_TRUE(a == b); }
+  int method1_int(const Int& a) { ++int1mem_hits; EXPECT_EQ(5, a); return a.value(); }
+  int method2_int(const Int& a, const Int& b) { ++int2mem_hits; EXPECT_TRUE(a == b); return a+b; }
 };
 
-void test1_void()
+TEST_F(RefTest, test1_void)
 {
   Int n(5);
   Signal1<void, const Int&> s1;
@@ -401,23 +417,23 @@ void test1_void()
   s1.connect(Bind(&T3::method2_int, &a, Ref(n), Ref(n)));
   s1(n);
 
-  assert(ctor_hits == 1);
-  assert(copy_ctor_hits == 0);
-  assert(void1fun_hits == 2);
-  assert(void2fun_hits == 1);
-  assert(int1fun_hits == 1);
-  assert(int2fun_hits == 1);
-  assert(void1cal_hits == 2);
-  assert(void2cal_hits == 1);
-  assert(int1cal_hits == 1);
-  assert(int2cal_hits == 1);
-  assert(void1mem_hits == 2);
-  assert(void2mem_hits == 1);
-  assert(int1mem_hits == 1);
-  assert(int2mem_hits == 1);
+  EXPECT_EQ(1, ctor_hits);
+  EXPECT_EQ(0, copy_ctor_hits);
+  EXPECT_EQ(2, void1fun_hits);
+  EXPECT_EQ(1, void2fun_hits);
+  EXPECT_EQ(1, int1fun_hits);
+  EXPECT_EQ(1, int2fun_hits);
+  EXPECT_EQ(2, void1cal_hits);
+  EXPECT_EQ(1, void2cal_hits);
+  EXPECT_EQ(1, int1cal_hits);
+  EXPECT_EQ(1, int2cal_hits);
+  EXPECT_EQ(2, void1mem_hits);
+  EXPECT_EQ(1, void2mem_hits);
+  EXPECT_EQ(1, int1mem_hits);
+  EXPECT_EQ(1, int2mem_hits);
 }
 
-void test1_int()
+TEST_F(RefTest, test1_int)
 {
   Int n(5);
   Signal1<int, const Int&> s1;
@@ -433,23 +449,23 @@ void test1_int()
   s1.connect(Bind(&T3::method2_int, &a, Ref(n), Ref(n)));
   s1(n);
 
-  assert(ctor_hits == 1);
-  assert(copy_ctor_hits == 0);
-  assert(void1fun_hits == 0);
-  assert(void2fun_hits == 0);
-  assert(int1fun_hits == 2);
-  assert(int2fun_hits == 1);
-  assert(void1cal_hits == 0);
-  assert(void2cal_hits == 0);
-  assert(int1cal_hits == 2);
-  assert(int2cal_hits == 1);
-  assert(void1mem_hits == 0);
-  assert(void2mem_hits == 0);
-  assert(int1mem_hits == 2);
-  assert(int2mem_hits == 1);
+  EXPECT_EQ(1, ctor_hits);
+  EXPECT_EQ(0, copy_ctor_hits);
+  EXPECT_EQ(0, void1fun_hits);
+  EXPECT_EQ(0, void2fun_hits);
+  EXPECT_EQ(2, int1fun_hits);
+  EXPECT_EQ(1, int2fun_hits);
+  EXPECT_EQ(0, void1cal_hits);
+  EXPECT_EQ(0, void2cal_hits);
+  EXPECT_EQ(2, int1cal_hits);
+  EXPECT_EQ(1, int2cal_hits);
+  EXPECT_EQ(0, void1mem_hits);
+  EXPECT_EQ(0, void2mem_hits);
+  EXPECT_EQ(2, int1mem_hits);
+  EXPECT_EQ(1, int2mem_hits);
 }
 
-void test2_void()
+TEST_F(RefTest, test2_void)
 {
   Int n(5);
   Signal2<void, const Int&, const Int&> s2;
@@ -471,23 +487,23 @@ void test2_void()
   s2.connect(Bind(&T3::method2_int, &a, Ref(n), Ref(n)));
   s2(n, n);
 
-  assert(ctor_hits == 1);
-  assert(copy_ctor_hits == 0);
-  assert(void1fun_hits == 1);
-  assert(void2fun_hits == 2);
-  assert(int1fun_hits == 1);
-  assert(int2fun_hits == 1);
-  assert(void1cal_hits == 1);
-  assert(void2cal_hits == 2);
-  assert(int1cal_hits == 1);
-  assert(int2cal_hits == 1);
-  assert(void1mem_hits == 1);
-  assert(void2mem_hits == 2);
-  assert(int1mem_hits == 1);
-  assert(int2mem_hits == 1);
+  EXPECT_EQ(1, ctor_hits);
+  EXPECT_EQ(0, copy_ctor_hits);
+  EXPECT_EQ(1, void1fun_hits);
+  EXPECT_EQ(2, void2fun_hits);
+  EXPECT_EQ(1, int1fun_hits);
+  EXPECT_EQ(1, int2fun_hits);
+  EXPECT_EQ(1, void1cal_hits);
+  EXPECT_EQ(2, void2cal_hits);
+  EXPECT_EQ(1, int1cal_hits);
+  EXPECT_EQ(1, int2cal_hits);
+  EXPECT_EQ(1, void1mem_hits);
+  EXPECT_EQ(2, void2mem_hits);
+  EXPECT_EQ(1, int1mem_hits);
+  EXPECT_EQ(1, int2mem_hits);
 }
 
-void test2_int()
+TEST_F(RefTest, test2_int)
 {
   Int n(5);
   Signal2<int, const Int&, const Int&> s2;
@@ -503,36 +519,20 @@ void test2_int()
   s2.connect(Bind(&T3::method2_int, &a, Ref(n), Ref(n)));
   s2(n, n);
 
-  assert(ctor_hits == 1);
-  assert(copy_ctor_hits == 0);
-  assert(void1fun_hits == 0);
-  assert(void2fun_hits == 0);
-  assert(int1fun_hits == 1);
-  assert(int2fun_hits == 2);
-  assert(void1cal_hits == 0);
-  assert(void2cal_hits == 0);
-  assert(int1cal_hits == 1);
-  assert(int2cal_hits == 2);
-  assert(void1mem_hits == 0);
-  assert(void2mem_hits == 0);
-  assert(int1mem_hits == 1);
-  assert(int2mem_hits == 2);
+  EXPECT_EQ(1, ctor_hits);
+  EXPECT_EQ(0, copy_ctor_hits);
+  EXPECT_EQ(0, void1fun_hits);
+  EXPECT_EQ(0, void2fun_hits);
+  EXPECT_EQ(1, int1fun_hits);
+  EXPECT_EQ(2, int2fun_hits);
+  EXPECT_EQ(0, void1cal_hits);
+  EXPECT_EQ(0, void2cal_hits);
+  EXPECT_EQ(1, int1cal_hits);
+  EXPECT_EQ(2, int2cal_hits);
+  EXPECT_EQ(0, void1mem_hits);
+  EXPECT_EQ(0, void2mem_hits);
+  EXPECT_EQ(1, int1mem_hits);
+  EXPECT_EQ(2, int2mem_hits);
 }
 
-}
-
-int main()
-{
-  reset_hits(); test1::test0_void();
-  reset_hits(); test1::test0_int();
-  reset_hits(); test1::test1_void();
-  reset_hits(); test1::test1_int();
-  reset_hits(); test1::test2_void();
-  reset_hits(); test1::test2_int();
-  // test references
-  reset_hits(); test2::test1_void();
-  reset_hits(); test2::test1_int();
-  reset_hits(); test2::test2_void();
-  reset_hits(); test2::test2_int();
-  return 0;
 }

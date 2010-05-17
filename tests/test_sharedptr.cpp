@@ -1,4 +1,4 @@
-#include <cassert>
+#include <gtest/gtest.h>
 
 #include "Vaca/SharedPtr.h"
 #include "Vaca/Referenceable.h"
@@ -8,23 +8,17 @@ using namespace Vaca;
 class Int : public Referenceable
 {
 public:
-  int value;
-  Int(int value) : value(value) { }
+  int value_;
+  Int(int value) : value_(value) { }
 };
 
-void test_equal()
+TEST(SharedPtr, Equal)
 {
   SharedPtr<Int> a(new Int(5));
   SharedPtr<Int> b;
-  assert(a->value == 5);
-  assert(a != b);
+  EXPECT_EQ(5, a->value_);
+  EXPECT_TRUE(a != b);
   b = a;
-  assert(a == b);
-  assert(&a->value == &b->value);
-}
-
-int main()
-{
-  test_equal();
-  return 0;
+  EXPECT_TRUE(a == b);
+  EXPECT_TRUE(&a->value_ == &b->value_); // Same address
 }

@@ -1,4 +1,4 @@
-#include <cassert>
+#include <gtest/gtest.h>
 
 #include "Vaca/Image.h"
 #include "Vaca/Graphics.h"
@@ -7,15 +7,23 @@
 
 using namespace Vaca;
 
-#define assert_pixel(pixels, x, y, r, g, b)			\
+inline std::ostream& operator<<(std::ostream& os, const Color& color)
+{
+  return os << "Color(" 
+	    << color.getR() << ", "
+	    << color.getG() << ", "
+	    << color.getB() << ")\n";
+}
+
+#define EXPECT_PIXEL(pixels, x, y, r, g, b)			\
   {								\
     ImagePixels::pixel_type color = pixels.getPixel(x, y);	\
-    assert(ImagePixels::getR(color) == r);			\
-    assert(ImagePixels::getG(color) == g);			\
-    assert(ImagePixels::getB(color) == b);			\
+    EXPECT_EQ(r, ImagePixels::getR(color));			\
+    EXPECT_EQ(g, ImagePixels::getG(color));			\
+    EXPECT_EQ(b, ImagePixels::getB(color));			\
   }
 
-void test_pointers()
+TEST(Image, Pointers)
 {
   Image img1(32, 32);
   Image img2 = img1;		// img1 and img2 references the same Image
@@ -24,7 +32,7 @@ void test_pointers()
   assert(img1 != img3);
 }
 
-void test_pixels()
+TEST(Image, GetPixels)
 {
   Image img(32, 32);
 
@@ -33,25 +41,18 @@ void test_pixels()
   ImagePixels pixels = img.getPixels();
   for (int y=0; y<pixels.getHeight(); ++y)
     for (int x=0; x<pixels.getWidth(); ++x)
-      assert_pixel(pixels, x, y, 64, 128, 255);
+      EXPECT_PIXEL(pixels, x, y, 64, 128, 255);
 
   g.setPixel(0, 0, Color(255, 0, 0));
   g.setPixel(1, 0, Color(0, 255, 0));
   g.setPixel(2, 0, Color(0, 0, 255));
 
-  assert(g.getPixel(0, 0) == Color(255, 0, 0));
-  assert(g.getPixel(1, 0) == Color(0, 255, 0));
-  assert(g.getPixel(2, 0) == Color(0, 0, 255));
+  EXPECT_EQ(Color(255, 0, 0), g.getPixel(0, 0));
+  EXPECT_EQ(Color(0, 255, 0), g.getPixel(1, 0));
+  EXPECT_EQ(Color(0, 0, 255), g.getPixel(2, 0));
 
   pixels = img.getPixels();
-  assert_pixel(pixels, 0, 0, 255, 0, 0);
-  assert_pixel(pixels, 1, 0, 0, 255, 0);
-  assert_pixel(pixels, 2, 0, 0, 0, 255);
-}
-
-int main()
-{
-  test_pointers();
-  test_pixels();
-  return 0;
+  EXPECT_PIXEL(pixels, 0, 0, 255, 0, 0);
+  EXPECT_PIXEL(pixels, 1, 0, 0, 255, 0);
+  EXPECT_PIXEL(pixels, 2, 0, 0, 0, 255);
 }

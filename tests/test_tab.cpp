@@ -1,11 +1,12 @@
-#include <cassert>
+#include <gtest/gtest.h>
 
 #include "Vaca/Vaca.h"
 
 using namespace Vaca;
 
-void test_base()
+TEST(Tab, Base)
 {
+  Application app;
   Frame frame(L"Temporary");
   TabBase tab(&frame);
 
@@ -34,11 +35,4 @@ void test_base()
   assert(tab.getPageText(0) == L"A");
   assert(tab.getPageText(1) == L"B");
   assert(tab.getPageText(2) == L"C");
-}
-
-int main()
-{
-  Application app;
-  test_base();
-  return 0;
 }

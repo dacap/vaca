@@ -1,4 +1,4 @@
-#include <cassert>
+#include <gtest/gtest.h>
 #include <cstdio>
 
 #include "Vaca/Region.h"
@@ -8,25 +8,34 @@
 
 using namespace Vaca;
 
-void test_simple()
+inline std::ostream& operator<<(std::ostream& os, const Rect& rc)
 {
-  Region rgn;
-  assert(rgn.isEmpty());
-
-  rgn |= Region::fromRect(Rect(5, 5, 25, 25));
-  assert(rgn.isSimple());
-  assert(rgn.getBounds() == Rect(5, 5, 25, 25));
+  return os << "Rect(" 
+	    << rc.x << ", "
+	    << rc.y << ", "
+	    << rc.w << ", "
+	    << rc.h << ")\n";
 }
 
-void test_complex()
+TEST(Region, Simple)
+{
+  Region rgn;
+  EXPECT_TRUE(rgn.isEmpty());
+
+  rgn |= Region::fromRect(Rect(5, 5, 25, 25));
+  EXPECT_TRUE(rgn.isSimple());
+  EXPECT_TRUE(rgn.getBounds() == Rect(5, 5, 25, 25));
+}
+
+TEST(Region, Complex)
 {
   Region r1;
   r1 |= Region::fromRect(Rect(5, 5, 25, 25));
   r1 |= Region::fromRect(Rect(20, 20, 20, 20));
-  assert(r1.getBounds() == Rect(5, 5, 35, 35));
+  EXPECT_TRUE(r1.getBounds() == Rect(5, 5, 35, 35));
 }
 
-void test_time()
+TEST(Region, Time)
 {
   double seconds_accum = 0.0;
 
@@ -47,31 +56,31 @@ void test_time()
   std::printf("seconds_accum = %.16g\n", seconds_accum / 1000.0);
 }
 
-void test_geometric_ops()
+TEST(Region, GeometricOperations)
 {
   Region r1 = Region::fromRect(Rect(5, 5, 25, 25));
   Region r2 = Region::fromRect(Rect(20, 20, 20, 20));
 
-  assert((r1 | r2).getBounds() == Rect(5, 5, 35, 35));
-  assert((r1 + r2).getBounds() == Rect(5, 5, 35, 35));
-  assert((r1 - r2).getBounds() == Rect(5, 5, 25, 25));
-  assert((r1 & r2).getBounds() == Rect(20, 20, 10, 10));
-  assert((r1 ^ r2).getBounds() == Rect(5, 5, 35, 35));
+  EXPECT_TRUE((r1 | r2).getBounds() == Rect(5, 5, 35, 35));
+  EXPECT_TRUE((r1 + r2).getBounds() == Rect(5, 5, 35, 35));
+  EXPECT_TRUE((r1 - r2).getBounds() == Rect(5, 5, 25, 25));
+  EXPECT_TRUE((r1 & r2).getBounds() == Rect(20, 20, 10, 10));
+  EXPECT_TRUE((r1 ^ r2).getBounds() == Rect(5, 5, 35, 35));
 
-  assert((r1 | r2) == (r2 | r1));
-  assert((r1 | r2) == (r1 + r2));
-  assert((r1 & r2) == (r2 & r1));
-  assert((r1 ^ r2) == (r2 ^ r1));
-  assert((r1 - r2) != (r2 - r1));
-  assert((r1 - r2) == (Region::fromRect(Rect(5, 5, 25, 15)) |
+  EXPECT_TRUE((r1 | r2) == (r2 | r1));
+  EXPECT_TRUE((r1 | r2) == (r1 + r2));
+  EXPECT_TRUE((r1 & r2) == (r2 & r1));
+  EXPECT_TRUE((r1 ^ r2) == (r2 ^ r1));
+  EXPECT_TRUE((r1 - r2) != (r2 - r1));
+  EXPECT_TRUE((r1 - r2) == (Region::fromRect(Rect(5, 5, 25, 15)) |
 		       Region::fromRect(Rect(5, 5, 15, 25))));
-  assert((r1 - r2) == (Region::fromRect(Rect(5, 5, 15, 25)) |
+  EXPECT_TRUE((r1 - r2) == (Region::fromRect(Rect(5, 5, 15, 25)) |
 		       Region::fromRect(Rect(5, 5, 25, 15))));
 
-  assert((r1 | r2) == ((r1 ^ r2) | (r1 | r2)));
+  EXPECT_TRUE((r1 | r2) == ((r1 ^ r2) | (r1 | r2)));
 }
 
-void test_references()
+TEST(Region, References)
 {
   Region a = Region::fromRect(Rect(5, 5, 25, 25));
   Region b = a;
@@ -79,16 +88,7 @@ void test_references()
 
   a |= Region::fromRect(Rect(20, 20, 20, 20));
 
-  assert(a == b);
-  assert(a != c);
-  assert(b != c);
-}
-
-int main()
-{
-  test_simple();
-  test_complex();
-  test_geometric_ops();
-  test_references();
-  return 0;
+  EXPECT_TRUE(a == b);
+  EXPECT_TRUE(a != c);
+  EXPECT_TRUE(b != c);
 }

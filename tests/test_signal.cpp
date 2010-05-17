@@ -1,4 +1,4 @@
-#include <cassert>
+#include <gtest/gtest.h>
 #include <string>
 
 #include "Vaca/Signal.h"
@@ -50,7 +50,7 @@ namespace test0 {
   class class1_string { public: string method(string a) { ++count1_string; return a; } };
   class class2_string { public: string method(string a, string b) { ++count2_string; return a+b; } };
 
-  void test_coverage()
+  TEST(Signal, Coverage)
   {
     Signal0<void>                   sig0_void;
     Signal1<void, int>              sig1_void;
@@ -102,15 +102,15 @@ namespace test0 {
     sig1_string("Hello World!");
     sig2_string("Hi", "Bye");
 
-    assert(count0_void == 3);
-    assert(count1_void == 3);
-    assert(count2_void == 3);
-    assert(count0_int == 3);
-    assert(count1_int == 3);
-    assert(count2_int == 3);
-    assert(count0_string == 3);
-    assert(count1_string == 3);
-    assert(count2_string == 3);
+    EXPECT_EQ(3, count0_void);
+    EXPECT_EQ(3, count1_void);
+    EXPECT_EQ(3, count2_void);
+    EXPECT_EQ(3, count0_int);
+    EXPECT_EQ(3, count1_int);
+    EXPECT_EQ(3, count2_int);
+    EXPECT_EQ(3, count0_string);
+    EXPECT_EQ(3, count1_string);
+    EXPECT_EQ(3, count2_string);
 
     // with "default_result"
     sig0_int(0);
@@ -156,7 +156,7 @@ namespace test1 {
     void cancel() { if (v == 2) cancel_counter++; }
   };
 
-  void test_void()
+  TEST(Signal, ReturnVoidNoArgs)
   {
     Signal0<void> s;
     {
@@ -176,10 +176,10 @@ namespace test1 {
       Slot0<void>* c = s.connect(&Q::cancel, &q2);
       s();
     }
-    assert(func1_counter == 2);
-    assert(op1_counter == 2);
-    assert(ok_counter == 1);
-    assert(cancel_counter == 1);
+    EXPECT_EQ(2, func1_counter);
+    EXPECT_EQ(2, op1_counter);
+    EXPECT_EQ(1, ok_counter);
+    EXPECT_EQ(1, cancel_counter);
   }
 
 }
@@ -191,13 +191,14 @@ namespace test2 {
   int return_4() { return 4; }
   int return_6() { return 6; }
 
-  void test_int()
+  TEST(Signal, ReturnIntNoArgs)
   {
     Signal0<int> s;
     s.connect(&return_4);
-    assert(s() == 4);
+    EXPECT_EQ(4, s());
     s.connect(&return_6);
-    assert(s() == 6);		// last returned value
+    EXPECT_EQ(6, s());		// Last returned value (first slot returned 4,
+				// second one returned 6)
   }
 
 }
@@ -208,7 +209,7 @@ namespace test3 {
 
   void return_check_arg_eq_5(int arg)
   {
-    assert(arg == 5);
+    EXPECT_EQ(5, arg);
   }
 
   struct checker
@@ -216,11 +217,11 @@ namespace test3 {
     int a;
     checker(int a) : a(a) { }
     void operator()(int b) {
-      assert(a < b);
+      EXPECT_TRUE(a < b);
     }
   };
 
-  void test_void_int()
+  TEST(Signal, ReturnVoidOneArg)
   {
     Signal1<void, int> s;
     Slot1<void, int>* a = s.connect(&return_check_arg_eq_5);
@@ -245,7 +246,7 @@ namespace test4 {
     int a, b;
     members_eq_args(int a, int b) : a(a), b(b) { }
     void operator()(int c, int d) {
-      assert(a+b == c+d);
+      EXPECT_TRUE(a+b == c+d);
     }
   };
 
@@ -265,7 +266,7 @@ namespace test4 {
     }
   };
 
-  void test_void_int_int()
+  TEST(Signal, ReturnVoidTwoArgs)
   {
     Signal2<void, int, int> s1;
     s1.connect(members_eq_args(2, 4));
@@ -276,13 +277,13 @@ namespace test4 {
 
     Signal2<int, int, int> s2;
     s2.connect(&sum_args);
-    assert(s2(2, 4) == 6);
+    EXPECT_EQ(6, s2(2, 4));
 
     Signal2<int, int, int> s3;
     sum_of_squares i;
     s3.connect(&sum_of_squares::add, &i);
-    assert(s3(4, 1) == 9);
-    assert(s3(5, 0) == 9+25);
+    EXPECT_EQ(9,    s3(4, 1));
+    EXPECT_EQ(9+25, s3(5, 0));
   }
 
 }
@@ -308,28 +309,18 @@ namespace test5 {
     }
   };
 
-  void test_mergers()
+  TEST(Signal, Mergers)
   {
     Signal2<int, int, int> s;
     s.connect(&multiply_args);
-    assert(s(2, 4) == 8);
+    EXPECT_EQ(8, s(2, 4));
 
     s.connect(dot_product(6, -1));
     s.connect(dot_product(3, 2));
-    assert(s(5, 6, 0, sum()) == (5*6) + (6*5 + -1*6) + (3*5 + 2*6));
+    EXPECT_EQ((5*6) + (6*5 + -1*6) + (3*5 + 2*6),
+	      s(5, 6, 0, sum()));
   }
 
 }
 
 //////////////////////////////////////////////////////////////////////
-
-int main()
-{
-  test0::test_coverage();
-  test1::test_void();
-  test2::test_int();
-  test3::test_void_int();
-  test4::test_void_int_int();
-  test5::test_mergers();
-  return 0;
-}

@@ -1,57 +1,50 @@
-#include <cassert>
+#include <gtest/gtest.h>
 
 #include "Vaca/Vaca.h"
 
 using namespace Vaca;
 
-void test_label()
+class MenuTest : public testing::Test {
+  Application app;
+};
+
+TEST_F(MenuTest, Label)
 {
   MenuItem mi(L"MenuItem label", 1);
-  assert(mi.getText() == L"MenuItem label");
+  EXPECT_EQ(L"MenuItem label", mi.getText());
 
   Menu m(L"Menu label");
-  assert(m.getText() == L"Menu label");
+  EXPECT_EQ(L"Menu label", m.getText());
 }
 
-void test_enabled()
+TEST_F(MenuTest, Enabled)
 {
   MenuItem mi(L"a", 1);
-
-  assert(mi.isEnabled());
+  EXPECT_TRUE(mi.isEnabled());
   mi.setEnabled(false);
-  assert(!mi.isEnabled());
+  EXPECT_FALSE(mi.isEnabled());
 
   Menu m(L"b");
 
   m.add(&mi);
-  assert(!mi.isEnabled());
+  EXPECT_FALSE(mi.isEnabled());
   mi.setEnabled(true);
-  assert(mi.isEnabled());
+  EXPECT_TRUE(mi.isEnabled());
   m.remove(&mi);
 }
 
-void test_checked()
+TEST_F(MenuTest, Checked)
 {
   MenuItem mi(L"a", 1);
-
-  assert(!mi.isChecked());
+  EXPECT_FALSE(mi.isChecked());
   mi.setChecked(true);
-  assert(mi.isChecked());
+  EXPECT_TRUE(mi.isChecked());
 
   Menu m(L"b");
 
   m.add(&mi);
-  assert(mi.isChecked());
+  EXPECT_TRUE(mi.isChecked());
   mi.setChecked(false);
-  assert(!mi.isChecked());
+  EXPECT_FALSE(mi.isChecked());
   m.remove(&mi);
-}
-
-int main()
-{
-  Application app;
-  test_label();
-  test_enabled();
-  test_checked();
-  return 0;
 }

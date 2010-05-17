@@ -135,17 +135,7 @@ bool FileDialog::doModal()
   // fill the OPENFILENAME structure
   OPENFILENAME ofn;
 
-#if (_WIN32_WINNT >= 0x0500)
-  if (System::isWin95_98_Me())
-    ofn.lStructSize = sizeof(OPENFILENAME)
-      - sizeof(void*)
-      - sizeof(DWORD)
-      - sizeof(DWORD);
-  else
-    ofn.lStructSize = sizeof(OPENFILENAME);
-#else
   ofn.lStructSize = sizeof(OPENFILENAME);
-#endif
   ofn.hwndOwner = getParentHandle();
   ofn.hInstance = Application::getHandle();
   ofn.lpstrFilter = m_filtersString.c_str();

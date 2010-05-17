@@ -133,10 +133,7 @@ MsgBox::Result MsgBox::show(Widget* parent,
       buttons = 2;
       break;
     case MsgBox::Type::CancelRetryContinue:
-      if (System::isWin2K_XP())
-	flags |= MB_CANCELTRYCONTINUE;
-      else
-	flags |= MB_ABORTRETRYIGNORE;
+      flags |= MB_CANCELTRYCONTINUE;
       buttons = 3;
       break;
   }

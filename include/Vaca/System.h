@@ -75,30 +75,7 @@ public:
   static String getUserName();
   static String getFriendlyUserName();
 
-//   static int getWheelScrollLines();
-
-  struct OS {
-    typedef int Type;
-
-    static const Type Unknown          = 0x0000;
-    static const Type WinServer2003    = 0x0001;
-    static const Type WinXP            = 0x0002;
-    static const Type Win2K            = 0x0004;
-    static const Type WinNT            = 0x0008;
-    static const Type Win95            = 0x0010;
-    static const Type Win95R2          = 0x1010;
-    static const Type Win98            = 0x0020;
-    static const Type Win98SE          = 0x1020;
-    static const Type WinMe            = 0x0080;
-    static const Type Win32s           = 0x0100;
-  };
-
-  static OS::Type getOS();
-
-  static bool isWin95_98_Me();
-  static bool isWinNT_2K_XP();
-  static bool isWin2K_XP();
-  static bool isWinXP();
+  //static int getWheelScrollLines();
 
 };
 

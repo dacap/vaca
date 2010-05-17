@@ -95,34 +95,17 @@ void Clipboard::setString(const String& str)
 
   EmptyClipboard();
 
-  // NT, 2K and XP
-  if (System::isWinNT_2K_XP()) {
-    int len = str.size();
-    HGLOBAL hglobal = GlobalAlloc(GMEM_MOVEABLE, sizeof(Char)*(len+1));
-    LPTSTR lptstr = static_cast<LPTSTR>(GlobalLock(hglobal));
-    copy_string_to(str, lptstr, len);
-    GlobalUnlock(hglobal);
+  int len = str.size();
+  HGLOBAL hglobal = GlobalAlloc(GMEM_MOVEABLE, sizeof(Char)*(len+1));
+  LPTSTR lptstr = static_cast<LPTSTR>(GlobalLock(hglobal));
+  copy_string_to(str, lptstr, len+1);
+  GlobalUnlock(hglobal);
  
 #ifdef _UNICODE
-    SetClipboardData(CF_UNICODETEXT, hglobal);
+  SetClipboardData(CF_UNICODETEXT, hglobal);
 #else
-    SetClipboardData(CF_TEXT, hglobal);
+  SetClipboardData(CF_TEXT, hglobal);
 #endif
-  }
-  // 98, Me
-  else {
-#ifdef _UNICODE
-    // TODO convert the str to ANSI and copy the content to Clipboard
-#else
-    int len = str.size();
-    HGLOBAL hglobal = GlobalAlloc(GMEM_MOVEABLE, sizeof(Char)*(len+1));
-    LPTSTR lptstr = static_cast<LPTSTR>(GlobalLock(hglobal));
-    str.copyTo(lptstr, len);
-    GlobalUnlock(hglobal);
- 
-    SetClipboardData(CF_TEXT, hglobal);
-#endif
-  }
 
   CloseClipboard();
 }

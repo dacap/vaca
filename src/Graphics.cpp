@@ -397,7 +397,7 @@ void Graphics::strokePath(const Pen& pen)
 {
   assert(m_handle);
 
-  HGDIOBJ oldPen   = SelectObject(m_handle, pen.getHandle());
+  HGDIOBJ oldPen   = SelectObject(m_handle, convert_to<HPEN>(pen));
   HGDIOBJ oldBrush = SelectObject(m_handle, m_nullBrush);
 
   StrokePath(m_handle);
@@ -426,7 +426,7 @@ void Graphics::strokeAndFillPath(const Pen& pen, const Brush& brush)
 {
   assert(m_handle);
 
-  HGDIOBJ oldPen   = SelectObject(m_handle, pen.getHandle());
+  HGDIOBJ oldPen   = SelectObject(m_handle, convert_to<HPEN>(pen));
   HGDIOBJ oldBrush = SelectObject(m_handle, brush.getHandle());
 
   int oldPolyFillMode = SetPolyFillMode(m_handle, ALTERNATE); // TODO ALTERNATE or WINDING
@@ -624,7 +624,7 @@ void Graphics::drawLine(const Pen& pen, int x1, int y1, int x2, int y2)
   assert(m_handle);
 
   POINT oldPos;
-  HGDIOBJ oldPen = SelectObject(m_handle, pen.getHandle());
+  HGDIOBJ oldPen = SelectObject(m_handle, convert_to<HPEN>(pen));
 
   MoveToEx(m_handle, x1, y1, &oldPos);
   LineTo(m_handle, x2, y2);
@@ -685,7 +685,7 @@ void Graphics::drawRect(const Pen& pen, int x, int y, int w, int h)
 {
   assert(m_handle);
 
-  HGDIOBJ oldPen   = SelectObject(m_handle, pen.getHandle());
+  HGDIOBJ oldPen   = SelectObject(m_handle, convert_to<HPEN>(pen));
   HGDIOBJ oldBrush = SelectObject(m_handle, m_nullBrush);
 
   Rectangle(m_handle, x, y, x+w, y+h);
@@ -703,7 +703,7 @@ void Graphics::drawRoundRect(const Pen& pen, int x, int y, int w, int h, int ell
 {
   assert(m_handle);
 
-  HGDIOBJ oldPen   = SelectObject(m_handle, pen.getHandle());
+  HGDIOBJ oldPen   = SelectObject(m_handle, convert_to<HPEN>(pen));
   HGDIOBJ oldBrush = SelectObject(m_handle, m_nullBrush);
 
   RoundRect(m_handle, x, y, x+w, y+h, ellipseWidth, ellipseHeight);
@@ -754,7 +754,7 @@ void Graphics::drawEllipse(const Pen& pen, int x, int y, int w, int h)
 {
   assert(m_handle);
 
-  HGDIOBJ oldPen   = SelectObject(m_handle, pen.getHandle());
+  HGDIOBJ oldPen   = SelectObject(m_handle, convert_to<HPEN>(pen));
   HGDIOBJ oldBrush = SelectObject(m_handle, m_nullBrush);
 
   Ellipse(m_handle, x, y, x+w, y+h);
@@ -778,7 +778,7 @@ void Graphics::drawArc(const Pen& pen, int x, int y, int w, int h, double startA
 {
   assert(m_handle);
 
-  HGDIOBJ oldPen = SelectObject(m_handle, pen.getHandle());
+  HGDIOBJ oldPen = SelectObject(m_handle, convert_to<HPEN>(pen));
   int x1, y1, x2, y2;
 
   x1 = x+w/2 + static_cast<int>(std::cos(startAngle*M_PI/180)*w);
@@ -800,7 +800,7 @@ void Graphics::drawPie(const Pen& pen, int x, int y, int w, int h, double startA
 {
   assert(m_handle);
 
-  HGDIOBJ oldPen   = SelectObject(m_handle, pen.getHandle());
+  HGDIOBJ oldPen   = SelectObject(m_handle, convert_to<HPEN>(pen));
   HGDIOBJ oldBrush = SelectObject(m_handle, m_nullBrush);
   int x1, y1, x2, y2;
 
@@ -824,7 +824,7 @@ void Graphics::drawChord(const Pen& pen, int x, int y, int w, int h, double star
 {
   assert(m_handle);
 
-  HGDIOBJ oldPen   = SelectObject(m_handle, pen.getHandle());
+  HGDIOBJ oldPen   = SelectObject(m_handle, convert_to<HPEN>(pen));
   HGDIOBJ oldBrush = SelectObject(m_handle, m_nullBrush);
   int x1, y1, x2, y2;
 
@@ -1151,7 +1151,7 @@ void Graphics::drawBezier(const Pen& pen, CONST POINT* lppt, int numPoints)
 {
   assert(m_handle);
 
-  HGDIOBJ oldPen = SelectObject(m_handle, pen.getHandle());
+  HGDIOBJ oldPen = SelectObject(m_handle, convert_to<HPEN>(pen));
   PolyBezier(m_handle, lppt, numPoints);
   SelectObject(m_handle, oldPen);
 }
@@ -1160,7 +1160,7 @@ void Graphics::drawBezierTo(const Pen& pen, CONST POINT* lppt, int numPoints)
 {
   assert(m_handle);
 
-  HGDIOBJ oldPen = SelectObject(m_handle, pen.getHandle());
+  HGDIOBJ oldPen = SelectObject(m_handle, convert_to<HPEN>(pen));
   PolyBezierTo(m_handle, lppt, numPoints);
   SelectObject(m_handle, oldPen);
 }
@@ -1169,7 +1169,7 @@ void Graphics::drawPolyline(const Pen& pen, CONST POINT* lppt, int numPoints)
 {
   assert(m_handle);
 
-  HGDIOBJ oldPen = SelectObject(m_handle, pen.getHandle());
+  HGDIOBJ oldPen = SelectObject(m_handle, convert_to<HPEN>(pen));
   Polyline(m_handle, lppt, numPoints);
   SelectObject(m_handle, oldPen);
 }

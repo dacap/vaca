@@ -30,20 +30,22 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "Vaca/Pen.h"
-#include "Vaca/Color.h"
-#include "Vaca/win32.h"
-#include <cassert>
+
+#if defined(VACA_WINDOWS)
+  #include "win32/PenImpl.h"
+#else
+  #error Implement Pen class in your platform
+#endif
 
 using namespace Vaca;
 
 Pen::Pen()
-  : SharedPtr<GdiObject<HPEN> >(new GdiObject<HPEN>(CreatePen(PS_COSMETIC | PS_SOLID, 1,
-							     RGB(0, 0, 0))))
+  : m_impl(new PenImpl())
 {
 }
 
 Pen::Pen(const Pen& pen)
-  : SharedPtr<GdiObject<HPEN> >(pen)
+  : m_impl(pen.m_impl)		// Copy shared pointers
 {
 }
 
@@ -55,54 +57,14 @@ Pen::Pen(const Pen& pen)
 		if width > 0 the pen will be geometric.
 */
 Pen::Pen(const Color& color, int width)
-  : SharedPtr<GdiObject<HPEN> >(new GdiObject<HPEN>(CreatePen(PS_COSMETIC | PS_SOLID, width,
-							      convert_to<COLORREF>(color))))
+  : m_impl(new PenImpl(color, width))
 {
 }
 
 Pen::Pen(const Color& color, int width,
 	 PenStyle style, PenEndCap endCap, PenJoin join)
-  : SharedPtr<GdiObject<HPEN> >(new GdiObject<HPEN>)
+  : m_impl(new PenImpl(color, width, style, endCap, join))
 {
-  int flags = 0;
-
-  // pen style
-  switch (style) {
-    case PenStyle::Solid:       flags |= PS_SOLID;       break;
-    case PenStyle::Dash:        flags |= PS_DASH;        break;
-    case PenStyle::Dot:         flags |= PS_DOT;         break;
-    case PenStyle::DashDot:     flags |= PS_DASHDOT;     break;
-    case PenStyle::DashDotDot:  flags |= PS_DASHDOTDOT;  break;
-    case PenStyle::Null:        flags |= PS_NULL;        break;
-    case PenStyle::InsideFrame: flags |= PS_INSIDEFRAME; break;
-  }
-
-  // end cap style
-  switch (endCap) {
-    case PenEndCap::Round:  flags |= PS_ENDCAP_ROUND;  break;
-    case PenEndCap::Square: flags |= PS_ENDCAP_SQUARE; break;
-    case PenEndCap::Flat:   flags |= PS_ENDCAP_FLAT;   break;
-  }
-
-  // join style
-  switch (join) {
-    case PenJoin::Round: flags |= PS_JOIN_ROUND; break;
-    case PenJoin::Bevel: flags |= PS_JOIN_BEVEL; break;
-    case PenJoin::Miter: flags |= PS_JOIN_MITER; break;
-  }
-
-  LOGBRUSH lb;
-  lb.lbStyle = BS_SOLID;
-  lb.lbColor = convert_to<COLORREF>(color);
-  lb.lbHatch = 0;
-
-  HPEN handle;
-  if (width == 1)
-    handle = ExtCreatePen(PS_COSMETIC | flags, width, &lb, 0, NULL);
-  else
-    handle = ExtCreatePen(PS_GEOMETRIC | flags, width, &lb, 0, NULL);
-
-  get()->setHandle(handle);
 }
 
 /**
@@ -118,7 +80,8 @@ Pen::~Pen()
 
 Pen& Pen::operator=(const Pen& pen)
 {
-  SharedPtr<GdiObject<HPEN> >::operator=(pen);
+  // Copy shared pointers
+  m_impl = pen.m_impl;
   return *this;
 }
 
@@ -129,10 +92,7 @@ Pen& Pen::operator=(const Pen& pen)
 */
 Color Pen::getColor() const
 {
-  EXTLOGPEN elp;
-  assert(getHandle());
-  ::GetObject(getHandle(), sizeof(EXTLOGPEN), &elp);
-  return convert_to<Color>(elp.elpColor);
+  return m_impl->getColor();
 }
 
 /**
@@ -142,10 +102,7 @@ Color Pen::getColor() const
 */
 int Pen::getWidth() const
 {
-  EXTLOGPEN elp;
-  assert(getHandle());
-  ::GetObject(getHandle(), sizeof(EXTLOGPEN), &elp);
-  return elp.elpWidth;
+  return m_impl->getWidth();
 }
 
 /**
@@ -155,57 +112,15 @@ int Pen::getWidth() const
 */
 PenStyle Pen::getStyle() const
 {
-  EXTLOGPEN elp;
-  assert(getHandle());
-  ::GetObject(getHandle(), sizeof(EXTLOGPEN), &elp);
-
-  PenStyle style;
-
-  if (elp.elpPenStyle  & PS_SOLID) { style = PenStyle::Solid; }
-  else if (elp.elpPenStyle  & PS_DASH) { style = PenStyle::Dash; }
-  else if (elp.elpPenStyle  & PS_DOT) { style = PenStyle::Dot; }
-  else if (elp.elpPenStyle  & PS_DASHDOT) { style = PenStyle::DashDot; }
-  else if (elp.elpPenStyle  & PS_DASHDOTDOT) { style = PenStyle::DashDotDot; }
-  else if (elp.elpPenStyle  & PS_NULL) { style = PenStyle::Null; }
-  else if (elp.elpPenStyle  & PS_INSIDEFRAME) { style = PenStyle::InsideFrame; }
-
-  return style;
+  return m_impl->getStyle();
 }
 
 PenEndCap Pen::getEndCap() const
 {
-  EXTLOGPEN elp;
-  assert(getHandle());
-  ::GetObject(getHandle(), sizeof(EXTLOGPEN), &elp);
-
-  PenEndCap endCap;
-
-  if (elp.elpPenStyle  & PS_ENDCAP_ROUND) { endCap = PenEndCap::Round; }
-  else if (elp.elpPenStyle  & PS_ENDCAP_SQUARE) { endCap = PenEndCap::Square; }
-  else if (elp.elpPenStyle  & PS_ENDCAP_FLAT) { endCap = PenEndCap::Flat; }
-
-  return endCap;
+  return m_impl->getEndCap();
 }
 
 PenJoin Pen::getJoin() const
 {
-  EXTLOGPEN elp;
-  assert(getHandle());
-  ::GetObject(getHandle(), sizeof(EXTLOGPEN), &elp);
-
-  PenJoin join;
-
-  if (elp.elpPenStyle  & PS_JOIN_ROUND) { join = PenJoin::Round; }
-  else if (elp.elpPenStyle  & PS_JOIN_BEVEL) { join = PenJoin::Bevel; }
-  else if (elp.elpPenStyle  & PS_JOIN_MITER) { join = PenJoin::Miter; }
-
-  return join;
-}
-
-/**
-   Returns the Win32's handle.
-*/
-HPEN Pen::getHandle() const
-{
-  return get()->getHandle();
+  return m_impl->getJoin();
 }

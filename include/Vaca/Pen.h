@@ -34,7 +34,6 @@
 
 #include "Vaca/base.h"
 #include "Vaca/Enum.h"
-#include "Vaca/GdiObject.h"
 #include "Vaca/SharedPtr.h"
 
 namespace Vaca {
@@ -142,17 +141,19 @@ typedef Enum<PenJoinEnum> PenJoin;
 
    @see Graphics, Graphics#drawLine, Graphics#drawRect, Graphics#strokePath
 */
-class VACA_DLL Pen : private SharedPtr<GdiObject<HPEN> >
+class VACA_DLL Pen
 {
-public:
+  template<typename To, typename From>
+  friend To convert_to(const From& from);
 
+public:
   Pen();
   Pen(const Pen& pen);
   explicit Pen(const Color& color, int width = 1);
-  explicit Pen(const Color& color, int width,
-	       PenStyle style, // = PenStyle::Solid,
-	       PenEndCap endCap = PenEndCap::Round,
-	       PenJoin join = PenJoin::Round);
+  Pen(const Color& color, int width,
+      PenStyle style, // = PenStyle::Solid,
+      PenEndCap endCap = PenEndCap::Round,
+      PenJoin join = PenJoin::Round);
   virtual ~Pen();
 
   Pen& operator=(const Pen& pen);
@@ -163,8 +164,9 @@ public:
   PenEndCap getEndCap() const;
   PenJoin getJoin() const;
 
-  HPEN getHandle() const;
-
+private:
+  class PenImpl;
+  SharedPtr<PenImpl> m_impl;
 };
 
 } // namespace Vaca

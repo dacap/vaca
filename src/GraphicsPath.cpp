@@ -35,6 +35,7 @@
 #include "Vaca/Pen.h"
 #include "Vaca/Brush.h"
 #include "Vaca/Graphics.h"
+#include "Vaca/win32.h"
 
 using namespace Vaca;
 
@@ -196,7 +197,7 @@ GraphicsPath& GraphicsPath::widen(const Pen& pen)
 {
   ScreenGraphics g;
 
-  HGDIOBJ oldPen = SelectObject(g.getHandle(), pen.getHandle());
+  HGDIOBJ oldPen = SelectObject(g.getHandle(), convert_to<HPEN>(pen));
 
   g.tracePath(*this, Point(0, 0));
   ::WidenPath(g.getHandle());

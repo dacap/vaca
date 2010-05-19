@@ -50,7 +50,7 @@ using namespace Vaca;
 */
 Mutex::Mutex()
 {
-  m_pimpl = new MutexImpl();
+  m_impl = new MutexImpl();
 }
 
 /**
@@ -62,7 +62,7 @@ Mutex::Mutex()
 */
 Mutex::~Mutex()
 {
-  delete m_pimpl;
+  delete m_impl;
 }
 
 /**
@@ -79,7 +79,7 @@ Mutex::~Mutex()
 */
 void Mutex::lock()
 {
-  return m_pimpl->lock();
+  return m_impl->lock();
 }
 
 /**
@@ -93,7 +93,7 @@ void Mutex::lock()
 */
 bool Mutex::tryLock()
 {
-  return m_pimpl->tryLock();
+  return m_impl->tryLock();
 }
 
 /**
@@ -111,5 +111,5 @@ bool Mutex::tryLock()
 */
 void Mutex::unlock()
 {
-  return m_pimpl->unlock();
+  return m_impl->unlock();
 }

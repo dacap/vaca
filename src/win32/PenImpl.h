@@ -164,6 +164,7 @@ public:
 
 template<> HPEN Vaca::convert_to(const Pen& pen)
 {
-  // getHandle is defined in GdiObject<HPEN> class
+  // 1) getHandle is defined in GdiObject<HPEN> class
+  // 2) convert_to<> is friend of Pen class
   return pen.m_impl->getHandle();
 }

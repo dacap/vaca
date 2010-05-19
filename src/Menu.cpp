@@ -35,7 +35,6 @@
 #include "Vaca/System.h"
 #include "Vaca/Mdi.h"
 #include "Vaca/ResourceException.h"
-#include "Vaca/Mutex.h"
 #include "Vaca/ScopedLock.h"
 #include "Vaca/Command.h"
 #include "Vaca/Point.h"

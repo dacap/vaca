@@ -36,7 +36,6 @@
 #include "Vaca/Color.h"
 #include "Vaca/Debug.h"
 #include "Vaca/ImageList.h"
-#include "Vaca/Mutex.h"
 #include "Vaca/ScopedLock.h"
 #include "Vaca/win32.h"
 

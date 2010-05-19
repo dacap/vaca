@@ -45,11 +45,13 @@ namespace Vaca {
 
   class Color;
   class Pen;
+  class Brush;
 
   template<> VACA_DLL COLORREF convert_to(const Color& color);
   template<> VACA_DLL Color convert_to(const COLORREF& colorref);
 
   template<> VACA_DLL HPEN convert_to(const Pen& pen);
+  template<> VACA_DLL HBRUSH convert_to(const Brush& brush);
 
 }
 

@@ -411,7 +411,7 @@ void Graphics::fillPath(const Brush& brush)
   assert(m_handle);
 
   HGDIOBJ oldPen   = SelectObject(m_handle, m_nullPen);
-  HGDIOBJ oldBrush = SelectObject(m_handle, brush.getHandle());
+  HGDIOBJ oldBrush = SelectObject(m_handle, convert_to<HBRUSH>(brush));
 
   int oldPolyFillMode = SetPolyFillMode(m_handle,
 					m_fillRule == FillRule::EvenOdd ? ALTERNATE: WINDING);
@@ -427,7 +427,7 @@ void Graphics::strokeAndFillPath(const Pen& pen, const Brush& brush)
   assert(m_handle);
 
   HGDIOBJ oldPen   = SelectObject(m_handle, convert_to<HPEN>(pen));
-  HGDIOBJ oldBrush = SelectObject(m_handle, brush.getHandle());
+  HGDIOBJ oldBrush = SelectObject(m_handle, convert_to<HBRUSH>(brush));
 
   int oldPolyFillMode = SetPolyFillMode(m_handle, ALTERNATE); // TODO ALTERNATE or WINDING
   StrokeAndFillPath(m_handle);
@@ -861,7 +861,7 @@ void Graphics::fillRect(const Brush& brush, int x, int y, int w, int h)
   assert(m_handle);
 
   HGDIOBJ oldPen   = SelectObject(m_handle, m_nullPen);
-  HGDIOBJ oldBrush = SelectObject(m_handle, brush.getHandle());
+  HGDIOBJ oldBrush = SelectObject(m_handle, convert_to<HBRUSH>(brush));
 
   Rectangle(m_handle, x, y, x+w+1, y+h+1);
 
@@ -879,7 +879,7 @@ void Graphics::fillRoundRect(const Brush& brush, int x, int y, int w, int h, int
   assert(m_handle);
 
   HGDIOBJ oldPen   = SelectObject(m_handle, m_nullPen);
-  HGDIOBJ oldBrush = SelectObject(m_handle, brush.getHandle());
+  HGDIOBJ oldBrush = SelectObject(m_handle, convert_to<HBRUSH>(brush));
 
   RoundRect(m_handle, x, y, x+w, y+h, ellipseWidth, ellipseHeight);
 
@@ -897,7 +897,7 @@ void Graphics::fillEllipse(const Brush& brush, int x, int y, int w, int h)
   assert(m_handle);
 
   HGDIOBJ oldPen   = SelectObject(m_handle, m_nullPen);
-  HGDIOBJ oldBrush = SelectObject(m_handle, brush.getHandle());
+  HGDIOBJ oldBrush = SelectObject(m_handle, convert_to<HBRUSH>(brush));
 
   Ellipse(m_handle, x, y, x+w+1, y+h+1);
 
@@ -915,7 +915,7 @@ void Graphics::fillPie(const Brush& brush, int x, int y, int w, int h, double st
   assert(m_handle);
 
   HGDIOBJ oldPen   = SelectObject(m_handle, m_nullPen);
-  HGDIOBJ oldBrush = SelectObject(m_handle, brush.getHandle());
+  HGDIOBJ oldBrush = SelectObject(m_handle, convert_to<HBRUSH>(brush));
   int x1, y1, x2, y2;
 
   x1 = x+w/2 + (int)(cos(startAngle*M_PI/180)*w);
@@ -939,7 +939,7 @@ void Graphics::fillChord(const Brush& brush, int x, int y, int w, int h, double 
   assert(m_handle);
 
   HGDIOBJ oldPen   = SelectObject(m_handle, m_nullPen);
-  HGDIOBJ oldBrush = SelectObject(m_handle, brush.getHandle());
+  HGDIOBJ oldBrush = SelectObject(m_handle, convert_to<HBRUSH>(brush));
   int x1, y1, x2, y2;
 
   x1 = x+w/2 + (int)(cos(startAngle*M_PI/180)*w);
@@ -959,7 +959,7 @@ void Graphics::fillRegion(const Brush& brush, const Region& rgn)
 
   FillRgn(m_handle,
 	  const_cast<Region*>(&rgn)->getHandle(),
-	  brush.getHandle());
+	  convert_to<HBRUSH>(brush));
 }
 
 void Graphics::fillGradientRect(const Rect& rc, const Color& startColor, const Color& endColor,

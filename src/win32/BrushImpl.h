@@ -29,47 +29,43 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_BRUSH_H
-#define VACA_BRUSH_H
+#ifndef _WIN32_WINNT
+#define _WIN32_WINNT 0x0400
+#endif
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
 
-#include "Vaca/base.h"
-#include "Vaca/SharedPtr.h"
+#include "Vaca/Color.h"
+#include "Vaca/GdiObject.h"
+#include "Vaca/win32.h"
 
-namespace Vaca {
-
-/**
-   A brush can be used to fill rectangles, ellipses, and paths.
-
-   This is a SharedPtr, so if you copy instances of brushes they will be
-   referencing to the same place. You can't clone brushes because you can't
-   modify them.
-
-   @win32
-     This is a @msdn{HBRUSH} wrapper.
-   @endwin32
-
-   @see Graphics, Graphics#fillRect, Graphics#fillPath
-*/
-class VACA_DLL Brush
+class Vaca::Brush::BrushImpl : public GdiObject<HBRUSH>
 {
-  template<typename To, typename From>
-  friend To convert_to(const From& from);
-
 public:
-  Brush();
-  Brush(const Brush& brush);
-  explicit Brush(const Color& color);
-  virtual ~Brush();
 
-  Brush& operator=(const Brush& brush);
+  BrushImpl()
+    : GdiObject<HBRUSH>(CreateSolidBrush(RGB(0, 0, 0))) {
+  }
 
-  Color getColor() const;
+  BrushImpl(const Color& color)
+    : GdiObject<HBRUSH>(CreateSolidBrush(convert_to<COLORREF>(color))) {
+  }
 
-private:
-  class BrushImpl;
-  SharedPtr<BrushImpl> m_impl;
+  ~BrushImpl() {
+  }
+
+  Color getColor() const {
+    LOGBRUSH lb;
+    assert(getHandle());
+    ::GetObject(getHandle(), sizeof(LOGBRUSH), &lb);
+    return convert_to<Color>(lb.lbColor);
+  }
+
 };
 
-} // namespace Vaca
-
-#endif
+template<> HBRUSH Vaca::convert_to(const Brush& brush)
+{
+  // 1) getHandle is defined in GdiObject<HBRUSH> class
+  // 2) convert_to<> is friend of Brush class
+  return brush.m_impl->getHandle();
+}

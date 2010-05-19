@@ -30,24 +30,27 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "Vaca/Brush.h"
-#include "Vaca/Color.h"
-#include "Vaca/win32.h"
-#include <cassert>
+
+#if defined(VACA_WINDOWS)
+  #include "win32/BrushImpl.h"
+#else
+  #error Implement Brush class in your platform
+#endif
 
 using namespace Vaca;
 
 Brush::Brush()
-  : SharedPtr<GdiObject<HBRUSH> >(new GdiObject<HBRUSH>(CreateSolidBrush(RGB(0, 0, 0))))
+  : m_impl(new BrushImpl())
 {
 }
 
 Brush::Brush(const Brush& brush)
-  : SharedPtr<GdiObject<HBRUSH> >(brush)
+  : m_impl(brush.m_impl)		// Copy shared pointers
 {
 }
 
 Brush::Brush(const Color& color)
-  : SharedPtr<GdiObject<HBRUSH> >(new GdiObject<HBRUSH>(CreateSolidBrush(convert_to<COLORREF>(color))))
+  : m_impl(new BrushImpl(color))
 {
 }
 
@@ -57,19 +60,12 @@ Brush::~Brush()
 
 Brush& Brush::operator=(const Brush& brush)
 {
-  SharedPtr<GdiObject<HBRUSH> >::operator=(brush);
+  // Copy shared pointers
+  m_impl = brush.m_impl;
   return *this;
 }
 
 Color Brush::getColor() const
 {
-  LOGBRUSH lb;
-  assert(getHandle());
-  ::GetObject(getHandle(), sizeof(LOGBRUSH), &lb); 
-  return convert_to<Color>(lb.lbColor);
-}
-
-HBRUSH Brush::getHandle() const
-{
-  return get()->getHandle();
+  return m_impl->getColor();
 }

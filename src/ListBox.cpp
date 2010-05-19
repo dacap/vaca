@@ -35,6 +35,7 @@
 #include "Vaca/System.h"
 #include "Vaca/WidgetClass.h"
 #include "Vaca/PreferredSizeEvent.h"
+#include "Vaca/win32.h"
 
 using namespace Vaca;
 
@@ -102,7 +103,7 @@ Rect ListBox::getItemBounds(int itemIndex)
 {
   RECT rc;
   sendMessage(LB_GETITEMRECT, itemIndex, reinterpret_cast<LPARAM>(&rc));
-  return Rect(&rc);
+  return convert_to<Rect>(rc);
 }
 
 /**

@@ -37,6 +37,7 @@
 #include "Vaca/ClientLayout.h"
 #include "Vaca/PreferredSizeEvent.h"
 #include "Vaca/LayoutEvent.h"
+#include "Vaca/win32.h"
 
 using namespace Vaca;
 
@@ -271,11 +272,11 @@ Size TabBase::getNonClientSize()
   assert(::IsWindow(getHandle()));
 
   Rect clientRect(0, 0, 1, 1);
-  RECT nonClientRect = clientRect;
+  RECT nonClientRect = convert_to<RECT>(clientRect);
 
   TabCtrl_AdjustRect(getHandle(), TRUE, &nonClientRect);
 
-  return Rect(&nonClientRect).getSize() - clientRect.getSize();
+  return convert_to<Rect>(nonClientRect).getSize() - clientRect.getSize();
 }
 
 // /// TCN_SELCHANGING
@@ -326,9 +327,9 @@ void TabBase::onLayout(LayoutEvent& ev)
   RECT rc;
   assert(::IsWindow(getHandle()));
 
-  rc = ev.getBounds();
+  rc = convert_to<RECT>(ev.getBounds());
   TabCtrl_AdjustRect(getHandle(), FALSE, &rc);
-  ev.setBounds(Rect(&rc).offset(-getBounds().getOrigin()));
+  ev.setBounds(convert_to<Rect>(rc).offset(-getBounds().getOrigin()));
 
   // Call base implementation
   Widget::onLayout(ev);

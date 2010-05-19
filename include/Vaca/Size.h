@@ -71,11 +71,6 @@ public:
   bool operator==(const Size& sz) const;
   bool operator!=(const Size& sz) const;
 
-#ifdef VACA_WINDOWS
-  explicit Size(CONST LPSIZE sz);
-  operator SIZE() const;
-#endif
-
 };
 
 } // namespace Vaca

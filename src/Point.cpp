@@ -151,27 +151,3 @@ bool Point::operator!=(const Point& pt) const
 {
   return x != pt.x || y != pt.y;
 }
-
-#ifdef VACA_WINDOWS
-
-Point::Point(CONST LPPOINT pt)
-{
-  x = pt->x;
-  y = pt->y;
-}
-
-Point::Point(CONST LPPOINTS pt)
-{
-  x = pt->x;
-  y = pt->y;
-}
-
-Point::operator POINT() const
-{
-  POINT pt;
-  pt.x = x;
-  pt.y = y;
-  return pt;
-}
-
-#endif

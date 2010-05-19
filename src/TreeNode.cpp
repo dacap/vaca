@@ -33,6 +33,7 @@
 #include "Vaca/TreeView.h"
 #include "Vaca/TreeViewEvent.h"
 #include "Vaca/Debug.h"
+#include "Vaca/win32.h"
 
 using namespace Vaca;
 
@@ -271,7 +272,7 @@ Rect TreeNode::getBounds() const
 
   RECT rc;
   TreeView_GetItemRect(m_owner->getHandle(), m_handle, (WPARAM)&rc, TRUE);
-  return Rect(&rc);
+  return convert_to<Rect>(rc);
 }
 
 Rect TreeNode::getRowBounds() const
@@ -280,7 +281,7 @@ Rect TreeNode::getRowBounds() const
 
   RECT rc;
   TreeView_GetItemRect(m_owner->getHandle(), m_handle, (WPARAM)&rc, FALSE);
-  return Rect(&rc);
+  return convert_to<Rect>(rc);
 }
 
 void TreeNode::ensureVisible()

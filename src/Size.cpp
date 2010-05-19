@@ -163,21 +163,3 @@ bool Size::operator!=(const Size& sz) const
 {
   return w != sz.w || h != sz.h;
 }
-
-#ifdef VACA_WINDOWS
-
-Size::Size(CONST LPSIZE sz)
-{
-  w = sz->cx;
-  h = sz->cy;
-}
-
-Size::operator SIZE() const
-{
-  SIZE sz;
-  sz.cx = w;
-  sz.cy = h;
-  return sz;
-}
-
-#endif

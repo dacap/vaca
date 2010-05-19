@@ -46,6 +46,7 @@
 #include "Vaca/ChildEvent.h"
 #include "Vaca/CommandEvent.h"
 #include "Vaca/PreferredSizeEvent.h"
+#include "Vaca/win32.h"
 
 using namespace Vaca;
 
@@ -420,14 +421,14 @@ Size Frame::getNonClientSize()
   assert(::IsWindow(hwnd));
 
   Rect clientRect(0, 0, 1, 1);
-  RECT nonClientRect = clientRect;
+  RECT nonClientRect = convert_to<RECT>(clientRect);
 
   ::AdjustWindowRectEx(&nonClientRect,
 		       GetWindowLong(hwnd, GWL_STYLE),
 		       m_menuBar ? true: false,
 		       GetWindowLong(hwnd, GWL_EXSTYLE));
 
-  return Rect(&nonClientRect).getSize() - clientRect.getSize();
+  return convert_to<Rect>(nonClientRect).getSize() - clientRect.getSize();
 }
 
 bool Frame::isLayoutFree() const
@@ -549,7 +550,7 @@ bool Frame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult
 
     case WM_SIZING: {
       LPRECT lprc = reinterpret_cast<LPRECT>(lParam);
-      Rect rc(lprc);
+      Rect rc(convert_to<Rect>(*lprc));
       CardinalDirection dir;
 
       switch (wParam) {
@@ -564,7 +565,7 @@ bool Frame::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult
       }
 
       onResizing(dir, rc);
-      *lprc = rc;
+      *lprc = convert_to<RECT>(rc);
       lResult = TRUE;
       return true;
     }

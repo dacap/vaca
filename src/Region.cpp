@@ -34,6 +34,7 @@
 #include "Vaca/Debug.h"
 #include "Vaca/Point.h"
 #include "Vaca/Size.h"
+#include "Vaca/win32.h"
 
 using namespace Vaca;
 
@@ -58,7 +59,7 @@ Region::Region(HRGN hrgn)
 Region::Region(const Rect& rc)
   : SharedPtr<GdiObject<HRGN> >(new GdiObject<HRGN>)
 {
-  RECT _rc = rc;
+  RECT _rc = convert_to<RECT>(rc);
   get()->setHandle(CreateRectRgnIndirect(&_rc));
   assert(getHandle()); // TODO exception
 }
@@ -138,7 +139,7 @@ Rect Region::getBounds() const
   if (res == NULLREGION)
     return Rect();		// empty rectangle
   else
-    return Rect(&rc);
+    return convert_to<Rect>(rc);
 }
 
 Region& Region::offset(int dx, int dy)
@@ -163,7 +164,7 @@ bool Region::contains(const Rect& rc) const
 {
   assert(getHandle());
 
-  RECT rc2 = rc;
+  RECT rc2 = convert_to<RECT>(rc);
   return RectInRegion(getHandle(), &rc2) != FALSE;
 }
 
@@ -284,7 +285,7 @@ Region& Region::operator^=(const Region& rgn)
 */
 Region Region::fromRect(const Rect &_rc)
 {
-  RECT rc = _rc;
+  RECT rc = convert_to<RECT>(_rc);
   return Region(CreateRectRgnIndirect(&rc));
 }
 
@@ -293,7 +294,7 @@ Region Region::fromRect(const Rect &_rc)
 */
 Region Region::fromEllipse(const Rect &_rc)
 {
-  RECT rc = _rc;
+  RECT rc = convert_to<RECT>(_rc);
   return Region(CreateEllipticRgnIndirect(&rc));
 }
 
@@ -304,7 +305,7 @@ Region Region::fromEllipse(const Rect &_rc)
 */
 Region Region::fromRoundRect(const Rect& _rc, const Size& ellipseSize)
 {
-  RECT rc = _rc;
+  RECT rc = convert_to<RECT>(_rc);
   return Region(CreateRoundRectRgn(rc.left, rc.top,
 				   rc.right, rc.bottom,
 				   ellipseSize.w, ellipseSize.h));

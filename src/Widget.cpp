@@ -800,8 +800,8 @@ Rect Widget::getBounds() const
 
   if (m_parent != NULL &&
       (::GetWindowLong(m_handle, GWL_STYLE) & WS_CAPTION) == 0) {
-    POINT pt1 = Point(rc.left, rc.top);
-    POINT pt2 = Point(rc.right, rc.bottom);
+    POINT pt1 = { rc.left, rc.top };
+    POINT pt2 = { rc.right, rc.bottom };
 
     ::ScreenToClient(m_parent->m_handle, &pt1);
     ::ScreenToClient(m_parent->m_handle, &pt2);
@@ -809,7 +809,7 @@ Rect Widget::getBounds() const
     return Rect(pt1.x, pt1.y, pt2.x-pt1.x, pt2.y-pt1.y);
   }
   else {
-    return Rect(&rc);
+    return convert_to<Rect>(rc);
   }
 }
 
@@ -826,7 +826,7 @@ Rect Widget::getAbsoluteBounds() const
   RECT rc;
   ::GetWindowRect(m_handle, &rc);
 
-  return Rect(&rc);
+  return convert_to<Rect>(rc);
 }
 
 /**
@@ -845,7 +845,7 @@ Rect Widget::getClientBounds() const
   RECT rc;
   assert(::IsWindow(m_handle));
   ::GetClientRect(m_handle, &rc);
-  return Rect(&rc);
+  return convert_to<Rect>(rc);
 }
 
 /**
@@ -856,9 +856,9 @@ Rect Widget::getClientBounds() const
 */
 Rect Widget::getAbsoluteClientBounds() const
 {
-  RECT rc = getClientBounds();
+  RECT rc = convert_to<RECT>(getClientBounds());
   ::MapWindowPoints(m_handle, NULL, (POINT*)&rc, 2);
-  return Rect(&rc);
+  return convert_to<Rect>(rc);
 }
 
 /**
@@ -1100,12 +1100,12 @@ void Widget::validate()
 
    @see invalidate(bool)
 */
-void Widget::validate(const Rect& rc)
+void Widget::validate(const Rect& _rc)
 {
   assert(::IsWindow(m_handle));
 
-  RECT rc2 = rc;
-  ::ValidateRect(m_handle, &rc2);
+  RECT rc = convert_to<RECT>(_rc);
+  ::ValidateRect(m_handle, &rc);
 }
 
 /**
@@ -1143,12 +1143,12 @@ void Widget::invalidate(bool eraseBg)
 
    @see invalidate(bool), #update
 */
-void Widget::invalidate(const Rect& rc, bool eraseBg)
+void Widget::invalidate(const Rect& _rc, bool eraseBg)
 {
-  RECT rc2 = rc;
+  RECT rc = convert_to<RECT>(_rc);
 
   assert(::IsWindow(m_handle));
-  ::InvalidateRect(m_handle, &rc2, eraseBg);
+  ::InvalidateRect(m_handle, &rc, eraseBg);
 }
 
 /**
@@ -1521,7 +1521,7 @@ bool Widget::hasMouse()
 */
 bool Widget::hasMouseAbove()
 {
-  return ::WindowFromPoint(System::getCursorPos()) == m_handle;
+  return ::WindowFromPoint(convert_to<POINT>(System::getCursorPos())) == m_handle;
 }
 
 /**
@@ -1701,14 +1701,14 @@ void Widget::hideScrollBar(Orientation orientation)
      ScrollWindowEx
    @endwin32
 */
-void Widget::scrollRect(const Rect& rc, const Point& delta)
+void Widget::scrollRect(const Rect& _rc, const Point& delta)
 {
   assert(::IsWindow(m_handle));
 
-  RECT rc2 = rc;
+  RECT rc = convert_to<RECT>(_rc);
   ScrollWindowEx(m_handle,
 		 delta.x, delta.y,
-		 &rc2, &rc2, NULL, NULL,
+		 &rc, &rc, NULL, NULL,
 		 SW_ERASE | SW_INVALIDATE);
 }
 
@@ -2709,7 +2709,7 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
     case WM_MBUTTONDOWN: {
       MouseEvent
 	ev(this,					   // widget
-	   Point(&MAKEPOINTS(lParam)),			   // pt
+	   convert_to<Point>(MAKEPOINTS(lParam)),	   // mouse position
 	   1,						   // clicks
 	   wParam,					   // flags
 	   message == WM_LBUTTONDOWN ? MouseButton::Left:  // button
@@ -2726,7 +2726,7 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
     case WM_RBUTTONUP: {
       MouseEvent
 	ev(this,					 // widget
-	   Point(&MAKEPOINTS(lParam)),			 // pt
+	   convert_to<Point>(MAKEPOINTS(lParam)),	 // mouse position
 	   1,						 // clicks
 	   wParam,					 // flags
 	   message == WM_LBUTTONUP ? MouseButton::Left:  // button
@@ -2743,7 +2743,7 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
     case WM_RBUTTONDBLCLK: {
       MouseEvent
 	ev(this,					     // widget
-	   Point(&MAKEPOINTS(lParam)),			     // pt
+	   convert_to<Point>(MAKEPOINTS(lParam)),	     // mouse position
 	   2,						     // clicks
 	   wParam,					     // flags
 	   message == WM_LBUTTONDBLCLK ? MouseButton::Left:  // button
@@ -2762,7 +2762,7 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
     case WM_MOUSEMOVE: {
       MouseEvent
 	ev(this,				    // widget
-	   Point(&MAKEPOINTS(lParam)),		    // pt
+	   convert_to<Point>(MAKEPOINTS(lParam)),   // mouse position
 	   0,					    // clicks
 	   wParam,				    // flags
 	   MouseButton::None);			    // button
@@ -2794,7 +2794,7 @@ bool Widget::wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResul
       Point clientOrigin = getAbsoluteClientBounds().getOrigin();
       MouseEvent
 	ev(this,				   // widget
-	   Point(&MAKEPOINTS(lParam)) - clientOrigin, // pt
+	   convert_to<Point>(MAKEPOINTS(lParam)) - clientOrigin, // mouse position
 	   0,					   // clicks
 	   LOWORD(wParam),			   // flags
 	   MouseButton::None,			   // button

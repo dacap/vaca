@@ -40,6 +40,7 @@
 #include "Vaca/Command.h"
 #include "Vaca/CommandEvent.h"
 #include "Vaca/PreferredSizeEvent.h"
+#include "Vaca/win32.h"
 
 using namespace Vaca;
 
@@ -187,7 +188,7 @@ Rect ToolSet::setRows(int rows, bool expand)
 	      MAKEWPARAM(rows, expand),
 	      reinterpret_cast<LPARAM>(&rect));
 
-  return Rect(&rect);
+  return convert_to<Rect>(rect);
 }
 
 /**
@@ -340,7 +341,7 @@ ToolButton* ToolSet::getButtonByIndex(int index) const
 */
 int ToolSet::hitTest(const Point& pt) const
 {
-  POINT point = pt;
+  POINT point = convert_to<POINT>(pt);
   return
     const_cast<ToolSet*>(this)->
     sendMessage(TB_HITTEST, 0, reinterpret_cast<LPARAM>(&point));

@@ -68,12 +68,6 @@ public:
   bool operator==(const Point& pt) const;
   bool operator!=(const Point& pt) const;
 
-#ifdef VACA_WINDOWS
-  explicit Point(CONST LPPOINT pt);
-  explicit Point(CONST LPPOINTS pt);
-  operator POINT() const;
-#endif
-
 };
 
 } // namespace Vaca

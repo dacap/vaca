@@ -253,7 +253,7 @@ Rect System::getWorkAreaBounds()
 
   // returns the work-area rectangle
   if (SystemParametersInfo(SPI_GETWORKAREA, 0, reinterpret_cast<PVOID>(&rc), 0))
-    return Rect(&rc);
+    return convert_to<Rect>(rc);
   // returns the full-screen rectangle
   else
     return Rect(Point(0, 0), System::getScreenSize());

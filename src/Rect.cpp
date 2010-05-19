@@ -413,37 +413,3 @@ bool Rect::operator!=(const Rect& rc) const
     x != rc.x || w != rc.w ||
     y != rc.y || h != rc.h;
 }
-
-#ifdef VACA_WINDOWS
-
-/**
-   Converts a Win32's rectangle (RECT structure) to a Vaca's rectangle
-   (Rect class).
-
-   @internal
-*/
-Rect::Rect(LPCRECT rc)
-{
-  x = rc->left;
-  y = rc->top;
-  w = rc->right-rc->left;
-  h = rc->bottom-rc->top;
-}
-
-/**
-   Converts a Vaca's rectangle (Rect class) to a Win32's rectangle
-   (RECT structure).
-
-   @internal
-*/
-Rect::operator RECT() const
-{
-  RECT rc;
-  rc.left = x;
-  rc.top = y;
-  rc.right = x+w;
-  rc.bottom = y+h;
-  return rc;
-}
-
-#endif

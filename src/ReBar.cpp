@@ -311,7 +311,7 @@ Rect ReBar::getBandRect(int index)
 {
   RECT rc;
   sendMessage(RB_GETRECT, (WPARAM)index, (LPARAM)&rc);
-  return Rect(&rc);
+  return convert_to<Rect>(rc);
 }
 
 int ReBar::getRowCount()

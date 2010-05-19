@@ -32,6 +32,7 @@
 #include "Vaca/ListItem.h"
 #include "Vaca/ListView.h"
 #include "Vaca/Debug.h"
+#include "Vaca/win32.h"
 
 using namespace Vaca;
 
@@ -88,7 +89,7 @@ Rect ListItem::getBounds() const
   RECT rc;
   LPRECT prc = &rc; // to avoid a warning with MinGW with the ListView_GetItemRect macro
   if (ListView_GetItemRect(m_owner->getHandle(), m_index, prc, code))
-    return Rect(prc);
+    return convert_to<Rect>(*prc);
 
   // empty rectangle
   return Rect();

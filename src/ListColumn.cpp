@@ -32,6 +32,7 @@
 #include "Vaca/ListColumn.h"
 #include "Vaca/ListView.h"
 #include "Vaca/Debug.h"
+#include "Vaca/win32.h"
 
 using namespace Vaca;
 
@@ -116,7 +117,7 @@ Rect ListColumn::getBounds() const
     if (hHeader != NULL) {
       RECT rc;
       if (Header_GetItemRect(hHeader, m_index, &rc))
-	return Rect(&rc);
+	return convert_to<Rect>(rc);
     }
   }
 

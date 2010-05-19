@@ -109,11 +109,6 @@ public:
   bool operator==(const Rect& rc) const;
   bool operator!=(const Rect& rc) const;
 
-#ifdef VACA_WINDOWS
-  explicit Rect(LPCRECT rc);
-  operator RECT() const;
-#endif
-
 };
 
 } // namespace Vaca

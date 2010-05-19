@@ -35,6 +35,7 @@
 #include "Vaca/System.h"
 #include "Vaca/WidgetClass.h"
 #include "Vaca/PreferredSizeEvent.h"
+#include "Vaca/win32.h"
 
 using namespace Vaca;
 
@@ -193,7 +194,7 @@ Rect ComboBox::getDropDownBounds()
 {
   RECT rc;
   sendMessage(CB_GETDROPPEDCONTROLRECT, 0, reinterpret_cast<LPARAM>(&rc));
-  return Rect(&rc);
+  return convert_to<Rect>(rc);
 }
 
 int ComboBox::getHeightForAllItems()

@@ -157,7 +157,7 @@ Rect Graphics::getClipBounds()
       res == ERROR)
     return Rect();
   else
-    return Rect(&rc);
+    return convert_to<Rect>(rc);
 }
 
 void Graphics::getClipRegion(Region& rgn)
@@ -219,7 +219,7 @@ bool Graphics::isVisible(const Point& pt)
 bool Graphics::isVisible(const Rect& rc)
 {
   assert(m_handle);
-  RECT rc2 = rc;
+  RECT rc2 = convert_to<RECT>(rc);
   return RectVisible(m_handle, &rc2) != FALSE;
 }
 
@@ -482,7 +482,7 @@ void Graphics::drawString(const String& str, const Color& color, const Rect& _rc
   int oldMode = SetBkMode(m_handle, TRANSPARENT);
   int oldColor = SetTextColor(m_handle, convert_to<COLORREF>(color));
 
-  RECT rc = _rc;
+  RECT rc = convert_to<RECT>(_rc);
 
   HGDIOBJ oldFont = SelectObject(m_handle, reinterpret_cast<HGDIOBJ>(m_font.getHandle()));
   DrawText(m_handle, str.c_str(), static_cast<int>(str.size()), &rc, flags);
@@ -635,44 +635,48 @@ void Graphics::drawLine(const Pen& pen, int x1, int y1, int x2, int y2)
 
 void Graphics::drawBezier(const Pen& pen, const Point points[4])
 {
-  POINT pt[4];
-  std::copy(points, points+4, pt);
-  drawBezier(pen, pt, 4);
+  POINT pts[4];
+  for (int i=0; i<4; ++i)
+    pts[i] = convert_to<POINT>(points[i]);
+  drawBezier(pen, pts, 4);
 }
 
 void Graphics::drawBezier(const Pen& pen, const std::vector<Point>& points)
 {
-  int numPoints = static_cast<int>(points.size());
+  size_t numPoints = points.size();
 
   assert(numPoints >= 4);
 
-  POINT *pt = new POINT[numPoints];
-  std::copy(points.begin(), points.end(), pt);
-  drawBezier(pen, pt, numPoints);
-  delete[] pt;
+  POINT* pts = new POINT[numPoints];
+  POINT* pt = pts;
+  for (std::vector<Point>::const_iterator
+	 it = points.begin(),
+	 end = points.end(); it != end; ++it, ++pt) {
+    *pt = convert_to<POINT>(*it);
+  }
+  drawBezier(pen, pts, numPoints);
+  delete[] pts;
 }
 
 void Graphics::drawBezier(const Pen& pen, const Point& pt1, const Point& pt2, const Point& pt3, const Point& pt4)
 {
-  POINT pt[4];
-  pt[0] = pt1;
-  pt[1] = pt2;
-  pt[2] = pt3;
-  pt[3] = pt4;
+  POINT pt[4] = {
+    { pt1.x, pt1.y },
+    { pt2.x, pt2.y },
+    { pt3.x, pt3.y },
+    { pt4.x, pt4.y }
+  };
   drawBezier(pen, pt, 4);
 }
 
 void Graphics::drawBezier(const Pen& pen, int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4)
 {
-  POINT pt[4];
-  pt[0].x = x1;
-  pt[0].y = y1;
-  pt[1].x = x2;
-  pt[1].y = y2;
-  pt[2].x = x3;
-  pt[2].y = y3;
-  pt[3].x = x4;
-  pt[3].y = y4;
+  POINT pt[4] = {
+    { x1, y1 },
+    { x2, y2 },
+    { x3, y3 },
+    { x4, y4 }
+  };
   drawBezier(pen, pt, 4);
 }
 
@@ -841,14 +845,19 @@ void Graphics::drawChord(const Pen& pen, int x, int y, int w, int h, double star
 
 void Graphics::drawPolyline(const Pen& pen, const std::vector<Point>& points)
 {
-  int numPoints = static_cast<int>(points.size());
+  size_t numPoints = points.size();
 
   assert(numPoints >= 2);
 
-  POINT *pt = new POINT[numPoints];
-  std::copy(points.begin(), points.end(), pt);
-  drawPolyline(pen, pt, numPoints);
-  delete[] pt;
+  POINT* pts = new POINT[numPoints];
+  POINT* pt = pts;
+  for (std::vector<Point>::const_iterator
+	 it = points.begin(),
+	 end = points.end(); it != end; ++it, ++pt) {
+    *pt = convert_to<POINT>(*it);
+  }
+  drawPolyline(pen, pts, numPoints);
+  delete[] pts;
 }
 
 void Graphics::fillRect(const Brush& brush, const Rect& rc)
@@ -1080,7 +1089,7 @@ void Graphics::drawFocus(const Rect& rc)
 {
   assert(m_handle);
 
-  RECT _rc = rc;
+  RECT _rc = convert_to<RECT>(rc);
   ::DrawFocusRect(m_handle, &_rc);
 }
 
@@ -1092,7 +1101,7 @@ Size Graphics::measureString(const String& str, int fitInWidth, int flags)
 {
   assert(m_handle);
 
-  RECT rc = Rect(0, 0, fitInWidth, 0);
+  RECT rc = { 0, 0, fitInWidth, 0 };
   HGDIOBJ oldFont = SelectObject(m_handle, reinterpret_cast<HGDIOBJ>(m_font.getHandle()));
 
   if (!str.empty()) {
@@ -1109,7 +1118,7 @@ Size Graphics::measureString(const String& str, int fitInWidth, int flags)
 
   SelectObject(m_handle, oldFont);
 
-  return Rect(&rc).getSize();
+  return convert_to<Rect>(rc).getSize();
 }
 
 /**

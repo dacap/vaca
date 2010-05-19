@@ -61,7 +61,7 @@ public:
 #if(_WIN32_WINNT >= 0x0400)
     return TryEnterCriticalSection(&m_handle) ? true: false;
 #else
-    return false;
+    #error Vaca does not support the target platform
 #endif
   }
 

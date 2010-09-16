@@ -62,7 +62,7 @@ struct Debug {
 };
 #endif
 
-void Vaca::details::trace(LPCSTR filename, UINT line, LPCSTR fmt, ...)
+void Vaca::details::trace(const char* filename, size_t line, const char* fmt, ...)
 {
 #ifndef NDEBUG
   if (closed) { return; }

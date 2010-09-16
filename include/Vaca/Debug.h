@@ -54,7 +54,7 @@ namespace Vaca {
 
 namespace details {
 
-void VACA_DLL trace(LPCSTR filename, UINT line, LPCSTR msg, ...);
+void VACA_DLL trace(const char* filename, size_t line, const char* msg, ...);
 void VACA_DLL closeLogFile();
 
 #ifndef __GNUC__
@@ -64,9 +64,9 @@ void VACA_DLL closeLogFile();
       macros with ellipsis (...).
 */
 struct trace_t {
-  LPCSTR filename;
-  UINT line;
-  void operator()(LPCSTR fmt, ...) {
+  const char* filename;
+  size_t line;
+  void operator()(const char* fmt, ...) {
     char buf[1024];		// TODO: overflow
     va_list ap;
     va_start(ap, fmt);
@@ -75,7 +75,7 @@ struct trace_t {
     Vaca::details::trace(filename, line, buf);
   }
 };
-inline trace_t make_trace(LPCSTR filename, UINT line) {
+inline trace_t make_trace(const char* filename, size_t line) {
   trace_t tmp;
   tmp.filename = filename;
   tmp.line = line;

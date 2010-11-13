@@ -43,7 +43,8 @@ enum {
   ID_GAME_NEW_WITH_SEED,
   ID_GAME_USE_HELPER,
   ID_GAME_EXIT,
-  ID_HELP,
+  ID_HELP_HELP,
+  ID_HELP_ABOUT,
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -331,7 +332,8 @@ public:
     addCommand(useHelperCmd =
 	       new SignalCommand(ID_GAME_USE_HELPER, &MainFrame::onUseHelper, this));
     addCommand(new SignalCommand(ID_GAME_EXIT, Bind(&MainFrame::setVisible, this, false)));
-    addCommand(new SignalCommand(ID_HELP, &MainFrame::onHelp, this));
+    addCommand(new SignalCommand(ID_HELP_HELP, &MainFrame::onHelp, this));
+    addCommand(new SignalCommand(ID_HELP_ABOUT, &MainFrame::onAbout, this));
 
     useHelperCmd->Checked.connect(Bind(&MainFrame::isUseHelper, this));
 
@@ -546,6 +548,7 @@ private:
   {
     MenuBar* menuBar = new MenuBar;
     Menu* gameMenu = new Menu(L"&Game");
+    Menu* helpMenu = new Menu(L"&Help");
 
     gameMenu->add(L"&New\tCtrl+Shift+N", ID_GAME_NEW, Keys::Control | Keys::Shift | Keys::N);
     gameMenu->add(L"New with &seed\tCtrl+N", ID_GAME_NEW_WITH_SEED, Keys::Control | Keys::N);
@@ -554,8 +557,12 @@ private:
     gameMenu->addSeparator();
     gameMenu->add(L"&Exit", ID_GAME_EXIT);
 
+    helpMenu->add(L"&Help", ID_HELP_HELP);
+    helpMenu->addSeparator();
+    helpMenu->add(L"&About", ID_HELP_ABOUT);
+
     menuBar->add(gameMenu);
-    menuBar->add(L"&Help", ID_HELP);
+    menuBar->add(helpMenu);
     return menuBar;
   }
   
@@ -591,6 +598,11 @@ private:
   {
     HelpDialog dlg(this);
     dlg.doModal();
+  }
+
+  void onAbout()
+  {
+    MsgBox::show(this, L"About", L"Copyright (C) 2008-2010 by David Capello");
   }
 
   void onCellEnter()

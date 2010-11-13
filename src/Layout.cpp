@@ -37,49 +37,33 @@ using namespace Vaca;
 
 Layout::Layout()
 {
-  m_HDWP = NULL;
 }
 
 Layout::~Layout()
 {
-  assert(m_HDWP == NULL);
-}
-
-void Layout::beginMovement(const WidgetList& widgets)
-{
-  m_HDWP = BeginDeferWindowPos(widgets.size());
-
-  m_relayoutWidgets.clear();
-}
-
-void Layout::moveWidget(Widget* widget, const Rect& rc)
-{
-  if (m_HDWP != NULL) {
-    m_HDWP = DeferWindowPos(m_HDWP, widget->getHandle(), NULL,
-			    rc.x, rc.y, rc.w, rc.h, 
-			    SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOACTIVATE);
-  }
-
-//   if (widget->getBounds() == rc)
-  m_relayoutWidgets.push_back(widget);
-}
-
-void Layout::endMovement()
-{
-  if (m_HDWP != NULL) {
-    EndDeferWindowPos(m_HDWP);
-    m_HDWP = NULL;
-  }
-
-  for (WidgetList::iterator it=m_relayoutWidgets.begin();
-       it!=m_relayoutWidgets.end(); ++it) {
-    (*it)->layout();
-  }
-
-  m_relayoutWidgets.clear();
 }
 
 Size Layout::getPreferredSize(Widget* parent, WidgetList& widgets, const Size& fitIn)
 {
   return Size(0, 0);
+}
+
+//////////////////////////////////////////////////////////////////////
+// WidgetsMovement
+
+#include "win32/WidgetsMovementImpl.h"
+
+WidgetsMovement::WidgetsMovement(const WidgetList& widgets)
+  : m_impl(new WidgetsMovementImpl(widgets))
+{
+}
+
+WidgetsMovement::~WidgetsMovement()
+{
+  delete m_impl;
+}
+
+void WidgetsMovement::moveWidget(Widget* widget, const Rect& rc)
+{
+  m_impl->moveWidget(widget, rc);
 }

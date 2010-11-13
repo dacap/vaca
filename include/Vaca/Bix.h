@@ -117,7 +117,7 @@ private:
 
   Size getPreferredSize(const Size& fitIn);
   Size getPreferredSize(Matrix& mat);
-  void layout(Bix* parentBix, const Rect& rc);
+  void layout(WidgetsMovement& movement, Bix* parentBix, const Rect& rc);
 
   Size getMatrixDimension();
   void fillMatrix(Matrix& mat);

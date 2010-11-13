@@ -55,8 +55,7 @@ AnchorLayout::AnchorLayout(const Size& refSize)
 void AnchorLayout::layout(Widget* parent, WidgetList& widgets, const Rect& parentRc)
 {
   Size delta(parentRc.getSize() - m_refSize);
-
-  beginMovement(widgets);
+  WidgetsMovement movement(widgets);
 
   for (WidgetList::iterator it=widgets.begin(); it!=widgets.end(); ++it) {
     Widget* widget = *it;
@@ -109,8 +108,6 @@ void AnchorLayout::layout(Widget* parent, WidgetList& widgets, const Rect& paren
       rc.y += delta.h/2;
     }
 
-    moveWidget(widget, rc);
+    movement.moveWidget(widget, rc);
   }
-
-  endMovement();
 }

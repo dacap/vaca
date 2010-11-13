@@ -53,7 +53,7 @@ struct Bix::Element
   virtual int getFlags() = 0;
   virtual bool isLayoutFree() = 0;
   virtual Size getPreferredSize(const Size& fitIn) = 0;
-  virtual void setBounds(Bix* bix, const Rect& rc) = 0;
+  virtual void setBounds(WidgetsMovement& movement, Bix* bix, const Rect& rc) = 0;
 };
 
 /**
@@ -67,7 +67,9 @@ struct Bix::SubBixElement : public Bix::Element
   virtual int getFlags() { return bix->m_flags; };
   virtual bool isLayoutFree() { return false; }
   virtual Size getPreferredSize(const Size& fitIn) { return bix->getPreferredSize(fitIn); }
-  virtual void setBounds(Bix* parentBix, const Rect& rc) { bix->layout(parentBix, rc); }
+  virtual void setBounds(WidgetsMovement& movement, Bix* parentBix, const Rect& rc) {
+    bix->layout(movement, parentBix, rc);
+  }
 };
 
 /**
@@ -86,7 +88,9 @@ struct Bix::WidgetElement : public Bix::Element
   virtual int getFlags() { return flags; };
   virtual bool isLayoutFree() { return widget->isLayoutFree(); }
   virtual Size getPreferredSize(const Size& fitIn) { return widget->getPreferredSize(fitIn); }
-  virtual void setBounds(Bix* parentBix, const Rect& rc) { parentBix->moveWidget(widget, rc); }
+  virtual void setBounds(WidgetsMovement& movement, Bix* parentBix, const Rect& rc) {
+    movement.moveWidget(widget, rc);
+  }
 };
 
 /**
@@ -367,9 +371,8 @@ Size Bix::getPreferredSize(Widget* parent, WidgetList& widgets, const Size& fitI
 
 void Bix::layout(Widget* parent, WidgetList& widgets, const Rect& rc)
 {
-  beginMovement(widgets);
-  layout(this, rc);
-  endMovement();
+  WidgetsMovement movement(widgets);
+  layout(movement, this, rc);
 }
 
 Size Bix::getPreferredSize(const Size& fitIn)
@@ -425,7 +428,7 @@ Size Bix::getPreferredSize(Matrix& mat)
   return sz;
 }
 
-void Bix::layout(Bix* parentBix, const Rect& rc)
+void Bix::layout(WidgetsMovement& movement, Bix* parentBix, const Rect& rc)
 {
   Size matDim = getMatrixDimension();
   if (matDim.w > 0 && matDim.h > 0) {
@@ -514,7 +517,8 @@ void Bix::layout(Bix* parentBix, const Rect& rc)
       pt.x = rc.x+m_border;
       for (x=0; x<mat.cols; ++x) {
 	if (mat.elem[y][x] != NULL)
-	  mat.elem[y][x]->setBounds(parentBix,
+	  mat.elem[y][x]->setBounds(movement,
+				    parentBix,
 				    Rect(pt, Size(mat.size[0][x].w,
 						  mat.size[y][0].h)));
 

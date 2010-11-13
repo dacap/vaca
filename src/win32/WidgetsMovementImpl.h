@@ -29,56 +29,42 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef VACA_LAYOUT_H
-#define VACA_LAYOUT_H
+#ifndef _WIN32_WINNT
+#define _WIN32_WINNT 0x0400
+#endif
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
 
-#include "Vaca/base.h"
-#include "Vaca/Size.h"
-#include "Vaca/Referenceable.h"
-#include "Vaca/WidgetList.h"
-
-namespace Vaca {
-
-/**
-   A Layout setups the position of a collection of widgets. It's used
-   to arrange the widgets quickly without worrying about the exact
-   position of them.
-
-   Each widget can have a layout manager, but it's only useful when
-   the widget has children.
-
-   @warning If the parent widget doesn't have a layout manager
-	    specified, the children bounds aren't modified (see the
-	    @c FreeOfLayout example).
-
-   @see @ref page_tn_011
-*/
-class VACA_DLL Layout : public Referenceable
+class Vaca::WidgetsMovement::WidgetsMovementImpl
 {
+  HDWP m_hdwp;
+  WidgetList m_relayoutWidgets;
+
 public:
-  Layout();
-  virtual ~Layout();
 
-  virtual Size getPreferredSize(Widget* parent, WidgetList& widgets, const Size& fitIn);
-  virtual void layout(Widget* parent, WidgetList& widgets, const Rect& rc) = 0;
+  WidgetsMovementImpl(const WidgetList& widgets)
+  {
+    m_hdwp = BeginDeferWindowPos(widgets.size());
+  }
+
+  ~WidgetsMovementImpl()
+  {
+    EndDeferWindowPos(m_hdwp);
+    m_hdwp = NULL;
+
+    for (WidgetList::iterator it=m_relayoutWidgets.begin();
+	 it!=m_relayoutWidgets.end(); ++it) {
+      (*it)->layout();
+    }
+  }
+
+  void moveWidget(Widget* widget, const Rect& rc)
+  {
+    m_hdwp = DeferWindowPos(m_hdwp, widget->getHandle(), NULL,
+			    rc.x, rc.y, rc.w, rc.h, 
+			    SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOACTIVATE);
+
+    m_relayoutWidgets.push_back(widget);
+  }
+
 };
-
-/**
-   Auxiliary class to move widgets inside onLayout() method.
- */
-class VACA_DLL WidgetsMovement
-{
-public:
-  WidgetsMovement(const WidgetList& widgets);
-  ~WidgetsMovement();
-
-  void moveWidget(Widget* widget, const Rect& rc);
-
-private:
-  class WidgetsMovementImpl;
-  WidgetsMovementImpl* m_impl;
-};
-
-} // namespace Vaca
-
-#endif // VACA_LAYOUT_H

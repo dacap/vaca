@@ -245,7 +245,7 @@ void BoxLayout::layout(Widget* parent, WidgetList& widgets, const Rect& rc)
 	else								\
 	  cpos = Rect(y, x, h, w);					\
 									\
-	moveWidget(widget, cpos);					\
+	movement.moveWidget(widget, cpos);				\
 	x += child_width + m_childSpacing;				\
       }									\
     }									\
@@ -267,8 +267,7 @@ void BoxLayout::layout(Widget* parent, WidgetList& widgets, const Rect& rc)
   Size pref, prefDiff;
   int extra, width, child_width;
   int x, y, w, h;
-
-  beginMovement(widgets);
+  WidgetsMovement movement(widgets);
 
   pref = getPreferredSize(parent, widgets, Size(0, 0)); // fitIn doesn't matter
 //   pref = preferredSize(parent, widgets,
@@ -281,6 +280,4 @@ void BoxLayout::layout(Widget* parent, WidgetList& widgets, const Rect& rc)
   else {
     FIXUP(y, x, h, w);
   }
-
-  endMovement();
 }

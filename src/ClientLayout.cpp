@@ -68,14 +68,11 @@ void ClientLayout::layout(Widget* parent, WidgetList& widgets, const Rect& rc)
 {
   Rect bounds = rc;
   bounds.shrink(m_border);
-
-  beginMovement(widgets);
+  WidgetsMovement movement(widgets);
 
   for (WidgetList::iterator it=widgets.begin(); it!=widgets.end(); ++it) {
     Widget* widget = *it;
     if (!widget->isLayoutFree())
-      moveWidget(widget, bounds);
+      movement.moveWidget(widget, bounds);
   }
-
-  endMovement();
 }

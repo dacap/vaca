@@ -92,7 +92,7 @@ int vaca_main()
     app.run();
   }
   catch (Exception& e) {
-    e.show();
+    MsgBox::showException(NULL, e);
   }
   return 0;
 }

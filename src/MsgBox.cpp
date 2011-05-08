@@ -187,3 +187,24 @@ MsgBox::Result MsgBox::show(Widget* parent,
 
   return result;
 }
+
+/**
+   Shows an the given exception in a MsgBox.
+
+   It displays the Exception#getMessage() in the first line, and the
+   Exception#what() in the second line.
+*/
+void MsgBox::showException(Widget* parent, const Exception& exception)
+{
+  String msg(exception.getMessage());
+  std::string what(exception.what());
+
+  if (what.size() > 0) {
+    msg += L"\r\n";
+    msg += convert_to<String>(what);
+  }
+
+  MsgBox::show(parent, L"Error/Exception", msg,
+	       MsgBox::Type::Ok,
+	       MsgBox::Icon::Error);
+}

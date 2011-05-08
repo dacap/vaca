@@ -119,7 +119,7 @@ int vaca_main()
   catch (Exception& e) {
     // if some errors come from Vaca show it (this method shows the
     // error as a MsgBox)
-    e.show();
+    MsgBox::showException(NULL, e);
   }
   return 0;
 }

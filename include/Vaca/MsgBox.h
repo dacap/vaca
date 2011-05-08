@@ -102,6 +102,9 @@ public:
 		     Icon icon = Icon::None,
 		     int default_button = -1);
 
+  static void showException(Widget* parent,
+			    const Exception& exception);
+
 };
 
 } // namespace Vaca

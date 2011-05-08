@@ -46,8 +46,8 @@ namespace Vaca {
 class VACA_DLL Exception : public std::exception
 {
   String m_message;
-  DWORD m_errorCode;
   std::string m_what;
+  int m_errorCode;
 
 public:
 
@@ -58,7 +58,7 @@ public:
   virtual const char* what() const throw();
   virtual const String& getMessage() const throw();
 
-  void show();
+  int getErrorCode() const;
 
 private:
 

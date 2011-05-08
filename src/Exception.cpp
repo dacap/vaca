@@ -82,27 +82,9 @@ const String& Exception::getMessage() const throw()
   return m_message;
 }
 
-/**
-   Shows the error in a MsgBox.
-
-   @warning The MsgBox doesn't lock any Frame. It's like a dialog
-	    running in background.
-
-   @win32
-     It is like call MessageBox(NULL, getMessage(), ...);
-   @endwin32
-*/
-void Exception::show()
+int Exception::getErrorCode() const
 {
-  String msg;
-
-  if (m_errorCode != ERROR_SUCCESS)
-    msg = convert_to<String>(what());
-  else
-    msg = getMessage();
-
-  MessageBox(NULL, msg.c_str(), L"Error/Exception",
-	     MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
+  return m_errorCode;
 }
 
 void Exception::initialize()

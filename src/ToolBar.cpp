@@ -355,7 +355,7 @@ std::vector<Size> ToolSet::getPreferredSizes() const
 void ToolSet::onPreferredSize(PreferredSizeEvent& ev)
 {
   int rows = getRows();
-  if (rows < m_preferredSizes.size()) {
+  if (rows < (int)m_preferredSizes.size()) {
     ev.setPreferredSize(m_preferredSizes[rows]);
   }
   else

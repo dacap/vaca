@@ -26,7 +26,6 @@ Report bugs, errors, and mistakes to <a href="mailto:davidcapello@gmail.com">dav
 @li @subpage page_mess
 @li @subpage page_examples
 @li @subpage page_tn
-@li @subpage page_api_changes
 
 
 @section index_reference Reference

@@ -48,7 +48,9 @@ struct Point_f
 
   Point_f(float u, float v) : x(u), y(v) { }
   Point_f(const Point_f &pt) : x(pt.x), y(pt.y) { }
-  Point_f(const Point &pt) : x(pt.x), y(pt.y) { }
+  Point_f(const Point &pt) : x(static_cast<float>(pt.x))
+			   , y(static_cast<float>(pt.y)) { }
+
   Point_f& operator=(const Point_f& pt) { x=pt.x; y=pt.y; return *this; }
   bool operator==(const Point_f& pt) { return x==pt.x && y==pt.y; }
 

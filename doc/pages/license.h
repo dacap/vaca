@@ -9,7 +9,7 @@ Vaca is licensed under the terms of the New BSD License.
 <hr/>
 
 Vaca - Visual Application Components Abstraction @n
-Copyright (c) 2005-2009 David Capello @n
+Copyright (c) 2005-2011 David Capello @n
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without

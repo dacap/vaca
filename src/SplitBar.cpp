@@ -50,7 +50,7 @@ SplitBar::SplitBar(Orientation orientation, Widget* parent, Style style)
   , m_pane2(NULL)
   , m_barSize(SPLITBAR_DEFAULT_SIZE)
   , m_barPos(SPLITBAR_DEFAULT_POS)
-  , m_fullDrag(false)
+  , m_fullDrag(true)
   , m_trackerIsVisible(false)
   , m_gripperVisible(true)
 {

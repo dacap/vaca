@@ -165,7 +165,6 @@ Base classes of the MESS architecture.
   @itemRow{Message}
 @titleRow{Events}
   @itemRow{CancelableEvent}
-  @itemRow{ChildEvent}
   @itemRow{CloseEvent}
   @itemRow{CommandEvent}
   @itemRow{ConsumableEvent}

@@ -48,7 +48,6 @@
 #include "Vaca/ButtonBase.h"
 #include "Vaca/CancelableEvent.h"
 #include "Vaca/CheckBox.h"
-#include "Vaca/ChildEvent.h"
 #include "Vaca/ClientLayout.h"
 #include "Vaca/Clipboard.h"
 #include "Vaca/CloseEvent.h"

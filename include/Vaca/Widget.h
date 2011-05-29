@@ -439,8 +439,6 @@ protected:
   virtual void onUpdateIndicators();
   virtual void onScroll(ScrollEvent& ev);
   virtual void onDropFiles(DropFilesEvent& ev);
-  virtual void onAddChild(ChildEvent& ev);
-  virtual void onRemoveChild(ChildEvent& ev);
 
   // ===============================================================
   // REFLECTION

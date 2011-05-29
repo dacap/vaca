@@ -52,7 +52,6 @@ set(VACA_SOURCES
     src/ButtonBase.cpp 
     src/CancelableEvent.cpp
     src/CheckBox.cpp 
-    src/ChildEvent.cpp 
     src/ClientLayout.cpp
     src/Clipboard.cpp 
     src/CloseEvent.cpp 

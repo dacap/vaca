@@ -52,7 +52,6 @@
 #include "Vaca/Command.h"
 #include "Vaca/ScrollInfo.h"
 #include "Vaca/ScrollEvent.h"
-#include "Vaca/ChildEvent.h"
 #include "Vaca/FocusEvent.h"
 #include "Vaca/CommandEvent.h"
 #include "Vaca/ResizeEvent.h"
@@ -2237,24 +2236,6 @@ void Widget::onDropFiles(DropFilesEvent& ev)
 }
 
 /**
-   Fired when a child is added to this widget.
-
-   @warning If you override this event, remember that the child
-   widget may not be fully created when the event is fired (e.g. you
-   cannot do a dynamic_cast<> to your specific widget).
-   Generally you should not override this event.
-*/
-void Widget::onAddChild(ChildEvent& ev)
-{
-  // do nothing
-}
-
-void Widget::onRemoveChild(ChildEvent& ev)
-{
-  // do nothing
-}
-
-/**
    This member function can be used to handle command notifications
    (@msdn{WM_COMMAND}) reflected from the parent.
 
@@ -2340,9 +2321,6 @@ void Widget::addChildWin32(Widget* child, bool setParent)
     ::SetParent(child->m_handle, m_handle);
     // sendMessage(WM_UPDATEUISTATE, UIS_SET..., 0);
   }
-
-  ChildEvent ev(this, child, true);
-  onAddChild(ev);
 }
 
 /**
@@ -2362,9 +2340,6 @@ void Widget::removeChildWin32(Widget* child, bool setParent)
   assert(child != NULL);
   assert(child->m_handle != NULL);
   assert(child->m_parent == this);
-
-  ChildEvent ev(this, child, false);
-  onRemoveChild(ev);
 
   remove_from_container(m_children, child);
 

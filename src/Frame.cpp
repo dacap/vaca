@@ -43,7 +43,6 @@
 #include "Vaca/Mdi.h"
 #include "Vaca/Thread.h"
 #include "Vaca/Icon.h"
-#include "Vaca/ChildEvent.h"
 #include "Vaca/CommandEvent.h"
 #include "Vaca/PreferredSizeEvent.h"
 #include "Vaca/win32.h"

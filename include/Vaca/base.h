@@ -415,7 +415,6 @@ class Button;
 class ButtonBase;
 class CancelableEvent;
 class CheckBox;
-class ChildEvent;
 class ClientLayout;
 class Clipboard;
 class CloseEvent;

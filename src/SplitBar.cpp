@@ -36,7 +36,6 @@
 #include "Vaca/MouseEvent.h"
 #include "Vaca/PaintEvent.h"
 #include "Vaca/System.h"
-#include "Vaca/ChildEvent.h"
 #include "Vaca/SetCursorEvent.h"
 
 using namespace Vaca;
@@ -284,16 +283,6 @@ void SplitBar::onSetCursor(SetCursorEvent& ev)
     ev.setCursor(Cursor(sysCursor));
   }
   Widget::onSetCursor(ev);
-}
-
-void SplitBar::onAddChild(ChildEvent& ev)
-{
-  Widget::onAddChild(ev);
-
-  if (m_first == NULL)
-    setFirstWidget(ev.getChild());
-  else if (m_second == NULL)
-    setSecondWidget(ev.getChild());
 }
 
 void SplitBar::updateChildrenVisibility()

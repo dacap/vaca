@@ -103,7 +103,6 @@ protected:
   virtual void onMouseDown(MouseEvent& ev);
   virtual void onMouseUp(MouseEvent& ev);
   virtual void onSetCursor(SetCursorEvent& ev);
-  virtual void onAddChild(ChildEvent& ev);
 
 private:
   void updateChildrenVisibility();

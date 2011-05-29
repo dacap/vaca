@@ -93,38 +93,34 @@ public:
   MainFrame()
     : Frame(L"SplitBar demo")
   {
-    TextEdit* me;
-    
     setMenuBar(new MenuBar(CommandId(IDR_MAINMENU)));
 
     // The position of SplitBars are specified in percentage by
     // default, and the starting position is 50%
     SplitBar* sp1 = new SplitBar(Orientation::Vertical, this);
-
-    me = new TextEdit(L"First Panel", sp1, TextEdit::Styles::TextArea +
-					   Widget::Styles::Scroll);
-    me->setBgColor(Color(200, 255, 200));
-
     SplitBar* sp2 = new SplitBar(Orientation::Horizontal, sp1,
 				 SplitBar::Styles::Default |
 				 SplitBar::Styles::ByPixels);
-    sp2->setBarPosition(100);	// pixels
+    TextEdit* firstPanel
+      = new TextEdit(L"First Panel", sp1, TextEdit::Styles::TextArea +
+					  Widget::Styles::Scroll);
+    TextEdit* subFirstPanel =
+      new TextEdit(L"Sub First Panel", sp2, TextEdit::Styles::TextArea +
+					    Widget::Styles::Scroll);
+    TextEdit* subSecondPanel =
+      new TextEdit(L"Sub Second Panel", sp2, TextEdit::Styles::TextArea +
+					     Widget::Styles::Scroll);
 
-    me = new TextEdit(L"Sub First Panel", sp2, TextEdit::Styles::TextArea +
-					       Widget::Styles::Scroll);
-    me->setBgColor(Color(255, 200, 200));
+    sp1->setFirstWidget(firstPanel);
+    sp1->setSecondWidget(sp2);
 
-    me = new TextEdit(L"Sub Second Panel", sp2, TextEdit::Styles::TextArea +
-						Widget::Styles::Scroll);
-    me->setBgColor(Color(200, 200, 255));
+    sp2->setFirstWidget(subFirstPanel);
+    sp2->setSecondWidget(subSecondPanel);
+    sp2->setBarPosition(100);	// In pixels
 
-    // The following lines aren't necessary (it's done automatically
-    // when the two first children are added to the SplitBar)
-
-    //sp1->setFirstWidget(me);
-    //sp1->setSecondWidget(sp2);
-    //sp2->setFirstWidget(me);
-    //sp2->setSecondWidget(me);
+    firstPanel->setBgColor(Color(200, 255, 200));
+    subFirstPanel->setBgColor(Color(255, 200, 200));
+    subSecondPanel->setBgColor(Color(200, 200, 255));
 
     setLayout(new ClientLayout);
 

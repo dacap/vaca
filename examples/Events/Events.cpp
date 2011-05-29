@@ -243,18 +243,6 @@ protected:
     Widget::onDropFiles(ev);
   }
 
-  virtual void onAddChild(ChildEvent& ev)
-  {
-    m_console->println(L"onAddChild()");
-    Widget::onAddChild(ev);
-  }
-
-  virtual void onRemoveChild(ChildEvent& ev)
-  {
-    m_console->println(L"onRemoveChild()");
-    Widget::onRemoveChild(ev);
-  }
-
 };
 
 //////////////////////////////////////////////////////////////////////

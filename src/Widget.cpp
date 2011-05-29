@@ -61,6 +61,8 @@
 #include "Vaca/LayoutEvent.h"
 #include "Vaca/win32.h"
 
+#include <iterator>
+
 // uncomment this if you want message reporting in the "vaca.log"
 // #define REPORT_MESSAGES
 

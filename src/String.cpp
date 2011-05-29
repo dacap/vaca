@@ -38,6 +38,7 @@
 #include <cstdlib>
 #include <cctype>
 #include <vector>
+#include <iterator>
 #include <wininet.h>
 
 #include <algorithm>

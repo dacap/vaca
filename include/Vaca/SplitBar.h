@@ -53,8 +53,8 @@ class VACA_DLL SplitBar : public Register<SplitBarClass>
 			, public Widget
 {
   Orientation m_orientation;
-  Widget* m_first;
-  Widget* m_second;
+  Widget* m_pane1;
+  Widget* m_pane2;
   int m_barSize;
   double m_barPos;
   double m_oldBarPos;
@@ -73,11 +73,11 @@ public:
   SplitBar(Orientation orientation, Widget* parent, Style style = Styles::Default);
   virtual ~SplitBar();
 
-  void setFirstWidget(Widget* widget);
-  void setSecondWidget(Widget* widget);
+  void setPane1(Widget* widget);
+  void setPane2(Widget* widget);
 
-  Widget* getFirstWidget() const;
-  Widget* getSecondWidget() const;
+  Widget* getPane1() const;
+  Widget* getPane2() const;
 
   int getBarSize() const;
   void setBarSize(int size);

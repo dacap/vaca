@@ -111,11 +111,11 @@ public:
       new TextEdit(L"Sub Second Panel", sp2, TextEdit::Styles::TextArea +
 					     Widget::Styles::Scroll);
 
-    sp1->setFirstWidget(firstPanel);
-    sp1->setSecondWidget(sp2);
+    sp1->setPane1(firstPanel);
+    sp1->setPane2(sp2);
 
-    sp2->setFirstWidget(subFirstPanel);
-    sp2->setSecondWidget(subSecondPanel);
+    sp2->setPane1(subFirstPanel);
+    sp2->setPane2(subSecondPanel);
     sp2->setBarPosition(100);	// In pixels
 
     firstPanel->setBgColor(Color(200, 255, 200));

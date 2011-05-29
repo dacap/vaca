@@ -46,8 +46,8 @@ using namespace Vaca;
 SplitBar::SplitBar(Orientation orientation, Widget* parent, Style style)
   : Widget(SplitBarClass::getClassName(), parent, style)
   , m_orientation(orientation)
-  , m_first(NULL)
-  , m_second(NULL)
+  , m_pane1(NULL)
+  , m_pane2(NULL)
   , m_barSize(SPLITBAR_DEFAULT_SIZE)
   , m_barPos(SPLITBAR_DEFAULT_POS)
   , m_fullDrag(false)
@@ -60,28 +60,28 @@ SplitBar::~SplitBar()
 {
 }
 
-void SplitBar::setFirstWidget(Widget* widget)
+void SplitBar::setPane1(Widget* widget)
 {
-  m_first = widget;
+  m_pane1 = widget;
   updateChildrenVisibility();
   layout();
 }
 
-void SplitBar::setSecondWidget(Widget* widget)
+void SplitBar::setPane2(Widget* widget)
 {
-  m_second = widget;
+  m_pane2 = widget;
   updateChildrenVisibility();
   layout();
 }
 
-Widget* SplitBar::getFirstWidget() const
+Widget* SplitBar::getPane1() const
 {
-  return m_first;
+  return m_pane1;
 }
 
-Widget* SplitBar::getSecondWidget() const
+Widget* SplitBar::getPane2() const
 {
-  return m_second;
+  return m_pane2;
 }
 
 int SplitBar::getBarSize() const
@@ -146,13 +146,13 @@ void SplitBar::onLayout(LayoutEvent& ev)
 {
   Rect rcL, rcR;
   getRects(rcL, rcR);
-  if (m_first) {
-    m_first->setBounds(rcL);
-    m_first->layout();
+  if (m_pane1) {
+    m_pane1->setBounds(rcL);
+    m_pane1->layout();
   }
-  if (m_second) {
-    m_second->setBounds(rcR);
-    m_second->layout();
+  if (m_pane2) {
+    m_pane2->setBounds(rcR);
+    m_pane2->layout();
   }
   Widget::onLayout(ev);
 }
@@ -287,13 +287,13 @@ void SplitBar::onSetCursor(SetCursorEvent& ev)
 
 void SplitBar::updateChildrenVisibility()
 {
-  // hide children that aren't first or second
+  // Hide children that aren't first or second
   WidgetList children = getChildren();
   for (WidgetList::iterator
 	 it = children.begin(); it != children.end(); ++it) {
     Widget* child = *it;
-    child->setVisible(child == m_first ||
-		      child == m_second);
+    child->setVisible(child == m_pane1 ||
+		      child == m_pane2);
   }
 }
 

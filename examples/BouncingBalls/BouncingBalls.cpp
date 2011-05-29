@@ -446,7 +446,7 @@ private:
 
 //////////////////////////////////////////////////////////////////////
 
-int vaca_main()
+int VACA_MAIN()
 {
   std::srand(std::time(NULL));
 
@@ -457,5 +457,3 @@ int vaca_main()
 
   return 0;
 }
-
-#include "Vaca/main.h"

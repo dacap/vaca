@@ -73,6 +73,15 @@
 #ifdef VACA_WINDOWS
   #include <windows.h>
   #include <commctrl.h>
+
+  #define VACA_MAIN()						\
+      PASCAL WinMain(HINSTANCE hInstance,			\
+		     HINSTANCE hPrevInstance,			\
+		     LPSTR lpCmdLine,				\
+		     int nCmdShow)
+#else
+  #define VACA_MAIN()						\
+      main(int argc, char* argv[])
 #endif
 
 #include "Vaca/Enum.h"

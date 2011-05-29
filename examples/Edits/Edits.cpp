@@ -70,7 +70,7 @@ public:
 
 //////////////////////////////////////////////////////////////////////
 
-int vaca_main()
+int VACA_MAIN()
 {
   Application app;
   MainFrame frm;
@@ -79,5 +79,3 @@ int vaca_main()
   app.run();
   return 0;
 }
-
-#include "Vaca/main.h"

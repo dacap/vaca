@@ -187,7 +187,7 @@ void Application::setProcessPriority(ProcessPriority priority)
 /**
    The common way to start the application.
 
-   You should call this member function from @e vaca_main,
+   You should call this member function from @e WinMain,
    using the Application instance.
 
    The work of this routine is really simple: it calls #main and then
@@ -197,7 +197,7 @@ void Application::setProcessPriority(ProcessPriority priority)
 
    Example:
    @code
-   int vaca_main()
+   int VACA_MAIN()
    {
      Application app;
      Frame frm("My frame");
@@ -205,7 +205,6 @@ void Application::setProcessPriority(ProcessPriority priority)
      app.run();
      return 0;
    }
-   #include <Vaca/main.h>
    @endcode
 
    The same example with a variation:
@@ -220,13 +219,12 @@ void Application::setProcessPriority(ProcessPriority priority)
        frm.setVisible(true);
      }
    };
-   int vaca_main()
+   int VACA_MAIN()
    {
      MyApp app;
      app.run();
      return 0;
    }
-   #include <Vaca/main.h>
    @endcode
 
    @see CurrentThread#doMessageLoop

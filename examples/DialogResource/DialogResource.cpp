@@ -42,7 +42,7 @@ void show_about(Widget* parent)
   dlg.doModal();
 }
 
-int vaca_main()
+int VACA_MAIN()
 {
   Application app;
   Dialog dlg(ResourceId(IDD_MAIN));
@@ -54,5 +54,3 @@ int vaca_main()
   dlg.doModal();
   return 0;
 }
-
-#include "Vaca/main.h"

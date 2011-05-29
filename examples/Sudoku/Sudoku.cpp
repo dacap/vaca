@@ -972,7 +972,7 @@ private:
 
 //////////////////////////////////////////////////////////////////////
 
-int vaca_main()
+int VACA_MAIN()
 {
   srand(static_cast<unsigned int>(time(NULL)));
 
@@ -983,5 +983,3 @@ int vaca_main()
   app.run();
   return 0;
 }
-
-#include "Vaca/main.h"

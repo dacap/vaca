@@ -324,11 +324,9 @@ void Example::main()
 //////////////////////////////////////////////////////////////////////
 // WinMain
 
-int vaca_main()
+int VACA_MAIN()
 {
   Example app;
   app.run();
   return 0;
 }
-
-#include "Vaca/main.h"

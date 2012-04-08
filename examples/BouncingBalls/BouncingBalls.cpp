@@ -34,9 +34,8 @@
 #include <cmath>
 #include <ctime>
 
-#ifndef M_PI
-#define M_PI		3.14159265358979323846
-#endif
+#undef M_PI
+#define M_PI		static_cast<v2dfloat>(3.14159265358979323846)
 
 // ticks per second
 #define TPS 60
@@ -50,7 +49,7 @@ namespace simulation_model {
 
 v2dfloat uniform_dist(v2dfloat a, v2dfloat b)
 {
-  return a + (b-a) * ((std::rand() % 10001) / 10000.0);
+  return static_cast<v2dfloat>(a + (b-a) * ((std::rand() % 10001) / 10000.0));
 }
 
 struct segment
@@ -131,7 +130,7 @@ struct ball
     this->vel = vel;
     this->acc = acc;
     radius    = uniform_dist(8, 20);
-    mass      = 100.0f * M_PI*radius*radius;
+    mass      = static_cast<v2dfloat>(100.0f) * M_PI*radius*radius;
 
     switch (std::rand()%5) {
       case 0: color = Color(255, 255, 255); break;
@@ -146,7 +145,7 @@ struct ball
   {
     vector2d pos_t    = pos;
     int      steps    = static_cast<int>(ceil(dir.magnitude()+1));
-    vector2d delta    = dir / steps;
+    vector2d delta    = dir / static_cast<v2dfloat>(steps);
     bool     collided_with_seg = false;
 
     for (int c=0; c<steps; ++c) {
@@ -267,10 +266,10 @@ void draw_segments(Graphics &g, double a, double b)
 
 void add_ball()
 {
-  double x = uniform_dist(50, 500);
-  double y = uniform_dist(100, 200);
-  double a = uniform_dist(-M_PI, M_PI);
-  double v = uniform_dist(1 * 60/TPS, 2 * 60/TPS);
+  v2dfloat x = uniform_dist(50, 500);
+  v2dfloat y = uniform_dist(100, 200);
+  v2dfloat a = uniform_dist(-M_PI, M_PI);
+  v2dfloat v = uniform_dist(1 * 60/TPS, 2 * 60/TPS);
   balls.push_back(new ball(vector2d(x, y),
 			   vector2d(v*cos(a), v*sin(a)),
 			   vector2d(0, 0.5)));
@@ -448,7 +447,7 @@ private:
 
 int VACA_MAIN()
 {
-  std::srand(std::time(NULL));
+  std::srand(static_cast<unsigned int>(std::time(NULL)));
 
   Application app;
   MainFrame mainFrame;

@@ -2,6 +2,11 @@
 # Copyright (c) 2005-2010 David Capello
 # All rights reserved.
 
+# Fix to compile gtest with VC11 (2012)
+if (MSVC_VERSION EQUAL 1700)
+  add_definitions(-D_VARIADIC_MAX=10)
+endif()
+
 include_directories(.)
 add_library(gtest STATIC gtest/gtest-all.cc)
 add_library(gtest_main STATIC gtest/gtest_main.cc)

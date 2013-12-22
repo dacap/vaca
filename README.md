@@ -1,4 +1,5 @@
-# Vaca - Visual Application Components Abstraction
+# Vaca
+## Visual Application Components Abstraction
 > Copyright (c) 2005-2012 David Capello
 > All rights reserved.
 

@@ -9,8 +9,8 @@
 #include "Vaca/WidgetClass.h"
 #include "Vaca/String.h"
 #include "Vaca/Register.h"
-#include "Scintilla.h"
-#include "SciLexer.h"
+#include "scintilla/Scintilla.h"
+#include "scintilla/SciLexer.h"
 
 using namespace Vaca;
 

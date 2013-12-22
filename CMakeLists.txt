@@ -32,129 +32,127 @@ set(BUILD_SHARED_LIBS ${SHARED})
 ########################################
 # Directories
 
-include_directories(${CMAKE_SOURCE_DIR}/include
-		    ${CMAKE_SOURCE_DIR}/scintilla/include)
-
+include_directories(${CMAKE_SOURCE_DIR})
 set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
 
 ########################################
 # Main target: Vaca Library
 
 set(VACA_SOURCES
-    src/Anchor.cpp 
-    src/AnchorLayout.cpp
-    src/Application.cpp 
-    src/BandedDockArea.cpp 
-    src/BasicDockArea.cpp
-    src/Bix.cpp 
-    src/BoxConstraint.cpp 
-    src/BoxLayout.cpp 
-    src/Brush.cpp
-    src/Button.cpp 
-    src/ButtonBase.cpp 
-    src/CancelableEvent.cpp
-    src/CheckBox.cpp 
-    src/ClientLayout.cpp
-    src/Clipboard.cpp 
-    src/CloseEvent.cpp 
-    src/Color.cpp 
-    src/ColorDialog.cpp
-    src/ComboBox.cpp 
-    src/Command.cpp 
-    src/CommandEvent.cpp
-    src/CommonDialog.cpp 
-    src/Component.cpp 
-    src/ConditionVariable.cpp 
-    src/Constraint.cpp 
-    src/ConsumableEvent.cpp
-    src/Cursor.cpp 
-    src/CustomButton.cpp 
-    src/CustomLabel.cpp 
-    src/Debug.cpp
-    src/Dialog.cpp 
-    src/DockArea.cpp 
-    src/DockBar.cpp 
-    src/DockFrame.cpp
-    src/DropFilesEvent.cpp 
-    src/Event.cpp 
-    src/Exception.cpp
-    src/FileDialog.cpp 
-    src/FindFiles.cpp 
-    src/FindTextDialog.cpp
-    src/FocusEvent.cpp 
-    src/Font.cpp 
-    src/FontDialog.cpp 
-    src/Frame.cpp
-    src/Graphics.cpp 
-    src/GraphicsPath.cpp 
-    src/GroupBox.cpp
-    src/HttpRequest.cpp 
-    src/Icon.cpp 
-    src/Image.cpp 
-    src/ImageList.cpp
-    src/KeyEvent.cpp 
-    src/Keys.cpp 
-    src/Label.cpp 
-    src/Layout.cpp
-    src/LayoutEvent.cpp 
-    src/LinkLabel.cpp 
-    src/ListBox.cpp
-    src/ListColumn.cpp 
-    src/ListItem.cpp 
-    src/ListView.cpp 
-    src/Mdi.cpp
-    src/Menu.cpp 
-    src/MenuItemEvent.cpp 
-    src/Message.cpp 
-    src/MouseEvent.cpp
-    src/MsgBox.cpp 
-    src/Mutex.cpp 
-    src/PaintEvent.cpp 
-    src/Pen.cpp
-    src/Point.cpp 
-    src/PreferredSizeEvent.cpp 
-    src/ProgressBar.cpp
-    src/Property.cpp 
-    src/RadioButton.cpp 
-    src/ReBar.cpp 
-    src/Rect.cpp
-    src/Referenceable.cpp 
-    src/Region.cpp 
-    src/ResizeEvent.cpp
-    src/ResourceId.cpp 
-    src/RichEdit.cpp 
-    src/Scintilla.cpp
-    src/ScrollEvent.cpp 
-    src/ScrollInfo.cpp 
-    src/ScrollableWidget.cpp
-    src/Separator.cpp 
-    src/SetCursorEvent.cpp 
-    src/Size.cpp 
-    src/Slider.cpp
-    src/SpinButton.cpp 
-    src/Spinner.cpp 
-    src/SplitBar.cpp 
-    src/StatusBar.cpp
-    src/String.cpp 
-    src/Style.cpp 
-    src/Styles.cpp 
-    src/System.cpp 
-    src/Tab.cpp
-    src/TextEdit.cpp 
-    src/Thread.cpp 
-    src/TimePoint.cpp 
-    src/Timer.cpp
-    src/ToggleButton.cpp 
-    src/ToolBar.cpp 
-    src/TreeNode.cpp 
-    src/TreeView.cpp
-    src/TreeViewEvent.cpp 
-    src/Vaca.cpp 
-    src/Widget.cpp 
-    src/WidgetClass.cpp)
+    vaca/Anchor.cpp
+    vaca/AnchorLayout.cpp
+    vaca/Application.cpp
+    vaca/BandedDockArea.cpp
+    vaca/BasicDockArea.cpp
+    vaca/Bix.cpp
+    vaca/BoxConstraint.cpp
+    vaca/BoxLayout.cpp
+    vaca/Brush.cpp
+    vaca/Button.cpp
+    vaca/ButtonBase.cpp
+    vaca/CancelableEvent.cpp
+    vaca/CheckBox.cpp
+    vaca/ClientLayout.cpp
+    vaca/Clipboard.cpp
+    vaca/CloseEvent.cpp
+    vaca/Color.cpp
+    vaca/ColorDialog.cpp
+    vaca/ComboBox.cpp
+    vaca/Command.cpp
+    vaca/CommandEvent.cpp
+    vaca/CommonDialog.cpp
+    vaca/Component.cpp
+    vaca/ConditionVariable.cpp
+    vaca/Constraint.cpp
+    vaca/ConsumableEvent.cpp
+    vaca/Cursor.cpp
+    vaca/CustomButton.cpp
+    vaca/CustomLabel.cpp
+    vaca/Debug.cpp
+    vaca/Dialog.cpp
+    vaca/DockArea.cpp
+    vaca/DockBar.cpp
+    vaca/DockFrame.cpp
+    vaca/DropFilesEvent.cpp
+    vaca/Event.cpp
+    vaca/Exception.cpp
+    vaca/FileDialog.cpp
+    vaca/FindFiles.cpp
+    vaca/FindTextDialog.cpp
+    vaca/FocusEvent.cpp
+    vaca/Font.cpp
+    vaca/FontDialog.cpp
+    vaca/Frame.cpp
+    vaca/Graphics.cpp
+    vaca/GraphicsPath.cpp
+    vaca/GroupBox.cpp
+    vaca/HttpRequest.cpp
+    vaca/Icon.cpp
+    vaca/Image.cpp
+    vaca/ImageList.cpp
+    vaca/KeyEvent.cpp
+    vaca/Keys.cpp
+    vaca/Label.cpp
+    vaca/Layout.cpp
+    vaca/LayoutEvent.cpp
+    vaca/LinkLabel.cpp
+    vaca/ListBox.cpp
+    vaca/ListColumn.cpp
+    vaca/ListItem.cpp
+    vaca/ListView.cpp
+    vaca/Mdi.cpp
+    vaca/Menu.cpp
+    vaca/MenuItemEvent.cpp
+    vaca/Message.cpp
+    vaca/MouseEvent.cpp
+    vaca/MsgBox.cpp
+    vaca/Mutex.cpp
+    vaca/PaintEvent.cpp
+    vaca/Pen.cpp
+    vaca/Point.cpp
+    vaca/PreferredSizeEvent.cpp
+    vaca/ProgressBar.cpp
+    vaca/Property.cpp
+    vaca/RadioButton.cpp
+    vaca/ReBar.cpp
+    vaca/Rect.cpp
+    vaca/Referenceable.cpp
+    vaca/Region.cpp
+    vaca/ResizeEvent.cpp
+    vaca/ResourceId.cpp
+    vaca/RichEdit.cpp
+    vaca/Scintilla.cpp
+    vaca/ScrollEvent.cpp
+    vaca/ScrollInfo.cpp
+    vaca/ScrollableWidget.cpp
+    vaca/Separator.cpp
+    vaca/SetCursorEvent.cpp
+    vaca/Size.cpp
+    vaca/Slider.cpp
+    vaca/SpinButton.cpp
+    vaca/Spinner.cpp
+    vaca/SplitBar.cpp
+    vaca/StatusBar.cpp
+    vaca/String.cpp
+    vaca/Style.cpp
+    vaca/Styles.cpp
+    vaca/System.cpp
+    vaca/Tab.cpp
+    vaca/TextEdit.cpp
+    vaca/Thread.cpp
+    vaca/TimePoint.cpp
+    vaca/Timer.cpp
+    vaca/ToggleButton.cpp
+    vaca/ToolBar.cpp
+    vaca/TreeNode.cpp
+    vaca/TreeView.cpp
+    vaca/TreeViewEvent.cpp
+    vaca/Vaca.cpp
+    vaca/Widget.cpp
+    vaca/WidgetClass.cpp)
 
 if(VACA_WINDOWS)
-  set(VACA_SOURCES ${VACA_SOURCES} src/win32/win32.cpp)
+  set(VACA_SOURCES ${VACA_SOURCES} vaca/win32/win32.cpp)
 endif(VACA_WINDOWS)
 
 add_library(Vaca ${VACA_SOURCES})
@@ -204,8 +202,8 @@ endif(BUILD_SHARED_LIBS)
 ########################################
 # Installation commands
 
-FILE(GLOB vaca_h_files "${CMAKE_CURRENT_SOURCE_DIR}/include/Vaca/*.h")
-INSTALL(FILES ${vaca_h_files} DESTINATION include/Vaca)
+FILE(GLOB vaca_h_files "${CMAKE_CURRENT_SOURCE_DIR}/vaca/*.h")
+INSTALL(FILES ${vaca_h_files} DESTINATION include/vaca)
 
 INSTALL(TARGETS Vaca
   RUNTIME DESTINATION bin

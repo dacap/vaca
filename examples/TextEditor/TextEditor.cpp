@@ -6,7 +6,7 @@
 
 #include <Vaca/Vaca.h>
 #include <cstdio>
-#include "Scintilla.h"
+#include "scintilla/Scintilla.h"
 #include "resource.h"
 
 using namespace std;

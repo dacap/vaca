@@ -1,6 +1,8 @@
 # Vaca - Visual Application Components Abstraction
 # Copyright (c) 2005-2010 David Capello, Jie Zhang
-# All rights reserved
+#
+# This file is distributed under the terms of the MIT license,
+# please read LICENSE.txt for more information.
 
 cmake_minimum_required(VERSION 2.6)
 

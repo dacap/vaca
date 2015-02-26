@@ -7,10 +7,10 @@
 #ifndef VACA_CONSTRAINT_H
 #define VACA_CONSTRAINT_H
 
-#include "Vaca/base.h"
-#include "Vaca/Referenceable.h"
+#include "vaca/base.h"
+#include "vaca/Referenceable.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    Abstract class to represent a constraint. Constraints are useful to
@@ -34,6 +34,6 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_CONSTRAINT_H

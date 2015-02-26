@@ -7,9 +7,9 @@
 #ifndef VACA_SCROLLINFO_H
 #define VACA_SCROLLINFO_H
 
-#include "Vaca/base.h"
+#include "vaca/base.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    Auxiliary structure to get and set scroll information.
@@ -40,6 +40,6 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_SCROLLINFO_H

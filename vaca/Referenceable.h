@@ -7,10 +7,10 @@
 #ifndef VACA_REFERENCEABLE_H
 #define VACA_REFERENCEABLE_H
 
-#include "Vaca/base.h"
-#include "Vaca/NonCopyable.h"
+#include "vaca/base.h"
+#include "vaca/NonCopyable.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    Class that counts references and can be wrapped by a SharedPtr.
@@ -38,6 +38,6 @@ private:
   void destroy();
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_REFERENCEABLE_H

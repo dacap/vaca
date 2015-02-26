@@ -4,10 +4,10 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include <Vaca/Vaca.h>
+#include <vaca/vaca.h>
 #include "../resource.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 class ColoredButton : public CustomButton
 {
@@ -17,7 +17,7 @@ public:
     : CustomButton(text, parent)
   {
     setBgColor(color);
- 
+
     // use double-buffering technique for this Widget when onPaint()
     // event is received
     setDoubleBuffered(true);
@@ -65,7 +65,7 @@ public:
     Point point = bounds.getCenter() - Point(g.measureString(getText())/2);
     g.drawString(getText(), Color::Black, selected ? point+1: point);
   }
-  
+
 };
 
 class MainFrame : public Frame

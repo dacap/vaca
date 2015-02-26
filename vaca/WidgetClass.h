@@ -7,9 +7,9 @@
 #ifndef VACA_WIDGETCLASS_H
 #define VACA_WIDGETCLASS_H
 
-#include "Vaca/base.h"
+#include "vaca/base.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    Represents the name of a WidgetClass.
@@ -98,6 +98,6 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_WIDGETCLASS_H

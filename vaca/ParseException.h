@@ -7,9 +7,9 @@
 #ifndef VACA_PARSEEXCEPTION_H
 #define VACA_PARSEEXCEPTION_H
 
-#include "Vaca/Exception.h"
+#include "vaca/Exception.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    This exception is thrown when a routine that parse a string has
@@ -97,6 +97,6 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_PARSEEXCEPTION_H

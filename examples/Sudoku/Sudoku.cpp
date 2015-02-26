@@ -7,11 +7,11 @@
 #include <algorithm>
 #include <time.h>
 
-#include <Vaca/Vaca.h>
+#include <vaca/vaca.h>
 #include "grid.h"
 #include "resource.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 enum {
   ID_GAME_NEW = 1000,
@@ -174,9 +174,9 @@ public:
     g.setFont(getFont());
     return g.measureString(L" ").h;
   }
-  
+
   Signal0<void> Enter;
-  
+
 protected:
 
   virtual void onKeyDown(KeyEvent& ev)
@@ -222,7 +222,7 @@ public:	// MSVC needs it to be public because grid<cell> needs to access to it
     }
   };
 
-private:  
+private:
   ////////////////////////////////////////
   // a predicates and functors
 
@@ -432,11 +432,11 @@ protected:
 	}
       }
     }
-	
+
     // draw horizontal and vertical lines to split 3x3 regions and cells
     Pen blackPen(Color::Black);
     Pen grayPen(Color::Gray);
-    
+
     for (int i=0; i<=2; i++) {
       if (i > 0) {
 	g.drawRect(blackPen, 0, i*rc.h/3, rc.w, 2);
@@ -469,7 +469,7 @@ protected:
 
     Frame::onMouseMove(ev);
   }
-  
+
   // if the mouse leave the client area, remove the highlight
   virtual void onMouseLeave(MouseEvent& ev)
   {
@@ -540,7 +540,7 @@ private:
     menuBar->add(helpMenu);
     return menuBar;
   }
-  
+
   //////////////////////////////////////////////////////////////////////
   // signal bindings
 
@@ -751,12 +751,12 @@ private:
     updateWarnings();
     invalidate(true);
   }
-  
+
   int getGivenCount()
   {
     return std::count_if(m_puzzle.begin(), m_puzzle.end(), if_given_is_true());
   }
-  
+
   // put a digit in its 3x3 box
   void fillBoxWithDigit(int box, int digit)
   {
@@ -794,7 +794,7 @@ private:
       fixCellCollisions(bestCell);
     }
   }
-  
+
   int countDigitCollisionsInRowAndColumn(grid_iterator it, int digit)
   {
     int count =

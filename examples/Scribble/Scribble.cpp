@@ -4,10 +4,10 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include <Vaca/Vaca.h>
+#include <vaca/vaca.h>
 #include "../resource.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 class Scribble : public Widget
 {
@@ -70,7 +70,7 @@ protected:
       for (int c=0; c<3; ++c)
 	m_point[c] = ev.getPoint();
 
-      // with right mouse button we erase 
+      // with right mouse button we erase
       m_erasing = ev.getButton() == MouseButton::Right;
     }
   }
@@ -135,14 +135,14 @@ class MainFrame : public Frame
   Scribble m_scrible;
 
 public:
-  
+
   MainFrame()
     : Frame(L"Scribble")
     , m_scrible(this)
   {
     setLayout(new ClientLayout);
   }
-  
+
 };
 
 //////////////////////////////////////////////////////////////////////

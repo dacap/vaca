@@ -7,14 +7,14 @@
 #ifndef VACA_SYSTEM_H
 #define VACA_SYSTEM_H
 
-#include "Vaca/base.h"
-#include "Vaca/Rect.h"
-#include "Vaca/Keys.h"
+#include "vaca/base.h"
+#include "vaca/Rect.h"
+#include "vaca/Keys.h"
 
 #include <vector>
 #include <shlobj.h>
 
-namespace Vaca {
+namespace vaca {
 
 /**
    Class to access to operating system information.
@@ -54,6 +54,6 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_SYSTEM_H

@@ -4,10 +4,10 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/KeyEvent.h"
-#include "Vaca/Widget.h"
+#include "vaca/KeyEvent.h"
+#include "vaca/Widget.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 KeyEvent::KeyEvent(Widget* source, Keys::Type keys, Char charCode)
   : ConsumableEvent(source)

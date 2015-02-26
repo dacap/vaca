@@ -4,10 +4,10 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/DropFilesEvent.h"
-#include "Vaca/Widget.h"
+#include "vaca/DropFilesEvent.h"
+#include "vaca/Widget.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 /**
    Creates the event.

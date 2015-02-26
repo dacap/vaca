@@ -7,9 +7,9 @@
 #ifndef VACA_GROUPBOX_H
 #define VACA_GROUPBOX_H
 
-#include "Vaca/Widget.h"
+#include "vaca/Widget.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    An edge (with a label optionally) that can be used to group
@@ -38,6 +38,6 @@ protected:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_GROUPBOX_H

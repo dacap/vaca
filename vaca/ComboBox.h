@@ -7,12 +7,12 @@
 #ifndef VACA_COMBOBOX_H
 #define VACA_COMBOBOX_H
 
-#include "Vaca/base.h"
-#include "Vaca/Widget.h"
+#include "vaca/base.h"
+#include "vaca/Widget.h"
 
 #include <vector>
 
-namespace Vaca {
+namespace vaca {
 
 /**
    Combo box control. Widget to select an option from a drop down
@@ -72,6 +72,6 @@ private:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_COMBOBOX_H

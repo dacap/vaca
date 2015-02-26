@@ -6,10 +6,10 @@
 
 #include <time.h>
 
-#include <Vaca/Vaca.h>
+#include <vaca/vaca.h>
 #include "resource.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 class MainFrame : public Frame
 {
@@ -26,7 +26,7 @@ public:
     , m_mouseImage(Size(64, 64))
   {
     setDoubleBuffered(true);
-    
+
     // set the Frame's size to the m_vacaImage's size (plus the
     // non-client size needed by the Frame's borders)
     setSize(getNonClientSize() + m_vacaImage.getSize());

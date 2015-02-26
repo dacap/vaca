@@ -7,11 +7,11 @@
 #ifndef VACA_SETCURSOREVENT_H
 #define VACA_SETCURSOREVENT_H
 
-#include "Vaca/base.h"
-#include "Vaca/MouseEvent.h"
-#include "Vaca/WidgetHit.h"
+#include "vaca/base.h"
+#include "vaca/MouseEvent.h"
+#include "vaca/WidgetHit.h"
 
-namespace Vaca {
+namespace vaca {
 
 class VACA_DLL SetCursorEvent : public MouseEvent
 {
@@ -28,6 +28,6 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_SETCURSOREVENT_H

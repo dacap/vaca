@@ -7,14 +7,14 @@
 #ifndef VACA_LISTVIEW_H
 #define VACA_LISTVIEW_H
 
-#include "Vaca/base.h"
-#include "Vaca/Widget.h"
-#include "Vaca/CancelableEvent.h"
-#include "Vaca/ImageList.h"
+#include "vaca/base.h"
+#include "vaca/Widget.h"
+#include "vaca/CancelableEvent.h"
+#include "vaca/ImageList.h"
 
 #include <vector>
 
-namespace Vaca {
+namespace vaca {
 
 // ======================================================================
 
@@ -157,6 +157,6 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_LISTVIEW_H

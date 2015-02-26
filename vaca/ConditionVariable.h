@@ -7,11 +7,11 @@
 #ifndef VACA_CONDITIONVARIABLE_H
 #define VACA_CONDITIONVARIABLE_H
 
-#include "Vaca/base.h"
-#include "Vaca/NonCopyable.h"
-#include "Vaca/Exception.h"
+#include "vaca/base.h"
+#include "vaca/NonCopyable.h"
+#include "vaca/Exception.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    This exception is thrown when a ConditionVariable couldn't be created.
@@ -64,6 +64,6 @@ private:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_CONDITIONVARIABLE_H

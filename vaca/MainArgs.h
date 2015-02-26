@@ -7,9 +7,9 @@
 #ifndef VACA_MAINARGS_H
 #define VACA_MAINARGS_H
 
-#include "Vaca/base.h"
+#include "vaca/base.h"
 
-namespace Vaca {
+namespace vaca {
 
   namespace details {
     class VACA_DLL MainArgs
@@ -19,6 +19,6 @@ namespace Vaca {
     };
   }
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_MAINARGS_H

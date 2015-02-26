@@ -7,12 +7,12 @@
 #ifndef VACA_TAB_H
 #define VACA_TAB_H
 
-#include "Vaca/Widget.h"
-#include "Vaca/Font.h"
-#include "Vaca/WidgetClass.h"
-#include "Vaca/Register.h"
+#include "vaca/Widget.h"
+#include "vaca/Font.h"
+#include "vaca/WidgetClass.h"
+#include "vaca/Register.h"
 
-namespace Vaca {
+namespace vaca {
 
 // ======================================================================
 // TabBase
@@ -149,6 +149,6 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_TAB_H

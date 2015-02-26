@@ -7,14 +7,14 @@
 #ifndef VACA_IMAGELIST_H
 #define VACA_IMAGELIST_H
 
-#include "Vaca/base.h"
-#include "Vaca/Image.h"
-#include "Vaca/Color.h"
-#include "Vaca/ResourceId.h"
-#include "Vaca/GdiObject.h"
-#include "Vaca/SharedPtr.h"
+#include "vaca/base.h"
+#include "vaca/Image.h"
+#include "vaca/Color.h"
+#include "vaca/ResourceId.h"
+#include "vaca/GdiObject.h"
+#include "vaca/SharedPtr.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    Used to destroy the HIMAGELIST handle from GdiObject.
@@ -70,6 +70,6 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_IMAGELIST_H

@@ -7,9 +7,9 @@
 #ifndef VACA_BUTTONBASE_H
 #define VACA_BUTTONBASE_H
 
-#include "Vaca/Widget.h"
+#include "vaca/Widget.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    Base for every button.
@@ -43,6 +43,6 @@ protected:
   virtual bool onReflectedCommand(int id, int code, LRESULT& lResult);
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif

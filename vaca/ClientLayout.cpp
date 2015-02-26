@@ -4,10 +4,10 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/ClientLayout.h"
-#include "Vaca/Widget.h"
+#include "vaca/ClientLayout.h"
+#include "vaca/Widget.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 ClientLayout::ClientLayout()
 {

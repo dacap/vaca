@@ -7,11 +7,11 @@
 #ifndef VACA_APPLICATION_H
 #define VACA_APPLICATION_H
 
-#include "Vaca/base.h"
-#include "Vaca/Thread.h"
+#include "vaca/base.h"
+#include "vaca/Thread.h"
 #include <vector>
 
-namespace Vaca {
+namespace vaca {
 
   // Forward declarations
   namespace details { class MainArgs; }
@@ -100,6 +100,6 @@ private:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_APPLICATION_H

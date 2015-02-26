@@ -1,12 +1,12 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-#include "Vaca/Thread.h"
-#include "Vaca/Mutex.h"
-#include "Vaca/ScopedLock.h"
+#include "vaca/Thread.h"
+#include "vaca/Mutex.h"
+#include "vaca/ScopedLock.h"
 
 using namespace std;
-using namespace Vaca;
+using namespace vaca;
 
 namespace test1 {
 

@@ -4,10 +4,10 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include <Vaca/Vaca.h>
+#include <vaca/vaca.h>
 #include "resource.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 // the eye-dropper widget
 class EyeDropper : public Widget
@@ -15,7 +15,7 @@ class EyeDropper : public Widget
   Font m_font;
   Cursor m_cursor;
   bool m_isHexFormat;
-  
+
 public:
 
   EyeDropper(Widget* parent)
@@ -45,7 +45,7 @@ protected:
     Color bg = getBgColor();
     Pen blackPen(Color::Black);
     Pen whitePen(Color::White);
-    
+
     g.drawRect(blackPen, rc);
 
     rc.shrink(1);

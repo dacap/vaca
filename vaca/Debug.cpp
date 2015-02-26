@@ -4,16 +4,16 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/Debug.h"
-#include "Vaca/Mutex.h"
-#include "Vaca/ScopedLock.h"
-#include "Vaca/System.h"
-#include "Vaca/Thread.h"
+#include "vaca/Debug.h"
+#include "vaca/Mutex.h"
+#include "vaca/ScopedLock.h"
+#include "vaca/System.h"
+#include "vaca/Thread.h"
 
 #include <cstdio>
 
 using namespace std;
-using namespace Vaca;
+using namespace vaca;
 
 #ifndef NDEBUG
 struct Debug;
@@ -37,7 +37,7 @@ struct Debug {
 };
 #endif
 
-void Vaca::details::trace(const char* filename, size_t line, const char* fmt, ...)
+void vaca::details::trace(const char* filename, size_t line, const char* fmt, ...)
 {
 #ifndef NDEBUG
   if (closed) { return; }
@@ -57,7 +57,7 @@ void Vaca::details::trace(const char* filename, size_t line, const char* fmt, ..
 #endif
 }
 
-void Vaca::details::closeLogFile()
+void vaca::details::closeLogFile()
 {
 #ifndef NDEBUG
   delete dbg;

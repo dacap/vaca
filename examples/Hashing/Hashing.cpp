@@ -4,7 +4,7 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include <Vaca/Vaca.h>
+#include <vaca/vaca.h>
 #include "../resource.h"
 
 #include "md5.h"
@@ -13,7 +13,7 @@
 #include <cstdio>
 
 using namespace std;
-using namespace Vaca;
+using namespace vaca;
 
 //////////////////////////////////////////////////////////////////////
 // MD5
@@ -157,7 +157,7 @@ private:
       m_shaEdit.setText(item->getText(2));
     }
   }
-  
+
 };
 
 //////////////////////////////////////////////////////////////////////

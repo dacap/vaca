@@ -7,15 +7,15 @@
 #ifndef VACA_FRAME_H
 #define VACA_FRAME_H
 
-#include "Vaca/base.h"
-#include "Vaca/Widget.h"
-#include "Vaca/WidgetClass.h"
-#include "Vaca/Register.h"
-#include "Vaca/Icon.h"
+#include "vaca/base.h"
+#include "vaca/Widget.h"
+#include "vaca/WidgetClass.h"
+#include "vaca/Register.h"
+#include "vaca/Icon.h"
 
 #include <vector>
 
-namespace Vaca {
+namespace vaca {
 
 /**
    Represents the Win32 class used by Frame.
@@ -99,6 +99,6 @@ private:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_FRAME_H

@@ -7,10 +7,10 @@
 #ifndef VACA_RICHEDIT_H
 #define VACA_RICHEDIT_H
 
-#include "Vaca/base.h"
-#include "Vaca/Widget.h"
+#include "vaca/base.h"
+#include "vaca/Widget.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    Loads the RichEdit DLL.
@@ -73,6 +73,6 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_TEXTEDIT_H

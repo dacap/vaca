@@ -4,16 +4,16 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/Bix.h"
-#include "Vaca/Point.h"
-#include "Vaca/ParseException.h"
-#include "Vaca/Widget.h"
+#include "vaca/Bix.h"
+#include "vaca/Point.h"
+#include "vaca/ParseException.h"
+#include "vaca/Widget.h"
 
 #include <stack>
 #include <cassert>
 #include <algorithm>
 
-using namespace Vaca;
+using namespace vaca;
 
 #define MAIN_BIX_DEFAULT_BORDER		4
 #define BIX_DEFAULT_BORDER		0

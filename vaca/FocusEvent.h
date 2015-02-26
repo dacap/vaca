@@ -7,10 +7,10 @@
 #ifndef VACA_FOCUSEVENT_H
 #define VACA_FOCUSEVENT_H
 
-#include "Vaca/base.h"
-#include "Vaca/Event.h"
+#include "vaca/base.h"
+#include "vaca/Event.h"
 
-namespace Vaca {
+namespace vaca {
 
 class VACA_DLL FocusEvent : public Event
 {
@@ -27,6 +27,6 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_FOCUSEVENT_H

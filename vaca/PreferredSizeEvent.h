@@ -7,11 +7,11 @@
 #ifndef VACA_PREFERREDSIZEEVENT_H
 #define VACA_PREFERREDSIZEEVENT_H
 
-#include "Vaca/base.h"
-#include "Vaca/Event.h"
-#include "Vaca/Size.h"
+#include "vaca/base.h"
+#include "vaca/Event.h"
+#include "vaca/Size.h"
 
-namespace Vaca {
+namespace vaca {
 
 class VACA_DLL PreferredSizeEvent : public Event
 {
@@ -33,6 +33,6 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_PREFERREDSIZEEVENT_H

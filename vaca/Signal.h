@@ -7,12 +7,12 @@
 #ifndef VACA_SIGNAL_H
 #define VACA_SIGNAL_H
 
-#include "Vaca/base.h"
-#include "Vaca/Slot.h"
+#include "vaca/base.h"
+#include "vaca/Slot.h"
 
 #include <vector>
 
-namespace Vaca {
+namespace vaca {
 
 /**
    @defgroup signal_group Signal Classes
@@ -477,6 +477,6 @@ public:
 
 /** @} */
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_SIGNAL_H

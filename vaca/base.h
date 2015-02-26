@@ -59,14 +59,14 @@
       main(int argc, char* argv[])
 #endif
 
-#include "Vaca/Enum.h"
+#include "vaca/Enum.h"
 
 // memory leaks
 #ifdef MEMORY_LEAK_DETECTOR
   #include "debug_new.h"
 #endif
 
-namespace Vaca {
+namespace vaca {
 
 #define VACA_VERSION     0
 #define VACA_SUB_VERSION 0
@@ -599,6 +599,6 @@ typedef SharedPtr<Widget> WidgetPtr;
 
 /** @} */
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_BASE_H

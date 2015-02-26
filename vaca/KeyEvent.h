@@ -7,11 +7,11 @@
 #ifndef VACA_KEYEVENT_H
 #define VACA_KEYEVENT_H
 
-#include "Vaca/base.h"
-#include "Vaca/ConsumableEvent.h"
-#include "Vaca/Keys.h"
+#include "vaca/base.h"
+#include "vaca/ConsumableEvent.h"
+#include "vaca/Keys.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    Data for an event that comes from the keyboard.
@@ -47,6 +47,6 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_KEYEVENT_H

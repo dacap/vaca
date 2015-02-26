@@ -4,13 +4,13 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/HttpRequest.h"
-#include "Vaca/String.h"
+#include "vaca/HttpRequest.h"
+#include "vaca/String.h"
 
 #include <memory>
 #include <cassert>
 
-using namespace Vaca;
+using namespace vaca;
 using namespace std;
 
 // ======================================================================

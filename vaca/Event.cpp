@@ -4,9 +4,9 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/Event.h"
+#include "vaca/Event.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 /**
    Creates a new event specifying that it was generated

@@ -7,13 +7,13 @@
 #ifndef VACA_THREAD_H
 #define VACA_THREAD_H
 
-#include "Vaca/base.h"
-#include "Vaca/Exception.h"
-#include "Vaca/Message.h"
-#include "Vaca/NonCopyable.h"
-#include "Vaca/Slot.h"
+#include "vaca/base.h"
+#include "vaca/Exception.h"
+#include "vaca/Message.h"
+#include "vaca/NonCopyable.h"
+#include "vaca/Slot.h"
 
-namespace Vaca {
+namespace vaca {
 
 // ======================================================================
 
@@ -153,6 +153,6 @@ namespace details {
   VACA_DLL void removeAllThreadData();
 }
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_THREAD_H

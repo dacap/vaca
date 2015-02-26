@@ -4,18 +4,18 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/Application.h"
-#include "Vaca/Debug.h"
-#include "Vaca/Frame.h"
-#include "Vaca/Timer.h"
-#include "Vaca/Graphics.h"
-#include "Vaca/Font.h"
+#include "vaca/Application.h"
+#include "vaca/Debug.h"
+#include "vaca/Frame.h"
+#include "vaca/Timer.h"
+#include "vaca/Graphics.h"
+#include "vaca/Font.h"
 
 #ifndef NDEBUG
-#include "Vaca/System.h"
+#include "vaca/System.h"
 #endif
 
-using namespace Vaca;
+using namespace vaca;
 
 HINSTANCE Application::m_HINSTANCE = NULL;
 Application* Application::m_instance = NULL;

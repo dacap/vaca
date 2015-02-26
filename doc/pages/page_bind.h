@@ -1,4 +1,4 @@
-namespace Vaca {
+namespace vaca {
 
 /**
 
@@ -25,7 +25,7 @@ with any parameters.
 For example, the following code:
 @code
 #include <iostream>
-#include "Vaca/Bind.h"
+#include "vaca/Bind.h"
 
 int func(int a, int b)
 {
@@ -34,7 +34,7 @@ int func(int a, int b)
 
 int main()
 {
-  int a = Vaca::Bind<int>(&func, 1, 2)(2.3, "Hello", 200);
+  int a = vaca::Bind<int>(&func, 1, 2)(2.3, "Hello", 200);
   std::cout << a << std::endl;
   return 0;
 }
@@ -56,15 +56,15 @@ Why? There are two things in the example:
 
 Is the same to call BindAdapter::operator() without parameters or
 with any kind and number of parameters, they will be ignored anyway.
-The BindAdapter object (created with @link Vaca::Bind Bind@endlink function)
+The BindAdapter object (created with @link vaca::Bind Bind@endlink function)
 always will remember the arguments specified in its constructor, and these arguments
 will be used in each operator() call.
 
 The following example shows you how to create an adapter directly (without
-the help of @link Vaca::Bind Bind@endlink function):
+the help of @link vaca::Bind Bind@endlink function):
 @code
 #include <iostream>
-#include "Vaca/Bind.h"
+#include "vaca/Bind.h"
 
 int func(int a, int b)
 {
@@ -73,7 +73,7 @@ int func(int a, int b)
 
 int main()
 {
-  Vaca::BindAdapter2_fun<int, int(*)(int,int), int, int>
+  vaca::BindAdapter2_fun<int, int(*)(int,int), int, int>
     adapter(&func, 1, 2);
 
   std::cout << adapter() << std::endl;

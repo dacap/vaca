@@ -4,17 +4,17 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/Tab.h"
-#include "Vaca/Font.h"
-#include "Vaca/Point.h"
-#include "Vaca/Debug.h"
-#include "Vaca/Event.h"
-#include "Vaca/ClientLayout.h"
-#include "Vaca/PreferredSizeEvent.h"
-#include "Vaca/LayoutEvent.h"
-#include "Vaca/win32.h"
+#include "vaca/Tab.h"
+#include "vaca/Font.h"
+#include "vaca/Point.h"
+#include "vaca/Debug.h"
+#include "vaca/Event.h"
+#include "vaca/ClientLayout.h"
+#include "vaca/PreferredSizeEvent.h"
+#include "vaca/LayoutEvent.h"
+#include "vaca/win32.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 // ======================================================================
 // TabBase

@@ -1,9 +1,9 @@
 #include <gtest/gtest.h>
 #include <climits>
 
-#include "Vaca/String.h"
+#include "vaca/String.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 TEST(String, Basic)
 {

@@ -4,9 +4,9 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/CommandEvent.h"
+#include "vaca/CommandEvent.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 CommandEvent::CommandEvent(Component* source, CommandId commandId)
   : ConsumableEvent(source)

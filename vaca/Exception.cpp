@@ -4,13 +4,13 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/Exception.h"
-#include "Vaca/String.h"
+#include "vaca/Exception.h"
+#include "vaca/String.h"
 
 #include <lmerr.h>
 #include <wininet.h>
 
-using namespace Vaca;
+using namespace vaca;
 
 /**
    Creates generic exception with an empty error message.

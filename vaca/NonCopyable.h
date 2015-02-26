@@ -7,9 +7,9 @@
 #ifndef VACA_NONCOPYABLE_H
 #define VACA_NONCOPYABLE_H
 
-#include "Vaca/base.h"
+#include "vaca/base.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    Class which can't be copied.
@@ -44,6 +44,6 @@ private:
   NonCopyable& operator=(const NonCopyable&);
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_NONCOPYABLE_H

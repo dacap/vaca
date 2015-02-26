@@ -7,9 +7,9 @@
 #ifndef VACA_POINT_H
 #define VACA_POINT_H
 
-#include "Vaca/base.h"
+#include "vaca/base.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    A 2D coordinate in the screen or client area of a widget.
@@ -45,6 +45,6 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_POINT_H

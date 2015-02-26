@@ -4,16 +4,16 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include <Vaca/Vaca.h>
+#include <vaca/vaca.h>
 #include "../resource.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 class TimerViewer : public Widget
 {
   Timer m_timer;
   bool m_on;
-  
+
 public:
 
   TimerViewer(int msecs, Color color, Widget* parent)
@@ -52,7 +52,7 @@ private:
     m_on = !m_on;
     invalidate(true);
   }
-   
+
 
 };
 

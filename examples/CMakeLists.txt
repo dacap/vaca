@@ -55,8 +55,7 @@ function(add_vaca_example name)
     COMPILE_FLAGS "${common_flags}")
 
   # Dependencies with libraries
-  target_link_libraries(${name} Vaca)
-  target_link_libraries(${name} ${win32_libs})
+  target_link_libraries(${name} vaca ${win32_libs})
 
   # Custom command to embed our manifest file with MSVC compiler
   if(THEMES AND MSVC)

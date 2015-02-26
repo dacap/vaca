@@ -6,16 +6,16 @@
 
 #if 0
 
-#include "Vaca/BandedDockArea.h"
-#include "Vaca/DockBar.h"
-#include "Vaca/Frame.h"
-#include "Vaca/Point.h"
-#include "Vaca/Debug.h"
-#include "Vaca/System.h"
-#include "Vaca/Pen.h"
-#include "Vaca/PreferredSizeEvent.h"
+#include "vaca/BandedDockArea.h"
+#include "vaca/DockBar.h"
+#include "vaca/Frame.h"
+#include "vaca/Point.h"
+#include "vaca/Debug.h"
+#include "vaca/System.h"
+#include "vaca/Pen.h"
+#include "vaca/PreferredSizeEvent.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 // Information about the docked position of the DockBar in a BandedDockArea.
 class BandedDockInfo : public DockInfo

@@ -4,14 +4,14 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/ButtonBase.h"
-#include "Vaca/Debug.h"
-#include "Vaca/Event.h"
-#include "Vaca/System.h"
-#include "Vaca/WidgetClass.h"
-#include "Vaca/PreferredSizeEvent.h"
+#include "vaca/ButtonBase.h"
+#include "vaca/Debug.h"
+#include "vaca/Event.h"
+#include "vaca/System.h"
+#include "vaca/WidgetClass.h"
+#include "vaca/PreferredSizeEvent.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 ButtonBase::ButtonBase(Widget* parent, Style style)
   : Widget(WidgetClassName(WC_BUTTON), parent, style)

@@ -7,9 +7,9 @@
 #ifndef DOCUMENT_H
 #define DOCUMENT_H
 
-#include <Vaca/Vaca.h>
+#include <vaca/vaca.h>
 
-using namespace Vaca;
+using namespace vaca;
 
 typedef String::size_type DocPos;
 
@@ -49,7 +49,7 @@ public:
   void remove(DocPos pos, DocPos n) {
     m_string.erase(pos, n);
   }
-  
+
 };
 
 typedef SharedPtr<Document> DocumentPtr;

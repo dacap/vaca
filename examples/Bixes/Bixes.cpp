@@ -5,10 +5,10 @@
 // please read LICENSE.txt for more information.
 
 #include <map>
-#include <Vaca/Vaca.h>
+#include <vaca/vaca.h>
 #include "resource.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 //////////////////////////////////////////////////////////////////////
 // an element of the model
@@ -65,7 +65,7 @@ public:
 
   bool isAncestor(Element* parent) const {
     Element* p = m_parent;
-    
+
     while (p != NULL) {
       if (p == parent)
 	return true;
@@ -77,12 +77,12 @@ public:
 
   void add(Element* e) {
     m_children.push_back(e);
-    e->m_parent = this; 
+    e->m_parent = this;
   }
 
   void remove(Element* e) {
     remove_from_container(m_children, e);
-    e->m_parent = NULL; 
+    e->m_parent = NULL;
   }
 
 };
@@ -168,7 +168,7 @@ public:
 class TreeView_Model : public TreeView
 {
   Model* m_model;
-    
+
 public:
 
   Signal1<void, Element*> ElementSelected;
@@ -273,7 +273,7 @@ private:
 
     return NULL;
   }
-  
+
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -432,7 +432,7 @@ private:
     else {
       Bix* parentBix = find_element(m_mapElemBix, parent);
       assert(parentBix);
-      
+
       if (flags == 0) {
 	TextEdit_Element* elementWidget = new TextEdit_Element(element, this);
 	elementWidget->ElementSelected.connect(&Widgets_Model::onElementSelected, this);
@@ -502,7 +502,7 @@ private:
 
     layout();
   }
-  
+
   void onAfterRemoveElement(Element* element, Element* parent)
   {
   }

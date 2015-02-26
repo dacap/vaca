@@ -7,10 +7,10 @@
 #ifndef VACA_PROPERTY_H
 #define VACA_PROPERTY_H
 
-#include "Vaca/base.h"
-#include "Vaca/Referenceable.h"
+#include "vaca/base.h"
+#include "vaca/Referenceable.h"
 
-namespace Vaca {
+namespace vaca {
 
 class VACA_DLL Property : public Referenceable
 {
@@ -23,6 +23,6 @@ public:
   String getName() const;
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_PROPERTY_H

@@ -7,14 +7,14 @@
 #ifndef VACA_IMAGE_H
 #define VACA_IMAGE_H
 
-#include "Vaca/base.h"
-#include "Vaca/ResourceId.h"
-#include "Vaca/Size.h"
-#include "Vaca/GdiObject.h"
-#include "Vaca/SharedPtr.h"
-#include "Vaca/ImagePixels.h"
+#include "vaca/base.h"
+#include "vaca/ResourceId.h"
+#include "vaca/Size.h"
+#include "vaca/GdiObject.h"
+#include "vaca/SharedPtr.h"
+#include "vaca/ImagePixels.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    Used to destroy the HBITMAP handle of a Image.
@@ -95,6 +95,6 @@ private:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_IMAGE_H

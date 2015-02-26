@@ -4,13 +4,13 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/Label.h"
-#include "Vaca/Font.h"
-#include "Vaca/Debug.h"
-#include "Vaca/WidgetClass.h"
-#include "Vaca/PreferredSizeEvent.h"
+#include "vaca/Label.h"
+#include "vaca/Font.h"
+#include "vaca/Debug.h"
+#include "vaca/WidgetClass.h"
+#include "vaca/PreferredSizeEvent.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 /**
    Creates a new Label widget.

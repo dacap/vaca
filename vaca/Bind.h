@@ -7,7 +7,7 @@
 #ifndef VACA_BIND_H
 #define VACA_BIND_H
 
-namespace Vaca {
+namespace vaca {
 
 /**
    @defgroup bind_group Bind Classes and Functions
@@ -613,6 +613,6 @@ RefWrapper<T> Ref(T& ref)
 
 /** @} */
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_BIND_H

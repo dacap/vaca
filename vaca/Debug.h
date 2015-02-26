@@ -7,11 +7,11 @@
 #ifndef VACA_DEBUG_H
 #define VACA_DEBUG_H
 
-#include "Vaca/base.h"
+#include "vaca/base.h"
 
 #include <cassert>
 
-namespace Vaca {
+namespace vaca {
 
 #ifdef NDEBUG
 #  ifdef __GNUC__
@@ -21,9 +21,9 @@ namespace Vaca {
 #  endif
 #else
 #  ifdef __GNUC__
-#    define VACA_TRACE(msg...) Vaca::details::trace(__FILE__, __LINE__, msg)
+#    define VACA_TRACE(msg...) vaca::details::trace(__FILE__, __LINE__, msg)
 #  else
-#    define VACA_TRACE         Vaca::details::make_trace(__FILE__, __LINE__)
+#    define VACA_TRACE         vaca::details::make_trace(__FILE__, __LINE__)
 #  endif
 #endif
 
@@ -47,7 +47,7 @@ struct trace_t {
     va_start(ap, fmt);
     vsprintf(buf, fmt, ap);
     va_end(ap);
-    Vaca::details::trace(filename, line, buf);
+    vaca::details::trace(filename, line, buf);
   }
 };
 inline trace_t make_trace(const char* filename, size_t line) {
@@ -60,6 +60,6 @@ inline trace_t make_trace(const char* filename, size_t line) {
 
 } // namespace details
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_DEBUG_H

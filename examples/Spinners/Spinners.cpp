@@ -4,10 +4,10 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include <Vaca/Vaca.h>
+#include <vaca/vaca.h>
 #include "../resource.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 class MainFrame : public Frame
 {
@@ -42,7 +42,7 @@ public:
   }
 
 protected:
-  
+
   void onSpinButtonChange(SpinButtonEvent& ev)
   {
     if (Spinner* spinner = dynamic_cast<Spinner*>(ev.getSource())) {

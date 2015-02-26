@@ -7,10 +7,10 @@
 #ifndef VACA_LABEL_H
 #define VACA_LABEL_H
 
-#include "Vaca/base.h"
-#include "Vaca/Widget.h"
+#include "vaca/base.h"
+#include "vaca/Widget.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    A static label of text. It's just an informative label. Remember to
@@ -52,6 +52,6 @@ protected:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_LABEL_H

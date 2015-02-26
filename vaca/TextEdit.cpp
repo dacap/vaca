@@ -4,13 +4,13 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/TextEdit.h"
-#include "Vaca/Event.h"
-#include "Vaca/System.h"
-#include "Vaca/WidgetClass.h"
-#include "Vaca/PreferredSizeEvent.h"
+#include "vaca/TextEdit.h"
+#include "vaca/Event.h"
+#include "vaca/System.h"
+#include "vaca/WidgetClass.h"
+#include "vaca/PreferredSizeEvent.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 TextEdit::TextEdit(const String& text, Widget* parent, Style style)
   : Widget(WidgetClassName(WC_EDIT), parent, style)

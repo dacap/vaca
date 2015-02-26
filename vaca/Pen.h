@@ -7,11 +7,11 @@
 #ifndef VACA_PEN_H
 #define VACA_PEN_H
 
-#include "Vaca/base.h"
-#include "Vaca/Enum.h"
-#include "Vaca/SharedPtr.h"
+#include "vaca/base.h"
+#include "vaca/Enum.h"
+#include "vaca/SharedPtr.h"
 
-namespace Vaca {
+namespace vaca {
 
 // ======================================================================
 
@@ -144,6 +144,6 @@ private:
   SharedPtr<PenImpl> m_impl;
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_PEN_H

@@ -7,9 +7,9 @@
 #ifndef VACA_SLOT_H
 #define VACA_SLOT_H
 
-#include "Vaca/base.h"
+#include "vaca/base.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    @defgroup slot_group Slot Classes
@@ -230,6 +230,6 @@ public:
 
 /** @} */
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_SLOT_H

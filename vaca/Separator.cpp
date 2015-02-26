@@ -4,11 +4,11 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/Separator.h"
-#include "Vaca/WidgetClass.h"
-#include "Vaca/PreferredSizeEvent.h"
+#include "vaca/Separator.h"
+#include "vaca/WidgetClass.h"
+#include "vaca/PreferredSizeEvent.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 Separator::Separator(Widget* parent, Style style)
   : Widget(WidgetClassName(WC_STATIC), parent, style)

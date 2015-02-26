@@ -4,11 +4,11 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/SetCursorEvent.h"
-#include "Vaca/Widget.h"
-#include "Vaca/Cursor.h"
+#include "vaca/SetCursorEvent.h"
+#include "vaca/Widget.h"
+#include "vaca/Cursor.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 SetCursorEvent::SetCursorEvent(Widget* source, Point point, WidgetHit hit)
   : MouseEvent(source, point, 0, 0, MouseButton::None)

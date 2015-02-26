@@ -4,10 +4,10 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/PreferredSizeEvent.h"
-#include "Vaca/Widget.h"
+#include "vaca/PreferredSizeEvent.h"
+#include "vaca/Widget.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 /**
    Event generated to calculate the preferred size of a widget.

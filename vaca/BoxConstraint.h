@@ -7,10 +7,10 @@
 #ifndef VACA_BOXCONSTRAINT_H
 #define VACA_BOXCONSTRAINT_H
 
-#include "Vaca/base.h"
-#include "Vaca/Constraint.h"
+#include "vaca/base.h"
+#include "vaca/Constraint.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    Defines a constraint for the BoxLayout. With BoxLayout a Widget can
@@ -35,6 +35,6 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_BOXCONSTRAINT_H

@@ -7,11 +7,11 @@
 #ifndef VACA_SCOPEDLOCK_H
 #define VACA_SCOPEDLOCK_H
 
-#include "Vaca/base.h"
-#include "Vaca/Mutex.h"
-#include "Vaca/NonCopyable.h"
+#include "vaca/base.h"
+#include "vaca/Mutex.h"
+#include "vaca/NonCopyable.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    An object to safely lock and unlock mutexes.
@@ -74,6 +74,6 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_SCOPEDLOCK_H

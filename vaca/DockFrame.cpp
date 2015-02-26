@@ -6,13 +6,13 @@
 
 #if 0
 
-#include "Vaca/DockFrame.h"
-#include "Vaca/DockBar.h"
-#include "Vaca/ClientLayout.h"
-#include "Vaca/Event.h"
-#include "Vaca/Debug.h"
+#include "vaca/DockFrame.h"
+#include "vaca/DockBar.h"
+#include "vaca/ClientLayout.h"
+#include "vaca/Event.h"
+#include "vaca/Debug.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 DockFrame::DockFrame(DockBar* dockBar, Widget* parent, Style style)
   : Frame(DockFrameClass::getClassName(), dockBar->getText(), parent, style)

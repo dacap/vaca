@@ -6,7 +6,7 @@
 
 #include <windows.h>
 
-void Vaca::details::MainArgs::setArgs(int, char**)
+void vaca::details::MainArgs::setArgs(int, char**)
 {
   // Convert the command-line to a vector of arguments using Win32 API
   std::vector<String> args;

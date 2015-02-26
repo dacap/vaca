@@ -4,10 +4,10 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/ScrollEvent.h"
-#include "Vaca/Widget.h"
+#include "vaca/ScrollEvent.h"
+#include "vaca/Widget.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 ScrollEvent::ScrollEvent(Widget* source, Orientation orien, ScrollRequest req, int pos)
   : Event(source)

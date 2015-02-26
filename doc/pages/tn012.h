@@ -1,4 +1,4 @@
-namespace Vaca {
+namespace vaca {
 
 /**
 

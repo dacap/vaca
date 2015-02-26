@@ -7,10 +7,10 @@
 #ifndef VACA_SLIDER_H
 #define VACA_SLIDER_H
 
-#include "Vaca/base.h"
-#include "Vaca/Widget.h"
+#include "vaca/base.h"
+#include "vaca/Widget.h"
 
-namespace Vaca {
+namespace vaca {
 
 class VACA_DLL Slider : public Widget
 {
@@ -63,6 +63,6 @@ protected:
   
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_SLIDER_H

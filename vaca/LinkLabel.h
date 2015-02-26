@@ -7,10 +7,10 @@
 #ifndef VACA_LINKLABEL_H
 #define VACA_LINKLABEL_H
 
-#include "Vaca/base.h"
-#include "Vaca/CustomLabel.h"
+#include "vaca/base.h"
+#include "vaca/CustomLabel.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    A link to Internet (or whatever you want).
@@ -73,6 +73,6 @@ private:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_LINKLABEL_H

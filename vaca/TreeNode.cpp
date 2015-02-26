@@ -4,13 +4,13 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/TreeNode.h"
-#include "Vaca/TreeView.h"
-#include "Vaca/TreeViewEvent.h"
-#include "Vaca/Debug.h"
-#include "Vaca/win32.h"
+#include "vaca/TreeNode.h"
+#include "vaca/TreeView.h"
+#include "vaca/TreeViewEvent.h"
+#include "vaca/Debug.h"
+#include "vaca/win32.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 TreeNode::TreeNode(const String& text, int imageIndex, int selectedImageIndex)
   : m_text(text)

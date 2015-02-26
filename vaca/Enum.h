@@ -7,7 +7,7 @@
 #ifndef VACA_ENUM_H
 #define VACA_ENUM_H
 
-namespace Vaca {
+namespace vaca {
 
 /**
    This class is used to define enumerations "a la" C++0x.
@@ -139,6 +139,6 @@ private:
   int m_value;
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_ENUM_H

@@ -7,14 +7,14 @@
 #ifndef VACA_MENU_H
 #define VACA_MENU_H
 
-#include "Vaca/base.h"
-#include "Vaca/Component.h"
-#include "Vaca/Event.h"
-#include "Vaca/Keys.h"
+#include "vaca/base.h"
+#include "vaca/Component.h"
+#include "vaca/Event.h"
+#include "vaca/Keys.h"
 
 #include <vector>
 
-namespace Vaca {
+namespace vaca {
 
 typedef std::vector<MenuItem*> MenuItemList;
 
@@ -198,6 +198,6 @@ public:
   virtual bool isMdiList() const;
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_MENU_H

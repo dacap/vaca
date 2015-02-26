@@ -7,10 +7,10 @@
 #ifndef VACA_STRING_H
 #define VACA_STRING_H
 
-#include "Vaca/base.h"
+#include "vaca/base.h"
 #include <vector>
 
-namespace Vaca {
+namespace vaca {
 
 /**
    @defgroup string_utils String Utilities
@@ -87,6 +87,6 @@ namespace Vaca {
 
 /** @} */
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_STRING_H

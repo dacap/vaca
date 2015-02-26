@@ -7,14 +7,14 @@
 #ifndef VACA_REGISTER_H
 #define VACA_REGISTER_H
 
-#include "Vaca/base.h"
-#include "Vaca/Application.h"
-#include "Vaca/Widget.h"
-#include "Vaca/WidgetClass.h"
-#include "Vaca/Exception.h"
-#include "Vaca/String.h"
+#include "vaca/base.h"
+#include "vaca/Application.h"
+#include "vaca/Widget.h"
+#include "vaca/WidgetClass.h"
+#include "vaca/Exception.h"
+#include "vaca/String.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    Thrown when Register can't registers the WidgetClass.
@@ -79,6 +79,6 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_REGISTER_H

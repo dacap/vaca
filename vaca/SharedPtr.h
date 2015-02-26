@@ -7,10 +7,10 @@
 #ifndef VACA_SHAREDPTR_H
 #define VACA_SHAREDPTR_H
 
-#include "Vaca/base.h"
-#include "Vaca/Referenceable.h"
+#include "vaca/base.h"
+#include "vaca/Referenceable.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    A pointer which maintains reference counting and
@@ -130,6 +130,6 @@ bool operator!=(const SharedPtr<T>& ptr1, const SharedPtr<T>& ptr2)
   return ptr1.get() != ptr2.get();
 }
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_SHAREDPTR_H

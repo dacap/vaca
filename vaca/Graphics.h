@@ -7,15 +7,15 @@
 #ifndef VACA_GRAPHICS_H
 #define VACA_GRAPHICS_H
 
-#include "Vaca/base.h"
-#include "Vaca/NonCopyable.h"
-#include "Vaca/Rect.h"
-#include "Vaca/Font.h"
+#include "vaca/base.h"
+#include "vaca/NonCopyable.h"
+#include "vaca/Rect.h"
+#include "vaca/Font.h"
 
 #include <list>
 #include <vector>
 
-namespace Vaca {
+namespace vaca {
 
 // ======================================================================
 
@@ -205,6 +205,6 @@ public:
   virtual ~ScreenGraphics();
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_GRAPHICS_H

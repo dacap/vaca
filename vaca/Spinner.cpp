@@ -4,11 +4,11 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/Spinner.h"
-#include "Vaca/PreferredSizeEvent.h"
-#include "Vaca/LayoutEvent.h"
+#include "vaca/Spinner.h"
+#include "vaca/PreferredSizeEvent.h"
+#include "vaca/LayoutEvent.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 Spinner::Spinner(Widget* parent, Style spinStyle, Style style)
   : Widget(SpinnerClass::getClassName(), parent, style)

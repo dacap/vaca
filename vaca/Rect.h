@@ -7,9 +7,9 @@
 #ifndef VACA_RECT_H
 #define VACA_RECT_H
 
-#include "Vaca/base.h"
+#include "vaca/base.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    A rectangle.
@@ -86,7 +86,7 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_RECT_H
 

@@ -6,7 +6,7 @@
 
 cmake_minimum_required(VERSION 2.6)
 
-project(Vaca)
+project(vaca)
 
 ########################################
 # Options
@@ -155,23 +155,23 @@ if(VACA_WINDOWS)
   set(VACA_SOURCES ${VACA_SOURCES} vaca/win32/win32.cpp)
 endif(VACA_WINDOWS)
 
-add_library(Vaca ${VACA_SOURCES})
+add_library(vaca ${VACA_SOURCES})
 
 ######################################################################
 # Post-build commands to run examples and tests
 
-add_custom_command(TARGET Vaca
+add_custom_command(TARGET vaca
   POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/scintilla/SciLexer.dll ${CMAKE_CURRENT_BINARY_DIR}/examples
   COMMENT "Copying SciLexer DLL to examples directory")
 
 if(BUILD_SHARED_LIBS)
-  get_target_property(vaca_dll_location Vaca LOCATION)
-  add_custom_command(TARGET Vaca
+  get_target_property(vaca_dll_location vaca LOCATION)
+  add_custom_command(TARGET vaca
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy ${vaca_dll_location} ${CMAKE_CURRENT_BINARY_DIR}/examples
     COMMAND ${CMAKE_COMMAND} -E copy ${vaca_dll_location} ${CMAKE_CURRENT_BINARY_DIR}/tests
-    COMMENT "Copying Vaca DLL to examples and tests directories")
+    COMMENT "Copying vaca dll to examples and tests directories")
 endif(BUILD_SHARED_LIBS)
 
 ########################################
@@ -192,11 +192,11 @@ endif(NOT BUILD_SHARED_LIBS)
 
 set(common_flags "${win32_flags} ${unicode_flags} ${static_flags}")
 
-set_target_properties(Vaca PROPERTIES
+set_target_properties(vaca PROPERTIES
   COMPILE_FLAGS "-DVACA_SRC ${common_flags} ${vaca_platform_def}")
 
 if(BUILD_SHARED_LIBS)
-  target_link_libraries(Vaca ${win32_libs})
+  target_link_libraries(vaca ${win32_libs})
 endif(BUILD_SHARED_LIBS)
 
 ########################################
@@ -205,7 +205,7 @@ endif(BUILD_SHARED_LIBS)
 FILE(GLOB vaca_h_files "${CMAKE_CURRENT_SOURCE_DIR}/vaca/*.h")
 INSTALL(FILES ${vaca_h_files} DESTINATION include/vaca)
 
-INSTALL(TARGETS Vaca
+INSTALL(TARGETS vaca
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib)

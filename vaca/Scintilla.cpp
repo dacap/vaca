@@ -4,15 +4,15 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/Scintilla.h"
-#include "Vaca/Font.h"
-#include "Vaca/WidgetClass.h"
-#include "Vaca/String.h"
-#include "Vaca/Register.h"
+#include "vaca/Scintilla.h"
+#include "vaca/Font.h"
+#include "vaca/WidgetClass.h"
+#include "vaca/String.h"
+#include "vaca/Register.h"
 #include "scintilla/Scintilla.h"
 #include "scintilla/SciLexer.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 HINSTANCE SciRegister::hmod = NULL;
 

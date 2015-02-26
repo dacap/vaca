@@ -1,8 +1,8 @@
-#include "Vaca/Pen.h"
-#include "Vaca/Color.h"
+#include "vaca/Pen.h"
+#include "vaca/Color.h"
 #include <gtest/gtest.h>
 
-using namespace Vaca;
+using namespace vaca;
 
 inline std::ostream& operator<<(std::ostream& os, const Color& color)
 {

@@ -7,10 +7,10 @@
 #ifndef VACA_BRUSH_H
 #define VACA_BRUSH_H
 
-#include "Vaca/base.h"
-#include "Vaca/SharedPtr.h"
+#include "vaca/base.h"
+#include "vaca/SharedPtr.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    A brush can be used to fill rectangles, ellipses, and paths.
@@ -45,6 +45,6 @@ private:
   SharedPtr<BrushImpl> m_impl;
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif

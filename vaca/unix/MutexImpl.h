@@ -7,7 +7,7 @@
 #include <pthread.h>
 #include <errno.h>
 
-class Vaca::Mutex::MutexImpl
+class vaca::Mutex::MutexImpl
 {
   pthread_mutex_t m_handle;
 

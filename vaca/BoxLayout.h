@@ -7,10 +7,10 @@
 #ifndef VACA_BOXLAYOUT_H
 #define VACA_BOXLAYOUT_H
 
-#include "Vaca/base.h"
-#include "Vaca/Layout.h"
+#include "vaca/base.h"
+#include "vaca/Layout.h"
 
-namespace Vaca {
+namespace vaca {
 
 // ======================================================================
 // BoxLayout
@@ -48,6 +48,6 @@ protected:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_BOXLAYOUT_H

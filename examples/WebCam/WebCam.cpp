@@ -4,7 +4,7 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include <Vaca/Vaca.h>
+#include <vaca/vaca.h>
 #include <vfw.h>
 #include "../resource.h"
 
@@ -43,7 +43,7 @@ typedef struct {
 } CAPSTATUS;
 #endif
 
-using namespace Vaca;
+using namespace vaca;
 
 //////////////////////////////////////////////////////////////////////
 
@@ -88,7 +88,7 @@ public:
     // now we can create the widget because in this point is when our
     // version of createHandle (see below) will be called
     create(WidgetClassName::None, parent, Widget::Styles::Visible);
-    
+
     setPreferredSize(Size(320, 240));
   }
 
@@ -97,7 +97,7 @@ public:
     // disconnect the driver
     setDriver(-1);
   }
-  
+
   void setDriver(int driverIndex)
   {
     if (m_driverIndex != driverIndex) {
@@ -244,7 +244,7 @@ private:
     }
     m_webcam.capture();
   }
-  
+
   void onChangeRate()
   {
     int rate = m_rate.getValue();

@@ -4,16 +4,16 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/Slider.h"
-#include "Vaca/Debug.h"
-#include "Vaca/Event.h"
-#include "Vaca/ScrollEvent.h"
-#include "Vaca/WidgetClass.h"
-#include "Vaca/PreferredSizeEvent.h"
+#include "vaca/Slider.h"
+#include "vaca/Debug.h"
+#include "vaca/Event.h"
+#include "vaca/ScrollEvent.h"
+#include "vaca/WidgetClass.h"
+#include "vaca/PreferredSizeEvent.h"
 #include <limits>
 #include <limits.h>
 
-using namespace Vaca;
+using namespace vaca;
 
 const int Slider::MinLimit = SHRT_MIN; // std::numeric_limits<short>::min();
 const int Slider::MaxLimit = SHRT_MAX; // std::numeric_limits<short>::max();

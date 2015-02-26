@@ -4,13 +4,13 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/Vaca.h"
+#include "vaca/vaca.h"
 
 #ifndef PBS_MARQUEE
 #define PBS_MARQUEE 8
 #endif
 
-using namespace Vaca;
+using namespace vaca;
 
 // ===================================================================
 // Base Styles

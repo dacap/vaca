@@ -7,9 +7,9 @@
 #ifndef VACA_STYLE_H
 #define VACA_STYLE_H
 
-#include "Vaca/base.h"
+#include "vaca/base.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    A widget style.
@@ -51,6 +51,6 @@ struct VACA_DLL Style
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_STYLE_H

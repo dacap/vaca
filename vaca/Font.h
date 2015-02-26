@@ -7,11 +7,11 @@
 #ifndef VACA_FONT_H
 #define VACA_FONT_H
 
-#include "Vaca/base.h"
-#include "Vaca/SharedPtr.h"
-#include "Vaca/GdiObject.h"
+#include "vaca/base.h"
+#include "vaca/SharedPtr.h"
+#include "vaca/GdiObject.h"
 
-namespace Vaca {
+namespace vaca {
 
 // ======================================================================
 
@@ -103,6 +103,6 @@ private:
   void assign(LPLOGFONT lplf);
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_FONT_H

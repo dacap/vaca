@@ -4,10 +4,10 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/CustomLabel.h"
-#include "Vaca/Debug.h"
+#include "vaca/CustomLabel.h"
+#include "vaca/Debug.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 CustomLabel::CustomLabel(const String& text, Widget* parent, Style style)
   : Label(text, parent, style)

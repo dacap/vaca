@@ -4,9 +4,9 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/ConsumableEvent.h"
+#include "vaca/ConsumableEvent.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 ConsumableEvent::ConsumableEvent(Component* source)
   : Event(source)

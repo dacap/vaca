@@ -4,12 +4,12 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/CommonDialog.h"
-#include "Vaca/Widget.h"
-#include "Vaca/Debug.h"
-#include "Vaca/Application.h"
+#include "vaca/CommonDialog.h"
+#include "vaca/Widget.h"
+#include "vaca/Debug.h"
+#include "vaca/Application.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 CommonDialog::CommonDialog(Widget* parent)
 {

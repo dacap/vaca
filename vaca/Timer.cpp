@@ -4,18 +4,18 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/Timer.h"
-#include "Vaca/Thread.h"
-#include "Vaca/Debug.h"
-#include "Vaca/Mutex.h"
-#include "Vaca/ScopedLock.h"
-#include "Vaca/TimePoint.h"
-#include "Vaca/ConditionVariable.h"
+#include "vaca/Timer.h"
+#include "vaca/Thread.h"
+#include "vaca/Debug.h"
+#include "vaca/Mutex.h"
+#include "vaca/ScopedLock.h"
+#include "vaca/TimePoint.h"
+#include "vaca/ConditionVariable.h"
 
 #include <limits>
 #include <limits.h>		// because MSVC
 
-using namespace Vaca;
+using namespace vaca;
 
 static Mutex               timer_mutex;		// monitor
 static Thread*             timer_thread = NULL; // the thread that process timers

@@ -4,13 +4,13 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/SpinButton.h"
-#include "Vaca/Application.h"
-#include "Vaca/Debug.h"
-#include "Vaca/WidgetClass.h"
-#include "Vaca/PreferredSizeEvent.h"
+#include "vaca/SpinButton.h"
+#include "vaca/Application.h"
+#include "vaca/Debug.h"
+#include "vaca/WidgetClass.h"
+#include "vaca/PreferredSizeEvent.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 SpinButton::SpinButton(Widget* parent, Style style)
   : Widget(WidgetClassName(UPDOWN_CLASS), parent, style)

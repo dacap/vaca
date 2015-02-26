@@ -7,12 +7,12 @@
 #ifndef VACA_GRAPHICSPATH_H
 #define VACA_GRAPHICSPATH_H
 
-#include "Vaca/base.h"
-#include "Vaca/Point.h"
+#include "vaca/base.h"
+#include "vaca/Point.h"
 
 #include <vector>
 
-namespace Vaca {
+namespace vaca {
 
 /**
    Set of nodes to draw polygons and shapes in Graphics.
@@ -104,6 +104,6 @@ private:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_GRAPHICSPATH_H

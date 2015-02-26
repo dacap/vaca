@@ -4,9 +4,9 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/String.h"
+#include "vaca/String.h"
 
-void Vaca::details::MainArgs::setArgs(int argc, char* argv[])
+void vaca::details::MainArgs::setArgs(int argc, char* argv[])
 {
   std::vector<String> args;
   args.reserve(argc);

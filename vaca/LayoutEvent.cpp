@@ -4,10 +4,10 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/LayoutEvent.h"
-#include "Vaca/Widget.h"
+#include "vaca/LayoutEvent.h"
+#include "vaca/Widget.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 LayoutEvent::LayoutEvent(Widget* source, const Rect& bounds)
   : Event(source)

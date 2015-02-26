@@ -7,11 +7,11 @@
 #ifndef VACA_REGION_H
 #define VACA_REGION_H
 
-#include "Vaca/base.h"
-#include "Vaca/GdiObject.h"
-#include "Vaca/SharedPtr.h"
+#include "vaca/base.h"
+#include "vaca/GdiObject.h"
+#include "vaca/SharedPtr.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    A region, it can be simple as a rectangle, complex as any shape,
@@ -65,6 +65,6 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_REGION_H

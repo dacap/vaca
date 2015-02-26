@@ -10,11 +10,11 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
-#include "Vaca/Color.h"
-#include "Vaca/GdiObject.h"
-#include "Vaca/win32.h"
+#include "vaca/Color.h"
+#include "vaca/GdiObject.h"
+#include "vaca/win32.h"
 
-class Vaca::Brush::BrushImpl : public GdiObject<HBRUSH>
+class vaca::Brush::BrushImpl : public GdiObject<HBRUSH>
 {
 public:
 
@@ -38,7 +38,7 @@ public:
 
 };
 
-template<> HBRUSH Vaca::convert_to(const Brush& brush)
+template<> HBRUSH vaca::convert_to(const Brush& brush)
 {
   // 1) getHandle is defined in GdiObject<HBRUSH> class
   // 2) convert_to<> is friend of Brush class

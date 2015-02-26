@@ -1,12 +1,12 @@
 #include <gtest/gtest.h>
 #include <cstdio>
 
-#include "Vaca/Region.h"
-#include "Vaca/Rect.h"
-#include "Vaca/Size.h"
-#include "Vaca/TimePoint.h"
+#include "vaca/Region.h"
+#include "vaca/Rect.h"
+#include "vaca/Size.h"
+#include "vaca/TimePoint.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 inline std::ostream& operator<<(std::ostream& os, const Rect& rc)
 {

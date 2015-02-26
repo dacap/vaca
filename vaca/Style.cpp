@@ -4,9 +4,9 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/Style.h"
+#include "vaca/Style.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 // This constructor must be here to export const styles
 // (e.g. Widget::Styles::Default, etc.)

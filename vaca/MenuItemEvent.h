@@ -7,10 +7,10 @@
 #ifndef VACA_MENUITEMEVENT_H
 #define VACA_MENUITEMEVENT_H
 
-#include "Vaca/base.h"
-#include "Vaca/Event.h"
+#include "vaca/base.h"
+#include "vaca/Event.h"
 
-namespace Vaca {
+namespace vaca {
 
 class VACA_DLL MenuItemEvent : public Event
 {
@@ -24,6 +24,6 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_MENUITEMEVENT_H

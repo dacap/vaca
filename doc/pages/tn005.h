@@ -1,4 +1,4 @@
-namespace Vaca {
+namespace vaca {
 
 /**
 
@@ -12,8 +12,8 @@ MdiChild).
 
 Also, Windows ignores some other styles (for example: you can't
 create a MdiChild without the WS_MAXIMIZEBOX style). But is possible
-to change that styles after creation (using Vaca::Widget::removeStyle or
-Vaca::Widget::addStyle).
+to change that styles after creation (using vaca::Widget::removeStyle or
+vaca::Widget::addStyle).
 
 Other problem is that because MdiChild is visible when it's
 constructed, we lost some messages (like WM_SETFOCUS, WM_MDIACTIVATE): They

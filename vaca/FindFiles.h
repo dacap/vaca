@@ -7,10 +7,10 @@
 #ifndef VACA_FINDFILES_H
 #define VACA_FINDFILES_H
 
-#include "Vaca/base.h"
-#include "Vaca/NonCopyable.h"
+#include "vaca/base.h"
+#include "vaca/NonCopyable.h"
 
-namespace Vaca {
+namespace vaca {
 
 class VACA_DLL FindFiles : public NonCopyable
 {
@@ -32,6 +32,6 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_FINDFILES_H

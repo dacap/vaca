@@ -4,7 +4,7 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/Brush.h"
+#include "vaca/Brush.h"
 
 #if defined(VACA_WINDOWS)
   #include "win32/BrushImpl.h"
@@ -12,7 +12,7 @@
   #error Implement Brush class in your platform
 #endif
 
-using namespace Vaca;
+using namespace vaca;
 
 Brush::Brush()
   : m_impl(new BrushImpl())

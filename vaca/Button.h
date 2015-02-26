@@ -7,9 +7,9 @@
 #ifndef VACA_BUTTON_H
 #define VACA_BUTTON_H
 
-#include "Vaca/ButtonBase.h"
+#include "vaca/ButtonBase.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    Handles a pusheable button. These are the more common buttons, like
@@ -35,6 +35,6 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_BUTTON_H

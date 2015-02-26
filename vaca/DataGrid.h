@@ -7,12 +7,12 @@
 #ifndef VACA_DATAGRID_H
 #define VACA_DATAGRID_H
 
-#include "Vaca/base.h"
+#include "vaca/base.h"
 
-namespace Vaca {
+namespace vaca {
 
   // TODO
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_DATAGRID_H

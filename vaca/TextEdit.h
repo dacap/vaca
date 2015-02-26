@@ -7,10 +7,10 @@
 #ifndef VACA_TEXTEDIT_H
 #define VACA_TEXTEDIT_H
 
-#include "Vaca/base.h"
-#include "Vaca/Widget.h"
+#include "vaca/base.h"
+#include "vaca/Widget.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    Widget to edit text.
@@ -97,6 +97,6 @@ protected:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_TEXTEDIT_H

@@ -7,11 +7,11 @@
 #ifndef VACA_LAYOUTEVENT_H
 #define VACA_LAYOUTEVENT_H
 
-#include "Vaca/base.h"
-#include "Vaca/Event.h"
-#include "Vaca/Rect.h"
+#include "vaca/base.h"
+#include "vaca/Event.h"
+#include "vaca/Rect.h"
 
-namespace Vaca {
+namespace vaca {
 
 class VACA_DLL LayoutEvent : public Event
 {
@@ -27,6 +27,6 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_LAYOUTEVENT_H

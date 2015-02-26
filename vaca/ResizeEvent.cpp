@@ -4,9 +4,9 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/ResizeEvent.h"
+#include "vaca/ResizeEvent.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 ResizeEvent::ResizeEvent(Component* source, const Size& size)
   : Event(source)

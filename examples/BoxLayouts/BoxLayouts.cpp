@@ -4,10 +4,10 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include <Vaca/Vaca.h>
+#include <vaca/vaca.h>
 #include "../resource.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 class MainFrame : public Frame
 {
@@ -28,7 +28,7 @@ class MainFrame : public Frame
   ToggleButton m_expandLabel;
   ToggleButton m_expandEdit;
   ToggleButton m_expandButton;
-  
+
 public:
 
   MainFrame()
@@ -57,7 +57,7 @@ public:
     // other layouts
     m_top.setLayout(new BoxLayout(Orientation::Vertical, false)); // heterogeneous
     m_edit.setConstraint(new BoxConstraint(true)); // expansive
-    
+
     // other layouts
     m_bottom.setLayout(new BoxLayout(Orientation::Horizontal, false)); // heterogeneous
     m_bottomSub1.setLayout(new BoxLayout(Orientation::Vertical, true)); // homogeneous
@@ -91,7 +91,7 @@ protected:
 							   Orientation::Horizontal;
 
     bool isHomogeneous = m_homogeneous.isSelected();
-    
+
     // setup the new layout manager, and hold the old layout
     m_top.setLayout(new BoxLayout(newOrientation,
 				  isHomogeneous));

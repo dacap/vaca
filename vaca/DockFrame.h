@@ -7,11 +7,11 @@
 #ifndef VACA_DOCKFRAME_H
 #define VACA_DOCKFRAME_H
 
-#include "Vaca/base.h"
-#include "Vaca/Frame.h"
-#include "Vaca/Event.h"
+#include "vaca/base.h"
+#include "vaca/Frame.h"
+#include "vaca/Event.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    Represents the Win32 class used by DockFrame.
@@ -64,6 +64,6 @@ protected:
   virtual bool wndProc(UINT message, WPARAM wParam, LPARAM lParam, LRESULT& lResult);
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_DOCKFRAME_H

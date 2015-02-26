@@ -4,10 +4,10 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include <Vaca/Vaca.h>
+#include <vaca/vaca.h>
 #include "../resource.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 //////////////////////////////////////////////////////////////////////
 
@@ -600,7 +600,7 @@ int ColorNames_size = sizeof(ColorNames) / sizeof(struct ColorName);
 class AutoCompletionComboBox : public ComboBox
 {
   Timer m_timer;
-  
+
 public:
 
   AutoCompletionComboBox(Widget* parent)
@@ -672,7 +672,7 @@ private:
     else
       NoColor();
   }
-  
+
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -714,7 +714,7 @@ protected:
   virtual void onPaint(PaintEvent& ev)
   {
     Graphics& g = ev.getGraphics();
-    Rect rc = getClientBounds(); 
+    Rect rc = getClientBounds();
 
     if (m_color != NULL) {
       Pen pen(m_color->toBlackAndWhite().negative());
@@ -733,7 +733,7 @@ protected:
       g.drawLine(pen, rc.x, rc.y+rc.h-1, rc.x+rc.w-1, rc.y);
     }
   }
-  
+
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -744,7 +744,7 @@ class MainFrame : public Frame
   Widget m_bottomPanel;
   AutoCompletionComboBox m_comboBox;
   ColorViewer m_colorViewer;
-  
+
 public:
 
   MainFrame()

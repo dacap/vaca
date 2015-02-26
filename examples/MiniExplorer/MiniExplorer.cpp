@@ -4,13 +4,13 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include <Vaca/Vaca.h>
+#include <vaca/vaca.h>
 #include <shlobj.h>
 #include <shlwapi.h>
 
 #include "../resource.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 static LPMALLOC g_pMalloc = NULL;
 static IShellFolder* g_pDesktop = NULL;
@@ -76,7 +76,7 @@ public:
   }
 
 protected:
-  
+
   virtual void onBeforeExpand(TreeViewEvent &ev)
   {
     IShellFolder* pFolder = NULL;
@@ -143,7 +143,7 @@ private:
       if (pFolder != g_pDesktop)
 	pFolder->Release();
     }
-    
+
     StrRetToBuf(&strDispName, m_pidl, pszDisplayName, MAX_PATH);
     return pszDisplayName;
   }
@@ -168,7 +168,7 @@ private:
 
     return (attr & SFGAO_HASSUBFOLDER) != 0;
   }
-  
+
   LPITEMIDLIST concatPidl(LPITEMIDLIST pidlHead, LPITEMIDLIST pidlTail)
   {
     assert(pidlHead != NULL);
@@ -206,7 +206,7 @@ private:
 	return pidl;
     }
     return NULL;
-  } 
+  }
 
 };
 
@@ -295,7 +295,7 @@ public:
 
     // relase desktop IShellFolder interface
     g_pDesktop->Release();
-    
+
     // release IMalloc interface
     g_pMalloc->Release();
     g_pMalloc = NULL;
@@ -309,7 +309,7 @@ private:
   {
     m_mainFrame->setVisible(true);
   }
-  
+
 };
 
 int VACA_MAIN()

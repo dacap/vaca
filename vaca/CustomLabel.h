@@ -7,10 +7,10 @@
 #ifndef VACA_CUSTOMLABEL_H
 #define VACA_CUSTOMLABEL_H
 
-#include "Vaca/base.h"
-#include "Vaca/Label.h"
+#include "vaca/base.h"
+#include "vaca/Label.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    Customized static label control.
@@ -41,6 +41,6 @@ protected:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_CUSTOMLABEL_H

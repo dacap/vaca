@@ -4,14 +4,14 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/Dialog.h"
-#include "Vaca/Debug.h"
-#include "Vaca/Application.h"
-#include "Vaca/CloseEvent.h"
-#include "Vaca/WidgetClass.h"
-#include "Vaca/CommandEvent.h"
+#include "vaca/Dialog.h"
+#include "vaca/Debug.h"
+#include "vaca/Application.h"
+#include "vaca/CloseEvent.h"
+#include "vaca/WidgetClass.h"
+#include "vaca/CommandEvent.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 /**
    Creates a dialog using the default DialogClass.

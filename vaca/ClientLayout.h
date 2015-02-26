@@ -7,10 +7,10 @@
 #ifndef VACA_CLIENTLAYOUT_H
 #define VACA_CLIENTLAYOUT_H
 
-#include "Vaca/base.h"
-#include "Vaca/Layout.h"
+#include "vaca/base.h"
+#include "vaca/Layout.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    The more simplest Layout manager: positions all the widgets in the
@@ -32,6 +32,6 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_CLIENTLAYOUT_H

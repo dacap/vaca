@@ -7,10 +7,10 @@
 #ifndef VACA_TREEVIEWEVENT_H
 #define VACA_TREEVIEWEVENT_H
 
-#include "Vaca/base.h"
-#include "Vaca/CancelableEvent.h"
+#include "vaca/base.h"
+#include "vaca/CancelableEvent.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    Event where interact a TreeView and TreeNode.
@@ -32,6 +32,6 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_TREEVIEWEVENT_H

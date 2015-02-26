@@ -7,9 +7,9 @@
 #ifndef VACA_TOGGLEBUTTON_H
 #define VACA_TOGGLEBUTTON_H
 
-#include "Vaca/ButtonBase.h"
+#include "vaca/ButtonBase.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    Handles a pusheable button (with BS_AUTOCHECKBOX | BS_PUSHLIKE styles).
@@ -27,6 +27,6 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_TOGGLEBUTTON_H

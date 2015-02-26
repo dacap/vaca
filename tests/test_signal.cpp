@@ -1,10 +1,10 @@
 #include <gtest/gtest.h>
 #include <string>
 
-#include "Vaca/Signal.h"
+#include "vaca/Signal.h"
 
 using namespace std;
-using namespace Vaca;
+using namespace vaca;
 
 //////////////////////////////////////////////////////////////////////
 

@@ -7,12 +7,12 @@
 #ifndef VACA_SCROLLEVENT_H
 #define VACA_SCROLLEVENT_H
 
-#include "Vaca/base.h"
-#include "Vaca/Enum.h"
-#include "Vaca/Event.h"
-#include "Vaca/Point.h"
+#include "vaca/base.h"
+#include "vaca/Enum.h"
+#include "vaca/Event.h"
+#include "vaca/Point.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    It's like a namespace for ScrollRequest.
@@ -69,6 +69,6 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_SCROLLEVENT_H

@@ -7,11 +7,11 @@
 #ifndef VACA_WIDGETLIST_H
 #define VACA_WIDGETLIST_H
 
-#include "Vaca/base.h"
+#include "vaca/base.h"
 
 #include <vector>
 
-namespace Vaca {
+namespace vaca {
 
 /**
    Collection of widgets.
@@ -20,6 +20,6 @@ namespace Vaca {
 */
 typedef std::vector<Widget*> WidgetList;
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_WIDGETLIST_H

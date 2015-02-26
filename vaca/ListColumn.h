@@ -7,10 +7,10 @@
 #ifndef VACA_LISTCOLUMN_H
 #define VACA_LISTCOLUMN_H
 
-#include "Vaca/base.h"
-#include "Vaca/Component.h"
+#include "vaca/base.h"
+#include "vaca/Component.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    A column in a ListView.
@@ -53,6 +53,6 @@ private:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_LISTCOLUMN_H

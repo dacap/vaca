@@ -4,10 +4,10 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/FindFiles.h"
-#include "Vaca/String.h"
+#include "vaca/FindFiles.h"
+#include "vaca/String.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 FindFiles::FindFiles(const String& pattern)
 {

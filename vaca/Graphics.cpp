@@ -4,21 +4,21 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/Graphics.h"
-#include "Vaca/Image.h"
-#include "Vaca/ImageList.h"
-#include "Vaca/Debug.h"
-#include "Vaca/Font.h"
-#include "Vaca/Rect.h"
-#include "Vaca/Point.h"
-#include "Vaca/Size.h"
-#include "Vaca/Widget.h"
-#include "Vaca/System.h"
-#include "Vaca/Region.h"
-#include "Vaca/Pen.h"
-#include "Vaca/Brush.h"
-#include "Vaca/GraphicsPath.h"
-#include "Vaca/win32.h"
+#include "vaca/Graphics.h"
+#include "vaca/Image.h"
+#include "vaca/ImageList.h"
+#include "vaca/Debug.h"
+#include "vaca/Font.h"
+#include "vaca/Rect.h"
+#include "vaca/Point.h"
+#include "vaca/Size.h"
+#include "vaca/Widget.h"
+#include "vaca/System.h"
+#include "vaca/Region.h"
+#include "vaca/Pen.h"
+#include "vaca/Brush.h"
+#include "vaca/GraphicsPath.h"
+#include "vaca/win32.h"
 
 #include <cmath>
 #ifndef M_PI
@@ -30,7 +30,7 @@
   #define GRADIENT_FILL_RECT_V 1
 #endif
 
-using namespace Vaca;
+using namespace vaca;
 
 // ======================================================================
 // Graphics

@@ -4,11 +4,11 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/MsgBox.h"
-#include "Vaca/System.h"
-#include "Vaca/Widget.h"
+#include "vaca/MsgBox.h"
+#include "vaca/System.h"
+#include "vaca/Widget.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 /**
    Shows a message box, locking the specified @a parent widget.

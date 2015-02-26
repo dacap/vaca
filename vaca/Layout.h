@@ -7,12 +7,12 @@
 #ifndef VACA_LAYOUT_H
 #define VACA_LAYOUT_H
 
-#include "Vaca/base.h"
-#include "Vaca/Size.h"
-#include "Vaca/Referenceable.h"
-#include "Vaca/WidgetList.h"
+#include "vaca/base.h"
+#include "vaca/Size.h"
+#include "vaca/Referenceable.h"
+#include "vaca/WidgetList.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    A Layout setups the position of a collection of widgets. It's used
@@ -54,6 +54,6 @@ private:
   WidgetsMovementImpl* m_impl;
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_LAYOUT_H

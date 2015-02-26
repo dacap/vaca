@@ -4,10 +4,10 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/TreeViewEvent.h"
-#include "Vaca/TreeView.h"
+#include "vaca/TreeViewEvent.h"
+#include "vaca/TreeView.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 TreeViewEvent::TreeViewEvent(TreeView* treeView, TreeNode* treeNode, String label)
   : CancelableEvent(treeView)

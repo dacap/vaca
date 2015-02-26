@@ -1,11 +1,11 @@
 #include <gtest/gtest.h>
 
-#include "Vaca/Image.h"
-#include "Vaca/Graphics.h"
-#include "Vaca/Color.h"
-#include "Vaca/Brush.h"
+#include "vaca/Image.h"
+#include "vaca/Graphics.h"
+#include "vaca/Color.h"
+#include "vaca/Brush.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 inline std::ostream& operator<<(std::ostream& os, const Color& color)
 {

@@ -5,13 +5,13 @@
 // please read LICENSE.txt for more information.
 
 
-#include "Vaca/ReBar.h"
-#include "Vaca/Event.h"
-#include "Vaca/ImageList.h"
-#include "Vaca/WidgetClass.h"
-#include "Vaca/LayoutEvent.h"
-#include "Vaca/PreferredSizeEvent.h"
-#include "Vaca/win32.h"
+#include "vaca/ReBar.h"
+#include "vaca/Event.h"
+#include "vaca/ImageList.h"
+#include "vaca/WidgetClass.h"
+#include "vaca/LayoutEvent.h"
+#include "vaca/PreferredSizeEvent.h"
+#include "vaca/win32.h"
 
 // Warning:
 //   You must define WINVER & _WIN32_WINNT version, otherwise,
@@ -26,7 +26,7 @@
 #error You have to define _WIN32_IE to compile ReBar
 #endif
 
-using namespace Vaca;
+using namespace vaca;
 
 // ======================================================================
 // ReBarBand class

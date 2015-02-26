@@ -4,16 +4,16 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/FileDialog.h"
-#include "Vaca/Widget.h"
-#include "Vaca/Application.h"
-#include "Vaca/System.h"
-#include "Vaca/String.h"
+#include "vaca/FileDialog.h"
+#include "vaca/Widget.h"
+#include "vaca/Application.h"
+#include "vaca/System.h"
+#include "vaca/String.h"
 
 // 32k is the limit for Win95/98/Me/NT4/2000/XP with ANSI version
 #define FILENAME_BUFSIZE (1024*32)
 
-using namespace Vaca;
+using namespace vaca;
 
 // ======================================================================
 // FileDialog

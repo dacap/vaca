@@ -4,15 +4,15 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/ComboBox.h"
-#include "Vaca/Event.h"
-#include "Vaca/Debug.h"
-#include "Vaca/System.h"
-#include "Vaca/WidgetClass.h"
-#include "Vaca/PreferredSizeEvent.h"
-#include "Vaca/win32.h"
+#include "vaca/ComboBox.h"
+#include "vaca/Event.h"
+#include "vaca/Debug.h"
+#include "vaca/System.h"
+#include "vaca/WidgetClass.h"
+#include "vaca/PreferredSizeEvent.h"
+#include "vaca/win32.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 // ======================================================================
 // ComboBox

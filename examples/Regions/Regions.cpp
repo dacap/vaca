@@ -4,11 +4,11 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include <Vaca/Vaca.h>
+#include <vaca/vaca.h>
 #include <cmath>
 #include "../resource.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 class Regions : public Widget
 {
@@ -39,7 +39,7 @@ public:
   }
 
 protected:
-    
+
   virtual void onPaint(PaintEvent& ev)
   {
     Graphics& g = ev.getGraphics();
@@ -58,7 +58,7 @@ protected:
       ScreenGraphics g;
       xorRect(g, m_oldPoint);
 
-      // with right mouse button we erase 
+      // with right mouse button we erase
       m_erasing = ev.getButton() == MouseButton::Right;
     }
   }
@@ -74,7 +74,7 @@ protected:
 
       // draw the feedback rectangle in new position
       xorRect(g, newPoint);
-      
+
       // the old point is now the new point
       m_oldPoint = newPoint;
     }
@@ -122,7 +122,7 @@ private:
 	    min_value(m_startPoint.y, pt.y),
 	    abs(m_startPoint.x-pt.x)+1,
 	    abs(m_startPoint.y-pt.y)+1);
-    
+
     g.setRop2(R2_NOTXORPEN);
     g.intersectClipRect(getAbsoluteClientBounds());
 
@@ -148,7 +148,7 @@ class MainFrame : public Frame
   Region m_region;
 
 public:
-  
+
   MainFrame()
     : Frame(L"Regions")
     , m_tab(this)
@@ -196,17 +196,17 @@ private:
 	m_regions.setRegion(m_region, true);
 	break;
       // A & B
-      case 3: 
+      case 3:
 	m_region = m_regionA & m_regionB;
 	m_regions.setRegion(m_region, true);
 	break;
       // A - B
-      case 4: 
+      case 4:
 	m_region = m_regionA - m_regionB;
 	m_regions.setRegion(m_region, true);
 	break;
       // B - A
-      case 5: 
+      case 5:
 	m_region = m_regionB - m_regionA;
 	m_regions.setRegion(m_region, true);
 	break;
@@ -217,7 +217,7 @@ private:
 	break;
     }
   }
-  
+
 };
 
 //////////////////////////////////////////////////////////////////////

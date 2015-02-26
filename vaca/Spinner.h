@@ -7,14 +7,14 @@
 #ifndef VACA_SPINNER_H
 #define VACA_SPINNER_H
 
-#include "Vaca/base.h"
-#include "Vaca/Widget.h"
-#include "Vaca/WidgetClass.h"
-#include "Vaca/Register.h"
-#include "Vaca/TextEdit.h"
-#include "Vaca/SpinButton.h"
+#include "vaca/base.h"
+#include "vaca/Widget.h"
+#include "vaca/WidgetClass.h"
+#include "vaca/Register.h"
+#include "vaca/TextEdit.h"
+#include "vaca/SpinButton.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    Represents the Win32 class used by Spinner.
@@ -74,6 +74,6 @@ protected:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_SPINNER_H

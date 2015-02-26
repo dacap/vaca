@@ -10,11 +10,11 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
-#include "Vaca/Color.h"
-#include "Vaca/GdiObject.h"
-#include "Vaca/win32.h"
+#include "vaca/Color.h"
+#include "vaca/GdiObject.h"
+#include "vaca/win32.h"
 
-class Vaca::Pen::PenImpl : public GdiObject<HPEN>
+class vaca::Pen::PenImpl : public GdiObject<HPEN>
 {
 public:
 
@@ -137,7 +137,7 @@ public:
 
 };
 
-template<> HPEN Vaca::convert_to(const Pen& pen)
+template<> HPEN vaca::convert_to(const Pen& pen)
 {
   // 1) getHandle is defined in GdiObject<HPEN> class
   // 2) convert_to<> is friend of Pen class

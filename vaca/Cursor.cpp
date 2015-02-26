@@ -4,13 +4,13 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/Cursor.h"
-#include "Vaca/Application.h"
-#include "Vaca/Debug.h"
-#include "Vaca/ResourceException.h"
-#include "Vaca/String.h"
+#include "vaca/Cursor.h"
+#include "vaca/Application.h"
+#include "vaca/Debug.h"
+#include "vaca/ResourceException.h"
+#include "vaca/String.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 #define GdiObj GdiObject<HCURSOR, Win32DestroyCursor>
 

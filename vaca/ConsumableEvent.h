@@ -7,9 +7,9 @@
 #ifndef VACA_CONSUMABLEEVENT_H
 #define VACA_CONSUMABLEEVENT_H
 
-#include "Vaca/Event.h"
+#include "vaca/Event.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    Event that can be consumed.
@@ -31,6 +31,6 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_CONSUMABLEEVENT_H

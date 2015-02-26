@@ -4,9 +4,9 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/Constraint.h"
+#include "vaca/Constraint.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 Constraint::Constraint()
 {

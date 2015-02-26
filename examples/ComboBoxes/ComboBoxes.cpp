@@ -4,16 +4,16 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include <Vaca/Vaca.h>
+#include <vaca/vaca.h>
 #include "../resource.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 class MainFrame : public Frame
 {
   Label m_label1; ComboBox m_combo1;
   Label m_label2; ComboBox m_combo2;
-  
+
 public:
 
   MainFrame()
@@ -42,7 +42,7 @@ protected:
   virtual void onResizing(CardinalDirection dir, Rect &rc)
   {
     rc.y = getBounds().y;
-    
+
     if (dir != CardinalDirection::North &&
 	dir != CardinalDirection::South) {
       // the height is calculated through the width that the user wants
@@ -54,7 +54,7 @@ protected:
   }
 
 private:
-  
+
   void onComboChange(Event& ev)
   {
     m_combo2.setSelectedItem(m_combo1.getSelectedItem());

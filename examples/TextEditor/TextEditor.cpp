@@ -4,13 +4,13 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include <Vaca/Vaca.h>
+#include <vaca/vaca.h>
 #include <cstdio>
 #include "scintilla/Scintilla.h"
 #include "resource.h"
 
 using namespace std;
-using namespace Vaca;
+using namespace vaca;
 
 //////////////////////////////////////////////////////////////////////
 // View
@@ -41,7 +41,7 @@ class Document
   typedef vector<View*>::iterator iterator;
 
 public:
-  
+
   Document(String fileName, bool hasFileName)
     : m_fileName(fileName)
     , m_hasFileName(hasFileName)
@@ -246,7 +246,7 @@ public:
     else
       return false;
   }
-  
+
   bool hasFileName() { return m_document->hasFileName(); }
   String getFileName() { return m_document->getFileName(); }
   SciEdit& getEditor() { return m_editor; }

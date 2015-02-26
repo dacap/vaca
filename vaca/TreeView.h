@@ -7,18 +7,18 @@
 #ifndef VACA_TREEVIEW_H
 #define VACA_TREEVIEW_H
 
-#include "Vaca/base.h"
-#include "Vaca/Widget.h"
-#include "Vaca/TreeNode.h"
-#include "Vaca/ImageList.h"
-#include "Vaca/Point.h"
+#include "vaca/base.h"
+#include "vaca/Widget.h"
+#include "vaca/TreeNode.h"
+#include "vaca/ImageList.h"
+#include "vaca/Point.h"
 
 #include <iterator>
 
-namespace Vaca {
+namespace vaca {
 
 /**
-   @internal You should use @link Vaca::TreeView::iterator TreeView::iterator @endlink.
+   @internal You should use @link vaca::TreeView::iterator TreeView::iterator @endlink.
 */
 class VACA_DLL TreeViewIterator
   : public std::iterator<std::bidirectional_iterator_tag,
@@ -169,6 +169,6 @@ protected:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_TREEVIEW_H

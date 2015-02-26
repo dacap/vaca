@@ -4,9 +4,9 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/ToggleButton.h"
+#include "vaca/ToggleButton.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 ToggleButton::ToggleButton(const String& text, Widget* parent, Style style)
   : ButtonBase(parent, style)

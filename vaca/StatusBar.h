@@ -7,10 +7,10 @@
 #ifndef VACA_STATUSBAR_H
 #define VACA_STATUSBAR_H
 
-#include "Vaca/base.h"
-#include "Vaca/Widget.h"
+#include "vaca/base.h"
+#include "vaca/Widget.h"
 
-namespace Vaca {
+namespace vaca {
 
 class VACA_DLL StatusBar : public Widget
 {
@@ -31,6 +31,6 @@ protected:
   virtual void onLayout(LayoutEvent& ev);
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_STATUSBAR_H

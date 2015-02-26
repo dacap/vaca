@@ -7,12 +7,12 @@
 #ifndef VACA_LISTBOX_H
 #define VACA_LISTBOX_H
 
-#include "Vaca/base.h"
-#include "Vaca/Widget.h"
+#include "vaca/base.h"
+#include "vaca/Widget.h"
 
 #include <vector>
 
-namespace Vaca {
+namespace vaca {
 
 /**
    List box control. Widget to manage a list of strings.
@@ -72,6 +72,6 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_LISTBOX_H

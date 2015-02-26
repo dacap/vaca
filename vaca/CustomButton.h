@@ -7,9 +7,9 @@
 #ifndef VACA_CUSTOMBUTTON_H
 #define VACA_CUSTOMBUTTON_H
 
-#include "Vaca/Button.h"
+#include "vaca/Button.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    Customizable button to draw it with your own Widget#onPaint member function.
@@ -80,6 +80,6 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_CUSTOMBUTTON_H

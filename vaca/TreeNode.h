@@ -7,13 +7,13 @@
 #ifndef VACA_TREENODE_H
 #define VACA_TREENODE_H
 
-#include "Vaca/base.h"
-#include "Vaca/Component.h"
-#include "Vaca/NonCopyable.h"
+#include "vaca/base.h"
+#include "vaca/Component.h"
+#include "vaca/NonCopyable.h"
 
 #include <vector>
 
-namespace Vaca {
+namespace vaca {
 
 typedef std::vector<TreeNode*> TreeNodeList;
 
@@ -89,6 +89,6 @@ private:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_TREENODE_H

@@ -4,16 +4,16 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/ListView.h"
-#include "Vaca/System.h"
-#include "Vaca/Debug.h"
-#include "Vaca/ImageList.h"
-#include "Vaca/WidgetClass.h"
-#include "Vaca/ListItem.h"
-#include "Vaca/ListColumn.h"
-#include "Vaca/win32.h"
+#include "vaca/ListView.h"
+#include "vaca/System.h"
+#include "vaca/Debug.h"
+#include "vaca/ImageList.h"
+#include "vaca/WidgetClass.h"
+#include "vaca/ListItem.h"
+#include "vaca/ListColumn.h"
+#include "vaca/win32.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 #ifndef LVS_EX_DOUBLEBUFFER
 #define LVS_EX_DOUBLEBUFFER 0x00010000

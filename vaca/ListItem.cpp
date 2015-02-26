@@ -4,12 +4,12 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/ListItem.h"
-#include "Vaca/ListView.h"
-#include "Vaca/Debug.h"
-#include "Vaca/win32.h"
+#include "vaca/ListItem.h"
+#include "vaca/ListView.h"
+#include "vaca/Debug.h"
+#include "vaca/win32.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 ListItem::ListItem(const String& text, int imageIndex)
 {

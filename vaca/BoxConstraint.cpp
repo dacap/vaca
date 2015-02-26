@@ -4,9 +4,9 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/BoxConstraint.h"
+#include "vaca/BoxConstraint.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 BoxConstraint::BoxConstraint(bool expansive)
   : m_expansive(expansive)

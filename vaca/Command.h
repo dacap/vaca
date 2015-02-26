@@ -7,13 +7,13 @@
 #ifndef VACA_COMMAND_H
 #define VACA_COMMAND_H
 
-#include "Vaca/base.h"
-#include "Vaca/NonCopyable.h"
-#include "Vaca/Signal.h"
+#include "vaca/base.h"
+#include "vaca/NonCopyable.h"
+#include "vaca/Signal.h"
 
 #include <vector>
 
-namespace Vaca {
+namespace vaca {
 
 /**
    A command, action or function of the application.
@@ -117,6 +117,6 @@ public:
   Command* getCommandById(CommandId id) const;
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_COMMAND_H

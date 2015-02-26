@@ -4,10 +4,10 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/FocusEvent.h"
-#include "Vaca/Widget.h"
+#include "vaca/FocusEvent.h"
+#include "vaca/Widget.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 FocusEvent::FocusEvent(Widget* source, Widget* oldFocus, Widget* newFocus)
   : Event(source)

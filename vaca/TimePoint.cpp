@@ -4,9 +4,9 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/TimePoint.h"
+#include "vaca/TimePoint.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 /**
    Creates a new TimePoint starting the chronometer from this point.

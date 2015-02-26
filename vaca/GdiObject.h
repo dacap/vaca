@@ -7,12 +7,12 @@
 #ifndef VACA_GDIOBJECT_H
 #define VACA_GDIOBJECT_H
 
-#include "Vaca/base.h"
-#include "Vaca/Referenceable.h"
+#include "vaca/base.h"
+#include "vaca/Referenceable.h"
 
 #include <cassert>
 
-namespace Vaca {
+namespace vaca {
 
 /**
    Helper for GdiObject class to destroy Win32's HGDIOBJ handles.
@@ -103,6 +103,6 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_GDIOBJECT_H

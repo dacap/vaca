@@ -4,25 +4,25 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/Frame.h"
-#include "Vaca/Application.h"
-#include "Vaca/Register.h"
-#include "Vaca/CloseEvent.h"
-#include "Vaca/Debug.h"
-#include "Vaca/Menu.h"
-#include "Vaca/MenuItemEvent.h"
-#include "Vaca/AnchorLayout.h"
-#include "Vaca/Event.h"
-#include "Vaca/Point.h"
-#include "Vaca/System.h"
-#include "Vaca/Mdi.h"
-#include "Vaca/Thread.h"
-#include "Vaca/Icon.h"
-#include "Vaca/CommandEvent.h"
-#include "Vaca/PreferredSizeEvent.h"
-#include "Vaca/win32.h"
+#include "vaca/Frame.h"
+#include "vaca/Application.h"
+#include "vaca/Register.h"
+#include "vaca/CloseEvent.h"
+#include "vaca/Debug.h"
+#include "vaca/Menu.h"
+#include "vaca/MenuItemEvent.h"
+#include "vaca/AnchorLayout.h"
+#include "vaca/Event.h"
+#include "vaca/Point.h"
+#include "vaca/System.h"
+#include "vaca/Mdi.h"
+#include "vaca/Thread.h"
+#include "vaca/Icon.h"
+#include "vaca/CommandEvent.h"
+#include "vaca/PreferredSizeEvent.h"
+#include "vaca/win32.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 /**
    Creates a frame using the FrameClass.  Also, remember that by

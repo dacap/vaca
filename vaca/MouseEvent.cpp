@@ -4,10 +4,10 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/MouseEvent.h"
-#include "Vaca/Widget.h"
+#include "vaca/MouseEvent.h"
+#include "vaca/Widget.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 /**
    Creates an event from the mouse.

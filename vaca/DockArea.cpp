@@ -4,13 +4,13 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/DockArea.h"
-#include "Vaca/DockBar.h"
-#include "Vaca/Frame.h"
-#include "Vaca/Point.h"
-#include "Vaca/Debug.h"
+#include "vaca/DockArea.h"
+#include "vaca/DockBar.h"
+#include "vaca/Frame.h"
+#include "vaca/Point.h"
+#include "vaca/Debug.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 DockArea::DockArea(Side side, Widget* parent, Style style)
   : Widget(DockAreaClass::getClassName(), parent, style)

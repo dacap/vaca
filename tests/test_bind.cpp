@@ -1,9 +1,9 @@
 #include <gtest/gtest.h>
 
-#include "Vaca/Bind.h"
-#include "Vaca/Signal.h"
+#include "vaca/Bind.h"
+#include "vaca/Signal.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 //////////////////////////////////////////////////////////////////////
 // Global variables to count function hits

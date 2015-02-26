@@ -6,19 +6,19 @@
 
 #if 0
 
-#include "Vaca/DockBar.h"
-#include "Vaca/DockFrame.h"
-#include "Vaca/Debug.h"
-#include "Vaca/Application.h"
-#include "Vaca/MouseEvent.h"
-#include "Vaca/PaintEvent.h"
-#include "Vaca/Debug.h"
-#include "Vaca/System.h"
-#include "Vaca/PreferredSizeEvent.h"
+#include "vaca/DockBar.h"
+#include "vaca/DockFrame.h"
+#include "vaca/Debug.h"
+#include "vaca/Application.h"
+#include "vaca/MouseEvent.h"
+#include "vaca/PaintEvent.h"
+#include "vaca/Debug.h"
+#include "vaca/System.h"
+#include "vaca/PreferredSizeEvent.h"
 
 #define DEF_GRIPPER_SIZE 8
 
-using namespace Vaca;
+using namespace vaca;
 
 // Information about the DockBar when the user is dragging it.
 struct DockBar::DragInfo
@@ -108,8 +108,8 @@ DockBar::~DockBar()
    Hides or shows the DockBar.
 
    If you hide the DockBar, this member function deletes the
-   #Vaca::DockFrame if it exist, or remove the DockBar from the
-   #Vaca::DockArea. All is automatic.
+   #vaca::DockFrame if it exist, or remove the DockBar from the
+   #vaca::DockArea. All is automatic.
 */
 void DockBar::setVisible(bool visible)
 {

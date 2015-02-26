@@ -4,21 +4,21 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/LinkLabel.h"
-#include "Vaca/Point.h"
-#include "Vaca/MouseEvent.h"
-#include "Vaca/PaintEvent.h"
-#include "Vaca/Cursor.h"
-#include "Vaca/Debug.h"
-#include "Vaca/Font.h"
-#include "Vaca/Brush.h"
-#include "Vaca/Pen.h"
-#include "Vaca/KeyEvent.h"
-#include "Vaca/Image.h"
-#include "Vaca/PreferredSizeEvent.h"
-#include "Vaca/SetCursorEvent.h"
+#include "vaca/LinkLabel.h"
+#include "vaca/Point.h"
+#include "vaca/MouseEvent.h"
+#include "vaca/PaintEvent.h"
+#include "vaca/Cursor.h"
+#include "vaca/Debug.h"
+#include "vaca/Font.h"
+#include "vaca/Brush.h"
+#include "vaca/Pen.h"
+#include "vaca/KeyEvent.h"
+#include "vaca/Image.h"
+#include "vaca/PreferredSizeEvent.h"
+#include "vaca/SetCursorEvent.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 /**
    It creates a LinkLabel.

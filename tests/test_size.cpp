@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 
-#include "Vaca/Size.h"
+#include "vaca/Size.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 inline std::ostream& operator<<(std::ostream& os, const Size& sz)
 {

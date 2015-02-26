@@ -4,11 +4,11 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/Layout.h"
-#include "Vaca/Debug.h"
-#include "Vaca/Widget.h"
+#include "vaca/Layout.h"
+#include "vaca/Debug.h"
+#include "vaca/Widget.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 Layout::Layout()
 {

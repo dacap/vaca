@@ -7,9 +7,9 @@
 #ifndef VACA_EVENT_H
 #define VACA_EVENT_H
 
-#include "Vaca/base.h"
+#include "vaca/base.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    Base class for every kind of event.
@@ -31,6 +31,6 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_EVENT_H

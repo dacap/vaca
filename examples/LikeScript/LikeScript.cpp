@@ -4,9 +4,9 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include <Vaca/Vaca.h>
+#include <vaca/vaca.h>
 
-using namespace Vaca;
+using namespace vaca;
 
 void configure_frame(Frame& frame);
 void configure_editor(TextEdit& edit, Font& normalFont, Font& hotFont, int preferredWidth);

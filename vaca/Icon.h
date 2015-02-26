@@ -7,13 +7,13 @@
 #ifndef VACA_ICON_H
 #define VACA_ICON_H
 
-#include "Vaca/base.h"
-#include "Vaca/Size.h"
-#include "Vaca/ResourceId.h"
-#include "Vaca/SharedPtr.h"
-#include "Vaca/GdiObject.h"
+#include "vaca/base.h"
+#include "vaca/Size.h"
+#include "vaca/ResourceId.h"
+#include "vaca/SharedPtr.h"
+#include "vaca/GdiObject.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    Used to destroy the HICON handle from GdiObject.
@@ -64,6 +64,6 @@ public:
   HICON getHandle() const;
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_ICON_H

@@ -4,20 +4,20 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/ToolBar.h"
-#include "Vaca/AnchorLayout.h"
-#include "Vaca/Anchor.h"
-#include "Vaca/ClientLayout.h"
-#include "Vaca/Event.h"
-#include "Vaca/Debug.h"
-#include "Vaca/ImageList.h"
-#include "Vaca/DockFrame.h"
-#include "Vaca/Command.h"
-#include "Vaca/CommandEvent.h"
-#include "Vaca/PreferredSizeEvent.h"
-#include "Vaca/win32.h"
+#include "vaca/ToolBar.h"
+#include "vaca/AnchorLayout.h"
+#include "vaca/Anchor.h"
+#include "vaca/ClientLayout.h"
+#include "vaca/Event.h"
+#include "vaca/Debug.h"
+#include "vaca/ImageList.h"
+#include "vaca/DockFrame.h"
+#include "vaca/Command.h"
+#include "vaca/CommandEvent.h"
+#include "vaca/PreferredSizeEvent.h"
+#include "vaca/win32.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 // ======================================================================
 // ToolButton

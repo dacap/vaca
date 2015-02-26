@@ -7,9 +7,9 @@
 #ifndef VACA_TIMEPOINT_H
 #define VACA_TIMEPOINT_H
 
-#include "Vaca/base.h"
+#include "vaca/base.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    Class to measure elapsed time, like a chronometer.
@@ -28,6 +28,6 @@ public:
   double elapsed() const;
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_TIMEPOINT_H

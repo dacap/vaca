@@ -4,14 +4,14 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/Mdi.h"
-#include "Vaca/Application.h"
-#include "Vaca/Debug.h"
-#include "Vaca/Event.h"
-#include "Vaca/ClientLayout.h"
-#include "Vaca/Menu.h"
+#include "vaca/Mdi.h"
+#include "vaca/Application.h"
+#include "vaca/Debug.h"
+#include "vaca/Event.h"
+#include "vaca/ClientLayout.h"
+#include "vaca/Menu.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 // ======================================================================
 // MdiChild

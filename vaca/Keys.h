@@ -7,9 +7,9 @@
 #ifndef VACA_KEYS_H
 #define VACA_KEYS_H
 
-#include "Vaca/base.h"
+#include "vaca/base.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    Namespace for keyboard scancodes and modifiers.
@@ -242,6 +242,6 @@ struct Keys {
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_KEYS_H

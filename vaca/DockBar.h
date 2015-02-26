@@ -7,14 +7,14 @@
 #ifndef VACA_DOCKBAR_H
 #define VACA_DOCKBAR_H
 
-#include "Vaca/base.h"
-#include "Vaca/Frame.h"
-#include "Vaca/Event.h"
-#include "Vaca/Rect.h"
-#include "Vaca/Point.h"
-#include "Vaca/Size.h"
+#include "vaca/base.h"
+#include "vaca/Frame.h"
+#include "vaca/Event.h"
+#include "vaca/Rect.h"
+#include "vaca/Point.h"
+#include "vaca/Size.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    Represents the Win32 class used by DockBar.
@@ -149,6 +149,6 @@ private:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_DOCKBAR_H

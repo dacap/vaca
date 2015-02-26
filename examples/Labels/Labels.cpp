@@ -4,10 +4,10 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include <Vaca/Vaca.h>
+#include <vaca/vaca.h>
 #include "../resource.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 class MainFrame : public Frame
 {
@@ -62,7 +62,7 @@ protected:
   virtual void onResizing(CardinalDirection dir, Rect &rc)
   {
     rc.y = getBounds().y;
-    
+
     if (dir != CardinalDirection::North &&
 	dir != CardinalDirection::South) {
       // the height is calculated through the width that the user wants

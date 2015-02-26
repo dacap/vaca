@@ -7,13 +7,13 @@
 #ifndef VACA_FILEDIALOG_H
 #define VACA_FILEDIALOG_H
 
-#include "Vaca/base.h"
-#include "Vaca/CommonDialog.h"
+#include "vaca/base.h"
+#include "vaca/CommonDialog.h"
 
 #include <vector>
 #include <utility>
 
-namespace Vaca {
+namespace vaca {
 
 /**
    A common dialog box to select files. You shouldn't use directly
@@ -87,6 +87,6 @@ private:
   virtual bool showDialog(LPOPENFILENAME lpofn);
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_FILEDIALOG_H

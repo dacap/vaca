@@ -4,11 +4,11 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/Rect.h"
-#include "Vaca/Point.h"
-#include "Vaca/Size.h"
+#include "vaca/Rect.h"
+#include "vaca/Point.h"
+#include "vaca/Size.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 /**
    Creates a new empty rectangle with the origin in @c Point(0,0).

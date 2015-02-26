@@ -7,13 +7,13 @@
 #ifndef VACA_HTTPREQUEST_H
 #define VACA_HTTPREQUEST_H
 
-#include "Vaca/base.h"
-#include "Vaca/NonCopyable.h"
-#include "Vaca/Exception.h"
+#include "vaca/base.h"
+#include "vaca/NonCopyable.h"
+#include "vaca/Exception.h"
 
 #include <wininet.h>
 
-namespace Vaca {
+namespace vaca {
 
 /**
    This exception is thrown when HttpRequest generates an error due
@@ -75,6 +75,6 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_HTTPREQUEST_H

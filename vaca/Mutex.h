@@ -7,10 +7,10 @@
 #ifndef VACA_MUTEX_H
 #define VACA_MUTEX_H
 
-#include "Vaca/base.h"
-#include "Vaca/NonCopyable.h"
+#include "vaca/base.h"
+#include "vaca/NonCopyable.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    An object to synchronize threads using mutual exclusion of critical
@@ -43,6 +43,6 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_MUTEX_H

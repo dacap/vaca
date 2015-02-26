@@ -7,9 +7,9 @@
 #ifndef VACA_RESOURCEEXCEPTION_H
 #define VACA_RESOURCEEXCEPTION_H
 
-#include "Vaca/Exception.h"
+#include "vaca/Exception.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    A resource (from exe or from an external file) can't be loaded.
@@ -24,6 +24,6 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_RESOURCEEXCEPTION_H

@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 
-#include "Vaca/Vaca.h"
+#include "vaca/vaca.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 class MenuTest : public testing::Test {
   Application app;

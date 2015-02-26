@@ -7,10 +7,10 @@
 #ifndef VACA_PAINTEVENT_H
 #define VACA_PAINTEVENT_H
 
-#include "Vaca/base.h"
-#include "Vaca/Event.h"
+#include "vaca/base.h"
+#include "vaca/Event.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    Event to paint a widget.
@@ -30,6 +30,6 @@ public:
   bool isPainted() const;
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_PAINTEVENT_H

@@ -7,9 +7,9 @@
 #ifndef VACA_CHECKBOX_H
 #define VACA_CHECKBOX_H
 
-#include "Vaca/ButtonBase.h"
+#include "vaca/ButtonBase.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    Handles a check box button.
@@ -29,6 +29,6 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_CHECKBOX_H

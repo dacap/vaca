@@ -33,12 +33,12 @@
 // Vaca - Visual Application Components Abstraction
 // Adapted by David Capello
 
-#include "Vaca/ConditionVariable.h"
-#include "Vaca/ScopedLock.h"
+#include "vaca/ConditionVariable.h"
+#include "vaca/ScopedLock.h"
 
 #include <limits>
 
-using namespace Vaca;
+using namespace vaca;
 
 class ScopedUnlock : private NonCopyable
 {

@@ -7,10 +7,10 @@
 #ifndef VACA_ANCHORLAYOUT_H
 #define VACA_ANCHORLAYOUT_H
 
-#include "Vaca/base.h"
-#include "Vaca/Layout.h"
+#include "vaca/base.h"
+#include "vaca/Layout.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    An AnchorLayout tries to maintain the same aspect of the widgets
@@ -39,6 +39,6 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_ANCHORLAYOUT_H

@@ -4,22 +4,22 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/System.h"
-#include "Vaca/Rect.h"
-#include "Vaca/Point.h"
-#include "Vaca/Size.h"
-#include "Vaca/Color.h"
-#include "Vaca/Debug.h"
-#include "Vaca/ImageList.h"
-#include "Vaca/ScopedLock.h"
-#include "Vaca/win32.h"
+#include "vaca/System.h"
+#include "vaca/Rect.h"
+#include "vaca/Point.h"
+#include "vaca/Size.h"
+#include "vaca/Color.h"
+#include "vaca/Debug.h"
+#include "vaca/ImageList.h"
+#include "vaca/ScopedLock.h"
+#include "vaca/win32.h"
 
 #include <cstdio>
 #include <cwchar>
 #include <lmcons.h>
 
 using namespace std;
-using namespace Vaca;
+using namespace vaca;
 
 /**
    Prints a line in the console.

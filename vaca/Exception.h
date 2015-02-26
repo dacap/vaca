@@ -7,11 +7,11 @@
 #ifndef VACA_EXCEPTION_H
 #define VACA_EXCEPTION_H
 
-#include "Vaca/base.h"
+#include "vaca/base.h"
 
 #include <exception>
 
-namespace Vaca {
+namespace vaca {
 
 /**
    Exception generated from Vaca.
@@ -41,6 +41,6 @@ private:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_EXCEPTION_H

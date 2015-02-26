@@ -7,11 +7,11 @@
 #ifndef VACA_SPINBUTTON_H
 #define VACA_SPINBUTTON_H
 
-#include "Vaca/base.h"
-#include "Vaca/Widget.h"
-#include "Vaca/CancelableEvent.h"
+#include "vaca/base.h"
+#include "vaca/Widget.h"
+#include "vaca/CancelableEvent.h"
 
-namespace Vaca {
+namespace vaca {
 
 // TODO move this to "SpinButtonEvent.h"
 class SpinButtonEvent : public CancelableEvent
@@ -94,6 +94,6 @@ protected:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_SPINBUTTON_H

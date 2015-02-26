@@ -7,15 +7,15 @@
 #ifndef VACA_BANDEDDOCKAREA_H
 #define VACA_BANDEDDOCKAREA_H
 
-#include "Vaca/base.h"
-#include "Vaca/DockArea.h"
+#include "vaca/base.h"
+#include "vaca/DockArea.h"
 
 #include <vector>
 
-namespace Vaca {
+namespace vaca {
 
 /**
-   An area where you can put @link Vaca::DockBar DockBars@endlink
+   An area where you can put @link vaca::DockBar DockBars@endlink
    separated by bands.
 */
 class VACA_DLL BandedDockArea : public DockArea
@@ -61,6 +61,6 @@ private:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_BANDEDDOCKAREA_H

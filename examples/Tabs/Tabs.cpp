@@ -4,10 +4,10 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include <Vaca/Vaca.h>
+#include <vaca/vaca.h>
 #include "../resource.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 enum {
   ID_EXIT = 1000,
@@ -46,12 +46,12 @@ class MainFrame : public Frame
       MenuItem::onClick(ev);
       m_tab.setSide(m_side);
     }
-    
+
     virtual void onUpdate(MenuItemEvent& ev) {
       MenuItem::onUpdate(ev);
       setRadio(m_tab.getSide() == m_side);
     }
-    
+
   };
 
 public:

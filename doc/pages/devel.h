@@ -1,4 +1,4 @@
-namespace Vaca {
+namespace vaca {
 
 /**
 
@@ -14,25 +14,25 @@ namespace Vaca {
 
 @section page_devel_headers Header Files
 
-You should include the &lt;Vaca/Vaca.h&gt; file:
+You should include the &lt;vaca/vaca.h&gt; file:
 @code
-#include <Vaca/Vaca.h>
+#include <vaca/vaca.h>
 @endcode
 
 But if you want to make the compilation faster, you can include the
 header file of the class that you use. E.g.:
 @code
-#include <Vaca/Color.h>
-void my_routine(const Vaca::Color& color)
+#include <vaca/Color.h>
+void my_routine(const vaca::Color& color)
 {
   ...
 }
 @endcode
 
-Also it's a good idea to include the Vaca namespace in .cpp files to
+Also it's a good idea to include the vaca namespace in .cpp files to
 get quick access to all Vaca classes:
 @code
-using namespace Vaca;
+using namespace vaca;
 @endcode
 
 
@@ -45,10 +45,10 @@ remember to compile your application using the @c -DVACA_STATIC flag.
 @section page_devel_dynamic Dynamic Library
 
 If you are going to use the dynamic version of Vaca (shared version),
-you have to distribute the @c Vaca.dll with your executable file.
+you have to distribute the @c vaca.dll with your executable file.
 
 Also, remember to compile your source code @b without the
-@c -DVACA_STATIC flag. When VACA_STATIC is not defined, &lt;Vaca/base.h&gt;
+@c -DVACA_STATIC flag. When VACA_STATIC is not defined, &lt;vaca/base.h&gt;
 defines VACA_DLL as @c __declspec(dllimport) to import each class from the @c DLL.
 
 

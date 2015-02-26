@@ -7,12 +7,12 @@
 #ifndef VACA_DOCKAREA_H
 #define VACA_DOCKAREA_H
 
-#include "Vaca/base.h"
-#include "Vaca/Widget.h"
-#include "Vaca/WidgetClass.h"
-#include "Vaca/Register.h"
+#include "vaca/base.h"
+#include "vaca/Widget.h"
+#include "vaca/WidgetClass.h"
+#include "vaca/Register.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    Information needed for every DockBar that is docked in a specific
@@ -121,6 +121,6 @@ protected:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_DOCKAREA_H

@@ -7,11 +7,11 @@
 #ifndef VACA_RESIZEEVENT_H
 #define VACA_RESIZEEVENT_H
 
-#include "Vaca/base.h"
-#include "Vaca/Event.h"
-#include "Vaca/Size.h"
+#include "vaca/base.h"
+#include "vaca/Event.h"
+#include "vaca/Size.h"
 
-namespace Vaca {
+namespace vaca {
 
 class VACA_DLL ResizeEvent : public Event
 {
@@ -26,6 +26,6 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_RESIZEEVENT_H

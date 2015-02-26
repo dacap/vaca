@@ -7,20 +7,20 @@
 #ifndef VACA_MSGBOX_H
 #define VACA_MSGBOX_H
 
-#include "Vaca/base.h"
-#include "Vaca/Color.h"
-#include "Vaca/Component.h"
-#include "Vaca/Exception.h"
-#include "Vaca/Graphics.h"
-#include "Vaca/Rect.h"
-#include "Vaca/ScrollInfo.h"
-#include "Vaca/Signal.h"
-#include "Vaca/Size.h"
-#include "Vaca/Style.h"
+#include "vaca/base.h"
+#include "vaca/Color.h"
+#include "vaca/Component.h"
+#include "vaca/Exception.h"
+#include "vaca/Graphics.h"
+#include "vaca/Rect.h"
+#include "vaca/ScrollInfo.h"
+#include "vaca/Signal.h"
+#include "vaca/Size.h"
+#include "vaca/Style.h"
 
 #include <vector>
 
-namespace Vaca {
+namespace vaca {
 
 /**
    Class to show a message box.
@@ -82,6 +82,6 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_MSGBOX_H

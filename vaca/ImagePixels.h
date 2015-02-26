@@ -10,12 +10,12 @@
 #include <vector>
 #include <algorithm>
 
-#include "Vaca/base.h"
-#include "Vaca/Size.h"
-#include "Vaca/Point.h"
-#include "Vaca/SharedPtr.h"
+#include "vaca/base.h"
+#include "vaca/Size.h"
+#include "vaca/Point.h"
+#include "vaca/SharedPtr.h"
 
-namespace Vaca {
+namespace vaca {
 
 class ImagePixelsHandle : public Referenceable
 {
@@ -171,6 +171,6 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_IMAGEPIXELS_H

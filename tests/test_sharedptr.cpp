@@ -1,9 +1,9 @@
 #include <gtest/gtest.h>
 
-#include "Vaca/SharedPtr.h"
-#include "Vaca/Referenceable.h"
+#include "vaca/SharedPtr.h"
+#include "vaca/Referenceable.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 class Int : public Referenceable
 {

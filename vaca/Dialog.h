@@ -7,11 +7,11 @@
 #ifndef VACA_DIALOG_H
 #define VACA_DIALOG_H
 
-#include "Vaca/base.h"
-#include "Vaca/Frame.h"
-#include "Vaca/Event.h"
+#include "vaca/base.h"
+#include "vaca/Frame.h"
+#include "vaca/Event.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    Represents the Win32 class used by Dialog.
@@ -128,6 +128,6 @@ private:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_DIALOG_H

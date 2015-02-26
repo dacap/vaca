@@ -7,7 +7,7 @@
 #ifndef VACA_WIN32_H
 #define VACA_WIN32_H
 
-#include "Vaca/base.h"
+#include "vaca/base.h"
 
 #ifndef VACA_ON_WINDOWS
   #error You cannot use this header file outside Windows platform.
@@ -16,7 +16,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
-namespace Vaca {
+namespace vaca {
 
   template<> VACA_DLL POINT convert_to(const Point& pt);
   template<> VACA_DLL Point convert_to(const POINT& pt);

@@ -7,24 +7,24 @@
 #ifndef VACA_WIDGET_H
 #define VACA_WIDGET_H
 
-#include "Vaca/base.h"
-#include "Vaca/Color.h"
-#include "Vaca/Component.h"
-#include "Vaca/Exception.h"
-#include "Vaca/Font.h"
-#include "Vaca/Graphics.h"
-#include "Vaca/Rect.h"
-#include "Vaca/Register.h"
-#include "Vaca/Signal.h"
-#include "Vaca/Size.h"
-#include "Vaca/Style.h"
-#include "Vaca/WidgetClass.h"
-#include "Vaca/WidgetHit.h"
-#include "Vaca/WidgetList.h"
+#include "vaca/base.h"
+#include "vaca/Color.h"
+#include "vaca/Component.h"
+#include "vaca/Exception.h"
+#include "vaca/Font.h"
+#include "vaca/Graphics.h"
+#include "vaca/Rect.h"
+#include "vaca/Register.h"
+#include "vaca/Signal.h"
+#include "vaca/Size.h"
+#include "vaca/Style.h"
+#include "vaca/WidgetClass.h"
+#include "vaca/WidgetHit.h"
+#include "vaca/WidgetList.h"
 
 #include <vector>
 
-namespace Vaca {
+namespace vaca {
 
 /**
    This exception is thrown when the operating system can't create the Widget.
@@ -467,6 +467,6 @@ private:
 
 VACA_DLL void delete_widget(Widget* widget);
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_WIDGET_H

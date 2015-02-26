@@ -4,10 +4,10 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/CustomButton.h"
-#include "Vaca/Debug.h"
+#include "vaca/CustomButton.h"
+#include "vaca/Debug.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 #ifndef ODS_HOTLIGHT
 #  define ODS_HOTLIGHT 64

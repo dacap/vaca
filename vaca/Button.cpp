@@ -4,10 +4,10 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/Button.h"
-#include "Vaca/Debug.h"
+#include "vaca/Button.h"
+#include "vaca/Debug.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 Button::Button(const String& text, Widget* parent, Style style)
   : ButtonBase(parent, style)

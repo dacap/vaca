@@ -7,12 +7,12 @@
 #ifndef VACA_LISTITEM_H
 #define VACA_LISTITEM_H
 
-#include "Vaca/base.h"
-#include "Vaca/Component.h"
+#include "vaca/base.h"
+#include "vaca/Component.h"
 
 #include <vector>
 
-namespace Vaca {
+namespace vaca {
 
 /**
    An item in a ListView.
@@ -54,6 +54,6 @@ private:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_LISTITEM_H

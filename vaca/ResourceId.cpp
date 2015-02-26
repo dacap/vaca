@@ -4,10 +4,10 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/ResourceId.h"
-#include "Vaca/String.h"
+#include "vaca/ResourceId.h"
+#include "vaca/String.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 ResourceId::ResourceId(int id)
 {

@@ -4,10 +4,10 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include <Vaca/Vaca.h>
+#include <vaca/vaca.h>
 #include "../resource.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 static Side side[4] = { Side::Left,
 			Side::Top,
@@ -101,7 +101,7 @@ private:
   {
     Color color((m_hotSides & b) == b ? Color::Yellow:
 					  getFgColor());
-    
+
     if ((m_anchor->getSides() & b) == b) {
       Brush brush(color);
       g.fillRoundRect(brush, rc, Size(8, 8));
@@ -115,7 +115,7 @@ private:
   Rect getSideRect(Side side)
   {
     Rect rc(getClientBounds());
-    
+
     switch (side) {
       case Side::Left:   return Rect(rc.x,        rc.y,        8, rc.h);
       case Side::Top:    return Rect(rc.x,        rc.y,        rc.w, 8);
@@ -190,7 +190,7 @@ protected:
   }
 
 private:
-  
+
 };
 
 //////////////////////////////////////////////////////////////////////

@@ -7,9 +7,9 @@
 #ifndef VACA_RESOURCEID_H
 #define VACA_RESOURCEID_H
 
-#include "Vaca/base.h"
+#include "vaca/base.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    Class to wrap an ID of an object in the resource file (.rc).
@@ -35,6 +35,6 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_RESOURCEID_H

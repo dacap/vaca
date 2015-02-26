@@ -4,10 +4,10 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include <Vaca/Vaca.h>
+#include <vaca/vaca.h>
 #include "../resource.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 // commands of the application
 enum {
@@ -145,7 +145,7 @@ public:
     m_joinInfo.setLayout(new BoxLayout(Orientation::Vertical, false));
 
     initValues();
-    
+
     // signals/slots
     m_penWidthSlider.Change.connect(Bind(&FigureProperties::onPenChange, this));
     m_endCapGroup.Change.connect(Bind(&FigureProperties::onPenChange, this));
@@ -154,7 +154,7 @@ public:
     m_penColor.Click.connect(Bind(&FigureProperties::onSelectPenColor, this));
     m_brushColor.Click.connect(Bind(&FigureProperties::onSelectBrushColor, this));
     m_closeFigure.Click.connect(Bind(&FigureProperties::onCloseFigure, this));
-    
+
     // center the dialog
     setSize(getPreferredSize());
     center();
@@ -167,7 +167,7 @@ private:
   {
     m_penWidthSlider.setValue(m_fig.pen.getWidth());
     m_penWidthEdit.setText(convert_to<String>(m_fig.pen.getWidth()));
-      
+
     m_endCapGroup.setSelectedIndex(m_fig.pen.getEndCap());
     m_joinGroup.setSelectedIndex(m_fig.pen.getJoin());
 
@@ -238,7 +238,7 @@ private:
   	       PenStyle::Solid,
   	       endCap, join);
   }
-  
+
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -259,7 +259,7 @@ class FigsEditor : public Widget
   Figure m_clipboard;		    // the clipboard to save figures
   bool m_moved;			    // true if the mouse moved when after it is captured
   Point m_oldPoint;
-  
+
 public:
 
   FigsEditor(Widget* parent)
@@ -348,7 +348,7 @@ protected:
       updateHotNode(ev.getPoint());
     }
   }
-  
+
   virtual void onMouseUp(MouseEvent& ev)
   {
     Widget::onMouseUp(ev);
@@ -622,7 +622,7 @@ private:
 class MainFrame : public Frame
 {
   FigsEditor m_editor;
-  
+
 public:
 
   MainFrame()

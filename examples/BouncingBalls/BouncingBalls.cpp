@@ -4,7 +4,7 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include <Vaca/Vaca.h>
+#include <vaca/vaca.h>
 #include "vector2d.h"
 #include <cmath>
 #include <ctime>
@@ -15,7 +15,7 @@
 // ticks per second
 #define TPS 60
 
-using namespace Vaca;
+using namespace vaca;
 
 //////////////////////////////////////////////////////////////////////
 // simulation model
@@ -76,7 +76,7 @@ struct segment
   {
     return (v-pos).project_on(dir.get_normal());
   }
-  
+
 };
 
 struct ball;
@@ -156,7 +156,7 @@ struct ball
 	    v2dfloat v2_f = (v2_u*(m2-cor*m1)+(cor+1)*m1*v1_u) / (m1+m2);
 
 	    // total momentum remains constant: m1*v1_u + m2*v2_u == m1*v1_f + m2*v2_f
-  
+
 	    this ->vel = (u * v1_f) + (n * v1_n);
 	    other->vel = (u * v2_f) + (n * v2_n);
 
@@ -167,7 +167,7 @@ struct ball
 	  }
 	}
       }
-      
+
       // collision with segments
       for (std::vector<segment>::iterator
 	     seg = segments.begin(); seg != segments.end(); ++seg) {
@@ -175,7 +175,7 @@ struct ball
 	if (seg->collided_circumference(pos_t, radius)) {
 	  // modify position
 	  vector2d u = seg->project_on_normal(pos_t);
-	  
+
 	  v2dfloat r = radius - u.magnitude() + 1;
 	  pos_t += r * u.normalize();
 
@@ -206,14 +206,14 @@ void move_balls()
   for (std::vector<ball*>::iterator
 	 it = balls.begin(); it != balls.end(); ++it) {
     ball* bal = *it;
-    
+
     // move balls
     bal->vel += bal->acc;
     bal->move(bal->vel);
 
     bal->vel *= friction_with_air;
   }
-  
+
 }
 
 void draw_balls(Graphics &g, double a, double b)
@@ -299,7 +299,7 @@ void init_segments()
 class MainFrame : public Frame
 {
   Timer m_timer;
-  
+
 public:
 
   MainFrame()
@@ -366,7 +366,7 @@ protected:
     }
     else
       rc = getBounds();
-    
+
 //     Timer::pollTimers();
 //     update();
   }
@@ -398,7 +398,7 @@ protected:
 	// close the frame
 	setVisible(false);
 	break;
-	
+
     }
   }
 
@@ -407,7 +407,7 @@ protected:
     Frame::onMouseDown(ev);
     simulation_model::add_ball();
   }
-  
+
 private:
 
   void onTick()

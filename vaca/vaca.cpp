@@ -4,10 +4,10 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/MainArgs.h"
-#include "Vaca/Application.h"
+#include "vaca/MainArgs.h"
+#include "vaca/Application.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 #if defined(VACA_WINDOWS)
   #include "win32/MainArgs.h"

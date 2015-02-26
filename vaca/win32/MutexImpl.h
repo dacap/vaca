@@ -10,7 +10,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
-class Vaca::Mutex::MutexImpl
+class vaca::Mutex::MutexImpl
 {
   CRITICAL_SECTION m_handle;
 

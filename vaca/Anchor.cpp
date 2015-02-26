@@ -4,9 +4,9 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/Anchor.h"
+#include "vaca/Anchor.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 /**
    Creates an anchor constraint to be used in a child that has a

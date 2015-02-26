@@ -7,10 +7,10 @@
 #ifndef VACA_PROGRESSBAR_H
 #define VACA_PROGRESSBAR_H
 
-#include "Vaca/base.h"
-#include "Vaca/Widget.h"
+#include "vaca/base.h"
+#include "vaca/Widget.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    Shows progress for a task that is running in background.
@@ -49,6 +49,6 @@ protected:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_PROGRESSBAR_H

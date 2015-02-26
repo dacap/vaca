@@ -7,9 +7,9 @@
 #ifndef VACA_COLOR_H
 #define VACA_COLOR_H
 
-#include "Vaca/base.h"
+#include "vaca/base.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    A color that can be used to create pens or brushes.
@@ -60,6 +60,6 @@ private:
   unsigned int m_raw;
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_COLOR_H

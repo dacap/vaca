@@ -4,10 +4,10 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/Point.h"
-#include "Vaca/Size.h"
+#include "vaca/Point.h"
+#include "vaca/Size.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 Point::Point()
 {

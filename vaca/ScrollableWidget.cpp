@@ -4,15 +4,15 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/ScrollableWidget.h"
-#include "Vaca/ResizeEvent.h"
-#include "Vaca/MouseEvent.h"
-#include "Vaca/SetCursorEvent.h"
-#include "Vaca/Cursor.h"
-#include "Vaca/ScrollInfo.h"
-#include "Vaca/ScrollEvent.h"
+#include "vaca/ScrollableWidget.h"
+#include "vaca/ResizeEvent.h"
+#include "vaca/MouseEvent.h"
+#include "vaca/SetCursorEvent.h"
+#include "vaca/Cursor.h"
+#include "vaca/ScrollInfo.h"
+#include "vaca/ScrollEvent.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 ScrollableWidget::ScrollableWidget(Widget* parent, Style style)
 : Widget(parent, style), m_fullSize(0, 0)

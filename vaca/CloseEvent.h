@@ -7,9 +7,9 @@
 #ifndef VACA_CLOSEEVENT_H
 #define VACA_CLOSEEVENT_H
 
-#include "Vaca/CancelableEvent.h"
+#include "vaca/CancelableEvent.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    Event generated when a Frame is being closed.
@@ -28,6 +28,6 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_CLOSEEVENT_H

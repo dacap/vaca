@@ -7,12 +7,12 @@
 #ifndef VACA_DROPFILESEVENT_H
 #define VACA_DROPFILESEVENT_H
 
-#include "Vaca/base.h"
-#include "Vaca/Event.h"
+#include "vaca/base.h"
+#include "vaca/Event.h"
 
 #include <vector>
 
-namespace Vaca {
+namespace vaca {
 
 class VACA_DLL DropFilesEvent : public Event
 {
@@ -27,6 +27,6 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_DROPFILESEVENT_H

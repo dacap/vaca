@@ -4,12 +4,12 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include <Vaca/Vaca.h>
+#include <vaca/vaca.h>
 #include <memory>
 #include "Document.h"
 #include "Editor.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 enum {
   ID_NEW_DOCUMENT,
@@ -173,7 +173,7 @@ Example::Example()
   // commands
   addCommand(new SignalCommand(ID_NEW_DOCUMENT, &Example::onNew, this));
   addCommand(new SignalCommand(ID_EXIT, Bind(&MainFrame::setVisible, m_mainFrame.get(), false)));
-  
+
   SignalCommand* cmd = new SignalCommand(ID_CLOSE_DOCUMENT);
   cmd->Execute.connect(&Example::onClose, this);
   cmd->Enabled.connect(&Example::hasCurrentDoc, this);

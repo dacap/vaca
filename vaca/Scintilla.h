@@ -7,10 +7,10 @@
 #ifndef VACA_SCINTILLA_H
 #define VACA_SCINTILLA_H
 
-#include "Vaca/base.h"
-#include "Vaca/Widget.h"
+#include "vaca/base.h"
+#include "vaca/Widget.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    Loads the Scintilla DLL.
@@ -621,6 +621,6 @@ protected:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_SCINTILLA_H

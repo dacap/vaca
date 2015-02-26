@@ -7,10 +7,10 @@
 #ifndef VACA_MDI_H
 #define VACA_MDI_H
 
-#include "Vaca/base.h"
-#include "Vaca/Frame.h"
+#include "vaca/base.h"
+#include "vaca/Frame.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    ID for the first MdiChild. These IDs are used internally by Win32
@@ -133,6 +133,6 @@ protected:
 };
 
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_MDI_H

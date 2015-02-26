@@ -4,43 +4,43 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/Widget.h"
-#include "Vaca/WidgetClass.h"
-#include "Vaca/Brush.h"
-#include "Vaca/Constraint.h"
-#include "Vaca/Cursor.h"
-#include "Vaca/Debug.h"
-#include "Vaca/Dialog.h"
-#include "Vaca/DropFilesEvent.h"
-#include "Vaca/Font.h"
-#include "Vaca/Frame.h"
-#include "Vaca/Image.h"
-#include "Vaca/KeyEvent.h"
-#include "Vaca/Layout.h"
-#include "Vaca/MouseEvent.h"
-#include "Vaca/PaintEvent.h"
-#include "Vaca/Point.h"
-#include "Vaca/Region.h"
-#include "Vaca/System.h"
-#include "Vaca/Mutex.h"
-#include "Vaca/ScopedLock.h"
-#include "Vaca/Command.h"
-#include "Vaca/ScrollInfo.h"
-#include "Vaca/ScrollEvent.h"
-#include "Vaca/FocusEvent.h"
-#include "Vaca/CommandEvent.h"
-#include "Vaca/ResizeEvent.h"
-#include "Vaca/PreferredSizeEvent.h"
-#include "Vaca/SetCursorEvent.h"
-#include "Vaca/LayoutEvent.h"
-#include "Vaca/win32.h"
+#include "vaca/Widget.h"
+#include "vaca/WidgetClass.h"
+#include "vaca/Brush.h"
+#include "vaca/Constraint.h"
+#include "vaca/Cursor.h"
+#include "vaca/Debug.h"
+#include "vaca/Dialog.h"
+#include "vaca/DropFilesEvent.h"
+#include "vaca/Font.h"
+#include "vaca/Frame.h"
+#include "vaca/Image.h"
+#include "vaca/KeyEvent.h"
+#include "vaca/Layout.h"
+#include "vaca/MouseEvent.h"
+#include "vaca/PaintEvent.h"
+#include "vaca/Point.h"
+#include "vaca/Region.h"
+#include "vaca/System.h"
+#include "vaca/Mutex.h"
+#include "vaca/ScopedLock.h"
+#include "vaca/Command.h"
+#include "vaca/ScrollInfo.h"
+#include "vaca/ScrollEvent.h"
+#include "vaca/FocusEvent.h"
+#include "vaca/CommandEvent.h"
+#include "vaca/ResizeEvent.h"
+#include "vaca/PreferredSizeEvent.h"
+#include "vaca/SetCursorEvent.h"
+#include "vaca/LayoutEvent.h"
+#include "vaca/win32.h"
 
 #include <iterator>
 
 // uncomment this if you want message reporting in the "vaca.log"
 // #define REPORT_MESSAGES
 
-using namespace Vaca;
+using namespace vaca;
 
 #define VACA_ATOM (reinterpret_cast<LPCTSTR>(MAKELPARAM(atom, 0)))
 
@@ -993,8 +993,8 @@ Size Widget::getPreferredSize()
        This can have both attributes (width and height) in
        zero, which means that it'll behave same as #getPreferredSize().
        If the width is great than zero the #onPreferredSize will try to
-       fit in that width (this is useful to fit @link Vaca::Label Label@endlink
-       or @link Vaca::Edit Edit@endlink controls in a specified width and
+       fit in that width (this is useful to fit @link vaca::Label Label@endlink
+       or @link vaca::Edit Edit@endlink controls in a specified width and
        calculate the height it could occupy).
 
    @see getPreferredSize
@@ -3416,7 +3416,7 @@ void MakeWidgetRef::safeDelete(Widget* widget)
 
    @see @ref page_tn_006
 */
-void Vaca::delete_widget(Widget* widget)
+void vaca::delete_widget(Widget* widget)
 {
   // is unreferenced?
   if (widget->getRefCount() == 0)

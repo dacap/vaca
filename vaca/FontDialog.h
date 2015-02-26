@@ -7,11 +7,11 @@
 #ifndef VACA_FONTDIALOG_H
 #define VACA_FONTDIALOG_H
 
-#include "Vaca/base.h"
-#include "Vaca/CommonDialog.h"
-#include "Vaca/Font.h"
+#include "vaca/base.h"
+#include "vaca/CommonDialog.h"
+#include "vaca/Font.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    A common dialog box to select fonts.
@@ -35,6 +35,6 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_FONTDIALOG_H

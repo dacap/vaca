@@ -7,11 +7,11 @@
 #ifndef VACA_REBAR_H
 #define VACA_REBAR_H
 
-#include "Vaca/base.h"
-#include "Vaca/ImageList.h"
-#include "Vaca/Widget.h"
+#include "vaca/base.h"
+#include "vaca/ImageList.h"
+#include "vaca/Widget.h"
 
-namespace Vaca {
+namespace vaca {
 
 struct ReBarBandStyleEnumSet
 {
@@ -136,6 +136,6 @@ protected:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_REBAR_H

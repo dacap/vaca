@@ -7,9 +7,9 @@
 #ifndef VACA_SIZE_H
 #define VACA_SIZE_H
 
-#include "Vaca/base.h"
+#include "vaca/base.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    A 2D size.
@@ -48,6 +48,6 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_SIZE_H

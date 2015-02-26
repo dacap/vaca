@@ -4,13 +4,13 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/BoxLayout.h"
-#include "Vaca/BoxConstraint.h"
-#include "Vaca/Size.h"
-#include "Vaca/Debug.h"
-#include "Vaca/Widget.h"
+#include "vaca/BoxLayout.h"
+#include "vaca/BoxConstraint.h"
+#include "vaca/Size.h"
+#include "vaca/Debug.h"
+#include "vaca/Widget.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 // auxiliar function to known if a widget is expansive
 static bool WidgetIsExpansive(Widget* widget) 

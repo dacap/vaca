@@ -4,7 +4,7 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/Pen.h"
+#include "vaca/Pen.h"
 
 #if defined(VACA_WINDOWS)
   #include "win32/PenImpl.h"
@@ -12,7 +12,7 @@
   #error Implement Pen class in your platform
 #endif
 
-using namespace Vaca;
+using namespace vaca;
 
 Pen::Pen()
   : m_impl(new PenImpl())

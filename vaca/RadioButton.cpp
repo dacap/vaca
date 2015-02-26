@@ -4,13 +4,13 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/RadioButton.h"
-#include "Vaca/Debug.h"
-#include "Vaca/Event.h"
-#include "Vaca/Mutex.h"
-#include "Vaca/ScopedLock.h"
+#include "vaca/RadioButton.h"
+#include "vaca/Debug.h"
+#include "vaca/Event.h"
+#include "vaca/Mutex.h"
+#include "vaca/ScopedLock.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 // ======================================================================
 // RadioButton

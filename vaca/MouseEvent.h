@@ -7,12 +7,12 @@
 #ifndef VACA_MOUSEEVENT_H
 #define VACA_MOUSEEVENT_H
 
-#include "Vaca/base.h"
-#include "Vaca/Enum.h"
-#include "Vaca/ConsumableEvent.h"
-#include "Vaca/Point.h"
+#include "vaca/base.h"
+#include "vaca/Enum.h"
+#include "vaca/ConsumableEvent.h"
+#include "vaca/Point.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    Namespace for MouseButton enumeration.
@@ -90,6 +90,6 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_MOUSEEVENT_H

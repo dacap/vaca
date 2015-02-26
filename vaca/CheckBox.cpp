@@ -4,9 +4,9 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/CheckBox.h"
+#include "vaca/CheckBox.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 CheckBox::CheckBox(const String& text, Widget* parent, Style style)
   : ButtonBase(parent, style)

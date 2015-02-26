@@ -4,9 +4,9 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/Keys.h"
+#include "vaca/Keys.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 Keys::Type Keys::fromMessageParams(WPARAM wParam, LPARAM lParam)
 {

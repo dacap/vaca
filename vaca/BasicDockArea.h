@@ -7,10 +7,10 @@
 #ifndef VACA_BASICDOCKAREA_H
 #define VACA_BASICDOCKAREA_H
 
-#include "Vaca/base.h"
-#include "Vaca/DockArea.h"
+#include "vaca/base.h"
+#include "vaca/DockArea.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    The most basic dock area management.
@@ -39,6 +39,6 @@ protected:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_BASICDOCKAREA_H

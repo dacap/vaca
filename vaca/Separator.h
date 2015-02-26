@@ -7,10 +7,10 @@
 #ifndef VACA_SEPARATOR_H
 #define VACA_SEPARATOR_H
 
-#include "Vaca/base.h"
-#include "Vaca/Widget.h"
+#include "vaca/base.h"
+#include "vaca/Widget.h"
 
-namespace Vaca {
+namespace vaca {
 
 class VACA_DLL Separator : public Widget
 {
@@ -30,6 +30,6 @@ protected:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_SEPARATOR_H

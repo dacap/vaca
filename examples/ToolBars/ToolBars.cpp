@@ -4,10 +4,10 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include <Vaca/Vaca.h>
+#include <vaca/vaca.h>
 #include "resource.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 #include "../Console.h"
 
@@ -176,7 +176,7 @@ private:
   void onToggleFullDrag()
   {
     bool state = m_button5.isSelected();
-    
+
     m_toolBar1.setFullDrag(state);
     m_toolBar2.setFullDrag(state);
     m_toolBar3.setFullDrag(state);

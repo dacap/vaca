@@ -4,15 +4,15 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/Menu.h"
-#include "Vaca/MenuItemEvent.h"
-#include "Vaca/Debug.h"
-#include "Vaca/System.h"
-#include "Vaca/Mdi.h"
-#include "Vaca/ResourceException.h"
-#include "Vaca/ScopedLock.h"
-#include "Vaca/Command.h"
-#include "Vaca/Point.h"
+#include "vaca/Menu.h"
+#include "vaca/MenuItemEvent.h"
+#include "vaca/Debug.h"
+#include "vaca/System.h"
+#include "vaca/Mdi.h"
+#include "vaca/ResourceException.h"
+#include "vaca/ScopedLock.h"
+#include "vaca/Command.h"
+#include "vaca/Point.h"
 
 #include <stack>
 
@@ -24,7 +24,7 @@
 #  define MIM_STYLE 16
 #endif
 
-using namespace Vaca;
+using namespace vaca;
 
 // ======================================================================
 // MenuItem

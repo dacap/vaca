@@ -7,10 +7,10 @@
 #ifndef VACA_BIX_H
 #define VACA_BIX_H
 
-#include "Vaca/base.h"
-#include "Vaca/Layout.h"
+#include "vaca/base.h"
+#include "vaca/Layout.h"
 
-namespace Vaca {
+namespace vaca {
 
 enum {
   // flags: type
@@ -99,6 +99,6 @@ private:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_BIX_H

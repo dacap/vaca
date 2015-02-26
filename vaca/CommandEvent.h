@@ -7,10 +7,10 @@
 #ifndef VACA_COMMANDEVENT_H
 #define VACA_COMMANDEVENT_H
 
-#include "Vaca/base.h"
-#include "Vaca/ConsumableEvent.h"
+#include "vaca/base.h"
+#include "vaca/ConsumableEvent.h"
 
-namespace Vaca {
+namespace vaca {
 
 class VACA_DLL CommandEvent : public ConsumableEvent
 {
@@ -25,6 +25,6 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_COMMANDEVENT_H

@@ -4,16 +4,16 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/SplitBar.h"
-#include "Vaca/Color.h"
-#include "Vaca/Brush.h"
-#include "Vaca/Cursor.h"
-#include "Vaca/MouseEvent.h"
-#include "Vaca/PaintEvent.h"
-#include "Vaca/System.h"
-#include "Vaca/SetCursorEvent.h"
+#include "vaca/SplitBar.h"
+#include "vaca/Color.h"
+#include "vaca/Brush.h"
+#include "vaca/Cursor.h"
+#include "vaca/MouseEvent.h"
+#include "vaca/PaintEvent.h"
+#include "vaca/System.h"
+#include "vaca/SetCursorEvent.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 #define SPLITBAR_DEFAULT_SIZE		5
 #define SPLITBAR_DEFAULT_POS		50

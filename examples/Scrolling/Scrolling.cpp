@@ -4,10 +4,10 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include <Vaca/Vaca.h>
+#include <vaca/vaca.h>
 #include "../resource.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 //////////////////////////////////////////////////////////////////////
 
@@ -63,7 +63,7 @@ protected:
       g.drawRoundRect(pen, rc, Size(32, 32));
     }
   }
-  
+
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -83,7 +83,7 @@ int VACA_MAIN()
   sleep.Click.connect(Bind<void>(&updateSleep, &wgt, &sleep));
 
   wgt.setConstraint(new BoxConstraint(true));
-  
+
   frm.setLayout(new BoxLayout(Orientation::Vertical, false));
   frm.setIcon(ResourceId(IDI_VACA));
   frm.setVisible(true);

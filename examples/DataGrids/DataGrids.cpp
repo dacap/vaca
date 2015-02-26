@@ -4,11 +4,11 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include <Vaca/Vaca.h>
+#include <vaca/vaca.h>
 #include <cmath>
 #include "../resource.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 class GridValue;
 class GridColumn;
@@ -43,7 +43,7 @@ public:
   explicit GridValue(long value);
   explicit GridValue(unsigned long value);
   explicit GridValue(double value);
-  explicit GridValue(const Vaca::String& value);
+  explicit GridValue(const vaca::String& value);
   ~GridValue();
 
   GridValue& operator=(const GridValue& value);
@@ -56,7 +56,7 @@ public:
   void assign(long value);
   void assign(unsigned long value);
   void assign(double value);
-  void assign(const Vaca::String& value);
+  void assign(const vaca::String& value);
 
   bool isEmpty() const;
   bool getBool() const;
@@ -65,7 +65,7 @@ public:
   long getLong() const;
   unsigned long getULong() const;
   double getDouble() const;
-  Vaca::String getString() const;
+  vaca::String getString() const;
 
 private:
   template<typename T>
@@ -132,7 +132,7 @@ GridValue::GridValue(double value)
   assign(value);
 }
 
-GridValue::GridValue(const Vaca::String& value)
+GridValue::GridValue(const vaca::String& value)
   : m_type(Empty)
   , m_data(NULL)
 {
@@ -175,7 +175,7 @@ void GridValue::clear()
       delete (double*)m_data;
       break;
     case String:
-      delete (Vaca::String*)m_data;
+      delete (vaca::String*)m_data;
       break;
   }
   m_type = Empty;
@@ -194,7 +194,7 @@ void GridValue::assign(const GridValue& value)
     case Long: assign(*(long*)value.m_data); break;
     case ULong: assign(*(unsigned long*)value.m_data); break;
     case Double: assign(*(double*)value.m_data); break;
-    case String: assign(*(Vaca::String*)value.m_data); break;
+    case String: assign(*(vaca::String*)value.m_data); break;
   }
 }
 
@@ -228,9 +228,9 @@ void GridValue::assign(double value)
   assign<double>(Double, value);
 }
 
-void GridValue::assign(const Vaca::String& value)
+void GridValue::assign(const vaca::String& value)
 {
-  assign<Vaca::String>(String, value);
+  assign<vaca::String>(String, value);
 }
 
 bool GridValue::isEmpty() const
@@ -268,7 +268,7 @@ bool GridValue::getBool() const
       return std::floor(value) != 0.0;
     }
     case String: {
-      const Vaca::String& value(*(Vaca::String*)m_data);
+      const vaca::String& value(*(vaca::String*)m_data);
       return
 	!value.empty() &&
 	value != L"0" &&
@@ -308,7 +308,7 @@ int GridValue::getInt() const
       return (int)value;
     }
     case String: {
-      Vaca::String& value(*(Vaca::String*)m_data);
+      vaca::String& value(*(vaca::String*)m_data);
       return convert_to<int>(value);
     }
   }
@@ -345,7 +345,7 @@ unsigned int GridValue::getUInt() const
       return (unsigned int)value;
     }
     case String: {
-      Vaca::String& value(*(Vaca::String*)m_data);
+      vaca::String& value(*(vaca::String*)m_data);
       return convert_to<unsigned long>(value);
     }
   }
@@ -382,7 +382,7 @@ long GridValue::getLong() const
       return (long)value;
     }
     case String: {
-      Vaca::String& value(*(Vaca::String*)m_data);
+      vaca::String& value(*(vaca::String*)m_data);
       return convert_to<long>(value);
     }
   }
@@ -419,7 +419,7 @@ unsigned long GridValue::getULong() const
       return (unsigned long)value;
     }
     case String: {
-      Vaca::String& value(*(Vaca::String*)m_data);
+      vaca::String& value(*(vaca::String*)m_data);
       return convert_to<unsigned long>(value);
     }
   }
@@ -456,18 +456,18 @@ double GridValue::getDouble() const
       return value;
     }
     case String: {
-      Vaca::String& value(*(Vaca::String*)m_data);
+      vaca::String& value(*(vaca::String*)m_data);
       return convert_to<double>(value);
     }
   }
   return 0;
 }
 
-Vaca::String GridValue::getString() const
+vaca::String GridValue::getString() const
 {
   switch (m_type) {
     case Empty:
-      return Vaca::String();
+      return vaca::String();
     case Bool: {
       bool value = *(bool*)m_data;
       return value ? L"1": L"0";
@@ -493,11 +493,11 @@ Vaca::String GridValue::getString() const
       return format_string(L"%.16g", value);
     }
     case String: {
-      Vaca::String& value(*(Vaca::String*)m_data);
+      vaca::String& value(*(vaca::String*)m_data);
       return value;
     }
   }
-  return Vaca::String();
+  return vaca::String();
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -530,7 +530,7 @@ class GridColumn
   // int m_headerHeight;
   int m_columnWidth;
   int m_preferredColumnWidth;
-  
+
 public:
 
   GridColumn(const String& name, const GridValue& defaultValue);
@@ -544,12 +544,12 @@ public:
 
   bool getAllowNull() const;
   void setAllowNull(bool state);
-  
+
   GridValue getDefaultValue();
 
   // GridRow& operator[](int index);
   // const GridRow& operator[](int index) const;
-  
+
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -560,7 +560,7 @@ class GridRow
   friend class GridView;
 
   int m_rowHeight;
-  
+
 public:
 
   GridRow();
@@ -585,7 +585,7 @@ public:
   //   }
   //   assert(false);
   // }
-  
+
 //////////////////////////////////////////////////////////////////////
 // GridView
 
@@ -692,7 +692,7 @@ protected:
   virtual void onSetCursor(SetCursorEvent& ev);
   virtual void onResize(ResizeEvent& ev);
   virtual void onPaint(PaintEvent& ev);
-  
+
 private:
 
   void resizeCells(int oldRowCount, int oldColumnCount);
@@ -710,7 +710,7 @@ private:
   void updateHorizontalScrollBarVisibility();
   void updateVerticalScrollBarVisibility();
   void updateHotTracking(const Point& pt);
-  
+
 };
 
 const Style GridView::Styles::Default(Widget::Styles::Default +
@@ -788,7 +788,7 @@ void GridView::onScroll(ScrollEvent& ev)
     case ScrollRequest::LineBackward:
       pos -= 32;
       break;
-    case ScrollRequest::LineForward: 
+    case ScrollRequest::LineForward:
       pos += 32;
       break;
     case ScrollRequest::PageBackward:
@@ -869,7 +869,7 @@ void GridView::onMouseUp(MouseEvent &ev)
       // 	updateHorizontalScrollBarVisibility();
       // 	invalidate(false);
     }
-    
+
     releaseMouse();
   }
 }
@@ -956,7 +956,7 @@ void GridView::onMouseWheel(MouseEvent &ev)
   //       }
   //     }
   //     // Horizontal
-  //     else 
+  //     else
   {
     int oldPos = getScrollPos(Orientation::Horizontal);
     setScrollPos(Orientation::Horizontal, oldPos - ev.getDelta() * 32);
@@ -1032,7 +1032,7 @@ void GridView::onSetCursor(SetCursorEvent& ev)
   }
   Widget::onSetCursor(ev);
 }
-  
+
 void GridView::onResize(ResizeEvent& ev)
 {
   //       invalidate(true);
@@ -1139,7 +1139,7 @@ void GridView::onPaint(PaintEvent& ev)
 	    backgroundColor = headerFaceColor;
 	    textColor = getFgColor();
 	  }
-	    
+
 	  drawCell(g, text, rc, borderColor, backgroundColor, textColor);
 
 	  // CRUD icon
@@ -1215,7 +1215,7 @@ void GridView::addRow(const GridRow& row)
 
   resizeCells(oldRowCount, getColumnCount());
 }
-  
+
 void GridView::resizeCells(int oldRowCount, int oldColumnCount)
 {
   int newRowCount = getRowCount();
@@ -1266,7 +1266,7 @@ Rect GridView::getColumnBounds(int columnIndex)
 {
   if (columnIndex == CRUD_COLUMN_INDEX)
     return getCrudColumnBounds();
-  
+
   assert(columnIndex >= 0 && columnIndex < getColumnCount());
   Point pt = getClientBounds().getOrigin() - getScrollPoint();
   int i;

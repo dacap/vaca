@@ -4,7 +4,7 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/Mutex.h"
+#include "vaca/Mutex.h"
 
 #if defined(VACA_ON_WINDOWS)
   #include "win32/MutexImpl.h"
@@ -14,7 +14,7 @@
   #error Your platform does not support mutexes
 #endif 
 
-using namespace Vaca;
+using namespace vaca;
 
 /**
    Creates a new mutex.

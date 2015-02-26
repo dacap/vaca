@@ -7,12 +7,12 @@
 #ifndef VACA_TIMER_H
 #define VACA_TIMER_H
 
-#include "Vaca/base.h"
-#include "Vaca/Signal.h"
-#include "Vaca/NonCopyable.h"
-#include "Vaca/Thread.h"
+#include "vaca/base.h"
+#include "vaca/Signal.h"
+#include "vaca/NonCopyable.h"
+#include "vaca/Thread.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    Class to schedule events every @e x milliseconds.
@@ -70,6 +70,6 @@ private:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_TIMER_H

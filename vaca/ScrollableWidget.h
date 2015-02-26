@@ -7,12 +7,12 @@
 #ifndef VACA_SCROLLABLEWIDGET_H
 #define VACA_SCROLLABLEWIDGET_H
 
-#include "Vaca/base.h"
-#include "Vaca/Widget.h"
-#include "Vaca/Size.h"
-#include "Vaca/Point.h"
+#include "vaca/base.h"
+#include "vaca/Widget.h"
+#include "vaca/Size.h"
+#include "vaca/Point.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    A wrapper ready-to-use to create scrollable widgets.
@@ -54,6 +54,6 @@ protected:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_SCROLLABLEWIDGET_H

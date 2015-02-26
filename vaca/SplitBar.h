@@ -7,12 +7,12 @@
 #ifndef VACA_SPLITBAR_H
 #define VACA_SPLITBAR_H
 
-#include "Vaca/Point.h"
-#include "Vaca/Widget.h"
-#include "Vaca/Register.h"
-#include "Vaca/WidgetClass.h"
+#include "vaca/Point.h"
+#include "vaca/Widget.h"
+#include "vaca/Register.h"
+#include "vaca/WidgetClass.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    Represents the Win32 class used by SplitBar.
@@ -87,6 +87,6 @@ private:
   void cleanTracker(Graphics& g);
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_SPLITBAR_H

@@ -7,11 +7,11 @@
 #ifndef VACA_FINDTEXTDIALOG_H
 #define VACA_FINDTEXTDIALOG_H
 
-#include "Vaca/base.h"
-#include "Vaca/Dialog.h"
-#include "Vaca/Signal.h"
+#include "vaca/base.h"
+#include "vaca/Dialog.h"
+#include "vaca/Signal.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    A common dialog box to find (or replace) text.
@@ -61,6 +61,6 @@ private:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_FINDTEXTDIALOG_H

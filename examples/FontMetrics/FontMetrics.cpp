@@ -4,11 +4,11 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include <Vaca/Vaca.h>
+#include <vaca/vaca.h>
 #include <ctime>
 #include "../resource.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 class MainFrame : public Frame
 {
@@ -47,7 +47,7 @@ public:
 
     String baseLineStr = L"Base line";
     Size baseLineStrSize = g.measureString(baseLineStr);
-    
+
     // Measure the sampleText string
     FontMetrics fontMetrics;
     g.setFont(m_font);
@@ -71,7 +71,7 @@ public:
 	       origin.y+fontMetrics.getAscent(), // (1)
 	       origin.x+textSize.w,
 	       origin.y+textSize.h-fontMetrics.getDescent()); // (2)
-    
+
     // Restore to the default widget font
     FontMetrics fontMetrics2;
     g.setFont(getFont());
@@ -156,7 +156,7 @@ private:
       g.drawString(str, color, rc.getOrigin());
     }
   };
-    
+
   template<typename Functor>
   void forEachChar(Graphics& g, const Color& color, Functor functor)
   {

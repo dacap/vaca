@@ -7,10 +7,10 @@
 #ifndef EDITOR_H
 #define EDITOR_H
 
-#include <Vaca/Vaca.h>
+#include <vaca/vaca.h>
 #include "Document.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 // Document's view
 class Editor : public Widget
@@ -21,7 +21,7 @@ class Editor : public Widget
   bool m_caretVisible;
   Timer m_caretBlink;
   const DocPos max_length;
-  
+
 public:
 
   Editor(Widget* parent)
@@ -170,7 +170,7 @@ private:
     m_caretBlink.start();	// restart timer
     invalidate(true);
   }
-  
+
 };
 
 #endif // EDITOR_H

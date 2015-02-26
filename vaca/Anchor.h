@@ -7,11 +7,11 @@
 #ifndef VACA_ANCHOR_H
 #define VACA_ANCHOR_H
 
-#include "Vaca/base.h"
-#include "Vaca/Constraint.h"
-#include "Vaca/Rect.h"
+#include "vaca/base.h"
+#include "vaca/Constraint.h"
+#include "vaca/Rect.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    Anchor constraint. You should setup an Anchor contraint for every
@@ -37,6 +37,6 @@ public:
 
 }; // Anchor
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_ANCHOR_H

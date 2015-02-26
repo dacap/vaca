@@ -4,12 +4,12 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/Clipboard.h"
-#include "Vaca/Widget.h"
-#include "Vaca/System.h"
-#include "Vaca/String.h"
+#include "vaca/Clipboard.h"
+#include "vaca/Widget.h"
+#include "vaca/System.h"
+#include "vaca/String.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 Clipboard::Clipboard(Widget* owner)
 {

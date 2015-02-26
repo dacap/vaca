@@ -7,9 +7,9 @@
 #ifndef VACA_WIDGETHIT_H
 #define VACA_WIDGETHIT_H
 
-#include "Vaca/base.h"
+#include "vaca/base.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    @see WidgetHit
@@ -154,6 +154,6 @@ struct WidgetHitEnum
 */
 typedef Enum<WidgetHitEnum> WidgetHit;
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_WIDGETHIT_H

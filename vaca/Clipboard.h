@@ -7,9 +7,9 @@
 #ifndef VACA_CLIPBOARD_H
 #define VACA_CLIPBOARD_H
 
-#include "Vaca/base.h"
+#include "vaca/base.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    Handles the global clipboard.
@@ -30,6 +30,6 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_CLIPBOARD_H

@@ -4,12 +4,12 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/StatusBar.h"
-#include "Vaca/WidgetClass.h"
-#include "Vaca/PreferredSizeEvent.h"
-#include "Vaca/LayoutEvent.h"
+#include "vaca/StatusBar.h"
+#include "vaca/WidgetClass.h"
+#include "vaca/PreferredSizeEvent.h"
+#include "vaca/LayoutEvent.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 StatusBar::StatusBar(Widget* parent, Style style)
   : Widget(WidgetClassName(STATUSCLASSNAME), parent, style)

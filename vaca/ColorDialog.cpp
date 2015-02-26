@@ -4,11 +4,11 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/ColorDialog.h"
-#include "Vaca/Application.h"
-#include "Vaca/win32.h"
+#include "vaca/ColorDialog.h"
+#include "vaca/Application.h"
+#include "vaca/win32.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 ColorDialog::ColorDialog(const Color& color, Widget* parent)
   : CommonDialog(parent)

@@ -4,9 +4,9 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/CancelableEvent.h"
+#include "vaca/CancelableEvent.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 CancelableEvent::CancelableEvent(Component* source)
   : Event(source)

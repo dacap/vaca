@@ -4,21 +4,21 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/Thread.h"
-#include "Vaca/Debug.h"
-#include "Vaca/Frame.h"
-#include "Vaca/Signal.h"
-#include "Vaca/Timer.h"
-#include "Vaca/Mutex.h"
-#include "Vaca/ScopedLock.h"
-#include "Vaca/Slot.h"
-#include "Vaca/TimePoint.h"
+#include "vaca/Thread.h"
+#include "vaca/Debug.h"
+#include "vaca/Frame.h"
+#include "vaca/Signal.h"
+#include "vaca/Timer.h"
+#include "vaca/Mutex.h"
+#include "vaca/ScopedLock.h"
+#include "vaca/Slot.h"
+#include "vaca/TimePoint.h"
 
 #include <vector>
 #include <algorithm>
 #include <memory>
 
-using namespace Vaca;
+using namespace vaca;
 
 // ======================================================================
 
@@ -260,11 +260,11 @@ void CurrentThread::enqueueMessage(const Message& message)
 
 /**
    Does the message loop while there are
-   visible @link Vaca::Frame frames@endlink.
+   visible @link vaca::Frame frames@endlink.
 
    @see Frame::setVisible
 */
-void Vaca::CurrentThread::doMessageLoop()
+void vaca::CurrentThread::doMessageLoop()
 {
   // message loop
   Message msg;
@@ -275,7 +275,7 @@ void Vaca::CurrentThread::doMessageLoop()
 /**
    Does the message loop until the @a widget is hidden.
 */
-void Vaca::CurrentThread::doMessageLoopFor(Widget* widget)
+void vaca::CurrentThread::doMessageLoopFor(Widget* widget)
 {
   // get widget HWND
   HWND hwnd = widget->getHandle();
@@ -298,25 +298,25 @@ void Vaca::CurrentThread::doMessageLoopFor(Widget* widget)
     ::EnableWindow(hparent, TRUE);
 }
 
-void Vaca::CurrentThread::pumpMessageQueue()
+void vaca::CurrentThread::pumpMessageQueue()
 {
   Message msg;
   while (peekMessage(msg))
     processMessage(msg);
 }
 
-void Vaca::CurrentThread::breakMessageLoop()
+void vaca::CurrentThread::breakMessageLoop()
 {
   get_thread_data()->breakLoop = true;
   ::PostThreadMessage(::GetCurrentThreadId(), WM_NULL, 0, 0);
 }
 
-void Vaca::CurrentThread::yield()
+void vaca::CurrentThread::yield()
 {
   ::Sleep(0);
 }
 
-void Vaca::CurrentThread::sleep(int msecs)
+void vaca::CurrentThread::sleep(int msecs)
 {
   ::Sleep(msecs);
 }
@@ -330,7 +330,7 @@ void Vaca::CurrentThread::sleep(int msecs)
      or false if there aren't more visible @link Frame frames@endlink
      to dispatch messages.
 */
-bool Vaca::CurrentThread::getMessage(Message& message)
+bool vaca::CurrentThread::getMessage(Message& message)
 {
   ThreadData* data = get_thread_data();
 

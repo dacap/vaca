@@ -4,7 +4,7 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include <Vaca/Vaca.h>
+#include <vaca/vaca.h>
 #include <cmath>
 #include "../resource.h"
 
@@ -12,7 +12,7 @@
 #define M_PI		3.14159265358979323846
 #endif
 
-using namespace Vaca;
+using namespace vaca;
 
 //////////////////////////////////////////////////////////////////////
 // 2-D point with floating-point coordinates
@@ -80,7 +80,7 @@ protected:
     return getClientBounds().getCenter() + Point(static_cast<int>(pt.x*32),
 						 static_cast<int>(-pt.y*32));
   }
-  
+
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -91,7 +91,7 @@ class EditablePointsPage : public AxisPage
   int mHotPoint;
 protected:
   std::vector<Point_f> mPoints;
-  
+
 public:
 
   EditablePointsPage(const String& text, Tab* parent)
@@ -129,7 +129,7 @@ protected:
     else {
       // add a new point
       mPoints.push_back(viewToModel(ev.getPoint()));
-      
+
       // update hot-tracking point
       onMouseMove(ev);
 
@@ -181,14 +181,14 @@ protected:
   virtual void onPaint(PaintEvent& ev)
   {
     AxisPage::onPaint(ev);
-    
+
     Graphics& g = ev.getGraphics();
     Rect rc = getClientBounds();
     Point origin = rc.getCenter();
 
     // number of points
     int n = mPoints.size();
-    
+
     // draw points
     Pen pen(Color::Blue);
     Brush brush(Color::Blue);
@@ -204,7 +204,7 @@ protected:
       }
     }
   }
-  
+
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -247,7 +247,7 @@ class FunctionsPage : public AxisPage
   Timer m_timer;
   int m_currentFunction;
   Font m_font;
-  
+
 public:
 
   FunctionsPage(Tab* parent)
@@ -292,7 +292,7 @@ private:
 
     invalidate(true);
   }
-  
+
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -318,7 +318,7 @@ protected:
 
     // number of points
     int n = mPoints.size();
-    
+
     // draw the f(x) (Lagrange polynomial)
     for (int viewX=rc.x; viewX<rc.x+rc.w; ++viewX) {
       Point_f pt = viewToModel(Point(viewX, 0));
@@ -342,7 +342,7 @@ protected:
       g.setPixel(modelToView(pt), Color(0, 192, 0));
     }
   }
-  
+
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -372,7 +372,7 @@ protected:
 
     // number of points
     int n = mPoints.size();
-    
+
     // draw control lines
     if (n > 0) {
       for (int i=1; i<n; ++i)
@@ -390,7 +390,7 @@ protected:
       g.drawBezier(greenPen, points);
     }
   }
-  
+
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -426,7 +426,7 @@ protected:
       ev.consume();
     }
   }
-  
+
 };
 
 //////////////////////////////////////////////////////////////////////

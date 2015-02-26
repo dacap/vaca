@@ -7,11 +7,11 @@
 #ifndef VACA_COLORDIALOG_H
 #define VACA_COLORDIALOG_H
 
-#include "Vaca/base.h"
-#include "Vaca/CommonDialog.h"
-#include "Vaca/Color.h"
+#include "vaca/base.h"
+#include "vaca/CommonDialog.h"
+#include "vaca/Color.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    A common dialog box to select colors.
@@ -32,6 +32,6 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_COLORDIALOG_H

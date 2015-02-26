@@ -4,17 +4,17 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/ProgressBar.h"
-#include "Vaca/Debug.h"
-#include "Vaca/WidgetClass.h"
-#include "Vaca/PreferredSizeEvent.h"
-#include "Vaca/win32.h"
+#include "vaca/ProgressBar.h"
+#include "vaca/Debug.h"
+#include "vaca/WidgetClass.h"
+#include "vaca/PreferredSizeEvent.h"
+#include "vaca/win32.h"
 
 #ifndef PBM_SETMARQUEE
 #define PBM_SETMARQUEE 1034
 #endif
 
-using namespace Vaca;
+using namespace vaca;
 
 ProgressBar::ProgressBar(Widget* parent, Style style)
   : Widget(WidgetClassName(PROGRESS_CLASS), parent, style)

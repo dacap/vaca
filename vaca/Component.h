@@ -7,11 +7,11 @@
 #ifndef VACA_COMPONENT_H
 #define VACA_COMPONENT_H
 
-#include "Vaca/base.h"
-#include "Vaca/Referenceable.h"
+#include "vaca/base.h"
+#include "vaca/Referenceable.h"
 #include <map>
 
-namespace Vaca {
+namespace vaca {
 
 /**
    A component is a visual object, such as widgets or menus.
@@ -41,6 +41,6 @@ private:
   Properties m_properties;
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_COMPONENT_H

@@ -7,11 +7,11 @@
 #ifndef VACA_MESSAGE_H
 #define VACA_MESSAGE_H
 
-#include "Vaca/base.h"
-#include "Vaca/NonCopyable.h"
-#include "Vaca/Exception.h"
+#include "vaca/base.h"
+#include "vaca/NonCopyable.h"
+#include "vaca/Exception.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    Thrown when a Message cannot be registered/created.
@@ -58,6 +58,6 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_MESSAGE_H

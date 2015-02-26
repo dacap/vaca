@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 
-#include "Vaca/Point.h"
+#include "vaca/Point.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 inline std::ostream& operator<<(std::ostream& os, const Point& pt)
 {

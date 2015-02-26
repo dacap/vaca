@@ -6,14 +6,14 @@
 
 // we include the entire Vaca namespace, in this way we don't worry
 // about what classes are accesible: we have all the classes available
-#include <Vaca/Vaca.h>
+#include <vaca/vaca.h>
 
 // here is defined IDI_VACA = 1
 #include "../resource.h"
 
 // we can use the Vaca namespace by default to avoid writting things
-// like Vaca::Frame, Vaca::LinkLabel, Vaca::Font, etc.
-using namespace Vaca;
+// like vaca::Frame, vaca::LinkLabel, vaca::Font, etc.
+using namespace vaca;
 
 // the main window
 class MainFrame : public Frame

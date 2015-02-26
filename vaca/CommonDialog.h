@@ -7,12 +7,12 @@
 #ifndef VACA_COMMONDIALOG_H
 #define VACA_COMMONDIALOG_H
 
-#include "Vaca/base.h"
-#include "Vaca/Component.h"
+#include "vaca/base.h"
+#include "vaca/Component.h"
 
 #include <commdlg.h>
 
-namespace Vaca {
+namespace vaca {
 
 /**
    Base class for common dialogs.
@@ -33,6 +33,6 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_COMMONDIALOG_H

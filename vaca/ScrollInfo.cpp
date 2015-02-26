@@ -4,9 +4,9 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/ScrollInfo.h"
+#include "vaca/ScrollInfo.h"
 
-using namespace Vaca;
+using namespace vaca;
 
 ScrollInfo::ScrollInfo()
 {

@@ -4,17 +4,17 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
-#include "Vaca/RichEdit.h"
-#include "Vaca/Event.h"
-#include "Vaca/System.h"
-#include "Vaca/Register.h"
-#include "Vaca/WidgetClass.h"
-#include "Vaca/win32.h"
+#include "vaca/RichEdit.h"
+#include "vaca/Event.h"
+#include "vaca/System.h"
+#include "vaca/Register.h"
+#include "vaca/WidgetClass.h"
+#include "vaca/win32.h"
 
 #include <richedit.h>
 #include <memory>
 
-using namespace Vaca;
+using namespace vaca;
 
 HINSTANCE RichEditRegister::hmod = NULL;
 

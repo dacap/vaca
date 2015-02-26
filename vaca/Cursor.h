@@ -7,12 +7,12 @@
 #ifndef VACA_CURSOR_H
 #define VACA_CURSOR_H
 
-#include "Vaca/base.h"
-#include "Vaca/ResourceId.h"
-#include "Vaca/SharedPtr.h"
-#include "Vaca/GdiObject.h"
+#include "vaca/base.h"
+#include "vaca/ResourceId.h"
+#include "vaca/SharedPtr.h"
+#include "vaca/GdiObject.h"
 
-namespace Vaca {
+namespace vaca {
 
 /**
    @see SysCursor
@@ -96,6 +96,6 @@ public:
 
 };
 
-} // namespace Vaca
+} // namespace vaca
 
 #endif // VACA_CURSOR_H

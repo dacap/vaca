@@ -6,9 +6,9 @@
 
 #define VACA_STRING_CPP
 
-#include "Vaca/String.h"
-#include "Vaca/Debug.h"
-#include "Vaca/Exception.h"
+#include "vaca/String.h"
+#include "vaca/Debug.h"
+#include "vaca/Exception.h"
 #include <cstdarg>
 #include <cstdlib>
 #include <cctype>
@@ -19,9 +19,9 @@
 #include <algorithm>
 #include <memory>
 
-using namespace Vaca;
+using namespace vaca;
 
-String Vaca::format_string(const Char* fmt, ...)
+String vaca::format_string(const Char* fmt, ...)
 {
   std::auto_ptr<Char> buf;
   int size = 512;
@@ -48,12 +48,12 @@ String Vaca::format_string(const Char* fmt, ...)
   return String(buf.get());
 }
 
-String Vaca::trim_string(const String& str)
+String vaca::trim_string(const String& str)
 {
   return trim_string(str.c_str());
 }
 
-String Vaca::trim_string(const Char* str)
+String vaca::trim_string(const Char* str)
 {
   assert(str != NULL);
 
@@ -66,7 +66,7 @@ String Vaca::trim_string(const Char* str)
   return res;
 }
 
-std::string Vaca::to_utf8(const String& string)
+std::string vaca::to_utf8(const String& string)
 {
   int required_size =
     WideCharToMultiByte(CP_UTF8, 0,
@@ -86,7 +86,7 @@ std::string Vaca::to_utf8(const String& string)
   return std::string(&buf[0]);
 }
 
-String Vaca::from_utf8(const std::string& string)
+String vaca::from_utf8(const std::string& string)
 {
   int required_size =
     MultiByteToWideChar(CP_UTF8, 0,
@@ -123,7 +123,7 @@ namespace {
   };
 }
 
-void Vaca::split_string(const String& string, std::vector<String>& parts, const String& separators)
+void vaca::split_string(const String& string, std::vector<String>& parts, const String& separators)
 {
   size_t elements = 1 + std::count_if(string.begin(), string.end(), is_separator(&separators));
   parts.resize(elements);
@@ -142,7 +142,7 @@ void Vaca::split_string(const String& string, std::vector<String>& parts, const 
   }
 }
 
-template<> std::string Vaca::convert_to(const Char* const& from)
+template<> std::string vaca::convert_to(const Char* const& from)
 {
   int len = std::wcslen(from)+1;
   std::auto_ptr<char> ansiBuf(new char[len]);
@@ -153,7 +153,7 @@ template<> std::string Vaca::convert_to(const Char* const& from)
     return std::string(ansiBuf.get());
 }
 
-template<> std::string Vaca::convert_to(const String& from)
+template<> std::string vaca::convert_to(const String& from)
 {
   int len = from.size()+1;
   std::auto_ptr<char> ansiBuf(new char[len]);
@@ -164,37 +164,37 @@ template<> std::string Vaca::convert_to(const String& from)
     return std::string(ansiBuf.get());
 }
 
-template<> int Vaca::convert_to(const String& from)
+template<> int vaca::convert_to(const String& from)
 {
   return (int)std::wcstol(from.c_str(), NULL, 10);
 }
 
-template<> long Vaca::convert_to(const String& from)
+template<> long vaca::convert_to(const String& from)
 {
   return (long)std::wcstol(from.c_str(), NULL, 10);
 }
 
-template<> unsigned int Vaca::convert_to(const String& from)
+template<> unsigned int vaca::convert_to(const String& from)
 {
   return (unsigned int)std::wcstoul(from.c_str(), NULL, 10);
 }
 
-template<> unsigned long Vaca::convert_to(const String& from)
+template<> unsigned long vaca::convert_to(const String& from)
 {
   return (unsigned long)std::wcstoul(from.c_str(), NULL, 10);
 }
 
-template<> float Vaca::convert_to(const String& from)
+template<> float vaca::convert_to(const String& from)
 {
   return (float)std::wcstod(from.c_str(), NULL);
 }
 
-template<> double Vaca::convert_to(const String& from)
+template<> double vaca::convert_to(const String& from)
 {
   return std::wcstod(from.c_str(), NULL);
 }
 
-template<> String Vaca::convert_to(const char* const& from)
+template<> String vaca::convert_to(const char* const& from)
 {
   int len = strlen(from)+1;
   std::auto_ptr<Char> wideBuf(new Char[len]);
@@ -205,7 +205,7 @@ template<> String Vaca::convert_to(const char* const& from)
     return String(wideBuf.get());
 }
 
-template<> String Vaca::convert_to(const std::string& from)
+template<> String vaca::convert_to(const std::string& from)
 {
   int len = from.size()+1;
   std::auto_ptr<Char> wideBuf(new Char[len]);
@@ -216,32 +216,32 @@ template<> String Vaca::convert_to(const std::string& from)
     return String(wideBuf.get());
 }
 
-template<> String Vaca::convert_to(const int& from)
+template<> String vaca::convert_to(const int& from)
 {
   return format_string(L"%d", from);
 }
 
-template<> String Vaca::convert_to(const long& from)
+template<> String vaca::convert_to(const long& from)
 {
   return format_string(L"%ld", from);
 }
 
-template<> String Vaca::convert_to(const unsigned int& from)
+template<> String vaca::convert_to(const unsigned int& from)
 {
   return format_string(L"%u", from);
 }
 
-template<> String Vaca::convert_to(const unsigned long& from)
+template<> String vaca::convert_to(const unsigned long& from)
 {
   return format_string(L"%lu", from);
 }
 
-template<> String Vaca::convert_to(const float& from)
+template<> String vaca::convert_to(const float& from)
 {
   return format_string(L"%.16g", from);
 }
 
-template<> String Vaca::convert_to(const double& from)
+template<> String vaca::convert_to(const double& from)
 {
   return format_string(L"%.16g", from);
 }
@@ -250,7 +250,7 @@ template<> String Vaca::convert_to(const double& from)
    Commondly used to give strings to Win32 API or from Win32 API (in
    structures and messages).
 */
-void Vaca::copy_string_to(const String& src, Char* dest, int size)
+void vaca::copy_string_to(const String& src, Char* dest, int size)
 {
   std::wcsncpy(dest, src.c_str(), size);
   dest[size-1] = L'\0';
@@ -270,7 +270,7 @@ void Vaca::copy_string_to(const String& src, Char* dest, int size)
      The string to be added at the end of the string
      (separated by a slash).
 */
-String Vaca::operator/(const String& path, const String& comp)
+String vaca::operator/(const String& path, const String& comp)
 {
   String res(path);
 
@@ -296,7 +296,7 @@ String Vaca::operator/(const String& path, const String& comp)
      The string to be added at the end of the string
      (separated by a slash).
 */
-String& Vaca::operator/=(String& path, const String& comp)
+String& vaca::operator/=(String& path, const String& comp)
 {
   if (!path.empty() && *(path.end()-1) != L'/' && *(path.end()-1) != L'\\')
     path.push_back(L'\\');
@@ -311,7 +311,7 @@ String& Vaca::operator/=(String& path, const String& comp)
 
    @see file_name
 */
-String Vaca::file_path(const String& fullpath)
+String vaca::file_path(const String& fullpath)
 {
   String::const_reverse_iterator rit;
   String res;
@@ -335,7 +335,7 @@ String Vaca::file_path(const String& fullpath)
 
    @see file_path, file_title
 */
-String Vaca::file_name(const String& fullpath)
+String vaca::file_name(const String& fullpath)
 {
   String::const_reverse_iterator rit;
   String res;
@@ -359,7 +359,7 @@ String Vaca::file_name(const String& fullpath)
 
    @see file_path, file_title
 */
-String Vaca::file_extension(const String& fullpath)
+String vaca::file_extension(const String& fullpath)
 {
   String::const_reverse_iterator rit;
   String res;
@@ -389,7 +389,7 @@ String Vaca::file_extension(const String& fullpath)
 
    @see file_path, file_extension
 */
-String Vaca::file_title(const String& fullpath)
+String vaca::file_title(const String& fullpath)
 {
   String::const_reverse_iterator rit;
   String::const_iterator last_dot = fullpath.end();
@@ -412,7 +412,7 @@ String Vaca::file_title(const String& fullpath)
   return res;
 }
 
-String Vaca::url_host(const String& url)
+String vaca::url_host(const String& url)
 {
   String host;
   int len = url.size();
@@ -425,7 +425,7 @@ String Vaca::url_host(const String& url)
   return host;
 }
 
-String Vaca::url_object(const String& url)
+String vaca::url_object(const String& url)
 {
   String object;
   int len = url.size();
@@ -440,7 +440,7 @@ String Vaca::url_object(const String& url)
   return object;
 }
 
-String Vaca::encode_url(const String& url)
+String vaca::encode_url(const String& url)
 {
   std::auto_ptr<Char> buf;
   DWORD size = 1024;
@@ -460,7 +460,7 @@ String Vaca::encode_url(const String& url)
   return String(buf.get());
 }
 
-String Vaca::decode_url(const String& url)
+String vaca::decode_url(const String& url)
 {
   std::auto_ptr<Char> buf;
   DWORD size = 1024;

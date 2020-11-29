@@ -1,3 +1,5 @@
 doc/*.chm
 doc/*.tmp
 doc/html/
+/out/build
+/.vs

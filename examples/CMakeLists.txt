@@ -65,10 +65,16 @@ function(add_vaca_example name)
     get_target_property(example_exe_output ${name} LOCATION)
     add_custom_command(TARGET ${name}
       POST_BUILD
-      COMMAND mt.exe -nologo
-		     -manifest ${CMAKE_CURRENT_SOURCE_DIR}/Example.manifest
-			       ${CMAKE_CURRENT_BINARY_DIR}/${name}.exe.embed.manifest
-		     -outputresource:${example_exe_output};#1
+      if(EXISTS ${CMAKE_CURRENT_BINARY_DIR}/${name}.exe.embed.manifest)
+          COMMAND mt.exe -nologo
+		         -manifest ${CMAKE_CURRENT_SOURCE_DIR}/Example.manifest
+			           ${CMAKE_CURRENT_BINARY_DIR}/${name}.exe.embed.manifest
+		         -outputresource:${example_exe_output};#1
+      else()
+          COMMAND mt.exe -nologo
+		         -manifest ${CMAKE_CURRENT_SOURCE_DIR}/Example.manifest
+		         -outputresource:${example_exe_output};#1
+      endif()
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
   endif()
 endfunction(add_vaca_example)

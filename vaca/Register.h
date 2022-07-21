@@ -66,7 +66,7 @@ public:
       wcex.hInstance     = Application::getHandle();
       wcex.hIcon         = (HICON)NULL;//LoadIcon(hInstance, IDI_GFC);
       wcex.hCursor       = (HCURSOR)NULL;//LoadCursor(NULL, IDC_ARROW);
-      wcex.hbrBackground = reinterpret_cast<HBRUSH>(T::getColor()+1);
+      wcex.hbrBackground = reinterpret_cast<HBRUSH>(__int64(T::getColor()+1));
       wcex.lpszMenuName  = (LPCTSTR)NULL;
       wcex.lpszClassName = class_name.c_str();
       wcex.hIconSm       = NULL;//LoadIcon(wcex.hInstance, (LPCTSTR)IDI_SMALL);

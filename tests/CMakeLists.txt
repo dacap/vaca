@@ -19,6 +19,8 @@ function(add_vaca_test name)
     COMPILE_FLAGS "${common_flags}")
 
   target_link_libraries(${name} gtest_main vaca ${win32_libs})
+
+  add_test(NAME ${name} COMMAND ${name})
 endfunction(add_vaca_test)
 
 add_vaca_test(test_bind)

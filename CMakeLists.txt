@@ -221,4 +221,5 @@ add_subdirectory(examples)
 ########################################
 # Tests
 
+enable_testing()
 add_subdirectory(tests)

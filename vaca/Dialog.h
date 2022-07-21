@@ -124,7 +124,7 @@ protected:
   virtual void onCommand(CommandEvent& ev);
 
 private:
-  static BOOL CALLBACK globalDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+  static INT_PTR CALLBACK globalDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 
 };
 

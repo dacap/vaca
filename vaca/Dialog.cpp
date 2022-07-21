@@ -26,7 +26,7 @@ Dialog::Dialog(const String& title, Widget* parent, Style style)
   create(DialogClass::getClassName(), parent, style);
   setText(title);
 
-  SetWindowLongPtr(getHandle(), DWL_DLGPROC,
+  SetWindowLongPtr(getHandle(), DWLP_DLGPROC,
 		   reinterpret_cast<LONG_PTR>(Dialog::globalDlgProc));
 
   m_state = false;
@@ -50,10 +50,11 @@ Dialog::Dialog(const WidgetClassName& className, const String& title, Widget* pa
 }
 
 Dialog::Dialog(ResourceId dialogId, Widget* parent)
-  : Frame(::CreateDialog(Application::getHandle(),
-			 dialogId.toLPTSTR(),
-			 parent ? parent->getHandle() : NULL,
-			 Dialog::globalDlgProc))
+  : Frame(::CreateDialogParam(Application::getHandle(),
+			      dialogId.toLPTSTR(),
+			      parent ? parent->getHandle() : NULL,
+			      Dialog::globalDlgProc,
+			      NULL))
 {
   m_state = false;
 }
@@ -207,8 +208,8 @@ void Dialog::onCommand(CommandEvent& ev)
   Frame::onCommand(ev);
 }
 
-BOOL CALLBACK Dialog::globalDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK Dialog::globalDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
   // do default behaviour
-  return FALSE;
+  return NULL;
 }

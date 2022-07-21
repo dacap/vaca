@@ -43,9 +43,3 @@ add_vaca_test(test_string)
 add_vaca_test(test_tab)
 add_vaca_test(test_thread)
 add_vaca_test(test_widget)
-
-# After building the last test
-add_custom_command(TARGET test_widget
-  POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/run_all.sh ${CMAKE_CURRENT_BINARY_DIR}
-  COMMENT "Copying run_all.sh to tests binary directory")

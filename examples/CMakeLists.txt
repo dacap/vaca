@@ -56,21 +56,6 @@ function(add_vaca_example name)
 
   # Dependencies with libraries
   target_link_libraries(${name} vaca ${win32_libs})
-
-  # Custom command to embed our manifest file with MSVC compiler
-  if(THEMES AND MSVC)
-    # TODO The following custom command fails with VC solutions
-    #      because we have to known object-output directory for each
-    #      example (e.g. "examples/Buttons.dir/Release" instead of "")
-    get_target_property(example_exe_output ${name} LOCATION)
-    add_custom_command(TARGET ${name}
-      POST_BUILD
-      COMMAND mt.exe -nologo
-		     -manifest ${CMAKE_CURRENT_SOURCE_DIR}/Example.manifest
-			       ${CMAKE_CURRENT_BINARY_DIR}/${name}.exe.embed.manifest
-		     -outputresource:${example_exe_output};#1
-      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-  endif()
 endfunction(add_vaca_example)
 
 add_vaca_example(AnchorLayouts)

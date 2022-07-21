@@ -69,7 +69,7 @@ Graphics::Graphics(HDC hdc)
 {
   assert(hdc != NULL);
 
-  m_handle         = hdc;
+  m_handle      = hdc;
   m_autoRelease = false;
   m_autoDelete  = false;
   m_font        = NULL;

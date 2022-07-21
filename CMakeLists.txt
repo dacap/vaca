@@ -171,10 +171,14 @@ if(BUILD_SHARED_LIBS)
     BYPRODUCTS
       ${CMAKE_CURRENT_BINARY_DIR}/examples/vaca.dll
       ${CMAKE_CURRENT_BINARY_DIR}/tests/vaca.dll
+      ${CMAKE_CURRENT_BINARY_DIR}/tests/gtest.dll
+      ${CMAKE_CURRENT_BINARY_DIR}/tests/gtest_main.dll
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:vaca> ${CMAKE_CURRENT_BINARY_DIR}/examples
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:vaca> ${CMAKE_CURRENT_BINARY_DIR}/tests
-    COMMENT "Copying vaca dll to examples and tests directories")
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:gtest> ${CMAKE_CURRENT_BINARY_DIR}/tests
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:gtest_main> ${CMAKE_CURRENT_BINARY_DIR}/tests
+    COMMENT "Copying dlls to examples and tests directories")
 endif(BUILD_SHARED_LIBS)
 
 ########################################

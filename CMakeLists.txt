@@ -4,7 +4,7 @@
 # This file is distributed under the terms of the MIT license,
 # please read LICENSE.txt for more information.
 
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.2)
 
 project(vaca)
 
@@ -166,11 +166,14 @@ add_custom_command(TARGET vaca
   COMMENT "Copying SciLexer DLL to examples directory")
 
 if(BUILD_SHARED_LIBS)
-  get_target_property(vaca_dll_location vaca LOCATION)
-  add_custom_command(TARGET vaca
+  add_custom_command(
+    TARGET vaca
+    BYPRODUCTS
+      ${CMAKE_CURRENT_BINARY_DIR}/examples/vaca.dll
+      ${CMAKE_CURRENT_BINARY_DIR}/tests/vaca.dll
     POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy ${vaca_dll_location} ${CMAKE_CURRENT_BINARY_DIR}/examples
-    COMMAND ${CMAKE_COMMAND} -E copy ${vaca_dll_location} ${CMAKE_CURRENT_BINARY_DIR}/tests
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:vaca> ${CMAKE_CURRENT_BINARY_DIR}/examples
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:vaca> ${CMAKE_CURRENT_BINARY_DIR}/tests
     COMMENT "Copying vaca dll to examples and tests directories")
 endif(BUILD_SHARED_LIBS)
 

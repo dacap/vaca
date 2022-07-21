@@ -27,3 +27,35 @@ jobs:
       shell: bash
       run: |
         cd build && ctest --output-on-failure
+    - name: Copying Files
+      shell: bash
+      run: |
+        export dst=$(pwd)/Vaca-${{ matrix.build_type }}-Library
+        mkdir lib && \
+          cp build/lib/vaca.dll \
+             build/lib/vaca.lib \
+             lib
+        mkdir $dst &&
+          cp -R --parents \
+            vaca/*.h \
+            lib/vaca.dll \
+            lib/vaca.lib \
+            $dst
+        export dst=$(pwd)/Vaca-${{ matrix.build_type }}-Examples
+        mkdir $dst && \
+          cd build/examples && \
+          cp -R --parents \
+            *.dll \
+            *.exe \
+            $dst
+    - name: Uploading Library
+      uses: actions/upload-artifact@v1
+      with:
+        name: Vaca-${{ matrix.build_type }}-Library
+        path: Vaca-${{ matrix.build_type }}-Library
+    - name: Uploading Examples
+      if: matrix.build_type == 'RelWithDebInfo'
+      uses: actions/upload-artifact@v1
+      with:
+        name: Vaca-${{ matrix.build_type }}-Examples
+        path: Vaca-${{ matrix.build_type }}-Examples

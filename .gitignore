@@ -1,3 +1,5 @@
+.vscode
+browse.VC.db
 doc/*.chm
 doc/*.tmp
 doc/html/

@@ -8,9 +8,14 @@ if (MSVC_VERSION EQUAL 1700)
 endif()
 
 include_directories(.)
-add_library(gtest STATIC gtest/gtest-all.cc)
-add_library(gtest_main STATIC gtest/gtest_main.cc)
-target_link_libraries(gtest_main gtest)
+
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  URL https://github.com/google/googletest/archive/3655149a60ad7bfeb0902f7308b95dafa97a68ad.zip
+)
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
 
 function(add_vaca_test name)
   add_executable(${name} ${name}.cpp)

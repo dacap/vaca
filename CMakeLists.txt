@@ -4,7 +4,7 @@
 # This file is distributed under the terms of the MIT license,
 # please read LICENSE.txt for more information.
 
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 3.11)
 
 project(vaca)
 

@@ -6,13 +6,11 @@
 
 #include "vaca/Mutex.h"
 
-#if defined(VACA_ON_WINDOWS)
+#if defined(VACA_WINDOWS)
   #include "win32/MutexImpl.h"
-#elif defined(VACA_ON_UNIXLIKE)
-  #include "unix/MutexImpl.h"
 #else
-  #error Your platform does not support mutexes
-#endif 
+  #include "unix/MutexImpl.h"
+#endif
 
 using namespace vaca;
 

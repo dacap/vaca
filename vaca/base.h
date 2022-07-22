@@ -9,7 +9,7 @@
 
 // If there are not a defined target (like VACA_WINDOWS)...
 #if !defined(VACA_WINDOWS) &&			\
-    !defined(VACA_ALLEGRO)
+    !defined(VACA_MACOS)
   // ...we define VACA_DEFAULT_PLATFORM to specify that the default
   // target will be used
   #define VACA_DEFAULT_TARGET
@@ -22,16 +22,10 @@
   #ifdef VACA_DEFAULT_TARGET
     #define VACA_WINDOWS
   #endif
-
-  // We define a macro to know that we can use Windows API
-  #define VACA_ON_WINDOWS
 #else
   #ifdef VACA_DEFAULT_TARGET
-    #define VACA_ALLEGRO
+    #define VACA_MACOS
   #endif
-
-  // We define a macro to know that we are in a Unix-like environment
-  #define VACA_ON_UNIXLIKE
 #endif
 
 #ifdef _MSC_VER

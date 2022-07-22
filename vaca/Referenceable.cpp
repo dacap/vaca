@@ -12,7 +12,7 @@
 #include "vaca/ScopedLock.h"
 #include <vector>
 #include <typeinfo>
-  #ifdef VACA_ON_WINDOWS
+  #ifdef VACA_WINDOWS
     #define WIN32_LEAN_AND_MEAN
     #include <windows.h>
   #endif
@@ -108,7 +108,7 @@ unsigned Referenceable::getRefCount()
 #ifndef NDEBUG
 void Referenceable::showLeaks()
 {
-#ifdef VACA_ON_WINDOWS
+#ifdef VACA_WINDOWS
   if (!s_list.empty())
     ::Beep(400, 100);
 #endif

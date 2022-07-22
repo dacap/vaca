@@ -15,16 +15,19 @@ option(SHARED "Build shared libraries" on)
 option(THEMES "Build examples using WinXP themes" on)
 
 set(VACA_PLATFORM "Windows" CACHE STRING
-  "Vaca as Win32 API wrapper or Allegro 4.2 wrapper")
+  "Vaca as Win32 API wrapper or as Cocoa API wrapper")
+
+# TODO macOS port is not supported, and not planned, but it might be
+#      fun to implement in the future
 set_property(CACHE VACA_PLATFORM PROPERTY STRINGS
-  "Windows" "Allegro")
+  "Windows" "macOS")
 
 if(VACA_PLATFORM STREQUAL "Windows")
   set(VACA_WINDOWS 1)
   set(vaca_platform_def "-DVACA_WINDOWS")
-elseif(VACA_PLATFORM STREQUAL "Allegro")
-  set(VACA_ALLEGRO 1)
-  set(vaca_platform_def "-DVACA_ALLEGRO")
+elseif(VACA_PLATFORM STREQUAL "macOS")
+  set(VACA_MACOS 1)
+  set(vaca_platform_def "-DVACA_MACOS")
 endif()
 
 set(BUILD_SHARED_LIBS ${SHARED})

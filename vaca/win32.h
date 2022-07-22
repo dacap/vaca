@@ -9,7 +9,7 @@
 
 #include "vaca/base.h"
 
-#ifndef VACA_ON_WINDOWS
+#ifndef VACA_WINDOWS
   #error You cannot use this header file outside Windows platform.
 #endif
 

@@ -7,6 +7,10 @@
 #include "vaca/MouseEvent.h"
 #include "vaca/Widget.h"
 
+#ifdef VACA_WINDOWS
+  #include <shellapi.h>
+#endif
+
 using namespace vaca;
 
 /**
@@ -134,7 +138,9 @@ bool MouseEvent::isControlKeyPressed() const
 
 bool MouseEvent::isAltKeyPressed() const
 {
-  return (m_flags & MK_ALT) != 0;
+  // TODO MK_ALT doesn't exist for mouse message flags
+  //return (m_flags & MK_ALT) != 0;
+  return false;
 }
 
 int MouseEvent::getDelta() const

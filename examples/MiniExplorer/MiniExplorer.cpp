@@ -5,6 +5,7 @@
 // please read LICENSE.txt for more information.
 
 #include <vaca/vaca.h>
+#include <shellapi.h>
 #include <shlobj.h>
 #include <shlwapi.h>
 

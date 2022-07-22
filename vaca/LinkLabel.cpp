@@ -18,6 +18,10 @@
 #include "vaca/PreferredSizeEvent.h"
 #include "vaca/SetCursorEvent.h"
 
+#ifdef VACA_WINDOWS
+  #include <shellapi.h>
+#endif
+
 using namespace vaca;
 
 /**

@@ -5,6 +5,7 @@
 // please read LICENSE.txt for more information.
 
 #include <windows.h>
+#include <shellapi.h>
 
 void vaca::details::MainArgs::setArgs(int, char**)
 {

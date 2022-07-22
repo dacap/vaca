@@ -4,6 +4,10 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
+#ifdef VACA_WINDOWS
+  #include <windows.h>
+#endif
+
 #include "vaca/FindTextDialog.h"
 #include "vaca/Debug.h"
 #include "vaca/Application.h"
@@ -215,4 +219,3 @@ UINT_PTR CALLBACK FindTextDialog::hookProc(HWND hdlg, UINT message, WPARAM wPara
 
   return FALSE;
 }
-

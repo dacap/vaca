@@ -4,6 +4,10 @@
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
+#ifdef VACA_WINDOWS
+  #include <windows.h>
+#endif
+
 #include "vaca/Widget.h"
 #include "vaca/WidgetClass.h"
 #include "vaca/Brush.h"

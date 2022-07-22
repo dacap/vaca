@@ -673,7 +673,7 @@ Bix* Bix::parse(const Char* fmt, ...)
 {
 #define PARSE_ASSERT(condition, error)				\
   if (!(condition))						\
-    throw ParseException(error, n_line, n_column, fmt-p);
+    throw ParseException(error, n_line, n_column, int(fmt-p));
 
 #define NEW_BIX(flags)							\
   if (mainBix == NULL)							\

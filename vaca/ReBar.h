@@ -1,4 +1,5 @@
 // Vaca - Visual Application Components Abstraction
+// Copyright (c) 2022 David Capello
 // Copyright (c) 2008, 2009, Jie Zhang, David Capello
 //
 // This file is distributed under the terms of the MIT license,
@@ -91,7 +92,22 @@ class VACA_DLL ReBar : public Widget
 public:
 
   struct VACA_DLL Styles {
-    static const Style Default;
+    // same as ATL_SIMPLE_REBAR_STYLE - WS_CLIPSIBLINGS
+    static constexpr Style Default =
+      Widget::Styles::Visible |
+      Style(WS_BORDER | WS_CLIPCHILDREN /*| WS_CLIPSIBLINGS*/ |
+            RBS_AUTOSIZE | RBS_VARHEIGHT | CCS_NODIVIDER, 0);
+
+    // static constexpr Style Default =
+    //   Widget::Styles::Visible |
+    //   Widget::Styles::Container |
+    //   Style(WS_CLIPSIBLINGS |
+    //         RBS_BANDBORDERS
+    // #if (_WIN32_IE >= 0x0400)
+    //         | RBS_DBLCLKTOGGLE
+    // #endif
+    //         , 0);
+
   };
 
   ReBar(Widget* parent, Style style = ReBar::Styles::Default);

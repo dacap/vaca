@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005-2010 David Capello
+// Copyright (c) 2005-2022 David Capello
 //
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
@@ -20,7 +20,11 @@ public:
   static const int MaxLimit;
 
   struct VACA_DLL Styles {
-    static const Style Default;
+    static constexpr Style Default =
+      Widget::Styles::Visible |
+      Widget::Styles::Focusable |
+      Style(TBS_HORZ | TBS_BOTH |
+            TBS_NOTICKS | TBS_AUTOTICKS, 0);
   };
 
   Slider(Widget* parent, Style style = Styles::Default);
@@ -57,10 +61,10 @@ protected:
   // Events
   virtual void onPreferredSize(PreferredSizeEvent& ev);
   virtual void onScroll(ScrollEvent& ev);
-  
+
   // New events
   virtual void onChange(Event& ev);
-  
+
 };
 
 } // namespace vaca

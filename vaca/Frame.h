@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005-2010 David Capello
+// Copyright (c) 2005-2022 David Capello
 //
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
@@ -40,14 +40,88 @@ class VACA_DLL Frame : public Register<FrameClass>, public Widget
 public:
 
   struct VACA_DLL Styles {
-    static const Style Default;
-    static const Style WithCaption;
-    static const Style WithSystemMenu;
-    static const Style Minimizable;
-    static const Style Maximizable;
-    static const Style Resizable;
-    static const Style InitiallyMinimized;
-    static const Style InitiallyMaximized;
+
+    /**
+       This Frame is a window that as a title bar.
+
+       @win32
+       It is WS_CAPTION
+       @endwin32
+    */
+    static constexpr Style WithCaption = Style(WS_CAPTION, 0);
+
+    /**
+       @win32
+       It is WS_SYSMENU
+       @endwin32
+    */
+    static constexpr Style WithSystemMenu = Style(WS_SYSMENU, 0);
+
+    /**
+       @win32
+       It is WS_MINIMIZEBOX
+       @endwin32
+    */
+    static constexpr Style Minimizable = Style(WS_MINIMIZEBOX, 0);
+
+    /**
+       @win32
+       It is WS_MAXIMIZEBOX
+       @endwin32
+    */
+    static constexpr Style Maximizable = Style(WS_MAXIMIZEBOX, 0);
+
+    /**
+       The user will be able to change the window's size.
+
+       @win32
+       It is WS_SIZEBOX
+       @endwin32
+    */
+    static constexpr Style Resizable = Style(WS_SIZEBOX, 0);
+
+    /**
+       The window can be minimized.
+
+       @win32
+       It is WS_MINIMIZE
+       @endwin32
+    */
+    static constexpr Style InitiallyMinimized = Style(WS_MINIMIZE, 0);
+
+    /**
+       The window can be maximized.
+
+       @win32
+       It is WS_MAXIMIZE
+       @endwin32
+    */
+    static constexpr Style InitiallyMaximized = Style(WS_MAXIMIZE, 0);
+
+    /**
+       Default style for Frame widget.
+
+       It contains the following styles:
+       @li Widget::Styles::Container
+       @li Frame::Styles::WithCaption
+       @li Frame::Styles::WithSystemMenu
+       @li Frame::Styles::Minimizable
+       @li Frame::Styles::Maximizable
+       @li Frame::Styles::Resizable
+
+       @win32
+       It is WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU |
+       WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SIZEBOX |
+       WS_EX_CONTROLPARENT
+       @endwin32
+    */
+    static constexpr Style Default =
+      Widget::Styles::Container |
+      Frame::Styles::WithCaption |
+      Frame::Styles::WithSystemMenu |
+      Frame::Styles::Minimizable |
+      Frame::Styles::Maximizable |
+      Frame::Styles::Resizable;
   };
 
   Frame(const String& title, Widget* parent = NULL, Style style = Styles::Default);

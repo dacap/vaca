@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005-2010 David Capello
+// Copyright (c) 2005-2022 David Capello
 //
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
@@ -9,6 +9,10 @@
 
 #include "vaca/base.h"
 #include "vaca/Widget.h"
+
+#ifndef PBS_MARQUEE
+  #define PBS_MARQUEE 8
+#endif
 
 namespace vaca {
 
@@ -20,10 +24,11 @@ class VACA_DLL ProgressBar : public Widget
 public:
 
   struct VACA_DLL Styles {
-    static const Style Default;
-    static const Style Smooth;
-    static const Style Vertical; // TODO change with set/getOrientation
-    static const Style Marquee;
+    static constexpr Style Default = Widget::Styles::Visible;
+    static constexpr Style Smooth = Style(PBS_SMOOTH, 0);
+     // TODO change with set/getOrientation
+    static constexpr Style Vertical = Style(PBS_VERTICAL, 0);
+    static constexpr Style Marquee = Style(PBS_MARQUEE, 0);
   };
 
   ProgressBar(Widget* parent, Style style = Styles::Default);

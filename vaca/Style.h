@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005-2010 David Capello
+// Copyright (c) 2005-2022 David Capello
 //
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
@@ -37,17 +37,54 @@ struct VACA_DLL Style
   int regular;
   int extended;
 
-  Style(int regular, int extended);
-  Style(const Style& style);
+  // This constructor must be here to export const styles
+  // (e.g. Widget::Styles::Default, etc.)
+  constexpr Style(int regular, int extended)
+    : regular(regular),
+      extended(extended) {
+  }
 
-  Style operator+(const Style& style) const;
-  Style operator|(const Style& style) const;
-  Style operator-(const Style& style) const;
-  Style operator&(const Style& style) const;
-  Style operator~() const;
+  constexpr Style(const Style& style)
+    : regular(style.regular),
+      extended(style.extended) {
+  }
 
-  bool operator==(const Style& style) const;
-  bool operator!=(const Style& style) const;
+  constexpr Style operator+(const Style& style) const {
+    return Style(regular | style.regular,
+                 extended | style.extended);
+  }
+
+  constexpr Style operator|(const Style& style) const {
+    return Style(regular | style.regular,
+                 extended | style.extended);
+  }
+
+  constexpr Style operator-(const Style& style) const {
+    return Style(regular & ~style.regular,
+                 extended & ~style.extended);
+  }
+
+
+  constexpr Style operator&(const Style& style) const {
+    return Style(regular & style.regular,
+                 extended & style.extended);
+  }
+
+  constexpr Style operator~() const {
+    return Style(~regular, ~extended);
+  }
+
+  constexpr bool operator==(const Style& style) const {
+    return
+      regular == style.regular &&
+      extended == style.extended;
+  }
+
+  constexpr bool operator!=(const Style& style) const {
+    return
+      regular != style.regular ||
+      extended != style.extended;
+  }
 
 };
 

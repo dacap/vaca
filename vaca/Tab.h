@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005-2010 David Capello
+// Copyright (c) 2005-2022 David Capello
 //
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
@@ -34,7 +34,7 @@ class VACA_DLL TabBase : public Widget
 public:
 
   struct VACA_DLL Styles {
-    static const Style Default;
+    static constexpr Style Default = Widget::Styles::Default;
   };
 
   TabBase(Widget* parent, Style style = Styles::Default);
@@ -102,7 +102,7 @@ class VACA_DLL Tab : public TabBase
 public:
 
   struct VACA_DLL Styles {
-    static const Style Default;
+    static constexpr Style Default = TabBase::Styles::Default;
   };
 
   Tab(Widget* parent, Style style = Styles::Default);
@@ -136,7 +136,7 @@ class VACA_DLL TabPage : public Register<TabPageClass>, public Widget
 public:
 
   struct VACA_DLL Styles {
-    static const Style Default;
+    static constexpr Style Default = Widget::Styles::Default;
   };
 
   TabPage(const String& text, Tab* parent, Style style = Styles::Default);

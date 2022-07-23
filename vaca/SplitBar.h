@@ -1,4 +1,5 @@
 // Vaca - Visual Application Components Abstraction
+// Copyright (c) 2022 David Capello
 // Copyright (c) 2008, 2009, Jie Zhang, David Capello
 //
 // This file is distributed under the terms of the MIT license,
@@ -41,8 +42,15 @@ class VACA_DLL SplitBar : public Register<SplitBarClass>
 public:
 
   struct VACA_DLL Styles {
-    static const Style Default;
-    static const Style ByPixels;
+    static constexpr Style Default =
+      Widget::Styles::Visible |
+      Widget::Styles::Container;
+
+    /**
+       SplitBar position is expressed in percentage by default, but if you
+       specify this style the position will be expressed in pixels.
+    */
+    static constexpr Style ByPixels = Style(1, 0);
   };
 
   SplitBar(Orientation orientation, Widget* parent, Style style = Styles::Default);

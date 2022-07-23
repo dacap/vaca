@@ -1,6 +1,6 @@
 # Vaca
 ## Visual Application Components Abstraction
-> Copyright (c) 2005-2012 David Capello
+> Copyright (c) 2005-2022 David Capello
 > All rights reserved.
 
 Vaca is a library to develop GUI applications with C++. It uses

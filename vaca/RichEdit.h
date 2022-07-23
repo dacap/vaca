@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005-2010 David Capello
+// Copyright (c) 2005-2022 David Capello
 //
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
@@ -31,11 +31,16 @@ class VACA_DLL RichEdit : public RichEditRegister, public Widget
 public:
 
   struct VACA_DLL Styles {
-    static const Style Default;
-    static const Style RightAligned;
-    static const Style ReadOnly;
-    static const Style AutoHorizontalScroll;
-    static const Style AutoVerticalScroll;
+    static constexpr Style RightAligned = Style(ES_RIGHT, 0);
+    static constexpr Style ReadOnly = Style(ES_READONLY, 0);
+    static constexpr Style AutoHorizontalScroll = Style(ES_AUTOHSCROLL, 0);
+    static constexpr Style AutoVerticalScroll = Style(ES_AUTOVSCROLL, 0);
+    static constexpr Style Default =
+      Widget::Styles::Visible |
+      Widget::Styles::Focusable |
+      Widget::Styles::ClientEdge |
+      Widget::Styles::Scroll |
+      Style(ES_MULTILINE, 0);
   };
 
   RichEdit(const String& text, Widget* parent, Style style = Styles::Default);

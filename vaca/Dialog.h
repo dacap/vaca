@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005-2010 David Capello
+// Copyright (c) 2005-2022 David Capello
 //
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
@@ -69,8 +69,21 @@ class VACA_DLL Dialog : public Register<DialogClass>, public Frame
 public:
 
   struct VACA_DLL Styles {
-    static const Style Default;
-    static const Style Modal;
+
+    /**
+       This style is activated by default in Dialogs.
+    */
+    static constexpr Style Modal = Style(0, WS_EX_DLGMODALFRAME);
+
+    /**
+       Default style for Dialogs.
+    */
+    static constexpr Style Default =
+      Frame::Styles::WithCaption |
+      Frame::Styles::WithSystemMenu |
+      Dialog::Styles::Modal |
+      Style(WS_POPUP | DS_CONTROL, 0);
+
   };
 
   struct VACA_DLL Id {		// it Id "namespace"

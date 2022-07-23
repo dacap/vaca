@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005-2010 David Capello
+// Copyright (c) 2005-2022 David Capello
 //
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
@@ -39,7 +39,9 @@ class VACA_DLL MdiChild : public Register<MdiChildClass>, public Frame
 public:
 
   struct VACA_DLL Styles {
-    static const Style Default;
+    static constexpr Style Default =
+      Frame::Styles::Default |
+      Style(WS_CHILD, WS_EX_MDICHILD);
   };
 
   MdiChild(const String& title, MdiClient* parent, Style style = Styles::Default);
@@ -65,7 +67,11 @@ class VACA_DLL MdiClient : public Widget
 public:
 
   struct VACA_DLL Styles {
-    static const Style Default;
+    static constexpr Style Default =
+      Widget::Styles::Visible |
+      Widget::Styles::Scroll |
+      Widget::Styles::ClientEdge |
+      Widget::Styles::Container;
   };
 
   MdiClient(Widget* parent, Style style = Styles::Default);
@@ -113,7 +119,8 @@ private:
 public:
 
   struct VACA_DLL Styles {
-    static const Style Default;
+    static constexpr Style Default =
+      Frame::Styles::Default;
   };
 
   MdiFrame(const String& title, Widget* parent = NULL, Style style = Styles::Default,

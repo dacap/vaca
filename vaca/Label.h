@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005-2010 David Capello
+// Copyright (c) 2005-2022 David Capello
 //
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
@@ -28,10 +28,50 @@ class VACA_DLL Label : public Widget
 public:
 
   struct VACA_DLL Styles {
-    static const Style Default;
-    static const Style WordEllipsis;
-    static const Style EndEllipsis;
-    static const Style PathEllipsis;
+
+    /**
+       Default style for Label.
+
+       @win32
+       It is WS_VISIBLE | SS_NOTIFY
+       @endwin32
+    */
+    static constexpr Style Default =
+      Widget::Styles::Visible |
+      Style(SS_NOTIFY, 0);
+
+    /**
+       If the label is too long, ellipsis ("...") is used at the end of
+       each word instead of wrap them.
+
+       @win32
+       @msdn{SS_WORDELLIPSIS}
+       @endwin32
+    */
+    static constexpr Style WordEllipsis = Style(SS_WORDELLIPSIS, 0);
+
+    /**
+       If the label is too long, ellipsis ("...") is used at the end of
+       the text. The text is not wrapped.
+
+       @win32
+       @msdn{SS_ENDELLIPSIS}
+       @endwin32
+    */
+    static constexpr Style EndEllipsis = Style(SS_ENDELLIPSIS, 0);
+
+    /**
+       If the label is too long, ellipsis ("...") is used in the middle of
+       the text. It is useful to show file name paths, because the
+       ellipsis is used trying to show the file name part
+       (String#getFileName). The text is not wrapped.
+
+       @win32
+       @msdn{SS_PATHELLIPSIS}
+       @endwin32
+    */
+    static constexpr Style PathEllipsis = Style(SS_PATHELLIPSIS, 0);
+
   };
 
   Label(const String& text, Widget* parent, Style style = Styles::Default);

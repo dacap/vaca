@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005-2010 David Capello
+// Copyright (c) 2005-2022 David Capello
 //
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
@@ -25,8 +25,61 @@ class VACA_DLL ComboBox : public Widget
 public:
 
   struct VACA_DLL Styles {
-    static const Style Default;
-    static const Style Editable;
+    /**
+       Default style for ComboBox widget. It is the classic ComboBox in
+       which the user can select only items in the list (but can't edit
+       text nor items).
+
+       It contains the following styles:
+       @li Widget::Styles::Visible
+       @li Widget::Styles::Focusable
+       @li Widget::Styles::VerticalScroll
+       @li Widget::Styles::ClientEdge
+
+       Example:
+       @code
+       Frame frame(...);
+       // Use:
+       ComboBox combo1(&frame);
+       // or:
+       ComboBox combo2(&frame, ComboBox::Styles::Default);
+       @endcode
+
+       @win32
+       It is WS_VISIBLE | WS_TABSTOP | WS_VSCROLL,
+       CBS_HASSTRINGS | CBS_AUTOHSCROLL | CBS_DROPDOWNLIST |
+       WS_EX_CLIENTEDGE
+       @endwin32
+    */
+    static constexpr Style Default =
+      Widget::Styles::Visible |
+      Widget::Styles::Focusable |
+      Widget::Styles::ClientEdge |
+      Widget::Styles::VerticalScroll |
+      Style(CBS_HASSTRINGS | CBS_AUTOHSCROLL | CBS_DROPDOWNLIST, 0);
+
+    /**
+       Special style for ComboBox so the user can enter any text (not only
+       the items in the list).
+
+       Example:
+       @code
+       Frame frame(...);
+       ComboBox combo(&frame, ComboBox::Styles::Editable);
+       @endcode
+
+       @win32
+       It is WS_VISIBLE | WS_TABSTOP | WS_VSCROLL |
+       CBS_HASSTRINGS | CBS_AUTOHSCROLL | CBS_DROPDOWN | WS_EX_CLIENTEDGE
+       @endwin32
+    */
+    static constexpr Style Editable =
+      Widget::Styles::Visible |
+      Widget::Styles::Focusable |
+      Widget::Styles::ClientEdge |
+      Widget::Styles::VerticalScroll |
+      Style(CBS_HASSTRINGS | CBS_AUTOHSCROLL | CBS_DROPDOWN, 0);
+
   };
 
   ComboBox(Widget* parent, Style style = Styles::Default);

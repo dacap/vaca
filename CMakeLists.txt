@@ -1,4 +1,5 @@
 # Vaca - Visual Application Components Abstraction
+# Copyright (c) 2022 David Capello
 # Copyright (c) 2005-2010 David Capello, Jie Zhang
 #
 # This file is distributed under the terms of the MIT license,
@@ -137,8 +138,6 @@ set(VACA_SOURCES
     vaca/SplitBar.cpp
     vaca/StatusBar.cpp
     vaca/String.cpp
-    vaca/Style.cpp
-    vaca/Styles.cpp
     vaca/System.cpp
     vaca/Tab.cpp
     vaca/TextEdit.cpp

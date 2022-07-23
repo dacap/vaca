@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005-2010 David Capello
+// Copyright (c) 2005-2022 David Capello
 //
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
@@ -34,7 +34,9 @@ class VACA_DLL SciEdit : public SciRegister, public Widget
 public:
 
   struct VACA_DLL Styles {
-    static const Style Default;
+    static constexpr Style Default =
+      Widget::Styles::Visible |
+      Widget::Styles::Scroll;
   };
 
   SciEdit(Widget* parent, Style style = Styles::Default);

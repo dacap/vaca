@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005-2010 David Capello
+// Copyright (c) 2005-2022 David Capello
 //
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
@@ -31,7 +31,20 @@ class VACA_DLL LinkLabel : public CustomLabel
 public:
 
   struct VACA_DLL Styles {
-    static const Style Default;
+    /**
+       Default style for LinkLabel widget.
+
+       It contains the following styles:
+       @li CustomLabel::Styles::Default
+       @li Widget::Styles::Focusable
+
+       @win32
+       It is
+       @endwin32
+    */
+    static constexpr Style Default =
+      CustomLabel::Styles::Default |
+      Widget::Styles::Focusable;
   };
 
   LinkLabel(const String& urlOrText, Widget* parent, Style style = Styles::Default);

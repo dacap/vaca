@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005-2010 David Capello
+// Copyright (c) 2005-2022 David Capello
 //
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
@@ -22,7 +22,17 @@ class VACA_DLL ListBox : public Widget
 public:
 
   struct VACA_DLL Styles {
-    static const Style Default;
+
+    /**
+       Default style for ListBox.
+    */
+    static constexpr Style Default =
+      Widget::Styles::Visible |
+      Widget::Styles::Focusable |
+      Widget::Styles::ClientEdge |
+      Widget::Styles::Scroll |
+      Style(LBS_NOINTEGRALHEIGHT | LBS_NOTIFY, 0);
+
   };
 
   ListBox(Widget* parent, Style style = Styles::Default);
@@ -65,7 +75,7 @@ class VACA_DLL DragListBox : public ListBox
 public:
 
   struct VACA_DLL Styles {
-    static const Style Default;
+    static constexpr Style Default = ListBox::Styles::Default;
   };
 
   DragListBox(Widget* parent, Style style = Styles::Default);

@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005-2010 David Capello
+// Copyright (c) 2005-2022 David Capello
 //
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
@@ -68,16 +68,94 @@ public:
   // ============================================================
 
   struct VACA_DLL Styles {
-    static const Style None;
-    static const Style Visible;
-    static const Style Focusable;
-    static const Style Scroll;
-    static const Style HorizontalScroll;
-    static const Style VerticalScroll;
-    static const Style ClientEdge;
-    static const Style Container;
-    static const Style AcceptFiles;
-    static const Style Default;
+    /**
+       Without style.
+    */
+    static constexpr Style None = Style(0, 0);
+
+    /**
+       A widget that should be shown to the user.
+
+       @win32
+       It is WS_VISIBLE.
+       @endwin32
+    */
+    static constexpr Style Visible = Style(WS_VISIBLE, 0);
+
+    /**
+       Indicates that a Widget can receive the focus in Dialogs.
+
+       @win32
+       It is WS_TABSTOP.
+       @endwin32
+    */
+    static constexpr Style Focusable = Style(WS_TABSTOP, 0);
+
+    /**
+       When the widget needs both scroll bars (horizontal and vertical).
+
+       @win32
+       It is WS_HSCROLL | WS_VSCROLL.
+       @endwin32
+    */
+    static constexpr Style Scroll = Style(WS_HSCROLL | WS_VSCROLL, 0);
+
+    /**
+       When the widget needs the horizontal scroll bar.
+
+       @win32
+       It is WS_HSCROLL.
+       @endwin32
+    */
+    static constexpr Style HorizontalScroll = Style(WS_HSCROLL, 0);
+
+    /**
+       When the widget needs the veritcal scroll bar.
+
+       @win32
+       It is WS_VSCROLL.
+       @endwin32
+    */
+    static constexpr Style VerticalScroll = Style(WS_VSCROLL, 0);
+
+    /**
+       This style makes the widget to have an edge in its client area.
+       E.g.: This style is used by text-fields (TextEdit) to enclose the
+       typed text in a box for example.
+
+       @win32
+       It is WS_EX_CLIENTEDGE.
+       @endwin32
+    */
+    static constexpr Style ClientEdge = Style(0, WS_EX_CLIENTEDGE);
+
+    /**
+       Style used for container widgets, that is, widget that contains
+       children.
+
+       @win32
+       It is WS_CLIPCHILDREN | WS_EX_CONTROLPARENT.
+       @endwin32
+    */
+    static constexpr Style Container = Style(WS_CLIPCHILDREN,
+                                             WS_EX_CONTROLPARENT);
+
+    /**
+       Use this style if the user should be able to drop files on your widget.
+
+       @warning Using this style is the only way to receive the Widget#onDropFiles event.
+
+       @win32
+       It is WS_EX_ACCEPTFILES.
+       @endwin32
+    */
+    static constexpr Style AcceptFiles = Style(0, WS_EX_ACCEPTFILES);
+
+    /**
+       Default widget style.
+    */
+    static constexpr Style Default = (Widget::Styles::Visible |
+                                      Widget::Styles::Container);
   };
 
 private:

@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005-2010 David Capello
+// Copyright (c) 2005-2022 David Capello
 //
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
@@ -92,14 +92,25 @@ public:
   typedef TreeViewIterator iterator;
 
   struct VACA_DLL Styles {
-    static const Style EditLabel;
-    static const Style ShowSelectionAlways;
-    static const Style WithButtons;
-    static const Style WithLines;
-    static const Style RootWithLines;
-    static const Style FullRowSelect;
-    static const Style NoDragAndDrop;
-    static const Style Default;
+    /**
+       With this style in a TreeeView the label of each TreeNode can be edited.
+    */
+    static constexpr Style EditLabel = Style(TVS_EDITLABELS, 0);
+
+    static constexpr Style ShowSelectionAlways = Style(TVS_SHOWSELALWAYS, 0);
+    static constexpr Style WithButtons = Style(TVS_HASBUTTONS, 0);
+    static constexpr Style WithLines = Style(TVS_HASLINES, 0);
+    static constexpr Style RootWithLines = Style(TVS_LINESATROOT, 0);
+    static constexpr Style FullRowSelect = Style(TVS_FULLROWSELECT, 0);
+    static constexpr Style NoDragAndDrop = Style(TVS_DISABLEDRAGDROP, 0);
+
+    static constexpr Style Default = (Widget::Styles::Visible |
+                                      Widget::Styles::Focusable |
+                                      Widget::Styles::ClientEdge |
+                                      TreeView::Styles::WithButtons |
+                                      TreeView::Styles::WithLines |
+                                      TreeView::Styles::RootWithLines |
+                                      TreeView::Styles::ShowSelectionAlways);
   };
 
   TreeView(Widget* parent, Style style = Styles::Default);

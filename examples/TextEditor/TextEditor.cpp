@@ -159,8 +159,8 @@ private:
 
     // on FocusEnter or Activate signals, put the focus to the m_editor
     // (so the user can start writting)
-    FocusEnter.connect(Bind(&SciEdit::requestFocus, &m_editor));
-    // Activate.connect(Bind(&SciEditor::requestFocus, &m_editor));
+    FocusEnter.connect([this]{ m_editor.requestFocus(); });
+    // Activate.connect([this]{ m_editor.requestFocus(); });
 
     // add this view to the document
     m_document->addView(this);
@@ -168,7 +168,7 @@ private:
     // when the text or the selection of the editor is updated, we
     // call m_document->notify() to put the "*" in the title-bar of the
     // TextEditor
-    m_editor.UpdateUI.connect(Bind(&Document::notify, m_document));
+    m_editor.UpdateUI.connect([this]{ m_document->notify(); });
   }
 
   // method from View class
@@ -351,63 +351,63 @@ private:
 
     addCommand(cmd = new SignalCommand(ID_FILE_SAVE));
     cmd->Execute.connect(&MainFrame::onSave, this);
-    cmd->Enabled.connect(&MainFrame::canSave, this);
+    cmd->Enabled.connect([this]{ return canSave(); });
 
     addCommand(cmd = new SignalCommand(ID_FILE_SAVE_AS));
     cmd->Execute.connect(&MainFrame::onSaveAs, this);
-    cmd->Enabled.connect(&MainFrame::isTextEditorAvailable, this);
+    cmd->Enabled.connect([this]{ return isTextEditorAvailable(); });
 
     addCommand(new SignalCommand(ID_FILE_EXIT, &MainFrame::onExit, this));
 
     addCommand(cmd = new SignalCommand(ID_EDIT_UNDO));
     cmd->Execute.connect(&MainFrame::onUndo, this);
-    cmd->Enabled.connect(&MainFrame::canUndo, this);
+    cmd->Enabled.connect([this]{ return canUndo(); });
 
     addCommand(cmd = new SignalCommand(ID_EDIT_REDO));
     cmd->Execute.connect(&MainFrame::onRedo, this);
-    cmd->Enabled.connect(&MainFrame::canRedo, this);
+    cmd->Enabled.connect([this]{ return canRedo(); });
 
     addCommand(cmd = new SignalCommand(ID_EDIT_CUT));
     cmd->Execute.connect(&MainFrame::onCut, this);
-    cmd->Enabled.connect(&MainFrame::isTextEditorAvailable, this);
+    cmd->Enabled.connect([this]{ return isTextEditorAvailable(); });
 
     addCommand(cmd = new SignalCommand(ID_EDIT_COPY));
     cmd->Execute.connect(&MainFrame::onCopy, this);
-    cmd->Enabled.connect(&MainFrame::isTextEditorAvailable, this);
+    cmd->Enabled.connect([this]{ return isTextEditorAvailable(); });
 
     addCommand(cmd = new SignalCommand(ID_EDIT_PASTE));
     cmd->Execute.connect(&MainFrame::onPaste, this);
-    cmd->Enabled.connect(&MainFrame::isTextEditorAvailable, this);
+    cmd->Enabled.connect([this]{ return isTextEditorAvailable(); });
 
     addCommand(cmd = new SignalCommand(ID_EDIT_CLEAR));
     cmd->Execute.connect(&MainFrame::onClear, this);
-    cmd->Enabled.connect(&MainFrame::isTextEditorAvailable, this);
+    cmd->Enabled.connect([this]{ return isTextEditorAvailable(); });
 
     addCommand(cmd = new SignalCommand(ID_EDIT_FIND));
-    cmd->Execute.connect(Bind(&MainFrame::onFindReplace, this, false));
-    cmd->Enabled.connect(&MainFrame::isTextEditorAvailable, this);
+    cmd->Execute.connect([this]{ onFindReplace(false); });
+    cmd->Enabled.connect([this]{ return isTextEditorAvailable(); });
 
     addCommand(cmd = new SignalCommand(ID_EDIT_REPLACE));
-    cmd->Execute.connect(Bind(&MainFrame::onFindReplace, this, true));
-    cmd->Enabled.connect(&MainFrame::isTextEditorAvailable, this);
+    cmd->Execute.connect([this]{ onFindReplace(true); });
+    cmd->Enabled.connect([this]{ return isTextEditorAvailable(); });
 
     addCommand(new SignalCommand(ID_OPTIONS_CHANGE_FONT, &MainFrame::onChangeFont, this));
 
     addCommand(cmd = new SignalCommand(ID_OPTIONS_VIEW_EOL));
     cmd->Execute.connect(&MainFrame::onToggleViewEol, this);
-    cmd->Enabled.connect(&MainFrame::updateViewEolMenuItem, this);
+    cmd->Enabled.connect([this]{ return updateViewEolMenuItem(); });
 
     addCommand(cmd = new SignalCommand(ID_WINDOWS_CLOSE));
     cmd->Execute.connect(&MainFrame::onCloseWindow, this);
-    cmd->Enabled.connect(&MainFrame::isTextEditorAvailable, this);
+    cmd->Enabled.connect([this]{ return isTextEditorAvailable(); });
 
     addCommand(cmd = new SignalCommand(ID_WINDOWS_DUPLICATE));
     cmd->Execute.connect(&MainFrame::onDuplicateWindow, this);
-    cmd->Enabled.connect(&MainFrame::isTextEditorAvailable, this);
+    cmd->Enabled.connect([this]{ return isTextEditorAvailable(); });
 
     addCommand(cmd = new SignalCommand(ID_WINDOWS_CASCADE));
     cmd->Execute.connect(&MdiClient::cascade, getMdiClient());
-    cmd->Enabled.connect(&MainFrame::isTextEditorAvailable, this);
+    cmd->Enabled.connect([this]{ return isTextEditorAvailable(); });
   }
 
   void onNew()
@@ -537,9 +537,9 @@ private:
   void onFindReplace(bool replace)
   {
     FindTextDialog dlg(replace, this);
-    dlg.FindNext.connect(Bind(&MainFrame::onFindNext, this, &dlg));
-    dlg.Replace.connect(Bind(&MainFrame::onReplace, this, &dlg));
-    dlg.ReplaceAll.connect(Bind(&MainFrame::onReplaceAll, this, &dlg));
+    dlg.FindNext.connect([this, &dlg]{ onFindNext(&dlg); });
+    dlg.Replace.connect([this, &dlg]{ onReplace(&dlg); });
+    dlg.ReplaceAll.connect([this, &dlg]{ onReplaceAll(&dlg); });
     dlg.doModal();
   }
 

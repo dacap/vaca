@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005-2010 David Capello
+// Copyright (c) 2005-2022 David Capello
 //
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
@@ -11,7 +11,8 @@
 #include "vaca/Exception.h"
 #include "vaca/Message.h"
 #include "vaca/NonCopyable.h"
-#include "vaca/Slot.h"
+
+#include <functional>
 
 namespace vaca {
 
@@ -97,8 +98,8 @@ public:
        If the thread couldn't be created by Win32's @c CreateThread.
   */
   template<typename F>
-  explicit Thread(F f) {
-    _Thread(Slot0_fun<void, F>(f));
+  explicit Thread(F&& f) {
+    _Thread(std::forward<F>(f));
   }
 
   ThreadId getId() const;
@@ -115,7 +116,7 @@ public:
   void enqueueMessage(const Message& message);
 
 private:
-  void _Thread(const Slot0<void>& slot);
+  void _Thread(std::function<void()>&& f);
 
 };
 

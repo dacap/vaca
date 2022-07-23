@@ -44,7 +44,7 @@ public:
   bool operator==(const RadioGroup& other) const;
 
   // Signals
-  Signal1<void, Event&> Change; ///< @see onChange
+  Signal<void(Event&)> Change; ///< @see onChange
 
 protected:
   // New events

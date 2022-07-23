@@ -1,3 +1,8 @@
+Vaca 0.1
+
+- Simplified signal/slot using std::function()
+- Removed Bind, we have C++11 lambdas now
+
 Vaca 0.0.8
 
 - Using CMake as building system.

@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005-2010 David Capello
+// Copyright (c) 2005-2022 David Capello
 //
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
@@ -14,9 +14,9 @@
 #include "vaca/Slot.h"
 #include "vaca/TimePoint.h"
 
-#include <vector>
 #include <algorithm>
 #include <memory>
+#include <vector>
 
 using namespace vaca;
 
@@ -92,7 +92,7 @@ static ThreadData* get_thread_data()
 
 // ======================================================================
 
-static DWORD WINAPI ThreadProxy(LPVOID slot)
+static DWORD WINAPI ThreadProxy(LPVOID data)
 {
   // Force the creation of a message queue in this new thread...
   {
@@ -100,8 +100,9 @@ static DWORD WINAPI ThreadProxy(LPVOID slot)
     PeekMessage(&msg, NULL, WM_USER, WM_USER, PM_NOREMOVE);
   }
 
-  std::auto_ptr<Slot0<void> > slot_ptr(reinterpret_cast<Slot0<void>*>(slot));
-  (*slot_ptr)();
+  std::unique_ptr<std::function<void()>> fptr(
+    reinterpret_cast<std::function<void()>*>(data));
+  (*fptr)();
   return 0;
 }
 
@@ -121,21 +122,18 @@ Thread::Thread()
 
    @internal
 */
-void Thread::_Thread(const Slot0<void>& slot)
+void Thread::_Thread(std::function<void()>&& f)
 {
-  Slot0<void>* slotclone = slot.clone();
+  auto fptr = std::make_unique<std::function<void()>>(std::move(f));
   DWORD id;
 
   m_handle = CreateThread(NULL, 0,
-			  ThreadProxy,
-			  // clone the slot
-			  reinterpret_cast<LPVOID>(slotclone),
+			  ThreadProxy, fptr.get(),
 			  CREATE_SUSPENDED, &id);
-  if (!m_handle) {
-    delete slotclone;
+  if (!m_handle)
     throw CreateThreadException();
-  }
 
+  fptr.release();
   m_id = id;
 
   VACA_TRACE("new Thread (%p, %d)\n", this, m_id);

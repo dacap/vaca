@@ -47,7 +47,7 @@ class ThreadView : public Widget
   Button m_kill;
 
 public:
-  Signal1<void, Thread*> KillThread;
+  Signal<void(Thread*)> KillThread;
 
   ThreadView(Thread* thread, Widget* parent)
     : Widget(parent)
@@ -58,7 +58,7 @@ public:
     setLayout(new BoxLayout(Orientation::Horizontal, false, 0, 4));
     m_bar.setConstraint(new BoxConstraint(true));
     m_kill.setPreferredSize(100, m_kill.getPreferredSize().h);
-    m_kill.Click.connect(Bind(&ThreadView::onKillButtonPressed, this));
+    m_kill.Click.connect([this]{ onKillButtonPressed(); });
   }
 
   Thread* getThread() {
@@ -104,7 +104,7 @@ public:
   {
     setLayout(new BoxLayout(Orientation::Vertical, false));
 
-    m_createThread.Click.connect(Bind(&MainFrame::onCreateThread, this));
+    m_createThread.Click.connect([this]{ onCreateThread(); });
 
     setSize(getBounds().w, getPreferredSize().h);
   }
@@ -131,7 +131,7 @@ protected:
   void onCreateThread()
   {
     // Create the new thread
-    Thread* newThread = new Thread(Bind<void>(&working_thread, this));
+    Thread* newThread = new Thread([this]{ working_thread(this); });
     m_threads.push_back(newThread);
 
     // Create a progress bar and a "Kill" button to stop the new thread

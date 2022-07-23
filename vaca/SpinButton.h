@@ -83,9 +83,9 @@ public:
   void setBuddy(Widget* buddy);
 
   // Signals
-  Signal1<void, SpinButtonEvent&> Change;
-//   Signal1<void, SpinButtonEvent&> BeforeChange;
-//   Signal1<void, SpinButtonEvent&> AfterChange;
+  Signal<void(SpinButtonEvent&)> Change;
+//   Signal<void(SpinButtonEvent&)> BeforeChange;
+//   Signal<void(SpinButtonEvent&)> AfterChange;
 
 protected:
   // Events

@@ -94,7 +94,7 @@ public:
 
   // signal fired when the figure's properties are modified
   // in the dialog
-  Signal0<void> Change;
+  Signal<void()> Change;
 
   FigureProperties(Figure& fig, Widget* parent)
     : Dialog(L"Figure Properties", parent)
@@ -147,13 +147,13 @@ public:
     initValues();
 
     // signals/slots
-    m_penWidthSlider.Change.connect(Bind(&FigureProperties::onPenChange, this));
-    m_endCapGroup.Change.connect(Bind(&FigureProperties::onPenChange, this));
-    m_joinGroup.Change.connect(Bind(&FigureProperties::onPenChange, this));
+    m_penWidthSlider.Change.connect([this]{ onPenChange(); });
+    m_endCapGroup.Change.connect([this]{ onPenChange(); });
+    m_joinGroup.Change.connect([this]{ onPenChange(); });
 
-    m_penColor.Click.connect(Bind(&FigureProperties::onSelectPenColor, this));
-    m_brushColor.Click.connect(Bind(&FigureProperties::onSelectBrushColor, this));
-    m_closeFigure.Click.connect(Bind(&FigureProperties::onCloseFigure, this));
+    m_penColor.Click.connect([this]{ onSelectPenColor(); });
+    m_brushColor.Click.connect([this]{ onSelectBrushColor(); });
+    m_closeFigure.Click.connect([this]{ onCloseFigure(); });
 
     // center the dialog
     setSize(getPreferredSize());
@@ -602,7 +602,7 @@ private:
 
 	  // if the properties in dialog are changed, then we have to
 	  // invalidate the editor so we can see the changes immediately
-	  dlg.Change.connect(Bind(&FigsEditor::invalidate, this, true));
+	  dlg.Change.connect([this]{ invalidate(true); });
 
 	  // show the dialog
 	  dlg.doModal();

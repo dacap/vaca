@@ -314,7 +314,7 @@ public:
     simulation_model::init_balls();
     simulation_model::init_segments();
 
-    m_timer.Tick.connect(&MainFrame::onTick, this);
+    m_timer.Tick.connect([this]{ onTick(); });
     m_timer.start();
 
     setSize(400, 300);

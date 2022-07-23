@@ -69,7 +69,7 @@ private:
 
   void bindButton(ButtonBase& button)
   {
-    button.Click.connect(Bind(&MainFrame::updateLabel, this));
+    button.Click.connect([this]{ updateLabel(); });
   }
 
   void updateLabel()

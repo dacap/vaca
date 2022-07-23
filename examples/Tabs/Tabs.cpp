@@ -72,11 +72,11 @@ public:
     // commands
     SignalCommand* cmd;
 
-    addCommand(new SignalCommand(ID_EXIT, Bind(&MainFrame::setVisible, this, false)));
+    addCommand(new SignalCommand(ID_EXIT, [this]{ setVisible(false); }));
     addCommand(new SignalCommand(ID_CHANGE_FONT, &MainFrame::onChangeFont, this));
     addCommand(cmd = new SignalCommand(ID_MULTILINE));
-    cmd->Execute.connect(&MainFrame::onMultiline, this);
-    cmd->Enabled.connect(&MainFrame::onUpdateMultiline, this);
+    cmd->Execute.connect([this]{ onMultiline(); });
+    cmd->Enabled.connect([this]{ return onUpdateMultiline(); });
     addCommand(new SignalCommand(ID_READ_ME, &MainFrame::onReadMe, this));
 
     // m_tab
@@ -87,13 +87,13 @@ public:
     m_tab.addPage(L"Page2");
     m_tab.addPage(L"Page3");
 
-    m_tab.PageChange.connect(Bind(&MainFrame::onPageChange, this));
+    m_tab.PageChange.connect([this]{ onPageChange(); });
 
     // labels
-    m_label0.Click.connect(Bind(&MainFrame::onPageLink, this, 0));
-    m_label1.Click.connect(Bind(&MainFrame::onPageLink, this, 1));
-    m_label2.Click.connect(Bind(&MainFrame::onPageLink, this, 2));
-    m_label3.Click.connect(Bind(&MainFrame::onPageLink, this, 3));
+    m_label0.Click.connect([this]{ onPageLink(0); });
+    m_label1.Click.connect([this]{ onPageLink(1); });
+    m_label2.Click.connect([this]{ onPageLink(2); });
+    m_label3.Click.connect([this]{ onPageLink(3); });
 
     updatePage();
 

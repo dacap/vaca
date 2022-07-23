@@ -40,9 +40,9 @@ public:
   bool isForward();
 
   // Signals
-  Signal1<void, Event&> FindNext;
-  Signal1<void, Event&> Replace;
-  Signal1<void, Event&> ReplaceAll;
+  Signal<void(Event&)> FindNext;
+  Signal<void(Event&)> Replace;
+  Signal<void(Event&)> ReplaceAll;
 
 protected:
 

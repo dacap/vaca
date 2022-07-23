@@ -46,8 +46,8 @@ public:
     m_listType.setSelectedItem(0);
 
     // Bindings
-    m_browseButton.Click.connect(Bind(&MainFrame::onBrowse, this));
-    m_listType.SelChange.connect(Bind(&MainFrame::onListTypeChange, this));
+    m_browseButton.Click.connect([this]{ onBrowse(); });
+    m_listType.SelChange.connect([this]{ onListTypeChange(); });
 
     refresh();
   }

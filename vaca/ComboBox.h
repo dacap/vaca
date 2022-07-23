@@ -104,8 +104,8 @@ public:
   Rect getDropDownBounds();
 
   // Signals
-  Signal1<void, Event&> SelChange;  ///< @see onSelChange
-  Signal1<void, Event&> EditChange; ///< @see onEditChange
+  Signal<void(Event&)> SelChange;  ///< @see onSelChange
+  Signal<void(Event&)> EditChange; ///< @see onEditChange
 
 protected:
   // Events

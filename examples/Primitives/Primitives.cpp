@@ -31,7 +31,7 @@ public:
 
     // when the "Fill" button is pressed, we must to call:
     // ((MainFrame*)this)->invalidate(true);
-    m_fill.Click.connect(Bind(&MainFrame::invalidate, this, true));
+    m_fill.Click.connect([this]{ invalidate(true); });
   }
 
   virtual void onResize(ResizeEvent& ev)

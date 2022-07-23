@@ -29,9 +29,6 @@ namespace vaca {
 @titleRow{URL}
   @itemRow{decode_url}
   @itemRow{encode_url}
-@titleRow{Bindings}
-  @itemRow{page_bind, Adapts functions or methods to be connected to signals.}
-  @itemRow{Ref}
 @endTable
 
 */

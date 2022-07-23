@@ -30,7 +30,7 @@ public:
   void setSelected(bool state);
 
   // Signals
-  Signal1<void, Event&> Click; ///< @see onClick
+  Signal<void(Event&)> Click; ///< @see onClick
 
 protected:
   // Events

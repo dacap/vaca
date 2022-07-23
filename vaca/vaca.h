@@ -14,7 +14,6 @@
 #include "vaca/Application.h"
 // #include "vaca/BandedDockArea.h"
 // #include "vaca/BasicDockArea.h"
-#include "vaca/Bind.h"
 #include "vaca/Bix.h"
 #include "vaca/BoxConstraint.h"
 #include "vaca/BoxLayout.h"

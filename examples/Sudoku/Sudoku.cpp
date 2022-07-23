@@ -175,7 +175,7 @@ public:
     return g.measureString(L" ").h;
   }
 
-  Signal0<void> Enter;
+  Signal<void()> Enter;
 
 protected:
 
@@ -306,17 +306,17 @@ public:
     addCommand(new SignalCommand(ID_GAME_NEW_WITH_SEED, &MainFrame::onNewWithSeed, this));
     addCommand(useHelperCmd =
 	       new SignalCommand(ID_GAME_USE_HELPER, &MainFrame::onUseHelper, this));
-    addCommand(new SignalCommand(ID_GAME_EXIT, Bind(&MainFrame::setVisible, this, false)));
+    addCommand(new SignalCommand(ID_GAME_EXIT, [this]{ setVisible(false); }));
     addCommand(new SignalCommand(ID_HELP_HELP, &MainFrame::onHelp, this));
     addCommand(new SignalCommand(ID_HELP_ABOUT, &MainFrame::onAbout, this));
 
-    useHelperCmd->Checked.connect(Bind(&MainFrame::isUseHelper, this));
+    useHelperCmd->Checked.connect([this]{ return isUseHelper(); });
 
     // signals
-    m_valueEdit.Enter.connect(Bind(&MainFrame::onCellEnter, this));
-    m_valueEdit.Change.connect(Bind(&MainFrame::onCellChange, this));
-    m_candidatesEdit.Enter.connect(Bind(&MainFrame::onCellEnter, this));
-    m_candidatesEdit.Change.connect(Bind(&MainFrame::onCellChange, this));
+    m_valueEdit.Enter.connect([this]{ onCellEnter(); });
+    m_valueEdit.Change.connect([this]{ onCellChange(); });
+    m_candidatesEdit.Enter.connect([this]{ onCellEnter(); });
+    m_candidatesEdit.Change.connect([this]{ onCellChange(); });
 
     setDoubleBuffered(true);
     setSize(getNonClientSize()+Size(40*9, 40*9));

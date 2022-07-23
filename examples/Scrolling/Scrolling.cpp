@@ -80,7 +80,7 @@ int VACA_MAIN()
   ScrollableTest wgt(&frm);
   CheckBox sleep(L"Show invalidated areas for some milliseconds", &frm);
 
-  sleep.Click.connect(Bind<void>(&updateSleep, &wgt, &sleep));
+  sleep.Click.connect([&]{ updateSleep(&wgt, &sleep); });
 
   wgt.setConstraint(new BoxConstraint(true));
 

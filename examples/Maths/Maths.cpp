@@ -256,7 +256,7 @@ public:
     , m_currentFunction(0)
     , m_font(L"Courier", 10)
   {
-    m_timer.Tick.connect(Bind(&FunctionsPage::nextFunction, this));
+    m_timer.Tick.connect([this]{ nextFunction(); });
     m_timer.start();
 
     setFont(m_font);

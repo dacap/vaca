@@ -141,7 +141,7 @@ public:
 
 public:
   // Signals
-  Signal1<void, Event&> AutoSize;
+  Signal<void(Event&)> AutoSize;
 
 protected:
   // Events

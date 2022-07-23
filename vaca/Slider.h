@@ -55,7 +55,7 @@ public:
   void setPageSize(int pageSize);
 
   // Signals
-  Signal1<void, Event&> Change; ///< @see onChange
+  Signal<void(Event&)> Change; ///< @see onChange
 
 protected:
   // Events

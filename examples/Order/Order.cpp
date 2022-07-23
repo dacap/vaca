@@ -34,10 +34,10 @@ public:
     m_items.setLayout(new BoxLayout(Orientation::Vertical, false));
     m_items.setConstraint(new BoxConstraint(true));
 
-    m_top.Click.connect(Bind(&MainFrame::onClickTop, this));
-    m_up.Click.connect(Bind(&MainFrame::onClickUp, this));
-    m_down.Click.connect(Bind(&MainFrame::onClickDown, this));
-    m_bottom.Click.connect(Bind(&MainFrame::onClickBottom, this));
+    m_top.Click.connect([this]{ onClickTop(); });
+    m_up.Click.connect([this]{ onClickUp(); });
+    m_down.Click.connect([this]{ onClickDown(); });
+    m_bottom.Click.connect([this]{ onClickBottom(); });
 
     for (int c=0; c<10; ++c) {
       CheckBox* box = new CheckBox(format_string(L"Item %d", c), &m_items);

@@ -71,11 +71,11 @@ public:
     m_value.setPreferredSize(Size(64, m_value.getPreferredSize().h));
     m_tickFreq.setPreferredSize(Size(64, m_tickFreq.getPreferredSize().h));
 
-    m_minValue.Change.connect(Bind(&MainFrame::onRangesChange, this));
-    m_maxValue.Change.connect(Bind(&MainFrame::onRangesChange, this));
-    m_value.Change.connect(Bind(&MainFrame::onRangesChange, this));
+    m_minValue.Change.connect([this]{ onRangesChange(); });
+    m_maxValue.Change.connect([this]{ onRangesChange(); });
+    m_value.Change.connect([this]{ onRangesChange(); });
 
-    m_slider.Change.connect(Bind(&MainFrame::onSliderChange, this));
+    m_slider.Change.connect([this]{ onSliderChange(); });
 
     m_orienGroup.setSelectedIndex(0);
     m_orienGroup.Change.connect(&MainFrame::onStyleChange, this);

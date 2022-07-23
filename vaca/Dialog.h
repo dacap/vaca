@@ -128,8 +128,8 @@ public:
   Widget* getNextFocusableWidget(Widget* widget);
   Widget* getPreviousFocusableWidget(Widget* widget);
 
-  Signal0<void> Ok;       ///< @see onOk
-  Signal0<void> Cancel;   ///< @see onCancel
+  Signal<void()> Ok;       ///< @see onOk
+  Signal<void()> Cancel;   ///< @see onCancel
 
 protected:
   virtual void onOk();

@@ -452,19 +452,19 @@ public:
   // SIGNALS (signals are public, see TN004)
   // ===============================================================
 
-  Signal1<void, ResizeEvent&> Resize; ///< @see onResize
-  Signal1<void, MouseEvent&> MouseEnter; ///< @see onMouseEnter
-  Signal1<void, MouseEvent&> MouseLeave; ///< @see onMouseLeave
-  Signal1<void, MouseEvent&> MouseDown; ///< @see onMouseDown
-  Signal1<void, MouseEvent&> MouseUp; ///< @see onMouseUp
-  Signal1<void, MouseEvent&> MouseMove; ///< @see onMouseMove
-  Signal1<void, MouseEvent&> MouseWheel; ///< @see onMouseWheel
-  Signal1<void, MouseEvent&> DoubleClick; ///< @see onDoubleClick
-  Signal1<void, KeyEvent&> KeyUp; ///< @see onKeyUp
-  Signal1<void, KeyEvent&> KeyDown; ///< @see onKeyDown
-  Signal1<void, FocusEvent&> FocusEnter; ///< @see onFocusEnter
-  Signal1<void, FocusEvent&> FocusLeave; ///< @see onFocusLeave
-  Signal1<void, DropFilesEvent&> DropFiles; ///< @see onDropFiles
+  Signal<void(ResizeEvent&)> Resize; ///< @see onResize
+  Signal<void(MouseEvent&)> MouseEnter; ///< @see onMouseEnter
+  Signal<void(MouseEvent&)> MouseLeave; ///< @see onMouseLeave
+  Signal<void(MouseEvent&)> MouseDown; ///< @see onMouseDown
+  Signal<void(MouseEvent&)> MouseUp; ///< @see onMouseUp
+  Signal<void(MouseEvent&)> MouseMove; ///< @see onMouseMove
+  Signal<void(MouseEvent&)> MouseWheel; ///< @see onMouseWheel
+  Signal<void(MouseEvent&)> DoubleClick; ///< @see onDoubleClick
+  Signal<void(KeyEvent&)> KeyUp; ///< @see onKeyUp
+  Signal<void(KeyEvent&)> KeyDown; ///< @see onKeyDown
+  Signal<void(FocusEvent&)> FocusEnter; ///< @see onFocusEnter
+  Signal<void(FocusEvent&)> FocusLeave; ///< @see onFocusLeave
+  Signal<void(DropFilesEvent&)> DropFiles; ///< @see onDropFiles
 
 protected:
 

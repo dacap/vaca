@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005-2010 David Capello
+// Copyright (c) 2005-2022 David Capello
 //
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
@@ -53,7 +53,7 @@ public:
   static void pollTimers();
 
   // Signals
-  Signal0<void> Tick;   ///< @see onTick
+  Signal<void()> Tick;   ///< @see onTick
 
 protected:
 

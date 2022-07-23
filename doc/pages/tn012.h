@@ -23,7 +23,7 @@ class Frm : public Frame
   But but;
 public:
   Frm();
-  Signal0<void> Sig;
+  Signal<void()> Sig;
 };
 
 But::But(Frm* parent) : Button("...", parent)
@@ -48,7 +48,7 @@ class Frm : public Frame
 {
 public:
   Frm();
-  Signal0<void> Sig;
+  Signal<void()> Sig;
 private:
   But but;
 };
@@ -61,7 +61,7 @@ class Frm : public Frame
   std::auto_ptr<But> but;
 public:
   Frm();
-  Signal0<void> Sig;
+  Signal<void()> Sig;
 };
 ...
 Frm::Frm() : Frame("...")

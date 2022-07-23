@@ -167,7 +167,7 @@ public:
     m_tab.addPage(L"Substract: B - A");
     m_tab.addPage(L"Xor: A ^ B");
 
-    m_tab.PageChange.connect(Bind(&MainFrame::onPageChange, this));
+    m_tab.PageChange.connect([this]{ onPageChange(); });
 
     m_regionA = Region::fromRect(Rect(32, 32, 64, 64));
     m_regionB = Region::fromEllipse(Rect(48, 48, 64, 64));

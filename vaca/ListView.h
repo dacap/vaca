@@ -114,9 +114,9 @@ public:
 //   int getCurrentItem();
 
   // Signals
-  Signal1<void, ListViewEvent&> BeforeSelect;
-  Signal1<void, ListViewEvent&> AfterSelect;
-  Signal1<void, ListViewEvent&> ColumnClick;
+  Signal<void(ListViewEvent&)> BeforeSelect;
+  Signal<void(ListViewEvent&)> AfterSelect;
+  Signal<void(ListViewEvent&)> ColumnClick;
 
 protected:
   // Events

@@ -143,10 +143,10 @@ public:
   virtual bool isLayoutFree() const;
   virtual bool keepSynchronized();
 
-  Signal1<void, Event&> Activate;     ///< @see onActivate
-  Signal1<void, Event&> Deactivate;   ///< @see onDeactivate
-  Signal1<void, CloseEvent&> Close;   ///< @see onClose
-  Signal2<void, CardinalDirection, Rect&> Resizing; ///< @see onResizing
+  Signal<void(Event&)> Activate;     ///< @see onActivate
+  Signal<void(Event&)> Deactivate;   ///< @see onDeactivate
+  Signal<void(CloseEvent&)> Close;   ///< @see onClose
+  Signal<void(CardinalDirection, Rect&)> Resizing; ///< @see onResizing
 
   virtual bool preTranslateMessage(Message& message);
 

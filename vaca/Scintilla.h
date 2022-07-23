@@ -584,7 +584,7 @@ public:
   // Notifications
 
   // Signals
-  Signal0<void> UpdateUI; ///< @see onUpdateUI
+  Signal<void()> UpdateUI; ///< @see onUpdateUI
 
 protected:
   // Reflected notifications

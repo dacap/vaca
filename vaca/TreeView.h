@@ -146,16 +146,16 @@ public:
   virtual void setBgColor(const Color& color);
 
   // Signals
-  Signal1<void, TreeViewEvent&> BeforeExpand;
-  Signal1<void, TreeViewEvent&> BeforeCollapse;
-  Signal1<void, TreeViewEvent&> BeforeSelect;
-  Signal1<void, TreeViewEvent&> BeforeLabelEdit;
-  Signal1<void, TreeViewEvent&> AfterExpand;
-  Signal1<void, TreeViewEvent&> AfterCollapse;
-  Signal1<void, TreeViewEvent&> AfterSelect;
-  Signal1<void, TreeViewEvent&> AfterLabelEdit;
-//   Signal1<void, TreeViewEvent&> BeginDrag;
-//   Signal1<void, TreeViewEvent&> EndDrag;
+  Signal<void(TreeViewEvent&)> BeforeExpand;
+  Signal<void(TreeViewEvent&)> BeforeCollapse;
+  Signal<void(TreeViewEvent&)> BeforeSelect;
+  Signal<void(TreeViewEvent&)> BeforeLabelEdit;
+  Signal<void(TreeViewEvent&)> AfterExpand;
+  Signal<void(TreeViewEvent&)> AfterCollapse;
+  Signal<void(TreeViewEvent&)> AfterSelect;
+  Signal<void(TreeViewEvent&)> AfterLabelEdit;
+//   Signal<void(TreeViewEvent&)> BeginDrag;
+//   Signal<void(TreeViewEvent&)> EndDrag;
 
 protected:
   // Events

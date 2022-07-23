@@ -57,7 +57,7 @@ public:
   virtual Color getLinkColor();
   virtual Color getHoverColor();
 
-  Signal1<void, Event&> Click; ///< @see onClick
+  Signal<void(Event&)> Click; ///< @see onClick
 
 protected:
 

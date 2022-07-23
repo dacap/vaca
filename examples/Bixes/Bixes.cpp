@@ -96,10 +96,10 @@ class Model
 
 public:
 
-  Signal2<void, Element*, Element*> BeforeAddElement;
-  Signal1<void, Element*>           AfterAddElement;
-  Signal1<void, Element*>           BeforeRemoveElement;
-  Signal2<void, Element*, Element*> AfterRemoveElement;
+  Signal<void(Element*, Element*)> BeforeAddElement;
+  Signal<void(Element*)>           AfterAddElement;
+  Signal<void(Element*)>           BeforeRemoveElement;
+  Signal<void(Element*, Element*)> AfterRemoveElement;
 
   Model() {
     m_root = NULL;
@@ -171,7 +171,7 @@ class TreeView_Model : public TreeView
 
 public:
 
-  Signal1<void, Element*> ElementSelected;
+  Signal<void(Element*)> ElementSelected;
 
   TreeView_Model(Model* model, Widget* parent)
     : TreeView(parent)
@@ -214,7 +214,7 @@ protected:
 	ElementSelected(elemNode->getElement());
       }
       else
-	ElementSelected(NULL);
+	ElementSelected(nullptr);
     }
   }
 
@@ -286,7 +286,7 @@ class TextEdit_Element : public TextEdit
 
 public:
 
-  Signal1<void, Element*> ElementSelected;
+  Signal<void(Element*)> ElementSelected;
 
   TextEdit_Element(Element* element, Widget* parent)
     : TextEdit(element->getName(), parent,
@@ -357,7 +357,7 @@ class Widgets_Model : public Widget
 
 public:
 
-  Signal1<void, Element*> ElementSelected;
+  Signal<void(Element*)> ElementSelected;
 
   Widgets_Model(Model* model, Widget* parent)
     : Widget(parent, Widget::Styles::Default +
@@ -546,11 +546,11 @@ public:
     , m_disableReselect(false)
   {
     // commands
-    addCommand(new SignalCommand(IDM_ADD_COLUMN, Bind(&MainFrame::onAddColumn, this)));
-    addCommand(new SignalCommand(IDM_ADD_ROW, Bind(&MainFrame::onAddRow, this)));
-    addCommand(new SignalCommand(IDM_ADD_MATRIX, Bind(&MainFrame::onAddMatrix, this)));
-    addCommand(new SignalCommand(IDM_ADD_WIDGET, Bind(&MainFrame::onAddWidget, this)));
-    addCommand(new SignalCommand(IDM_REMOVE, Bind(&MainFrame::onRemove, this)));
+    addCommand(new SignalCommand(IDM_ADD_COLUMN, &MainFrame::onAddColumn, this));
+    addCommand(new SignalCommand(IDM_ADD_ROW, &MainFrame::onAddRow, this));
+    addCommand(new SignalCommand(IDM_ADD_MATRIX, &MainFrame::onAddMatrix, this));
+    addCommand(new SignalCommand(IDM_ADD_WIDGET, &MainFrame::onAddWidget, this));
+    addCommand(new SignalCommand(IDM_REMOVE, &MainFrame::onRemove, this));
     addCommand(new SignalCommand(IDM_PROPERTIES));
 
     // layout

@@ -54,8 +54,8 @@ public:
   std::vector<int> getSelectedItems();
 
   // Signals
-  Signal1<void, Event&> ItemDoubleClick; ///< @see onItemDoubleClick
-  Signal1<void, Event&> SelChange; ///< @see onSelChange
+  Signal<void(Event&)> ItemDoubleClick; ///< @see onItemDoubleClick
+  Signal<void(Event&)> SelChange; ///< @see onSelChange
 
 protected:
   // Events

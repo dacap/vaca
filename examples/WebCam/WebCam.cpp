@@ -205,10 +205,10 @@ public:
 
     m_rateEdit.setPreferredSize(Size(64, m_rateEdit.getPreferredSize().h));
 
-    m_start.Click.connect(Bind(&MainFrame::onStart, this));
-    m_capture.Click.connect(Bind(&MainFrame::onCapture, this));
-    m_copy.Click.connect(Bind(&WebCam::copy, &m_webcam));
-    m_rate.Change.connect(Bind(&MainFrame::onChangeRate, this));
+    m_start.Click.connect([this]{ onStart(); });
+    m_capture.Click.connect([this]{ onCapture(); });
+    m_copy.Click.connect([&]{ m_webcam.copy(); });
+    m_rate.Change.connect([this]{ onChangeRate(); });
 
     // update m_rateEdit text
     onChangeRate();

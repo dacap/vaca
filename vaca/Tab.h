@@ -67,8 +67,8 @@ public:
   Size getNonClientSize();
 
   // Signals
-//   Signal1<void, Event&> PageChanging;
-  Signal1<void, Event&> PageChange; ///< @see onPageChange
+//   Signal<void(Event&)> PageChanging;
+  Signal<void(Event&)> PageChange; ///< @see onPageChange
 
 protected:
   // Events

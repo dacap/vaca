@@ -82,13 +82,13 @@ void configure_frame(Frame &frame)
 
 void configure_editor(TextEdit &edit, Font &normalFont, Font &hotFont, int preferredWidth)
 {
-  edit.FocusEnter.connect(Bind(&Widget::setFont, &edit, hotFont));
-  edit.FocusLeave.connect(Bind(&Widget::setFont, &edit, normalFont));
+  edit.FocusEnter.connect([&]{ edit.setFont(hotFont); });
+  edit.FocusLeave.connect([&]{ edit.setFont(normalFont); });
 
-  edit.MouseEnter.connect(Bind(&Widget::setBgColor, &edit, Color(255, 255, 190)));
-  edit.MouseLeave.connect(Bind(&Widget::setBgColor, &edit, Color::White));
-  edit.MouseEnter.connect(Bind(&Widget::invalidate, &edit, true));
-  edit.MouseLeave.connect(Bind(&Widget::invalidate, &edit, true));
+  edit.MouseEnter.connect([&]{ edit.setBgColor(Color(255, 255, 190)); });
+  edit.MouseLeave.connect([&]{ edit.setBgColor(Color::White); });
+  edit.MouseEnter.connect([&]{ edit.invalidate(true); });
+  edit.MouseLeave.connect([&]{ edit.invalidate(true); });
 
   edit.setFont(normalFont);
   edit.setPreferredSize(Size(preferredWidth, edit.getPreferredSize().h));
@@ -101,9 +101,9 @@ void configure_num_editor(TextEdit &edit)
 
 void configure_buttons(Button& ok, Button& cancel)
 {
-  ok.Click.connect(Bind<void>(&msg_ok, ok.getParent()));
-  ok.Click.connect(Bind(&Widget::setVisible, ok.getParent(), false));
-  cancel.Click.connect(Bind(&Widget::setVisible, cancel.getParent(), false));
+  ok.Click.connect([&]{ msg_ok(ok.getParent()); });
+  ok.Click.connect([&]{ ok.getParent()->setVisible(false); });
+  cancel.Click.connect([&]{ cancel.getParent()->setVisible(false); });
 }
 
 void filter_num_keys(KeyEvent &ev)

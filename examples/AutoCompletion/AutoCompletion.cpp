@@ -614,8 +614,8 @@ public:
   }
 
   // signals
-  Signal1<void, const Color&> SelColor;
-  Signal0<void> NoColor;
+  Signal<void(const Color&)> SelColor;
+  Signal<void()> NoColor;
 
 protected:
 
@@ -760,8 +760,13 @@ public:
 
     m_comboBox.requestFocus();
 
-    m_comboBox.SelColor.connect(&ColorViewer::setColor, &m_colorViewer);
-    m_comboBox.NoColor.connect(&ColorViewer::setNoColor, &m_colorViewer);
+    m_comboBox.SelColor.connect(
+      [this](const Color& color){
+        m_colorViewer.setColor(color);
+      });
+    m_comboBox.NoColor.connect([this]{
+      m_colorViewer.setNoColor();
+    });
 
     setSize(getPreferredSize());
     center();

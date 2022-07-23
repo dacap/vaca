@@ -240,8 +240,8 @@ public:
     // add the root node (for the desktop)
     m_treeView.addNode(new FileTreeNode(pidl, NULL));
 
-    m_treeView.BeforeExpand.connect(Bind(&MainFrame::startLoading, this));
-    m_treeView.AfterExpand.connect(Bind(&MainFrame::endLoading, this));
+    m_treeView.BeforeExpand.connect([this]{ startLoading(); });
+    m_treeView.AfterExpand.connect([this]{ endLoading(); });
   }
 
 private:

@@ -89,16 +89,16 @@ public:
   virtual void execute() { Execute(); }
 
   virtual bool isEnabled() {
-    return Enabled(true);	// true by default
+    return Enabled.callWithDefaultReturn(true);
   }
 
   virtual bool isChecked() {
-    return Checked(false);	// false by default
+    return Checked.callWithDefaultReturn(false);
   }
 
-  Signal0<void> Execute;
-  Signal0<bool> Enabled;
-  Signal0<bool> Checked;
+  Signal<void()> Execute;
+  Signal<bool()> Enabled;
+  Signal<bool()> Checked;
 };
 
 /**

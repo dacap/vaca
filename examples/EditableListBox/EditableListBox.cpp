@@ -75,7 +75,7 @@ private:
       m_edit = new TextEdit(getItemText(index), this, TextEdit::Styles::Default -
 						      Widget::Styles::ClientEdge);
       m_edit->KeyDown.connect(&EditableListBox::onEditKeyDown, this);
-      m_edit->FocusLeave.connect(Bind(&EditableListBox::onEditFocusLeave, this));
+      m_edit->FocusLeave.connect([this]{ onEditFocusLeave(); });
       m_edit->selectAll();
       m_edit->requestFocus();
 
@@ -137,8 +137,8 @@ public:
     for (int c=0; c<10; c++)
       onAdd();
 
-    m_addButton.Click.connect(Bind(&MainFrame::onAdd, this));
-    m_removeButton.Click.connect(Bind(&MainFrame::onRemove, this));
+    m_addButton.Click.connect([this]{ onAdd(); });
+    m_removeButton.Click.connect([this]{ onRemove(); });
 
     setSize(getPreferredSize());
     center();

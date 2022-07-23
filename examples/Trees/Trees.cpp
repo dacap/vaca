@@ -108,18 +108,18 @@ public:
     m_treeView2.addNode(new InfiniteTreeNode(L"Infinite Node"));
 
     // bind some events
-    m_dragAndDrop1.Click.connect(Bind(&MainFrame::onDragAndDrop, this, &m_dragAndDrop1, &m_treeView1));
-    m_dragAndDrop2.Click.connect(Bind(&MainFrame::onDragAndDrop, this, &m_dragAndDrop2, &m_treeView2));
+    m_dragAndDrop1.Click.connect([&]{ onDragAndDrop(&m_dragAndDrop1, &m_treeView1); });
+    m_dragAndDrop2.Click.connect([&]{ onDragAndDrop(&m_dragAndDrop2, &m_treeView2); });
 
     m_treeView1.AfterExpand.connect(&MainFrame::onAfterExpand, this);
     m_treeView1.AfterCollapse.connect(&MainFrame::onAfterCollapse, this);
     m_treeView1.AfterSelect.connect(&MainFrame::onAfterSelect, this);
     m_treeView1.AfterLabelEdit.connect(&MainFrame::onAfterLabelEdit, this);
 
-    m_addItem.Click.connect(Bind(&MainFrame::onAddItem, this));
-    m_deleteItem.Click.connect(Bind(&MainFrame::onDeleteItem, this));
-    m_from1to2.Click.connect(Bind(&MainFrame::onFromTo, this, &m_treeView1, &m_treeView2));
-    m_from2to1.Click.connect(Bind(&MainFrame::onFromTo, this, &m_treeView2, &m_treeView1));
+    m_addItem.Click.connect([this]{ onAddItem(); });
+    m_deleteItem.Click.connect([this]{ onDeleteItem(); });
+    m_from1to2.Click.connect([&]{ onFromTo(&m_treeView1, &m_treeView2); });
+    m_from2to1.Click.connect([&]{ onFromTo(&m_treeView2, &m_treeView1); });
   }
 
 protected:

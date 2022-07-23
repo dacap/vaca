@@ -54,10 +54,10 @@ public:
     m_start.setDefault(true);
 
     // call "onStart" when the "Start" button is pressed
-    m_start.Click.connect(Bind(&MainFrame::onStart, this));
+    m_start.Click.connect([this]{ onStart(); });
 
     // the Dialog::onCancel generates an onClose event
-    m_close.Click.connect(Bind(&MainFrame::onCancel, this));
+    m_close.Click.connect([this]{ onCancel(); });
 
     // the application is waiting to work (the user should press the
     // "Start" button)

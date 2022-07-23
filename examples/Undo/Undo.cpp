@@ -49,9 +49,9 @@ public:
   Documents getDocuments() { return m_docs; };
   DocumentPtr getCurrentDocument() { return m_currentDoc; };
 
-  Signal1<void, DocumentPtr> DocumentChange;
-  Signal1<void, DocumentPtr> NewDocument;
-  Signal1<void, DocumentPtr> CloseDocument;
+  Signal<void(DocumentPtr)> DocumentChange;
+  Signal<void(DocumentPtr)> NewDocument;
+  Signal<void(DocumentPtr)> CloseDocument;
 };
 
 Example* GetApp()
@@ -172,11 +172,11 @@ Example::Example()
 
   // commands
   addCommand(new SignalCommand(ID_NEW_DOCUMENT, &Example::onNew, this));
-  addCommand(new SignalCommand(ID_EXIT, Bind(&MainFrame::setVisible, m_mainFrame.get(), false)));
+  addCommand(new SignalCommand(ID_EXIT, [&]{ m_mainFrame->setVisible(false); }));
 
   SignalCommand* cmd = new SignalCommand(ID_CLOSE_DOCUMENT);
   cmd->Execute.connect(&Example::onClose, this);
-  cmd->Enabled.connect(&Example::hasCurrentDoc, this);
+  cmd->Enabled.connect([this]{ return hasCurrentDoc(); });
   addCommand(cmd);
 }
 

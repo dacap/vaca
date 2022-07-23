@@ -180,13 +180,9 @@ Base classes of the MESS architecture.
   @itemRow{SpinButtonEvent}
   @itemRow{TreeViewEvent}
 @titleRow{Signals}
-  @itemRow{Signal0}
-  @itemRow{Signal1}
-  @itemRow{Signal2}
+  @itemRow{Signal}
 @titleRow{Slots}
-  @itemRow{Slot0}
-  @itemRow{Slot1}
-  @itemRow{Slot2}
+  @itemRow{Slot}
 @titleRow{Other}
   @itemRow{RefWrapper}
 @endTable

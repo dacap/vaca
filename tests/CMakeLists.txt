@@ -28,7 +28,6 @@ function(add_vaca_test name)
   add_test(NAME ${name} COMMAND ${name})
 endfunction(add_vaca_test)
 
-add_vaca_test(test_bind)
 add_vaca_test(test_handle)
 add_vaca_test(test_image)
 add_vaca_test(test_menu)

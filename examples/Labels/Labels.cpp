@@ -37,7 +37,7 @@ public:
   {
     setLayout(new BoxLayout(Orientation::Vertical, false));
 
-    m_alignButton.Click.connect(Bind(&MainFrame::onSetAlignment, this));
+    m_alignButton.Click.connect([this]{ onSetAlignment(); });
 
     setSize(getPreferredSize());
     center();

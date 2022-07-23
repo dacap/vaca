@@ -21,7 +21,7 @@ MESS stands for Message-Event-Signal/Slot:
 @li @c Slot: an instance of @link Slot0 Slot@endlink that wraps functions,
     function objects (@em functors), or classes' methods.
     They are automatically created/connected to signals when you
-    use functions like @link Signal0_base#connect Signal::connect@endlink.
+    use functions like @link Signal#connect Signal::connect@endlink.
 
 Basically when a @em message came from the operating system, it means
 that the user inputs a value or is waiting for an output. The @em message
@@ -31,7 +31,7 @@ related to that event.
 
 Signals can be intercepted by anyone. Each connection to a signal is
 called a @link Slot0 slot@endlink. You shouldn't worry about slots,
-they are created and destroyed automatically, you just use Signal0#connect.
+they are created and destroyed automatically, you just use Signal#connect.
 
 In each Vaca's widget there are defined methods to handle @em events
 inside the widget, and there are @em signals for events that should be
@@ -108,8 +108,6 @@ until there are not more visible @link Frame Frames@endlink.
 
 
 @section page_mess_signals Signals/Slots
-
-@see @ref page_bind
 
 */
 

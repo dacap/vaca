@@ -10,9 +10,9 @@ namespace vaca {
 
 @section page_tn_004_intro Signals
 
-Maybe OOP fanatics'll explode of hungry when they see the @em public
-data members like @c Close or @c Action for every signal. But I think
-that it is the better way to access to signals because we don't need to
+Maybe OOP fans will be full of rage when they see the @em public data
+members like @c Close or @c Action for every signal. But I think that
+it is the better way to access to signals because we don't need to
 create/known a lot of routines to access/modify/update bindings for
 the signal.
 

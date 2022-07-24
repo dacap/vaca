@@ -19,16 +19,11 @@ namespace vaca {
 
 // ======================================================================
 
-struct FillRuleEnum
+enum class FillRule
 {
-  enum enumeration {
-    EvenOdd,
-    Winding
-  };
-  static const enumeration default_value = EvenOdd;
+  EvenOdd,
+  Winding
 };
-
-typedef Enum<FillRuleEnum> FillRule;
 
 /**
    Class to control a graphics context.

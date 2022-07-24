@@ -15,28 +15,6 @@
 namespace vaca {
 
 /**
-   It's like a namespace for ScrollRequest.
-
-   @see ScrollRequest
-*/
-struct ScrollRequestEnum
-{
-  enum enumeration {
-    FullBackward,
-    FullForward,
-    PageBackward,
-    PageForward,
-    LineBackward,
-    LineForward,
-    BoxPosition,
-    BoxTracking,
-    EndScroll,
-  };
-
-  static const enumeration default_value = FullBackward;
-};
-
-/**
    Defines how does the user want to scroll.
 
    One of the following values:
@@ -50,7 +28,18 @@ struct ScrollRequestEnum
    @li ScrollRequest::BoxTracking: the is moving the scroll box.
    @li ScrollRequest::EndScroll: the scroll request finished.
 */
-typedef Enum<ScrollRequestEnum> ScrollRequest;
+enum class ScrollRequest
+{
+  FullBackward,
+  FullForward,
+  PageBackward,
+  PageForward,
+  LineBackward,
+  LineForward,
+  BoxPosition,
+  BoxTracking,
+  EndScroll,
+};
 
 class VACA_DLL ScrollEvent : public Event
 {

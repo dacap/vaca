@@ -37,7 +37,7 @@ struct FontStyleEnumSet
    @li FontStyle::Underline
    @li FontStyle::Strikeout
 */
-typedef EnumSet<FontStyleEnumSet> FontStyle;
+using FontStyle = EnumSet<FontStyleEnumSet>;
 
 // ======================================================================
 

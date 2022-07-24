@@ -177,44 +177,19 @@ typedef unsigned int ThreadId;
 // ======================================================================
 
 /**
-   It's like a namespace for Orientation.
-
-   @see Orientation
-*/
-struct OrientationEnum
-{
-  enum enumeration {
-    Horizontal,
-    Vertical
-  };
-  static const enumeration default_value = Horizontal;
-};
-
-/**
    Horizontal or vertical orientation.
 
    One of the following values:
    @li Orientation::Horizontal (default)
    @li Orientation::Vertical
 */
-typedef Enum<OrientationEnum> Orientation;
+enum class Orientation
+{
+  Horizontal,
+  Vertical,
+};
 
 // ======================================================================
-
-/**
-   It's like a namespace for TextAlign.
-
-   @see TextAlign
-*/
-struct TextAlignEnum
-{
-  enum enumeration {
-    Left,
-    Center,
-    Right
-  };
-  static const enumeration default_value = Left;
-};
 
 /**
    Horizontal alignment.
@@ -224,24 +199,14 @@ struct TextAlignEnum
    @li TextAlign::Center
    @li TextAlign::Right
 */
-typedef Enum<TextAlignEnum> TextAlign;
+enum class TextAlign
+{
+  Left,
+  Center,
+  Right
+};
 
 // ======================================================================
-
-/**
-   It's like a namespace for VerticalAlign.
-
-   @see VerticalAlign
-*/
-struct VerticalAlignEnum
-{
-  enum enumeration {
-    Top,
-    Middle,
-    Bottom
-  };
-  static const enumeration default_value = Top;
-};
 
 /**
    Vertical alignment.
@@ -251,25 +216,14 @@ struct VerticalAlignEnum
    @li VerticalAlign::Middle
    @li VerticalAlign::Bottom
 */
-typedef Enum<VerticalAlignEnum> VerticalAlign;
+enum class VerticalAlign
+{
+  Top,
+  Middle,
+  Bottom
+};
 
 // ======================================================================
-
-/**
-   It's like a namespace for Side.
-
-   @see Side
-*/
-struct SideEnum
-{
-  enum enumeration {
-    Left,
-    Top,
-    Right,
-    Bottom
-  };
-  static const enumeration default_value = Left;
-};
 
 /**
    A side.
@@ -280,7 +234,13 @@ struct SideEnum
    @li Side::Right
    @li Side::Bottom
 */
-typedef Enum<SideEnum> Side;
+enum class Side
+{
+  Left,
+  Top,
+  Right,
+  Bottom
+};
 
 // ======================================================================
 
@@ -310,29 +270,9 @@ struct SidesEnumSet
    @li Sides::Right
    @li Sides::Bottom
 */
-typedef EnumSet<SidesEnumSet> Sides;
+using Sides = EnumSet<SidesEnumSet>;
 
 // ======================================================================
-
-/**
-   It's like a namespace for CardinalDirection.
-
-   @see CardinalDirection
-*/
-struct CardinalDirectionEnum
-{
-  enum enumeration {
-    North,
-    Northeast,
-    East,
-    Southeast,
-    South,
-    Southwest,
-    West,
-    Northwest
-  };
-  static const enumeration default_value = North;
-};
 
 /**
    A cardinal direction.
@@ -347,7 +287,17 @@ struct CardinalDirectionEnum
    @li CardinalDirection::West
    @li CardinalDirection::Northwest
 */
-typedef Enum<CardinalDirectionEnum> CardinalDirection;
+enum class CardinalDirection
+{
+  North,
+  Northeast,
+  East,
+  Southeast,
+  South,
+  Southwest,
+  West,
+  Northwest
+};
 
 // ======================================================================
 

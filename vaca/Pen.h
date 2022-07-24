@@ -16,25 +16,6 @@ namespace vaca {
 // ======================================================================
 
 /**
-   It's like a namespace for PenStyle.
-
-   @see PenStyle
-*/
-struct PenStyleEnum
-{
-  enum enumeration {
-    Solid,
-    Dash,
-    Dot,
-    DashDot,
-    DashDotDot,
-    Null,
-    InsideFrame
-  };
-  static const enumeration default_value = Solid;
-};
-
-/**
    Speficies the style to be used when draw a line. One of the
    following values:
    @li PenStyle::Solid
@@ -45,24 +26,18 @@ struct PenStyleEnum
    @li PenStyle::Null
    @li PenStyle::InsideFram
 */
-typedef Enum<PenStyleEnum> PenStyle;
+enum class PenStyle
+{
+  Solid,
+  Dash,
+  Dot,
+  DashDot,
+  DashDotDot,
+  Null,
+  InsideFrame
+};
 
 // ======================================================================
-
-/**
-   It's like a namespace for PenEndCap.
-
-   @see PenEndCap
-*/
-struct PenEndCapEnum
-{
-  enum enumeration {
-    Round,
-    Square,
-    Flat
-  };
-  static const enumeration default_value = Round;
-};
 
 /**
    Speficies how to end the lines of an open GraphicsPath. One of the
@@ -71,25 +46,15 @@ struct PenEndCapEnum
    @li PenEndCap::Square
    @li PenEndCap::Flat
 */
-typedef Enum<PenEndCapEnum> PenEndCap;
+enum class PenEndCap
+{
+  Round,
+  Square,
+  Flat
+};
 
 // ======================================================================
 // Pen Join
-
-/**
-   It's like a namespace for PenJoin.
-
-   @see PenJoin
-*/
-struct PenJoinEnum
-{
-  enum enumeration {
-    Round,
-    Bevel,
-    Miter
-  };
-  static const enumeration default_value = Round;
-};
 
 /**
    Specifies how to join the corners of a GraphicsPath. One of the
@@ -98,7 +63,12 @@ struct PenJoinEnum
    @li PenJoin::Bevel
    @li PenJoin::Miter
 */
-typedef Enum<PenJoinEnum> PenJoin;
+enum class PenJoin
+{
+  Round,
+  Bevel,
+  Miter
+};
 
 // ======================================================================
 

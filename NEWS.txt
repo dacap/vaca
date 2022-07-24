@@ -3,6 +3,7 @@ Vaca 0.1
 - Converted Style class to constexpr
 - Simplified signal/slot using std::function()
 - Removed Bind, we have C++11 lambdas now
+- Use new C++11 enum class instead of Enum
 
 Vaca 0.0.8
 

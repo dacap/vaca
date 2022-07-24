@@ -19,22 +19,6 @@ namespace vaca {
 // ======================================================================
 
 /**
-   It's like a namespace for ProcessPriority.
-
-   @see ProcessPriority
-*/
-struct ProcessPriorityEnum
-{
-  enum enumeration {
-    Idle,
-    Normal,
-    High,
-    RealTime,
-  };
-  static const enumeration default_value = Normal;
-};
-
-/**
    Process priority.
 
    One of the following values:
@@ -43,7 +27,13 @@ struct ProcessPriorityEnum
    @li ProcessPriority::High
    @li ProcessPriority::RealTime
 */
-typedef Enum<ProcessPriorityEnum> ProcessPriority;
+enum class ProcessPriority
+{
+  Idle,
+  Normal,
+  High,
+  RealTime,
+};
 
 // ======================================================================
 

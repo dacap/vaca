@@ -168,8 +168,8 @@ private:
     m_penWidthSlider.setValue(m_fig.pen.getWidth());
     m_penWidthEdit.setText(convert_to<String>(m_fig.pen.getWidth()));
 
-    m_endCapGroup.setSelectedIndex(m_fig.pen.getEndCap());
-    m_joinGroup.setSelectedIndex(m_fig.pen.getJoin());
+    m_endCapGroup.setSelectedIndex(int(m_fig.pen.getEndCap()));
+    m_joinGroup.setSelectedIndex(int(m_fig.pen.getJoin()));
 
     m_closeFigure.setSelected(m_fig.isClosed());
   }

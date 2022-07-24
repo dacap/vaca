@@ -19,25 +19,6 @@ namespace vaca {
 // ======================================================================
 
 /**
-   It's like a namespace for ThreadPriority.
-
-   @see ThreadPriority
-*/
-struct ThreadPriorityEnum
-{
-  enum enumeration {
-    Idle,
-    Lowest,
-    Low,
-    Normal,
-    High,
-    Highest,
-    TimeCritical,
-  };
-  static const enumeration default_value = Normal;
-};
-
-/**
    Thread priority.
 
    One of the following values:
@@ -49,7 +30,16 @@ struct ThreadPriorityEnum
    @li ThreadPriority::Highest
    @li ThreadPriority::TimeCritical
 */
-typedef Enum<ThreadPriorityEnum> ThreadPriority;
+enum class ThreadPriority
+{
+  Idle,
+  Lowest,
+  Low,
+  Normal,
+  High,
+  Highest,
+  TimeCritical,
+};
 
 // ======================================================================
 

@@ -19,23 +19,15 @@ namespace vaca {
 // ======================================================================
 
 /**
-   @see ListViewType
-*/
-struct ListViewTypeEnum
-{
-  enum enumeration {
-    Icon,
-    Report,
-    SmallIcon,
-    List
-  };
-  static const enumeration default_value = List;
-};
-
-/**
    Kind of ListView.
  */
-typedef Enum<ListViewTypeEnum> ListViewType;
+enum class ListViewType
+{
+  Icon,
+  Report,
+  SmallIcon,
+  List
+};
 
 // ======================================================================
 

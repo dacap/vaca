@@ -29,44 +29,28 @@ class VACA_DLL MsgBox
 {
 public:
 
-  struct TypeEnum
-  {
-    enum enumeration {
-      Ok,
-      OkCancel,
-      YesNo,
-      YesNoCancel,
-      RetryCancel,
-      CancelRetryContinue,
-    };
-    static const enumeration default_value = Ok;
+  enum class Type {
+    Ok,
+    OkCancel,
+    YesNo,
+    YesNoCancel,
+    RetryCancel,
+    CancelRetryContinue,
   };
 
-  struct IconEnum
-  {
-    enum enumeration {
-      None,
-      Error,
-      Warning,
-      Question,
-      Information,
-    };
-    static const enumeration default_value = None;
+  enum class Icon {
+    None,
+    Error,
+    Warning,
+    Question,
+    Information,
   };
 
-  struct ResultEnum
-  {
-    enum enumeration {
-      Ok, Cancel,
-      Yes, No,
-      Retry, Continue,
-    };
-    static const enumeration default_value = Ok;
+  enum class Result {
+    Ok, Cancel,
+    Yes, No,
+    Retry, Continue,
   };
-
-  typedef Enum<TypeEnum> Type;
-  typedef Enum<IconEnum> Icon;
-  typedef Enum<ResultEnum> Result;
 
 public:
 

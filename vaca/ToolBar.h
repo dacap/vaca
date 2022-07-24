@@ -27,7 +27,7 @@ struct ToolButtonStateEnumSet
   };
 };
 
-typedef EnumSet<ToolButtonStateEnumSet> ToolButtonState;
+using ToolButtonState = EnumSet<ToolButtonStateEnumSet>;
 
 // ======================================================================
 

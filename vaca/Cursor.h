@@ -15,40 +15,32 @@
 namespace vaca {
 
 /**
-   @see SysCursor
-*/
-struct SysCursorEnum
-{
-  enum enumeration {
-    None,
-    Arrow,
-    Crosshair,
-    Hand,
-    Help,
-    Text,
-    Forbidden,
-    Move,
-    SizeE,
-    SizeN,
-    SizeNE,
-    SizeNW,
-    SizeS,
-    SizeSE,
-    SizeSW,
-    SizeW,
-    UpArrow,
-    Wait,
-    WaitBg
-  };
-  static const enumeration default_value = Arrow;
-};
-
-/**
    System mouse cursors.
 
    @see Cursor#Cursor(SysCursor)
 */
-typedef Enum<SysCursorEnum> SysCursor;
+enum class SysCursor
+{
+  None,
+  Arrow,
+  Crosshair,
+  Hand,
+  Help,
+  Text,
+  Forbidden,
+  Move,
+  SizeE,
+  SizeN,
+  SizeNE,
+  SizeNW,
+  SizeS,
+  SizeSE,
+  SizeSW,
+  SizeW,
+  UpArrow,
+  Wait,
+  WaitBg
+};
 
 /**
    Used to destroy the HCURSOR handle from GdiObject.

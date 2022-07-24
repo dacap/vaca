@@ -503,15 +503,11 @@ vaca::String GridValue::getString() const
 //////////////////////////////////////////////////////////////////////
 // GridColumnStyle
 
-// struct _GridColumnStyle
+// enum class GridColumnStyle
 // {
-//   enum enumeration {
-//     Null,
-//   };
-//   static const enumeration default_value = Solid;
+//   Null,
+//   default_value = Null;
 // };
-
-// typedef Enum<_GridColumnStyle> GridColumnStyle;
 
 //////////////////////////////////////////////////////////////////////
 // GridColumn

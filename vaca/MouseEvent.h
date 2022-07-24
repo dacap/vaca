@@ -15,28 +15,9 @@
 namespace vaca {
 
 /**
-   Namespace for MouseButton enumeration.
-*/
-struct MouseButtonEnum
-{
-  /**
-     Enumeration to know which mouse's button triggers the MouseEvent.
-  */
-  enum enumeration {
-    None,
-    Left,
-    Right,
-    Middle,
-  };
-
-  /**
-     Default value for a MouseButton instance.
-  */
-  static const enumeration default_value = None;
-};
-
-/**
    A button of the mouse.
+
+   Enumeration to know which mouse's button triggers the MouseEvent.
 
    One of the following values:
    @li MouseButton::None
@@ -44,7 +25,13 @@ struct MouseButtonEnum
    @li MouseButton::Right
    @li MouseButton::Middle
 */
-typedef Enum<MouseButtonEnum> MouseButton;
+enum class MouseButton
+{
+  None,
+  Left,
+  Right,
+  Middle,
+};
 
 /**
    An event from the mouse.

@@ -34,7 +34,7 @@ struct ReBarBandStyleEnumSet
   };
 };
 
-typedef EnumSet<ReBarBandStyleEnumSet> ReBarBandStyle;
+using ReBarBandStyle = EnumSet<ReBarBandStyleEnumSet>;
 
 class ReBarException : public Exception
 {

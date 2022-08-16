@@ -5,6 +5,7 @@
 // please read LICENSE.txt for more information.
 
 #include <vaca/vaca.h>
+#include <memory>
 #include <vector>
 #include "Document.h"
 #include "Editor.h"

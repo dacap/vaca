@@ -23,7 +23,7 @@ function(add_vaca_test name)
   set_target_properties(${name} PROPERTIES
     COMPILE_FLAGS "${common_flags}")
 
-  target_link_libraries(${name} gtest_main vaca ${win32_libs})
+  target_link_libraries(${name} gtest_main vaca)
 
   add_test(NAME ${name} COMMAND ${name})
 endfunction(add_vaca_test)

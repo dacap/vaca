@@ -184,13 +184,6 @@ if(BUILD_SHARED_LIBS)
 endif(BUILD_SHARED_LIBS)
 
 ########################################
-# Win32 libraries
-
-set(win32_libs
-	User32 Shell32 ComCtl32 ComDlg32 Gdi32 Msimg32
-	WinMM AdvAPI32 Ole32 ShLwApi Vfw32 WinInet)
-
-########################################
 # Flags
 
 set(win32_flags "-DWINVER=0x0500 -D_WIN32_IE=0x0500 -D_WIN32_WINNT=0x0500")
@@ -204,9 +197,9 @@ set(common_flags "${win32_flags} ${unicode_flags} ${static_flags}")
 set_target_properties(vaca PROPERTIES
   COMPILE_FLAGS "-DVACA_SRC ${common_flags} ${vaca_platform_def}")
 
-if(BUILD_SHARED_LIBS)
-  target_link_libraries(vaca ${win32_libs})
-endif(BUILD_SHARED_LIBS)
+target_link_libraries(vaca
+  User32 Shell32 ComCtl32 ComDlg32 Gdi32 Msimg32
+  WinMM AdvAPI32 Ole32 ShLwApi Vfw32 WinInet)
 
 ########################################
 # Installation commands

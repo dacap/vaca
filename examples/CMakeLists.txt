@@ -55,7 +55,7 @@ function(add_vaca_example name)
     COMPILE_FLAGS "${common_flags}")
 
   # Dependencies with libraries
-  target_link_libraries(${name} vaca ${win32_libs})
+  target_link_libraries(${name} vaca)
 endfunction(add_vaca_example)
 
 add_vaca_example(AnchorLayouts)

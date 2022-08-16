@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005-2010 David Capello
+// Copyright (c) 2005-2022 David Capello
 //
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
@@ -94,7 +94,7 @@ public:
     assert(getHandle());
     ::GetObject(getHandle(), sizeof(EXTLOGPEN), &elp);
 
-    PenStyle style;
+    PenStyle style{};
 
     if (elp.elpPenStyle  & PS_SOLID) { style = PenStyle::Solid; }
     else if (elp.elpPenStyle  & PS_DASH) { style = PenStyle::Dash; }
@@ -112,7 +112,7 @@ public:
     assert(getHandle());
     ::GetObject(getHandle(), sizeof(EXTLOGPEN), &elp);
 
-    PenEndCap endCap;
+    PenEndCap endCap{};
 
     if (elp.elpPenStyle  & PS_ENDCAP_ROUND) { endCap = PenEndCap::Round; }
     else if (elp.elpPenStyle  & PS_ENDCAP_SQUARE) { endCap = PenEndCap::Square; }
@@ -126,7 +126,7 @@ public:
     assert(getHandle());
     ::GetObject(getHandle(), sizeof(EXTLOGPEN), &elp);
 
-    PenJoin join;
+    PenJoin join{};
 
     if (elp.elpPenStyle  & PS_JOIN_ROUND) { join = PenJoin::Round; }
     else if (elp.elpPenStyle  & PS_JOIN_BEVEL) { join = PenJoin::Bevel; }

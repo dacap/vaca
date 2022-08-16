@@ -58,7 +58,7 @@ private:
 @code
 class Frm : public Frame
 {
-  std::auto_ptr<But> but;
+  std::unique_ptr<But> but;
 public:
   Frm();
   Signal<void()> Sig;
@@ -66,7 +66,7 @@ public:
 ...
 Frm::Frm() : Frame("...")
 {
-  but.reset(new But(this));
+  but = std::make_unique<But>(this);
 }
 @endcode
 

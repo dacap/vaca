@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005-2010 David Capello
+// Copyright (c) 2005-2022 David Capello
 //
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
@@ -23,29 +23,25 @@ using namespace vaca;
 
 String vaca::format_string(const Char* fmt, ...)
 {
-  std::auto_ptr<Char> buf;
+  std::vector<Char> buf;
   int size = 512;
 
   while (true) {
-    buf = std::auto_ptr<Char>(new Char[size <<= 1]);
+    buf.resize(size <<= 1);
 
     va_list ap;
     va_start(ap, fmt);
-    int written = _vsnwprintf(buf.get(), size, fmt, ap);
+    int written = _vsnwprintf(&buf[0], size, fmt, ap);
     va_end(ap);
 
-    if (written == size) {
-      if (buf.get()[size] == 0)
-	break;
-    }
-    else if (written >= 0 && written < size) {
-      assert(buf.get()[written] == 0);
+    if (written >= 0 && written < size) {
+      assert(buf[written] == 0);
       break;
     }
     // else continue growing the buffer...
   }
 
-  return String(buf.get());
+  return String(&buf[0]);
 }
 
 String vaca::trim_string(const String& str)
@@ -145,23 +141,23 @@ void vaca::split_string(const String& string, std::vector<String>& parts, const 
 template<> std::string vaca::convert_to(const Char* const& from)
 {
   int len = std::wcslen(from)+1;
-  std::auto_ptr<char> ansiBuf(new char[len]);
-  int ret = WideCharToMultiByte(CP_ACP, 0, from, len, ansiBuf.get(), len, NULL, NULL);
+  std::vector<char> ansiBuf(len);
+  int ret = WideCharToMultiByte(CP_ACP, 0, from, len, &ansiBuf[0], len, NULL, NULL);
   if (ret == 0)
     return "";
   else
-    return std::string(ansiBuf.get());
+    return std::string(&ansiBuf[0]);
 }
 
 template<> std::string vaca::convert_to(const String& from)
 {
   int len = from.size()+1;
-  std::auto_ptr<char> ansiBuf(new char[len]);
-  int ret = WideCharToMultiByte(CP_ACP, 0, from.c_str(), len, ansiBuf.get(), len, NULL, NULL);
+  std::vector<char> ansiBuf(len);
+  int ret = WideCharToMultiByte(CP_ACP, 0, from.c_str(), len, &ansiBuf[0], len, NULL, NULL);
   if (ret == 0)
     return "";
   else
-    return std::string(ansiBuf.get());
+    return std::string(&ansiBuf[0]);
 }
 
 template<> int vaca::convert_to(const String& from)
@@ -197,23 +193,23 @@ template<> double vaca::convert_to(const String& from)
 template<> String vaca::convert_to(const char* const& from)
 {
   int len = strlen(from)+1;
-  std::auto_ptr<Char> wideBuf(new Char[len]);
-  int ret = MultiByteToWideChar(CP_ACP, 0, from, len, wideBuf.get(), len);
+  std::vector<Char> wideBuf(len);
+  int ret = MultiByteToWideChar(CP_ACP, 0, from, len, &wideBuf[0], len);
   if (ret == 0)
     return L"";
   else
-    return String(wideBuf.get());
+    return String(&wideBuf[0]);
 }
 
 template<> String vaca::convert_to(const std::string& from)
 {
   int len = from.size()+1;
-  std::auto_ptr<Char> wideBuf(new Char[len]);
-  int ret = MultiByteToWideChar(CP_ACP, 0, from.c_str(), len, wideBuf.get(), len);
+  std::vector<Char> wideBuf(len);
+  int ret = MultiByteToWideChar(CP_ACP, 0, from.c_str(), len, &wideBuf[0], len);
   if (ret == 0)
     return L"";
   else
-    return String(wideBuf.get());
+    return String(&wideBuf[0]);
 }
 
 template<> String vaca::convert_to(const int& from)
@@ -442,33 +438,30 @@ String vaca::url_object(const String& url)
 
 String vaca::encode_url(const String& url)
 {
-  std::auto_ptr<Char> buf;
   DWORD size = 1024;
+  std::vector<Char> buf(size);
 
   while (true) {
-    buf = std::auto_ptr<Char>(new Char[size]);
-
-    if (::InternetCanonicalizeUrl(url.c_str(), buf.get(), &size, 0))
+    if (::InternetCanonicalizeUrl(url.c_str(), &buf[0], &size, 0))
       break;
 
     if (GetLastError() != ERROR_INSUFFICIENT_BUFFER)
       throw Exception();
 
     // else continue growing the buffer...
+    buf.resize(size);
   }
 
-  return String(buf.get());
+  return String(&buf[0]);
 }
 
 String vaca::decode_url(const String& url)
 {
-  std::auto_ptr<Char> buf;
   DWORD size = 1024;
+  std::vector<Char> buf(size);
 
   while (true) {
-    buf = std::auto_ptr<Char>(new Char[size]);
-
-    if (::InternetCanonicalizeUrl(url.c_str(), buf.get(), &size,
+    if (::InternetCanonicalizeUrl(url.c_str(), &buf[0], &size,
 				  ICU_DECODE | ICU_NO_ENCODE))
       break;
 
@@ -476,7 +469,8 @@ String vaca::decode_url(const String& url)
       throw Exception();
 
     // else continue growing the buffer...
+    buf.resize(size);
   }
 
-  return String(buf.get());
+  return String(&buf[0]);
 }

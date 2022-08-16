@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005-2010 David Capello
+// Copyright (c) 2005-2022 David Capello
 //
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
@@ -12,7 +12,7 @@
 #include "vaca/win32.h"
 
 #include <richedit.h>
-#include <memory>
+#include <vector>
 
 using namespace vaca;
 
@@ -256,8 +256,8 @@ void RichEdit::getSelection(int& start, int& end)
 String RichEdit::getSelectedText() const
 {
   size_t length = getTextLength();
-  std::auto_ptr<Char> bufferWrap(new Char[length > 0 ? length: 1]);
-  Char* buffer = bufferWrap.get();
+  std::vector<Char> bufferWrap(length > 0 ? length: 1);
+  Char* buffer = &bufferWrap[0];
 
   const_cast<RichEdit*>(this)->sendMessage(EM_GETSELTEXT, 0, (LPARAM)buffer);
   return String(buffer);

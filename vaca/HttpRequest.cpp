@@ -1,5 +1,5 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005-2010 David Capello
+// Copyright (c) 2005-2022 David Capello
 //
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
@@ -7,11 +7,10 @@
 #include "vaca/HttpRequest.h"
 #include "vaca/String.h"
 
-#include <memory>
 #include <cassert>
+#include <vector>
 
 using namespace vaca;
-using namespace std;
 
 // ======================================================================
 // HttpRequest::InetHandle
@@ -97,10 +96,10 @@ HttpRequest::~HttpRequest()
 int HttpRequest::send(const String& headers, const char* body)
 {
   if (HttpSendRequest(req.handle,
-		      headers.empty() ? NULL: headers.c_str(),
+		      headers.empty() ? nullptr: headers.c_str(),
 		      headers.size(),
 		      reinterpret_cast<LPVOID>(const_cast<char*>(body)),
-		      body ? strlen(body): 0)) {
+		      body ? std::strlen(body): 0)) {
     return getStatusCode();
   }
   return 0;
@@ -169,13 +168,13 @@ size_t HttpRequest::getContentLength()
 bool HttpRequest::hasHeader(const String& headerName)
 {
   DWORD bufLength = headerName.size()+1;
-  auto_ptr<char> buf(new char[bufLength]);
+  std::vector<char> buf(bufLength);
   DWORD index = 0;
 
-  strcpy(buf.get(), convert_to<std::string>(headerName).c_str());
+  std::strcpy(&buf[0], convert_to<std::string>(headerName).c_str());
 
   if (HttpQueryInfo(req.handle, HTTP_QUERY_CUSTOM,
-		    buf.get(), &bufLength, &index)) {
+		    &buf[0], &bufLength, &index)) {
     return true;
   }
   else if (GetLastError() == ERROR_INSUFFICIENT_BUFFER)
@@ -194,22 +193,21 @@ bool HttpRequest::hasHeader(const String& headerName)
 String HttpRequest::getHeader(const String& headerName)
 {
   DWORD bufLength = headerName.size()+1;
-  auto_ptr<char> buf(new char[bufLength]);
+  std::vector<char> buf(bufLength);
   DWORD index = 0;
 
   while (true) {
     // copy the header's name in the buffer 'buf'
-    strcpy(buf.get(), convert_to<std::string>(headerName).c_str());
+    std::strcpy(&buf[0], convert_to<std::string>(headerName).c_str());
 
     // get the header's value
     if (HttpQueryInfo(req.handle, HTTP_QUERY_CUSTOM,
-		      buf.get(), &bufLength, &index)) {
+		      &buf[0], &bufLength, &index)) {
       // ok
-      return convert_to<String, const char*>(buf.get());
+      return convert_to<String, const char*>(&buf[0]);
     }
     else if (GetLastError() == ERROR_INSUFFICIENT_BUFFER) {
-      // the old value is deleted by auto_ptr::operator=
-      buf = auto_ptr<char>(new char[bufLength]);
+      buf.resize(bufLength);
       continue;
     }
     else

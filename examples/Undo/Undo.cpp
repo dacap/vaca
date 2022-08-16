@@ -1,11 +1,11 @@
 // Vaca - Visual Application Components Abstraction
-// Copyright (c) 2005-2009 David Capello
+// Copyright (c) 2005-2022 David Capello
 //
 // This file is distributed under the terms of the MIT license,
 // please read LICENSE.txt for more information.
 
 #include <vaca/vaca.h>
-#include <memory>
+#include <vector>
 #include "Document.h"
 #include "Editor.h"
 
@@ -32,7 +32,7 @@ class Example : public Application
   int m_docCounter;
   Documents m_docs;
   DocumentPtr m_currentDoc;
-  std::auto_ptr<MainFrame> m_mainFrame;
+  std::unique_ptr<MainFrame> m_mainFrame;
 
   virtual void main();
 
@@ -168,7 +168,7 @@ Example::Example()
 {
   // Warning: the "Example::m_mainFrame" must be constructed after the
   // "Example::DocumentChange" member is constructed. See TN012.
-  m_mainFrame.reset(new MainFrame());
+  m_mainFrame = std::make_unique<MainFrame>();
 
   // commands
   addCommand(new SignalCommand(ID_NEW_DOCUMENT, &Example::onNew, this));

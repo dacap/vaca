@@ -158,6 +158,7 @@ if(VACA_WINDOWS)
 endif(VACA_WINDOWS)
 
 add_library(vaca ${VACA_SOURCES})
+target_compile_features(vaca PUBLIC cxx_std_14)
 
 ######################################################################
 # Post-build commands to run examples and tests

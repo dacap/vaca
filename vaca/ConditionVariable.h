@@ -52,10 +52,10 @@ public:
   }
 
   template<typename Predicate>
-  void waitFor(ScopedLock& lock, double seconds, Predicate pred) {
+  bool waitFor(ScopedLock& lock, double seconds, Predicate pred) {
     while (!pred())
       if (!waitFor(lock, seconds))
-	return false;
+        return false;
     return true;
   }
 

@@ -53,7 +53,7 @@ Message::Message(const Message& msg, void* payload)
 {
   m_msg.hwnd = msg.m_msg.hwnd;
   m_msg.message = msg.m_msg.message;
-  m_msg.wParam = NULL;
+  m_msg.wParam = 0;
   m_msg.lParam = reinterpret_cast<LPARAM>(payload);
   m_msg.time = 0;
 }

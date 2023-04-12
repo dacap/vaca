@@ -96,7 +96,7 @@ namespace vaca {
 // you have to use a specialization
 template<typename To, typename From>
 To convert_to(const From& from) {
-  enum { not_supported = 1/(1 == 0) }; // static_assert(false)
+  static_assert(false && sizeof(To), "Invalid conversion");
 }
 
 // ============================================================

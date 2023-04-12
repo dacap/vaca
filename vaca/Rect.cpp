@@ -96,7 +96,7 @@ Rect::Rect(const Point& point1, const Point& point2)
 {
   Point leftTop = point1;
   Point rightBottom = point2;
-  register int t;
+  int t;
 
   if (leftTop.x > rightBottom.x) {
     t = leftTop.x;

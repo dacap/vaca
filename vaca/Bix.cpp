@@ -123,7 +123,7 @@ struct Bix::Matrix
 
   int getColFillsCount()
   {
-    register int x, count = 0;
+    int x, count = 0;
 
     for (x=0; x<cols; ++x)
       if (col_fill[x])
@@ -134,7 +134,7 @@ struct Bix::Matrix
 
   int getRowFillsCount()
   {
-    register int y, count = 0;
+    int y, count = 0;
 
     for (y=0; y<rows; ++y)
       if (row_fill[y])
@@ -145,7 +145,7 @@ struct Bix::Matrix
 
   void calcCellsSize(const Size& fitIn)
   {
-    register int x, y;
+    int x, y;
 
     // get the preferred size of each element in the matrix
     for (y=0; y<rows; ++y)
@@ -413,7 +413,7 @@ void Bix::layout(WidgetsMovement& movement, Bix* parentBix, const Rect& rc)
     mat.calcCellsSize(Size(0, 0));
 
     // distribute size
-    register int x, y;
+    int x, y;
 
     // X axis
     if (isEvenX()) {

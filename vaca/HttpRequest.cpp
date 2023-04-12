@@ -8,6 +8,7 @@
 #include "vaca/String.h"
 
 #include <cassert>
+#include <cstring>
 #include <vector>
 
 using namespace vaca;

@@ -12,6 +12,8 @@
 #include "vaca/PreferredSizeEvent.h"
 #include "vaca/win32.h"
 
+#include <vector>
+
 using namespace vaca;
 
 // ======================================================================
@@ -97,10 +99,9 @@ String ComboBox::getItemText(int itemIndex)
   if (!len)
     return L"";
   else {
-    Char* buf = new Char[len+1];
-    sendMessage(CB_GETLBTEXT, itemIndex, reinterpret_cast<LPARAM>(buf));
-    String str(buf);
-    delete buf;
+    std::vector<Char> buf(len+1);
+    sendMessage(CB_GETLBTEXT, itemIndex, reinterpret_cast<LPARAM>(buf.data()));
+    String str(buf.data());
     return str;
   }
 }

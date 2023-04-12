@@ -7,12 +7,12 @@
 #ifndef GRID_H
 #define GRID_H
 
-#include <iterator>
+#include <cstddef>
 
 //////////////////////////////////////////////////////////////////////
 
 template<class T, class MovementPolicy>
-class base_grid_iterator : public std::iterator<std::bidirectional_iterator_tag, T>
+class base_grid_iterator
 {
   template<class, class> friend class base_grid_iterator;
 
@@ -21,8 +21,12 @@ class base_grid_iterator : public std::iterator<std::bidirectional_iterator_tag,
   MovementPolicy m_movement;
 
 public:
-  // template<class, class> friend class base_grid_iterator;
-    
+  using iterator_category = std::bidirectional_iterator_tag;
+  using value_type = T;
+  using difference_type = std::ptrdiff_t;
+  using pointer = T*;
+  using reference = T&;
+
   base_grid_iterator()
     : m_values(0)
     , m_col(-1)
@@ -141,7 +145,7 @@ template<class T>
 class grid
 {
   T values[9*9];
-  
+
 public:
   typedef base_grid_iterator<T, scan_movement> iterator;
   typedef base_grid_iterator<T, box_movement> box_iterator;
@@ -177,7 +181,7 @@ public:
     std::copy(copy.begin(), copy.end(), this->begin());
     return *this;
   }
-  
+
 };
 
 #endif // GRID_H

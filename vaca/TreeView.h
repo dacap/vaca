@@ -13,7 +13,7 @@
 #include "vaca/ImageList.h"
 #include "vaca/Point.h"
 
-#include <iterator>
+#include <cstddef>
 
 namespace vaca {
 
@@ -21,12 +21,16 @@ namespace vaca {
    @internal You should use @link vaca::TreeView::iterator TreeView::iterator @endlink.
 */
 class VACA_DLL TreeViewIterator
-  : public std::iterator<std::bidirectional_iterator_tag,
-			 TreeNode*>
 {
   TreeNode* m_currentNode;
 
 public:
+  using iterator_category = std::bidirectional_iterator_tag;
+  using value_type = TreeNode*;
+  using difference_type = std::ptrdiff_t;
+  using pointer = TreeNode**;
+  using reference = TreeNode*&;
+
   TreeViewIterator();
   TreeViewIterator(const TreeViewIterator& other);
   explicit TreeViewIterator(TreeNode* node);

@@ -160,14 +160,14 @@ protected:
       return true;
 
     if (message == progress_message) {
-      ThreadId id = (ThreadId)message.getPayload();
+      ThreadId id = (ThreadId)(UINT_PTR)(message.getPayload());
       if (ThreadView* threadView = getThreadView(id)) {
 	threadView->makeProgress();
       }
       return true;
     }
     else if (message == end_message) {
-      ThreadId id = (ThreadId)message.getPayload();
+      ThreadId id = (ThreadId)(UINT_PTR)(message.getPayload());
       if (ThreadView* threadView = getThreadView(id)) {
 	// Get the thread that sent us the "end_message"
 	Thread* thread = threadView->getThread();

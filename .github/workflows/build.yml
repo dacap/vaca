@@ -59,3 +59,26 @@ jobs:
       with:
         name: Vaca-${{ matrix.build_type }}-Examples
         path: Vaca-${{ matrix.build_type }}-Examples
+  mingw:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest]
+        sys: [mingw64, mingw32, ucrt64, clang64]
+        build_type: [RelWithDebInfo, Debug]
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+    - uses: msys2/setup-msys2@v2
+      with:
+        release: false
+        msystem: ${{matrix.sys}}
+        pacboy: cc:p cmake:p ninja:p
+    - uses: actions/checkout@v2
+    - name: Generating Makefiles
+      run: cmake -S . -B build -G Ninja
+    - name: Compiling
+      run: cd build && ninja
+    - name: Test
+      run: cd build && ctest --output-on-failure

@@ -91,7 +91,7 @@ public:
   */
   typedef TreeViewIterator iterator;
 
-  struct VACA_DLL Styles {
+  struct Styles {
     /**
        With this style in a TreeeView the label of each TreeNode can be edited.
     */

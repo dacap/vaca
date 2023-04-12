@@ -20,7 +20,7 @@ class VACA_DLL CheckBox : public ButtonBase
 {
 public:
 
-  struct VACA_DLL Styles {
+  struct Styles {
     /**
        Default style for CheckBox widget.
     */

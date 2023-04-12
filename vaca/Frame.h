@@ -39,7 +39,7 @@ class VACA_DLL Frame : public Register<FrameClass>, public Widget
 
 public:
 
-  struct VACA_DLL Styles {
+  struct Styles {
 
     /**
        This Frame is a window that as a title bar.

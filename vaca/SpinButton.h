@@ -47,7 +47,7 @@ class VACA_DLL SpinButton : public Widget
 {
 public:
 
-  struct VACA_DLL Styles {
+  struct Styles {
     static constexpr Style Default =
       Widget::Styles::Visible |
       Style(UDS_SETBUDDYINT |

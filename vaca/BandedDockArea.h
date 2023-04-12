@@ -32,7 +32,7 @@ class VACA_DLL BandedDockArea : public DockArea
 
 public:
 
-  struct VACA_DLL Styles {
+  struct Styles {
     /**
        Default style for BandedDockArea widget.
     */

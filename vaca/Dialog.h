@@ -68,7 +68,7 @@ class VACA_DLL Dialog : public Register<DialogClass>, public Frame
 
 public:
 
-  struct VACA_DLL Styles {
+  struct Styles {
 
     /**
        This style is activated by default in Dialogs.

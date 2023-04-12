@@ -16,7 +16,7 @@ class VACA_DLL Separator : public Widget
 {
 public:
 
-  struct VACA_DLL Styles {
+  struct Styles {
     static constexpr Style Default =
       Widget::Styles::Visible |
       Style(SS_NOTIFY | SS_SUNKEN, 0);

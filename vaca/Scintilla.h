@@ -33,7 +33,7 @@ class VACA_DLL SciEdit : public SciRegister, public Widget
 {
 public:
 
-  struct VACA_DLL Styles {
+  struct Styles {
     static constexpr Style Default =
       Widget::Styles::Visible |
       Widget::Styles::Scroll;

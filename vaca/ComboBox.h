@@ -24,7 +24,7 @@ class VACA_DLL ComboBox : public Widget
 
 public:
 
-  struct VACA_DLL Styles {
+  struct Styles {
     /**
        Default style for ComboBox widget. It is the classic ComboBox in
        which the user can select only items in the list (but can't edit

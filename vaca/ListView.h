@@ -52,7 +52,7 @@ class VACA_DLL ListView : public Widget
 
 public:
 
-  struct VACA_DLL Styles {
+  struct Styles {
     static constexpr Style Default = (Widget::Styles::Visible |
                                       Widget::Styles::Focusable |
                                       Widget::Styles::ClientEdge);

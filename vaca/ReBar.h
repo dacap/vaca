@@ -91,7 +91,7 @@ class VACA_DLL ReBar : public Widget
 
 public:
 
-  struct VACA_DLL Styles {
+  struct Styles {
     // same as ATL_SIMPLE_REBAR_STYLE - WS_CLIPSIBLINGS
     static constexpr Style Default =
       Widget::Styles::Visible |

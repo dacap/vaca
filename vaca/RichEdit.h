@@ -30,7 +30,7 @@ class VACA_DLL RichEdit : public RichEditRegister, public Widget
 {
 public:
 
-  struct VACA_DLL Styles {
+  struct Styles {
     static constexpr Style RightAligned = Style(ES_RIGHT, 0);
     static constexpr Style ReadOnly = Style(ES_READONLY, 0);
     static constexpr Style AutoHorizontalScroll = Style(ES_AUTOHSCROLL, 0);

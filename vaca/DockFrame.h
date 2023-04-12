@@ -47,7 +47,7 @@ class VACA_DLL DockFrame : public Register<DockFrameClass>, public Frame
 
 public:
 
-  struct VACA_DLL Styles {
+  struct Styles {
 
     /**
        Default style for DockFrame widget.

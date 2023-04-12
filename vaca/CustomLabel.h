@@ -24,7 +24,7 @@ class VACA_DLL CustomLabel : public Label
 
 public:
 
-  struct VACA_DLL Styles {
+  struct Styles {
     /**
        Default style for CustomLabel.
     */

@@ -21,7 +21,7 @@ class VACA_DLL Button : public ButtonBase
 {
 public:
 
-  struct VACA_DLL Styles {
+  struct Styles {
 
     /**
        Default style for Button widget.

@@ -67,7 +67,7 @@ public:
   // STYLES
   // ============================================================
 
-  struct VACA_DLL Styles {
+  struct Styles {
     /**
        Without style.
     */

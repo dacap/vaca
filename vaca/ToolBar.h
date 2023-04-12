@@ -91,7 +91,7 @@ class VACA_DLL ToolSet : public Widget
 
 public:
 
-  struct VACA_DLL Styles {
+  struct Styles {
 
     static constexpr Style Default =
       Widget::Styles::Visible |
@@ -154,7 +154,7 @@ class VACA_DLL ToolBar : public DockBar
 
 public:
 
-  struct VACA_DLL Styles {
+  struct Styles {
     static constexpr Style Default = DockBar::Styles::Default;
   };
 

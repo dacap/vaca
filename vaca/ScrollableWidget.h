@@ -16,7 +16,7 @@ namespace vaca {
 
 /**
    A wrapper ready-to-use to create scrollable widgets.
-*/   
+*/
 class VACA_DLL ScrollableWidget : public Widget
 {
   /**
@@ -32,14 +32,14 @@ class VACA_DLL ScrollableWidget : public Widget
 
 public:
 
-  struct VACA_DLL Styles {
+  struct Styles {
     static constexpr Style Default =
       Widget::Styles::Default |
       Widget::Styles::Scroll |     // to show both scroll bars
       Widget::Styles::ClientEdge | // to show an edge arround the client area
       Widget::Styles::Focusable;   // to receive onMouseWheel
   };
-  
+
   ScrollableWidget(Widget* parent, Style style = Styles::Default);
 
   Size getFullSize() const;

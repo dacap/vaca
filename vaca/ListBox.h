@@ -21,7 +21,7 @@ class VACA_DLL ListBox : public Widget
 {
 public:
 
-  struct VACA_DLL Styles {
+  struct Styles {
 
     /**
        Default style for ListBox.
@@ -74,7 +74,7 @@ class VACA_DLL DragListBox : public ListBox
 {
 public:
 
-  struct VACA_DLL Styles {
+  struct Styles {
     static constexpr Style Default = ListBox::Styles::Default;
   };
 

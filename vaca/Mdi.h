@@ -38,7 +38,7 @@ class VACA_DLL MdiChild : public Register<MdiChildClass>, public Frame
 
 public:
 
-  struct VACA_DLL Styles {
+  struct Styles {
     static constexpr Style Default =
       Frame::Styles::Default |
       Style(WS_CHILD, WS_EX_MDICHILD);
@@ -66,7 +66,7 @@ class VACA_DLL MdiClient : public Widget
 {
 public:
 
-  struct VACA_DLL Styles {
+  struct Styles {
     static constexpr Style Default =
       Widget::Styles::Visible |
       Widget::Styles::Scroll |
@@ -118,7 +118,7 @@ private:
 
 public:
 
-  struct VACA_DLL Styles {
+  struct Styles {
     static constexpr Style Default =
       Frame::Styles::Default;
   };

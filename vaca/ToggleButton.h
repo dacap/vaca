@@ -18,7 +18,7 @@ class VACA_DLL ToggleButton : public ButtonBase
 {
 public:
 
-  struct VACA_DLL Styles {
+  struct Styles {
     static constexpr Style Default =
       Widget::Styles::Visible |
       Widget::Styles::Focusable |

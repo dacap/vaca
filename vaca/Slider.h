@@ -19,7 +19,7 @@ public:
   static const int MinLimit;
   static const int MaxLimit;
 
-  struct VACA_DLL Styles {
+  struct Styles {
     static constexpr Style Default =
       Widget::Styles::Visible |
       Widget::Styles::Focusable |

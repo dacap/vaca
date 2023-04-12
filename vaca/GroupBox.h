@@ -19,7 +19,7 @@ class VACA_DLL GroupBox : public Widget
 {
 public:
 
-  struct VACA_DLL Styles {
+  struct Styles {
     /**
        Default style for GroupBox widget.
     */

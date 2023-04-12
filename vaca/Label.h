@@ -27,7 +27,7 @@ class VACA_DLL Label : public Widget
 {
 public:
 
-  struct VACA_DLL Styles {
+  struct Styles {
 
     /**
        Default style for Label.

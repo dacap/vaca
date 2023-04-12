@@ -23,7 +23,7 @@ class VACA_DLL ProgressBar : public Widget
 {
 public:
 
-  struct VACA_DLL Styles {
+  struct Styles {
     static constexpr Style Default = Widget::Styles::Visible;
     static constexpr Style Smooth = Style(PBS_SMOOTH, 0);
      // TODO change with set/getOrientation

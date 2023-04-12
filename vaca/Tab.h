@@ -33,7 +33,7 @@ class VACA_DLL TabBase : public Widget
 
 public:
 
-  struct VACA_DLL Styles {
+  struct Styles {
     static constexpr Style Default = Widget::Styles::Default;
   };
 
@@ -101,7 +101,7 @@ class VACA_DLL Tab : public TabBase
 {
 public:
 
-  struct VACA_DLL Styles {
+  struct Styles {
     static constexpr Style Default = TabBase::Styles::Default;
   };
 
@@ -135,7 +135,7 @@ class VACA_DLL TabPage : public Register<TabPageClass>, public Widget
 
 public:
 
-  struct VACA_DLL Styles {
+  struct Styles {
     static constexpr Style Default = Widget::Styles::Default;
   };
 

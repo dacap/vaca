@@ -41,7 +41,7 @@ class VACA_DLL SplitBar : public Register<SplitBarClass>
 
 public:
 
-  struct VACA_DLL Styles {
+  struct Styles {
     static constexpr Style Default =
       Widget::Styles::Visible |
       Widget::Styles::Container;

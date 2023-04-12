@@ -49,7 +49,7 @@ class VACA_DLL DockArea : public Register<DockAreaClass>, public Widget
 
 public:
 
-  struct VACA_DLL Styles {
+  struct Styles {
 
     /**
        Default style for DockArea widget.

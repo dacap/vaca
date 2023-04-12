@@ -30,7 +30,7 @@ class VACA_DLL LinkLabel : public CustomLabel
 
 public:
 
-  struct VACA_DLL Styles {
+  struct Styles {
     /**
        Default style for LinkLabel widget.
 

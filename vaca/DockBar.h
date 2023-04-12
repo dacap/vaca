@@ -76,7 +76,7 @@ class VACA_DLL DockBar : public Register<DockBarClass>, public Widget
 
 public:
 
-  struct VACA_DLL Styles {
+  struct Styles {
 
     /**
        Default style for DockBar widget.

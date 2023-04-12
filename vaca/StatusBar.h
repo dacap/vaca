@@ -16,7 +16,7 @@ class VACA_DLL StatusBar : public Widget
 {
 public:
 
-  struct VACA_DLL Styles {
+  struct Styles {
     static constexpr Style Default =
       Widget::Styles::Visible |
       Style(SBARS_SIZEGRIP, 0);
